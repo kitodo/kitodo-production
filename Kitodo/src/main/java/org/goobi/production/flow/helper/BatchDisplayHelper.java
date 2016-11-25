@@ -27,9 +27,10 @@ package org.goobi.production.flow.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.List;
 
 import de.sub.goobi.helper.enums.StepStatus;
+
+import java.util.List;
 
 public class BatchDisplayHelper {
 
@@ -55,10 +56,11 @@ public class BatchDisplayHelper {
 		this.stepList = stepList;
 	}
 
-	/*
+	/**
 	 * Auswertung des Fortschritts
+	 *
+	 * @return add description
 	 */
-
 	public String getFortschritt() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -89,6 +91,11 @@ public class BatchDisplayHelper {
 		return df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
 	}
 
+	/**
+	 * Auswertung des Fortschritts
+	 *
+	 * @return add description
+	 */
 	public int getFortschritt1() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -109,6 +116,9 @@ public class BatchDisplayHelper {
 		return (offen * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getFortschritt2() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -129,6 +139,9 @@ public class BatchDisplayHelper {
 		return (inBearbeitung * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getFortschritt3() {
 		int offen = 0;
 		int inBearbeitung = 0;

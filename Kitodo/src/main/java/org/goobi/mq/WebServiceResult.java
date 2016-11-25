@@ -28,6 +28,8 @@
 
 package org.goobi.mq;
 
+import de.sub.goobi.helper.enums.ReportLevel;
+
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Level;
@@ -35,8 +37,6 @@ import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-
-import de.sub.goobi.helper.enums.ReportLevel;
 
 public class WebServiceResult {
 	private static final Logger logger = Logger.getLogger(ActiveMQDirector.class);
@@ -46,6 +46,12 @@ public class WebServiceResult {
 	private ReportLevel level;
 	private String message = null;
 
+	/**
+	 * @param queueName add description
+	 * @param id add description
+	 * @param level add description
+	 * @param message add description
+	 */
 	public WebServiceResult(String queueName, String id, ReportLevel level, String message) {
 		this.queueName = queueName;
 		this.id = id;
@@ -53,12 +59,20 @@ public class WebServiceResult {
 		this.message = message;
 	}
 
+	/**
+	 * @param queueName add description
+	 * @param id add description
+	 * @param level add description
+	 */
 	public WebServiceResult(String queueName, String id, ReportLevel level) {
 		this.queueName = queueName;
 		this.id = id;
 		this.level = level;
 	}
 
+	/**
+	 *
+	 */
 	public void send() {
 		if (ActiveMQDirector.getResultsTopic() == null) {
 
@@ -76,9 +90,9 @@ public class WebServiceResult {
 				report.setString("queue", queueName);
 				report.setString("id", id);
 				report.setString("level", level.toLowerCase());
-				if (message != null)
+				if (message != null) {
 					report.setString("message", message);
-
+				}
 				ActiveMQDirector.getResultsTopic().send(report);
 
 			} catch (Exception exce) {

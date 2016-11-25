@@ -28,6 +28,18 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.BenutzerDAO;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,18 +54,6 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BenutzerDAO;
 
 /**
  * class provides methods used by implementations of IEvaluableFilter
@@ -183,10 +183,10 @@ public class FilterHelper {
 	/**
 	 * This functions extracts the Integer from the parameters passed with the step filter in first position.
 	 *
-	 * @param parameter
+	 * @param parameter add description
 	 *
 	 * @return Integer
-	 ****************************************************************************/
+	 */
 	protected static Integer getStepStart(String parameter) {
 		String[] strArray = parameter.split("-");
 		return Integer.parseInt(strArray[0]);
@@ -195,21 +195,21 @@ public class FilterHelper {
 	/**
 	 * This functions extracts the Integer from the parameters passed with the step filter in last position.
 	 *
-	 * @param parameter
+	 * @param parameter add description
 	 * @return Integer
-	 ****************************************************************************/
+	 */
 	protected static Integer getStepEnd(String parameter) {
 		String[] strArray = parameter.split("-");
 		return Integer.parseInt(strArray[1]);
 	}
 
 	/**
-	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further processing it reduces the necessity to
-	 * apply some filter keywords
+	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further
+	 * processing it reduces the necessity to apply some filter keywords
 	 *
-	 * @param parameters
+	 * @param parameters add description
 	 * @return StepFilter
-	 ****************************************************************************/
+	 */
 	protected static StepFilter getStepFilter(String parameters) {
 
 		if (parameters.contains("-")) {
@@ -236,8 +236,8 @@ public class FilterHelper {
 	}
 
 	/**
-	 * This enum represents the result of parsing the step<modifier>: filter Restrictions
-	 ****************************************************************************/
+	 * This enum represents the result of parsing the step&lt;modifier&gt;: filter Restrictions
+	 */
 	protected static enum StepFilter {
 		exact, range, min, max, name, unknown
 	}
@@ -245,13 +245,12 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps range
 	 *
-	 * @param con
-	 * @param parameters
-	 * @param inStatus
-	 * @param negate
-	 * @param prefix
-	 *            {@link StepStatus} of searched step
-	 ****************************************************************************/
+	 * @param con add description
+	 * @param parameters add description
+	 * @param inStatus add description
+	 * @param negate add description
+	 * @param prefix {@link StepStatus} of searched step
+	 */
 	protected static void filterStepRange(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
 			String prefix) {
 		if (!negate) {
@@ -270,11 +269,9 @@ public class FilterHelper {
 	/**
 	 * Filter processes for steps name with given status
 	 *
-	 * @param inStatus
-	 *            {@link StepStatus} of searched step
-	 * @param parameters
-	 *            part of filter string to use
-	 ****************************************************************************/
+	 * @param inStatus {@link StepStatus} of searched step
+	 * @param parameters part of filter string to use
+	 */
 	protected static void filterStepName(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
 			String prefix) {
 		if (con == null) {
@@ -291,8 +288,7 @@ public class FilterHelper {
 
 	/**
 	 * Filter processes for steps name with given status
-	 *
-	 ****************************************************************************/
+	 */
 	protected static void filterAutomaticSteps(Conjunction con, String tok, boolean flagSteps) {
 		if (con == null) {
 			con = Restrictions.conjunction();
@@ -315,11 +311,9 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps min
 	 *
-	 * @param parameters
-	 *            part of filter string to use
-	 * @param inStatus
-	 *            {@link StepStatus} of searched step
-	 ****************************************************************************/
+	 * @param parameters part of filter string to use
+	 * @param inStatus {@link StepStatus} of searched step
+	 */
 	protected static void filterStepMin(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
 			String prefix) {
 		if (con == null) {
@@ -338,11 +332,9 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps max
 	 *
-	 * @param parameters
-	 *            part of filter string to use
-	 * @param inStatus
-	 *            {@link StepStatus} of searched step
-	 ****************************************************************************/
+	 * @param parameters part of filter string to use
+	 * @param inStatus {@link StepStatus} of searched step
+	 */
 	protected static void filterStepMax(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
 			String prefix) {
 		if (con == null) {
@@ -361,11 +353,9 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps exact
 	 *
-	 * @param parameters
-	 *            part of filter string to use
-	 * @param inStatus
-	 *            {@link StepStatus} of searched step
-	 ****************************************************************************/
+	 * @param parameters part of filter string to use
+	 * @param inStatus {@link StepStatus} of searched step
+	 */
 	protected static void filterStepExact(Conjunction con, String parameters, StepStatus inStatus, boolean negate,
 			String prefix) {
 		if (!negate) {
@@ -381,9 +371,8 @@ public class FilterHelper {
 	/**
 	 * Filter processes for done steps by user
 	 *
-	 * @param tok
-	 *            part of filter string to use
-	 ****************************************************************************/
+	 * @param tok part of filter string to use
+	 */
 	protected static void filterStepDoneUser(Conjunction con, String tok) {
 		/*
 		 * filtering by a certain done step, which the current user finished
@@ -395,9 +384,8 @@ public class FilterHelper {
 	/**
 	 * Filter processes by project
 	 *
-	 * @param tok
-	 *            part of filter string to use
-	 ****************************************************************************/
+	 * @param tok part of filter string to use
+	 */
 	protected static void filterProject(Conjunction con, String tok, boolean negate) {
 		/* filter according to linked project */
 		if (!negate) {
@@ -410,9 +398,8 @@ public class FilterHelper {
 	/**
 	 * Filter processes by scan template
 	 *
-	 * @param tok
-	 *            part of filter string to use
-	 ****************************************************************************/
+	 * @param tok part of filter string to use
+	 */
 	protected static void filterScanTemplate(Conjunction con, String tok, boolean negate) {
 		/* Filtering by signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
@@ -457,9 +444,8 @@ public class FilterHelper {
 	/**
 	 * Filter processes by Ids
 	 *
-	 * @param tok
-	 *            part of filter string to use
-	 ****************************************************************************/
+	 * @param tok part of filter string to use
+	 */
 	protected static void filterIds(Conjunction con, String tok) {
 		/* filtering by ids */
 		List<Integer> listIds = new ArrayList<Integer>();
@@ -482,9 +468,8 @@ public class FilterHelper {
 	/**
 	 * Filter processes by workpiece
 	 *
-	 * @param tok
-	 *            part of filter string to use
-	 ****************************************************************************/
+	 * @param tok part of filter string to use
+	 */
 	protected static void filterWorkpiece(Conjunction con, String tok, boolean negate) {
 		/* filter according signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
@@ -508,18 +493,17 @@ public class FilterHelper {
 	}
 
 	/**
-	 * This method builds a criteria depending on a filter string and some other parameters passed on along the initial criteria. The filter is parsed
-	 * and depending on which data structures are used for applying filtering restrictions conjunctions are formed and collect the restrictions and
-	 * then will be applied on the corresponding criteria. A criteria is only added if needed for the presence of filters applying to it.
+	 * This method builds a criteria depending on a filter string and some other parameters passed on along the initial
+	 * criteria. The filter is parsed and depending on which data structures are used for applying filtering
+	 * restrictions conjunctions are formed and collect the restrictions and then will be applied on the corresponding
+	 * criteria. A criteria is only added if needed for the presence of filters applying to it.
 	 *
-	 *
-	 * @param inFilter
-	 * @param crit
-	 * @param isTemplate
-	 * @param returnParameters
-	 *            Object containing values which need to be set and returned to UserDefinedFilter
-	 * @param userAssignedStepsOnly
-	 * @param stepOpenOnly
+	 * @param inFilter add description
+	 * @param crit add description
+	 * @param isTemplate add description
+	 * @param returnParameters Object containing values which need to be set and returned to UserDefinedFilter
+	 * @param userAssignedStepsOnly add description
+	 * @param stepOpenOnly add description
 	 * @return String used to pass on error messages about errors in the filter expression
 	 */
 	public static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
@@ -689,7 +673,8 @@ public class FilterHelper {
 				}
 				FilterHelper.filterProject(conjProjects, tok, false);
 
-			} else if (tokLowerCase.startsWith(FilterString.TEMPLATE) || tokLowerCase.startsWith(FilterString.VORLAGE)) {
+			} else if (tokLowerCase.startsWith(FilterString.TEMPLATE)
+					|| tokLowerCase.startsWith(FilterString.VORLAGE)) {
 				if (conjTemplates == null) {
 					conjTemplates = Restrictions.conjunction();
 				}
@@ -726,9 +711,7 @@ public class FilterHelper {
 					conjProcessProperties = Restrictions.conjunction();
 				}
 				FilterHelper.filterProcessProperty(conjProcessProperties, tok, true);
-			}
-
-			else if (tokLowerCase.startsWith("-" + FilterString.STEPINWORK)
+			} else if (tokLowerCase.startsWith("-" + FilterString.STEPINWORK)
 					|| tokLowerCase.startsWith("-" + FilterString.SCHRITTINARBEIT)) {
 				if (conjSteps == null) {
 					conjSteps = Restrictions.conjunction();
@@ -907,9 +890,8 @@ public class FilterHelper {
 	}
 
 	/**
-	 *
-	 * @param conjSteps
-	 * @param filterPart
+	 * @param conjSteps add description
+	 * @param filterPart add description
 	 * @return empty string
 	 */
 	private static String createHistoricFilter(Conjunction conjSteps, String filterPart, Boolean stepCriteria) {
@@ -945,12 +927,15 @@ public class FilterHelper {
 		return "";
 	}
 
-	/************************************************************************************
-	 * @param flagCriticalQuery
-	 * @param crit
-	 * @param parameters
+	/**
+	 * @param returnParameters add description
+	 * @param con add description
+	 * @param filterPart add description
+	 * @param inStatus add description
+	 * @param negate add description
+	 * @param filterPrefix add description
 	 * @return String
-	 ************************************************************************************/
+	 */
 	private static String createStepFilters(Parameters returnParameters, Conjunction con, String filterPart,
 			StepStatus inStatus, boolean negate, String filterPrefix) {
 		// extracting the substring into parameter (filter parameters e.g. 5,
@@ -960,8 +945,8 @@ public class FilterHelper {
 		String parameters = filterPart.substring(filterPart.indexOf(":") + 1);
 		String message = "";
 		/*
-		 * -------------------------------- Analyzing the parameters and what user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
-		 * Qualitätssicherung ->name) handling the filter according to the parameters --------------------------------
+		 * Analyzing the parameters and what user intended (5->exact, -5 ->max, 5-10 ->range, 5- ->min.,
+		 * Qualitätssicherung ->name) handling the filter according to the parameters
 		 */
 
 		switch (FilterHelper.getStepFilter(parameters)) {

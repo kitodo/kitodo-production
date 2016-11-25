@@ -24,18 +24,26 @@
 
 package org.goobi.pagination;
 
-import ugh.dl.RomanNumeral;
-
 import java.util.ArrayList;
 
-public class RomanNumberSequence extends ArrayList<String> {
+import ugh.dl.RomanNumeral;
 
+public class RomanNumberSequence extends ArrayList<String> {
+	/**
+	 * @param start add description
+	 * @param end add description
+	 */
 	public RomanNumberSequence(int start, int end) {
 
 		generateElements(start, end, 1);
 
 	}
 
+	/**
+	 * @param start add description
+	 * @param end add description
+	 * @param increment add description
+	 */
 	public RomanNumberSequence(int start, int end, int increment) {
 
 		generateElements(start, end, increment);

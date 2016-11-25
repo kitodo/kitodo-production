@@ -28,6 +28,14 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.HistoryEventType;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,19 +53,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
-
-/*****************************************************************************
- * Imlpementation of {@link IStatisticalQuestion}. Statistical Request with
- * predefined Values in data Table
- * 
+/**
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with predefined Values in data Table
+ *
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe {
 
 	private Date timeFilterFrom;
@@ -67,12 +67,11 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	private Boolean flagIncludeLoops = false;
 
 	/**
-	 * loops included means that all step open all stepdone are considered loops
-	 * not included means that only min(date) or max(date) - depending on option
-	 * in
-	 * 
+	 * loops included means that all step open all stepdone are considered loops not included means that only min(date)
+	 * or max(date) - depending on option in
+	 *
 	 * @see HistoryEventType
-	 * 
+	 *
 	 * @return status of loops included or not
 	 */
 	public Boolean getIncludeLoops() {
@@ -81,8 +80,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/**
 	 * Set status of loops included
-	 * 
-	 * @param includeLoops
+	 *
+	 * @param includeLoops add description
 	 */
 	public void setIncludeLoops(Boolean includeLoops) {
 		this.flagIncludeLoops = includeLoops;
@@ -92,7 +91,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
 	 * (org.goobi.production.flow.statistics.enums.TimeUnit)
@@ -104,7 +103,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables
 	 * (org.goobi.production.flow.statistics.IDataSource)
@@ -256,7 +255,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit
 	 * (org.goobi.production.flow.statistics.enums.CalculationUnit)
@@ -267,7 +266,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe
 	 * #setTimeFrame(java.util.Date, java.util.Date)
@@ -281,7 +280,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted
 	 * (de.intranda.commons.chart.renderer.IRenderer)
@@ -293,7 +292,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
 	 * getNumberFormatPattern()
 	 */
@@ -304,9 +303,9 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/**
 	 * returns a DataTable populated with the specified events
-	 * 
-	 * @param requestedType
-	 * @return
+	 *
+	 * @param requestedType add description
+	 * @return add description
 	 */
 	private DataTable getAllSteps(HistoryEventType requestedType) {
 
@@ -327,10 +326,10 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/**
 	 * returns a DataTable populated with the specified events
-	 * 
-	 * @param step
-	 * @param requestedType
-	 * @return
+	 *
+	 * @param step add description
+	 * @param requestedType add description
+	 * @return add description
 	 */
 
 	private DataTable getSpecificSteps(Integer step, HistoryEventType requestedType) {
@@ -345,14 +344,11 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	}
 
 	/**
-	 * Method generates a DataTable based on the input SQL. Methods success is
-	 * depending on a very specific data structure ... so don't use it if you
-	 * don't exactly understand it
-	 * 
-	 * 
-	 * @param natSQL
-	 *            , headerFromSQL -> to be used, if headers need to be read in
-	 *            first in order to get a certain sorting
+	 * Method generates a DataTable based on the input SQL. Methods success is depending on a very specific data
+	 * structure ... so don't use it if you don't exactly understand it
+	 *
+	 * @param natSQL , headerFromSQL -> to be used, if headers need to be read in first in order to get
+	 *                  a certain sorting
 	 * @return DataTable
 	 */
 
@@ -462,8 +458,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/**
 	 * method retrieves the highest step order in the requested history range
-	 * 
-	 * @param requestedType
+	 *
+	 * @param requestedType add description
 	 */
 	private Integer getMaxStepCount(HistoryEventType requestedType) {
 
@@ -490,8 +486,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/**
 	 * method retrieves the lowest step order in the requested history range
-	 * 
-	 * @param requestedType
+	 *
+	 * @param requestedType add description
 	 */
 	private Integer getMinStepCount(HistoryEventType requestedType) {
 		// adding time restrictions

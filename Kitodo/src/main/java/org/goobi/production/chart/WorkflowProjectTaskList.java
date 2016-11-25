@@ -28,18 +28,17 @@ package org.goobi.production.chart;
  * exception statement from your version.
  */
 
+import de.sub.goobi.beans.Projekt;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 
-import de.sub.goobi.beans.Projekt;
-
 /**
  * This implementation get the workflow from the project.
- * 
- * @author Wulf Riebensahm
  *
+ * @author Wulf Riebensahm
  */
 
 public class WorkflowProjectTaskList implements IProvideProjectTaskList {

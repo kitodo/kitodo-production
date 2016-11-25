@@ -28,6 +28,8 @@
 
 package org.goobi.io;
 
+import de.sub.goobi.helper.FilesystemHelper;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -35,14 +37,12 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.helper.FilesystemHelper;
-
 /**
  * Creates backup for files in a given directory that match a regular expression.
- * 
- * All backup files are named by the original file with a number appended. The bigger the number, the older the backup. A specified maximum number of
- * backup files are generated:
- * 
+ *
+ * <p>All backup files are named by the original file with a number appended. The bigger the number, the older the
+ * backup. A specified maximum number of backup files are generated:</p>
+ *
  * <pre>
  * file.xml	// would be the original
  * file.xml.1	// the latest backup
@@ -60,12 +60,9 @@ public class BackupFileRotation {
 	private String processDataDirectory;
 
 	/**
-	 * Start the configured backup.
-	 * 
-	 * If the maximum backup count is less then 1, nothing happens.
-	 * 
-	 * @throws IOException
-	 *             if a file system operation fails
+	 * Start the configured backup. If the maximum backup count is less then 1, nothing happens.
+	 *
+	 * @throws IOException if a file system operation fails
 	 */
 	public void performBackup() throws IOException {
 		File[] metaFiles;
@@ -91,9 +88,8 @@ public class BackupFileRotation {
 
 	/**
 	 * Set the number of backup files to create for each individual original file.
-	 * 
-	 * @param numberOfBackups
-	 *            Maximum number of backup files
+	 *
+	 * @param numberOfBackups Maximum number of backup files
 	 */
 	public void setNumberOfBackups(int numberOfBackups) {
 		this.numberOfBackups = numberOfBackups;
@@ -101,9 +97,8 @@ public class BackupFileRotation {
 
 	/**
 	 * Set file name matching pattern for original files to create backup files for.
-	 * 
-	 * @param format
-	 *            Java regular expression string.
+	 *
+	 * @param format Java regular expression string.
 	 */
 	public void setFormat(String format) {
 		this.format = format;
@@ -111,9 +106,8 @@ public class BackupFileRotation {
 
 	/**
 	 * Set the directory to find the original files and to place the backup files.
-	 * 
-	 * @param processDataDirectory
-	 *            A platform specific filesystem path
+	 *
+	 * @param processDataDirectory A platform specific filesystem path
 	 */
 	public void setProcessDataDirectory(String processDataDirectory) {
 		this.processDataDirectory = processDataDirectory;

@@ -27,21 +27,24 @@ package org.goobi.production.flow.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.helper.Helper;
+
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.helper.Helper;
 
 public class SearchResultGeneration {
 
@@ -49,12 +52,20 @@ public class SearchResultGeneration {
 	private boolean showClosedProcesses = false;
 	private boolean showArchivedProjects = false;
 
+	/**
+	 * @param filter add description
+	 * @param showClosedProcesses add description
+	 * @param showArchivedProjects add description
+	 */
 	public SearchResultGeneration(String filter, boolean showClosedProcesses, boolean showArchivedProjects) {
 		this.filter = filter;
 		this.showClosedProcesses = showClosedProcesses;
 		this.showArchivedProjects = showArchivedProjects;
 	}
 
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("deprecation")
 	public HSSFWorkbook getResult() {
 		IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);

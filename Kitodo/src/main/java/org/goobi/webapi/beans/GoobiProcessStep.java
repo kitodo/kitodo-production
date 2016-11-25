@@ -25,6 +25,7 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 package org.goobi.webapi.beans;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -39,6 +40,11 @@ public class GoobiProcessStep {
 	public GoobiProcessStep() {
 	}
 
+	/**
+	 * @param sequence add description
+	 * @param state add description
+	 * @param title add description
+	 */
 	public GoobiProcessStep(Integer sequence, Integer state, String title) {
 		this.sequence = sequence;
 		this.state = state;

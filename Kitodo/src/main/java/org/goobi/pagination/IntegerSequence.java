@@ -31,12 +31,21 @@ public class IntegerSequence extends ArrayList<Integer> {
 	public IntegerSequence() {
 	}
 
+	/**
+	 * @param start add description
+	 * @param end add description
+	 */
 	public IntegerSequence(int start, int end) {
 
 		generateElements(start, end, 1);
 
 	}
 
+	/**
+	 * @param start add description
+	 * @param end add description
+	 * @param increment add description
+	 */
 	public IntegerSequence(int start, int end, int increment) {
 
 		generateElements(start, end, increment);

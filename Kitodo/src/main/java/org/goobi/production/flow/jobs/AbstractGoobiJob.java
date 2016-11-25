@@ -34,7 +34,7 @@ import org.quartz.JobExecutionException;
 
 /**
  * SimpleGoobiJob as basis class for all big jobs
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 21.10.2009
  */

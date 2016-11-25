@@ -27,15 +27,6 @@ package org.goobi.production.flow.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
-import org.goobi.production.cli.helper.CopyProcess;
-import org.goobi.production.importer.ImportObject;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
@@ -46,6 +37,17 @@ import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.apache.ProcessManager;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.goobi.io.SafeFile;
+import org.goobi.production.cli.helper.CopyProcess;
+import org.goobi.production.importer.ImportObject;
+
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
@@ -53,6 +55,11 @@ import ugh.exceptions.WriteException;
 public class JobCreation {
 	private static final Logger logger = Logger.getLogger(JobCreation.class);
 
+	/**
+	 * @param io add description
+	 * @param vorlage add description
+	 * @return add description
+	 */
 	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();
@@ -143,6 +150,10 @@ public class JobCreation {
 		return p;
 	}
 
+	/**
+	 * @param titel add description
+	 * @return add description
+	 */
 	public static boolean testTitle(String titel) {
 		if (titel != null) {
 			int anzahl = 0;
@@ -157,6 +168,15 @@ public class JobCreation {
 		return true;
 	}
 
+	/**
+	 * @param metsfile add description
+	 * @param basepath add description
+	 * @param p add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 */
 	@SuppressWarnings("static-access")
 	public static void moveFiles(SafeFile metsfile, String basepath, Prozess p) throws SwapException, DAOException,
 			IOException, InterruptedException {
@@ -213,9 +233,7 @@ public class JobCreation {
 			if (anchor.exists()) {
 				anchor.deleteQuietly();
 			}
-		}
-
-		else {
+		} else {
 			// new folder structure for process imports
 			SafeFile importFolder = new SafeFile(basepath);
 			if (importFolder.isDirectory()) {

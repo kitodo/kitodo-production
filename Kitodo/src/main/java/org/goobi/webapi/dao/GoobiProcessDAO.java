@@ -25,15 +25,22 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 package org.goobi.webapi.dao;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.beans.IdentifierPPN;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,13 +49,14 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GoobiProcessDAO {
 
 	private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
 
+	/**
+	 * @param PPN add description
+	 * @return add description
+	 */
 	public static GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
 		Session session;
 		GoobiProcess result = null;
@@ -82,6 +90,9 @@ public class GoobiProcessDAO {
 		return result;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public static List<GoobiProcess> getAllProcesses() {
 		Session session;
 		List<GoobiProcess> result;
@@ -119,6 +130,10 @@ public class GoobiProcessDAO {
 		return result;
 	}
 
+	/**
+	 * @param PPN add description
+	 * @return add description
+	 */
 	public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN PPN) {
 		List<GoobiProcessStep> result;
 		Session session;

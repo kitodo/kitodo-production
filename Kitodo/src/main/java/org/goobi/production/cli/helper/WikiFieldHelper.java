@@ -27,12 +27,13 @@ package org.goobi.production.cli.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Prozess;
+
 import java.text.DateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-
-import de.sub.goobi.beans.Prozess;
 
 public class WikiFieldHelper {
 
@@ -47,6 +48,13 @@ public class WikiFieldHelper {
 
 	private static final String BREAK = "<br/>";
 
+	/**
+	 * @param p add description
+	 * @param currentWikifieldcontent add description
+	 * @param type add description
+	 * @param value add description
+	 * @return add description
+	 */
 	public static String getWikiMessage(Prozess p, String currentWikifieldcontent, String type, String value) {
 		String message = "";
 		if (currentWikifieldcontent != null && currentWikifieldcontent.length() > 0) {
@@ -78,6 +86,12 @@ public class WikiFieldHelper {
 		return message;
 	}
 
+	/**
+	 * @param currentWikifieldcontent add description
+	 * @param type add description
+	 * @param value add description
+	 * @return add description
+	 */
 	public static String getWikiMessage(String currentWikifieldcontent, String type, String value) {
 		String message = "";
 		if (currentWikifieldcontent != null && currentWikifieldcontent.length() > 0) {

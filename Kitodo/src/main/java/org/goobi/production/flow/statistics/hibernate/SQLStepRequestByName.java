@@ -36,24 +36,27 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import de.sub.goobi.helper.enums.HistoryEventType;
 
 /**
- * Class provides SQL for Step Requests statistics on the history table
- * it offers a little more functionallity compared to the other SQL Source
- * classes. There are a little more parameters which can be set
+ * Class provides SQL for Step Requests statistics on the history table it offers a little more functionality compared
+ * to the other SQL Source classes. There are a little more parameters which can be set
  *
  * @author Wulf Riebensahm
- *
  */
 public class SQLStepRequestByName extends SQLGenerator {
-
+	/**
+	 * @param timeFrom add description
+	 * @param timeTo add description
+	 * @param timeUnit add description
+	 * @param ids add description
+	 */
 	public SQLStepRequestByName(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
 		// "history.processid - overrides the default value of prozesse.prozesseID
 		// which is set in super class SQLGenerator
 		super(timeFrom, timeTo, timeUnit, ids, "processid");
 	}
 
-	/** This is an extended SQL generator for an SQL extracting data from the historyEvent log.
-	 *  depending on the parameters the query returns up to four fields
-	 *
+	/**
+	 * This is an extended SQL generator for an SQL extracting data from the historyEvent log.
+	 * Depending on the parameters the query returns up to four fields
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
 	 *
@@ -124,12 +127,12 @@ public class SQLStepRequestByName extends SQLGenerator {
 		throw new UnsupportedOperationException(
 				"The class "
 						+ this.getClass().getName()
-						+ " does not support the parameterless getSQL() method. Instead you need to use getSQL() with parameters.");
+						+ " does not support the parameterless getSQL() method. Instead you need to use getSQL() "
+						+ "with parameters.");
 	}
 
 	/**
-	 *
-	 * @param include
+	 * @param include add description
 	 * @return SQL snippet for Order by clause
 	 */
 
@@ -142,8 +145,7 @@ public class SQLStepRequestByName extends SQLGenerator {
 	}
 
 	/**
-	 *
-	 * @param include
+	 * @param include add description
 	 * @return SQL snippet for Select clause
 	 */
 	private String addedListing(Boolean include) {
@@ -155,8 +157,7 @@ public class SQLStepRequestByName extends SQLGenerator {
 	}
 
 	/**
-	 *
-	 * @param include
+	 * @param include add description
 	 * @return SQL snippet for Group by clause
 	 */
 	private String addedGrouping(Boolean include) {
@@ -168,8 +169,7 @@ public class SQLStepRequestByName extends SQLGenerator {
 	}
 
 	/**
-	 *
-	 * @param eventSelection
+	 * @param eventSelection add description
 	 * @return SQL String to retrieve the highest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
 	public String SQLMaxStepOrder(HistoryEventType eventSelection) {
@@ -194,8 +194,7 @@ public class SQLStepRequestByName extends SQLGenerator {
 	}
 
 	/**
-	 *
-	 * @param eventSelection
+	 * @param eventSelection add description
 	 * @return SQL String to retrieve the lowest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
 	public String SQLMinStepOrder(HistoryEventType eventSelection) {

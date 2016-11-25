@@ -48,14 +48,13 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
- * The class IndividualIssue represents a stamping of an Issue, that is one
- * distinguishable physically appeared issue (meanwhile the class Issue
- * represents the <em>type</em> of issue).
- * 
+ * The class IndividualIssue represents a stamping of an Issue, that is one distinguishable physically appeared issue
+ * (meanwhile the class Issue represents the <em>type</em> of issue).
+ *
  * <p>
  * The class IndividualIssue is final.
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class IndividualIssue {
@@ -100,13 +99,10 @@ public class IndividualIssue {
 
 	/**
 	 * Constructor to create an IndividualIssue
-	 * 
-	 * @param block
-	 *            Block block this issue is in
-	 * @param issue
-	 *            Issue type that this issue is of
-	 * @param date
-	 *            Date of appearance
+	 *
+	 * @param block Block block this issue is in
+	 * @param issue Issue type that this issue is of
+	 * @param date Date of appearance
 	 */
 	IndividualIssue(Block block, Issue issue, LocalDate date) {
 		this.block = block;
@@ -115,14 +111,11 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * Returns an integer which, for a given Granularity, shall indicate for two
-	 * neighbouring individual issues whether they form the same process (break
-	 * mark is equal) or to different processes (break mark differs).
-	 * 
-	 * @param mode
-	 *            how the course shall be broken into processes
-	 * @return an int which differs if two neighbouring individual issues belong
-	 *         to different processes
+	 * Returns an integer which, for a given Granularity, shall indicate for two neighbouring individual issues whether
+	 * they form the same process (break mark is equal) or to different processes (break mark differs).
+	 *
+	 * @param mode how the course shall be broken into processes
+	 * @return an int which differs if two neighbouring individual issues belong to different processes
 	 */
 	public int getBreakMark(Granularity mode) {
 		final int prime = 31;
@@ -146,7 +139,7 @@ public class IndividualIssue {
 
 	/**
 	 * The function getDate() returns the date of this issue.
-	 * 
+	 *
 	 * @return the date of this issue
 	 */
 	public LocalDate getDate() {
@@ -154,10 +147,9 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * The function getGenericFields() returns a map with generic fields that
-	 * can be configured for process title creation in goobi_projects.xml. It
-	 * provides the issue information in the following fields:
-	 * 
+	 * The function getGenericFields() returns a map with generic fields that can be configured for process title
+	 * creation in goobi_projects.xml. It provides the issue information in the following fields:
+	 *
 	 * <dl>
 	 * <dt><code>#DAY</code></dt>
 	 * <dd>two-digit day of month</dd>
@@ -167,12 +159,12 @@ public class IndividualIssue {
 	 * <dd>two-digit month of year</dd>
 	 * <dt><code>#YEAR</code></dt>
 	 * <dd>four-digit year</dd>
-	 * 
+	 *
 	 * </dl>
 	 * <p>
 	 * In addition, the following abbreviated fields are provided:
 	 * </p>
-	 * 
+	 *
 	 * <dl>
 	 * <dt><code>#i</code></dt>
 	 * <dd>first letter of issue name in lower case</dd>
@@ -193,7 +185,7 @@ public class IndividualIssue {
 	 * <dt><code>#YR</code></dt>
 	 * <dd>two-digit year of century</dd>
 	 * </dl>
-	 * 
+	 *
 	 * @return the generic fields for process title creation
 	 */
 	public Map<String, String> getGenericFields() {
@@ -219,9 +211,8 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * The function getHeading() returns the name of the issue this is an issue
-	 * from.
-	 * 
+	 * The function getHeading() returns the name of the issue this is an issue from.
+	 *
 	 * @return the issue’s name
 	 */
 	public String getHeading() {
@@ -229,24 +220,21 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * The function indexIn() returns the index of the first occurrence of the
-	 * block of this issue in the given course, or -1 if the course does not
-	 * contain the element.
-	 * 
-	 * @param course
-	 *            course to find the block in
-	 * @return the index of the first occurrence of the block of this issue in
-	 *         the course, or -1 if the course does not contain the element
+	 * The function indexIn() returns the index of the first occurrence of the block of this issue in the given course,
+	 * or -1 if the course does not contain the element.
+	 *
+	 * @param course course to find the block in
+	 * @return the index of the first occurrence of the block of this issue in the course, or -1 if the course does not
+	 * 				contain the element
 	 */
 	int indexIn(Course course) {
 		return course.indexOf(block);
 	}
 
 	/**
-	 * The function toString() provides returns a string that contains a concise
-	 * but informative representation of this issue that is easy for a person to
-	 * read.
-	 * 
+	 * The function toString() provides returns a string that contains a concise but informative representation of
+	 * this issue that is easy for a person to read.
+	 *
 	 * @return a string representation of the issue
 	 * @see java.lang.Object#toString()
 	 */
@@ -264,16 +252,14 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * Returns a hash code for the object which depends on the content of its
-	 * variables. Whenever IndividualIssue objects are held in HashSet objects,
-	 * a hashCode() is essentially necessary.
-	 * 
+	 * Returns a hash code for the object which depends on the content of its variables. Whenever IndividualIssue
+	 * objects are held in HashSet objects,  a hashCode() is essentially necessary.
+	 *
 	 * <p>
-	 * The method was generated by Eclipse using right-click → Source → Generate
-	 * hashCode() and equals()…. If you will ever change the classes’ fields,
-	 * just re-generate it.
+	 * The method was generated by Eclipse using right-click → Source → Generate hashCode() and equals()…. If you
+	 * will ever change the classes’ fields, just re-generate it.
 	 * </p>
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -287,15 +273,13 @@ public class IndividualIssue {
 	}
 
 	/**
-	 * Returns whether two individual issues are equal; the decision depends on
-	 * the content of its variables.
-	 * 
+	 * Returns whether two individual issues are equal; the decision depends on the content of its variables.
+	 *
 	 * <p>
-	 * The method was generated by Eclipse using right-click → Source → Generate
-	 * hashCode() and equals()…. If you will ever change the classes’ fields,
-	 * just re-generate it.
+	 * The method was generated by Eclipse using right-click → Source → Generate hashCode() and equals()…. If you
+	 * will ever change the classes’ fields, just re-generate it.
 	 * </p>
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

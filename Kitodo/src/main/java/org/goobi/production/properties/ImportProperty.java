@@ -159,6 +159,9 @@ public class ImportProperty implements IProperty {
 
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		String[] values = this.value.split("; ");
 		List<String> answer = new ArrayList<String>();
@@ -168,6 +171,9 @@ public class ImportProperty implements IProperty {
 		return answer;
 	}
 
+	/**
+	 * @param valueList add description
+	 */
 	public void setValueList(List<String> valueList) {
 		this.value = "";
 		for (String val : valueList) {
@@ -175,6 +181,9 @@ public class ImportProperty implements IProperty {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getBooleanValue() {
 		if (this.value.equalsIgnoreCase("true")) {
 			return true;
@@ -183,6 +192,9 @@ public class ImportProperty implements IProperty {
 		}
 	}
 
+	/**
+	 * @param val add description
+	 */
 	public void setBooleanValue(boolean val) {
 		if (val) {
 			this.value = "true";

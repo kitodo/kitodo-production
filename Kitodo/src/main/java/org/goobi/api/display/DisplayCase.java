@@ -27,13 +27,13 @@ package org.goobi.api.display;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.beans.Prozess;
+
 import java.util.ArrayList;
 
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
-
-import de.sub.goobi.beans.Prozess;
 
 public class DisplayCase {
 	private DisplayType displayType = null;
@@ -45,9 +45,9 @@ public class DisplayCase {
 
 	/**
 	 * gets items with current bind state
-	 * 
-	 * @param inProcess
-	 * @param metaType
+	 *
+	 * @param inProcess add description
+	 * @param metaType add description
 	 */
 
 	public DisplayCase(Prozess inProcess, String metaType) {
@@ -76,10 +76,10 @@ public class DisplayCase {
 
 	/**
 	 * gets items with given bind state
-	 * 
-	 * @param inProcess
-	 * @param bind
-	 * @param metaType
+	 *
+	 * @param inProcess add description
+	 * @param bind add description
+	 * @param metaType add description
 	 */
 
 	public DisplayCase(Prozess inProcess, String bind, String metaType) {
@@ -106,7 +106,6 @@ public class DisplayCase {
 	}
 
 	/**
-	 * 
 	 * @return current DisplayType
 	 */
 
@@ -115,7 +114,6 @@ public class DisplayCase {
 	}
 
 	/**
-	 * 
 	 * @param itemList ArrayList with items for metadatum
 	 */
 
@@ -124,7 +122,6 @@ public class DisplayCase {
 	}
 
 	/**
-	 * 
 	 * @return ArrayList with items for metadatum
 	 */
 

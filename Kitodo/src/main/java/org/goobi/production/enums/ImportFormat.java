@@ -39,6 +39,10 @@ public enum ImportFormat {
 		setTitle(inTitle);
 	}
 
+	/**
+	 * @param editType add description
+	 * @return add description
+	 */
 	public static ImportFormat getTypeFromValue(String editType) {
 		if (editType != null) {
 			for (ImportFormat ss : values()) {
@@ -50,6 +54,10 @@ public enum ImportFormat {
 		return PICA;
 	}
 
+	/**
+	 * @param editType add description
+	 * @return add description
+	 */
 	public static ImportFormat getTypeFromTitle(String editType) {
 		if (editType != null) {
 			for (ImportFormat ss : values()) {

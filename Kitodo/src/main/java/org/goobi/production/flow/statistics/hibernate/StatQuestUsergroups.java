@@ -27,6 +27,16 @@ package org.goobi.production.flow.statistics.hibernate;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.intranda.commons.chart.renderer.HtmlTableRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.beans.Benutzergruppe;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,25 +48,17 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import de.intranda.commons.chart.renderer.HtmlTableRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-
-/*****************************************************************************
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
- * 
+/**
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with predefined Values in data Table
+ *
  * @author Steffen Hankiewicz
- ****************************************************************************/
+ */
 public class StatQuestUsergroups implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+	 * org.goobi.production.flow.statistics.IDataSource)
 	 */
 	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
@@ -101,7 +103,8 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
+	 * de.intranda.commons.chart.renderer.IRenderer)
 	 */
 	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -110,7 +113,8 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+	 * org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
 	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
@@ -118,7 +122,8 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+	 * org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
 	@Override
 	public void setTimeUnit(TimeUnit timeUnit) {

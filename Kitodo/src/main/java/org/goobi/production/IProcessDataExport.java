@@ -27,10 +27,11 @@ package org.goobi.production;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.IOException;
-import java.io.OutputStream;
 
 import de.sub.goobi.beans.Prozess;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 public interface IProcessDataExport {
 

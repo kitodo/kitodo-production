@@ -25,6 +25,7 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 package org.goobi.webapi.beans;
 
 import java.util.regex.Matcher;
@@ -34,6 +35,9 @@ public class IdentifierPPN {
 
 	private String ppn;
 
+	/**
+	 * @param ppn add description
+	 */
 	public IdentifierPPN(String ppn) {
 		if (!isValid(ppn)) {
 			throw new IllegalArgumentException("Given string is not a valid PPN identifier.");
@@ -41,6 +45,10 @@ public class IdentifierPPN {
 		this.ppn = ppn;
 	}
 
+	/**
+	 * @param identifier add description
+	 * @return add description
+	 */
 	public static boolean isValid(String identifier) {
 		Boolean result;
 		int flags = Pattern.CASE_INSENSITIVE;

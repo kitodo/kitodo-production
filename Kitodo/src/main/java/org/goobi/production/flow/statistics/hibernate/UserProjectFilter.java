@@ -27,6 +27,11 @@ package org.goobi.production.flow.statistics.hibernate;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,14 +43,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
-
 public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 441692997066826360L;
 
@@ -120,7 +121,7 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()

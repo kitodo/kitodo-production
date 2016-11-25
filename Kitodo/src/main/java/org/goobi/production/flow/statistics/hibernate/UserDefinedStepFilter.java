@@ -27,6 +27,11 @@ package org.goobi.production.flow.statistics.hibernate;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,24 +41,17 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
-
 /**
- * This filter replaces the filter, which was integrated in class
- * AktuelleSchritteForm ... the purpose of refactoring was the goal to access
- * filter functions on the level of processes, which were already implemented in
+ * This filter replaces the filter, which was integrated in class AktuelleSchritteForm ... the purpose of refactoring
+ * was the goal to access filter functions on the level of processes, which were already implemented in
  * UserDefinedFilter and combine them for the step filter.
- * 
- * 
+ *
  * @author Wulf Riebensahm
- * 
  */
 public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7134772860962768932L;
 	private String myFilter = null;
@@ -68,8 +66,11 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 		this.clearSession = clearSession;
 	}
 
-	/*
+	/**
 	 * setting basic filter modes
+	 *
+	 * @param stepOpenOnly add description
+	 * @param userAssignedStepsOnly add description
 	 */
 	public void setFilterModes(Boolean stepOpenOnly, boolean userAssignedStepsOnly) {
 		myCriteria = null;
@@ -79,15 +80,14 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
 	 * ()
 	 */
 	@Override
 	public Criteria getCriteria() {
-		// myCriteria is a WeakReference ... both cases needs to be evaluated,
-		// after gc the WeakReference
+		// myCriteria is a WeakReference ... both cases needs to be evaluated, after gc the WeakReference
 		// object is still referenced but not the object referenced by it
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (myIds == null) {
@@ -135,7 +135,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
 	 * ()
@@ -148,7 +148,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
@@ -160,7 +160,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()
@@ -189,7 +189,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
 	 * (java.lang.String)
@@ -202,7 +202,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
 	 * (java.lang.String)
@@ -215,7 +215,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
 	 * (java.lang.String)
@@ -228,7 +228,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
 	 * ()
@@ -241,7 +241,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
 	@Override

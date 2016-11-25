@@ -28,6 +28,11 @@ package org.goobi.production.chart;
  * exception statement from your version.
  */
 
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.StepStatus;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,17 +45,11 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
-
 /**
- * This class implements the IProvideProjectTaskList and approaches the problem
- * by using a projection on the hibernate criteria, which accelerates data  retrieval
- * 
- * @author Wulf Riebensahm
+ * This class implements the IProvideProjectTaskList and approaches the problem by using a projection on the hibernate
+ * criteria, which accelerates data  retrieval
  *
+ * @author Wulf Riebensahm
  */
 
 public class HibernateProjectionProjectTaskList implements IProvideProjectTaskList {

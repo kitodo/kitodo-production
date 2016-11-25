@@ -34,25 +34,23 @@ import java.util.List;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
 //TODO: Remove redundant code
-/************************************************************************
- * 
- * This Class provide methods to prepare SQL Queries needed for production statistics. 
- * It depends on time frame and time unit.
- * 
+/**
+ * This Class provide methods to prepare SQL Queries needed for production statistics. It depends on time frame and
+ * time unit.
+ *
  * @author Wulf Riebensahm
- * 
- ***********************************************************************/
+ */
 class SQLProduction extends SQLGenerator {
 
 	public SQLProduction(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
 		super(timeFrom, timeTo, timeUnit, ids, null);
 	}
 
-	/**********************************************************************
+	/**
 	 * get actual SQL Query as String.
-	 * 
+	 *
 	 * @return String
-	 **********************************************************************/
+	 */
 	@Override
 	public String getSQL() {
 

@@ -27,25 +27,22 @@ package org.goobi.production.chart;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.List;
-
 import de.sub.goobi.beans.Projekt;
 
+import java.util.List;
+
 /**
- * This interface is used to provide a data source for the extended
- * Project Statistics
+ * This interface is used to provide a data source for the extended Project Statistics
  *
  * @author Steffen Hankiewicz
  * @author Wulf Riebensahm
- *
  */
 
 public interface IProvideProjectTaskList {
 
 	/**
-	 *
-	 * @param inProject
-	 * @param countImages
+	 * @param inProject add description
+	 * @param countImages add description
 	 * @return List
 	 */
 

@@ -56,6 +56,10 @@ public enum StepReturnValue {
 		return this.value;
 	}
 
+	/**
+	 * @param title add description
+	 * @return add description
+	 */
 	public static StepReturnValue getByValue(String title) {
 		for (StepReturnValue t : StepReturnValue.values()) {
 			if (t.getValue().equals(title)) {
@@ -65,6 +69,10 @@ public enum StepReturnValue {
 		return null;
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 */
 	public static StepReturnValue getById(int id) {
 		for (StepReturnValue t : StepReturnValue.values()) {
 			if (t.getId() == id) {

@@ -31,9 +31,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * 
  * @author Igor Toker
- *
  */
 @XStreamAlias("property")
 public class FireburnProperty {
@@ -58,6 +56,14 @@ public class FireburnProperty {
 	@XStreamAsAttribute
 	public String type;
 
+	/**
+	 * @param cdName add description
+	 * @param titel add description
+	 * @param date add description
+	 * @param cdnumber add description
+	 * @param type add description
+	 * @param size add description
+	 */
 	public FireburnProperty(String cdName, String titel, String date, int cdnumber, String type, long size) {
 		super();
 		this.cdName = cdName;

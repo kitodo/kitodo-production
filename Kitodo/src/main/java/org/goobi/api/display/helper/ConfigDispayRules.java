@@ -27,6 +27,8 @@ package org.goobi.api.display.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -37,8 +39,6 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
 
-import de.sub.goobi.helper.Helper;
-
 public final class ConfigDispayRules {
 
 	private static ConfigDispayRules instance = new ConfigDispayRules();
@@ -48,10 +48,9 @@ public final class ConfigDispayRules {
 	private final HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>> allValues = new HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>>();
 
 	/**
-	 *
 	 * reads given xml file into XMLConfiguration
 	 *
-	 * @throws ConfigurationException
+	 * @throws ConfigurationException add description
 	 */
 
 	private ConfigDispayRules() {
@@ -72,8 +71,7 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 *
-	 * creates hierarchical HashMap with values for each element of given data
+	 * Creates hierarchical HashMap with values for each element of given data
 	 */
 	private synchronized void getDisplayItems() {
 		if (this.allValues.isEmpty() && config != null) {
@@ -169,30 +167,13 @@ public final class ConfigDispayRules {
 						int item = config.getMaxIndex("ruleSet.context(" + i + ").select1(" + j + ").item");
 						for (int k = 0; k <= item; k++) {
 							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select1(" + j
-									+ ").item(" + k + ").label"), // the
-																	// displayed
-																	// value
+									+ ").item(" + k + ").label"), // the displayed value
 									config.getString("ruleSet.context(" + i + ").select1(" + j + ").item(" + k
-											+ ").value"), // the
-															// internal
-															// value,
-															// which
-															// will
-															// be
-															// taken
-															// if
-															// label
-															// is
-															// selected
+											+ ").value"), // the internal value, which will be taken if label is
+									// selected
 									config.getBoolean("ruleSet.context(" + i + ").select1(" + j + ").item(" + k
-											+ ")[@tns:selected]")); // indicates
-																	// whether
-																	// given
-																	// item
-																	// is
-																	// preselected
-																	// or
-																	// not
+											+ ")[@tns:selected]")); // indicates whether given item is preselected or
+							// not
 							listOfItems.add(myItem);
 						}
 					}
@@ -228,30 +209,13 @@ public final class ConfigDispayRules {
 
 						for (int k = 0; k <= item; k++) {
 							Item myItem = new Item(config.getString("ruleSet.context(" + i + ").select(" + j
-									+ ").item(" + k + ").label"), // the
-																	// displayed
-																	// value
+									+ ").item(" + k + ").label"), // the displayed value
 									config.getString("ruleSet.context(" + i + ").select(" + j + ").item(" + k
-											+ ").value"), // the
-															// internal
-															// value,
-															// which
-															// will
-															// be
-															// taken
-															// if
-															// label
-															// is
-															// selected
+											+ ").value"), // the internal value, which will be taken if label is
+									// selected
 									config.getBoolean("ruleSet.context(" + i + ").select(" + j + ").item(" + k
-											+ ")[@tns:selected]")); // indicates
-																	// whether
-																	// given
-																	// item
-																	// is
-																	// preselected
-																	// or
-																	// not
+											+ ")[@tns:selected]")); // indicates whether given item is preselected or
+							// not
 							listOfItems.add(myItem);
 						}
 					}
@@ -284,9 +248,8 @@ public final class ConfigDispayRules {
 				for (int j = 0; j <= type; j++) {
 					String myElementName = config.getString("ruleSet.context(" + i + ").input(" + j + ")[@tns:ref]");
 					if (myElementName.equals(elementName)) {
-						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").input(" + j + ").label"), // the
-																														// displayed
-																														// value
+						Item myItem = new Item(config.getString("ruleSet.context(" + i + ").input(" + j + ").label"),
+								//the displayed value
 								config.getString("ruleSet.context(" + i + ").input(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
@@ -320,8 +283,7 @@ public final class ConfigDispayRules {
 					if (myElementName.equals(elementName)) {
 						Item myItem = new Item(
 								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), // the
-																											// displayed
-																											// value
+								// displayed value
 								config.getString("ruleSet.context(" + i + ").textarea(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
@@ -345,8 +307,7 @@ public final class ConfigDispayRules {
 					if (myElementName.equals(elementName)) {
 						Item myItem = new Item(
 								config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), // the
-																											// displayed
-																											// value
+								// displayed value
 								config.getString("ruleSet.context(" + i + ").readonly(" + j + ").label"), false);
 						listOfItems.add(myItem);
 					}
@@ -446,8 +407,8 @@ public final class ConfigDispayRules {
 	}
 
 	/**
-	 * refreshes the hierarchical HashMap with values from xml file. If HashMap is used by another thread, the function will wait until
-	 *
+	 * refreshes the hierarchical HashMap with values from xml file. If HashMap is used by another thread, the function
+	 * will wait until
 	 */
 
 	public void refresh() {

@@ -27,17 +27,18 @@ package org.goobi.production.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
-
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
 
 public class ImportObject {
 

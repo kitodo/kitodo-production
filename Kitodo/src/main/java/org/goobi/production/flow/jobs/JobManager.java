@@ -27,6 +27,9 @@ package org.goobi.production.flow.jobs;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.config.ConfigMain;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -41,11 +44,9 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerUtils;
 
-import de.sub.goobi.config.ConfigMain;
-
 /**
  * JobManager organizes all scheduled jobs
- * 
+ *
  * @author Steffen Hankiewicz
  * @author Igor Toker
  * @version 21.10.2009
@@ -53,31 +54,31 @@ import de.sub.goobi.config.ConfigMain;
 public class JobManager implements ServletContextListener {
 	private static final Logger logger = Logger.getLogger(JobManager.class);
 
-	/***********************************************************************
+	/**
 	 * Restarts timed Jobs
-	 * 
-	 * @throws SchedulerException
-	 **********************************************************************/
+	 *
+	 * @throws SchedulerException add description
+	 */
 	public static void restartTimedJobs() throws SchedulerException {
 		stopTimedJobs();
 		startTimedJobs();
 	}
 
-	/***************************************************************************
+	/**
 	 * Stops timed updates of HistoryManager
-	 * 
-	 * @throws SchedulerException
-	 **************************************************************************/
+	 *
+	 * @throws SchedulerException add description
+	 */
 	private static void stopTimedJobs() throws SchedulerException {
 		SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 		schedFact.getScheduler().shutdown(false);
 	}
 
-	/***************************************************************************
+	/**
 	 * Starts timed updates of {@link HistoryAnalyserJob}
-	 * 
-	 * @throws SchedulerException
-	 **************************************************************************/
+	 *
+	 * @throws SchedulerException add description
+	 */
 	@SuppressWarnings("deprecation")
 	private static void startTimedJobs() throws SchedulerException {
 		SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
@@ -88,11 +89,11 @@ public class JobManager implements ServletContextListener {
 		initializeJobNonConfigured(new HotfolderJob(), 5, sched);
 	}
 
-	/***************************************************************************
+	/**
 	 * initializes given SimpleGoobiJob at given time
-	 * 
-	 * @throws SchedulerException
-	 **************************************************************************/
+	 *
+	 * @throws SchedulerException add description
+	 */
 	private static void initializeJob(IGoobiJob goobiJob, String configuredStartTimeProperty, Scheduler sched)
 			throws SchedulerException {
 		logger.debug(goobiJob.getJobName());
@@ -120,11 +121,11 @@ public class JobManager implements ServletContextListener {
 		}
 	}
 
-	/***************************************************************************
+	/**
 	 * initializes given SimpleGoobiJob at given time
-	 * 
-	 * @throws SchedulerException
-	 **************************************************************************/
+	 *
+	 * @throws SchedulerException add description
+	 */
 	private static void initializeJobNonConfigured(IGoobiJob goobiJob, int myTime, Scheduler sched)
 			throws SchedulerException {
 		logger.debug(goobiJob.getJobName());
@@ -157,9 +158,9 @@ public class JobManager implements ServletContextListener {
 		}
 	}
 
-	/***************************************************************************
+	/**
 	 * get current time plus 60 seconds as milliseconds from midnight to debug jobmanager
-	 **************************************************************************/
+	 */
 	public static void main(String[] args) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);

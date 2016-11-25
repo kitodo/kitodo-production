@@ -38,6 +38,8 @@
 
 package org.goobi.production.model.bibliography.course;
 
+import de.sub.goobi.helper.DateUtils;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -48,21 +50,19 @@ import java.util.TreeSet;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
-import de.sub.goobi.helper.DateUtils;
-
 /**
- * The static class CourseToGerman provides a toString() method to convert a
- * course of appearance into a verbal description in German language.
- * 
+ * The static class CourseToGerman provides a toString() method to convert a  course of appearance into a verbal
+ * description in German language.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CourseToGerman {
 	/**
 	 * Days of week’s names in German.
-	 * 
+	 *
 	 * <p>
-	 * Joda time’s days of week are 1-based, where 1 references Monday through 7
-	 * references Sunday. Therefore the “null” in first place.
+	 * Joda time’s days of week are 1-based, where 1 references Monday through 7 references Sunday. Therefore
+	 * the “null” in first place.
 	 * </p>
 	 */
 	private static final String[] DAYS_OF_WEEK_NAMES = new String[] {null, "Montag", "Dienstag", "Mittwoch",
@@ -70,7 +70,7 @@ public class CourseToGerman {
 
 	/**
 	 * Month’s names in German.
-	 * 
+	 *
 	 * <p>
 	 * Joda time’s months are 1-based, therefore the “null” in first place.
 	 * </p>
@@ -79,9 +79,8 @@ public class CourseToGerman {
 			"Juni", "Juli", "August", "September", "Oktober", "November", "Dezember" };
 
 	/**
-	 * The function toString() returns a verbal description of the course of
-	 * appearance in German.
-	 * 
+	 * The function toString() returns a verbal description of the course of appearance in German.
+	 *
 	 * @return Verbal description of the course in German
 	 */
 	public static List<String> asReadableText(Course course) {
@@ -101,18 +100,16 @@ public class CourseToGerman {
 				}
 			}
 			hasPreviousBlock = true;
-		} while (blocks.hasNext());
+		}
+		while (blocks.hasNext());
 		return result;
 	}
 
 	/**
-	 * The function titleToString() formulates the regular appearance of a block
-	 * in German language.
-	 * 
-	 * @param block
-	 *            Titel to formulate
-	 * @param subsequentBlock
-	 *            false for the first block, true otherwise
+	 * The function titleToString() formulates the regular appearance of a block in German language.
+	 *
+	 * @param block Titel to formulate
+	 * @param subsequentBlock false for the first block, true otherwise
 	 */
 	private static String titleToString(Block block, boolean subsequentBlock) {
 		StringBuilder result = new StringBuilder(500);
@@ -163,11 +160,9 @@ public class CourseToGerman {
 	}
 
 	/**
-	 * The function irregularitiesToString() formulates the irregularities of a
-	 * given issue in German language.
-	 * 
-	 * @param issues
-	 *            issues whose irregularities shall be formulated
+	 * The function irregularitiesToString() formulates the irregularities of a given issue in German language.
+	 *
+	 * @param issue issues whose irregularities shall be formulated
 	 */
 	private static String irregularitiesToString(Issue issue) {
 		int additionsSize = issue.getAdditions().size();
@@ -196,19 +191,13 @@ public class CourseToGerman {
 	}
 
 	/**
-	 * The method appendManyDates() converts a lot of date objects into readable
-	 * text in German language.
-	 * 
-	 * @param buffer
-	 *            StringBuilder to write to
-	 * @param dates
-	 *            Set of dates to convert to text
-	 * @param signum
-	 *            sign, i.e. true for additions, false for exclusions
-	 * @throws NoSuchElementException
-	 *             if dates has no elements
-	 * @throws NullPointerException
-	 *             if buffer or dates is null
+	 * The method appendManyDates() converts a lot of date objects into readable text in German language.
+	 *
+	 * @param buffer StringBuilder to write to
+	 * @param dates Set of dates to convert to text
+	 * @param signum sign, i.e. true for additions, false for exclusions
+	 * @throws NoSuchElementException if dates has no elements
+	 * @throws NullPointerException if buffer or dates is null
 	 */
 	private static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, boolean signum) {
 		if (signum) {
@@ -275,16 +264,15 @@ public class CourseToGerman {
 			current = next;
 			next = overNext;
 			overNext = datesIterator.hasNext() ? datesIterator.next() : null;
-		} while (current != null);
+		}
+		while (current != null);
 	}
 
 	/**
 	 * The method appendDate() writes a date to the buffer.
-	 * 
-	 * @param buffer
-	 *            Buffer to write to
-	 * @param date
-	 *            Date to write
+	 *
+	 * @param buffer Buffer to write to
+	 * @param date Date to write
 	 */
 	private static void appendDate(StringBuilder buffer, LocalDate date) {
 		buffer.append(date.getDayOfMonth());

@@ -28,6 +28,14 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,20 +49,14 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-
 /**
- * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data about the productivity of the
- * selected processes, which are passed into this class via implemetations of the IDataSource interface.
- * 
- * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of the selected {@link Prozess}es is
- * evaluated.
- * 
+ * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data about
+ * the productivity of the selected processes, which are passed into this class via implementations of the IDataSource
+ * interface.
+ *
+ * <p>According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of
+ * the selected {@link Prozess}es is evaluated. </p>
+ *
  * @author Wulf Riebensahm
  * @author Robert Sehr
  */
@@ -69,12 +71,12 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 	private CalculationUnit cu = CalculationUnit.volumesAndPages;
 
 	/**
-	 * IDataSource needs here to be an implementation of hibernate.IEvaluableFilter, which is a hibernate based extension of IDataSource
-	 * 
+	 * IDataSource needs here to be an implementation of hibernate.IEvaluableFilter, which is a hibernate based
+	 * extension of IDataSource
 	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
-	 ****************************************************************************/
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+	 * org.goobi.production.flow.statistics.IDataSource)
+	 */
 	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
 
@@ -231,8 +233,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
+	 *
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date,
+	 * java.util.Date)
 	 */
 	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
@@ -242,8 +245,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+	 *
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+	 * org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
 	@Override
 	public void setTimeUnit(TimeUnit timeGrouping) {
@@ -252,8 +256,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+	 *
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+	 * org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
 	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
@@ -262,8 +267,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+	 *
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
+	 * de.intranda.commons.chart.renderer.IRenderer)
 	 */
 	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -272,7 +278,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
 	 */
 	@Override

@@ -37,6 +37,10 @@ public class GoobiVersion {
 	private static String buildversion = "N/A";
 	private static String builddate = "N/A";
 
+	/**
+	 * @param manifest add description
+	 * @throws IllegalArgumentException add description
+	 */
 	public static void setupFromManifest(Manifest manifest) throws IllegalArgumentException {
 		Attributes mainAttributes = manifest.getMainAttributes();
 

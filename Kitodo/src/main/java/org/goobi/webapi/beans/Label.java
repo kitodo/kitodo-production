@@ -32,12 +32,11 @@ import javax.xml.bind.annotation.XmlValue;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
- * The Label class provides serialization for Map<String,String> objects where
- * keys are language identifiers (examples include “en”, “de”, …) and values are
- * texts in the respective language. This is necessary because Maps
+ * The Label class provides serialization for Map&lt;String,String&gt; objects where keys are language identifiers
+ * (examples include “en”, “de”, …) and values are texts in the respective language. This is necessary because Maps
  * unfortunately do not natively serialize to XML.
  * 
- * @author Matthias Ronge <matthias.ronge@zeutschel.de>
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Label {
 	public enum KeyAttribute {
@@ -54,9 +53,8 @@ public class Label {
 	public String value;
 
 	/**
-	 * Default constructor is required to be explicitly coded because copy
-	 * constructor is given. Java only provides an implicit default constructor
-	 * as long as no other constructors are given.
+	 * Default constructor is required to be explicitly coded because copy constructor is given. Java only provides
+	 * an implicit default constructor as long as no other constructors are given.
 	 */
 	public Label() {
 		// there is nothing to do
@@ -65,8 +63,7 @@ public class Label {
 	/**
 	 * Copy Constructor to instantiate an already populated Label.
 	 * 
-	 * @param toCopy
-	 *            Field to create a copy from
+	 * @param toCopy Field to create a copy from
 	 */
 	public Label(Label toCopy) {
 		this.label = toCopy.label;
@@ -74,6 +71,11 @@ public class Label {
 		this.value = toCopy.value;
 	}
 
+	/**
+	 * @param data add description
+	 * @param keyAttribute add description
+	 * @return add description
+	 */
 	public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {
 		List<Label> result = new ArrayList<Label>();
 		for (String key : data.keySet()) {

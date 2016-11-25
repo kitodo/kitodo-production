@@ -32,14 +32,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/*************************************************************************************
- * A ProjectStatusDataTable object holds all the information needed
- * for rendering a project status chart
+/**
+ * A ProjectStatusDataTable object holds all the information needed for rendering a project status chart
  *
- * A ProjectStatusDataTable consists of
+ * <p>A ProjectStatusDataTable consists of
  * - a name
  * - dates of project begin and project end
- * - a list of project tasks
+ * - a list of project tasks</p>
  *
  * @author Karsten Köhler
  * @author Hendrik Söhnholz
@@ -47,7 +46,7 @@ import java.util.List;
  * @version 30.10.2009
  *
  * @see ProjectTask
- *************************************************************************************/
+ */
 public class ProjectStatusDataTable implements Serializable {
 	private static final long serialVersionUID = -6649337945039135394L;
 	private String name;
@@ -58,11 +57,11 @@ public class ProjectStatusDataTable implements Serializable {
 	private List<ProjectTask> projectTasks;
 	private List<String> taskTitles;
 
-	/************************************************************************************
+	/**
 	 * public constructor, the name is set here
 	 *
 	 * @param inName the name to set
-	 ************************************************************************************/
+	 */
 	public ProjectStatusDataTable(String inName, Date begin, Date end) {
 		super();
 		this.name = inName;
@@ -75,7 +74,7 @@ public class ProjectStatusDataTable implements Serializable {
 	/**
 	 * Remove a task from the list.
 	 *
-	 * @param title
+	 * @param title add description
 	 */
 	public void removeTask(String title) {
 		if (taskTitles.contains(title)) {
@@ -86,12 +85,12 @@ public class ProjectStatusDataTable implements Serializable {
 		}
 	}
 
-	/************************************************************************************
+	/**
 	 * Add a task to the list
 	 *
 	 * @param inTask The task to add
 	 *
-	 ************************************************************************************/
+	 */
 	public void addTask(IProjectTask inTask) {
 		if (!(taskTitles.contains(inTask.getTitle()))) {
 			projectTasks.add(new ProjectTask(inTask.getTitle(), inTask.getStepsCompleted(), inTask.getStepsMax()));
@@ -107,39 +106,38 @@ public class ProjectStatusDataTable implements Serializable {
 
 	}
 
-	/************************************************************************************
+	/**
 	 * getter for name
 	 *
 	 * @return name as string
-	 ************************************************************************************/
+	 */
 	public String getName() {
 		return name;
 	}
 
-	/************************************************************************************
+	/**
 	 * setter for name
 	 *
-	 * @param name
-	 *            as string
-	 ************************************************************************************/
+	 * @param name as string
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/************************************************************************************
+	/**
 	 * getter for all tasks
 	 *
 	 * @return list of {@link ProjectTask}
-	 ************************************************************************************/
+	 */
 	public List<ProjectTask> getTasks() {
 		return projectTasks;
 	}
 
-	/************************************************************************************
+	/**
 	 * getter for size of task list
 	 *
 	 * @return number of tasks
-	 ************************************************************************************/
+	 */
 	public int getNumberOfTasks() {
 		if (projectTasks == null) {
 			return 0;
@@ -148,11 +146,11 @@ public class ProjectStatusDataTable implements Serializable {
 		}
 	}
 
-	/************************************************************************************
+	/**
 	 * getter for index of task in list
 	 *
 	 * @return index of task
-	 ************************************************************************************/
+	 */
 	public int getTaskIndex(String title) {
 		if (taskTitles.contains(title)) {
 			return taskTitles.indexOf(title);
@@ -161,20 +159,20 @@ public class ProjectStatusDataTable implements Serializable {
 		}
 	}
 
-	/************************************************************************************
+	/**
 	 * getter for projectBegin
 	 *
 	 * @return projectBegin as Date
-	 ************************************************************************************/
+	 */
 	public Date getProjectBegin() {
 		return projectBegin;
 	}
 
-	/************************************************************************************
+	/**
 	 * getter for projectEnd
 	 *
 	 * @return projectEnd as Date
-	 ************************************************************************************/
+	 */
 	public Date getProjectEnd() {
 		return projectEnd;
 	}

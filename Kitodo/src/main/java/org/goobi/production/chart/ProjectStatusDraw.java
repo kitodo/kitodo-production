@@ -27,6 +27,9 @@ package org.goobi.production.chart;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -40,10 +43,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-
-/*************************************************************************************
+/**
  * ProjectStatusDraw class creates and paints the chart depending on given parameters.
  * The value parameters are transferred as {@link ProjectStatusDataTable}-Object.
  * Width and height have to be set as pixel values.
@@ -52,7 +52,7 @@ import de.intranda.commons.chart.results.DataTable;
  * @author Hendrik Söhnholz
  * @author Steffen Hankiewicz
  * @version 27.10.2009
- * *************************************************************************************/
+ */
 
 public class ProjectStatusDraw {
 	private static final Logger myLogger = Logger.getLogger(ProjectStatusDraw.class);
@@ -79,18 +79,14 @@ public class ProjectStatusDraw {
 
 	private FontMetrics fm;
 
-	/************************************************************************************
+	/**
 	 * Instantiates a new ProjectStatusDraw.
 	 *
-	 * @param inDataTable
-	 *            the {@link DataTable} (contains the {@link DataRow}-objects)
-	 * @param g2d
-	 *            the {@link Graphics2D}-object, where to paint
-	 * @param width
-	 *            the width of the image
-	 * @param height
-	 *            the height of the image
-	 ************************************************************************************/
+	 * @param inDataTable the {@link DataTable} (contains the {@link DataRow}-objects)
+	 * @param g2d the {@link Graphics2D}-object, where to paint
+	 * @param width the width of the image
+	 * @param height the height of the image
+	 */
 	public ProjectStatusDraw(ProjectStatusDataTable inDataTable, Graphics2D g2d, int width, int height) {
 		this.dataTable = inDataTable;
 		this.g2d = g2d;
@@ -101,9 +97,9 @@ public class ProjectStatusDraw {
 		fm = g2d.getFontMetrics();
 	}
 
-	/************************************************************************************
+	/**
 	 * Paint the chart
-	 ************************************************************************************/
+	 */
 	public void paint() {
 		int w; // This is used to determine the width of strings in pixels.
 
@@ -208,9 +204,9 @@ public class ProjectStatusDraw {
 				- 2.5 * fm.getHeight());
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw horizontal bar with given color
-	 ************************************************************************************/
+	 */
 	private void drawHorizontalBar(int xpos, int ypos, int length, int width, Color col) {
 		int padding = 3;
 		g2d.setColor(Color.black);
@@ -223,53 +219,44 @@ public class ProjectStatusDraw {
 
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw centered string.
 	 *
-	 * @param str
-	 *            the string to show
-	 * @param xpos
-	 *            the x-position (middle of string)
-	 * @param ypos
-	 *            the y-position
-	 ************************************************************************************/
+	 * @param str the string to show
+	 * @param xpos the x-position (middle of string)
+	 * @param ypos the y-position
+	 */
 	private void drawCenteredString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos - fm.stringWidth(str) / 2.0), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw left aligned string.
 	 *
-	 * @param str
-	 *            the string to show
-	 * @param xpos
-	 *            the x-position (start of string)
-	 * @param ypos
-	 *            the y-position
-	 ************************************************************************************/
+	 * @param str the string to show
+	 * @param xpos the x-position (start of string)
+	 * @param ypos the y-position
+	 */
 	private void drawLeftAlignedString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw right aligned string.
 	 *
-	 * @param str
-	 *            the string to show
-	 * @param xpos
-	 *            the x-position (end of string)
-	 * @param ypos
-	 *            the y-position
-	 ************************************************************************************/
+	 * @param str the string to show
+	 * @param xpos the x-position (end of string)
+	 * @param ypos the y-position
+	 */
 	private void drawRightAlignedString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos - fm.stringWidth(str)), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
-	/************************************************************************************
+	/**
 	 * Get size of Image for rendering
 	 *
-	 * @param count
-	 ************************************************************************************/
+	 * @param count add description
+	 */
 	public static int getImageHeight(int count) {
 		return BORDERTOP + count * BARSPACING;
 	}

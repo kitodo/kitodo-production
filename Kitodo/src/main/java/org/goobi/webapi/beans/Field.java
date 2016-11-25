@@ -53,6 +53,11 @@ public class Field {
 	@XmlElement(name = "insertionLevel")
 	private String docstruct;
 
+	/**
+	 * @param project add description
+	 * @return add description
+	 * @throws IOException add description
+	 */
 	public static List<Field> getFieldConfigForProject(Projekt project) throws IOException {
 		List<Field> fields = new ArrayList<Field>();
 

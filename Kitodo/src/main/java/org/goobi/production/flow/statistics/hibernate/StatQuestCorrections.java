@@ -28,6 +28,14 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.HistoryEventType;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,19 +50,11 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
-
-/*****************************************************************************
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
- * 
+/**
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with predefined Values in data Table
+ *
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class StatQuestCorrections implements IStatisticalQuestionLimitedTimeframe {
 
 	private Date timeFilterFrom;
@@ -63,7 +63,8 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+	 * org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
 	@Override
 	public void setTimeUnit(TimeUnit timeGrouping) {
@@ -79,7 +80,8 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+	 * org.goobi.production.flow.statistics.IDataSource)
 	 */
 	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
@@ -156,9 +158,10 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
 		return allTables;
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+	 * org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
 	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
@@ -166,7 +169,8 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date,
+	 * java.util.Date)
 	 */
 	@Override
 	public void setTimeFrame(Date timeFrom, Date timeTo) {
@@ -177,7 +181,8 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
+	 * de.intranda.commons.chart.renderer.IRenderer)
 	 */
 	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {

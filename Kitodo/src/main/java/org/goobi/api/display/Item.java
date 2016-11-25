@@ -34,7 +34,7 @@ public class Item {
 
 	/**
 	 * Creates a new item with given params
-	 * 
+	 *
 	 * @param label label of the item
 	 * @param value value of the item
 	 * @param selected indicates whether an item is preselected or not
@@ -48,7 +48,6 @@ public class Item {
 	}
 
 	/**
-	 * 
 	 * @param myLabel sets label for the item
 	 */
 
@@ -57,7 +56,6 @@ public class Item {
 	}
 
 	/**
-	 * 
 	 * @return label of the item
 	 */
 	public String getLabel() {
@@ -65,7 +63,6 @@ public class Item {
 	}
 
 	/**
-	 * 
 	 * @param myValue sets value for the item
 	 */
 
@@ -74,7 +71,6 @@ public class Item {
 	}
 
 	/**
-	 * 
 	 * @return value of the item
 	 */
 	public String getValue() {
@@ -82,7 +78,6 @@ public class Item {
 	}
 
 	/**
-	 * 
 	 * @param isSelected sets Boolean that indicates whether item is preselected or not
 	 */
 
@@ -91,7 +86,6 @@ public class Item {
 	}
 
 	/**
-	 * 
 	 * @return Boolean: is preselected or not
 	 */
 	public Boolean getIsSelected() {

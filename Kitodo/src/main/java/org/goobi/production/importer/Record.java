@@ -37,8 +37,7 @@ public class Record {
 	private String id = "";
 
 	/**
-	 * @param data
-	 *            the data to set
+	 * @param data the data to set
 	 */
 	public void setData(String data) {
 		this.data = data;
@@ -52,8 +51,7 @@ public class Record {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;

@@ -28,21 +28,21 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.util.List;
 import java.util.Observable;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
-
 /**
  * This class of IEvaluable filter implements the template filter
- * 
+ *
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = -4062754600698521285L;
 	private boolean clearSession = false;
@@ -53,7 +53,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
 	 * ()
@@ -70,7 +70,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
@@ -82,7 +82,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
 	 * (java.lang.String)
@@ -95,7 +95,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
 	 * (java.lang.String)
@@ -109,7 +109,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
 	 * (java.lang.String)
@@ -122,7 +122,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -132,7 +132,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
 	@Override
@@ -143,7 +143,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
 	 * ()
@@ -156,7 +156,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()
@@ -169,7 +169,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
 	 * ()

@@ -34,14 +34,10 @@ import java.util.List;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
 /**
- * 
- * This is the superclass for SQL generation and it provides some common
- * data collection in the constructor and abstract methods which needs to 
- * be implemented in the sub classes (  
- * 
- * 
- * @author Wulf Riebensahm
+ * This is the superclass for SQL generation and it provides some common data collection in the constructor and
+ * abstract methods which needs to be implemented in the sub classes (
  *
+ * @author Wulf Riebensahm
  */
 
 public abstract class SQLGenerator {
@@ -58,6 +54,13 @@ public abstract class SQLGenerator {
 		super();
 	}
 
+	/**
+	 * @param timeFrom add description
+	 * @param timeTo add description
+	 * @param timeUnit add description
+	 * @param ids add description
+	 * @param idFieldName add description
+	 */
 	public SQLGenerator(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids, String idFieldName) {
 		this();
 		myTimeFrom = timeFrom;
@@ -84,20 +87,20 @@ public abstract class SQLGenerator {
 		}
 	}
 
-	/************************************************************************
+	/**
 	 * get actual SQL Query as String. Depends on the done step of process.
-	 * 
+	 *
 	 * @return String - SQL Query as String
-	 ***********************************************************************/
+	 */
 	public abstract String getSQL();
 
-	/*****************************************************************
-	 * generates SQL-WHERE for the time frame 
-	 * 
-	 * @param timeFrom start time 
+	/**
+	 * generates SQL-WHERE for the time frame
+	 *
+	 * @param timeFrom start time
 	 * @param timeTo   end time
 	 * @param timeLimiter name of field used to apply the timeframe
-	 ******************************************************************/
+	 */
 	protected static String getWhereClauseForTimeFrame(Date timeFrom, Date timeTo, String timeLimiter) {
 
 		if (timeFrom == null && timeTo == null) {
@@ -119,13 +122,13 @@ public abstract class SQLGenerator {
 				+ "','%Y%m%d%H%i%s')+0";
 	}
 
-	/*****************************************************************
+	/**
 	 * generates time format from {@link TimeUnit}
-	 * 
-	 * @param fieldExpression  
-	 * @param timeUnit
-	 * @return String - simple date format 
-	 ******************************************************************/
+	 *
+	 * @param fieldExpression add description
+	 * @param timeUnit add description
+	 * @return String - simple date format
+	 */
 	protected static String getIntervallExpression(TimeUnit timeUnit, String fieldExpression) {
 
 		if (timeUnit == null) {
@@ -158,9 +161,9 @@ public abstract class SQLGenerator {
 	}
 
 	/**
-	 *  converts the format of a date to match MySQL Timestamp format
-	 * @param date
-	 * @return 
+	 * converts the format of a date to match MySQL Timestamp format
+	 * @param date add description
+	 * @return add description
 	 */
 	private static Timestamp dateToSqlTimestamp(Date date) {
 		Timestamp timestamp = new Timestamp(date.getTime());

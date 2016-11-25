@@ -28,19 +28,17 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.sub.goobi.helper.enums.HistoryEventType;
+
 import java.util.Date;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
-
 /**
  * Class provides SQL for storage statistics
- * 
- * 
- * @author Wulf Riebensahm
  *
+ * @author Wulf Riebensahm
  */
 public class SQLStorage extends SQLGenerator {
 

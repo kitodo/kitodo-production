@@ -35,13 +35,14 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package org.goobi.production.constants;
 
 /**
  * This class collects file names used throughout the code.
- * 
+ *
  * TODO: Make all file name String literals constants here.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FileNames {

@@ -27,6 +27,17 @@ package org.goobi.production.flow.jobs;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.ProzessDAO;
+import de.sub.goobi.persistence.apache.StepManager;
+import de.sub.goobi.persistence.apache.StepObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,23 +51,14 @@ import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 
 /**
- * 
+ *
  * @author Robert Sehr
- * 
+ *
  */
 
 @Deprecated
@@ -65,7 +67,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.jobs.SimpleGoobiJob#initialize()
 	 */
 	@Override
@@ -75,7 +77,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.jobs.SimpleGoobiJob#execute()
 	 */
 	@Override
@@ -183,6 +185,14 @@ public class HotfolderJob extends AbstractGoobiJob {
 		return size;
 	}
 
+	/**
+	 * @param processTitle add description
+	 * @param vorlage add description
+	 * @param dir add description
+	 * @param digitalCollection add description
+	 * @param updateStrategy add description
+	 * @return add description
+	 */
 	public static int generateProcess(String processTitle, Prozess vorlage, SafeFile dir, String digitalCollection,
 			String updateStrategy) {
 		// wenn keine anchor Datei, dann Vorgang anlegen
@@ -343,6 +353,10 @@ public class HotfolderJob extends AbstractGoobiJob {
 		}
 	}
 
+	/**
+	 * @param titel add description
+	 * @return add description
+	 */
 	public static boolean testTitle(String titel) {
 		if (titel != null) {
 			long anzahl = 0;
@@ -361,6 +375,11 @@ public class HotfolderJob extends AbstractGoobiJob {
 		return true;
 	}
 
+	/**
+	 * @param io add description
+	 * @param vorlage add description
+	 * @return add description
+	 */
 	@SuppressWarnings("static-access")
 	public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
 		String processTitle = io.getProcessTitle();

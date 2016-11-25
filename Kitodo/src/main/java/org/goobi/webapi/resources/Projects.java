@@ -22,6 +22,10 @@
 
 package org.goobi.webapi.resources;
 
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,20 +43,18 @@ import org.goobi.webapi.beans.ProjectsRootNode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-
 /**
- * The CatalogueConfiguration class provides the Jersey API URL pattern
- * ${SERVLET_CONTEXT}/rest/projects which returns the major data from the
- * project configuration in XML or JSON format.
+ * The CatalogueConfiguration class provides the Jersey API URL pattern ${SERVLET_CONTEXT}/rest/projects which returns
+ * the major data from the project configuration in XML or JSON format.
  * 
- * @author Matthias Ronge <matthias.ronge@zeutschel.de>
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Path("/projects")
 public class Projects {
-
+	/**
+	 * @return add description
+	 * @throws IOException add description
+	 */
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {

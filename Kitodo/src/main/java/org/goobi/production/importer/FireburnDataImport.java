@@ -27,6 +27,13 @@ package org.goobi.production.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,18 +58,11 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-import de.sub.goobi.config.ConfigMain;
-
-/********************************************************************************************************
+/**
  * Import Data from the XML-File, created by FireburnExporter to the GoobiDB.
- * 
+ *
  * @author Igor Toker
- * 
- *********************************************************************************************************/
+ */
 
 public class FireburnDataImport {
 	private static final Logger logger = Logger.getLogger(FireburnDataImport.class);
@@ -87,6 +87,9 @@ public class FireburnDataImport {
 	private Connection connection;
 	Statement stmt;
 
+	/**
+	 *
+	 */
 	public FireburnDataImport() {
 		try {
 			this.connection = connectToDB();
@@ -104,15 +107,14 @@ public class FireburnDataImport {
 		}
 	}
 
-	/**************************************************************************
+	/**
 	 * Entry Point
-	 * 
-	 * @param args
-	 * @throws JDOMException
-	 * @throws IOException
-	 * @throws ParseException
-	 * 
-	 ***************************************************************************/
+	 *
+	 * @param args add description
+	 * @throws JDOMException add description
+	 * @throws IOException add description
+	 * @throws ParseException add description
+	 */
 	public static void main(String[] args) throws JDOMException, IOException, ParseException {
 		filename = ConfigMain.getParameter("tempfolder") + "fireburn.xml";
 		// debug
@@ -128,9 +130,7 @@ public class FireburnDataImport {
 		// debug
 		boolean search1 = true;
 		if (search1) {
-			// -----------------------------------------------------------------------
 			// Search for storeIdentifier in the Process Table (with title)
-			// -----------------------------------------------------------------------
 			logger.debug("Search in process title..");
 			logger.debug("-----------------------------------------------------------------------");
 			try {
@@ -142,9 +142,7 @@ public class FireburnDataImport {
 						// write to Goobi
 						fdi.writeToGoobiDB(p, processId);
 
-					}
-					// processId is not found.
-					else {
+					} else {
 						fdi.pNotFoundList.add(p);
 					}
 				}
@@ -160,9 +158,7 @@ public class FireburnDataImport {
 		}
 		boolean search2 = true;
 		if (search2) {
-			// -----------------------------------------------------------------------
 			// search in Vorlageneigenschaften
-			// -----------------------------------------------------------------------
 			logger.debug("Search in 'Vorlageeigenschaften'..");
 			logger.debug("-----------------------------------------------------------------------");
 			// prepare lists
@@ -192,9 +188,7 @@ public class FireburnDataImport {
 				logger.debug("Not found: " + fdi.pNotFoundList.size());
 			}
 		}
-		// -----------------------------------------------------------------------
 		// search in Werkstueckeeigenschaften
-		// -----------------------------------------------------------------------
 		logger.debug("Search in 'Werkstueckeeigenschaften'..");
 		logger.debug("-----------------------------------------------------------------------");
 		// prepare lists
@@ -223,9 +217,7 @@ public class FireburnDataImport {
 			logger.debug("Found: " + fdi.pFoundList.size());
 			logger.debug("Not found: " + fdi.pNotFoundList.size());
 		}
-		// -----------------------------------------------------------------------
 		// write all properties without process in separate xml file
-		// -----------------------------------------------------------------------
 		XStream xstream = new XStream();
 		xstream.setMode(XStream.NO_REFERENCES);
 		xstream.processAnnotations(FireburnDataImport.class);
@@ -239,15 +231,15 @@ public class FireburnDataImport {
 		logger.debug("Execution time (ms): " + time);
 	}
 
-	/***********************************************************************************
+	/**
 	 * Connect to Goobi DB.
-	 * 
+	 *
 	 * @return {@link Connection}
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 * @throws ConfigurationException
-	 * @throws IOException
-	 ************************************************************************************/
+	 * @throws ClassNotFoundException add description
+	 * @throws SQLException add description
+	 * @throws ConfigurationException add description
+	 * @throws IOException add description
+	 */
 	private Connection connectToDB() throws ClassNotFoundException, SQLException, ConfigurationException, IOException {
 		Connection connection = null;
 		// Load the JDBC driver
@@ -268,15 +260,14 @@ public class FireburnDataImport {
 		return connection;
 	}
 
-	/****************************************************************************************
+	/**
 	 * Get StoreIdentifier from Goobi DB for this Title
-	 * 
-	 * @param title
-	 *            String
+	 *
+	 * @param title String
 	 * @return String or null if ProzessID is not found
-	 * @throws SQLException
-	 * @throws ClassNotFoundException
-	 *****************************************************************************************/
+	 * @throws SQLException add description
+	 * @throws ClassNotFoundException add description
+	 */
 	private String getProcessId(String title) throws ClassNotFoundException, SQLException {
 		String retString = null;
 		String sqlstring = "SELECT ProzesseID FROM prozesse WHERE Titel='" + title + "'";
@@ -289,15 +280,14 @@ public class FireburnDataImport {
 		return retString;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Get StoreIdentifier from Vorlageneigenschaften.
-	 * 
-	 * @param p
-	 *            - FireburnProperty
-	 * @return String - StoreIdendifier
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 **************************************************************************************/
+	 *
+	 * @param p - FireburnProperty add description
+	 * @return String - StoreIdendifier add description
+	 * @throws ClassNotFoundException add description
+	 * @throws SQLException add description
+	 */
 	private String getStoreIdentifierFromWerkstueckeeigenschaften(FireburnProperty p) throws ClassNotFoundException,
 			SQLException {
 		String weId = getWerkstueckeeigenschaftenId(p);
@@ -314,15 +304,14 @@ public class FireburnDataImport {
 		return processId;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Get StoreIdentifier from Vorlageneigenschaften.
-	 * 
-	 * @param p
-	 *            - FireburnProperty
+	 *
+	 * @param p - FireburnProperty
 	 * @return String - StoreIdendifier
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 **************************************************************************************/
+	 * @throws ClassNotFoundException add description
+	 * @throws SQLException add description
+	 */
 	private String getStoreIdentifierFromVorlageneigenschaften(FireburnProperty p) throws ClassNotFoundException,
 			SQLException {
 		String vorlagenId = getVorlagenId(p);
@@ -338,19 +327,16 @@ public class FireburnDataImport {
 		return processId;
 	}
 
-	/****************************************************************************************
+	/**
 	 * Gets WerkstueckeeigenschaftenId from FireburnProperty
-	 * 
-	 * @param p
-	 *            FireburnProperty
+	 *
+	 * @param p FireburnProperty
 	 * @return String - VorlagenId
-	 * @throws SQLException
-	 * @throws ClassNotFoundException
-	 * 
-	 *****************************************************************************************/
+	 * @throws SQLException add description
+	 * @throws ClassNotFoundException add description
+	 */
 	private String getWerkstueckeeigenschaftenId(FireburnProperty p) throws ClassNotFoundException, SQLException {
 		// get ppn
-		// -----------------------------------------------------------------------
 		int substringIndex = p.titel.indexOf("PPN");
 		if (substringIndex == -1) {
 			substringIndex = p.titel.indexOf("ppn");
@@ -362,7 +348,6 @@ public class FireburnDataImport {
 		String ppn = p.titel.substring(substringIndex).substring(3);
 
 		// Search with short PPN
-		// -----------------------------------------------------------------------
 		String sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + ppn + "';";
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
@@ -375,7 +360,6 @@ public class FireburnDataImport {
 		}
 
 		// Search with full PPN
-		// -----------------------------------------------------------------------
 		sql = "SELECT werkstueckeID FROM werkstueckeeigenschaften WHERE Wert='" + fullppn + "';";
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
@@ -390,19 +374,16 @@ public class FireburnDataImport {
 		return null;
 	}
 
-	/****************************************************************************************
+	/**
 	 * Gets VorlagenId
-	 * 
-	 * @param p
-	 *            FireburnProperty
+	 *
+	 * @param p FireburnProperty
 	 * @return String - VorlagenId
-	 * @throws SQLException
-	 * @throws ClassNotFoundException
-	 * 
-	 *****************************************************************************************/
+	 * @throws SQLException add description
+	 * @throws ClassNotFoundException add description
+	 */
 	private String getVorlagenId(FireburnProperty p) throws ClassNotFoundException, SQLException {
 		// get ppn
-		// -----------------------------------------------------------------------
 		int substringIndex = p.titel.indexOf("PPN");
 		if (substringIndex == -1) {
 			substringIndex = p.titel.indexOf("ppn");
@@ -414,7 +395,6 @@ public class FireburnDataImport {
 		String ppn = p.titel.substring(substringIndex).substring(3);
 
 		// Search with short PPN
-		// -----------------------------------------------------------------------
 		String sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + ppn + "';";
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
@@ -427,7 +407,6 @@ public class FireburnDataImport {
 		}
 
 		// Search with full PPN
-		// -----------------------------------------------------------------------
 		sql = "SELECT vorlagenID FROM vorlageneigenschaften WHERE Wert='" + fullppn + "';";
 		try (ResultSet rs = this.stmt.executeQuery(sql)) {
 			if (rs.next()) {
@@ -443,19 +422,17 @@ public class FireburnDataImport {
 		return null;
 	}
 
-	/******************************************************************************************
+	/**
 	 * Write Property to GoobiDB
-	 * 
-	 * @param p
-	 *            FireburnProperty
-	 * @param processId
-	 *            String
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 *****************************************************************************************/
+	 *
+	 * @param p FireburnProperty
+	 * @param processId  String
+	 * @throws ClassNotFoundException add description
+	 * @throws SQLException add description
+	 */
 	private void writeToGoobiDB(FireburnProperty p, String processId) throws ClassNotFoundException, SQLException {
-		String sql = "INSERT INTO prozesseeigenschaften(prozesseID, Titel, Wert, IstObligatorisch, DatentypenID, Auswahl, creationDate)"
-
+		String sql = "INSERT INTO prozesseeigenschaften(prozesseID, Titel, Wert, IstObligatorisch, DatentypenID, "
+				+ "Auswahl, creationDate)"
 				+ " VALUES ('"
 				+ processId + "','" + cdName + "','" + p.cdName + "',false,'5',false,'" + p.date + "')" + ","
 
@@ -473,16 +450,15 @@ public class FireburnDataImport {
 
 	}
 
-	/****************************************************************************************
+	/**
 	 * Loads properties from XML-File to {@link FireburnProperty}
-	 * 
-	 * @param filename
-	 *            - String
+	 *
+	 * @param filename - String
 	 * @return HashMap: Key - Title, Value - Cd Name
-	 * @throws IOException
-	 * @throws JDOMException
-	 * @throws ParseException
-	 *****************************************************************************************/
+	 * @throws IOException add description
+	 * @throws JDOMException add description
+	 * @throws ParseException add description
+	 */
 	@SuppressWarnings("rawtypes")
 	private ArrayList<FireburnProperty> loadDataFromXml(String filename) throws JDOMException, IOException,
 			ParseException {

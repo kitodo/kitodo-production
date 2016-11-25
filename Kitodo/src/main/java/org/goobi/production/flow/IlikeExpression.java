@@ -32,7 +32,7 @@ import org.hibernate.criterion.LikeExpression;
 public class IlikeExpression extends LikeExpression {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -4799319673461424418L;
 

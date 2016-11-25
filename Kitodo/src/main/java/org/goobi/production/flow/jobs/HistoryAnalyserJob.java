@@ -27,6 +27,18 @@ package org.goobi.production.flow.jobs;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.HistoryEvent;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.HistoryEventType;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.persistence.apache.StepManager;
+
+import de.unigoettingen.sub.commons.util.file.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
@@ -39,19 +51,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.HistoryEvent;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.unigoettingen.sub.commons.util.file.FileUtils;
-
 /**
  * HistoryJob proofs History of {@link Prozess} and creates missing {@link HistoryEvent}s
- * 
+ *
  * @author Steffen Hankiewicz
  * @author Igor Toker
  * @version 15.06.2009
@@ -61,7 +63,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.jobs.SimpleGoobiJob#initialize()
 	 */
 	@Override
@@ -71,7 +73,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.jobs.SimpleGoobiJob#execute()
 	 */
 	@Override
@@ -79,24 +81,23 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		updateHistoryForAllProcesses();
 	}
 
-	/******************************************************************************
+	/**
 	 * update the history if necessary, which means:
-	 * 
 	 * - count storage difference in byte <br>
 	 * - count imagesWork difference <br>
 	 * - count imagesMaster difference <br>
 	 * - count metadata difference <br>
 	 * - count docstruct difference <br>
-	 * 
+	 *
 	 * @param inProcess
 	 *            the {@link Prozess} to use
-	 * 
+	 *
 	 * @return true, if any history event is updated, so the process has to be saved to database
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 *****************************************************************************/
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 */
 	public static Boolean updateHistory(Prozess inProcess) throws IOException, InterruptedException, SwapException,
 			DAOException {
 		boolean updated = false;
@@ -117,7 +118,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		}
 
 		/* metadata */
-		if (updateHistoryEvent(inProcess, HistoryEventType.metadataDiff, inProcess.getSortHelperMetadata().longValue())) {
+		if (updateHistoryEvent(inProcess, HistoryEventType.metadataDiff,
+				inProcess.getSortHelperMetadata().longValue())) {
 			updated = true;
 		}
 
@@ -130,32 +132,30 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return updated;
 	}
 
-	/****************************************************************************
+	/**
 	 * update history for each {@link Schritt} of given {@link Prozess}
-	 * 
-	 * @param inProcess
-	 *            given {@link Prozess}
+	 *
+	 * @param inProcess given {@link Prozess}
 	 * @return true, if changes are made and have to be saved to database
-	 ***************************************************************************/
+	 */
 	@SuppressWarnings("incomplete-switch")
 	private static Boolean updateHistoryForSteps(Prozess inProcess) {
 		Boolean isDirty = false;
 		HistoryEvent he = null;
 
-		/**
-		 * These are the patterns, which must be set, if a pattern differs from these something is wrong, timestamp pattern overrules status, in that
-		 * case status gets changed to match one of these pattern
-		 * 
+		/*
+		 * These are the patterns, which must be set, if a pattern differs from these something is wrong, timestamp
+		 * pattern overrules status, in that case status gets changed to match one of these pattern
+		 *
 		 * <pre>
 		 *         status |  begin    in work    work done
-		 *         -------+-------------------------------  
+		 *         -------+-------------------------------
 		 *           0    |  null     null       null
 		 *           1    |  null     null       null
 		 *           2    |  set      set        null
 		 *           3    |  set      set        set
 		 * </pre>
 		 */
-
 		for (Schritt step : inProcess.getSchritteList()) {
 
 			switch (step.getBearbeitungsstatusEnum()) {
@@ -309,13 +309,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	}
 
 	/**
-	 * 
-	 * @param timeStamp
-	 * @param stepOrder
-	 * @param stepName
-	 * @param type
-	 * @param inProcess
-	 * @return History event if event needs to be added, null if event(same kind, same time, same process ) already exists
+	 * @param timeStamp add description
+	 * @param stepOrder add description
+	 * @param stepName add description
+	 * @param type add description
+	 * @param inProcess add description
+	 * @return History event if event needs to be added, null if event(same kind, same time, same process)
+	 *					already exists
 	 */
 	private static HistoryEvent addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName,
 			HistoryEventType type, Prozess inProcess) {
@@ -329,15 +329,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		}
 	}
 
-	/****************************************************************************
+	/**
 	 * check if history already contains given event
-	 * 
-	 * @param inEvent
-	 *            given {@link HistoryEvent}
-	 * @param inProcess
-	 *            given {@link Prozess}
+	 *
+	 * @param inEvent given {@link HistoryEvent}
+	 * @param inProcess given {@link Prozess}
 	 * @return true, if {@link HistoryEvent} already exists
-	 ***************************************************************************/
+	 */
 	private static Boolean getHistoryContainsEventAlready(HistoryEvent inEvent, Prozess inProcess) {
 		for (HistoryEvent historyItem : inProcess.getHistoryList()) {
 			if (inEvent != historyItem) { // this is required, in case items
@@ -350,11 +348,11 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return false;
 	}
 
-	/****************************************************************************
+	/**
 	 * get stored value (all diffs as sum) from history
-	 * 
+	 *
 	 * @return stored value as Long
-	 ***************************************************************************/
+	 */
 	private static Long getStoredValue(Prozess inProcess, HistoryEventType inType) {
 		long storedValue = 0;
 		for (HistoryEvent historyItem : inProcess.getHistoryList()) {
@@ -365,11 +363,11 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return storedValue;
 	}
 
-	/****************************************************************************
+	/**
 	 * update history, if current value is different to stored value
-	 * 
+	 *
 	 * @return true if value is different and history got updated, else false
-	 ***************************************************************************/
+	 */
 	private static Boolean updateHistoryEvent(Prozess inProcess, HistoryEventType inType, Long inCurrentValue) {
 		long storedValue = getStoredValue(inProcess, inType);
 		long diff = inCurrentValue - storedValue;
@@ -383,15 +381,15 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		}
 	}
 
-	/****************************************************************************
+	/**
 	 * Size of Storage in Bytes per {@link Prozess}
-	 * 
+	 *
 	 * @return size in bytes, or 0 if error.
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 ***************************************************************************/
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 */
 	private static long getCurrentStorageSize(Prozess inProcess) throws IOException, InterruptedException,
 			SwapException, DAOException {
 		String dirAsString = inProcess.getProcessDataDirectory();
@@ -402,9 +400,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return org.apache.commons.io.FileUtils.sizeOfDirectory(directory);
 	}
 
-	/***************************************************************************
+	/**
 	 * updateHistoryForAllProcesses
-	 **************************************************************************/
+	 */
 	public void updateHistoryForAllProcesses() {
 		logger.info("start history updating for all processes");
 		try {
@@ -455,8 +453,10 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 
 	/**
 	 * method returns a timestamp from a previous step, iterates through the steps if necessary
-	 * 
-	 * @param stepOrder
+	 *
+	 * @param inProcess add description
+	 * @param inStep add description
+	 * @return add description
 	 */
 	private static Date getTimestampFromPreviousStep(Prozess inProcess, Schritt inStep) {
 		Date eventTimestamp = null;
@@ -505,9 +505,10 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 	}
 
 	/**
-	 * method iterates through the event list and checks if there are duplicate entries, if so it will remove the entry and return a true
-	 * 
-	 * @param inProcess
+	 * method iterates through the event list and checks if there are duplicate entries, if so it will remove the entry
+	 * and return a true
+	 *
+	 * @param inProcess add description
 	 * @return true if there are duplicate entries, false otherwise
 	 */
 	private static Boolean getHistoryEventDuplicated(Prozess inProcess) {
@@ -521,6 +522,10 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
 		return duplicateEventRemoved;
 	}
 
+	/**
+	 * @param inProc add description
+	 * @return add description
+	 */
 	public static Boolean updateHistoryForProcess(Prozess inProc) {
 		Boolean updated = false;
 		try {

@@ -27,12 +27,13 @@ package org.goobi.production.flow.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.enums.StepStatus;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
 
@@ -42,6 +43,9 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
 	private HashMap<String, String> scripts = new HashMap<String, String>();
 	private boolean exportDMS = false;
 
+	/**
+	 * @param s add description
+	 */
 	public BatchDisplayItem(Schritt s) {
 		this.stepTitle = s.getTitel();
 		this.stepOrder = s.getReihenfolge();

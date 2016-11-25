@@ -49,6 +49,10 @@ public enum PluginType {
 		this.interfaz = (Class<IPlugin>) inInterfaz;
 	}
 
+	/**
+	 * @param pluginType add description
+	 * @return add description
+	 */
 	public static PluginType getTypeFromValue(String pluginType) {
 		if (pluginType != null) {
 			for (PluginType type : PluginType.values()) {
@@ -60,6 +64,10 @@ public enum PluginType {
 		return null;
 	}
 
+	/**
+	 * @param pluginType add description
+	 * @return add description
+	 */
 	public static PluginType getTypesFromId(int pluginType) {
 		for (PluginType type : PluginType.values()) {
 			if (type.getId() == pluginType) {

@@ -28,6 +28,10 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 //import java.lang.ref.WeakReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -40,28 +44,20 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
-
 /**
- * This class UserDefinedFilter implements the IEvaluateFilter interface It
- * takes care of unsolved hibernate issues surrounding Criteria and Projections
- * ... could be also due to lack of hibernate knowledge but offers a pragmatic
- * solution for the purpose of creating robust extended statistical functions in
- * goobi
- * 
- * It uses code formerly used in ProzessverwaltungForm.FilterAlleStart and it
- * creates a Criteria which can be thrown into the Page Object. At the same time
- * it can now be used in order to provide statistical evaluations on the
- * filtered dataset without destroying the criteria used in the Page object
- * 
- * The interface IEvaluable Filter was used so that other Implementations of a
- * filter could be used with the same interface.
- * 
- * 
+ * This class UserDefinedFilter implements the IEvaluateFilter interface It takes care of unsolved hibernate issues
+ * surrounding Criteria and Projections... could be also due to lack of hibernate knowledge but offers a pragmatic
+ * solution for the purpose of creating robust extended statistical functions in goobi
+ *
+ * <p>It uses code formerly used in ProzessverwaltungForm.FilterAlleStart and it creates a Criteria which can be thrown
+ * into the Page Object. At the same time it can now be used in order to provide statistical evaluations on the
+ * filtered dataset without destroying the criteria used in the Page object.</p>
+ *
+ * <p>The interface IEvaluable Filter was used so that other Implementations of a filter could be used with the same
+ * interface.</p>
+ *
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = 4715772407607416975L;
 	private WeakReference<Criteria> myCriteria = null;
@@ -72,24 +68,22 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	private Parameters myParameter = new Parameters();
 
 	/**
-	 * Constructor using an Array of Integers representing the ids of the
-	 * Objects that need to be selected
-	 ****************************************************************************/
+	 * Constructor using an Array of Integers representing the ids of the Objects that need to be selected
+	 */
 	public UserDefinedFilter(List<Integer> selectIDs) {
 		myIds = new ArrayList<Integer>(selectIDs);
 	}
 
 	/**
 	 * Constructor using the user generated search string
-	 * 
-	 ****************************************************************************/
+	 */
 	public UserDefinedFilter(String filter) {
 		myFilterExpression = filter;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
 	 * ()
@@ -112,7 +106,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
@@ -123,7 +117,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
 	 * (java.lang.String)
@@ -136,7 +130,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	public String getFilter() {
 		return myFilterExpression;
@@ -144,7 +138,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
 	 * (java.lang.String)
@@ -156,7 +150,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
@@ -208,9 +202,9 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/**
 	 * creates an ID list from the criteria in parameter
-	 * 
-	 * @param crit
-	 ****************************************************************************/
+	 *
+	 * @param crit add description
+	 */
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
@@ -234,7 +228,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
 	@Override
@@ -245,7 +239,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
 	 * ()
@@ -262,7 +256,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()
@@ -291,7 +285,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
 	 * ()
@@ -303,7 +297,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
 	 * (java.lang.String)

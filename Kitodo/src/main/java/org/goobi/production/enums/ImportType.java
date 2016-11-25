@@ -67,6 +67,10 @@ public enum ImportType {
 		return this.title;
 	}
 
+	/**
+	 * @param title add description
+	 * @return add description
+	 */
 	public static ImportType getByTitle(String title) {
 		for (ImportType t : ImportType.values()) {
 			if (t.getTitle().equals(title)) {

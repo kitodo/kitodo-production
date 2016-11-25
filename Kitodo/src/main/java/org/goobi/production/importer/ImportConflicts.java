@@ -38,6 +38,12 @@ public class ImportConflicts {
 	private String goobiValue;
 	private String productionValue;
 
+	/**
+	 * @param storeidentifier add description
+	 * @param property add description
+	 * @param goobiValue add description
+	 * @param productionValue add description
+	 */
 	public ImportConflicts(String storeidentifier, String property, String goobiValue, String productionValue) {
 		super();
 		this.storeidentifier = storeidentifier;

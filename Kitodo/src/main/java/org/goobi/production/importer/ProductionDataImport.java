@@ -27,27 +27,6 @@ package org.goobi.production.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -73,10 +52,30 @@ import de.sub.goobi.persistence.HibernateUtilOld;
 import de.sub.goobi.persistence.ProjektDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
 /**
- * 
  * @author Robert Sehr
- * 
  */
 
 public class ProductionDataImport {
@@ -104,10 +103,10 @@ public class ProductionDataImport {
 
 	/**
 	 * Diese Methode darf nur ein Mal durchlaufen, sonst werden zu viele Properties hinzugefügt!!!!
-	 * 
-	 * @throws ConfigurationException
-	 * @throws DAOException
-	 * @throws FileNotFoundException
+	 *
+	 * @throws ConfigurationException add description
+	 * @throws DAOException add description
+	 * @throws FileNotFoundException add description
 	 */
 
 	public static void main(String[] args) throws HibernateException, SQLException, ConfigurationException,
@@ -532,12 +531,12 @@ public class ProductionDataImport {
 		if (crit.list().size() > 0) {
 			p = (Prozess) crit.list().get(0);
 		}
-		if (p == null)
+		if (p == null) {
 			return;
-
-		/*******************************************
-		 * properties and attributes for processes *
-		 ******************************************/
+		}
+		/*
+		 * properties and attributes for processes
+		 */
 		generateProzessProperty(session, p, "ImportMarker", "merged", PropertyType.String, 0, false);
 
 		// AutorTitelSchluessel
@@ -741,18 +740,18 @@ public class ProductionDataImport {
 				generateProzessProperty(session, p, "Druckqualität", String.valueOf(pd.getDRUCKQUALITAET()),
 						PropertyType.Integer, 0, false);
 			}
-			/********************************************
+			/*
 			 * step 'Qualitätskontrolle' *
-			 *******************************************/
+			 */
 			else if (s.getTitel().contains("Qualitätskontrolle")) {
 				if (s.getBearbeitungsende() == null) {
 					s.setBearbeitungsende(pd.getWERKQKONTROLLDATUM());
 
 				}
 
-				/********************************************
+				/*
 				 * step 'Imagenachbearbeitung' *
-				 *******************************************/
+				 */
 			} else if (s.getTitel().contains("Imagenachbearbeitung")) {
 
 				generateProzessProperty(session, p, "BitonalImageNachbearbeitung", pd.getBITONALIMAGENACHBEARBEITUNG(),
@@ -944,6 +943,10 @@ public class ProductionDataImport {
 		return altdaten;
 	}
 
+	/**
+	 * @param filename add description
+	 * @return add description
+	 */
 	@SuppressWarnings("unchecked")
 	public ArrayList<ProductionData> load(String filename) {
 		ArrayList<ProductionData> productionList = new ArrayList<ProductionData>();

@@ -33,12 +33,21 @@ public class CommandResponse {
 	private String title;
 	private String message;
 
+	/**
+	 * @param status add description
+	 * @param inTitle add description
+	 * @param inMessage add description
+	 */
 	public CommandResponse(int status, String inTitle, String inMessage) {
 		this.status = status;
 		title = inTitle;
 		message = inMessage;
 	}
 
+	/**
+	 * @param inTitle add description
+	 * @param inMessage add description
+	 */
 	public CommandResponse(String inTitle, String inMessage) {
 		status = 200;
 		title = inTitle;

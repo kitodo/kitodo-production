@@ -27,16 +27,21 @@ package org.goobi.production.cli;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
-import de.sub.goobi.helper.Helper;
-
 public class WebInterfaceConfig {
-
+	/**
+	 * @param requestIp add description
+	 * @param requestPassword add description
+	 * @return add description
+	 */
 	public static List<String> getCredentials(String requestIp, String requestPassword) {
 		ArrayList<String> allowed = new ArrayList<String>();
 		try {

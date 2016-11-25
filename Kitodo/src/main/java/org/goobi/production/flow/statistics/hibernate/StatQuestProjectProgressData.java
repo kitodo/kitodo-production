@@ -28,6 +28,14 @@ package org.goobi.production.flow.statistics.hibernate;
  * exception statement from your version.
  */
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.HistoryEventType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,23 +53,14 @@ import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
-
-/*****************************************************************************
- * Imlpementation of {@link IStatisticalQuestion}. This is used for the
- * generation of a Datatable relfecting the progress of a project, based on it's
- * processes workflow. Only the workflow common to all processes is used. A
- * reference step is taken and it's progress is calculated against the average
- * throughput. The average throughput is based on the duration and volume of a
- * project.
- * 
+/**
+ * Implementation of {@link IStatisticalQuestion}. This is used for the generation of a Datatable relfecting
+ * the progress of a project, based on it's processes workflow. Only the workflow common to all processes is used. A
+ * reference step is taken and it's progress is calculated against the average throughput. The average throughput is
+ * based on the duration and volume of a project.
+ *
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class StatQuestProjectProgressData implements IStatisticalQuestionLimitedTimeframe, Serializable {
 
 	private static final long serialVersionUID = 5488469945490611200L;
@@ -81,12 +80,10 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	private boolean isDirty = true;
 
 	/**
-	 * loops included means that all step open all stepdone are considered loops
-	 * not included means that only min(date) or max(date) - depending on option
-	 * in
-	 * 
+	 * loops included means that all step open all stepdone are considered loops not included means that only min(date)
+	 * or max(date) - depending on option in
+	 *
 	 * @see HistoryEventType
-	 * 
 	 * @return status of loops included or not
 	 */
 	public Boolean getIncludeLoops() {
@@ -98,7 +95,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	/**
-	 * 
 	 * @return true if all Data for the generation is set
 	 */
 
@@ -127,6 +123,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		return !error;
 	}
 
+	/**
+	 * @param flagIn add description
+	 */
 	public void setReferenceCurve(Boolean flagIn) {
 		if (flagIn == null) {
 			this.flagReferenceCurve = false;
@@ -143,8 +142,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * Set status of loops included
-	 * 
-	 * @param includeLoops
+	 *
+	 * @param includeLoops add description
 	 */
 	public void setIncludeLoops(Boolean includeLoops) {
 		this.flagIncludeLoops = includeLoops;
@@ -203,6 +202,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		return dataRow;
 	}
 
+	/**
+	 * @param inSource add description
+	 */
 	public void setDataSource(IDataSource inSource) {
 		// gathering IDs from the filter passed by dataSource
 		try {
@@ -214,13 +216,15 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	/**
-	 * 
 	 * @return if reference curve is used of average production
 	 */
 	public Boolean getReferenceCurve() {
 		return this.flagReferenceCurve;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public DataRow getRefRow() {
 		if (this.flagReferenceCurve) {
 			return referenceCurve(getDataRow(this.terminatingStep));
@@ -229,6 +233,10 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		}
 	}
 
+	/**
+	 * @param stepName add description
+	 * @return add description
+	 */
 	public DataRow getDataRow(String stepName) {
 		Boolean flagNoContent = true;
 		for (int i = 0; i < getDataTable().getDataRows().size(); i++) {
@@ -251,7 +259,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables
 	 * (org.goobi.production.flow.statistics.IDataSource)
@@ -279,7 +287,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit
 	 * (org.goobi.production.flow.statistics.enums.CalculationUnit)
@@ -290,7 +298,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe
 	 * #setTimeFrame(java.util.Date, java.util.Date)
@@ -304,7 +312,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted
 	 * (de.intranda.commons.chart.renderer.IRenderer)
@@ -316,7 +324,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
 	 * getNumberFormatPattern()
 	 */
@@ -327,9 +335,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * returns a DataTable populated with the specified events
-	 * 
-	 * @param requestedType
-	 * @return
+	 *
+	 * @param requestedType add description
+	 * @return add description
 	 */
 	private DataTable getAllSteps(HistoryEventType requestedType) {
 
@@ -341,14 +349,11 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	/**
-	 * Method generates a DataTable based on the input SQL. Methods success is
-	 * depending on a very specific data structure ... so don't use it if you
-	 * don't exactly understand it
-	 * 
-	 * 
-	 * @param natSQL
-	 *            , headerFromSQL -> to be used, if headers need to be read in
-	 *            first in order to get a certain sorting
+	 * Method generates a DataTable based on the input SQL. Methods success is depending on a very specific data
+	 * structure ... so don't use it if you don't exactly understand it
+	 *
+	 * @param natSQL , headerFromSQL -> to be used, if headers need to be read in first in order to get
+	 *                  a certain sorting
 	 * @return DataTable
 	 */
 	private DataTable buildDataTableFromSQL(String natSQL) {
@@ -445,8 +450,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * sets the terminating Step for this view
-	 * 
-	 * @param terminatingStep
+	 *
+	 * @param terminatingStep add description
 	 */
 	public void setTerminatingStep(String terminatingStep) {
 		this.terminatingStep = terminatingStep;
@@ -454,7 +459,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	/**
-	 * 
 	 * @return List of Steps that are selectable for this View
 	 */
 
@@ -467,6 +471,9 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		return selectableList;
 	}
 
+	/**
+	 * @param inSteps add description
+	 */
 	public void setSelectedSteps(List<String> inSteps) {
 		this.isDirty = true;
 		if (inSteps.contains(Helper.getTranslation("selectAll"))) {
@@ -488,7 +495,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	/**
-	 * 
 	 * @return list of Timeunits to select
 	 */
 	public List<TimeUnit> getSelectableTimeUnits() {
@@ -508,9 +514,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	}
 
 	/**
-	 * 
-	 * @return DataTable generated from the selected step names and the
-	 *         selected reference curve
+	 * @return DataTable generated from the selected step names and the selected reference curve
 	 */
 	public DataTable getSelectedTable() {
 		getDataTable();
@@ -519,8 +523,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 		for (String stepTitle : this.selectedSteps) {
 			returnTable.addDataRow(getDataRow(stepTitle));
 		}
-		// rest this, so that unit knows that no changes were made in between
-		// calls
+		// rest this, so that unit knows that no changes were made in between calls
 		return returnTable;
 	}
 
@@ -539,9 +542,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
+	 *
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit
 	 * (org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
 	@Override

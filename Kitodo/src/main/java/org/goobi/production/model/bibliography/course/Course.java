@@ -35,7 +35,10 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+
 package org.goobi.production.model.bibliography.course;
+
+import de.sub.goobi.helper.XMLUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,14 +56,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import de.sub.goobi.helper.XMLUtils;
-
 /**
  * The class Course represents the course of appearance of a newspaper.
  *
  * <p>
- * A course of appearance consists of one or more blocks of time. Interruptions
- * in the course of appearance can be modeled by subsequent blocks.
+ * A course of appearance consists of one or more blocks of time. Interruptions in the course of appearance can be
+ * modeled by subsequent blocks.
  * </p>
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -69,109 +70,90 @@ public class Course extends ArrayList<Block> {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Attribute <code>date="…"</code> used in the XML representation of a
-	 * course of appearance.
+	 * Attribute <code>date="…"</code> used in the XML representation of a course of appearance.
 	 */
 	private static final String ATTRIBUTE_DATE = "date";
 
 	/**
-	 * Attribute <code>index="…"</code> used in the XML representation of a
-	 * course of appearance.
+	 * Attribute <code>index="…"</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * The attribute <code>index="…"</code> is optional. It may be used to
-	 * distinguish different blocks if needed and can be omitted if only one
-	 * block is used.
+	 * The attribute <code>index="…"</code> is optional. It may be used to distinguish different blocks if needed and
+	 * can be omitted if only one block is used.
 	 * </p>
 	 */
 	private static final String ATTRIBUTE_VARIANT = "index";
 
 	/**
-	 * Attribute <code>issue="…"</code> used in the XML representation of a
-	 * course of appearance.
+	 * Attribute <code>issue="…"</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * The attribute <code>issue="…"</code> holds the name of the issue.
-	 * Newspapers, especially bigger ones, can have several issues that, e.g.,
-	 * may differ in time of publication (morning issue, evening issue, …) or
+	 * The attribute <code>issue="…"</code> holds the name of the issue. Newspapers, especially bigger ones, can have
+	 * several issues that, e.g., may differ in time of publication (morning issue, evening issue, …) or
 	 * geographic distribution (Edinburgh issue, London issue, …).
 	 * </p>
 	 */
 	private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
 
 	/**
-	 * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
-	 * course of appearance.
+	 * Element <code>&lt;appeared&gt;</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * Each <code>&lt;appeared&gt;</code> element represents one issue that
-	 * physically appeared. It has the attributes <code>issue="…"</code>
-	 * (required, may be empty) and <code>date="…"</code> (required) and cannot
+	 * Each <code>&lt;appeared&gt;</code> element represents one issue that physically appeared. It has the attributes
+	 * <code>issue="…"</code> (required, may be empty) and <code>date="…"</code> (required) and cannot
 	 * hold child elements.
 	 * </p>
 	 */
 	private static final String ELEMENT_APPEARED = "appeared";
 
 	/**
-	 * Element <code>&lt;course&gt;</code> used in the XML representation of a
-	 * course of appearance.
+	 * Element <code>&lt;course&gt;</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * <code>&lt;course&gt;</code> is the root element of the XML
-	 * representation. It can hold two children,
-	 * <code>&lt;description&gt;</code> (output only, optional) and
-	 * <code>&lt;processes&gt;</code> (required).
+	 * <code>&lt;course&gt;</code> is the root element of the XML representation. It can hold two children,
+	 * <code>&lt;description&gt;</code> (output only, optional) and <code>&lt;processes&gt;</code> (required).
 	 * </p>
 	 */
 	private static final String ELEMENT_COURSE = "course";
 
 	/**
-	 * Element <code>&lt;description&gt;</code> used in the XML representation
-	 * of a course of appearance.
+	 * Element <code>&lt;description&gt;</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * <code>&lt;description&gt;</code> holds a verbal, human-readable
-	 * description of the course of appearance, which is generated only and
-	 * doesn’t have an effect on input.
+	 * <code>&lt;description&gt;</code> holds a verbal, human-readable description of the course of appearance, which
+	 * is generated only and doesn’t have an effect on input.
 	 * </p>
 	 */
 	private static final String ELEMENT_DESCRIPTION = "description";
 
 	/**
-	 * Element <code>&lt;process&gt;</code> used in the XML representation of a
-	 * course of appearance.
+	 * Element <code>&lt;process&gt;</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * Each <code>&lt;process&gt;</code> element represents one process to be
-	 * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
-	 * elements (of any quantity).
+	 * Each <code>&lt;process&gt;</code> element represents one process to be generated in Goobi Production. It can
+	 * hold <code>&lt;title&gt;</code> elements (of any quantity).
 	 * </p>
 	 */
 	private static final String ELEMENT_PROCESS = "process";
 
 	/**
-	 * Element <code>&lt;processes&gt;</code> used in the XML representation of
-	 * a course of appearance.
+	 * Element <code>&lt;processes&gt;</code> used in the XML representation of a course of appearance.
 	 *
 	 * <p>
-	 * Each <code>&lt;processes&gt;</code> element represents the processes to
-	 * be generated in Goobi Production. It can hold
-	 * <code>&lt;process&gt;</code> elements (of any quantity).
+	 * Each <code>&lt;processes&gt;</code> element represents the processes to be generated in Goobi Production. It can
+	 * hold <code>&lt;process&gt;</code> elements (of any quantity).
 	 * </p>
 	 */
 	private static final String ELEMENT_PROCESSES = "processes";
 
 	/**
-	 * Element <code>&lt;title&gt;</code> used in the XML representation of a
-	 * course of appearance. Each <code>&lt;title&gt;</code> element represents
-	 * a block in time the appeared issues belong to. It has the optional
-	 * attribute <code>index="…"</code> and can hold
-	 * <code>&lt;appeared&gt;</code> elements (of any quantity).
+	 * Element <code>&lt;title&gt;</code> used in the XML representation of a course of appearance. Each
+	 * <code>&lt;title&gt;</code> element represents a block in time the appeared issues belong to. It has the optional
+	 * attribute <code>index="…"</code> and can hold <code>&lt;appeared&gt;</code> elements (of any quantity).
 	 *
 	 * <p>
-	 * Note: In the original design, the element was intended to model title
-	 * name changes. This was given up later, but for historical reasons, the
-	 * XML element’s name is still “title”. For the original design, see
+	 * Note: In the original design, the element was intended to model title name changes. This was given up later,
+	 * but for historical reasons, the XML element’s name is still “title”. For the original design, see
 	 * https://github.com/kitodo/kitodo-production/issues/51#issuecomment-38035674
 	 * </p>
 	 */
@@ -186,8 +168,7 @@ public class Course extends ArrayList<Block> {
 	private boolean processesAreVolatile = true;
 
 	/**
-	 * Default constructor, creates an empty course. Must be made explicit since
-	 * we offer other constructors, too.
+	 * Default constructor, creates an empty course. Must be made explicit since we offer other constructors, too.
 	 */
 	public Course() {
 		super();
@@ -196,14 +177,10 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Constructor to create a course from an xml source
 	 *
-	 * @param xml
-	 *            XML document data structure
-	 * @throws NoSuchElementException
-	 *             if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
-	 * @throws IllegalArgumentException
-	 *             if the dates of two blocks do overlap
-	 * @throws NullPointerException
-	 *             if a mandatory element is absent
+	 * @param xml XML document data structure
+	 * @throws NoSuchElementException  if ELEMENT_COURSE or ELEMENT_PROCESSES cannot be found
+	 * @throws IllegalArgumentException if the dates of two blocks do overlap
+	 * @throws NullPointerException if a mandatory element is absent
 	 */
 	public Course(Document xml) throws NoSuchElementException {
 		super();
@@ -247,8 +224,7 @@ public class Course extends ArrayList<Block> {
 	/**
 	 * Appends the specified block to the end of this course.
 	 *
-	 * @param block
-	 *            block to be appended to this course
+	 * @param block block to be appended to this course
 	 * @return true (as specified by Collection.add(E))
 	 * @see java.util.ArrayList#add(java.lang.Object)
 	 */
@@ -262,25 +238,17 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * Adds a LocalDate to the set of additions of the issue identified by
-	 * issueHeading in the block optionally identified by a variant. Note that
-	 * in case that the date is outside the time range of the described block,
-	 * the time range will be expanded. Do not use this function in contexts
-	 * where there is one or more issues in the block that have a regular
-	 * appearance set, because in this case the regularly appeared issues in the
-	 * expanded block will show up later, too, which is probably not what you
-	 * want.
+	 * Adds a LocalDate to the set of additions of the issue identified by issueHeading in the block optionally
+	 * identified by a variant. Note that in case that the date is outside the time range of the described block,
+	 * the time range will be expanded. Do not use this function in contexts where there is one or more issues in
+	 * the block that have a regular appearance set, because in this case the regularly appeared issues in the
+	 * expanded block will show up later, too, which is probably not what you want.
 	 *
-	 * @param variant
-	 *            block identifier (may be null)
-	 * @param issueHeading
-	 *            heading of the issue this issue is of
-	 * @param date
-	 *            date to add
+	 * @param variant block identifier (may be null)
+	 * @param issueHeading heading of the issue this issue is of
+	 * @param date date to add
 	 * @return an IndividualIssue representing the added issue
-	 * @throws IllegalArgumentException
-	 *             if the date would cause the block to overlap with another
-	 *             block
+	 * @throws IllegalArgumentException if the date would cause the block to overlap with another block
 	 */
 	private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
 		Block block = get(variant);
@@ -311,9 +279,8 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The procedure clearProcesses() deletes the process list. This is
-	 * necessary if the processes must be regenerated because the data structure
-	 * they will be derived from has changed, or if they only had been added
+	 * The procedure clearProcesses() deletes the process list. This is necessary if the processes must be regenerated
+	 * because the data structure they will be derived from has changed, or if they only had been added
 	 * temporarily to be able to retrieve an XML file containing values.
 	 */
 	public void clearProcesses() {
@@ -323,9 +290,8 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The method countIndividualIssues() determines how many stampings of
-	 * issues physically appeared without generating a list of IndividualIssue
-	 * objects.
+	 * The method countIndividualIssues() determines how many stampings of issues physically appeared without
+	 * generating a list of IndividualIssue objects.
 	 *
 	 * @return the count of issues
 	 */
@@ -338,13 +304,11 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * Returns the block identified by the optionally given variant, or null if
-	 * no block with the given variant can be found.
+	 * Returns the block identified by the optionally given variant, or null if no block with the given variant can
+	 * be found.
 	 *
-	 * @param variant
-	 *            the variant of the block (may be null)
-	 * @return the block identified by the given variant, or null if no block
-	 *         can be found
+	 * @param variant the variant of the block (may be null)
+	 * @return the block identified by the given variant, or null if no block can be found
 	 */
 	private Block get(String variant) {
 		if (resolveByBlockVariantCache.containsKey(variant)) {
@@ -365,9 +329,8 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function getIndividualIssues() generates a list of IndividualIssue
-	 * objects, each of them representing a stamping of one physically appeared
-	 * issue.
+	 * The function getIndividualIssues() generates a list of IndividualIssue objects, each of them representing
+	 * a stamping of one physically appeared issue.
 	 *
 	 * @return a LinkedHashSet of IndividualIssue objects, each of them
 	 *         representing one physically appeared issue
@@ -384,8 +347,7 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function getFirstAppearance() returns the date the regularity of this
-	 * course of appearance starts with.
+	 * The function getFirstAppearance() returns the date the regularity of this course of appearance starts with.
 	 *
 	 * @return the date of first appearance
 	 */
@@ -404,8 +366,7 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function getLastAppearance() returns the date the regularity of this
-	 * course of appearance ends with.
+	 * The function getLastAppearance() returns the date the regularity of this course of appearance ends with.
 	 *
 	 * @return the date of last appearance
 	 */
@@ -424,8 +385,8 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function getNumberOfProcesses() returns the number of processes into
-	 * which the course of appearance will be split.
+	 * The function getNumberOfProcesses() returns the number of processes into which the course of appearance will
+	 * be split.
 	 *
 	 * @return the number of processes
 	 */
@@ -434,11 +395,9 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function guessTotalNumberOfPages() calculates a guessed number of
-	 * pages for a course of appearance of a newspaper, presuming each issue
-	 * having 40 pages and Sunday issues having six times that size because most
-	 * people buy the Sunday issue most often and therefore advertisers buy the
-	 * most space on that day.
+	 * The function guessTotalNumberOfPages() calculates a guessed number of pages for a course of appearance of
+	 * a newspaper, presuming each issue having 40 pages and Sunday issues having six times that size because most
+	 * people buy the Sunday issue most often and therefore advertisers buy the  most space on that day.
 	 *
 	 * @return a guessed total number of pages for the full course of appearance
 	 */
@@ -461,8 +420,7 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function getProcesses() returns the processes to create from the
-	 * course of appearance.
+	 * The function getProcesses() returns the processes to create from the course of appearance.
 	 *
 	 * @return the processes
 	 */
@@ -471,13 +429,11 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function isMatch() iterates over the array of blocks and returns the
-	 * first one that matches a given date. Since there shouldn’t be overlapping
-	 * blocks, there should be at most one block for which this is true. If no
+	 * The function isMatch() iterates over the array of blocks and returns the first one that matches a given date.
+	 * Since there shouldn’t be overlapping blocks, there should be at most one block for which this is true. If no
 	 * matching block is found, it will return null.
 	 *
-	 * @param date
-	 *            a LocalDate to examine
+	 * @param date a LocalDate to examine
 	 * @return the block on which this date is represented, if any
 	 */
 	public Block isMatch(LocalDate date) {
@@ -490,11 +446,10 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The method recalculateRegularityOfIssues() recalculates for all blocks of
-	 * this Course for each Issue the daysOfWeek of its regular appearance
-	 * within the interval of time of the block. This is especially sensible to
-	 * detect the underlying regularity after lots of issues whose existence is
-	 * known have been added one by one as additions to the underlying issue(s).
+	 * The method recalculateRegularityOfIssues() recalculates for all blocks of this Course for each Issue the
+	 * daysOfWeek of its regular appearance within the interval of time of the block. This is especially sensible to
+	 * detect the underlying regularity after lots of issues whose existence is known have been added one by one as
+	 * additions to the underlying issue(s).
 	 */
 	public void recalculateRegularityOfIssues() {
 		for (Block block : this) {
@@ -503,17 +458,13 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The function remove() removes the element at the specified position in
-	 * this list. Shifts any subsequent elements to the left (subtracts one from
-	 * their indices). Additionally, any references to the object held in the
-	 * map used for resolving are being removed so that the object can be
-	 * garbage-collected.
+	 * The function remove() removes the element at the specified position in this list. Shifts any subsequent elements
+	 * to the left (subtracts one from their indices). Additionally, any references to the object held in the
+	 * map used for resolving are being removed so that the object can be garbage-collected.
 	 *
-	 * @param index
-	 *            the index of the element to be removed
+	 * @param index the index of the element to be removed
 	 * @return the element that was removed from the list
-	 * @throws IndexOutOfBoundsException
-	 *             if the index is out of range (index < 0 || index >= size())
+	 * @throws IndexOutOfBoundsException if the index is out of range (index < 0 || index >= size())
 	 * @see java.util.ArrayList#remove(int)
 	 */
 	@Override
@@ -532,11 +483,9 @@ public class Course extends ArrayList<Block> {
 	}
 
 	/**
-	 * The method splitInto() calculates the processes depending on the given
-	 * BreakMode.
+	 * The method splitInto() calculates the processes depending on the given BreakMode.
 	 *
-	 * @param mode
-	 *            how the course shall be broken into issues
+	 * @param mode how the course shall be broken into issues
 	 */
 
 	public void splitInto(Granularity mode) {

@@ -27,7 +27,8 @@ package org.goobi.production.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import org.goobi.io.SafeFile;
+
+import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -40,9 +41,9 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
-import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 
-import de.sub.goobi.helper.Helper;
+import org.goobi.io.SafeFile;
+import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 
 public class GoobiHotfolder implements IGoobiHotfolder {
 
@@ -55,6 +56,13 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	private String updateStrategy;
 	private String collection;
 
+	/**
+	 * @param name add description
+	 * @param folder add description
+	 * @param template add description
+	 * @param updateStrategy add description
+	 * @param collection add description
+	 */
 	public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
 		this.setName(name);
 		this.folder = folder;
@@ -64,7 +72,6 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 *
 	 * @return a list with all xml files in GoobiHotfolder
 	 */
 
@@ -74,8 +81,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 *
-	 * @param name
+	 * @param name add description
 	 * @return a list with all filenames containing the name in GoobiHotfolder
 	 */
 
@@ -92,8 +98,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 *
-	 * @param filter
+	 * @param filter add description
 	 * @return a list with all filenames matching the filter
 	 */
 
@@ -103,8 +108,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 	}
 
 	/**
-	 *
-	 * @param filter
+	 * @param filter add description
 	 * @return a list with all file matching the filter
 	 */
 
@@ -143,6 +147,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		}
 	};
 
+	/**
+	 * @return add description
+	 */
 	public static List<GoobiHotfolder> getInstances() {
 		logger.trace("config 1");
 		List<GoobiHotfolder> answer = new ArrayList<GoobiHotfolder>();
@@ -274,6 +281,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		return getLockFile().exists();
 	}
 
+	/**
+	 * @throws IOException add description
+	 */
 	public void lock() throws IOException {
 		SafeFile f = getLockFile();
 		if (!f.exists()) {
@@ -281,6 +291,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 		}
 	}
 
+	/**
+	 * @throws IOException add description
+	 */
 	public void unlock() throws IOException {
 		SafeFile f = getLockFile();
 		if (f.exists()) {

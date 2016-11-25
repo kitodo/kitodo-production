@@ -39,6 +39,10 @@
 
 package org.goobi.mq.processors;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.AktuelleSchritteForm;
+import de.sub.goobi.persistence.SchrittDAO;
+
 import java.util.List;
 import java.util.Map;
 
@@ -47,16 +51,11 @@ import org.goobi.mq.MapMessageObjectReader;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.AktuelleSchritteForm;
-import de.sub.goobi.persistence.SchrittDAO;
-
 /**
- * This is a web service interface to close steps. You have to provide the step
- * id as “id”; you can add a field “message” which will be added to the wiki
- * field.
- * 
- * @author Matthias Ronge <matthias.ronge@zeutschel.de>
+ * This is a web service interface to close steps. You have to provide the step id as “id”; you can add a field
+ * “message” which will be added to the wiki field.
+ *
+ * @author Matthias Ronge 	&lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FinaliseStepProcessor extends ActiveMQProcessor {
 
@@ -71,14 +70,12 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 	}
 
 	/**
-	 * This is the main routine processing incoming tickets. It gets an
-	 * AktuelleSchritteForm object, sets it to the appropriate step which is
-	 * retrieved from the database, appends the message − if any − to the wiki
+	 * This is the main routine processing incoming tickets. It gets an AktuelleSchritteForm object, sets it to
+	 * the appropriate step which is retrieved from the database, appends the message − if any − to the wiki
 	 * field, and executes the form’s the step close function.
-	 * 
-	 * @param ticket
-	 *            the incoming message
-	 * 
+	 *
+	 * @param ticket the incoming message
+	 *
 	 * @see org.goobi.mq.ActiveMQProcessor#process(org.goobi.mq.MapMessageObjectReader)
 	 */
 	@Override
@@ -86,21 +83,20 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 		AktuelleSchritteForm dialog = new AktuelleSchritteForm();
 		Integer stepID = ticket.getMandatoryInteger("id");
 		dialog.setMySchritt(new SchrittDAO().get(stepID));
-		if (ticket.hasField("properties"))
+		if (ticket.hasField("properties")) {
 			updateProperties(dialog, ticket.getMapOfStringToString("properties"));
-		if (ticket.hasField("message"))
+		}
+		if (ticket.hasField("message")) {
 			dialog.getMySchritt().getProzess().addToWikiField(ticket.getString("message"));
+		}
 		dialog.SchrittDurchBenutzerAbschliessen();
 	}
 
 	/**
-	 * The method updateProperties() transfers the properties to set into
-	 * Goobi’s data model.
-	 * 
-	 * @param dialog
-	 *            The AktuelleSchritteForm that we work with
-	 * @param propertiesToSet
-	 *            A Map with the properties to set
+	 * The method updateProperties() transfers the properties to set into Goobi’s data model.
+	 *
+	 * @param dialog The AktuelleSchritteForm that we work with
+	 * @param propertiesToSet A Map with the properties to set
 	 */
 	protected void updateProperties(AktuelleSchritteForm dialog, Map<String, String> propertiesToSet) {
 		List<ProcessProperty> availableProperties = dialog.getProcessProperties();
@@ -114,8 +110,9 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 					propertyAtPosition.setValue(desiredValue);
 					if (dialog.getContainer() == null || dialog.getContainer() == 0) {
 						dialog.setProcessProperty(propertyAtPosition);
-					} else
+					} else {
 						availableProperties.set(position, propertyAtPosition);
+					}
 					dialog.saveCurrentProperty();
 				}
 			}

@@ -48,6 +48,10 @@ public enum DisplayType {
 		return this.title;
 	}
 
+	/**
+	 * @param inTitle add description
+	 * @return add description
+	 */
 	public static DisplayType getByTitle(String inTitle) {
 		if (inTitle != null) {
 			for (DisplayType type : DisplayType.values()) {

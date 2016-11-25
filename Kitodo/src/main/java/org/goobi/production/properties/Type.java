@@ -37,6 +37,10 @@ public enum Type {
 		this.name = name;
 	}
 
+	/**
+	 * @param inName add description
+	 * @return add description
+	 */
 	public static Type getTypeByName(String inName) {
 		if (inName.equalsIgnoreCase("LIST")) {
 			return LIST;

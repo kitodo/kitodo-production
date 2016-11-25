@@ -47,6 +47,10 @@ public enum BindState {
 		return title;
 	}
 
+	/**
+	 * @param inTitle add description
+	 * @return add description
+	 */
 	public static BindState getByTitle(String inTitle) {
 		for (BindState type : BindState.values()) {
 			if (type.getTitle().equals(inTitle)) {

@@ -32,25 +32,23 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
-/************************************************************************
- * 
- * This Class provide methods to prepare SQL Queries needed for production statistics. 
- * It depends on time frame and time unit.
- * 
+/**
+ * This Class provide methods to prepare SQL Queries needed for production statistics. It depends on time frame and
+ * time unit.
+ *
  * @author Robert Sehr
- * 
- ***********************************************************************/
+ */
 class ImprovedSQLProduction extends SQLGenerator {
 
 	public ImprovedSQLProduction(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
 		super(timeFrom, timeTo, timeUnit, ids, "h.processID");
 	}
 
-	/**********************************************************************
+	/**
 	 * get actual SQL Query as String.
-	 * 
+	 *
 	 * @return String
-	 **********************************************************************/
+	 */
 	@Override
 	public String getSQL() {
 
@@ -113,16 +111,15 @@ class ImprovedSQLProduction extends SQLGenerator {
 		}
 
 		// building the inner SQL
-		subQuery = "(SELECT table1.prozesseid AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
-				+ getIntervallExpression(this.myTimeUnit, "h.date")
+		subQuery = "(SELECT table1.prozesseid AS singleProcess, table1.sortHelperImages AS pages, h.date "
+				+ "AS timeLimiter, " + getIntervallExpression(this.myTimeUnit, "h.date")
 				+ "  AS intervall from history h "
-				+ " JOIN prozesse AS table1 ON  h.processID=table1.prozesseid  "
-				+ innerWhereClause
+				+ " JOIN prozesse AS table1 ON  h.processID=table1.prozesseid  " + innerWhereClause
 				+ "GROUP BY h.processID order by h.date) AS table_1";
 
 		// building complete query
-		this.mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall FROM  "
-				+ subQuery + " " + outerWhereClause + " GROUP BY intervall ";
+		this.mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, "
+				+ "table_1.intervall FROM  " + subQuery + " " + outerWhereClause + " GROUP BY intervall ";
 		return this.mySql;
 	}
 
@@ -146,16 +143,15 @@ class ImprovedSQLProduction extends SQLGenerator {
 		}
 
 		// building the inner SQL
-		subQuery = "(SELECT table1.prozesseid AS singleProcess, table1.sortHelperImages AS pages, h.date AS timeLimiter, "
-				+ getIntervallExpression(this.myTimeUnit, "h.date")
+		subQuery = "(SELECT table1.prozesseid AS singleProcess, table1.sortHelperImages AS pages, h.date "
+				+ "AS timeLimiter, " + getIntervallExpression(this.myTimeUnit, "h.date")
 				+ "  AS intervall from history h "
-				+ " JOIN prozesse AS table1 ON  h.processID=table1.prozesseid  "
-				+ innerWhereClause
+				+ " JOIN prozesse AS table1 ON  h.processID=table1.prozesseid  " + innerWhereClause
 				+ " GROUP BY h.processID order by h.date) AS table_1";
 
 		// building complete query
-		this.mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall FROM  "
-				+ subQuery + " " + outerWhereClause + " GROUP BY intervall ";
+		this.mySql = "SELECT count(table_1.singleProcess ) AS volumes , sum(table_1.pages) AS pages, table_1.intervall"
+				+ " FROM  " + subQuery + " " + outerWhereClause + " GROUP BY intervall ";
 		return this.mySql;
 	}
 }

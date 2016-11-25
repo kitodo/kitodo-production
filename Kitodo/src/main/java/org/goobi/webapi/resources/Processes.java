@@ -25,25 +25,30 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 package org.goobi.webapi.resources;
 
 import com.sun.jersey.api.NotFoundException;
-import org.goobi.webapi.beans.GoobiProcess;
-import org.goobi.webapi.beans.GoobiProcessStep;
-import org.goobi.webapi.beans.IdentifierPPN;
-import org.goobi.webapi.dao.GoobiProcessDAO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.goobi.webapi.beans.GoobiProcess;
+import org.goobi.webapi.beans.GoobiProcessStep;
+import org.goobi.webapi.beans.IdentifierPPN;
+import org.goobi.webapi.dao.GoobiProcessDAO;
 
 @Path("/processes")
 public class Processes {
-
+	/**
+	 * @return add description
+	 */
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<GoobiProcess> getProcesses() {
@@ -54,6 +59,10 @@ public class Processes {
 		return processes;
 	}
 
+	/**
+	 * @param ippn add description
+	 * @return add description
+	 */
 	@GET
 	@Path("{ppnIdentifier}")
 	public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
@@ -67,6 +76,10 @@ public class Processes {
 		return process;
 	}
 
+	/**
+	 * @param ippn add description
+	 * @return add description
+	 */
 	@GET
 	@Path("{ppnIdentifier}/steps")
 	public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {

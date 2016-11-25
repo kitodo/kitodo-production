@@ -27,6 +27,12 @@ package org.goobi.production.properties;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,20 +42,22 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-
 public class PropertyParser {
 	private static final Logger logger = Logger.getLogger(PropertyParser.class);
 
+	/**
+	 * @param args add description
+	 */
 	public static void main(String[] args) {
 		PropertyParser parser = new PropertyParser();
 		parser.readConfigAsSample();
 		// System.out.println("finish");
 	}
 
+	/**
+	 * @param mySchritt add description
+	 * @return add description
+	 */
 	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
 		Hibernate.initialize(mySchritt.getProzess());
 		Hibernate.initialize(mySchritt.getProzess().getProjekt());
@@ -167,6 +175,10 @@ public class PropertyParser {
 		return properties;
 	}
 
+	/**
+	 * @param process add description
+	 * @return add description
+	 */
 	public static ArrayList<ProcessProperty> getPropertiesForProcess(Prozess process) {
 		Hibernate.initialize(process.getProjekt());
 		String projectTitle = process.getProjekt().getTitel();
@@ -231,9 +243,8 @@ public class PropertyParser {
 				properties.add(pp);
 
 			}
-		}// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of
-			// them with already existing
-			// 'eigenschaften'
+		} // add existing 'eigenschaften' to properties from config, so we have all properties from config and some of
+		// them with already existing 'eigenschaften'
 		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
 		for (Prozesseigenschaft pe : plist) {

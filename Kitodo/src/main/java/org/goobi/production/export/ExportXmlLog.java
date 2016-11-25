@@ -27,6 +27,21 @@ package org.goobi.production.export;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
+import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Vorlage;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.ExportFileException;
+import de.sub.goobi.helper.exceptions.SwapException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -36,7 +51,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.sub.goobi.helper.enums.StepStatus;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -55,47 +69,36 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.SwapException;
-
 /**
  * This class provides xml logfile generation. After the generation the file will be written to user home directory
- * 
+ *
  * @author Robert Sehr
  * @author Steffen Hankiewicz
- * 
  */
 public class ExportXmlLog implements IProcessDataExport {
 	private static final Logger logger = Logger.getLogger(ExportXmlLog.class);
 
 	/**
 	 * This method exports the production metadata as xml to a given directory
-	 * 
-	 * @param p
-	 *            the process to export
-	 * @param destination
-	 *            the destination to write the file
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ExportFileException
+	 *
+	 * @param p the process to export
+	 * @param destination the destination to write the file
+	 * @throws FileNotFoundException add description
+	 * @throws IOException add description
+	 * @throws ExportFileException add description
 	 */
-
 	public void startExport(Prozess p, String destination) throws FileNotFoundException, IOException {
 		try (FileOutputStream ostream = new FileOutputStream(destination)) {
 			startExport(p, ostream, null);
 		}
 	}
 
+	/**
+	 * @param p add description
+	 * @param dest add description
+	 * @throws FileNotFoundException add description
+	 * @throws IOException add description
+	 */
 	public void startExport(Prozess p, File dest) throws FileNotFoundException, IOException {
 		try (FileOutputStream ostream = new FileOutputStream(dest)) {
 			startExport(p, ostream, null);
@@ -104,13 +107,11 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method exports the production metadata as xml to a given stream.
-	 * 
-	 * @param process
-	 *            the process to export
-	 * @param os
-	 *            the OutputStream to write the contents to
-	 * @throws IOException
-	 * @throws ExportFileException
+	 *
+	 * @param process the process to export
+	 * @param os the OutputStream to write the contents to
+	 * @throws IOException add description
+	 * @throws ExportFileException add description
 	 */
 	@Override
 	public void startExport(Prozess process, OutputStream os, String xslt) throws IOException {
@@ -130,11 +131,10 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method creates a new xml document with process metadata
-	 * 
-	 * @param process
-	 *            the process to export
+	 *
+	 * @param process the process to export
 	 * @return a new xml document
-	 * @throws ConfigurationException
+	 * @throws ConfigurationException add description
 	 */
 	public Document createDocument(Prozess process, boolean addNamespace) {
 
@@ -400,6 +400,13 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	}
 
+	/**
+	 * @param expr add description
+	 * @param element add description
+	 * @param namespaces add description
+	 * @return add description
+	 * @throws JaxenException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces)
 			throws JaxenException {
@@ -415,14 +422,11 @@ public class ExportXmlLog implements IProcessDataExport {
 	/**
 	 * This method transforms the xml log using a xslt file and opens a new window with the output file
 	 *
-	 * @param out
-	 *            ServletOutputStream
-	 * @param doc
-	 *            the xml document to transform
-	 * @param filename
-	 *            the filename of the xslt
-	 * @throws XSLTransformException
-	 * @throws IOException
+	 * @param out ServletOutputStream
+	 * @param doc the xml document to transform
+	 * @param filename the filename of the xslt
+	 * @throws XSLTransformException add description
+	 * @throws IOException add description
 	 */
 
 	public void XmlTransformation(OutputStream out, Document doc, String filename) throws XSLTransformException,
@@ -466,9 +470,9 @@ public class ExportXmlLog implements IProcessDataExport {
 	/**
 	 * This method exports the production metadata for al list of processes as a single file to a given stream.
 	 *
-	 * @param processList
-	 * @param outputStream
-	 * @param xslt
+	 * @param processList add description
+	 * @param outputStream add description
+	 * @param xslt add description
 	 */
 
 	public void startExport(Iterable<Prozess> processList, OutputStream outputStream, String xslt) {

@@ -29,8 +29,8 @@ package org.goobi.production.enums;
  */
 public enum ImportReturnValue {
 
-	ExportFinished(0, "Export finished"), InvalidData(1, "Invalid data"), NoData(2, "No data found"), DataAllreadyExists(
-			3, "Data already exists"), WriteError(4, "Data could not be written");
+	ExportFinished(0, "Export finished"), InvalidData(1, "Invalid data"), NoData(2, "No data found"),
+	DataAllreadyExists(3, "Data already exists"), WriteError(4, "Data could not be written");
 
 	private int id;
 	private String value;
@@ -56,6 +56,10 @@ public enum ImportReturnValue {
 		return this.value;
 	}
 
+	/**
+	 * @param title add description
+	 * @return add description
+	 */
 	public static ImportReturnValue getByValue(String title) {
 		for (ImportReturnValue t : ImportReturnValue.values()) {
 			if (t.getValue().equals(title)) {
@@ -65,6 +69,10 @@ public enum ImportReturnValue {
 		return null;
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 */
 	public static ImportReturnValue getById(int id) {
 		for (ImportReturnValue t : ImportReturnValue.values()) {
 			if (t.getId() == id) {

@@ -28,6 +28,8 @@ package org.goobi.production.cli;
  * exception statement from your version.
  */
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,8 +48,6 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-
-import de.sub.goobi.config.ConfigMain;
 
 public class WebInterface extends HttpServlet {
 	private static final Logger logger = Logger.getLogger(WebInterface.class);
