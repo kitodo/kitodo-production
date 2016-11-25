@@ -27,6 +27,9 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -46,9 +49,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
-
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
@@ -180,14 +180,11 @@ public class ConfigOpac {
 	 * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
 	 * <kbd>goobi_opac.xml</kbd>.
 	 *
-	 * The function will return an empty list if there are no such entries for
-	 * the given catalogue.
+	 * <p>The function will return an empty list if there are no such entries for the given catalogue.</p>
 	 *
-	 * @param title
-	 *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
-	 *            examine
+	 * @param title Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to examine
 	 * @return List
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException add description
 	 */
 	public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
 		List<String> result = new LinkedList<String>();
@@ -205,8 +202,8 @@ public class ConfigOpac {
 	}
 
 	/**
-	 * Returns all configured catalogue titles from the config file. The Jersey
-	 * API cannot invoke static methods, so we need this wrapper method.
+	 * Returns all configured catalogue titles from the config file. The Jersey API cannot invoke static methods,
+	 * so we need this wrapper method.
 	 *
 	 * @return all catalogue titles
 	 */

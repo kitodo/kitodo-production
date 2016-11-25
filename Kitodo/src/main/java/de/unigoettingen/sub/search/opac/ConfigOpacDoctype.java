@@ -27,6 +27,7 @@ package de.unigoettingen.sub.search.opac;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,6 +104,9 @@ public class ConfigOpacDoctype {
 		return this.mappings;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getLocalizedLabel() {
 		String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
 		if (currentLocale != null && !currentLocale.equals("")) {
