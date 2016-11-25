@@ -56,10 +56,17 @@ public class MD4 {
 		return (lshift(a + H(b, c, d) + X[k] + 0x6ED9EBA1, s));
 	}
 
-	/* this applies md4 to 64 byte chunks */
+	/**
+	 * This applies md4 to 64 byte chunks
+	 *
+	 * @param M add description
+	 */
 	public static void mdfour64(int M[]) {
 		int j;
-		int AA, BB, CC, DD;
+		int AA;
+		int BB;
+		int CC;
+		int DD;
 
 		for (j = 0; j < 16; j++) {
 			X[j] = M[j];
@@ -127,6 +134,11 @@ public class MD4 {
 		D += DD;
 	}
 
+	/**
+	 * @param M add description
+	 * @param in add description
+	 * @param offset add description
+	 */
 	public static void copy64(int M[], byte in[], int offset) {
 		int i;
 
@@ -140,6 +152,11 @@ public class MD4 {
 		copy64(M, in, 0);
 	}
 
+	/**
+	 * @param out add description
+	 * @param offset add description
+	 * @param x add description
+	 */
 	public static void copy4(byte out[], int offset, int x) {
 		out[offset] = (byte) (x & 0xFF);
 		out[1 + offset] = (byte) ((x >> 8) & 0xFF);
@@ -147,7 +164,12 @@ public class MD4 {
 		out[3 + offset] = (byte) ((x >> 24) & 0xFF);
 	}
 
-	/* produce a md4 message digest from data of length n bytes */
+	/**
+	 * Produce a md4 message digest from data of length n bytes
+	 *
+	 * @param in add description
+	 * @return add description
+	 */
 	public static byte[] mdfour(byte in[]) {
 		byte out[] = new byte[16];
 		byte buf[] = new byte[128];
