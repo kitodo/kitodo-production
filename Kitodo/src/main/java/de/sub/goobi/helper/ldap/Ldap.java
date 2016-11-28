@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.ldap;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,8 @@ package de.sub.goobi.helper.ldap;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
@@ -110,7 +113,7 @@ public class Ldap {
 			setNextUidNumber();
 			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " " + inBenutzer.getNachVorname(), "");
 			/*
-			 * -------------------------------- check if HomeDir exists, else create it --------------------------------
+			 * check if HomeDir exists, else create it
 			 */
 			myLogger.debug("HomeVerzeichnis pruefen");
 			String homePath = getUserHomeDirectory(inBenutzer);
@@ -490,7 +493,7 @@ public class Ldap {
 				}
 
 				/*
-				 * -------------------------------- NTLM-Passwort-Attribut ändern --------------------------------
+				 * NTLM-Passwort-Attribut ändern
 				 */
 				BasicAttribute ntlmpassword = null;
 				try {

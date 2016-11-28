@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.forms;
 
@@ -87,8 +89,7 @@ public class CalendarForm {
 	 */
 	public static class Cell {
 		/**
-		 * The field date holds the date that this cell represents in the course
-		 * of time.
+		 * The field date holds the date that this cell represents in the course of time.
 		 */
 		protected LocalDate date = null;
 

@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.exceptions;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,18 +28,20 @@ package de.sub.goobi.helper.exceptions;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.util.ArrayList;
-import java.util.Date;
+//CHECKSTYLE:ON
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * This class provides the tools it takes to generate a configurable Error message for Errors which are unexpected An
  * example for the area in GoobiProperties.config is given after the class declaration in the source code.
  *
- * Besides building up the information in the constructor the other important
- * method is getLocalizedMessage(), which provides the build up message in html
+ * <p>Besides building up the information in the constructor the other important method is getLocalizedMessage(),
+ * which provides the build up message in html.</p>
  *
  * @author Wulf
  * @version 12/10/2009
@@ -50,13 +53,8 @@ import de.sub.goobi.helper.Helper;
  * err_linkText -> message in which the link from GoobiConfig: err_linkToPage=
  * err_noMailService -> message if email is disabled in GoobiConfig: err_emailEnabled=false
  * err_subjectLine -> message in Subject Line of email
- *
  */
 public class GUIExceptionWrapper extends Exception {
-
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
@@ -189,7 +187,7 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * @return collected addresses as a string to be used after <a href="mailto:"
+	 * @return collected addresses as a string to be used after <a href="mailto:"></a>
 	 */
 	private String getAddresses() {
 		StringBuffer addresses = new StringBuffer();

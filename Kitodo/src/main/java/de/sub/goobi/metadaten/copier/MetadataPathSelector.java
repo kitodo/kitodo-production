@@ -54,8 +54,7 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
 /**
- * A MetadataPathSelector provides methods to retrieve or modify document
- * structure nodes on a document structure node.
+ * A MetadataPathSelector provides methods to retrieve or modify document structure nodes on a document structure node.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -73,8 +72,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	@SuppressWarnings("javadoc")
 	private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
 	/**
-	 * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
-	 * to extract the first metadata path segment.
+	 * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used to extract the first metadata path
+	 * segment.
 	 */
 	private static final Pattern METADATA_SPLIT_PATH_SCHEME = Pattern.compile("^" + METADATA_PATH_SEPARATOR + "([^"
 			+ METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+)");

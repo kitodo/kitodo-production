@@ -29,8 +29,8 @@ import org.hibernate.Session;
 
 /**
  * Base class for DAOs. This class defines common CRUD methods. 
- * 
- * Changes have been made by Steffen Hankiewicz.
+ *
+ * <p>Changes have been made by Steffen Hankiewicz.</p>
  *
  * @author Nick Heudecker nick@systemmobile.com
  * @author Steffen Hankiewicz steffen.hankiewicz@intranda.com

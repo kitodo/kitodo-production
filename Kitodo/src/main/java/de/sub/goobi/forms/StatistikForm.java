@@ -1,5 +1,6 @@
 package de.sub.goobi.forms;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -175,7 +178,7 @@ public class StatistikForm {
 			List<Integer> trefferListe = new ArrayList<Integer>();
 
 			/*
-			 * -------------------------------- die Treffer der Benutzergruppen --------------------------------
+			 * die Treffer der Benutzergruppen
 			 */
 			Criteria critGruppen = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet) {
@@ -204,7 +207,7 @@ public class StatistikForm {
 			}
 
 			/*
-			 * -------------------------------- Treffer der Benutzer --------------------------------
+			 * Treffer der Benutzer
 			 */
 			Criteria critBenutzer = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet) {

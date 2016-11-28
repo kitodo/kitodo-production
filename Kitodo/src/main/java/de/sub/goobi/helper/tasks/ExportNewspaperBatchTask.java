@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.helper.tasks;
 
@@ -86,26 +88,22 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
 
 	/**
-	 * Name of the structural element used to represent the day of month in the
-	 * anchor structure of the newspaper.
+	 * Name of the structural element used to represent the day of month in the anchor structure of the newspaper.
 	 */
 	private final String dayLevelName;
 
 	/**
-	 * Name of the structural element used to represent the issue in the anchor
-	 * structure of the newspaper.
+	 * Name of the structural element used to represent the issue in the anchor structure of the newspaper.
 	 */
 	private final String issueLevelName;
 
 	/**
-	 * Name of the structural element used to represent the month in the anchor
-	 * structure of the newspaper.
+	 * Name of the structural element used to represent the month in the anchor structure of the newspaper.
 	 */
 	private final String monthLevelName;
 
 	/**
-	 * Name of the structural element used to represent the year in the anchor
-	 * structure of the newspaper.
+	 * Name of the structural element used to represent the year in the anchor structure of the newspaper.
 	 */
 	private final String yearLevelName;
 
@@ -115,37 +113,32 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	private Batch batch;
 
 	/**
-	 * The field aggregation holds a 4-dimensional list (hierarchy: year, month,
-	 * day, issue) into which the issues are aggregated.
+	 * The field aggregation holds a 4-dimensional list (hierarchy: year, month, day, issue) into which the issues
+	 * are aggregated.
 	 */
 	private final ArrayListMap<org.joda.time.LocalDate, String> aggregation;
 
 	/**
-	 * The field action holds the number of the action the task currently is in.
-	 * Valid values range from 1 to 2. This is to start up at the right position
-	 * after an interruption again.
+	 * The field action holds the number of the action the task currently is in. Valid values range from 1 to 2. This
+	 * is to start up at the right position after an interruption again.
 	 */
 	private int action;
 
 	/**
-	 * The field processesIterator holds an iterator object to walk though the
-	 * processes of the batch. The processes in a batch are a Set
-	 * implementation, so we use an iterator to walk through and do not use an
-	 * index.
+	 * The field processesIterator holds an iterator object to walk though the processes of the batch. The processes
+	 * in a batch are a Set implementation, so we use an iterator to walk through and do not use an index.
 	 */
 	private Iterator<Prozess> processesIterator;
 
 	/**
-	 * The field dividend holds the number of processes that have been processed
-	 * in this action. The fields dividend and divisor are used to display a
-	 * progress bar.
+	 * The field dividend holds the number of processes that have been processed in this action. The fields dividend
+	 * and divisor are used to display a progress bar.
 	 */
 	private int dividend;
 
 	/**
-	 * The field dividend holds the number of processes to process in each
-	 * action. The fields dividend and divisor are used to display a progress
-	 * bar.
+	 * The field dividend holds the number of processes to process in each action. The fields dividend and divisor are
+	 * used to display a progress bar.
 	 */
 	private final double divisor;
 

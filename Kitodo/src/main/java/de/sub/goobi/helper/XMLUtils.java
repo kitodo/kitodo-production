@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.helper;
 
@@ -70,7 +72,6 @@ public class XMLUtils {
 	 * @param data The document to convert
 	 * @param indent No of spaces to use for indenting. Use “null” to disable
 	 * @return the XML data as byte[]
-	 *
 	 * @throws TransformerException when it is not possible to create a Transformer instance or if an unrecoverable
 	 * 								error occurs during the course of the transformation
 	 */

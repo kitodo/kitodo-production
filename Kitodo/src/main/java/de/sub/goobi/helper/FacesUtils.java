@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.helper;
 
@@ -49,7 +51,6 @@ import javax.ws.rs.core.MediaType;
 /**
  * The class FacesUtils contains an omnium-gatherum of functions that perform recurring tasks related to
  * JavaServer Faces.
- *
  * TODO: Most of the static functions currently located in “Helper.java” do belong here.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;

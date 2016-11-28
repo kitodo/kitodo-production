@@ -1,5 +1,6 @@
 package org.goobi.production.flow.helper;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,7 @@ package org.goobi.production.flow.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
 
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.enums.StepStatus;
@@ -96,6 +98,9 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
 		return this.scripts.size();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getScriptnames() {
 		List<String> answer = new ArrayList<String>();
 		answer.addAll(this.scripts.keySet());

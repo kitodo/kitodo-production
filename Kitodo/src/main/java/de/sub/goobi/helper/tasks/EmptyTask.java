@@ -47,17 +47,16 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.Duration;
 
 /**
- * The class EmptyTask is the base class for worker threads that operate
- * independently to do the work in the background. The name empty task points
- * out that the task doesn’t do anything sensible yet. It is here to be
- * extendet.
+ * The class EmptyTask is the base class for worker threads that operate independently to do the work in the
+ * background. The name empty task points out that the task doesn’t do anything sensible yet. It is here to be
+ * extended.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class EmptyTask extends Thread implements INameableTask {
 	/**
-	 * The enum Actions lists the available instructions to the housekeeper what
-	 * to do with a terminated thread. These are:
+	 * The enum Actions lists the available instructions to the housekeeper what to do with a terminated thread.
+	 * These are:
 	 *
 	 * <dl>
 	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
@@ -79,9 +78,8 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The constant CATCH_ALL holds an UncaughtExceptionHandler implementation
-	 * which will automatically be attached to all task threads. Otherwise
-	 * exceptions might get lost or even bring the runtime to crash.
+	 * The constant CATCH_ALL holds an UncaughtExceptionHandler implementation which will automatically be attached
+	 * to all task threads. Otherwise exceptions might get lost or even bring the runtime to crash.
 	 */
 	public static final Thread.UncaughtExceptionHandler CATCH_ALL = new Thread.UncaughtExceptionHandler() {
 		/**
@@ -101,25 +99,22 @@ public class EmptyTask extends Thread implements INameableTask {
 	};
 
 	/**
-	 * The constant DEFAULT_BEHAVIOUR defines the default behaviour of the
-	 * TaskKeeper towards a task that terminated. The default behaviour is that
-	 * it will be kept in the front end as configured in the global
-	 * configuration file and then will be deleted.
+	 * The constant DEFAULT_BEHAVIOUR defines the default behaviour of the TaskKeeper towards a task that terminated.
+	 * The default behaviour is that it will be kept in the front end as configured in the global configuration file
+	 * and then will be deleted.
 	 */
 	private static final Behaviour DEFAULT_BEHAVIOUR = Behaviour.KEEP_FOR_A_WHILE;
 
 	/**
-	 * The field behaviour defines the behaviour of the TaskKeeper towards the
-	 * task if it has terminated. Setting this field to DELETE_IMMEDIATELY will
-	 * also result in the desired behaviour if the task has not yet been started
+	 * The field behaviour defines the behaviour of the TaskKeeper towards the task if it has terminated. Setting this
+	 * field to DELETE_IMMEDIATELY will also result in the desired behaviour if the task has not yet been started
 	 * at all.
 	 */
 	private Behaviour behaviour;
 
 	/**
-	 * The field detail holds a string giving some details about what the thread
-	 * is doing that do not require translation, i.e. which file is currently
-	 * processed.
+	 * The field detail holds a string giving some details about what the thread  is doing that do not require
+	 * translation, i.e. which file is currently processed.
 	 */
 	private String detail = null;
 
@@ -129,23 +124,21 @@ public class EmptyTask extends Thread implements INameableTask {
 	private Exception exception = null;
 
 	/**
-	 * The field passedAway will be initialised with a time stamp as the thread
-	 * dies to be able to remove it a defined timespan after it died.
+	 * The field passedAway will be initialised with a time stamp as the thread dies to be able to remove it a defined
+	 * timespan after it died.
 	 */
 	private Long passedAway = null;
 
 	/**
-	 * The field progress holds one out of 101 values, ranging from 0 to 100 to
-	 * indicate the progress of the work. This will be shown as a progress bar
-	 * in the front end.
+	 * The field progress holds one out of 101 values, ranging from 0 to 100 to indicate the progress of the work.
+	 * This will be shown as a progress bar in the front end.
 	 */
 	private int progress = 0;
 
 	/**
 	 * Default constructor. Creates an empty thread.
 	 *
-	 * @param nameDetail
-	 *            a detail that is helpful when being shown, may be null
+	 * @param nameDetail a detail that is helpful when being shown, may be null
 	 */
 	public EmptyTask(String nameDetail) {
 		setDaemon(true);
@@ -153,8 +146,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * Copy constructor. Required for cloning tasks. Cloning is required to be
-	 * able to restart a task.
+	 * Copy constructor. Required for cloning tasks. Cloning is required to be able to restart a task.
 	 *
 	 * @param master
 	 *            instance to make a copy from
@@ -170,10 +162,9 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * Calls the copy constructor to create a not-yet-executed replacement copy
-	 * of that thread object. Every subclass must provide its own copy
-	 * constructor—which must call super(objectToCopy)—and overload this method
-	 * to call its own copy constructor.
+	 * Calls the copy constructor to create a not-yet-executed replacement copy of that thread object. Every subclass
+	 * must provide its own copy constructor—which must call super(objectToCopy)—and overload this method to call its
+	 * own copy constructor.
 	 *
 	 * @return a not-yet-executed replacement of this thread
 	 */
@@ -182,24 +173,21 @@ public class EmptyTask extends Thread implements INameableTask {
 	}
 
 	/**
-	 * The function getBehaviour() returns the instruction how the TaskSitter
-	 * shall behave towards this task. Usually, the behaviour isn’t set while
-	 * the task is under normal execution. It can be set by calling
-	 * {@link #interrupt(Behaviour)}. It may also be set this way if the task is
-	 * still new and wasn’t even started. The following instructions are
-	 * available:
+	 * The function getBehaviour() returns the instruction how the TaskSitter shall behave towards this task. Usually,
+	 * the behaviour isn’t set while the task is under normal execution. It can be set by calling
+	 * {@link #interrupt(Behaviour)}. It may also be set this way if the task is still new and wasn’t even started.
+	 * The following instructions are available:
 	 *
 	 * <dl>
 	 * <dt><code>DELETE_IMMEDIATELY</code></dt>
 	 * <dd>The thread shall be disposed of as soon as is has gracefully stopped.
 	 * </dd>
 	 * <dt><code>KEEP_FOR_A_WHILE</code></dt>
-	 * <dd>The default behaviour: A thread that terminated either normally or
-	 * abnormally is kept around in memory for a while and then removed
-	 * automatically. Numeric and temporary limits can be configured.</dd>
+	 * <dd>The default behaviour: A thread that terminated either normally or abnormally is kept around in memory for
+	 * a while and then removed automatically. Numeric and temporary limits can be configured.</dd>
 	 * <dt><code>PREPARE_FOR_RESTART</code></dt>
-	 * <dd>If the thread was interrupted by a user, replace it by a new one,
-	 * passing in the state of the old one to be able to continue work.</dd>
+	 * <dd>If the thread was interrupted by a user, replace it by a new one, passing in the state of the old one to be
+	 * able to continue work.</dd>
 	 * </dl>
 	 *
 	 * @return how the TaskSitter shall behave towards this task
@@ -469,8 +457,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * The procedure setProgress() may be used to set the task’s progress in
 	 * percent (i.e., from 0 to 100).
 	 *
-	 * @param statusProgress
-	 *            the tasks progress
+	 * @param statusProgress the tasks progress
 	 */
 	protected void setProgress(double statusProgress) {
 		setProgress((int) Math.ceil(statusProgress));

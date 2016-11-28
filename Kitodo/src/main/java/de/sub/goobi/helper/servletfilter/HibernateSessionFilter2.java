@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.servletfilter;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.helper.servletfilter;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 import de.sub.goobi.persistence.HibernateSessionLong;
 
@@ -59,9 +62,9 @@ public class HibernateSessionFilter2 implements Filter {
 		HibernateSessionLong hsl = null;
 		Session session = null;
 
-		/* --------------------------------
+		/*
 		 * die Hibernate-Session connecten
-		 * --------------------------------*/
+		 */
 		// das Managed Bean aus der Session holen
 		hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
 		// wenn das Managed Bean bereits in der Http-Session war,
@@ -78,9 +81,9 @@ public class HibernateSessionFilter2 implements Filter {
 			throw new ServletException(new GUIExceptionWrapper("Unexpected Error.", e));
 		} finally {
 
-			/* --------------------------------
+			/*
 			 * die Hibernate-Session von der Datenbank trennen
-			 * --------------------------------*/
+			 */
 			// das Managed Bean aus der Session holen
 			hsl = (HibernateSessionLong) myRequest.getSession().getAttribute("HibernateSessionLong");
 			// wenn das Managed Bean bereits in der Http-Session war,

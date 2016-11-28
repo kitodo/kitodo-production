@@ -1,5 +1,6 @@
 package de.sub.goobi.helper;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,8 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.ProzessDAO;
@@ -65,9 +68,9 @@ public class XmlArtikelZaehlen {
 			return -1;
 		}
 
-		/* --------------------------------
+		/*
 		 * DocStruct rukursiv durchlaufen
-		 * --------------------------------*/
+		 */
 		DigitalDocument mydocument = null;
 		try {
 			mydocument = gdzfile.getDigitalDocument();
@@ -79,9 +82,9 @@ public class XmlArtikelZaehlen {
 			rueckgabe = 0;
 		}
 
-		/* --------------------------------
+		/*
 		 * die ermittelte Zahl im Prozess speichern
-		 * --------------------------------*/
+		 */
 		myProzess.setSortHelperArticles(Integer.valueOf(rueckgabe));
 		try {
 			new ProzessDAO().save(myProzess);
@@ -124,9 +127,9 @@ public class XmlArtikelZaehlen {
 				}
 			}
 
-			/* --------------------------------
+			/*
 			 * call children recursive
-			 * --------------------------------*/
+			 */
 			if (inStruct.getAllChildren() != null) {
 				for (DocStruct struct : inStruct.getAllChildren()) {
 					rueckgabe += getNumberOfUghElements(struct, inType);

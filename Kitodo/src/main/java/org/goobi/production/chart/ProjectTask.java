@@ -2,6 +2,7 @@ package org.goobi.production.chart;
 
 import java.io.Serializable;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -29,6 +30,7 @@ import java.io.Serializable;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
 
 public class ProjectTask implements IProjectTask, Serializable {
 	private static final long serialVersionUID = 1L;

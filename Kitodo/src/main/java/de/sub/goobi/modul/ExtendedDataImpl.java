@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -25,6 +26,7 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.modul;
 
@@ -53,13 +55,13 @@ import java.util.List;
  * Namenraum Process.Data
  * Adressierung von Prozessmetadaten
  * Prozessmetadaten werden über eine Kombination aus SessionID, Typ, Nummer und Name angesprochen.
- * ·   Der Typ ist dabei ein String um z.B. zwischen Scanvorlage („TEMPLATE“) 
+ * ·   Der Typ ist dabei ein String um z.B. zwischen Scanvorlage („TEMPLATE“)
  *     und Werkstück („WORKPIECE“) unterscheiden zu können.
  * ·   Die Nummer ist dabei die Nummer von z.B. Scanvorlage oder Werkstück.
  * Für Daten des Prozesses ist der Typ entweder „PROCESS“ oder leer, die Nummer wird ignoriert.
  *
- * <p>Für zukünftige Versionen bleiben Feldnamen mit dem Präfix „#“ reserviert, sie dürfen durch die API nicht ausgelesen
- * oder geschrieben werden. Für die Adressierung und den Austausch von einzelnen Prozesseigenschaften wird die
+ * <p>Für zukünftige Versionen bleiben Feldnamen mit dem Präfix „#“ reserviert, sie dürfen durch die API nicht
+ * ausgelesen der geschrieben werden. Für die Adressierung und den Austausch von einzelnen Prozesseigenschaften wird die
  * Datenstruktur „Process Property“ verwendet. Dabei wird die Struktur abhängig vom Kontext interpretiert:</p>
  * ·   Die Methode „add“ ignoriert das Feld „id“.
  * ·   Die Methode „set“ kann das Feld „name“ ignorieren oder es zur Validierung einsetzen.

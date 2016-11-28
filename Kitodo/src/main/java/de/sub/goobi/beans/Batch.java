@@ -49,8 +49,8 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 /**
- * The class Batch represents a user-definable, unordered collection of
- * processes that methods can be applied on in batch processing.
+ * The class Batch represents a user-definable, unordered collection of processes that methods can be applied on in
+ * batch processing.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -75,14 +75,13 @@ public class Batch {
 	}
 
 	/**
-	 * The field id holds the database record identifier. It is null in case
-	 * that the Batch has not yet been saved by Hibernate.
+	 * The field id holds the database record identifier. It is null in case that the Batch has not yet been saved
+	 * by Hibernate.
 	 */
 	private Integer id;
 	/**
-	 * The field title holds the batch title. Using titles for batches is
-	 * optional, the field may be null. If so, the id will be shown to the user
-	 * instead.
+	 * The field title holds the batch title. Using titles for batches is optional, the field may be null. If so,
+	 * the id will be shown to the user instead.
 	 */
 	private String title;
 	/**
@@ -105,8 +104,7 @@ public class Batch {
 	/**
 	 * Constructor to create an empty batch object with a given type.
 	 *
-	 * @param type
-	 *            type of the batch
+	 * @param type type of the batch
 	 */
 	public Batch(Type type) {
 		this.processes = new HashSet<Prozess>(0);
@@ -114,13 +112,10 @@ public class Batch {
 	}
 
 	/**
-	 * Constructor to create an empty batch object with a given title and a
-	 * type.
+	 * Constructor to create an empty batch object with a given title and a type.
 	 *
-	 * @param title
-	 *            title for the batch
-	 * @param type
-	 *            type of the batch
+	 * @param title title for the batch
+	 * @param type type of the batch
 	 */
 	public Batch(String title, Type type) {
 		this.processes = new HashSet<Prozess>(0);
@@ -131,10 +126,8 @@ public class Batch {
 	/**
 	 * Constructor to create a batch that holds the given processes.
 	 *
-	 * @param type
-	 *            type of the batch
-	 * @param processes
-	 *            processes that go into the batch
+	 * @param type type of the batch
+	 * @param processes processes that go into the batch
 	 */
 	public Batch(Type type, Collection<? extends Prozess> processes) {
 		this.processes = new HashSet<Prozess>(processes);
@@ -142,13 +135,10 @@ public class Batch {
 	}
 
 	/**
-	 * Constructor to create a batch with a given title that holds the given
-	 * processes.
+	 * Constructor to create a batch with a given title that holds the given processes.
 	 *
-	 * @param title
-	 *            title for the batch
-	 * @param type
-	 *            type of the batch
+	 * @param title title for the batch
+	 * @param type type of the batch
 	 * @param processes
 	 *            processes that go into the batch
 	 */
@@ -159,11 +149,9 @@ public class Batch {
 	}
 
 	/**
-	 * The function add() adds the given process to this batch if it is not
-	 * already present.
+	 * The function add() adds the given process to this batch if it is not already present.
 	 *
-	 * @param process
-	 *            process to add
+	 * @param process process to add
 	 * @return true if this batch did not already contain the specified process
 	 */
 	public boolean add(Prozess process) {
@@ -171,11 +159,10 @@ public class Batch {
 	}
 
 	/**
-	 * The function addAll() adds all of the elements in the given collection to
-	 * this batch if they're not already present.
+	 * The function addAll() adds all of the elements in the given collection to this batch if they're not already
+	 * present.
 	 *
-	 * @param processes
-	 *            collection containing elements to be added to this set
+	 * @param processes collection containing elements to be added to this set
 	 * @return true if this set changed as a result of the call
 	 */
 	public boolean addAll(Collection<? extends Prozess> processes) {
@@ -183,11 +170,10 @@ public class Batch {
 	}
 
 	/**
-	 * The function contains() returns true if the title (if set) or the
-	 * id-based label contain the specified sequence of char values.
+	 * The function contains() returns true if the title (if set) or the id-based label contain the specified sequence
+	 * of char values.
 	 *
-	 * @param s
-	 *            the sequence to search for
+	 * @param s the sequence to search for
 	 * @return true if the title or label contain s, false otherwise
 	 */
 	public boolean contains(CharSequence s) {
@@ -198,11 +184,10 @@ public class Batch {
 	}
 
 	/**
-	 * The function getId() returns the database record identifier for the
-	 * batch. In case that the Batch has not yet been saved by Hibernate it
-	 * returns null.
+	 * The function getId() returns the database record identifier for the batch. In case that the Batch has not yet
+	 * been saved by Hibernate it returns null.
 	 *
-	 * This method is required by Hibernate.
+	 * <p>This method is required by Hibernate.</p>
 	 *
 	 * @return the database record identifier for the batch
 	 */
@@ -211,11 +196,9 @@ public class Batch {
 	}
 
 	/**
-	 * The function getIdString() returns the identifier for the batch as
-	 * read-only property "idString".
+	 * The function getIdString() returns the identifier for the batch as read-only property "idString".
 	 *
-	 * This method is required by Faces which silently fails if you try to use
-	 * the id Integer.
+	 * <p>This method is required by Faces which silently fails if you try to use the id Integer.</p>
 	 *
 	 * @return the identifier for the batch as String
 	 */
@@ -224,11 +207,9 @@ public class Batch {
 	}
 
 	/**
-	 * The function getLabel() returns a readable label for the batch, which is
-	 * either its title, if defined, or, for batches not having a title (in
-	 * recent versions of Production, batches didn’t support titles) its ancient
-	 * label, consisting of the prefix “Batch ” (in the desired translation)
-	 * together with its id number.
+	 * The function getLabel() returns a readable label for the batch, which is either its title, if defined, or, for
+	 * batches not having a title (in recent versions of Production, batches didn’t support titles) its ancient
+	 * label, consisting of the prefix “Batch ” (in the desired translation) together with its id number.
 	 *
 	 * @return a readable label for the batch
 	 */
@@ -237,9 +218,8 @@ public class Batch {
 	}
 
 	/**
-	 * The function getNumericLabel() returns a readable label for the batch,
-	 * consisting of the prefix “Batch ” (in the desired translation) together
-	 * with its id number.
+	 * The function getNumericLabel() returns a readable label for the batch, consisting of the prefix “Batch ”
+	 * (in the desired translation) together with its id number.
 	 *
 	 * @return a readable label for the batch
 	 */
@@ -248,11 +228,9 @@ public class Batch {
 	}
 
 	/**
-	 * The function getProcesses() return the processes that belong to the
-	 * batch.
+	 * The function getProcesses() return the processes that belong to the batch.
 	 *
-	 * The internal logic is to make sure the collection has been populated from
-	 * Hibernate.
+	 * <p>The internal logic is to make sure the collection has been populated from Hibernate.</p>
 	 *
 	 * @return the processes that are in the batch
 	 */
@@ -302,11 +280,9 @@ public class Batch {
 	}
 
 	/**
-	 * The function removeAll() removes all elements that are contained in the
-	 * given collection from this batch.
+	 * The function removeAll() removes all elements that are contained in the given collection from this batch.
 	 *
-	 * @param processes
-	 *            collection containing elements to be removed from this set
+	 * @param processes collection containing elements to be removed from this set
 	 * @return true if the set of processes was changed as a result of the call
 	 */
 	public boolean removeAll(Collection<?> processes) {
@@ -314,12 +290,10 @@ public class Batch {
 	}
 
 	/**
-	 * The method setId() sets the database record identifier of this batch.
-	 * This method is solely intended to be called by Hibernate when creating
-	 * objects from the database. Do not use it in the code.
+	 * The method setId() sets the database record identifier of this batch. This method is solely intended to be
+	 * called by Hibernate when creating objects from the database. Do not use it in the code.
 	 *
-	 * @param id
-	 *            database record identifier of this batch
+	 * @param id database record identifier of this batch
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -328,11 +302,9 @@ public class Batch {
 	/**
 	 * The method setProcesses() sets the processes that belong to the batch.
 	 *
-	 * This method is also required by Hibernate when creating objects from the
-	 * database.
+	 * <p>This method is also required by Hibernate when creating objects from the database.</p>
 	 *
-	 * @param processes
-	 *            processes that belong to the batch
+	 * @param processes processes that belong to the batch
 	 */
 	public void setProcesses(Set<Prozess> processes) {
 		this.processes = processes;
@@ -341,11 +313,9 @@ public class Batch {
 	/**
 	 * The method setTitle() can be used to set a batch title.
 	 *
-	 * This function is also required by Hibernate when creating objects from
-	 * the database.
+	 * <p>This function is also required by Hibernate when creating objects from the database.
 	 *
-	 * @param title
-	 *            a title for the batch
+	 * @param title a title for the batch
 	 */
 	public void setTitle(String title) {
 		this.title = title;
@@ -354,19 +324,17 @@ public class Batch {
 	/**
 	 * The method setType() can be used to set a batch title.
 	 *
-	 * This function is also required by Hibernate when creating objects from
-	 * the database.
+	 * <p>This function is also required by Hibernate when creating objects from the database.</p>
 	 *
-	 * @param type
-	 *            type for the batch
+	 * @param type type for the batch
 	 */
 	public void setType(Type type) {
 		this.type = type;
 	}
 
 	/**
-	 * Returns the number of elements in this batch. If this batch contains more
-	 * than Integer.MAX_VALUE elements, returns Integer.MAX_VALUE.
+	 * Returns the number of elements in this batch. If this batch contains more than Integer.MAX_VALUE elements,
+	 * returns Integer.MAX_VALUE.
 	 *
 	 * @return the number of elements in this batch
 	 * @see java.util.Collection#size()
@@ -419,13 +387,10 @@ public class Batch {
 	}
 
 	/**
-	 * The function equals() indicates whether some other object is “equal to”
-	 * this one.
+	 * The function equals() indicates whether some other object is “equal to” this one.
 	 *
-	 * @param obj
-	 *            the reference object with which to compare
-	 * @return true if this object is the same as the obj argument; false
-	 *         otherwise
+	 * @param obj the reference object with which to compare
+	 * @return true if this object is the same as the obj argument; false otherwise
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -464,8 +429,8 @@ public class Batch {
 	}
 
 	/**
-	 * Goobi does not keep objects around from Hibernate session to Hibernate
-	 * session, so this is the working approach here.
+	 * Goobi does not keep objects around from Hibernate session to Hibernate session, so this is the working
+	 * approach here.
 	 * 
 	 * @see "https://developer.jboss.org/wiki/EqualsandHashCode"
 	 */

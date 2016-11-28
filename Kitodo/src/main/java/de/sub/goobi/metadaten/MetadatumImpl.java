@@ -1,5 +1,6 @@
 package de.sub.goobi.metadaten;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.metadaten;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 

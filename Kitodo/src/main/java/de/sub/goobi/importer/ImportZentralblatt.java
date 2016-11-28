@@ -1,5 +1,6 @@
 package de.sub.goobi.importer;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
@@ -330,7 +333,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Jahrgang --------------------------------
+		 * Jahrgang
 		 */
 		if (myLeft.equals("Y")) {
 			mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
@@ -357,7 +360,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Bandnummer --------------------------------
+		 * Bandnummer
 		 */
 		if (myLeft.equals("V")) {
 			mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
@@ -443,7 +446,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLIdentifier --------------------------------
+		 * ZBLIdentifier
 		 */
 		if (myLeft.equals("AN")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLIdentifier");
@@ -454,7 +457,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLPageNumber --------------------------------
+		 * ZBLPageNumber
 		 */
 		if (myLeft.equals("P")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLPageNumber");
@@ -465,7 +468,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLSource --------------------------------
+		 * ZBLSource
 		 */
 		if (myLeft.equals("SO")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLSource");
@@ -476,7 +479,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLAbstract --------------------------------
+		 * ZBLAbstract
 		 */
 		if (myLeft.equals("AB")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLAbstract");
@@ -487,7 +490,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLReviewAuthor --------------------------------
+		 * ZBLReviewAuthor
 		 */
 		if (myLeft.equals("RV")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
@@ -498,7 +501,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLCita --------------------------------
+		 * ZBLCita
 		 */
 		if (myLeft.equals("CI")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLCita");
@@ -509,7 +512,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLTempID --------------------------------
+		 * ZBLTempID
 		 */
 		if (myLeft.equals("DE")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLTempID");
@@ -520,7 +523,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLReviewLink --------------------------------
+		 * ZBLReviewLink
 		 */
 		if (myLeft.equals("SI")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewLink");
@@ -531,7 +534,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLIntern --------------------------------
+		 * ZBLIntern
 		 */
 		if (myLeft.equals("XX")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLIntern");
@@ -542,7 +545,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Keywords --------------------------------
+		 * Keywords
 		 */
 		if (myLeft.equals("KW")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
@@ -556,7 +559,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Autoren als Personen --------------------------------
+		 * Autoren als Personen
 		 */
 		if (myLeft.equals("AU")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
@@ -578,7 +581,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- AutorVariationen als Personen --------------------------------
+		 * AutorVariationen als Personen
 		 */
 		if (myLeft.equals("NH")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
@@ -600,7 +603,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- MSC 2000 - ClassificationMSC --------------------------------
+		 * MSC 2000 - ClassificationMSC
 		 */
 		if (myLeft.equals("CC")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight);

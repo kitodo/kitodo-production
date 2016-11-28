@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.enums;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.helper.enums;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.helper.Helper;
 
 /**
@@ -37,8 +40,7 @@ import de.sub.goobi.helper.Helper;
  */
 public enum HistoryEventType {
 	/**
-	 * default type is unknown for all properties, which still don't have a specific
-	 * type
+	 * default type is unknown for all properties, which still don't have a specific type
 	 */
 	unknown(0, "unknown", false, false, null),
 

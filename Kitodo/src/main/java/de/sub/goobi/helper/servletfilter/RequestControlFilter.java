@@ -62,8 +62,7 @@ public class RequestControlFilter implements Filter {
 	@SuppressWarnings({"unchecked", "rawtypes" })
 	public void init(FilterConfig config) throws ServletException {
 
-		// parse all of the initialization parameters, collecting the exclude
-		// patterns and the max wait parameters
+		// parse all of the initialization parameters, collecting the exclude patterns and the max wait parameters
 		Enumeration enumeration = config.getInitParameterNames();
 		this.excludePatterns = new LinkedList();
 		this.maxWaitDurations = new HashMap();

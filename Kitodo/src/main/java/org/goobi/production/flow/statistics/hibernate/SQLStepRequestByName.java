@@ -1,5 +1,6 @@
 package org.goobi.production.flow.statistics.hibernate;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,13 +28,14 @@ package org.goobi.production.flow.statistics.hibernate;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
+import de.sub.goobi.helper.enums.HistoryEventType;
 
 import java.util.Date;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-
-import de.sub.goobi.helper.enums.HistoryEventType;
 
 /**
  * Class provides SQL for Step Requests statistics on the history table it offers a little more functionality compared

@@ -1,5 +1,6 @@
 package de.sub.goobi.helper;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,8 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
@@ -51,15 +54,16 @@ public class ProjectHelper {
 	/**
 	 * static to reduce load
 	 *
-	 * @param project
+	 * @param project add description
 	 * @return a GoobiCollection of the following structure:
-	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle, stepOrder,
-	 *  stepCount,stepImageCount, totalProcessCount, totalImageCount which can get extracted by the IGoobiCollection
-	 *  Inteface using the getItem(&lt;name&gt;) method standard workflow of the project according to the definition that
-	 *  only steps shared by all processes are returned. The workflow order is returned according to the average order
-	 *  returen by a grouping by step titel consider workflow structure to be a prototype, it would probably make
-	 *  things easier, to either assemble the underlying construction in separate classes or to create a new class with
-	 *  these properties
+	 * 				GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,
+	 * 				stepOrder, stepCount,stepImageCount, totalProcessCount, totalImageCount which can get extracted by
+	 * 				the IGoobiCollection Inteface using the getItem(&lt;name&gt;) method standard workflow of
+	 * 				the project according to the definition that only steps shared by all processes are returned.
+	 * 				The workflow order is returned according to the average order returen by a grouping by step titel
+	 * 				consider workflow structure to be a prototype, it would probably make things easier, to either
+	 * 				assemble the underlying construction in separate classes or to create a new class with these
+	 * 				properties
 	 */
 
 	@SuppressWarnings("unchecked")

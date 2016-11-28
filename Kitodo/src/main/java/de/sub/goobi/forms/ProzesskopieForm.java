@@ -1,5 +1,6 @@
 package de.sub.goobi.forms;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -125,12 +128,10 @@ public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
 
 	/**
-	 * The class SelectableHit represents a hit on the hit list that shows up if
-	 * a catalogue search yielded more than one result. We need an inner class
-	 * for this because Faces is striclty object oriented and the always
-	 * argument-less actions can only be executed relatively to the list entry
-	 * in question this way if they are concerning elements that are rendered by
-	 * iterating along a list.
+	 * The class SelectableHit represents a hit on the hit list that shows up if a catalogue search yielded more than
+	 * one result. We need an inner class for this because Faces is strictly object oriented and the always
+	 * argument-less actions can only be executed relatively to the list entry in question this way if they are
+	 * concerning elements that are rendered by iterating along a list.
 	 *
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
@@ -141,18 +142,15 @@ public class ProzesskopieForm {
 		private final Hit hit;
 
 		/**
-		 * The field error holds an error message to be rendered as a list entry
-		 * in case that retrieving the hit failed within the plug-in used for
-		 * catalogue access.
+		 * The field error holds an error message to be rendered as a list entry in case that retrieving the hit
+		 * failed within the plug-in used for catalogue access.
 		 */
 		private final String error;
 
 		/**
-		 * Selectable hit constructor. Creates a new SelectableHit object with a
-		 * hit to show.
+		 * Selectable hit constructor. Creates a new SelectableHit object with a hit to show.
 		 *
-		 * @param hit
-		 *            Hit to show
+		 * @param hit Hit to show
 		 */
 		public SelectableHit(Hit hit) {
 			this.hit = hit;
@@ -160,11 +158,9 @@ public class ProzesskopieForm {
 		}
 
 		/**
-		 * Selectable hit constructor. Creates a new SelectableHit object with
-		 * an error message to show.
+		 * Selectable hit constructor. Creates a new SelectableHit object with an error message to show.
 		 *
-		 * @param error
-		 *            error message
+		 * @param error error message
 		 */
 		public SelectableHit(String error) {
 			hit = null;
@@ -172,9 +168,8 @@ public class ProzesskopieForm {
 		}
 
 		/**
-		 * The function getBibliographicCitation() returns a summary of this hit
-		 * in bibliographic citation style as HTML as read-only property
-		 * “bibliographicCitation”.
+		 * The function getBibliographicCitation() returns a summary of this hit in bibliographic citation style as
+		 * HTML as read-only property “bibliographicCitation”.
 		 *
 		 * @return a summary of this hit in bibliographic citation style as HTML
 		 */
@@ -183,9 +178,8 @@ public class ProzesskopieForm {
 		}
 
 		/**
-		 * The function getErrorMessage() returns an error if that had occurred
-		 * when trying to retrieve that hit from the catalogue as read-only
-		 * property “errorMessage”.
+		 * The function getErrorMessage() returns an error if that had occurred when trying to retrieve that hit from
+		 * the catalogue as read-only property “errorMessage”.
 		 *
 		 * @return an error message to be rendered as a list entry
 		 */
@@ -194,9 +188,8 @@ public class ProzesskopieForm {
 		}
 
 		/**
-		 * The function isError() returns whether an error occurred when trying
-		 * to retrieve that hit from the catalogue as read-only property
-		 * “error”.
+		 * The function isError() returns whether an error occurred when trying to retrieve that hit from
+		 * the catalogue as read-only property “error”.
 		 *
 		 * @return whether an error occurred when retrieving that hit
 		 */
@@ -205,8 +198,8 @@ public class ProzesskopieForm {
 		}
 
 		/**
-		 * The function selectClick() is called if the user clicks on a
-		 * catalogue hit summary in order to import it into Production.
+		 * The function selectClick() is called if the user clicks on a catalogue hit summary in order to import it
+		 * into Production.
 		 *
 		 * @return always "", indicating to Faces to stay on that page
 		 */
@@ -223,9 +216,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The constant DEFAULT_HITLIST_PAGE_SIZE holds the fallback number of hits
-	 * to show per page on the hit list if the user conducted a catalogue search
-	 * that yielded more than one result, if none is configured in the
+	 * The constant DEFAULT_HITLIST_PAGE_SIZE holds the fallback number of hits to show per page on the hit list if
+	 * the user conducted a catalogue search that yielded more than one result, if none is configured in the
 	 * Production configuration file.
 	 */
 	private static final int DEFAULT_HITLIST_PAGE_SIZE = 10;
@@ -242,27 +234,23 @@ public class ProzesskopieForm {
 	private Integer guessedImages = 0;
 
 	/**
-	 * The field hitlist holds some reference to the hitlist retrieved from a
-	 * library catalogue. The internals of this object are subject to the plugin
-	 * implementation and are not to be accessed directly.
+	 * The field hitlist holds some reference to the hitlist retrieved from a library catalogue. The internals of this
+	 * object are subject to the plugin implementation and are not to be accessed directly.
 	 */
 	private Object hitlist;
 
 	/**
-	 * The field hitlistPage holds the zero-based index of the page of the
-	 * hitlist currently showing. A negative value means that the hitlist is
-	 * hidden, otherwise it is showing the respective page.
+	 * The field hitlistPage holds the zero-based index of the page of the hitlist currently showing. A negative value
+	 * means that the hitlist is hidden, otherwise it is showing the respective page.
 	 */
 	private long hitlistPage = -1;
 	/**
-	 * The field hits holds the number of hits in the hitlist last retrieved
-	 * from a library catalogue.
+	 * The field hits holds the number of hits in the hitlist last retrieved from a library catalogue.
 	 */
 	private long hits;
 
 	/**
-	 * The field importCatalogue holds the catalogue plugin used to access the
-	 * library catalogue.
+	 * The field importCatalogue holds the catalogue plugin used to access the library catalogue.
 	 */
 	private CataloguePlugin importCatalogue;
 
@@ -326,9 +314,9 @@ public class ProzesskopieForm {
 	}
 
 	private void readProjectConfigs() {
-		/*--------------------------------
+		/*
 		 * projektabhängig die richtigen Felder in der Gui anzeigen
-		 * --------------------------------*/
+		 */
 		ConfigProjects cp = null;
 		try {
 			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
@@ -442,9 +430,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function OpacAuswerten() is executed if a user clicks the command
-	 * link to start a catalogue search. It performs the search and loads the
-	 * hit if it is unique. Otherwise, it will cause a hit list to show up for
+	 * The function OpacAuswerten() is executed if a user clicks the command link to start a catalogue search. It
+	 * performs the search and loads the hit if it is unique. Otherwise, it will cause a hit list to show up for
 	 * the user to select a hit.
 	 *
 	 * @return always "", telling JSF to stay on that page
@@ -483,19 +470,14 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function pluginAvailableFor(catalogue) verifies that a plugin
-	 * suitable for accessing the library catalogue identified by the given
-	 * String is available in the global variable importCatalogue. If
-	 * importCatalogue is empty or the current plugin doesn’t support the given
-	 * catalogue, the function will try to load a suitable plugin. Upon success
-	 * the preferences and the catalogue to use will be configured in the
-	 * plugin, otherwise an error message will be set to be shown.
+	 * The function pluginAvailableFor(catalogue) verifies that a plugin suitable for accessing the library catalogue
+	 * identified by the given String is available in the global variable importCatalogue. If importCatalogue is empty
+	 * or the current plugin doesn’t support the given catalogue, the function will try to load a suitable plugin. Upon
+	 * success the preferences and the catalogue to use will be configured in the plugin, otherwise an error message
+	 * will be set to be shown.
 	 *
-	 * @param catalogue
-	 *            identifier string for the catalogue that the plugin shall
-	 *            support
-	 * @return whether a plugin is available in the global varibale
-	 *         importCatalogue
+	 * @param catalogue identifier string for the catalogue that the plugin shall support
+	 * @return whether a plugin is available in the global variable importCatalogue
 	 */
 	private boolean pluginAvailableFor(String catalogue) {
 		if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue)) {
@@ -513,7 +495,6 @@ public class ProzesskopieForm {
 
 	/**
 	 * alle Konfigurationseigenschaften und Felder zurücksetzen
-	 * ================================================================
 	 */
 	private void clearValues() {
 		if (this.opacKatalog == null) {
@@ -544,8 +525,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * Creates a DataCopier with the given configuration, lets it process the
-	 * given data and wraps any errors to display in the front end.
+	 * Creates a DataCopier with the given configuration, lets it process the given data and wraps any errors to
+	 * display in the front end.
 	 *
 	 * @param data data to process
 	 */
@@ -699,7 +680,7 @@ public class ProzesskopieForm {
 	/**
 	 * Validierung der Eingaben
 	 *
-	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
+	 * @return sind Fehler bei den Eingaben vorhanden?
 	 */
 	boolean isContentValid() {
 		return isContentValid(true);
@@ -711,7 +692,7 @@ public class ProzesskopieForm {
 		if (criticiseEmptyTitle) {
 
 			/*
-			 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
+			 * grundsätzlich den Vorgangstitel prüfen
 			 */
 			/* kein Titel */
 			if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
@@ -849,11 +830,10 @@ public class ProzesskopieForm {
 			createNewFileformat();
 		}
 
-		/*--------------------------------
-		 * wenn eine RDF-Konfiguration
-		 * vorhanden ist (z.B. aus dem Opac-Import, oder frisch angelegt), dann
+		/*
+		 * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import, oder frisch angelegt), dann
 		 * diese ergänzen
-		 * --------------------------------*/
+		 */
 		if (this.myRdf != null) {
 
 			// there must be at least one non-anchor level doc struct
@@ -1000,7 +980,7 @@ public class ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- Collectionen hinzufügen --------------------------------
+			 * Collectionen hinzufügen
 			 */
 			DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
 			try {
@@ -1212,7 +1192,7 @@ public class ProzesskopieForm {
 
 	private void EigenschaftenHinzufuegen() {
 		/*
-		 * -------------------------------- Vorlageneigenschaften initialisieren --------------------------------
+		 * Vorlageneigenschaften initialisieren
 		 */
 		Vorlage vor;
 		if (this.prozessKopie.getVorlagenSize() > 0) {
@@ -1226,7 +1206,7 @@ public class ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- Werkstückeigenschaften initialisieren --------------------------------
+		 * Werkstückeigenschaften initialisieren
 		 */
 		Werkstueck werk;
 		if (this.prozessKopie.getWerkstueckeSize() > 0) {
@@ -1355,9 +1335,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function getProzessVorlageTitel() returns some kind of identifier for
-	 * this ProzesskopieForm. The title of the process template that a process
-	 * will be created from can be considered with some reason to be some good
+	 * The function getProzessVorlageTitel() returns some kind of identifier for this ProzesskopieForm. The title of
+	 * the process template that a process will be created from can be considered with some reason to be some good
 	 * identifier for the ProzesskopieForm, too.
 	 *
 	 * @return a human-readable identifier for this object
@@ -1383,18 +1362,12 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The method setAdditionalField() sets the value of an AdditionalField held
-	 * by a ProzesskopieForm object.
+	 * The method setAdditionalField() sets the value of an AdditionalField held by a ProzesskopieForm object.
 	 *
-	 * @param key
-	 *            the title of the AdditionalField whose value shall be modified
-	 * @param value
-	 *            the new value for the AdditionalField
-	 * @param strict
-	 *            throw a RuntimeException if the field is unknown
-	 * @throws RuntimeException
-	 *             in case that no field with a matching title was found in the
-	 *             ProzesskopieForm object
+	 * @param key the title of the AdditionalField whose value shall be modified
+	 * @param value the new value for the AdditionalField
+	 * @param strict throw a RuntimeException if the field is unknown
+	 * @throws RuntimeException in case that no field with a matching title was found in the ProzesskopieForm object
 	 */
 	public void setAdditionalField(String key, String value, boolean strict) throws RuntimeException {
 		boolean unknownField = true;
@@ -1512,7 +1485,6 @@ public class ProzesskopieForm {
 		}
 
 		// if only one collection is possible take it directly
-
 		if (isSingleChoiceCollection()) {
 			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
 		}
@@ -1620,7 +1592,7 @@ public class ProzesskopieForm {
 	 */
 
 	/**
-	 * Prozesstitel und andere Details generieren ================================================================
+	 * Prozesstitel und andere Details generieren
 	 */
 	public void CalcProzesstitel() {
 		try {
@@ -1761,7 +1733,7 @@ public class ProzesskopieForm {
 		String rueckgabe = inFeldWert;
 
 		/*
-		 * -------------------------------- Bandnummer --------------------------------
+		 * Bandnummer
 		 */
 		if (inFeldName.equals("Bandnummer") || inFeldName.equals("Volume number")) {
 			try {
@@ -1946,8 +1918,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function getHitlist returns the hits for the currently showing page of
-	 * the hitlist as read-only property "hitlist".
+	 * The function getHitlist returns the hits for the currently showing page of the hitlist as read-only
+	 * property "hitlist".
 	 *
 	 * @return a list of hits to render in the hitlist
 	 */
@@ -1971,8 +1943,7 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function getNumberOfHits() returns the number of hits on the hit list
-	 * as read-only property "numberOfHits".
+	 * The function getNumberOfHits() returns the number of hits on the hit list as read-only property "numberOfHits".
 	 *
 	 * @return the number of hits on the hit list
 	 */
@@ -1981,8 +1952,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function getPageSize() retrieves the desired number of hits on one
-	 * page of the hit list from the configuration.
+	 * The function getPageSize() retrieves the desired number of hits on one page of the hit list from
+	 * the configuration.
 	 *
 	 * @return desired number of hits on one page of the hit list from the configuration
 	 */
@@ -1991,19 +1962,18 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function isFirstPage() returns whether the currently showing page of
-	 * the hitlist is the first page of it as read-only property "firstPage".
+	 * The function isFirstPage() returns whether the currently showing page of the hitlist is the first page of it
+	 * as read-only property "firstPage".
 	 *
-	 * @return whether the currently showing page of the hitlist is the first
-	 *         one
+	 * @return whether the currently showing page of the hitlist is the first one
 	 */
 	public boolean isFirstPage() {
 		return hitlistPage == 0;
 	}
 
 	/**
-	 * The function getHitlistShowing returns whether the hitlist shall be
-	 * rendered or not as read-only property "hitlistShowing".
+	 * The function getHitlistShowing returns whether the hitlist shall be rendered or not as read-only
+	 * property "hitlistShowing".
 	 *
 	 * @return whether the hitlist is to be shown or not
 	 */
@@ -2012,8 +1982,8 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function isLastPage() returns whether the currently showing page of
-	 * the hitlist is the last page of it as read-only property "lastPage".
+	 * The function isLastPage() returns whether the currently showing page of the hitlist is the last page of it
+	 * as read-only property "lastPage".
 	 *
 	 * @return whether the currently showing page of the hitlist is the last one
 	 */
@@ -2022,24 +1992,24 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * The function nextPageClick() is executed if the user clicks the action
-	 * link to flip one page forward in the hit list.
+	 * The function nextPageClick() is executed if the user clicks the action link to flip one page forward in
+	 * the hit list.
 	 */
 	public void nextPageClick() {
 		hitlistPage++;
 	}
 
 	/**
-	 * The function previousPageClick() is executed if the user clicks the
-	 * action link to flip one page backwards in the hit list.
+	 * The function previousPageClick() is executed if the user clicks the action link to flip one page backwards in
+	 * the hit list.
 	 */
 	public void previousPageClick() {
 		hitlistPage--;
 	}
 
 	/**
-	 * The function isCalendarButtonShowing tells whether the calendar button
-	 * shall show up or not as read-only property "calendarButtonShowing".
+	 * The function isCalendarButtonShowing tells whether the calendar button shall show up or not as read-only
+	 * property "calendarButtonShowing".
 	 *
 	 * @return whether the calendar button shall show
 	 */
@@ -2057,8 +2027,7 @@ public class ProzesskopieForm {
 	}
 
 	/**
-	 * Returns the representation of the file holding the document metadata in
-	 * memory.
+	 * Returns the representation of the file holding the document metadata in memory.
 	 *
 	 * @return the metadata file in memory
 	 */

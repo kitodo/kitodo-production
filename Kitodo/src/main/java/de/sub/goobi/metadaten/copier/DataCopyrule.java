@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.metadaten.copier;
 
@@ -72,7 +74,7 @@ public abstract class DataCopyrule {
 	/**
 	 * Factory method to create a class implementing the metadata copy rule referenced by a given command string
 	 *
-	 * @param command A space-separated string constisting of subject (aka. patiens), operator (aka. agens) and
+	 * @param command A space-separated string consisting of subject (aka. patiens), operator (aka. agens) and
 	 *                   (optional) objects (depending on what objects the operator requires).
 	 * @return a class implementing the metadata copy rule referenced
 	 * @throws ConfigurationException if the operator cannot be resolved or the number of arguments doesn’t match

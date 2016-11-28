@@ -1,5 +1,6 @@
 package org.goobi.api.display.enums;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package org.goobi.api.display.enums;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 public enum DisplayType {
 
 	input("0", "input"), select("1", "select"), select1("2", "select1"), textarea("3", "textarea"), readonly("4",

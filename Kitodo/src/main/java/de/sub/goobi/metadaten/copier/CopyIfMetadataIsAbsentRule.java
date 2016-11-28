@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:OFF
 
 package de.sub.goobi.metadaten.copier;
 
@@ -57,7 +59,7 @@ import org.apache.commons.configuration.ConfigurationException;
 public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 
 	/**
-	 * Sybolic operator representing the rule: ""=
+	 * Symbolic operator representing the rule: ""=
 	 */
 	protected static final String OPERATOR = "\"\"=";
 

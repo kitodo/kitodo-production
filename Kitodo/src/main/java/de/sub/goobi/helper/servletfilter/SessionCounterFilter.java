@@ -1,5 +1,6 @@
 package de.sub.goobi.helper.servletfilter;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.helper.servletfilter;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 //TODO: Parts of this class seem to be copied from the Internet, what's the licence?
 
 import de.sub.goobi.forms.SessionForm;

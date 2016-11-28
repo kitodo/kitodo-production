@@ -44,7 +44,7 @@ import org.hibernate.transform.ResultTransformer;
  * http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 andchanged by retaining the
  * class name of the class which was used to instantiate the current instance of PaginatingCriteria
  *
- * Implementation of Criteria specifically for paginated searches.
+ * <p>Implementation of Criteria specifically for paginated searches.</p>
  *
  * @see org.hibernate.Criteria
  *

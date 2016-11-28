@@ -1,5 +1,6 @@
 package de.sub.goobi.helper;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
@@ -104,9 +107,9 @@ public class BeanHelper {
 		HashSet<Schritt> mySchritte = new HashSet<Schritt>();
 		for (Schritt step : prozessVorlage.getSchritteList()) {
 
-			/* --------------------------------
+			/*
 			 * Details des Schritts
-			 * --------------------------------*/
+			 */
 			Schritt stepneu = new Schritt();
 			stepneu.setTypAutomatisch(step.isTypAutomatisch());
 			stepneu.setScriptname1(step.getScriptname1());
@@ -145,18 +148,18 @@ public class BeanHelper {
 			// Fixing a bug found by Holger Busse (Berlin)
 			stepneu.setTypBeimAbschliessenVerifizieren(step.isTypBeimAbschliessenVerifizieren());
 
-			/* --------------------------------
+			/*
 			 * Benutzer übernehmen
-			 * --------------------------------*/
+			 */
 			HashSet<Benutzer> myBenutzer = new HashSet<Benutzer>();
 			for (Benutzer benneu : step.getBenutzer()) {
 				myBenutzer.add(benneu);
 			}
 			stepneu.setBenutzer(myBenutzer);
 
-			/* --------------------------------
+			/*
 			 * Benutzergruppen übernehmen
-			 * --------------------------------*/
+			 */
 			HashSet<Benutzergruppe> myBenutzergruppen = new HashSet<Benutzergruppe>();
 			for (Benutzergruppe grupneu : step.getBenutzergruppen()) {
 				myBenutzergruppen.add(grupneu);
@@ -176,15 +179,15 @@ public class BeanHelper {
 	public static void WerkstueckeKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		HashSet<Werkstueck> myWerkstuecke = new HashSet<Werkstueck>();
 		for (Werkstueck werk : prozessVorlage.getWerkstuecke()) {
-			/* --------------------------------
+			/*
 			 * Details des Werkstücks
-			 * --------------------------------*/
+			 */
 			Werkstueck werkneu = new Werkstueck();
 			werkneu.setProzess(prozessKopie);
 
-			/* --------------------------------
+			/*
 			 * Eigenschaften des Schritts
-			 * --------------------------------*/
+			 */
 			HashSet<Werkstueckeigenschaft> myEigenschaften = new HashSet<Werkstueckeigenschaft>();
 			for (Iterator<Werkstueckeigenschaft> iterator = werk.getEigenschaften().iterator(); iterator.hasNext();) {
 				Werkstueckeigenschaft eig = iterator.next();
@@ -232,16 +235,16 @@ public class BeanHelper {
 	public static void ScanvorlagenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		HashSet<Vorlage> myVorlagen = new HashSet<Vorlage>();
 		for (Vorlage vor : prozessVorlage.getVorlagen()) {
-			/* --------------------------------
+			/*
 			 * Details der Vorlage
-			 * --------------------------------*/
+			 */
 			Vorlage vorneu = new Vorlage();
 			vorneu.setHerkunft(vor.getHerkunft());
 			vorneu.setProzess(prozessKopie);
 
-			/* --------------------------------
+			/*
 			 * Eigenschaften des Schritts
-			 * --------------------------------*/
+			 */
 			HashSet<Vorlageeigenschaft> myEigenschaften = new HashSet<Vorlageeigenschaft>();
 			for (Iterator<Vorlageeigenschaft> iterator = vor.getEigenschaften().iterator(); iterator.hasNext();) {
 				Vorlageeigenschaft eig = iterator.next();

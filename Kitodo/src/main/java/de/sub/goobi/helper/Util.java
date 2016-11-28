@@ -1,5 +1,6 @@
 package de.sub.goobi.helper;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,8 @@ package de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -47,10 +50,10 @@ public final class Util {
 	}
 
 	/**
-	   Returns an HQL query from the resource bundle.
-
-	   @param key the resource key
-	   @return String
+	 * Returns an HQL query from the resource bundle.
+	 *
+	 * @param key the resource key
+	 * @return String
 	*/
 	public static String getQuery(String key) {
 		ResourceBundle bundle = getResourceBundle();
@@ -58,12 +61,11 @@ public final class Util {
 	}
 
 	/**
-	   Utility method to create a <code>Date</code> class
-	   from <code>dateString</code>.
-
-	   @param dateString add description
-	   @return Date
-	   @throws RuntimeException is dateString is invalid
+	 * Utility method to create a <code>Date</code> class from <code>dateString</code>.
+	 *
+	 * @param dateString add description
+	 * @return Date
+	 * @throws RuntimeException is dateString is invalid
 	*/
 	public static Date parseDate(String dateString) {
 		try {

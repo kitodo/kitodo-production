@@ -1,5 +1,6 @@
 package org.goobi.production.flow.statistics.hibernate;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,7 @@ package org.goobi.production.flow.statistics.hibernate;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
 
 import de.sub.goobi.helper.enums.HistoryEventType;
 
@@ -73,8 +75,7 @@ public class SQLStepRequestsImprovedDiscrimination extends SQLGenerator {
 		String timeLimiter = "h.date";
 		String groupInnerSelect = "";
 
-		// evaluate if groupingFunction comes along with HistoryEventType
-		// and if so implement this function in sql
+		// evaluate if groupingFunction comes along with HistoryEventType and if so implement this function in sql
 		if (typeSelection.getGroupingFunction() != null && !includeLoops) {
 			timeLimiter = typeSelection.getGroupingFunction() + "(h.date)";
 			groupInnerSelect = " GROUP BY processid, numericvalue, stringvalue ";

@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.metadaten;
 
@@ -52,8 +54,8 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 
 /**
- * Backing bean for a select list style input element to edit a metadatum with
- * the option to select one or more predefined values renderable by JSF.
+ * Backing bean for a select list style input element to edit a metadatum with the option to select one or more
+ * predefined values renderable by JSF.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */

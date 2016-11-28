@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,6 +36,7 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.metadaten.copier;
 
@@ -44,7 +46,7 @@ import org.apache.commons.configuration.ConfigurationException;
  * A DataSelector is useful to access a data object. There are different DataSelectors available to access metadata and
  * program variables.
  *
- * The factory method {{@link #create(String)} can be used to retrieve a DataSelector instance for a given path.
+ * <p>The factory method {{@link #create(String)} can be used to retrieve a DataSelector instance for a given path.</p>
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */

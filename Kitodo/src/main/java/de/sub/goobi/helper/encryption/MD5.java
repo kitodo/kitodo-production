@@ -3,6 +3,7 @@ package de.sub.goobi.helper.encryption;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 
+//CHECKSTYLE:OFF
 /*
 Program: MD5.java
 This program generates MD5-Hashes
@@ -19,6 +20,7 @@ See the GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License along with this library;
 if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110, USA *
 */
+//CHECKSTYLE:ON
 
 /**
  * <u>MD5-Klasse, zum erzeugen von MD5-Hashes aus Zeichenketten</u><br><br>
@@ -26,8 +28,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor
  * <b>Java-Version:</b> 1.5x<br><br>
  * <b>&copy; Copyright:</b> Karsten Bettray - 2010<br><br>
  * <b>License:</b> GPL2.0<br>
-  * @author Karsten Bettray (Universit&auml;t Duisburg-Essen)<br><br>
-  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Karsten Bettray (Universit&auml;t Duisburg-Essen)<br><br>
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  * @version 0.1.1<br>
  *
  */

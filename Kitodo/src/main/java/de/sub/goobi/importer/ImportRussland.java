@@ -1,5 +1,6 @@
 package de.sub.goobi.importer;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,8 @@ package de.sub.goobi.importer;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -109,9 +112,9 @@ public class ImportRussland {
 					+ "' <> '" + line + "')");
 		}
 
-		/* --------------------------------
+		/*
 		 * xml-Datei einlesen und Hauptelement ermitteln
-		 * --------------------------------*/
+		 */
 		Fileformat gdzfile = inProzess.readMetadataFile();
 		DigitalDocument mydocument;
 		mydocument = gdzfile.getDigitalDocument();
@@ -122,16 +125,16 @@ public class ImportRussland {
 		// return;
 		// }
 
-		/* --------------------------------
+		/*
 		 * alle Zeilen durchlaufen
-		 * --------------------------------*/
+		 */
 		List<String> listeDaten = new ArrayList<String>();
 		while ((line = reader.readLine()) != null) {
 			// myLogger.info(line);
 			if (line.length() == 0) {
 
-				/* immer wenn die Zeile leer ist, können die gesammelten
-				 * Daten aus der gesammelten Liste ausgewertet werden */
+				/* immer wenn die Zeile leer ist, können die gesammelten Daten aus der gesammelten Liste ausgewertet
+				werden */
 				AbsatzAuswerten(listeDaten);
 				/* Liste wieder zurücksetzen */
 				listeDaten = new ArrayList<String>();
@@ -144,9 +147,9 @@ public class ImportRussland {
 			}
 		}
 
-		/* --------------------------------
+		/*
 		 * Datei abschliessend wieder speichern
-		 * --------------------------------*/
+		 */
 		inProzess.writeMetadataFile(gdzfile);
 		myLogger.debug("ParsenRussland() - Ende");
 	}
@@ -227,9 +230,9 @@ public class ImportRussland {
 	private void ArtikelDetails(List<String> inListe) throws MetadataTypeNotAllowedException, WrongImportFileException {
 		boolean artikelGefunden = false;
 
-		/* --------------------------------
+		/*
 		 * zunächst alle Details durchlaufen und die ZBL-ID des Artikels ermitteln
-		 * --------------------------------*/
+		 */
 		String zblID = "";
 		for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
 			String meinDetail = iter.next();
@@ -244,9 +247,9 @@ public class ImportRussland {
 		// if (zblID.equals("0843.11050"))
 		// myLogger.warn("gesuchte ID");
 
-		/* --------------------------------
+		/*
 		 * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben ZBL-ID finden
-		 * --------------------------------*/
+		 */
 		MetadataType mdt_id = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLIdentifier");
 		MetadataType mdt_tempId = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLTempID");
 		DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
@@ -335,9 +338,9 @@ public class ImportRussland {
 	}
 
 	private void RussischeDatenLoeschen(DocStruct inStrukturelement) {
-		/* --------------------------------
+		/*
 		 * von dem aktuellen Stukturelement alle Metadaten durchlaufen und das gesuchte löschen
-		 * --------------------------------*/
+		 */
 		if (inStrukturelement.getAllVisibleMetadata() != null) {
 			LinkedList<Metadata> listMetas = new LinkedList<Metadata>(inStrukturelement.getAllMetadata());
 			for (Iterator<Metadata> iter = listMetas.iterator(); iter.hasNext();) {
@@ -354,9 +357,9 @@ public class ImportRussland {
 			}
 		}
 
-		/* --------------------------------
+		/*
 		 * von dem aktuellen Stukturelement alle Personen durchlaufen und die gesuchten löschen
-		 * --------------------------------*/
+		 */
 		if (inStrukturelement.getAllPersons() != null) {
 			List<Person> listPersons = new ArrayList<Person>(inStrukturelement.getAllPersons());
 			for (Person p : listPersons) {
@@ -366,9 +369,9 @@ public class ImportRussland {
 			}
 		}
 
-		/* --------------------------------
+		/*
 		 * von dem aktuellen Stukturelement alle Kinder durchlaufen und rekursiv durchlaufen
-		 * --------------------------------*/
+		 */
 		List<DocStruct> listKinder = inStrukturelement.getAllChildren();
 		if (listKinder != null) {
 			/* es gibt Kinder-Strukturelemente, also alle Kinder durchlaufen */
@@ -385,9 +388,9 @@ public class ImportRussland {
 		try {
 			md.setValue(inDetail.substring(4).trim());
 
-			/* --------------------------------
+			/*
 			 * prüfen, ob das Metadatum schon existiert, wenn nein, neu anlegen
-			 * --------------------------------*/
+			 */
 
 			// LinkedList list = inStruct.getAllChildren();
 			// if (list != null) {

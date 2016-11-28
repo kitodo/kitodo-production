@@ -1,5 +1,6 @@
 package de.sub.goobi.forms;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  *
@@ -27,6 +28,8 @@ package de.sub.goobi.forms;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.LdapGruppe;
@@ -213,7 +216,8 @@ public class BenutzerverwaltungForm extends BasisForm {
 	/**
 	 * The function Loeschen() deletes a user account.
 	 *
-	 * Please note that deleting a user in goobi.production will not delete the user from a connected LDAP service.
+	 * <p>Please note that deleting a user in goobi.production will not delete the user from a connected LDAP
+	 * service.</p>
 	 *
 	 * @return a string indicating the screen showing up after the command has been performed.
 	 */

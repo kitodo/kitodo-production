@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
@@ -35,12 +36,12 @@
  * to do so. If you do not wish to do so, delete this exception statement from
  * your version.
  */
+//CHECKSTYLE:ON
 
 package org.goobi.production.constants;
 
 /**
  * These constants define configuration parameters usable in the configuration file.
- *
  * TODO: Make all string literals throughout the code constants here.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
