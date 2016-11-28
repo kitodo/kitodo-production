@@ -1,5 +1,6 @@
 package org.goobi.production.plugin.interfaces;
 
+//CHECKSTYLE:OFF
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +28,10 @@ package org.goobi.production.plugin.interfaces;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+//CHECKSTYLE:ON
+
+import de.sub.goobi.helper.exceptions.ImportPluginException;
+
 import java.io.File;
 import java.util.List;
 
@@ -36,7 +41,6 @@ import org.goobi.production.importer.ImportObject;
 import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
 
-import de.sub.goobi.helper.exceptions.ImportPluginException;
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 
