@@ -28,12 +28,6 @@
 
 package org.kitodo.encryption;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
-
-import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -41,6 +35,13 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 
 public class DesEncrypter {
 	private Cipher encryptionCipher;
