@@ -242,6 +242,12 @@
             <version>2.3</version>
         </dependency>
         <dependency>
+            <!-- TODO: use newer versions from org.quartz-scheduler. -->
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>1.6.3</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-core</artifactId>
             <version>5.5.1</version>
@@ -657,13 +663,6 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/util-0.0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>quartz-all</artifactId>
-            <version>1.6.5</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/quartz-all-1.6.5.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.xalan</groupId>
