@@ -402,6 +402,13 @@
             <artifactId>xpp3</artifactId>
             <version>1.1.3.3</version>
         </dependency>
+        <!--package full of other packages-->
+        <!-- https://mvnrepository.com/artifact/xerces/xercesImpl -->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.9.1</version>
+        </dependency>
 
         <!-- Libraries from local resources-->
         <dependency>
@@ -599,14 +606,6 @@
             <version>2.4.0</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/xbean_xpath-2.4.0.jar</systemPath>
-        </dependency>
-        <!--package full of other packages-->
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.9.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/xercesImpl-2.9.1.jar</systemPath>
         </dependency>
 
         <!-- ########## Here comes dependencies needed for tests ########## -->
