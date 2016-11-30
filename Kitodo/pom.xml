@@ -23,6 +23,28 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
+    <repositories>
+        <!-- Lets first add the default Maven central repo,
+             otherwise maven will not use Maven Central as first download option -->
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Jahia</id>
+            <name>Jahia Reposetory</name>
+            <url>http://maven.jahia.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
@@ -234,6 +256,13 @@
             <groupId>opensymphony</groupId>
             <artifactId>oscache</artifactId>
             <version>2.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/opensymphony/quartz-all -->
+        <!-- from Jiha-Repo  -->
+        <dependency>
+            <groupId>opensymphony</groupId>
+            <artifactId>quartz-all</artifactId>
+            <version>1.6.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -564,13 +593,6 @@
             <version>1.1.5-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/tomahawk-sandbox-1.1.5-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>opensymphony</groupId>
-            <artifactId>quartz-all</artifactId>
-            <version>1.6.5</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/quartz-all-1.6.5.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>xmlbeans</groupId>
