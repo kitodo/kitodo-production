@@ -520,8 +520,8 @@
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
-            <artifactId>org.apache.commons.collections</artifactId>
-            <version>3.2.1-patched</version>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/commons-collections-3.2.1-patched.jar</systemPath>
         </dependency>
