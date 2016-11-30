@@ -24,8 +24,8 @@
     </properties>
 
     <repositories>
-        <!-- Lets first add the default Maven central repo,
-             otherwise maven will not use Maven Central as first download option -->
+        <!-- Let's first add the default Maven central repo,
+             otherwise Maven will not use Maven Central as first download option -->
         <repository>
             <id>central</id>
             <name>Maven Repository Switchboard</name>
@@ -37,7 +37,7 @@
         </repository>
         <repository>
             <id>Jahia</id>
-            <name>Jahia Reposetory</name>
+            <name>Jahia Repository</name>
             <url>http://maven.jahia.org/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
@@ -264,7 +264,7 @@
             <version>2.3</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/opensymphony/quartz-all -->
-        <!-- from Jiha-Repo  -->
+        <!-- from Jiha Repository -->
         <dependency>
             <groupId>opensymphony</groupId>
             <artifactId>quartz-all</artifactId>
@@ -437,7 +437,7 @@
         <dependency>
             <groupId>javax.media</groupId>
             <artifactId>jai_imageio</artifactId>
-            <version>1.1.2_01</version>
+            <version>1.0_01</version>
             <scope>system</scope>
             <systemPath>${local.lib.dir}/jai_imageio-1.0_01.jar</systemPath>
         </dependency>
