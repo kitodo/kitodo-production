@@ -53,7 +53,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import de.sub.goobi.beans.Batch;
 import de.sub.goobi.beans.Batch.Type;

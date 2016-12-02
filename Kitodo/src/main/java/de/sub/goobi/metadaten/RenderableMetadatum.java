@@ -53,7 +53,7 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * Abstract base class for all kinds of backing beans usable to render input

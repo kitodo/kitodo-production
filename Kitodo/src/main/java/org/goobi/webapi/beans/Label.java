@@ -29,7 +29,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlValue;
 
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * The Label class provides serialization for Map<String,String> objects where

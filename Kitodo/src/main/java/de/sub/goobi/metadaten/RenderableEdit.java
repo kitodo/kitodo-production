@@ -47,7 +47,7 @@ import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import de.sub.goobi.config.ConfigMain;
 

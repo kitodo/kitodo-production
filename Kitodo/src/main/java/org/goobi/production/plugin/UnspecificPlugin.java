@@ -46,8 +46,8 @@ import java.util.Map;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 
-import com.sharkysoft.util.NotImplementedException;
-import com.sharkysoft.util.UnreachableCodeException;
+import org.kitodo.production.exceptions.NotImplementedException;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * The class UnspecificPlugin is the base class for a set of redirection classes
