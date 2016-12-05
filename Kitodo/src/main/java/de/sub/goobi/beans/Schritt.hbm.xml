@@ -103,17 +103,17 @@
 		<property name="stepPlugin" column="stepPlugin" type="string"/>
 		<property name="validationPlugin" column="validationPlugin" type="string"/>
 		
-		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.beans.Benutzer" column="BearbeitungsBenutzerID" foreign-key="FK_BearbeitungsBenutzerID"/>
-		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="ProzesseID" foreign-key="FK_ProzesseID"/>
+		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.beans.Benutzer" column="BearbeitungsBenutzerID" foreign-key="FK_Schritte_BearbeitungsBenutzerID"/>
+		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="ProzesseID" foreign-key="FK_Schritte_ProzesseID"/>
 		
 		<set name="benutzer" table="schritteberechtigtebenutzer">
-		    <key column="schritteID" foreign-key="FK_SchritteID"/>
-		    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer" foreign-key="FK_BenutzerID"/>
+		    <key column="schritteID" foreign-key="FK_SchritteBerechtigteBenutzer_SchritteID"/>
+		    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer" foreign-key="FK_SchritteBerechtigteBenutzer_BenutzerID"/>
 		</set>
 		
 		<set name="benutzergruppen" table="schritteberechtigtegruppen">
-		    <key column="schritteID" foreign-key="FK_SchritteID"/>
-		    <many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe" foreign-key="FK_BenutzerGruppenID"/>
+		    <key column="schritteID" foreign-key="FK_SchritteBerechtigtegruppen_SchritteID"/>
+		    <many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe" foreign-key="FK_SchritteBerechtigtegruppen_BenutzerGruppenID"/>
 		</set>
 
 	</class>

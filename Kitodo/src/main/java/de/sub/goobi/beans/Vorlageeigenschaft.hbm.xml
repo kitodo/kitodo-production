@@ -46,7 +46,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 		<property name="container" column="container" type="integer" />			
-		<many-to-one name="vorlage" class="de.sub.goobi.beans.Vorlage" column="vorlagenID" foreign-key="FK_VorlagenID"/>
+		<many-to-one name="vorlage" class="de.sub.goobi.beans.Vorlage" column="vorlagenID" foreign-key="FK_Vorlageneigenschaft_VorlagenID"/>
 		
 	</class>
 
