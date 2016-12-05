@@ -17,11 +17,26 @@
 			<forbiddenElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</forbiddenElement>
 		</type>
 		<type rulesetType="Manuscript">
-			<mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
 			<mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
+			<mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
 		</type>
 	</structuretypes>
 	<catalogue title="Kalliope">
 		<config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
+		<mappingFile>mods2kitodo.xsl</mappingFile>
+		<institutionFilterParameter value="ead.repository.isil" />
+		<searchFields>
+			<searchField label="Title" value="ead.title" />
+			<searchField label="Identifier" value="ead.id" />
+		</searchFields>
+		<filterInstitutions>
+			<institution label="Deutsche Nationalbibliothek" value="DE-101" />
+			<institution label="Bauhaus-Archiv &lt;Berlin&gt;" value="DE-B1575" />
+			<institution label="Hauptstaatsarchiv &lt;Stuttgart&gt;" value="DE-Stg90" />
+			<institution label="Universitätsbibliothek &lt;Leipzig&gt;" value="DE-15" />
+			<institution label="Sächsische Landesbibliothek - Staats- und Universitätsbibliothek &lt;Dresden&gt;" value="DE-14" />
+			<institution label="Staats- und Universitätsbibliothek Hamburg Carl von Ossietzky" value="DE-18" />
+			<institution label="Staatsbibliothek zu Berlin - Preußischer Kulturbesitz, Haus Unter den Linden" value="DE-1" />
+		</filterInstitutions>
 	</catalogue>
 </opacCatalogues>

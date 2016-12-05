@@ -29,7 +29,6 @@ package org.kitodo.production.plugin.CataloguePlugin.ModsPlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Objects;
 
 import org.apache.commons.lang.CharEncoding;
@@ -43,18 +42,9 @@ class Query {
 
 	private String queryUrl = "&query=";
 
-	private static final String AND = "*";
+	private static final String AND = "AND";
 	private static final String OR = "%2B"; //URL-encoded +
 	private static final String NOT = "-";
-
-	// Identifier fieldNumber from UI: 12; should use "EAD.ID" with unique number instead, perhaps
-	private static final HashMap<String, String> fieldMappings = new HashMap<>();
-	static
-	{
-		fieldMappings.put("4", "ead.title");
-		fieldMappings.put("12", "ead.id");
-		fieldMappings.put("20", "ead.repository");
-	}
 
 	// Example: Kalliope-URL returning the mods data for a given ead.id
 	// http://kalliope-verbund.info/sru?version=1.2&operation=searchRetrieve&query=ead.id=DE-611-HS-2256337&recordSchema=mods
@@ -174,14 +164,12 @@ class Query {
 	}
 
 	//operation must be Query.AND, .OR, .NOT
-	void addQuery(String operation, String query, String fieldNumber) {
-		 try{
-			 if(fieldMappings.containsKey(fieldNumber)){
-				 if(!Objects.equals(this.queryUrl, "&query=")){
-					 this.queryUrl += "+"+operation+"+";
-				 }
-				 this.queryUrl += fieldMappings.get(fieldNumber) + "=%22" + URLEncoder.encode(query, CharEncoding.ISO_8859_1) + "%22";
+	void addQuery(String operation, String fieldValue, String fieldName) {
+		try{
+			 if(!Objects.equals(this.queryUrl, "&query=")){
+				 this.queryUrl += "+"+operation+"+";
 			 }
+			 this.queryUrl += fieldName + "=%22" + URLEncoder.encode(fieldValue, CharEncoding.ISO_8859_1) + "%22";
 		 }catch (UnsupportedEncodingException e) {
 			 e.printStackTrace();
 		 }

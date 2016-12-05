@@ -32,12 +32,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -271,7 +274,7 @@ public class ProzesskopieForm {
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
-	private String institution;
+	private String institution = "-";
 	private List<String> possibleDigitalCollection;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
@@ -454,9 +457,9 @@ public class ProzesskopieForm {
 
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
-			
-			if (!Objects.equals(institution, "-")) {
-				query = query +  "&&&" + institution;
+
+			if (!Objects.equals(institution, "-") && !Objects.equals("", importCatalogue.getInstitutionFilterParameter(opacKatalog))) {
+				query = QueryBuilder.appendAll(query, Arrays.asList(importCatalogue.getInstitutionFilterParameter(opacKatalog) + ":" + institution));
 			}
 
 			hitlist = importCatalogue.find(query, timeout);
@@ -1499,7 +1502,7 @@ public class ProzesskopieForm {
 	 */
 	public List<String> getAllOpacCatalogues() {
 		try {
-			ArrayList<String> allCatalogueTitles = new ArrayList<String>();
+			LinkedList<String> allCatalogueTitles = new LinkedList<String>();
 			
 			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
 				for (String catalogue : plugin.getSupportedCatalogues()) {
@@ -1512,8 +1515,58 @@ public class ProzesskopieForm {
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-			return new ArrayList<String>();
+			return new LinkedList<String>();
 		}
+	}
+
+	/**
+	 * The function getSearchFields() returns a HashMap of all search fields for the
+	 * currently selected OPAC catalogue. The map contains search fields keys as
+	 * labels and corresponding URL parameters as values.
+	 *
+	 * @return A map containing the search fields for the currently selected OPAC
+	 */
+	public HashMap<String, String> getSearchFields() {
+		HashMap<String, String> searchFields = new HashMap<String, String>();
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+			if (plugin.supportsCatalogue(opacKatalog)) {
+				searchFields = plugin.getSearchFields(opacKatalog);
+				break;
+			}
+		}
+		return searchFields;
+	}
+
+	/**
+	 * The function getInstitutions() returns a HashMap of all institutions usable
+	 * to filter search results in the currently selected OPAC. The map contains
+	 * institution names as labels and corresponding ISIL identifier as values.
+	 *
+	 * @return A map containing the filter institutions for the currently selected OPAC
+	 */
+	public HashMap<String, String> getInstitutions() {
+		HashMap<String, String> institutions = new HashMap<String, String>();
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+			if (plugin.supportsCatalogue(opacKatalog)) {
+				institutions = plugin.getInstitutions(opacKatalog);
+				break;
+			}
+		}
+		if(institutions.size() > 0) {
+			institutions.put("Alle", "-");
+		}
+		return institutions;
+	}
+
+	/**
+	 * The function getInstitutionCount() returns the number of institutions usable
+	 * to filter search results in the currently selected OPAC.
+	 *
+	 * @return The number of filter institutions configured in the currently selected OPAC
+	 */
+	public long getInstitutionCount() {
+		HashMap<String, String> institutions = getInstitutions();
+		return (long)institutions.size();
 	}
 
 	/**
@@ -1536,7 +1589,7 @@ public class ProzesskopieForm {
 					}
 				}
 			}
-			// reset XMLConfiguration of global ConfigOpac to 'originalConfiguration'
+			// reset XMLConfiguration of global ConfigOpac to 'original' configuration
 			ConfigOpac.setConfiguration(originalConfiguration);
 			return allDocTypes;
 		} catch (Throwable t) {

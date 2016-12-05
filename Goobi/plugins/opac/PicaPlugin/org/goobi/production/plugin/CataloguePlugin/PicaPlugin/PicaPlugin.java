@@ -27,14 +27,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.activity.InvalidActivityException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -83,7 +88,7 @@ import ugh.fileformats.opac.PicaPlus;
 @PluginImplementation
 public class PicaPlugin implements Plugin {
 	/**
-	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
+	 * The constant LANGUAGES_MAPPING_FILE holds the name of the PICA plug-in
 	 * languages mapping file. This is a text file with lines in form
 	 * replacement—space—stringToReplace used to replace the value from PICA+
 	 * field “010@” subfield “a” (the replacement will be saved in DocStruct
@@ -1048,5 +1053,81 @@ public class PicaPlugin implements Plugin {
 		GetOpac catalogueClient = new GetOpac(catalogue);
 		catalogueClient.setCharset(configuration.getCharset());
 		this.client = catalogueClient;
+	}
+
+	/**
+	 * The function getSearchFields(String catalogueName) loads the search fields, configured
+	 * in the configuration file of this plugin, for the catalogue with the given String 'catalogueName',
+	 * and returns them in a HashMap. The map contains the labels of the search fields as keys
+	 * and the corresponding URL parameters as values.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of search fields will be returned
+	 * @return Map containing the search fields of the selected OPAC
+	 * @throws InvalidActivityException
+	 */
+	public HashMap<String, String> getSearchFields(String catalogueName) throws InvalidActivityException {
+		LinkedHashMap<String, String> searchFields = new LinkedHashMap<String, String>();
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("searchFields.searchField")) {
+							SubnodeConfiguration searchField = (SubnodeConfiguration)fieldObject;
+							searchFields.put(searchField.getString("[@label]"), searchField.getString("[@value]"));
+						}
+					}
+				}
+			}
+		}
+		return searchFields;
+	}
+
+	/**
+	 * The function getInstitutions(String catalogueName) loads the institutions usable
+	 * for result filtering, configured in the configuration file of this plugin, for
+	 * the catalogue with the given String 'cagalogueName', and returns them in a
+	 * HashMap. The map contains the labels of the institutions as keys and the
+	 * corresponding ISIL IDs as values.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of search fields will be returned
+	 * @return Map containing the filter institutions of the selected OPAC
+	 */
+	public HashMap<String, String> getInstitutions(String catalogueName) {
+		LinkedHashMap<String, String> institutions = new LinkedHashMap<String, String>();
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("filterInstitutions.institution")) {
+							SubnodeConfiguration institution = (SubnodeConfiguration)fieldObject;
+							institutions.put(institution.getString("[@label]"), institution.getString("[@value]"));
+						}
+					}
+				}
+			}
+		}
+		return institutions;
+	}
+
+	/**
+	 * The function getInstitutionFilterParameter(String catalogueName) returns the URL parameter
+	 * used for institution filtering in this plugin.
+	 *
+	 * This function is not yet used in the PicaPlugin.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the institution filter parameter is returned
+	 * @return String the URL parameter used for institution filtering
+	 */
+	public String getInstitutionFilterParameter(String catalogueName) {
+		return "";
 	}
 }

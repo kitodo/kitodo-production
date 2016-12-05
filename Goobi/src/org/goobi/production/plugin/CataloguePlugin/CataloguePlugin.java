@@ -40,6 +40,7 @@ package org.goobi.production.plugin.CataloguePlugin;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -164,6 +165,18 @@ public class CataloguePlugin extends UnspecificPlugin {
 	private final Method getHit;
 
 	/**
+	 * The field getSearchFields holds a Method reference to the method getSearchFields() of the
+	 * plug-in implementation class.
+	 */
+	private final Method getSearchFields;
+
+	/**
+	 * The field getInstitutions holds a Method reference to the method getInstitutions() of the
+	 * plug-in implementation class.
+	 */
+	private final Method getInstitutions;
+
+	/**
 	 * The field getNumberOfHits holds a Method reference to the method
 	 * getNumberOfHits() of the plug-in implementation class.
 	 */
@@ -186,6 +199,8 @@ public class CataloguePlugin extends UnspecificPlugin {
 	private final Method getAllConfigDocTypes;
 
 	private final Method getXMLConfiguration;
+
+	private final Method getInstitutionFilterParameter;
 
 	/**
 	 * The field useCatalogue holds a Method reference to the method
@@ -224,6 +239,9 @@ public class CataloguePlugin extends UnspecificPlugin {
 		getAllConfigDocTypes = getDeclaredMethod("getAllConfigDocTypes", List.class);
 		useCatalogue = getDeclaredMethod("useCatalogue", String.class, Void.TYPE);
 		getXMLConfiguration = getDeclaredMethod("getXMLConfiguration", XMLConfiguration.class);
+		getSearchFields = getDeclaredMethod("getSearchFields", String.class, HashMap.class);
+		getInstitutions = getDeclaredMethod("getInstitutions", String.class, HashMap.class);
+		getInstitutionFilterParameter = getDeclaredMethod("getInstitutionFilterParameter", String.class, String.class);
 	}
 
 	/**
@@ -293,6 +311,33 @@ public class CataloguePlugin extends UnspecificPlugin {
 		Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] { searchResult, index, timeout },
 				Map.class);
 		return new Hit(data);
+	}
+
+	/**
+	 * The function getSearchFields(String opacName) should return the search fields
+	 * for the OPAC identified by the given String 'opacName' that are configured in the
+	 * plugin configuration file.
+	 *
+	 * @param opacName
+	 *            the name of the OPAC for which the search fields are returned
+	 * @return A map containing the names of the search fields as keys and the corresponding URL parameters as values
+	 */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String> getSearchFields(String opacName) {
+		return invokeQuietly(plugin, getSearchFields, new Object[]{ opacName }, HashMap.class);
+	}
+
+	/**
+	 * The function getInstitutions(String opacName) should return the institutions
+	 * for the OPAC that can be used to filter search results and that identified by the
+	 * given String 'opacName' that are configured in the plugin configuration file.
+	 * @param opacName
+	 *            the name of the OPAC for which the filter institutions are returned
+	 * @return A map containing the names of the institutions as keys and the corresponding ISIL IDs as values
+	 */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, String> getInstitutions(String opacName) {
+		return invokeQuietly(plugin, getInstitutions, new Object[]{ opacName }, HashMap.class);
 	}
 
 	/**
@@ -415,5 +460,17 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 */
 	public void useCatalogue(String catalogue) {
 		invokeQuietly(plugin, useCatalogue, catalogue, null);
+	}
+
+	/**
+	 * The function getInstitutionFilterParameter() returns the URL parameter used for institution filtering
+	 * in this plugin.
+	 *
+	 * @param opacName
+	 *            the name of the OPAC for which the name of the institution filter parameter is returned
+	 * @return String the URL parameter used for institution filtering
+	 */
+	public String getInstitutionFilterParameter(String opacName) {
+		return invokeQuietly(plugin, getInstitutionFilterParameter, new Object[]{ opacName }, String.class);
 	}
 }

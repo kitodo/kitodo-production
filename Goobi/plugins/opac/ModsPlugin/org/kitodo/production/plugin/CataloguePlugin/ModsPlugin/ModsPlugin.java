@@ -34,12 +34,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.activity.InvalidActivityException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -199,14 +201,14 @@ public class ModsPlugin implements Plugin {
 	private static HashMap<String, String> structureTypeToDocTypeMapping = new HashMap<String, String>();
 
 	/**
-	 * Filename of the XSL transformation file.
-	 */
-	private static final String MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = "mods2kitodo.xsl";
-
-	/**
 	 * Path of the output file for the XSL transformation.
 	 */
 	private static final String TEMP_FILENAME = "tempMETSMODS.xml";
+
+	/**
+	 * Filename of the XSL transformation file. This filename is being loaded from the plugin configuration file.
+	 */
+	private static String MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
 
 	/**
 	 * Static XPath variables used to parse MetsModsGoobi documents.
@@ -247,6 +249,7 @@ public class ModsPlugin implements Plugin {
 		xsltDir = configuration.get("xsltDir");
 	}
 
+
 	/**
 	 * The function find() initially queries the library catalogue with the
 	 * given query. If successful, it returns a FindResult with the number of
@@ -264,15 +267,7 @@ public class ModsPlugin implements Plugin {
 	 */
 	public Object find(String query, long timeout) {
 		try {
-			String[] queryParts = query.split("&&&");
-			query = queryParts[0];
 			Query queryObject = new Query(query);
-
-			String filterInstitution = "";
-			if(queryParts.length == 2) {
-				filterInstitution = queryParts[1];
-				queryObject.addQuery("AND", filterInstitution, "20");
-			}
 
 			int hits = client.getNumberOfHits(queryObject, timeout);
 			if (hits > 0) {
@@ -371,6 +366,8 @@ public class ModsPlugin implements Plugin {
 		dmdIdCounter = 1;
 		divIdCounter = 1;
 
+		loadMappingFile(configuration.getTitle());
+
 		String xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
 
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -431,6 +428,9 @@ public class ModsPlugin implements Plugin {
 				structureTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
 
 				File transformationScript = new File(xsltFilepath);
+
+				// TODO: extract and store identifier to later extract all elements with "localparentID" equal to this ID, once this functionality is available in the Kalliope SRU interface
+				//String documentId = ((Element)catalogueIDPath.selectSingleNode(doc)).getText();
 
 				doc = transformXML(doc, transformationScript, sb);
 
@@ -557,6 +557,26 @@ public class ModsPlugin implements Plugin {
 					String maynot = (String)forbiddenElement;
 					structureTypeForbiddenElements.get(structureTypeName).add(XPath.newInstance(maynot));
 				}
+			}
+		}
+	}
+
+	private void loadMappingFile(String opacName) {
+
+		MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = "";
+		for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+			SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+			for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+				ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+				if (Objects.equals(opacName, titleAttr.getValue())) {
+					SubnodeConfiguration catalogueConf = (SubnodeConfiguration)catalogueObject;
+					modsLogger.debug("Setting mapping file for OPAC '" + opacName + "' to '" + catalogueConf.getString("mappingFile") + "'");
+					MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = catalogueConf.getString("mappingFile");
+					break;
+				}
+			}
+			if (!Objects.equals(MODS2GOOBI_TRANSFORMATION_RULES_FILENAME, "")) {
+				break;
 			}
 		}
 	}
@@ -709,7 +729,7 @@ public class ModsPlugin implements Plugin {
 	private String retrieveParentRecord(Document doc, long timeout) throws JDOMException {
 		Element parentIDElement = (Element)parentIDPath.selectSingleNode(doc);
 		try {
-			Query parentQuery = new Query("12:" + parentIDElement.getText());
+			Query parentQuery = new Query("ead.id:" + parentIDElement.getText());
 			return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
 		} catch(NullPointerException e) {
 			modsLogger.info("Top level element reached. No further parent elements can be retrieved.");
@@ -973,5 +993,95 @@ public class ModsPlugin implements Plugin {
 	 */
 	static String getConfigDir() {
 		return configDir;
+	}
+
+	/**
+	 * The function getSearchFields(String catalogueName) loads the search fields, configured
+	 * in the configuration file of this plugin, for the catalogue with the given String 'catalogueName',
+	 * and returns them in a HashMap. The map contains the labels of the search fields as keys
+	 * and the corresponding URL parameters as values.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of search fields will be returned
+	 * @return Map containing the search fields of the selected OPAC
+	 * @throws InvalidActivityException
+	 */
+	public HashMap<String, String> getSearchFields(String catalogueName) {
+		LinkedHashMap<String, String> searchFields = new LinkedHashMap<String, String>();
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("searchFields.searchField")) {
+							SubnodeConfiguration searchField = (SubnodeConfiguration)fieldObject;
+							searchFields.put(searchField.getString("[@label]"), searchField.getString("[@value]"));
+						}
+					}
+				}
+			}
+		}
+		return searchFields;
+	}
+
+	/**
+	 * The function getInstitutions(String catalogueName) loads the institutions usable
+	 * for result filtering, configured in the configuration file of this plugin, for
+	 * the catalogue with the given String 'cagalogueName', and returns them in a
+	 * HashMap. The map contains the labels of the institutions as keys and the
+	 * corresponding ISIL IDs as values.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of search fields will be returned
+	 * @return Map containing the filter institutions of the selected OPAC
+	 */
+	public HashMap<String, String> getInstitutions(String catalogueName) {
+		LinkedHashMap<String, String> institutions = new LinkedHashMap<String, String>();
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("filterInstitutions.institution")) {
+							SubnodeConfiguration institution = (SubnodeConfiguration)fieldObject;
+							institutions.put(institution.getString("[@label]"), institution.getString("[@value]"));
+						}
+					}
+				}
+			}
+		}
+		return institutions;
+	}
+
+	/**
+	 * The function getInstitutionFilterParameter(String catalogueName) returns the URL parameter
+	 * used for institution filtering in this plugin.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the institution filter parameter is returned
+	 * @return String the URL parameter used for institution filtering
+	 */
+	public String getInstitutionFilterParameter(String catalogueName) {
+		String parameterName = "";
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("institutionFilterParameter")) {
+							SubnodeConfiguration conf = (SubnodeConfiguration)fieldObject;
+							parameterName = conf.getString("[@value]");
+						}
+					}
+				}
+			}
+		}
+		return parameterName;
 	}
 }

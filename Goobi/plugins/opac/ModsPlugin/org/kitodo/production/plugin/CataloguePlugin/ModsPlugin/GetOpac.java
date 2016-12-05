@@ -136,9 +136,9 @@ class GetOpac {
 
 		logger.debug("last query: " + this.lastQuery);
 
-        if (this.lastQuery.equals(querySummary)) {
-               return this.numberOfHits;
-        }
+		if (this.lastQuery.equals(querySummary)) {
+			return this.numberOfHits;
+		}
 
 		result = retrieveDataFromOPAC(SRU_VERSION + SEARCH_URL_BEFORE_QUERY + query.getQueryUrl() + RECORD_SCHEMA_MODS, timeout);
 
@@ -215,7 +215,7 @@ class GetOpac {
 		String request = "http://" + cat.getServerAddress()
 				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url;
 
-		logger.debug("request url: " + request);
+		logger.error("request url: " + request);
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
