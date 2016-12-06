@@ -42,7 +42,7 @@
 		<property name="type" column="type" type="integer" />
 		<property name="date" column="date" type="timestamp" />
 				
-		<many-to-one name="process" class="de.sub.goobi.beans.Prozess" column="processID" foreign-key="FK_ProzesseID"/>
+		<many-to-one name="process" class="de.sub.goobi.beans.Prozess" column="processID" foreign-key="FK_History_ProzesseID"/>
 		
 	</class>
 

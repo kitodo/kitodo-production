@@ -46,7 +46,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 		<property name="container" column="container" type="integer" />	
-		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="prozesseID" foreign-key="FK_ProzesseID"/>
+		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="prozesseID" foreign-key="FK_Prozesseigenschaft_ProzesseID"/>
 		
 	</class>
 

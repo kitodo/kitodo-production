@@ -58,7 +58,7 @@
 		</property>
 		<property name="tabellengroesse" column="Tabellengroesse" type="integer"/>
 		<property name="sessiontimeout" column="sessiontimeout" type="integer"/>
-		<many-to-one name="ldapGruppe" class="de.sub.goobi.beans.LdapGruppe" column="ldapgruppenID" foreign-key="FK_LdapgruppenID"/>
+		<many-to-one name="ldapGruppe" class="de.sub.goobi.beans.LdapGruppe" column="ldapgruppenID" foreign-key="FK_Benutzer_LdapgruppenID"/>
 		
 		<set name="bearbeitungsschritte" cascade="all,delete-orphan" inverse="true" lazy="true">
 			<key column="BearbeitungsBenutzerID"/>
@@ -66,13 +66,13 @@
 		</set>
 		
 		<set name="benutzergruppen" table="benutzergruppenmitgliedschaft" lazy="true">
-			<key column="BenutzerID" foreign-key="FK_BenutzerID"/>
-			<many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe" foreign-key="FK_BenutzerGruppenID"/>
+			<key column="BenutzerID" foreign-key="FK_Benutzergruppenmitgliedschaft_BenutzerID"/>
+			<many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe" foreign-key="FK_benutzergruppenmitgliedschaft_BenutzerGruppenID"/>
 		</set>
 		
 		<set name="projekte" table="projektbenutzer" lazy="true">
-			<key column="BenutzerID" foreign-key="FK_BenutzerID"/>
-			<many-to-many column="ProjekteID" class="de.sub.goobi.beans.Projekt" foreign-key="FK_ProjekteID"/>
+			<key column="BenutzerID" foreign-key="FK_ProjektBenutzer_BenutzerID"/>
+			<many-to-many column="ProjekteID" class="de.sub.goobi.beans.Projekt" foreign-key="FK_ProjektBenutzer_ProjekteID"/>
 		</set>
 		
 		<set name="schritte" table="schritteberechtigtebenutzer" inverse="true">
