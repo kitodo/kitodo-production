@@ -780,7 +780,7 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>4.0.3</version>
                         <configuration>
-                            <url>jdbc:mysql://localhost/kitodo-new</url>
+                            <url>jdbc:mysql://localhost/kitodo</url>
                             <user>kitodo</user>
                             <password>kitodo</password>
                         </configuration>
@@ -791,6 +791,14 @@
                                 <version>5.1.38</version>
                             </dependency>
                         </dependencies>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>migrate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
