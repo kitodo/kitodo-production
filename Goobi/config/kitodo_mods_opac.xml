@@ -27,7 +27,11 @@
 		<institutionFilterParameter value="ead.repository.isil" />
 		<searchFields>
 			<searchField label="Title" value="ead.title" />
+			<searchField label="Creator" value="ead.creator" />
 			<searchField label="Identifier" value="ead.id" />
+			<searchField label="Creation date" value="ead.creationdate.normal" />
+			<searchField label="Genre" value="ead.genre" />
+			<searchField label="Keyword" value="ead.keyword" />
 		</searchFields>
 		<filterInstitutions>
 			<institution label="Deutsche Nationalbibliothek" value="DE-101" />

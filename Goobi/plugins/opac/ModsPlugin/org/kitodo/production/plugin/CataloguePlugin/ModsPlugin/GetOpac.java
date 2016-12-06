@@ -215,7 +215,7 @@ class GetOpac {
 		String request = "http://" + cat.getServerAddress()
 				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url;
 
-		logger.error("request url: " + request);
+		logger.debug("request url: " + request);
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
