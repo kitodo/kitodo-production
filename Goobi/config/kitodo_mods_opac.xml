@@ -23,7 +23,7 @@
 	</structuretypes>
 	<catalogue title="Kalliope">
 		<config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
-		<mappingFile>mods2kitodo.xsl</mappingFile>
+		<mappingFile>kalliope2kitodo.xsl</mappingFile>
 		<institutionFilterParameter value="ead.repository.isil" />
 		<searchFields>
 			<searchField label="Title" value="ead.title" />
