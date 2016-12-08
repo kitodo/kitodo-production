@@ -1,8 +1,5 @@
-# Ant.
-/build
-/build.properties
+# local development
 /config-local
-/deploy.properties
-/dist
 # Maven.
-/Kitodo/target
+/Kitodo/target/
+/OpacPica-Plugin/target/

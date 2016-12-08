@@ -48,4 +48,4 @@
  *
  * @author Matthias Ronge
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
+package org.kitodo.production.plugin.opac.pica;

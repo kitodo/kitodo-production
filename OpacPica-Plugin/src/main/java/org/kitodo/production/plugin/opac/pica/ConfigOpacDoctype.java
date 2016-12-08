@@ -1,4 +1,4 @@
-/**
+package org.kitodo.production.plugin.opac.pica; /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
@@ -25,36 +25,43 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-class Catalogue {
+import java.util.ArrayList;
 
-	private String cbs = "";
+class ConfigOpacDoctype {
+	private final String title;
+	private final boolean periodical;
+	private final boolean multiVolume;
+	private final boolean containedWork;
+	private final ArrayList<String> mappings;
 
-	private final String dataBase;
-	private final String serverAddress;
-	private final int port;
-
-	Catalogue(ConfigOpacCatalogue coc) {
-		this.serverAddress = coc.getAddress();
-		this.port = coc.getPort();
-		this.dataBase = coc.getDatabase();
-		this.cbs = coc.getCbs();
+	ConfigOpacDoctype(String inTitle, boolean periodical, boolean multiVolume, boolean containedWork,
+			ArrayList<String> mappings) {
+		this.title = inTitle;
+		this.periodical = periodical;
+		this.multiVolume = multiVolume;
+		this.containedWork = containedWork;
+		this.mappings = mappings;
 	}
 
-	String getDataBase() {
-		return dataBase;
+	public String getTitle() {
+		return this.title;
 	}
 
-	int getPort() {
-		return port;
+	boolean isPeriodical() {
+		return periodical;
 	}
 
-	String getServerAddress() {
-		return serverAddress;
+	boolean isMultiVolume() {
+		return multiVolume;
 	}
 
-	String getCbs() {
-		return cbs;
+	boolean isContainedWork() {
+		return containedWork;
 	}
+
+	ArrayList<String> getMappings() {
+		return mappings;
+	}
+
 }

@@ -1,4 +1,4 @@
-/**
+package org.kitodo.production.plugin.opac.pica; /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
@@ -25,7 +25,6 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

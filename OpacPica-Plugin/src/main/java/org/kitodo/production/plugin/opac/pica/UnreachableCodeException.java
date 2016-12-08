@@ -1,22 +1,22 @@
-/**
+/*
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
- * 
- * Visit the websites for more information. 
- *     		- http://www.kitodo.org
- *     		- https://github.com/goobi/goobi-production
- * 		    - http://gdz.sub.uni-goettingen.de
- * 			- http://www.intranda.com
- * 			- http://digiverso.com 
- * 
+ *
+ * Visit the websites for more information.
+ *          - http://www.kitodo.org
+ *          - https://github.com/goobi/goobi-production
+ *          - http://gdz.sub.uni-goettingen.de
+ *          - http://www.intranda.com
+ *          - http://digiverso.com
+ *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
  * Software Foundation; either version 2 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
  * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
  * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
@@ -25,30 +25,15 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.util.ArrayList;
+package org.kitodo.production.plugin.opac.pica;
 
-/**
- * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer
- * einer Opacabfrage zurückgegeben wird. Dabei soll die Eigenschaft eines Wertes
- * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
- */
-class ConfigOpacCatalogueBeautifier {
-	private final ConfigOpacCatalogueBeautifierElement tagElementToChange;
-	private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
+public class UnreachableCodeException extends RuntimeException {
 
-	ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
-			ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
-		this.tagElementToChange = inChangeElement;
-		this.tagElementsToProof = inProofElements;
-	}
+    public UnreachableCodeException() {
+    }
 
-	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
-		return this.tagElementToChange;
-	}
-
-	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
-		return this.tagElementsToProof;
-	}
+    public UnreachableCodeException(String exceptionMessage) {
+        super(exceptionMessage);
+    }
 }

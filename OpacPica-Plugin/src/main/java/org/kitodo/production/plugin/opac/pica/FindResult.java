@@ -1,4 +1,4 @@
-/**
+package org.kitodo.production.plugin.opac.pica; /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
  * 
@@ -21,7 +21,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 /**
  * The class FindResult represents the result of a find() operation of the
