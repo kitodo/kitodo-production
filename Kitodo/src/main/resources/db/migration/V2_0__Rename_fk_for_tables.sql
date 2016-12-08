@@ -3,74 +3,74 @@
 -- Add foreign keys of the certain tables according to naming convention.
 --
 
-alter table Batchesprozesse add constraint `FK_BatchesProzesse_BatchID`
-foreign key (BatchID) REFERENCES Batches(BatchID);
+alter table batchesprozesse add constraint `FK_BatchesProzesse_BatchID`
+foreign key (BatchID) REFERENCES batches(BatchID);
 
-alter table Batchesprozesse add constraint `FK_BatchesProzesse_ProzesseID`
-foreign key (ProzesseID) REFERENCES Prozesse(ProzesseID);
+alter table batchesprozesse add constraint `FK_BatchesProzesse_ProzesseID`
+foreign key (ProzesseID) REFERENCES prozesse(ProzesseID);
 
-alter table Benutzer add constraint `FK_Benutzer_LdapgruppenID`
-foreign key (ldapgruppenID) REFERENCES Ldapgruppen(ldapgruppenID);
+alter table benutzer add constraint `FK_Benutzer_LdapgruppenID`
+foreign key (ldapgruppenID) REFERENCES ldapgruppen(ldapgruppenID);
 
-alter table Benutzereigenschaften add constraint `FK_Benutzereigenschaft_BenutzerID`
-foreign key (BenutzerID) REFERENCES Benutzer(BenutzerID);
+alter table benutzereigenschaften add constraint `FK_Benutzereigenschaft_BenutzerID`
+foreign key (BenutzerID) REFERENCES benutzer(BenutzerID);
 
-alter table Benutzergruppenmitgliedschaft add constraint `FK_Benutzergruppenmitgliedschaft_BenutzerID`
-foreign key (BenutzerID) REFERENCES Benutzer(BenutzerID);
+alter table benutzergruppenmitgliedschaft add constraint `FK_Benutzergruppenmitgliedschaft_BenutzerID`
+foreign key (BenutzerID) REFERENCES benutzer(BenutzerID);
 
-alter table Benutzergruppenmitgliedschaft add constraint `FK_Benutzergruppenmitgliedschaft_BenutzerGruppenID`
-foreign key (BenutzerGruppenID) REFERENCES BenutzerGruppen(BenutzergruppenID);
+alter table benutzergruppenmitgliedschaft add constraint `FK_Benutzergruppenmitgliedschaft_BenutzerGruppenID`
+foreign key (BenutzerGruppenID) REFERENCES benutzergruppen(BenutzergruppenID);
 
-alter table History add constraint `FK_History_ProzesseID`
-foreign key (processID) REFERENCES Prozesse(ProzesseID);
+alter table history add constraint `FK_History_ProzesseID`
+foreign key (processID) REFERENCES prozesse(ProzesseID);
 
-alter table ProjectFileGroups add constraint `FK_ProjectFileGroups_ProjekteID`
-foreign key (ProjekteID) REFERENCES Projekte(ProjekteID);
+alter table projectfilegroups add constraint `FK_ProjectFileGroups_ProjekteID`
+foreign key (ProjekteID) REFERENCES projekte(ProjekteID);
 
-alter table ProjektBenutzer add constraint `FK_ProjektBenutzer_BenutzerID`
-foreign key (BenutzerID) REFERENCES Benutzer(BenutzerID);
+alter table projektbenutzer add constraint `FK_ProjektBenutzer_BenutzerID`
+foreign key (BenutzerID) REFERENCES benutzer(BenutzerID);
 
-alter table ProjektBenutzer add constraint `FK_ProjektBenutzer_ProjekteID`
-foreign key (ProjekteID) REFERENCES Projekte(ProjekteID);
+alter table projektbenutzer add constraint `FK_ProjektBenutzer_ProjekteID`
+foreign key (ProjekteID) REFERENCES projekte(ProjekteID);
 
-alter table Prozesse add constraint `FK_Prozess_ProjekteID`
-foreign key (ProjekteID) REFERENCES Projekte(ProjekteID);
+alter table prozesse add constraint `FK_Prozess_ProjekteID`
+foreign key (ProjekteID) REFERENCES projekte(ProjekteID);
 
-alter table Prozesse add constraint `FK_Prozess_MetadatenKonfigurationID`
-foreign key (MetadatenKonfigurationID) REFERENCES MetadatenKonfigurationen(MetadatenKonfigurationID);
+alter table prozesse add constraint `FK_Prozess_MetadatenKonfigurationID`
+foreign key (MetadatenKonfigurationID) REFERENCES metadatenkonfigurationen(MetadatenKonfigurationID);
 
-alter table Prozesse add constraint `FK_Prozess_DocketID`
-foreign key (docketID) REFERENCES Dockets(docketID);
+alter table prozesse add constraint `FK_Prozess_DocketID`
+foreign key (docketID) REFERENCES dockets(docketID);
 
-alter table Prozesseeigenschaften add constraint `FK_Prozesseigenschaft_ProzesseID`
-foreign key (ProzesseID) REFERENCES Prozesse(ProzesseID);
+alter table prozesseeigenschaften add constraint `FK_Prozesseigenschaft_ProzesseID`
+foreign key (ProzesseID) REFERENCES prozesse(ProzesseID);
 
-alter table Schritte add constraint `FK_Schritte_BearbeitungsBenutzerID`
-foreign key (BearbeitungsBenutzerID) REFERENCES Benutzer(BenutzerID);
+alter table schritte add constraint `FK_Schritte_BearbeitungsBenutzerID`
+foreign key (BearbeitungsBenutzerID) REFERENCES benutzer(BenutzerID);
 
-alter table Schritte add constraint `FK_Schritte_ProzesseID`
-foreign key (ProzesseID) REFERENCES Prozesse(ProzesseID);
+alter table schritte add constraint `FK_Schritte_ProzesseID`
+foreign key (ProzesseID) REFERENCES prozesse(ProzesseID);
 
-alter table Schritteberechtigtebenutzer add constraint `FK_SchritteBerechtigteBenutzer_BenutzerID`
-foreign key (BenutzerID) REFERENCES Benutzer(BenutzerID);
+alter table schritteberechtigtebenutzer add constraint `FK_SchritteBerechtigteBenutzer_BenutzerID`
+foreign key (BenutzerID) REFERENCES benutzer(BenutzerID);
 
-alter table Schritteberechtigtebenutzer add constraint `FK_SchritteBerechtigteBenutzer_SchritteID`
-foreign key (SchritteID) REFERENCES Schritte(SchritteID);
+alter table schritteberechtigtebenutzer add constraint `FK_SchritteBerechtigteBenutzer_SchritteID`
+foreign key (SchritteID) REFERENCES schritte(SchritteID);
 
-alter table Schritteberechtigtegruppen add constraint `FK_SchritteBerechtigtegruppen_BenutzerGruppenID`
-foreign key (BenutzergruppenID) REFERENCES Benutzergruppen(BenutzergruppenID);
+alter table schritteberechtigtegruppen add constraint `FK_SchritteBerechtigtegruppen_BenutzerGruppenID`
+foreign key (BenutzergruppenID) REFERENCES benutzergruppen(BenutzergruppenID);
 
-alter table Schritteberechtigtegruppen add constraint `FK_SchritteBerechtigtegruppen_SchritteID`
-foreign key (SchritteID) REFERENCES Schritte(SchritteID);
+alter table schritteberechtigtegruppen add constraint `FK_SchritteBerechtigtegruppen_SchritteID`
+foreign key (SchritteID) REFERENCES schritte(SchritteID);
 
-alter table Vorlagen add constraint `FK_Vorlagen_ProzesseID`
-foreign key (ProzesseID) REFERENCES Prozesse(ProzesseID);
+alter table vorlagen add constraint `FK_Vorlagen_ProzesseID`
+foreign key (ProzesseID) REFERENCES prozesse(ProzesseID);
 
-alter table Vorlageneigenschaften add constraint `FK_Vorlageneigenschaften_VorlagenID`
-foreign key (vorlagenID) REFERENCES Vorlagen(VorlagenID);
+alter table vorlageneigenschaften add constraint `FK_Vorlageneigenschaften_VorlagenID`
+foreign key (vorlagenID) REFERENCES vorlagen(VorlagenID);
 
-alter table Werkstuecke add constraint `FK_Werkstuecke_ProzesseID`
-foreign key (ProzesseID) REFERENCES Prozesse(ProzesseID);
+alter table werkstuecke add constraint `FK_Werkstuecke_ProzesseID`
+foreign key (ProzesseID) REFERENCES prozesse(ProzesseID);
 
-alter table Werkstueckeeigenschaften add constraint `FK_Werkstueckeeigenschaften_WerkstueckeID`
-foreign key (werkstueckeID) REFERENCES Werkstuecke(WerkstueckeID);
+alter table werkstueckeeigenschaften add constraint `FK_Werkstueckeeigenschaften_WerkstueckeID`
+foreign key (werkstueckeID) REFERENCES werkstuecke(WerkstueckeID);

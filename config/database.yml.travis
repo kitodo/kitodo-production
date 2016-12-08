@@ -1,0 +1,5 @@
+mysql: &mysql
+adapter: mysql2
+username: kitodo
+password: kitodo
+database: kitodo
