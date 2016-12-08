@@ -1,4 +1,4 @@
-package org.kitodo.production.plugin.opac.pica; /**
+/**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
@@ -25,15 +25,16 @@ package org.kitodo.production.plugin.opac.pica; /**
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
+package org.kitodo.production.plugin.opac.pica;
 
 import org.apache.commons.lang.CharEncoding;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
 class OpacResponseHandler extends DefaultHandler {
 
