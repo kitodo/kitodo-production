@@ -1,4 +1,4 @@
-package PicaMassImport.de.intranda.goobi.plugins.sru;
+package org.kitodo.production.plugin.importer.massimport.sru;
 
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
@@ -25,7 +25,7 @@ package PicaMassImport.de.intranda.goobi.plugins.sru;
  * exception statement from your version.
  */
 
-import PicaMassImport.com.googlecode.fascinator.redbox.sru.SRUClient;
+import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;

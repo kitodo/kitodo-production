@@ -16,17 +16,17 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package PicaMassImport.com.googlecode.fascinator.redbox.sru;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru;
 
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>A basic wrapper for handling EAC-CPF formatted identities that return for
@@ -54,7 +54,7 @@ public class NLAIdentity {
     /**
      * <p>Default Constructor. Extract some basic information.</p>
      * 
-     * @param searchResponse A parsed DOM4J Document
+     * @param node searchResponse A parsed DOM4J Document
      * @throws SRUException If any of the XML structure does not look like expected
      */
     public NLAIdentity(Node node) throws SRUException {
