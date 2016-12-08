@@ -1,5 +1,3 @@
-package org.kitodo.production.plugin.importer.massimport;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,6 +25,8 @@ package org.kitodo.production.plugin.importer.massimport;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+package org.kitodo.production.plugin.importer.massimport;
+
 import de.sub.goobi.config.ConfigMain;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;

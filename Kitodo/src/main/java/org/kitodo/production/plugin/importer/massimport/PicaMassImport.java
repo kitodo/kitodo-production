@@ -1,5 +1,3 @@
-package org.kitodo.production.plugin.importer.massimport;
-
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
  *
@@ -24,6 +22,7 @@ package org.kitodo.production.plugin.importer.massimport;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+package org.kitodo.production.plugin.importer.massimport;
 
 import java.io.File;
 import java.io.FileInputStream;
