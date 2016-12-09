@@ -409,7 +409,7 @@
             <version>2.9.1</version>
         </dependency>
 
-        <!-- Libraries from Slub-Nexus repsitory -->
+        <!-- Libraries from Slub-Nexus repository -->
         <dependency>
             <groupId>de.unigoettingen.goobi</groupId>
             <artifactId>goobi-api</artifactId>
