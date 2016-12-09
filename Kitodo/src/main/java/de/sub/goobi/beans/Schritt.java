@@ -36,6 +36,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -45,54 +57,164 @@ import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
+@Entity
+@Table(name = "Step")
 public class Schritt implements Serializable {
 	private static final long serialVersionUID = 6831844584239811846L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "priority")
 	private Integer prioritaet;
+
+	@Column(name = "order")
 	private Integer reihenfolge;
+
+	@Column(name = "processing_status")
 	private Integer bearbeitungsstatus;
+
+	@Column(name = "processing_time")
 	private Date bearbeitungszeitpunkt;
+
+	@Column(name = "processing_beginning")
 	private Date bearbeitungsbeginn;
+
+	@Column(name = "processing_end")
 	private Date bearbeitungsende;
+
+	@Column(name = "edit_type")
 	private Integer editType;
-	private Benutzer bearbeitungsbenutzer;
+
+	@Column(name = "home_directory") //not sure how to translate it
 	private short homeverzeichnisNutzen;
 
+	@Column(name = "type_metadata")
 	private boolean typMetadaten = false;
+
+	@Column(name = "type_automatic")
 	private boolean typAutomatisch = false;
+
+	@Column(name = "type_import_file_upload")
 	private boolean typImportFileUpload = false;
+
+	@Column(name = "type_export_russian")
 	private boolean typExportRus = false;
+
+	@Column(name = "type_image_read")
 	private boolean typImagesLesen = false;
+
+	@Column(name = "type_image_write")
 	private boolean typImagesSchreiben = false;
+
+	@Column(name = "type_export_dms")
 	private boolean typExportDMS = false;
+
+	@Column(name = "type_accept_module")
 	private boolean typBeimAnnehmenModul = false;
+
+	@Column(name = "type_accept_close")
 	private boolean typBeimAnnehmenAbschliessen = false;
+
+	@Column(name = "type_accept_module_and_close")
 	private boolean typBeimAnnehmenModulUndAbschliessen = false;
+
+	@Column(name = "type_script_step")
 	private Boolean typScriptStep = false;
+
+	@Column(name = "script_name_1")
 	private String scriptname1;
+
+	@Column(name = "type_automatic_script_path")
 	private String typAutomatischScriptpfad;
+
+	@Column(name = "script_name_2")
 	private String scriptname2;
+
+	@Column(name = "type_automatic_script_path_2")
 	private String typAutomatischScriptpfad2;
+
+	@Column(name = "script_name_3")
 	private String scriptname3;
+
+	@Column(name = "type_automatic_script_path_3")
 	private String typAutomatischScriptpfad3;
+
+	@Column(name = "script_name_4")
 	private String scriptname4;
+
+	@Column(name = "type_automatic_script_path_4")
 	private String typAutomatischScriptpfad4;
+
+	@Column(name = "script_name_5")
 	private String scriptname5;
+
+	@Column(name = "type_automatic_script_path_5")
 	private String typAutomatischScriptpfad5;
+
+	@Column(name = "type_module_name")
 	private String typModulName;
+
+	@Column(name = "type_close_verify")
 	private boolean typBeimAbschliessenVerifizieren = false;
+
+	@Column(name = "batch_step")
 	private Boolean batchStep = false;
 
-	private Prozess prozess;
-	private Set<Benutzer> benutzer;
-	private Set<Benutzergruppe> benutzergruppen;
+	@Column(name = "panel_shown")
 	private boolean panelAusgeklappt = false;
+
+	@Column(name = "selected")
 	private boolean selected = false;
+
 	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
-	
+
+	@Column(name = "step_plugin")
 	private String stepPlugin;
+
+	@Column(name = "validation_plugin")
 	private String validationPlugin;
+
+	@ManyToOne
+	@JoinColumn(name = "processinguser_id", foreignKey = @ForeignKey(name = "FK_Step_processinguser_id"))
+	private Benutzer bearbeitungsbenutzer;
+
+	@ManyToOne
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_Step_process_id"))
+	private Prozess prozess;
+
+	@ManyToMany
+	@JoinTable(name = "Step_x_User",
+			joinColumns = {
+					@JoinColumn(
+							name = "step_id",
+							foreignKey = @ForeignKey(name = "FK_Step_x_User_step_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "user_id",
+							foreignKey = @ForeignKey(name = "FK_Step_x_User_user_id")
+					) })
+	private Set<Benutzer> benutzer;
+
+	@ManyToMany
+	@JoinTable(name = "Step_x_UserGroup",
+			joinColumns = {
+					@JoinColumn(
+							name = "step_id",
+							foreignKey = @ForeignKey(name = "FK_Step_x_UserGroup_step_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "usergroup_id",
+							foreignKey = @ForeignKey(name = "FK_Step_x_User_usergroup_id")
+					) })
+	private Set<Benutzergruppe> benutzergruppen;
 
 	public Schritt() {
 		this.titel = "";

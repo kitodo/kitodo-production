@@ -28,29 +28,78 @@ package de.sub.goobi.beans;
  */
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "LdapGroup")
 public class LdapGruppe implements Serializable {
    private static final long serialVersionUID = -1657514909731889712L;
-   private Integer id;
-   private String titel;
-   private String homeDirectory;
-   private String gidNumber;
-   private String userDN;
-   private String objectClasses;
-   private String sambaSID;
-   private String sn;
-   private String uid;
-   private String description;
-   private String displayName;
-   private String gecos;
-   private String loginShell;
-   private String sambaAcctFlags;
-   private String sambaLogonScript;
-   private String sambaPrimaryGroupSID;
 
-   private String sambaPwdMustChange;
-   private String sambaPasswordHistory;
-   private String sambaLogonHours;
-   private String sambaKickoffTime;
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
+	private Integer id;
+
+	@Column(name = "title")
+	private String titel;
+
+	@Column(name = "home_directory")
+	private String homeDirectory;
+
+	@Column(name = "gid_number")
+	private String gidNumber;
+
+	@Column(name = "user_dn")
+	private String userDN;
+
+	@Column(name = "object_class")
+	private String objectClasses;
+
+	@Column(name = "samba_sid")
+	private String sambaSID;
+
+	@Column(name = "sn")
+	private String sn;
+
+	@Column(name = "uid")
+	private String uid;
+
+	@Column(name = "description")
+	private String description;
+
+	@Column(name = "display_name")
+	private String displayName;
+
+	@Column(name = "gecos")
+	private String gecos;
+
+	@Column(name = "login_shell")
+	private String loginShell;
+
+	@Column(name = "samba_acct_flag")
+	private String sambaAcctFlags;
+
+	@Column(name = "samba_logon_script")
+	private String sambaLogonScript;
+
+	@Column(name = "samba_primary_group_sid")
+	private String sambaPrimaryGroupSID;
+
+	@Column(name = "samba_password_must_change")
+	private String sambaPwdMustChange;
+
+	@Column(name = "samba_password_history")
+	private String sambaPasswordHistory;
+
+	@Column(name = "samba_logon_hour")
+	private String sambaLogonHours;
+
+	@Column(name = "samba_kickoff_time")
+	private String sambaKickoffTime;
 
    public LdapGruppe() {
    }

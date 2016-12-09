@@ -32,21 +32,52 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
+@Entity
+@Table(name = "ProcessProperty")
 public class Prozesseigenschaft implements Serializable, IGoobiProperty, Comparable<Prozesseigenschaft> {
 	private static final long serialVersionUID = -2356566712752716107L;
 
-	private Prozess prozess;
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "value")
 	private String wert;
+
+	@Column(name = "is_obligatory")
 	private Boolean istObligatorisch;
+
+	@Column(name = "data_type")
 	private Integer datentyp;
+
+	@Column(name = "choice")
 	private String auswahl;
+
+	@Column(name = "creation_date")
 	private Date creationDate;
+
+	@Column(name = "container")
 	private Integer container;
+
+	@ManyToOne
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_ProcessProperty_process_id"))
+	private Prozess prozess;
 
 	public Prozesseigenschaft() {
 		this.istObligatorisch = false;

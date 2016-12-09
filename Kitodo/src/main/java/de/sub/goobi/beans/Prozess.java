@@ -44,9 +44,24 @@ import java.util.List;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -92,32 +107,91 @@ import de.sub.goobi.persistence.ProzessDAO;
 // elements. Further XML elements can be added as needed by annotating with
 // @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
+
+@Entity
+@Table(name = "Process")
 public class Prozess implements Serializable {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "output_name")
 	private String ausgabename;
+
+	@Column(name = "is_template")
 	private Boolean istTemplate;
+
+	@Column(name = "is_choice_list_shown")
 	private Boolean inAuswahllisteAnzeigen;
-	private Projekt projekt;
+
+	@Column(name = "creation_date")
 	private Date erstellungsdatum;
-	private Set<Schritt> schritte;
-	private Set<HistoryEvent> history;
-	private Set<Werkstueck> werkstuecke;
-	private Set<Vorlage> vorlagen;
-	private Set<Prozesseigenschaft> eigenschaften;
-	private Set<Batch> batches = new HashSet<Batch>(0);
+
+	@Column(name = "sort_helper_status")
 	private String sortHelperStatus;
+
+	@Column(name = "sort_helper_images")
 	private Integer sortHelperImages;
+
+	@Column(name = "sort_helper_articles")
 	private Integer sortHelperArticles;
+
+	@Column(name = "sort_helper_metadata")
 	private Integer sortHelperMetadata;
+
+	@Column(name = "sort_helper_docstructs")
 	private Integer sortHelperDocstructs;
-	private Regelsatz regelsatz;
+
+	@Column(name = "swapped_out")
 	private Boolean swappedOut = false;
+
+	@Column(name = "panel_shown")
 	private Boolean panelAusgeklappt = false;
+
+	@Column(name = "selected")
 	private Boolean selected = false;
+
+	@Column(name = "wiki_field")
+	private String wikifield = "";
+
+	@ManyToOne
+	@JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_Process_docket_id"))
 	private Docket docket;
+
+	@ManyToOne
+	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_Process_project_id"))
+	private Projekt projekt;
+
+	@ManyToOne
+	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_Process_ruleset_id"))
+	private Regelsatz regelsatz;
+
+	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Schritt> schritte;
+
+	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("date ASC")
+	private Set<HistoryEvent> history;
+
+	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Werkstueck> werkstuecke;
+
+	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Vorlage> vorlagen;
+
+	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("title ASC")
+	private Set<Prozesseigenschaft> eigenschaften;
+
+	@ManyToMany(mappedBy = "processes")
+	private Set<Batch> batches = new HashSet<Batch>(0);
 
 	private final MetadatenSperrung msp = new MetadatenSperrung();
 	Helper help = new Helper();
@@ -125,7 +199,6 @@ public class Prozess implements Serializable {
 	public static String DIRECTORY_PREFIX = "orig";
 	public static String DIRECTORY_SUFFIX = "images";
 
-	private String wikifield = "";
 	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
 	public Prozess() {

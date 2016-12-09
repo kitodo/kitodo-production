@@ -33,6 +33,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 import org.hibernate.Hibernate;
 
 /**
@@ -45,14 +52,30 @@ import org.hibernate.Hibernate;
  * 
  * ================================================================
  */
+@Entity
+@Table(name = "UserGroup")
 public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> {
 	private static final long serialVersionUID = -5924845694417474352L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "permission")
 	private Integer berechtigung;
-	private Set<Benutzer> benutzer;
-	private Set<Schritt> schritte;
+
+	@Column(name = "panel_shown")
 	private boolean panelAusgeklappt = false;
+
+	@ManyToMany(mappedBy = "usergroups")
+	private Set<Benutzer> benutzer;
+
+	@ManyToMany(mappedBy = "usergroups")
+	private Set<Schritt> schritte;
 
 	public Benutzergruppe() {
 		this.schritte = new HashSet<Schritt>();
