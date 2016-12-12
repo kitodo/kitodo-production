@@ -19,31 +19,8 @@
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <local.lib.dir>${basedir}/src/main/webapp/WEB-INF/lib</local.lib.dir>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-
-    <repositories>
-        <!-- Let's first add the default Maven central repo,
-             otherwise Maven will not use Maven Central as first download option -->
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>Jahia</id>
-            <name>Jahia Repository</name>
-            <url>http://maven.jahia.org/maven2/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -142,6 +119,12 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -186,6 +169,14 @@
                     <artifactId>xerces</artifactId>
                     <groupId>xerces</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jdom</groupId>
+                    <artifactId>jdom</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -229,11 +220,6 @@
             <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.3</version>
@@ -257,6 +243,12 @@
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>1.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>
@@ -300,11 +292,23 @@
             <groupId>org.apache.myfaces.core</groupId>
             <artifactId>myfaces-impl</artifactId>
             <version>1.1.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
             <artifactId>tomahawk</artifactId>
             <version>1.1.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
@@ -405,202 +409,144 @@
             <version>2.9.1</version>
         </dependency>
 
-        <!-- Libraries from local resources-->
+        <!-- Libraries from Slub-Nexus repository -->
         <dependency>
             <groupId>de.unigoettingen.goobi</groupId>
             <artifactId>goobi-api</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/goobi-api.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>de.intranda</groupId>
             <artifactId>intrandaChart</artifactId>
             <version>1.4</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/intrandaChart_1.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>javax.media</groupId>
             <artifactId>jai_codec</artifactId>
             <version>1.1.2_01</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jai_codec-1.1.2_01.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>javax.media</groupId>
             <artifactId>jai_core</artifactId>
             <version>1.1.2_01</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jai_core-1.1.2_01.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>javax.media</groupId>
             <artifactId>jai_imageio</artifactId>
             <version>1.0_01</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jai_imageio-1.0_01.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.xeoh</groupId>
             <artifactId>plugins-base</artifactId>
             <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jspf.core-1.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>de.unigoettingen</groupId>
             <artifactId>kitodo-contentserver</artifactId>
             <version>2.0.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/kitodo-contentserver-2.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-ugh</artifactId>
             <version>2.0.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/kitodo-ugh-2.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.richfaces.framework</groupId>
             <artifactId>richfaces-api</artifactId>
             <version>3.1.6.GA</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/richfaces-api-3.1.6.GA.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.richfaces.framework</groupId>
             <artifactId>richfaces-impl</artifactId>
             <version>3.1.6.GA</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/richfaces-impl-3.1.6.GA.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.richfaces.ui</groupId>
             <artifactId>richfaces-ui</artifactId>
             <version>3.1.6.GA</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/richfaces-ui-3.1.6.GA.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9</artifactId>
             <version>9.0.0.4</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/saxon9.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>net.sf.saxon.dom</groupId>
+            <groupId>org.saxon</groupId>
             <artifactId>saxon9-dom</artifactId>
-            <version>X</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/saxon9-dom.jar</systemPath>
+            <version>9.0.0.4</version>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0-oracle-thin-extras</artifactId>
             <version>0.9.5.2</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/c3p0-oracle-thin-extras-0.9.5.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.sf.jsfcomp.chartcreator</groupId>
             <artifactId>chartcreator</artifactId>
-            <version>1.2.0-RC1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/chartcreator-1.2.0-RC1.jar</systemPath>
+            <version>1.2.0</version>
+            <classifier>RC1</classifier>
         </dependency>
         <dependency>
             <groupId>com.sun.medialib.codec</groupId>
-            <artifactId>com.sun.medialib.codec</artifactId>
+            <artifactId>clibwrapper_jiio</artifactId>
             <version>1.2-daily</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/clibwrapper_jiio.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/commons-collections-3.2.1-patched.jar</systemPath>
+            <classifier>patched</classifier>
         </dependency>
         <dependency>
             <groupId>net.sf.jsfcomp.easysi</groupId>
             <artifactId>easysi</artifactId>
             <version>0.9.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/EasySI-0.9.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.exadel.htmLib</groupId>
             <artifactId>htmLib</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/htmLib.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>net.sf.j2ep</groupId>
             <artifactId>j2ep</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/j2ep-1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.jenia.faces</groupId>
             <artifactId>jenia4faces</artifactId>
             <version>1.2.1</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jenia4faces_1.2.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>jspf.core-1.0.0</groupId>
-            <artifactId>jspf.core</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jspf.core-1.0.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+            <artifactId>jstl</artifactId>
             <version>1.1.2</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/jstl.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.marc4j</groupId>
             <artifactId>marc4j</artifactId>
-            <version>X</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/marc4j.jar</systemPath>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>gov.loc.mets</groupId>
             <artifactId>mets</artifactId>
             <version>1.7</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/mets-1.7.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>gov.loc.mods.v3</groupId>
+            <groupId>gov.loc.mods</groupId>
             <artifactId>mods</artifactId>
             <version>3.3</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/mods-3.3.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
             <artifactId>tomahawk-sandbox</artifactId>
-            <version>1.1.5-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/tomahawk-sandbox-1.1.5-SNAPSHOT.jar</systemPath>
+            <version>1.1.5</version>
+            <classifier>SNAPSHOT</classifier>
         </dependency>
         <dependency>
             <groupId>xmlbeans</groupId>
             <artifactId>xbean_xpath</artifactId>
             <version>2.4.0</version>
-            <scope>system</scope>
-            <systemPath>${local.lib.dir}/xbean_xpath-2.4.0.jar</systemPath>
         </dependency>
 
         <!-- ########## Here comes dependencies needed for tests ########## -->
