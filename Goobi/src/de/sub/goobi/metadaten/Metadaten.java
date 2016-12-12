@@ -3122,8 +3122,8 @@ public class Metadaten {
 	 *             multi-select input
 	 */
 	public List<RenderableMetadataGroup> getMyGroups() throws ConfigurationException {
-		List<MetadataGroup> records = myDocStruct.getAllMetadataGroups();
-		if (records == null) {
+		List<MetadataGroup> records;
+		if (myDocStruct == null || (records = myDocStruct.getAllMetadataGroups()) == null) {
 			return Collections.emptyList();
 		}
 		List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
