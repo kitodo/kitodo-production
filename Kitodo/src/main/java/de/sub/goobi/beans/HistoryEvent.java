@@ -48,7 +48,7 @@ import de.sub.goobi.helper.enums.HistoryEventType;
  * @version 24.05.2009
  */
 @Entity
-@Table(name = "History")
+@Table(name = "history")
 public class HistoryEvent implements Serializable {
 	private static final long serialVersionUID = 991946177515032238L;
 
@@ -60,17 +60,17 @@ public class HistoryEvent implements Serializable {
 	@Column(name = "date")
 	private Date date;
 
-	@Column(name = "numeric_value")
+	@Column(name = "numericValue")
 	private Double numericValue;
 
-	@Column(name = "string_value")
+	@Column(name = "stringValue")
 	private String stringValue;
 
 	@Column(name = "type")
 	private Integer type;
 
 	@ManyToOne
-	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_History_ruleset_id"))
+	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_history_ruleset_id"))
 	private Prozess process;
 
 	/**

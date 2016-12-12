@@ -42,7 +42,7 @@ import ugh.exceptions.PreferencesException;
 import de.sub.goobi.config.ConfigMain;
 
 @Entity
-@Table(name = "Ruleset")
+@Table(name = "ruleset")
 public class Regelsatz implements Serializable {
 	private static final long serialVersionUID = -6663371963274685060L;
 
@@ -57,7 +57,7 @@ public class Regelsatz implements Serializable {
 	@Column(name = "file")
 	private String datei;
 
-	@Column(name = "order_metadata_by_rulset")
+	@Column(name = "orderMetadataByRuleset")
 	private Boolean orderMetadataByRuleset = false;
 
 	private static final Logger logger = Logger.getLogger(Regelsatz.class);

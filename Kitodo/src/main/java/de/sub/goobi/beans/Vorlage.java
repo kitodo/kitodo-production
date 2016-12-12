@@ -49,7 +49,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 @Entity
-@Table(name = "Production")
+@Table(name = "template")
 public class Vorlage implements Serializable {
 	private static final long serialVersionUID = 1736135433162833277L;
 
@@ -61,14 +61,14 @@ public class Vorlage implements Serializable {
 	@Column(name = "origin")
 	private String herkunft;
 
-	@Column(name = "panel_shown")
+	@Column(name = "panelShown")
 	private boolean panelAusgeklappt = true;
 
 	@ManyToOne
-	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_Production_process_id"))
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
 	private Prozess prozess;
 
-	@OneToMany(mappedBy = "production", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private Set<Vorlageeigenschaft> eigenschaften;
 

@@ -61,7 +61,7 @@ import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;
 
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 public class Benutzer implements Serializable {
 	private static final long serialVersionUID = -7482853955996650586L;
 
@@ -79,61 +79,61 @@ public class Benutzer implements Serializable {
 	@Column(name = "login")
 	private String login;
 
-	@Column(name = "ldaplogin")
+	@Column(name = "ldapLogin")
 	private String ldaplogin;
 
 	@Column(name = "password")
 	private String passwort;
 
-	@Column(name = "is_active")
+	@Column(name = "isActive")
 	private boolean istAktiv = true;
 
-	@Column(name = "is_visible")
+	@Column(name = "isVisible")
 	private String isVisible;
 
 	@Column(name = "location")
 	private String standort;
 
-	@Column(name = "table_size")
+	@Column(name = "tableSize")
 	private Integer tabellengroesse = Integer.valueOf(10);
 
-	@Column(name = "session_timeout")
+	@Column(name = "sessionTimeout")
 	private Integer sessiontimeout = 7200;
 
-	@Column(name = "config_production_date_show")
+	@Column(name = "configProductionDateShow")
 	private boolean confVorgangsdatumAnzeigen = false;
 
-	@Column(name = "metadata_language")
+	@Column(name = "metadataLanguage")
 	private String metadatenSprache;
 
-	@Column(name = "with_mass_download")
+	@Column(name = "withMassDownload")
 	private boolean mitMassendownload = false;
 
 	@Column(name = "css")
 	private String css;
 
 	@ManyToOne
-	@JoinColumn(name = "ldapgroup_id", foreignKey = @ForeignKey(name = "FK_User_ldapgroup_id"))
+	@JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
 	private LdapGruppe ldapGruppe;
 
 	@ManyToMany
-	@JoinTable(name = "User_x_UserGroup",
+	@JoinTable(name = "user_x_userGroup",
 			joinColumns = {
 					@JoinColumn(
 							name = "user_id",
-							foreignKey = @ForeignKey(name = "FK_User_x_UserGroup_user_id")
+							foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
-							name = "usergroup_id",
-							foreignKey = @ForeignKey(name = "FK_User_x_UserGroup_usergroup_id")
+							name = "userGroup_id",
+							foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")
 					) })
 	private Set<Benutzergruppe> benutzergruppen;
 
 	@ManyToMany(mappedBy = "steps")
 	private Set<Schritt> schritte;
 
-	@OneToMany(mappedBy = "processingsteps", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "processingSteps", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Schritt> bearbeitungsschritte;
 
 	@ManyToMany(mappedBy = "projects")

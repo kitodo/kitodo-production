@@ -35,7 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Docket")
+@Table(name = "docket")
 public class Docket implements Serializable {
 
 	private static final long serialVersionUID = -5187947220333984868L;

@@ -38,7 +38,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ProjectFileGroup")
+@Table(name = "projectFileGroup")
 public class ProjectFileGroup implements Serializable {
 	private static final long serialVersionUID = -5506252462891480484L;
 
@@ -53,7 +53,7 @@ public class ProjectFileGroup implements Serializable {
 	@Column(name = "path")
 	private String path;
 
-	@Column(name = "mime_type")
+	@Column(name = "mimeType")
 	private String mimetype; // optional
 
 	@Column(name = "suffix")
@@ -62,11 +62,11 @@ public class ProjectFileGroup implements Serializable {
 	@Column(name = "folder")
 	private String folder;
 
-	@Column(name = "preview_image")
+	@Column(name = "previewImage")
 	private boolean previewImage;
 
 	@ManyToOne
-	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_ProjectFileGroup_project_id"))
+	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
 	private Projekt project;
 
 	/*#####################################################

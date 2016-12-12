@@ -64,7 +64,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Entity
-@Table(name = "Batch")
+@Table(name = "batch")
 public class Batch {
 	/**
 	 * Type of batch:
@@ -112,16 +112,16 @@ public class Batch {
 	 * The field processes holds the processes that belong to the batch.
 	 */
 	@ManyToMany
-	@JoinTable(name = "Batch_x_Process",
+	@JoinTable(name = "batch_x_process",
 			joinColumns = {
 					@JoinColumn(
 							name = "batch_id",
-							foreignKey = @ForeignKey(name = "FK_Batch_x_Process_batch_id")
+							foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
 							name = "process_id",
-							foreignKey = @ForeignKey(name = "FK_Batch_x_Process_process_id")
+							foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")
 					) })
 	private Set<Prozess> processes;
 

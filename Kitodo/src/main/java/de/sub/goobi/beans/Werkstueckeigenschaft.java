@@ -44,7 +44,7 @@ import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 @Entity
-@Table(name = "WorkpieceProperty")
+@Table(name = "workpieceProperty")
 public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -88407008893258729L;
 
@@ -59,23 +59,23 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	@Column(name = "value")
 	private String wert;
 
-	@Column(name = "is_obligatory")
+	@Column(name = "isObligatory")
 	private Boolean istObligatorisch;
 
-	@Column(name = "data_type")
+	@Column(name = "dataType")
 	private Integer datentyp;
 
 	@Column(name = "choice")
 	private String auswahl;
 
-	@Column(name = "creation_date")
+	@Column(name = "creationDate")
 	private Date creationDate;
 
 	@Column(name = "container")
 	private Integer container;
 
 	@ManyToOne
-	@JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_WorkpieceProperty_workpiece_id"))
+	@JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_workpieceProperty_workpiece_id"))
 	private Werkstueck werkstueck;
 
 	public Werkstueckeigenschaft() {

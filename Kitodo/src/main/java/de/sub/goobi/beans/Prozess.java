@@ -109,7 +109,7 @@ import de.sub.goobi.persistence.ProzessDAO;
 // the Coding Guidelines (e.g. *english* names).
 
 @Entity
-@Table(name = "Process")
+@Table(name = "process")
 public class Prozess implements Serializable {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
@@ -122,55 +122,55 @@ public class Prozess implements Serializable {
 	@Column(name = "title")
 	private String titel;
 
-	@Column(name = "output_name")
+	@Column(name = "outputName")
 	private String ausgabename;
 
-	@Column(name = "is_template")
+	@Column(name = "isTemplate")
 	private Boolean istTemplate;
 
-	@Column(name = "is_choice_list_shown")
+	@Column(name = "isChoiceListShown")
 	private Boolean inAuswahllisteAnzeigen;
 
-	@Column(name = "creation_date")
+	@Column(name = "creationDate")
 	private Date erstellungsdatum;
 
-	@Column(name = "sort_helper_status")
+	@Column(name = "sortHelperStatus")
 	private String sortHelperStatus;
 
-	@Column(name = "sort_helper_images")
+	@Column(name = "sortHelperImages")
 	private Integer sortHelperImages;
 
-	@Column(name = "sort_helper_articles")
+	@Column(name = "sortHelperArticles")
 	private Integer sortHelperArticles;
 
-	@Column(name = "sort_helper_metadata")
+	@Column(name = "sortHelperMetadata")
 	private Integer sortHelperMetadata;
 
-	@Column(name = "sort_helper_docstructs")
+	@Column(name = "sortHelperDocstructs")
 	private Integer sortHelperDocstructs;
 
-	@Column(name = "swapped_out")
+	@Column(name = "swappedOut")
 	private Boolean swappedOut = false;
 
-	@Column(name = "panel_shown")
+	@Column(name = "panelShown")
 	private Boolean panelAusgeklappt = false;
 
 	@Column(name = "selected")
 	private Boolean selected = false;
 
-	@Column(name = "wiki_field")
+	@Column(name = "wikiField")
 	private String wikifield = "";
 
 	@ManyToOne
-	@JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_Process_docket_id"))
+	@JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
 	private Docket docket;
 
 	@ManyToOne
-	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_Process_project_id"))
+	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
 	private Projekt projekt;
 
 	@ManyToOne
-	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_Process_ruleset_id"))
+	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
 	private Regelsatz regelsatz;
 
 	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)

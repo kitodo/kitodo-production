@@ -48,7 +48,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 @Entity
-@Table(name = "Workpiece")
+@Table(name = "workpiece")
 public class Werkstueck implements Serializable {
 	private static final long serialVersionUID = 123266825187246791L;
 
@@ -57,7 +57,7 @@ public class Werkstueck implements Serializable {
 	@GeneratedValue
 	private Integer id;
 
-	@Column(name = "panel_shown")
+	@Column(name = "panelShown")
 	private boolean panelAusgeklappt = true;
 
 	@ManyToOne

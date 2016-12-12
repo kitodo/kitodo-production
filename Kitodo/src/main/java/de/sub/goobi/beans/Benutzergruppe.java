@@ -53,7 +53,7 @@ import org.hibernate.Hibernate;
  * ================================================================
  */
 @Entity
-@Table(name = "UserGroup")
+@Table(name = "userGroup")
 public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> {
 	private static final long serialVersionUID = -5924845694417474352L;
 
@@ -68,13 +68,13 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 	@Column(name = "permission")
 	private Integer berechtigung;
 
-	@Column(name = "panel_shown")
+	@Column(name = "panelShown")
 	private boolean panelAusgeklappt = false;
 
-	@ManyToMany(mappedBy = "usergroups")
+	@ManyToMany(mappedBy = "userGroups")
 	private Set<Benutzer> benutzer;
 
-	@ManyToMany(mappedBy = "usergroups")
+	@ManyToMany(mappedBy = "userGroups")
 	private Set<Schritt> schritte;
 
 	public Benutzergruppe() {

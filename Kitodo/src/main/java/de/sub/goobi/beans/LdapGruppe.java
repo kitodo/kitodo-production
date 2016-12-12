@@ -35,7 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "LdapGroup")
+@Table(name = "ldapGroup")
 public class LdapGruppe implements Serializable {
    private static final long serialVersionUID = -1657514909731889712L;
 
@@ -47,19 +47,19 @@ public class LdapGruppe implements Serializable {
 	@Column(name = "title")
 	private String titel;
 
-	@Column(name = "home_directory")
+	@Column(name = "homeDirectory")
 	private String homeDirectory;
 
-	@Column(name = "gid_number")
+	@Column(name = "gidNumber")
 	private String gidNumber;
 
-	@Column(name = "user_dn")
+	@Column(name = "userDn")
 	private String userDN;
 
-	@Column(name = "object_class")
+	@Column(name = "objectClasses")
 	private String objectClasses;
 
-	@Column(name = "samba_sid")
+	@Column(name = "sambaSid")
 	private String sambaSID;
 
 	@Column(name = "sn")
@@ -71,34 +71,34 @@ public class LdapGruppe implements Serializable {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "display_name")
+	@Column(name = "displayName")
 	private String displayName;
 
 	@Column(name = "gecos")
 	private String gecos;
 
-	@Column(name = "login_shell")
+	@Column(name = "loginShell")
 	private String loginShell;
 
-	@Column(name = "samba_acct_flag")
+	@Column(name = "sambaAcctFlags")
 	private String sambaAcctFlags;
 
-	@Column(name = "samba_logon_script")
+	@Column(name = "sambaLogonScript")
 	private String sambaLogonScript;
 
-	@Column(name = "samba_primary_group_sid")
+	@Column(name = "sambaPrimaryGroupSid")
 	private String sambaPrimaryGroupSID;
 
-	@Column(name = "samba_password_must_change")
+	@Column(name = "sambaPasswordMustChange")
 	private String sambaPwdMustChange;
 
-	@Column(name = "samba_password_history")
+	@Column(name = "sambaPasswordHistory")
 	private String sambaPasswordHistory;
 
-	@Column(name = "samba_logon_hour")
+	@Column(name = "sambaLogonHour")
 	private String sambaLogonHours;
 
-	@Column(name = "samba_kickoff_time")
+	@Column(name = "sambaKickoffTime")
 	private String sambaKickoffTime;
 
    public LdapGruppe() {

@@ -58,7 +58,7 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
 @Entity
-@Table(name = "Step")
+@Table(name = "step")
 public class Schritt implements Serializable {
 	private static final long serialVersionUID = 6831844584239811846L;
 
@@ -76,97 +76,97 @@ public class Schritt implements Serializable {
 	@Column(name = "order")
 	private Integer reihenfolge;
 
-	@Column(name = "processing_status")
+	@Column(name = "processingStatus")
 	private Integer bearbeitungsstatus;
 
-	@Column(name = "processing_time")
+	@Column(name = "processingTime")
 	private Date bearbeitungszeitpunkt;
 
-	@Column(name = "processing_beginning")
+	@Column(name = "processingBeginning")
 	private Date bearbeitungsbeginn;
 
-	@Column(name = "processing_end")
+	@Column(name = "processingEnd")
 	private Date bearbeitungsende;
 
-	@Column(name = "edit_type")
+	@Column(name = "editType")
 	private Integer editType;
 
-	@Column(name = "home_directory") //not sure how to translate it
+	@Column(name = "homeDirectory") //not sure how to translate it
 	private short homeverzeichnisNutzen;
 
-	@Column(name = "type_metadata")
+	@Column(name = "typeMetadata")
 	private boolean typMetadaten = false;
 
-	@Column(name = "type_automatic")
+	@Column(name = "typeAutomatic")
 	private boolean typAutomatisch = false;
 
-	@Column(name = "type_import_file_upload")
+	@Column(name = "typeImportFileUpload")
 	private boolean typImportFileUpload = false;
 
-	@Column(name = "type_export_russian")
+	@Column(name = "typeExportRussian")
 	private boolean typExportRus = false;
 
-	@Column(name = "type_image_read")
+	@Column(name = "typeImagesRead")
 	private boolean typImagesLesen = false;
 
-	@Column(name = "type_image_write")
+	@Column(name = "typeImagesWrite")
 	private boolean typImagesSchreiben = false;
 
-	@Column(name = "type_export_dms")
+	@Column(name = "typeExportDms")
 	private boolean typExportDMS = false;
 
-	@Column(name = "type_accept_module")
+	@Column(name = "typeAcceptModule")
 	private boolean typBeimAnnehmenModul = false;
 
-	@Column(name = "type_accept_close")
+	@Column(name = "typeAcceptClose")
 	private boolean typBeimAnnehmenAbschliessen = false;
 
-	@Column(name = "type_accept_module_and_close")
+	@Column(name = "typeAcceptModuleAndClose")
 	private boolean typBeimAnnehmenModulUndAbschliessen = false;
 
-	@Column(name = "type_script_step")
+	@Column(name = "typeScriptStep")
 	private Boolean typScriptStep = false;
 
-	@Column(name = "script_name_1")
+	@Column(name = "scriptName1")
 	private String scriptname1;
 
-	@Column(name = "type_automatic_script_path")
+	@Column(name = "typeAutomaticScriptPath")
 	private String typAutomatischScriptpfad;
 
-	@Column(name = "script_name_2")
+	@Column(name = "scriptName2")
 	private String scriptname2;
 
-	@Column(name = "type_automatic_script_path_2")
+	@Column(name = "typeAutomaticScriptPath2")
 	private String typAutomatischScriptpfad2;
 
-	@Column(name = "script_name_3")
+	@Column(name = "scriptName3")
 	private String scriptname3;
 
-	@Column(name = "type_automatic_script_path_3")
+	@Column(name = "typeAutomaticScriptPath3")
 	private String typAutomatischScriptpfad3;
 
-	@Column(name = "script_name_4")
+	@Column(name = "scriptName4")
 	private String scriptname4;
 
-	@Column(name = "type_automatic_script_path_4")
+	@Column(name = "typeAutomaticScriptPath4")
 	private String typAutomatischScriptpfad4;
 
-	@Column(name = "script_name_5")
+	@Column(name = "scriptName5")
 	private String scriptname5;
 
-	@Column(name = "type_automatic_script_path_5")
+	@Column(name = "typeAutomaticScriptPath5")
 	private String typAutomatischScriptpfad5;
 
-	@Column(name = "type_module_name")
+	@Column(name = "typeModuleName")
 	private String typModulName;
 
-	@Column(name = "type_close_verify")
+	@Column(name = "typeCloseVerify")
 	private boolean typBeimAbschliessenVerifizieren = false;
 
-	@Column(name = "batch_step")
+	@Column(name = "batchStep")
 	private Boolean batchStep = false;
 
-	@Column(name = "panel_shown")
+	@Column(name = "panelShown")
 	private boolean panelAusgeklappt = false;
 
 	@Column(name = "selected")
@@ -174,45 +174,45 @@ public class Schritt implements Serializable {
 
 	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
-	@Column(name = "step_plugin")
+	@Column(name = "stepPlugin")
 	private String stepPlugin;
 
-	@Column(name = "validation_plugin")
+	@Column(name = "validationPlugin")
 	private String validationPlugin;
 
 	@ManyToOne
-	@JoinColumn(name = "processinguser_id", foreignKey = @ForeignKey(name = "FK_Step_processinguser_id"))
+	@JoinColumn(name = "processingUser_id", foreignKey = @ForeignKey(name = "FK_step_processingUser_id"))
 	private Benutzer bearbeitungsbenutzer;
 
 	@ManyToOne
-	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_Step_process_id"))
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_step_process_id"))
 	private Prozess prozess;
 
 	@ManyToMany
-	@JoinTable(name = "Step_x_User",
+	@JoinTable(name = "step_x_user",
 			joinColumns = {
 					@JoinColumn(
 							name = "step_id",
-							foreignKey = @ForeignKey(name = "FK_Step_x_User_step_id")
+							foreignKey = @ForeignKey(name = "FK_step_x_user_step_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
 							name = "user_id",
-							foreignKey = @ForeignKey(name = "FK_Step_x_User_user_id")
+							foreignKey = @ForeignKey(name = "FK_step_x_user_user_id")
 					) })
 	private Set<Benutzer> benutzer;
 
 	@ManyToMany
-	@JoinTable(name = "Step_x_UserGroup",
+	@JoinTable(name = "step_x_userGroup",
 			joinColumns = {
 					@JoinColumn(
 							name = "step_id",
-							foreignKey = @ForeignKey(name = "FK_Step_x_UserGroup_step_id")
+							foreignKey = @ForeignKey(name = "FK_step_x_userGroup_step_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
-							name = "usergroup_id",
-							foreignKey = @ForeignKey(name = "FK_Step_x_User_usergroup_id")
+							name = "userGroup_id",
+							foreignKey = @ForeignKey(name = "FK_step_x_user_userGroup_id")
 					) })
 	private Set<Benutzergruppe> benutzergruppen;
 

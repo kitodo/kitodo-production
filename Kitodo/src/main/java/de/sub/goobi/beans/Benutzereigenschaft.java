@@ -43,7 +43,7 @@ import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 @Entity
-@Table(name = "UserProperty")
+@Table(name = "userProperty")
 public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -2356566712752716107L;
 
@@ -58,16 +58,16 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	@Column(name = "value")
 	private String wert;
 
-	@Column(name = "is_obligatory")
+	@Column(name = "isObligatory")
 	private Boolean istObligatorisch;
 
-	@Column(name = "data_type")
+	@Column(name = "dataType")
 	private Integer datentyp;
 
 	@Column(name = "choice")
 	private String auswahl;
 
-	@Column(name = "creation_date")
+	@Column(name = "creationDate")
 	private Date creationDate;
 
 	@ManyToOne

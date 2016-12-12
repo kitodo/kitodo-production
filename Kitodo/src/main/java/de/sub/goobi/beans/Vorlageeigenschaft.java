@@ -44,7 +44,7 @@ import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 @Entity
-@Table(name = "ProductionProperty")
+@Table(name = "templateProperty")
 public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -5981263038302791497L;
 
@@ -59,23 +59,23 @@ public class Vorlageeigenschaft implements Serializable, IGoobiProperty {
 	@Column(name = "value")
 	private String wert;
 
-	@Column(name = "is_obligatory")
+	@Column(name = "isObligatory")
 	private Boolean istObligatorisch;
 
-	@Column(name = "data_type")
+	@Column(name = "dataType")
 	private Integer datentyp;
 
 	@Column(name = "choice")
 	private String auswahl;
 
-	@Column(name = "creation_date")
+	@Column(name = "creationDate")
 	private Date creationDate;
 
 	@Column(name = "container")
 	private Integer container;
 
 	@ManyToOne
-	@JoinColumn(name = "production_id", foreignKey = @ForeignKey(name = "FK_ProductionProperty_production_id"))
+	@JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_templateProperty_template_id"))
 	private Vorlage vorlage;
 
 	public Vorlageeigenschaft() {

@@ -45,7 +45,7 @@ import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 @Entity
-@Table(name = "ProcessProperty")
+@Table(name = "processProperty")
 public class Prozesseigenschaft implements Serializable, IGoobiProperty, Comparable<Prozesseigenschaft> {
 	private static final long serialVersionUID = -2356566712752716107L;
 
@@ -60,23 +60,23 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	@Column(name = "value")
 	private String wert;
 
-	@Column(name = "is_obligatory")
+	@Column(name = "isObligatory")
 	private Boolean istObligatorisch;
 
-	@Column(name = "data_type")
+	@Column(name = "dataType")
 	private Integer datentyp;
 
 	@Column(name = "choice")
 	private String auswahl;
 
-	@Column(name = "creation_date")
+	@Column(name = "creationDate")
 	private Date creationDate;
 
 	@Column(name = "container")
 	private Integer container;
 
 	@ManyToOne
-	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_ProcessProperty_process_id"))
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_processProperty_process_id"))
 	private Prozess prozess;
 
 	public Prozesseigenschaft() {

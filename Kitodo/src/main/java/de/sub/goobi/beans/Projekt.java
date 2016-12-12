@@ -73,7 +73,7 @@ import de.sub.goobi.helper.enums.MetadataFormat;
 // getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
 // referenced as "fieldConfig" here, not "field" as one might expect.
 @Entity
-@Table(name = "Project")
+@Table(name = "project")
 public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
 
@@ -94,95 +94,95 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	@Column(name = "title")
 	private String titel;
 
-	@Column(name = "use_dms_import")
+	@Column(name = "useDmsImport")
 	private boolean useDmsImport = false;
 
-	@Column(name = "dms_import_time_out")
+	@Column(name = "dmsImportTimeOut")
 	private Integer dmsImportTimeOut = 20000;
 
-	@Column(name = "dms_import_root_path")
+	@Column(name = "dmsImportRootPath")
 	private String dmsImportRootPath;
 
-	@Column(name = "dms_import_images_path")
+	@Column(name = "dmsImportImagesPath")
 	private String dmsImportImagesPath;
 
-	@Column(name = "dms_import_success_path")
+	@Column(name = "dmsImportSuccessPath")
 	private String dmsImportSuccessPath;
 
-	@Column(name = "dms_import_error_path")
+	@Column(name = "dmsImportErrorPath")
 	private String dmsImportErrorPath;
 
-	@Column(name = "dms_import_create_process_folder")
+	@Column(name = "dmsImportCreateProcessFolder")
 	private Boolean dmsImportCreateProcessFolder = false;
 
-	@Column(name = "file_format_internal")
+	@Column(name = "fileFormatInternal")
 	private String fileFormatInternal;
 
-	@Column(name = "file_format_dms_export")
+	@Column(name = "fileFormatDmsExport")
 	private String fileFormatDmsExport;
 
-	@Column(name = "mets_rights_owner")
+	@Column(name = "metsRightsOwner")
 	private String metsRightsOwner = "";
 
-	@Column(name = "mets_rights_owner")
+	@Column(name = "metsRightsOwnerLogo")
 	private String metsRightsOwnerLogo = "";
 
-	@Column(name = "mets_rights_owner")
+	@Column(name = "metsRightsOwnerSite")
 	private String metsRightsOwnerSite = "";
 
-	@Column(name = "mets_rights_owner_mail")
+	@Column(name = "metsRightsOwnerMail")
 	private String metsRightsOwnerMail = "";
 
-	@Column(name = "mets_digiprov_reference")
+	@Column(name = "metsDigiprovReference")
 	private String metsDigiprovReference = "";
 
-	@Column(name = "mets_digiprov_presentation")
+	@Column(name = "metsDigiprovPresentation")
 	private String metsDigiprovPresentation = "";
 
-	@Column(name = "mets_digiprov_reference_anchor")
+	@Column(name = "metsDigiprovReferenceAnchor")
 	private String metsDigiprovReferenceAnchor = "";
 
-	@Column(name = "mets_digiprov_presentation_anchor")
+	@Column(name = "metsDigiprovPresentationAnchor")
 	private String metsDigiprovPresentationAnchor = "";
 
-	@Column(name = "mets_pointer_path")
+	@Column(name = "metsPointerPath")
 	private String metsPointerPath = "";
 
-	@Column(name = "mets_pointer_path_anchor")
+	@Column(name = "metsPointerPathAnchor")
 	private String metsPointerPathAnchor = "";
 
-	@Column(name = "mets_purl")
+	@Column(name = "metsPurl")
 	private String metsPurl = "";
 
-	@Column(name = "mets_content_id")
+	@Column(name = "metsContentId")
 	private String metsContentIDs = "";
 
-	@Column(name = "start_date")
+	@Column(name = "startDate")
 	private Date startDate;
 
-	@Column(name = "end_date")
+	@Column(name = "endDate")
 	private Date endDate;
 
-	@Column(name = "number_of_pages")
+	@Column(name = "numberOfPages")
 	private Integer numberOfPages;
 
-	@Column(name = "number_of_volumes")
+	@Column(name = "numberOfVolumes")
 	private Integer numberOfVolumes;
 
-	@Column(name = "project_is_archived")
+	@Column(name = "projectIsArchived")
 	private Boolean projectIsArchived = false;
 
 	@ManyToMany
-	@JoinTable(name = "Project_x_User",
+	@JoinTable(name = "project_x_user",
 			joinColumns = {
 					@JoinColumn(
 							name = "project_id",
-							foreignKey = @ForeignKey(name = "FK_Project_x_User_project_id")
+							foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
 							name = "user_id",
-							foreignKey = @ForeignKey(name = "FK_Project_x_User_user_id")
+							foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")
 					) })
 	private Set<Benutzer> benutzer;
 
