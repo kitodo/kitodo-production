@@ -3164,7 +3164,7 @@ public class Metadaten {
 	 * @return whether the link to add a new metadata group shows
 	 */
 	public boolean isAddNewMetadataGroupLinkShowing() {
-		return myDocStruct.getAddableMetadataGroupTypes() != null;
+		return myDocStruct != null && myDocStruct.getAddableMetadataGroupTypes() != null;
 	}
 
 	/**
