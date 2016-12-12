@@ -322,8 +322,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	 * @see Criteria#addQueryHint(java.lang.String)
 	 */
 	@Override
-	public Criteria addQueryHint(String queryHint) throws NotImplementedException {
-		return null;
+	public Criteria addQueryHint(String queryHint) {
+		throw new NotImplementedException();
 	}
 
 	/**
