@@ -26,6 +26,7 @@
 		<mappingFile>kalliope2kitodo.xsl</mappingFile>
 		<institutionFilterParameter value="ead.repository.isil" />
 		<identifierParameter value="ead.id" />
+		<identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
 		<parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
 		<recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
 		<searchFields>

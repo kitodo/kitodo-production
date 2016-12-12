@@ -205,6 +205,7 @@ public class ModsPlugin implements Plugin {
 	private static final String CONF_ID_PARAMETER = "identifierParameter";
 	private static final String CONF_PARENT_ELEMENT = "parentElement";
 	private static final String CONF_RECORD_ELEMENT = "recordElement";
+	private static final String CONF_ID_ELEMENT = "identifierElement";
 	private static final String CONF_CATALOGUE = "catalogue";
 
 	/**
@@ -230,8 +231,9 @@ public class ModsPlugin implements Plugin {
 	 * Static XPath variables used to parse MetsModsGoobi documents.
 	 */
 	private static XPath srwRecordXPath = null;
-	private static XPath modsPath = null;
-	private static XPath parentIDPath = null;
+	private static XPath modsXPath = null;
+	private static XPath parentIDXPath = null;
+	private static XPath identifierXPath = null;
 
 	/**
 	 * Static counter variables for constructing METS DmdSections for multiple imported MODS documents.
@@ -298,8 +300,9 @@ public class ModsPlugin implements Plugin {
 	private void initializeXPath() {
 		try {
 			srwRecordXPath = XPath.newInstance(getRecordXPath(configuration.getTitle()));
-			modsPath = XPath.newInstance("//mods:mods");
-			parentIDPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
+			modsXPath = XPath.newInstance("//mods:mods");
+			parentIDXPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
+			identifierXPath = XPath.newInstance(getIdentifierXPath(configuration.getTitle()));
 		} catch (JDOMException e) {
 			modsLogger.error("Error while initializing XPath variables: " + e.getMessage());
 		}
@@ -313,8 +316,8 @@ public class ModsPlugin implements Plugin {
 	private boolean xpathsDefined() {
 		return (
 				!Objects.equals(srwRecordXPath, null) &&
-				!Objects.equals(modsPath, null) &&
-				!Objects.equals(parentIDPath, null)
+				!Objects.equals(modsXPath, null) &&
+				!Objects.equals(parentIDXPath, null)
 		);
 	}
 
@@ -412,14 +415,14 @@ public class ModsPlugin implements Plugin {
 				LinkedList<Element> dmdSections = new LinkedList<Element>();
 				LinkedList<String> structureTypes = new LinkedList<String>();
 				String parentXML = retrieveParentRecord(doc, timeout);
-				structureTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
+				structureTypes.add(getStructureType((Element)modsXPath.selectSingleNode(doc)));
 
 				File transformationScript = new File(xsltFilepath);
 
-				// TODO: extract and store identifier to later extract all elements with "localparentID" equal to this ID, once this functionality is available in the Kalliope SRU interface
-				//String documentId = ((Element)catalogueIDPath.selectSingleNode(doc)).getText();
-
 				doc = transformXML(doc, transformationScript, sb);
+
+				// TODO: extract all elements with "localparentID" equal to this ID, once this functionality is available in the Kalliope SRU interface
+				String documentID = ((Element)identifierXPath.selectSingleNode(doc)).getText();
 
 				// read "additionalDetails" from document via XPaths elements specified in plugin configuration file
 				for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
@@ -431,7 +434,7 @@ public class ModsPlugin implements Plugin {
 				}
 
 				// XML MODS data of document itself
-				Element modsElement = (Element)modsPath.selectSingleNode(doc);
+				Element modsElement = (Element)modsXPath.selectSingleNode(doc);
 
 				dmdSections.add(createMETSDescriptiveMetadata((Element)modsElement.clone()));
 
@@ -439,18 +442,18 @@ public class ModsPlugin implements Plugin {
 					resultXML = parentXML;
 					doc = sb.build(new StringReader(resultXML));
 					parentXML = retrieveParentRecord(doc, timeout);
-					// docType is determined using relatedItem ID; this field is not available after transformation anymore, therefore doctype has to be determined before 'transformXML' is called!
-					structureTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
+					modsElement = (Element)modsXPath.selectSingleNode(doc);
+					// modsElement is 'null' if last structural element pointed to a "virtueller Bestand" as parent element;
+					// this is not allowed in Kitodo, therefore throw an exception here!
+					if (Objects.equals(modsElement, null)) {
+						throw new RuntimeException("Abgefragtes Dokument mit ID '"+ documentID + "' ist nicht Teil eines gültigen Bestandes.");
+					}
+					structureTypes.add(getStructureType(modsElement));
 
 					doc = transformXML(doc, transformationScript, sb);
 					// 'doc' can become "null", when the last doc had a 'parentID', but trying to retrieve the element with this parentID yields an empty SRW container (e.g. not containing any MODS documents)
-					// => break loop!
-					if (Objects.equals(doc, null)) {
-						modsLogger.info("Break: Transformed document is 'null'!");
-						break;
-					}
 					// if 'doc' is null after the XSL transformation (e.g. just an empty XML header), 'selectSingleNode' can't be called on it anymore! Therefore the loop has to be terminated before reaching this point!
-					modsElement = (Element)modsPath.selectSingleNode(doc);
+					modsElement = (Element)modsXPath.selectSingleNode(doc);
 					dmdSections.add(createMETSDescriptiveMetadata((Element)modsElement.clone()));
 				}
 
@@ -697,7 +700,7 @@ public class ModsPlugin implements Plugin {
 	 * @see org.jdom.Document
 	 */
 	private String retrieveParentRecord(Document doc, long timeout) throws JDOMException {
-		Element parentIDElement = (Element)parentIDPath.selectSingleNode(doc);
+		Element parentIDElement = (Element)parentIDXPath.selectSingleNode(doc);
 		try {
 			Query parentQuery = new Query(getIdentifierParameter(configuration.getTitle()) + ":" + parentIDElement.getText());
 			return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
@@ -1041,6 +1044,20 @@ public class ModsPlugin implements Plugin {
 	public String getRecordXPath(String catalogueName) {
 		return getConfigurationAttributeValue(catalogueName, CONF_RECORD_ELEMENT, CONF_XPATH);
 	}
+
+	/**
+	 * The function getIdentifierXPath(String catalogueName) returns the XPath
+	 * pointing to the identifier of a query result XML document.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which identifier XPath is returned
+	 * @return String
+	 *            the XPath for the identifier element in the query result XML document.
+	 */
+	public String getIdentifierXPath(String catalogueName) {
+		return getConfigurationAttributeValue(catalogueName, CONF_ID_ELEMENT, CONF_XPATH);
+	}
+
 
 	/**
 	 * The function getAdditionalDetailsFields(String catalogueName) load the names of
