@@ -1,5 +1,5 @@
 --
--- Add new indexes for Goobi.Production CE newer than 1.11.2
+-- Add new indexes for Kitodo.Production 2.0.0
 --
 ALTER TABLE `batchesprozesse`
   ADD KEY `FK_ProzesseID` (`ProzesseID`),
