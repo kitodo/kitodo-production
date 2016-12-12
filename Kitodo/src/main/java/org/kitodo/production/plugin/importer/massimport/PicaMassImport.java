@@ -1,5 +1,3 @@
-package PicaMassImport.de.intranda.goobi.plugins;
-
 /**
  * Copyright by intranda GmbH 2013. All rights reserved.
  *
@@ -24,6 +22,7 @@ package PicaMassImport.de.intranda.goobi.plugins;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
+package org.kitodo.production.plugin.importer.massimport;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,11 +87,11 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
-import PicaMassImport.de.intranda.goobi.plugins.sru.SRUHelper;
+import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import de.sub.goobi.beans.Prozesseigenschaft;
 import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
-import PicaMassImport.de.sub.goobi.helper.UghUtils;
+import org.kitodo.production.plugin.importer.massimport.UghUtils;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
 
 @PluginImplementation
@@ -422,7 +421,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	 * @param field
 	 *            field value to return
 	 * @return field value, or ""
-	 * @see org.goobi.production.plugin.CataloguePlugin.PicaPlugin.PicaPlugin#getPpnFromParent(Element,
+	 * @see org.kitodo.production.plugin.opac.pica.PicaPlugin#getPpnFromParent(Element,
 	 *      String, String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -446,7 +445,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	 * @param attributeValue
 	 *            attribute to locate
 	 * @return value, or "" if not found
-	 * @see org.goobi.production.plugin.CataloguePlugin.PicaPlugin.PicaPlugin#getSubelementValue(Element,
+	 * @see org.kitodo.production.plugin.opac.pica.PicaPlugin#getSubelementValue(Element,
 	 *      String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -803,7 +802,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	}
 
 	/**
-	 * @param the opac catalogue
+	 * @param opacCatalogue the opac catalogue
 	 */
 	@Override
 	public void setOpacCatalogue(String opacCatalogue) {
@@ -818,7 +817,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	}
 
 	/**
-	* @param the goobi config directory
+	* @param configDir the goobi config directory
 	*/
 	@Override
 	public void setGoobiConfigDirectory(String configDir) {

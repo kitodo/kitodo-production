@@ -1,5 +1,3 @@
-package PicaMassImport.de.sub.goobi.helper;
-
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
@@ -27,21 +25,17 @@ package PicaMassImport.de.sub.goobi.helper;
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
+package org.kitodo.production.plugin.importer.massimport;
 
+import de.sub.goobi.config.ConfigMain;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 
-import de.sub.goobi.config.ConfigMain;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class UghUtils {
 	private static final Logger myLogger = Logger.getLogger(UghUtils.class);
