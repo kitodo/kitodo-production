@@ -25,39 +25,30 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
+package org.kitodo.production.plugin.opac.pica;
 
-class ConfigOpacCatalogueBeautifierElement {
-	private final String tag;
-	private final String subtag;
-	private final String value;
-	private final String mode;
+import java.util.ArrayList;
 
-	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value, String mode) {
-		this.tag = tag;
-		this.subtag = subtag;
-		this.value = value;
-		this.mode = mode;
+/**
+ * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer
+ * einer Opacabfrage zurückgegeben wird. Dabei soll die Eigenschaft eines Wertes
+ * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
+ */
+class ConfigOpacCatalogueBeautifier {
+	private final ConfigOpacCatalogueBeautifierElement tagElementToChange;
+	private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
+
+	ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
+			ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
+		this.tagElementToChange = inChangeElement;
+		this.tagElementsToProof = inProofElements;
 	}
 
-	String getTag() {
-		return tag;
+	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
+		return this.tagElementToChange;
 	}
 
-	String getSubtag() {
-		return subtag;
-	}
-
-	String getValue() {
-		return value;
-	}
-
-	String getMode() {
-		return mode;
-	}
-
-	@Override
-	public String toString() {
-		return tag + " - " + subtag + " : " + value;
+	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
+		return this.tagElementsToProof;
 	}
 }

@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
+package org.kitodo.production.plugin.opac.pica;
 
 /**
  * The class FindResult represents the result of a find() operation of the

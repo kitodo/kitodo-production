@@ -25,17 +25,17 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
+package org.kitodo.production.plugin.opac.pica;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 class ConfigOpac {
 	private static XMLConfiguration config;

@@ -25,44 +25,39 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
+package org.kitodo.production.plugin.opac.pica;
 
-import java.util.ArrayList;
+class ConfigOpacCatalogueBeautifierElement {
+	private final String tag;
+	private final String subtag;
+	private final String value;
+	private final String mode;
 
-class ConfigOpacDoctype {
-	private final String title;
-	private final boolean periodical;
-	private final boolean multiVolume;
-	private final boolean containedWork;
-	private final ArrayList<String> mappings;
-
-	ConfigOpacDoctype(String inTitle, boolean periodical, boolean multiVolume, boolean containedWork,
-			ArrayList<String> mappings) {
-		this.title = inTitle;
-		this.periodical = periodical;
-		this.multiVolume = multiVolume;
-		this.containedWork = containedWork;
-		this.mappings = mappings;
+	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value, String mode) {
+		this.tag = tag;
+		this.subtag = subtag;
+		this.value = value;
+		this.mode = mode;
 	}
 
-	public String getTitle() {
-		return this.title;
+	String getTag() {
+		return tag;
 	}
 
-	boolean isPeriodical() {
-		return periodical;
+	String getSubtag() {
+		return subtag;
 	}
 
-	boolean isMultiVolume() {
-		return multiVolume;
+	String getValue() {
+		return value;
 	}
 
-	boolean isContainedWork() {
-		return containedWork;
+	String getMode() {
+		return mode;
 	}
 
-	ArrayList<String> getMappings() {
-		return mappings;
+	@Override
+	public String toString() {
+		return tag + " - " + subtag + " : " + value;
 	}
-
 }

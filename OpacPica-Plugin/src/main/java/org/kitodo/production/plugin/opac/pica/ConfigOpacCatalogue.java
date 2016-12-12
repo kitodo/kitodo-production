@@ -25,17 +25,7 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package org.kitodo.production.plugin.opac.pica;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -47,6 +37,16 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class ConfigOpacCatalogue {
 	private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);

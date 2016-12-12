@@ -25,13 +25,13 @@
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
  */
-package opac.PicaPlugin.org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
+package org.kitodo.production.plugin.opac.pica;
 
 import java.net.URLEncoder;
 
 import org.apache.commons.lang.CharEncoding;
 
-import org.kitodo.production.exceptions;
+import org.kitodo.production.plugin.opac.pica.UnreachableCodeException;
 
 class Query {
 	private static final String FIELDLESS = "Fieldless query isn’t supported";
@@ -177,8 +177,7 @@ class Query {
 		 this.queryUrl += FIELD + this.queryTermNumber + "=" + fieldNumber;
 		 
 		 try{
-			 this.queryUrl += QUERY + this.queryTermNumber + "=" + 
- URLEncoder.encode(query, CharEncoding.ISO_8859_1);
+			 this.queryUrl += QUERY + this.queryTermNumber + "=" + URLEncoder.encode(query, CharEncoding.ISO_8859_1);
 		 }catch (Exception e) {
 			 e.printStackTrace();
 		}
