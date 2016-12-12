@@ -25,6 +25,9 @@
 		<config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
 		<mappingFile>kalliope2kitodo.xsl</mappingFile>
 		<institutionFilterParameter value="ead.repository.isil" />
+		<identifierParameter value="ead.id" />
+		<parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
+		<recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
 		<searchFields>
 			<searchField label="Title" value="ead.title" />
 			<searchField label="Creator" value="ead.creator" />
@@ -42,5 +45,12 @@
 			<institution label="Staats- und Universitätsbibliothek Hamburg Carl von Ossietzky" value="DE-18" />
 			<institution label="Staatsbibliothek zu Berlin - Preußischer Kulturbesitz, Haus Unter den Linden" value="DE-1" />
 		</filterInstitutions>
+		<additionalDetails>
+			<detail name="creator" xpath="//goobi:displayName" transformed="true" />
+			<detail name="title" xpath="//goobi:metadata[@name='TitleDocMain']" transformed="true" />
+			<detail name="shelfmarksource" xpath="//goobi:metadata[@name='shelfmarksource']" transformed="true" />
+			<detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" transformed="true" />
+			<detail name="url" xpath="//mods:mods/mods:location/mods:url" transformed="false" />
+		</additionalDetails>
 	</catalogue>
 </opacCatalogues>

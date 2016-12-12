@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.activity.InvalidActivityException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Transformer;
@@ -192,6 +191,23 @@ public class ModsPlugin implements Plugin {
 	private static final String METS_DMD_ID_VALUE = "DMDLOG";
 
 	/**
+	 * Constants that are used in the ModsPlugin configuration file XML structure.
+	 */
+	private static final String CONF_LABEL = "label";
+	private static final String CONF_VALUE = "value";
+	private static final String CONF_NAME = "name";
+	private static final String CONF_TITLE = "title";
+	private static final String CONF_XPATH = "xpath";
+	private static final String CONF_SEARCHFIELDS = "searchFields.searchField";
+	private static final String CONF_DETAILS = "additionalDetails.detail";
+	private static final String CONF_INSTITUTIONS = "filterInstitutions.institution";
+	private static final String CONF_FILTER_PARAMETER = "institutionFilterParameter";
+	private static final String CONF_ID_PARAMETER = "identifierParameter";
+	private static final String CONF_PARENT_ELEMENT = "parentElement";
+	private static final String CONF_RECORD_ELEMENT = "recordElement";
+	private static final String CONF_CATALOGUE = "catalogue";
+
+	/**
 	 * Hashmaps with structureTypes (String) as keys and lists of XPath instances values. The lists of XPaths instances describe
 	 * the elements a MODS document must or must not contain in order to be classified as a specific structureType
 	 * (e.g. the corresponding key in the Hashmap)
@@ -215,13 +231,6 @@ public class ModsPlugin implements Plugin {
 	 */
 	private static XPath srwRecordXPath = null;
 	private static XPath modsPath = null;
-	private static XPath authorPath = null;
-	private static XPath titlePath = null;
-	private static XPath urlPath = null;
-	private static XPath datePath = null;
-	private static XPath catalogueIDPath = null;
-	private static XPath placePath = null;
-	private static XPath shelfmarksourcePath = null;
 	private static XPath parentIDPath = null;
 
 	/**
@@ -248,7 +257,6 @@ public class ModsPlugin implements Plugin {
 		tempDir = configuration.get("tempDir");
 		xsltDir = configuration.get("xsltDir");
 	}
-
 
 	/**
 	 * The function find() initially queries the library catalogue with the
@@ -289,20 +297,9 @@ public class ModsPlugin implements Plugin {
 	 */
 	private void initializeXPath() {
 		try {
-			srwRecordXPath = XPath.newInstance("//srw:searchRetrieveResponse/srw:records/srw:record");
+			srwRecordXPath = XPath.newInstance(getRecordXPath(configuration.getTitle()));
 			modsPath = XPath.newInstance("//mods:mods");
-
-			// the catalog ID, parent ID and URL are extracted from the original, untransformed document; therefore we need the original MODS XPaths here
-			catalogueIDPath = XPath.newInstance("//mods:mods/mods:recordInfo/mods:recordIdentifier");
-			parentIDPath = XPath.newInstance("//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']");
-			urlPath = XPath.newInstance("//mods:mods/mods:location/mods:url");
-
-			// all other fields are extracted from the transformed document; therefore we can use the "goobi" XPaths here
-			authorPath = XPath.newInstance("//goobi:displayName");
-			titlePath = XPath.newInstance("//goobi:metadata[@name='TitleDocMain']");
-			datePath = XPath.newInstance("//goobi:metadata[@name='PublicationDate']");
-			placePath = XPath.newInstance("//goobi:metadata[@name='PlaceOfPublication']");
-			shelfmarksourcePath = XPath.newInstance("//goobi:metadata[@name='shelfmarksource']");
+			parentIDPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
 		} catch (JDOMException e) {
 			modsLogger.error("Error while initializing XPath variables: " + e.getMessage());
 		}
@@ -317,13 +314,6 @@ public class ModsPlugin implements Plugin {
 		return (
 				!Objects.equals(srwRecordXPath, null) &&
 				!Objects.equals(modsPath, null) &&
-				!Objects.equals(authorPath, null) &&
-				!Objects.equals(titlePath, null) &&
-				!Objects.equals(urlPath, null) &&
-				!Objects.equals(datePath, null) &&
-				!Objects.equals(catalogueIDPath, null) &&
-				!Objects.equals(placePath, null) &&
-				!Objects.equals(shelfmarksourcePath, null) &&
 				!Objects.equals(parentIDPath, null)
 		);
 	}
@@ -407,7 +397,6 @@ public class ModsPlugin implements Plugin {
 			SAXBuilder sb = new SAXBuilder();
 			try {
 				Document doc = sb.build(new StringReader(resultXML));
-
 				initializeStructureToDocTypeMapping();
 
 				@SuppressWarnings("unchecked")
@@ -422,9 +411,7 @@ public class ModsPlugin implements Plugin {
 
 				LinkedList<Element> dmdSections = new LinkedList<Element>();
 				LinkedList<String> structureTypes = new LinkedList<String>();
-
 				String parentXML = retrieveParentRecord(doc, timeout);
-
 				structureTypes.add(getStructureType((Element)modsPath.selectSingleNode(doc)));
 
 				File transformationScript = new File(xsltFilepath);
@@ -434,30 +421,13 @@ public class ModsPlugin implements Plugin {
 
 				doc = transformXML(doc, transformationScript, sb);
 
-				Element nameElement = (Element)authorPath.selectSingleNode(doc);
-				Element titleElement = (Element)titlePath.selectSingleNode(doc);
-				Element urlElement = (Element)urlPath.selectSingleNode(doc);
-				Element dateElement = (Element)datePath.selectSingleNode(doc);
-				Element placeElement = (Element)placePath.selectSingleNode(doc);
-				Element shelfmarkSourceElement = (Element)shelfmarksourcePath.selectSingleNode(doc);
-
-				if (nameElement != null) {
-					result.put("creator", nameElement.getText());
-				}
-				if (titleElement != null) {
-					result.put("title", titleElement.getText());
-				}
-				if (shelfmarkSourceElement != null) {
-					result.put("shelfmarksource", shelfmarkSourceElement.getText());
-				}
-				if (placeElement != null) {
-					result.put("place", placeElement.getText());
-				}
-				if (urlElement != null) {
-					result.put("url", urlElement.getText());
-				}
-				if (dateElement != null) {
-					result.put("date", dateElement.getText());
+				// read "additionalDetails" from document via XPaths elements specified in plugin configuration file
+				for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
+					XPath detailPath = XPath.newInstance(detailField.getValue());
+					Element detailElement = (Element)detailPath.selectSingleNode(doc);
+					if (!Objects.equals(detailElement, null)) {
+						result.put(detailField.getKey(), detailElement.getText());
+					}
 				}
 
 				// XML MODS data of document itself
@@ -564,9 +534,9 @@ public class ModsPlugin implements Plugin {
 	private void loadMappingFile(String opacName) {
 
 		MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = "";
-		for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+		for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt(CONF_CATALOGUE)) {
 			SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
-			for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+			for (Object titleAttrObject : catalogue.getRootNode().getAttributes(CONF_TITLE)) {
 				ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
 				if (Objects.equals(opacName, titleAttr.getValue())) {
 					SubnodeConfiguration catalogueConf = (SubnodeConfiguration)catalogueObject;
@@ -608,7 +578,7 @@ public class ModsPlugin implements Plugin {
 				}
 			}
 
-			for (Object titleObject : docTypeNode.getAttributes("title")) {
+			for (Object titleObject : docTypeNode.getAttributes(CONF_TITLE)) {
 				ConfigurationNode titleNode = (ConfigurationNode)titleObject;
 				titleString = (String)titleNode.getValue();
 				if (titleString != "") {
@@ -729,7 +699,7 @@ public class ModsPlugin implements Plugin {
 	private String retrieveParentRecord(Document doc, long timeout) throws JDOMException {
 		Element parentIDElement = (Element)parentIDPath.selectSingleNode(doc);
 		try {
-			Query parentQuery = new Query("ead.id:" + parentIDElement.getText());
+			Query parentQuery = new Query(getIdentifierParameter(configuration.getTitle()) + ":" + parentIDElement.getText());
 			return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
 		} catch(NullPointerException e) {
 			modsLogger.info("Top level element reached. No further parent elements can be retrieved.");
@@ -996,34 +966,108 @@ public class ModsPlugin implements Plugin {
 	}
 
 	/**
+	 * The function getCatalougeConfigutaration(String catalogueName) is a helper function to retrieve
+	 * and return the subnode configuration of a catalogue whose name equals the given String "catalogueName"
+	 * from the plugin configuration file. If no subnode configuration for such a catalogue exsits in the
+	 * plugin configuration file, null is returned.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the subnode configuration is returned
+	 * @return SubnodeConfiguration for the catalogue with the name "catalogueName" or null if no such
+	 *         catalogue SubnodeConfiguration exists in the plugin configuration file
+	 */
+	private SubnodeConfiguration getCatalogueConfiguration(String catalogueName) {
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt(CONF_CATALOGUE)) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes(CONF_TITLE)) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						return catalogue;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private HashMap<String, String> getConfigurationMapping(String catalogueName, String subConfigurationPath, String keyAttribute, String valueAttribute) {
+		LinkedHashMap<String, String> configurationMapping = new LinkedHashMap<String, String>();
+		SubnodeConfiguration catalogueConfiguration = getCatalogueConfiguration(catalogueName);
+		if (!Objects.equals(catalogueConfiguration, null)) {
+			for (Object fieldObject : catalogueConfiguration.configurationsAt(subConfigurationPath)) {
+				SubnodeConfiguration conf = (SubnodeConfiguration)fieldObject;
+				configurationMapping.put(conf.getString("[@" + keyAttribute + "]"), conf.getString("[@" + valueAttribute + "]"));
+			}
+		}
+		return configurationMapping;
+	}
+
+	private String getConfigurationAttributeValue(String catalogueName, String subConfigurationPath, String valueAttribute) {
+		String parameterName = "";
+		SubnodeConfiguration catalogueConfiguration = getCatalogueConfiguration(catalogueName);
+		if(!Objects.equals(catalogueConfiguration, null)) {
+			for (Object fieldObject : catalogueConfiguration.configurationsAt(subConfigurationPath)) {
+				SubnodeConfiguration conf = (SubnodeConfiguration)fieldObject;
+				parameterName = conf.getString("[@" + valueAttribute + "]");
+			}
+		}
+		return parameterName;
+	}
+
+	/**
+	 * The function getParentElementXPath(String catalogueName) returns the XPath
+	 * pointing to the parent element ID in a document.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the institution filter parameter is returned
+	 * @return String
+	 *            the XPath for parent element IDs in query results documents
+	 */
+	public String getParentElementXPath(String catalogueName) {
+		return getConfigurationAttributeValue(catalogueName, CONF_PARENT_ELEMENT, CONF_XPATH);
+	}
+
+	/**
+	 * The function getRecordXPath(String catalogueName) returns the XPath
+	 * pointing to individual records in a query result XML document.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the institution filter parameter is returned
+	 * @return String
+	 *            the XPath for individual records in the query results for the configured catalogue
+	 */
+	public String getRecordXPath(String catalogueName) {
+		return getConfigurationAttributeValue(catalogueName, CONF_RECORD_ELEMENT, CONF_XPATH);
+	}
+
+	/**
+	 * The function getAdditionalDetailsFields(String catalogueName) load the names of
+	 * additional metadata fields to be displayed in the website form, configured in the
+	 * configuration file of this plugin, for the catalogue with the name 'catalogueName'.
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of additional metadata fields is returned
+	 * @return Map
+	 *             containing the additional metadata fields of the selected OPAC
+	 */
+	public HashMap<String, String> getAdditionalDetailsFields(String catalogueName) {
+		return getConfigurationMapping(catalogueName, CONF_DETAILS, CONF_NAME, CONF_XPATH);
+	}
+
+	/**
 	 * The function getSearchFields(String catalogueName) loads the search fields, configured
 	 * in the configuration file of this plugin, for the catalogue with the given String 'catalogueName',
 	 * and returns them in a HashMap. The map contains the labels of the search fields as keys
 	 * and the corresponding URL parameters as values.
 	 *
 	 * @param catalogueName
-	 *            the name of the catalogue for which the list of search fields will be returned
-	 * @return Map containing the search fields of the selected OPAC
-	 * @throws InvalidActivityException
+	 *            the name of the catalogue for which the list of search fields is returned
+	 * @return Map
+	 *            containing the search fields of the selected OPAC
 	 */
 	public HashMap<String, String> getSearchFields(String catalogueName) {
-		LinkedHashMap<String, String> searchFields = new LinkedHashMap<String, String>();
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
-				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
-				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
-					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
-					String currentOpacName = (String)titleAttr.getValue();
-					if (Objects.equals(catalogueName, currentOpacName)) {
-						for (Object fieldObject : catalogue.configurationsAt("searchFields.searchField")) {
-							SubnodeConfiguration searchField = (SubnodeConfiguration)fieldObject;
-							searchFields.put(searchField.getString("[@label]"), searchField.getString("[@value]"));
-						}
-					}
-				}
-			}
-		}
-		return searchFields;
+		return getConfigurationMapping(catalogueName, CONF_SEARCHFIELDS, CONF_LABEL,CONF_VALUE);
 	}
 
 	/**
@@ -1035,26 +1079,11 @@ public class ModsPlugin implements Plugin {
 	 *
 	 * @param catalogueName
 	 *            the name of the catalogue for which the list of search fields will be returned
-	 * @return Map containing the filter institutions of the selected OPAC
+	 * @return Map
+	 *            containing the filter institutions of the selected OPAC
 	 */
 	public HashMap<String, String> getInstitutions(String catalogueName) {
-		LinkedHashMap<String, String> institutions = new LinkedHashMap<String, String>();
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
-				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
-				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
-					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
-					String currentOpacName = (String)titleAttr.getValue();
-					if (Objects.equals(catalogueName, currentOpacName)) {
-						for (Object fieldObject : catalogue.configurationsAt("filterInstitutions.institution")) {
-							SubnodeConfiguration institution = (SubnodeConfiguration)fieldObject;
-							institutions.put(institution.getString("[@label]"), institution.getString("[@value]"));
-						}
-					}
-				}
-			}
-		}
-		return institutions;
+		return getConfigurationMapping(catalogueName, CONF_INSTITUTIONS, CONF_LABEL, CONF_VALUE);
 	}
 
 	/**
@@ -1063,25 +1092,23 @@ public class ModsPlugin implements Plugin {
 	 *
 	 * @param catalogueName
 	 *            the name of the catalogue for which the institution filter parameter is returned
-	 * @return String the URL parameter used for institution filtering
+	 * @return String
+	 *            the URL parameter used for institution filtering
 	 */
 	public String getInstitutionFilterParameter(String catalogueName) {
-		String parameterName = "";
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
-				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
-				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
-					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
-					String currentOpacName = (String)titleAttr.getValue();
-					if (Objects.equals(catalogueName, currentOpacName)) {
-						for (Object fieldObject : catalogue.configurationsAt("institutionFilterParameter")) {
-							SubnodeConfiguration conf = (SubnodeConfiguration)fieldObject;
-							parameterName = conf.getString("[@value]");
-						}
-					}
-				}
-			}
-		}
-		return parameterName;
+		return getConfigurationAttributeValue(catalogueName, CONF_FILTER_PARAMETER, CONF_VALUE);
+	}
+
+	/**
+	 * The function getIdentifierParameter(String catalogueName) returns the URL parameter
+	 * used for retrieving documents by identifier configured for the given catalogue.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the ID parameter is returned
+	 * @return String
+	 *            the URL parameter used for retrieving documents by identifier
+	 */
+	public String getIdentifierParameter(String catalogueName) {
+		return getConfigurationAttributeValue(catalogueName, CONF_ID_PARAMETER, CONF_VALUE);
 	}
 }
