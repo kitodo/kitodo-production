@@ -43,9 +43,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -186,14 +186,16 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 					) })
 	private Set<Benutzer> benutzer;
 
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "projekt", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Prozess> prozesse;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ProjectFileGroup> filegroups;
 
+	@Transient
 	private List<StepInformation> commonWorkFlow = null;
 
+	@Transient
 	@XmlElement(name = "template")
 	public List<Prozess> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child nodes of the respective project.
 

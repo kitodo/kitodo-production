@@ -40,6 +40,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
@@ -85,6 +86,7 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 		this.creationDate = new Date();
 	}
 
+	@Transient
 	private List<String> valueList;
 
 	@Override

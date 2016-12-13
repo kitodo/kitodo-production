@@ -43,6 +43,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -57,16 +58,16 @@ public class Werkstueck implements Serializable {
 	@GeneratedValue
 	private Integer id;
 
-	@Column(name = "panelShown")
-	private boolean panelAusgeklappt = true;
-
 	@ManyToOne
 	@JoinColumn(name = "process_id")
 	private Prozess prozess;
 
-	@OneToMany(mappedBy = "workpiece", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "werkstueck", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private Set<Werkstueckeigenschaft> eigenschaften;
+
+	@Transient
+	private boolean panelAusgeklappt = true;
 
 	public Werkstueck() {
 		this.eigenschaften = new HashSet<Werkstueckeigenschaft>();

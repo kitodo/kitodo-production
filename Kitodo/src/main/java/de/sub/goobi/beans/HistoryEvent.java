@@ -70,7 +70,7 @@ public class HistoryEvent implements Serializable {
 	private Integer type;
 
 	@ManyToOne
-	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_history_ruleset_id"))
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_history_process_id"))
 	private Prozess process;
 
 	/**

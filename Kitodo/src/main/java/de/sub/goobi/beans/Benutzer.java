@@ -130,16 +130,16 @@ public class Benutzer implements Serializable {
 					) })
 	private Set<Benutzergruppe> benutzergruppen;
 
-	@ManyToMany(mappedBy = "steps")
+	@ManyToMany(mappedBy = "benutzer")
 	private Set<Schritt> schritte;
 
-	@OneToMany(mappedBy = "processingSteps", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "bearbeitungsbenutzer", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Schritt> bearbeitungsschritte;
 
-	@ManyToMany(mappedBy = "projects")
+	@ManyToMany(mappedBy = "benutzer")
 	private Set<Projekt> projekte;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "benutzer", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private Set<Benutzereigenschaft> eigenschaften;
 

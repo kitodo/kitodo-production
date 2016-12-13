@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -47,6 +46,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -73,7 +73,7 @@ public class Schritt implements Serializable {
 	@Column(name = "priority")
 	private Integer prioritaet;
 
-	@Column(name = "order")
+	@Column(name = "ordering")
 	private Integer reihenfolge;
 
 	@Column(name = "processingStatus")
@@ -82,7 +82,7 @@ public class Schritt implements Serializable {
 	@Column(name = "processingTime")
 	private Date bearbeitungszeitpunkt;
 
-	@Column(name = "processingBeginning")
+	@Column(name = "processingBegin")
 	private Date bearbeitungsbeginn;
 
 	@Column(name = "processingEnd")
@@ -166,14 +166,6 @@ public class Schritt implements Serializable {
 	@Column(name = "batchStep")
 	private Boolean batchStep = false;
 
-	@Column(name = "panelShown")
-	private boolean panelAusgeklappt = false;
-
-	@Column(name = "selected")
-	private boolean selected = false;
-
-	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
-
 	@Column(name = "stepPlugin")
 	private String stepPlugin;
 
@@ -215,6 +207,15 @@ public class Schritt implements Serializable {
 							foreignKey = @ForeignKey(name = "FK_step_x_user_userGroup_id")
 					) })
 	private Set<Benutzergruppe> benutzergruppen;
+
+	@Transient
+	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
+
+	@Transient
+	private boolean panelAusgeklappt = false;
+
+	@Transient
+	private boolean selected = false;
 
 	public Schritt() {
 		this.titel = "";

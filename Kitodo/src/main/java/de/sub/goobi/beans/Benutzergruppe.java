@@ -33,12 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.Hibernate;
 
@@ -68,14 +63,14 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 	@Column(name = "permission")
 	private Integer berechtigung;
 
-	@Column(name = "panelShown")
-	private boolean panelAusgeklappt = false;
-
-	@ManyToMany(mappedBy = "userGroups")
+	@ManyToMany(mappedBy = "benutzergruppen")
 	private Set<Benutzer> benutzer;
 
-	@ManyToMany(mappedBy = "userGroups")
+	@ManyToMany(mappedBy = "benutzergruppen")
 	private Set<Schritt> schritte;
+
+	@Transient
+	private boolean panelAusgeklappt = false;
 
 	public Benutzergruppe() {
 		this.schritte = new HashSet<Schritt>();

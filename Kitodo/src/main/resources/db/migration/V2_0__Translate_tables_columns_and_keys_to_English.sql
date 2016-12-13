@@ -31,78 +31,84 @@ RENAME TABLE
 --
 -- 2. Rename columns in tables
 --
+-- Wrong column type in all ...property tables for column value. Found: longtext, expected: varchar(255)
+--
 
+-- Wrong column type in goobi.batch for column type. Found: varchar, expected: integer
 ALTER TABLE batch
-  CHANGE BatchID id INT(11);
+  CHANGE BatchID id INT(11) NOT NULL AUTO_INCREMENT,
+  CHANGE type type INT(10);
 
 ALTER TABLE batch_x_process
-  CHANGE BatchID batch_id INT(11),
-  CHANGE ProzesseID process_id INT(11);
+  CHANGE BatchID batch_id INT(11) NOT NULL,
+  CHANGE ProzesseID process_id INT(11) NOT NULL;
 
 ALTER TABLE docket
-  CHANGE docketID id INT(11);
+  CHANGE docketID id INT(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE history
-  CHANGE historyid id INT(11),
+  CHANGE historyid id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE stringvalue stringValue VARCHAR(255),
   CHANGE processID process_id INT(11);
 
 ALTER TABLE ldapGroup
-  CHANGE ldapgruppenID id INT(11),
+  CHANGE ldapgruppenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE titel title VARCHAR(255),
   CHANGE userDN userDn VARCHAR(255),
   CHANGE sambaSID sambaSid VARCHAR(255),
   CHANGE sambaPrimaryGroupSID sambaPrimaryGroupSid VARCHAR(255),
   CHANGE sambaPwdMustChange sambaPasswordMustChange VARCHAR(255);
 
+-- Wrong column type in goobi.process for column wikiField. Found: longtext, expected: varchar(255)
 ALTER TABLE process
-  CHANGE ProzesseID id INT(11),
+  CHANGE ProzesseID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
   CHANGE ausgabename outputName VARCHAR(255),
   CHANGE IstTemplate isTemplate TINYINT(1),
-  CHANGE inAuswahllisteAnzeigen isChoiceListShown VARCHAR(255),
+  CHANGE inAuswahllisteAnzeigen isChoiceListShown TINYINT(1),
   CHANGE erstellungsdatum creationDate DATETIME,
-  CHANGE wikifield wikiField LONGTEXT,
+  CHANGE wikifield wikiField VARCHAR(255),
   CHANGE ProjekteID project_id INT(11),
   CHANGE MetadatenKonfigurationID ruleset_id INT(11),
   CHANGE docketID docket_id INT(11);
 
 ALTER TABLE processProperty
-  CHANGE prozesseeigenschaftenID id INT(11),
+  CHANGE prozesseeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value LONGTEXT,
+  CHANGE Wert value VARCHAR(255),
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
   CHANGE prozesseID process_id INT(11);
 
 ALTER TABLE project
-  CHANGE ProjekteID id INT(11),
+  CHANGE ProjekteID id INT(11) NOT NULL AUTO_INCREMENT,
+  CHANGE Titel title VARCHAR(255),
   CHANGE metsContentIDs metsContentId VARCHAR(255);
 
 ALTER TABLE project_x_user
-  CHANGE BenutzerID user_id INT(11),
-  CHANGE ProjekteID project_id INT(11);
+  CHANGE BenutzerID user_id INT(11) NOT NULL,
+  CHANGE ProjekteID project_id INT(11) NOT NULL;
 
 ALTER TABLE projectFileGroup
-  CHANGE ProjectFileGroupID id INT(11),
+  CHANGE ProjectFileGroupID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE mimetype mimeType VARCHAR(255),
   CHANGE ProjekteID project_id INT(11);
 
 ALTER TABLE ruleset
-  CHANGE MetadatenKonfigurationID id INT(11),
+  CHANGE MetadatenKonfigurationID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
   CHANGE Datei file VARCHAR(255);
 
 ALTER TABLE step
-  CHANGE SchritteID id INT(11),
+  CHANGE SchritteID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
   CHANGE Prioritaet priority INT(11),
-  CHANGE Reihenfolge `order` INT(11),
+  CHANGE Reihenfolge ordering INT(11),
   CHANGE Bearbeitungsstatus processingStatus INT(11),
   CHANGE edittype editType INT(11),
   CHANGE BearbeitungsZeitpunkt processingTime DATETIME,
-  CHANGE BearbeitungsBeginn processingBeginning DATETIME,
+  CHANGE BearbeitungsBeginn processingBegin DATETIME,
   CHANGE BearbeitungsEnde processingEnd DATETIME,
   CHANGE homeverzeichnisNutzen homeDirectory SMALLINT(6),
   CHANGE typMetadaten typeMetadata TINYINT(1),
@@ -127,15 +133,15 @@ ALTER TABLE step
   CHANGE ProzesseID process_id INT(11);
 
 ALTER TABLE step_x_user
-  CHANGE BenutzerID user_id INT(11),
-  CHANGE schritteID step_id INT(11);
+  CHANGE BenutzerID user_id INT(11) NOT NULL,
+  CHANGE schritteID step_id INT(11) NOT NULL;
 
 ALTER TABLE step_x_userGroup
-  CHANGE BenutzerGruppenID userGroup_id INT(11),
+  CHANGE BenutzerGruppenID userGroup_id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE schritteID step_id INT(11);
 
 ALTER TABLE stepProperty
-  CHANGE schritteeigenschaftenID id INT(11),
+  CHANGE schritteeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
   CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
@@ -144,21 +150,21 @@ ALTER TABLE stepProperty
   CHANGE schritteID step_id INT(11);
 
 ALTER TABLE template
-  CHANGE VorlagenID id INT(11),
+  CHANGE VorlagenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Herkunft origin VARCHAR(255),
   CHANGE ProzesseID process_id INT(11);
 
 ALTER TABLE templateProperty
-  CHANGE vorlageneigenschaftenID id INT(11),
+  CHANGE vorlageneigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value LONGTEXT,
+  CHANGE Wert value VARCHAR(255),
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
   CHANGE vorlagenID template_id INT(11);
 
 ALTER TABLE user
-  CHANGE BenutzerID id INT(11),
+  CHANGE BenutzerID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Vorname name VARCHAR(255),
   CHANGE Nachname surname VARCHAR(255),
   CHANGE ldaplogin ldapLogin VARCHAR(255),
@@ -173,31 +179,31 @@ ALTER TABLE user
   CHANGE ldapgruppenID ldapGroup_id INT(11);
 
 ALTER TABLE user_x_userGroup
-  CHANGE BenutzerID user_id INT(11),
+  CHANGE BenutzerID user_id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE BenutzerGruppenID userGroup_id INT(11);
 
 ALTER TABLE userGroup
-  CHANGE BenutzergruppenID id INT(11),
+  CHANGE BenutzergruppenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE titel title VARCHAR(255),
   CHANGE berechtigung permission INT(11);
 
 ALTER TABLE userProperty
-  CHANGE benutzereigenschaftenID id INT(11),
+  CHANGE benutzereigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value LONGTEXT,
+  CHANGE Wert value VARCHAR(255),
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
   CHANGE BenutzerID user_id INT(11);
 
 ALTER TABLE workpiece
-  CHANGE WerkstueckeID id INT(11),
-  CHANGE ProzesseID process_id INT(11);
+  CHANGE WerkstueckeID id INT(11) NOT NULL,
+  CHANGE ProzesseID process_id INT(11) NOT NULL;
 
 ALTER TABLE workpieceProperty
-  CHANGE werkstueckeeigenschaftenID id INT(11),
+  CHANGE werkstueckeeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value LONGTEXT,
+  CHANGE Wert value VARCHAR(255),
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),

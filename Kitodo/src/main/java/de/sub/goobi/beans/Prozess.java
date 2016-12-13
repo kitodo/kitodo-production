@@ -57,6 +57,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -152,12 +153,6 @@ public class Prozess implements Serializable {
 	@Column(name = "swappedOut")
 	private Boolean swappedOut = false;
 
-	@Column(name = "panelShown")
-	private Boolean panelAusgeklappt = false;
-
-	@Column(name = "selected")
-	private Boolean selected = false;
-
 	@Column(name = "wikiField")
 	private String wikifield = "";
 
@@ -173,27 +168,36 @@ public class Prozess implements Serializable {
 	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
 	private Regelsatz regelsatz;
 
-	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Schritt> schritte;
 
 	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("date ASC")
 	private Set<HistoryEvent> history;
 
-	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Werkstueck> werkstuecke;
 
-	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Vorlage> vorlagen;
 
-	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private Set<Prozesseigenschaft> eigenschaften;
 
 	@ManyToMany(mappedBy = "processes")
 	private Set<Batch> batches = new HashSet<Batch>(0);
 
+	@Transient
+	private Boolean panelAusgeklappt = false;
+
+	@Transient
+	private Boolean selected = false;
+
+	@Transient
 	private final MetadatenSperrung msp = new MetadatenSperrung();
+
+	@Transient
 	Helper help = new Helper();
 
 	public static String DIRECTORY_PREFIX = "orig";

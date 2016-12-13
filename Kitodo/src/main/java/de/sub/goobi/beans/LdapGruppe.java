@@ -95,7 +95,7 @@ public class LdapGruppe implements Serializable {
 	@Column(name = "sambaPasswordHistory")
 	private String sambaPasswordHistory;
 
-	@Column(name = "sambaLogonHour")
+	@Column(name = "sambaLogonHours")
 	private String sambaLogonHours;
 
 	@Column(name = "sambaKickoffTime")

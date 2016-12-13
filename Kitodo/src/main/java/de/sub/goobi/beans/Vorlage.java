@@ -44,6 +44,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -61,16 +62,16 @@ public class Vorlage implements Serializable {
 	@Column(name = "origin")
 	private String herkunft;
 
-	@Column(name = "panelShown")
-	private boolean panelAusgeklappt = true;
-
 	@ManyToOne
 	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
 	private Prozess prozess;
 
-	@OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "vorlage", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private Set<Vorlageeigenschaft> eigenschaften;
+
+	@Transient
+	private boolean panelAusgeklappt = true;
 
 	public Vorlage() {
 		this.eigenschaften = new HashSet<Vorlageeigenschaft>();
