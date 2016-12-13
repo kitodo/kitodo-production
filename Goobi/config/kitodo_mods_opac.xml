@@ -47,11 +47,11 @@
 			<institution label="Staatsbibliothek zu Berlin - Preußischer Kulturbesitz, Haus Unter den Linden" value="DE-1" />
 		</filterInstitutions>
 		<additionalDetails>
-			<detail name="creator" xpath="//goobi:displayName" transformed="true" />
-			<detail name="title" xpath="//goobi:metadata[@name='TitleDocMain']" transformed="true" />
-			<detail name="shelfmarksource" xpath="//goobi:metadata[@name='shelfmarksource']" transformed="true" />
-			<detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" transformed="true" />
-			<detail name="url" xpath="//mods:mods/mods:location/mods:url" transformed="false" />
+			<detail name="creator" xpath="//goobi:displayName" />
+			<detail name="title" xpath="//goobi:metadata[@name='TitleDocMain']" />
+			<detail name="shelfmarksource" xpath="//goobi:metadata[@name='shelfmarksource']" />
+			<detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" />
+			<detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
 		</additionalDetails>
 	</catalogue>
 </opacCatalogues>

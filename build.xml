@@ -317,6 +317,7 @@
                 <path refid="compile.classpath" />
             </classpath>
             <compilerarg value="${build.javac.args}" />
+            <exclude name="**/package-info.java"/>
         </javac>
         <copy file="${src.dir.plugins.opac}/ModsPlugin/org/kitodo/production/plugin/CataloguePlugin/ModsPlugin/kalliope2kitodo.xsl" todir="${build.classes}" />
     </target>
