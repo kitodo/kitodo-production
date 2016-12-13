@@ -65,6 +65,8 @@ import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
+import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
+
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
  *
@@ -97,6 +99,8 @@ public class PluginLoader {
 	public static List<IPlugin> getPluginList(PluginType inType) {
 		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(IPlugin.class);
+		PicaMassImport pmi = new PicaMassImport();
+		plugins.add(pmi);
 		return new ArrayList<IPlugin>(plugins);
 	}
 
@@ -107,6 +111,8 @@ public class PluginLoader {
 	public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
 		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
+		PicaMassImport pmi = new PicaMassImport();
+		plugins.add(pmi);
 		for (IPlugin p : plugins) {
 			if (p.getTitle().equals(inTitle)) {
 				return p;
@@ -146,14 +152,7 @@ public class PluginLoader {
 	 */
 	@Deprecated
 	public static IPlugin getPlugin(PluginType inType, String inTitle) {
-		PluginManagerUtil pmu = getPluginLoader(inType);
-		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
-		for (IPlugin p : plugins) {
-			if (p.getTitle().equals(inTitle)) {
-				return p;
-			}
-		}
-		return null;
+		return getPluginByTitle(inType, inTitle);
 	}
 
 	/**

@@ -699,7 +699,7 @@
 			internal name of a single <MetadataType>. Multiple instances of
 			the <metadata> element may appear within a <DocStrctType>. It has
 			two attributes:
-				num: states the number of occurences within a document
+				num: states the number of occurrences within a document
 				structure. E.g. an article may only have a single main title,
 				but several authors. Possible values for the num attribute are
 					"*"  zero or more
@@ -2927,7 +2927,7 @@
 		needs to be implemented by special classes. The appropriate section
 		of the configuration file are read by those file format specific
 		classes. The workflow component of GOOBI uses the RDF format only.
-		For that reason METS/MODS information is not defined yet completly.
+		For that reason METS/MODS information is not defined yet completely.
 	-->
 
 	<Formats>

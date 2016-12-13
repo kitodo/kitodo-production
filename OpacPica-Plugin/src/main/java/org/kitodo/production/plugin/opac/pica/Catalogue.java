@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--  
+/**
  * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
  * 
  * Visit the websites for more information. 
@@ -25,29 +24,37 @@
  * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
  * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
  * exception statement from your version.
- -->
-<!DOCTYPE hibernate-mapping PUBLIC
-        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+ */
+package org.kitodo.production.plugin.opac.pica;
 
-<hibernate-mapping>
+class Catalogue {
 
-	<class name="de.sub.goobi.beans.Prozesseigenschaft" table="prozesseeigenschaften">
-		<id name="id" column="prozesseeigenschaftenID" type="integer">
-			<generator class="native" />
-		</id>
+	private String cbs = "";
 
-		<property name="titel" column="Titel" type="string" />
-		<property name="wert" column="Wert" type="text" />
-		<property name="istObligatorisch" type="java.lang.Boolean">
-			<column name="IstObligatorisch" sql-type="bit"/>
-		</property>
-		<property name="datentyp" column="DatentypenID" type="integer" />
-		<property name="auswahl" column="Auswahl" type="string" />
-		<property name="creationDate" column="creationDate" type="timestamp"/>
-		<property name="container" column="container" type="integer" />	
-		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="prozesseID" foreign-key="FK_Prozesseigenschaft_ProzesseID"/>
-		
-	</class>
+	private final String dataBase;
+	private final String serverAddress;
+	private final int port;
 
-</hibernate-mapping>
+	Catalogue(ConfigOpacCatalogue coc) {
+		this.serverAddress = coc.getAddress();
+		this.port = coc.getPort();
+		this.dataBase = coc.getDatabase();
+		this.cbs = coc.getCbs();
+	}
+
+	String getDataBase() {
+		return dataBase;
+	}
+
+	int getPort() {
+		return port;
+	}
+
+	String getServerAddress() {
+		return serverAddress;
+	}
+
+	String getCbs() {
+		return cbs;
+	}
+}

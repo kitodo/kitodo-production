@@ -46,7 +46,7 @@
 		<property name="auswahl" column="Auswahl" type="string" />
 		<property name="creationDate" column="creationDate" type="timestamp"/>
 		<property name="container" column="container" type="integer" />			
-		<many-to-one name="werkstueck" class="de.sub.goobi.beans.Werkstueck" column="werkstueckeID" foreign-key="FK_WerkstueckeID"/>
+		<many-to-one name="werkstueck" class="de.sub.goobi.beans.Werkstueck" column="werkstueckeID" foreign-key="FK_Werkstueckeeigenschaften_WerkstueckeID"/>
 		
 	</class>
 

@@ -37,7 +37,7 @@
 			<generator class="native"/>
 		</id>
 		
-		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="ProzesseID" foreign-key="FK_ProzesseID"/>
+		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="ProzesseID" foreign-key="FK_Werkstuecke_ProzesseID"/>
 		
 		<set name="eigenschaften" cascade="all,delete-orphan" inverse="true"  order-by="titel">
 			<key column="werkstueckeID"/>

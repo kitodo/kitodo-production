@@ -16,7 +16,54 @@
     <name>Kitodo Production</name>
     <url>https://github.com/kitodo/kitodo-production</url>
 
+    <repositories>
+        <!-- Let's first add the default Maven central repo,
+             otherwise Maven will not use Maven Central as first download option -->
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>https://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>Jahia</id>
+            <name>Jahia Repository</name>
+            <url>http://maven.jahia.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>slubnexus-public</id>
+            <name>Slub-Nexus:3rd Party Releases</name>
+            <url>http://nexus.slub-dresden.de:8081/nexus/content/repositories/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>slubnexus-snapshots</id>
+            <name>Slub-Nexus:Internal Snapshots</name>
+            <url>http://nexus.slub-dresden.de:8081/nexus/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>slubnexus-releases</id>
+            <name>Slub-Nexus:Internal Releases</name>
+            <url>http://nexus.slub-dresden.de:8081/nexus/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <modules>
+        <module>OpacPica-Plugin</module>
         <module>Kitodo</module>
     </modules>
 </project>
