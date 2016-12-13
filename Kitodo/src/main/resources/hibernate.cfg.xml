@@ -69,23 +69,23 @@
 		<property name="hbm2ddl.auto">validate</property>
 
 		<!-- Die einzelnen Mappings -->
-		<mapping resource="de/sub/goobi/beans/Batch.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Benutzergruppe.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Benutzer.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Benutzereigenschaft.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Docket.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Prozess.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Prozesseigenschaft.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Schritt.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Werkstueck.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Werkstueckeigenschaft.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Vorlage.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Vorlageeigenschaft.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Projekt.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/Regelsatz.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/LdapGruppe.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/ProjectFileGroup.hbm.xml"/>
-		<mapping resource="de/sub/goobi/beans/HistoryEvent.hbm.xml"/>
+		<mapping class="de.sub.goobi.beans.Batch"/>
+		<mapping class="de.sub.goobi.beans.Docket"/>
+		<mapping class="de.sub.goobi.beans.HistoryEvent"/>
+		<mapping class="de.sub.goobi.beans.LdapGruppe"/>
+		<mapping class="de.sub.goobi.beans.Prozess"/>
+		<mapping class="de.sub.goobi.beans.Prozesseigenschaft"/>
+		<mapping class="de.sub.goobi.beans.Projekt"/>
+		<mapping class="de.sub.goobi.beans.ProjectFileGroup"/>
+		<mapping class="de.sub.goobi.beans.Regelsatz"/>
+		<mapping class="de.sub.goobi.beans.Schritt"/>
+		<mapping class="de.sub.goobi.beans.Vorlage"/>
+		<mapping class="de.sub.goobi.beans.Vorlageeigenschaft"/>
+		<mapping class="de.sub.goobi.beans.Benutzergruppe"/>
+		<mapping class="de.sub.goobi.beans.Benutzer"/>
+		<mapping class="de.sub.goobi.beans.Benutzereigenschaft"/>
+		<mapping class="de.sub.goobi.beans.Werkstueck"/>
+		<mapping class="de.sub.goobi.beans.Werkstueckeigenschaft"/>
 
 	</session-factory>
 
