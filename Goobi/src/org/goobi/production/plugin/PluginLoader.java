@@ -204,12 +204,12 @@ public class PluginLoader {
 				plugin.configure(getPluginConfiguration());
 				result.add(plugin);
 			} catch (NoSuchMethodException e) {
-				if(logger.isEnabledFor(Priority.WARN)){
+				if(logger.isEnabledFor(Level.WARN)){
 					logger.warn("Bad implementation of " + type.getName() + " plugin "
 							+ implementation.getClass().getName(), e);
 				}
 			} catch (SecurityException e) {
-				if(logger.isEnabledFor(Priority.WARN)){
+				if(logger.isEnabledFor(Level.WARN)){
 					logger.warn("Bad implementation of " + type.getName() + " plugin "
 							+ implementation.getClass().getName(), e);
 				}

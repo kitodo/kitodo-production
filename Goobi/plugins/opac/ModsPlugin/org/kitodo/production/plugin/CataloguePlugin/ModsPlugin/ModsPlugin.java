@@ -101,6 +101,7 @@ import ugh.fileformats.mets.XStream;
  */
 @PluginImplementation
 public class ModsPlugin implements Plugin {
+	private static final Logger modsLogger = Logger.getLogger(ModsPlugin.class);
 
 	/**
 	 * The field configDir holds a reference to the file system directory where
@@ -446,7 +447,7 @@ public class ModsPlugin implements Plugin {
 					// modsElement is 'null' if last structural element pointed to a "virtueller Bestand" as parent element;
 					// this is not allowed in Kitodo, therefore throw an exception here!
 					if (Objects.equals(modsElement, null)) {
-						throw new RuntimeException("Abgefragtes Dokument mit ID '"+ documentID + "' ist nicht Teil eines gültigen Bestandes.");
+						throw new RuntimeException("Requested document with ID '"+ documentID + "' is not associated with a valid inventory.");
 					}
 					structureTypes.add(getStructureType(modsElement));
 
