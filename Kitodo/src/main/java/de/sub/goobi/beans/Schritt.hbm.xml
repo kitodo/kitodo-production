@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<!--  
+ * This file is part of the Goobi Application - a Workflow tool for the support of mass digitization.
+ * 
+ * Visit the websites for more information. 
+ *     		- http://www.kitodo.org
+ *     		- https://github.com/goobi/goobi-production
+ * 		    - http://gdz.sub.uni-goettingen.de
+ * 			- http://www.intranda.com
+ * 			- http://digiverso.com 
+ * 
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Linking this library statically or dynamically with other modules is making a combined work based on this library. Thus, the terms and conditions
+ * of the GNU General Public License cover the whole combination. As a special exception, the copyright holders of this library give you permission to
+ * link this library with independent modules to produce an executable, regardless of the license terms of these independent modules, and to copy and
+ * distribute the resulting executable under terms of your choice, provided that you also meet, for each linked independent module, the terms and
+ * conditions of the license of that module. An independent module is a module which is not derived from or based on this library. If you modify this
+ * library, you may extend this exception to your version of the library, but you are not obliged to do so. If you do not wish to do so, delete this
+ * exception statement from your version.
+ -->
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="de.sub.goobi.beans.Schritt" table="schritte">
+		<!--  <cache usage="read-write"/> -->
+		<id name="id" column="SchritteID" type="integer">
+			<generator class="native"/>
+		</id>
+		
+		<property name="titel" column="Titel" type="string"/>
+		<property name="prioritaet" column="Prioritaet" type="integer"/>
+		<property name="reihenfolge" column="Reihenfolge" type="integer"/>
+		<property name="bearbeitungsstatus" column="Bearbeitungsstatus" type="integer"/>
+		<property name="editType" column="edittype" type="integer"/>
+		<property name="bearbeitungszeitpunkt" column="BearbeitungsZeitpunkt" type="timestamp"/>
+		<property name="bearbeitungsbeginn" column="BearbeitungsBeginn" type="timestamp"/>
+		<property name="bearbeitungsende" column="BearbeitungsEnde" type="timestamp"/>
+		<!-- 	<property name="typ" column="Typ" type="integer"/>  -->
+		<property name="homeverzeichnisNutzen" column="homeverzeichnisNutzen" type="short"/>
+
+		<property name="typMetadaten" type="java.lang.Boolean">
+			<column name="typMetadaten" sql-type="bit"/>
+		</property>
+		<property name="typAutomatisch" type="java.lang.Boolean">
+			<column name="typAutomatisch" sql-type="bit"/>
+		</property>
+		<property name="typImportFileUpload" type="java.lang.Boolean">
+			<column name="typImportFileUpload" sql-type="bit"/>
+		</property>
+		<property name="typExportRus" type="java.lang.Boolean">
+			<column name="typExportRus" sql-type="bit"/>
+		</property>
+		<property name="typImagesLesen" type="java.lang.Boolean">
+			<column name="typImagesLesen" sql-type="bit"/>
+		</property>
+		<property name="typImagesSchreiben" type="java.lang.Boolean">
+			<column name="typImagesSchreiben" sql-type="bit"/>
+		</property>
+		<property name="typExportDMS" type="java.lang.Boolean">
+			<column name="typExportDMS" sql-type="bit"/>
+		</property>
+		<property name="typBeimAnnehmenModul" type="java.lang.Boolean">
+			<column name="typBeimAnnehmenModul" sql-type="bit"/>
+		</property>
+		<property name="typBeimAnnehmenAbschliessen" type="java.lang.Boolean">
+			<column name="typBeimAnnehmenAbschliessen" sql-type="bit"/>
+		</property>
+		<property name="typBeimAnnehmenModulUndAbschliessen" type="java.lang.Boolean">
+			<column name="typBeimAnnehmenModulUndAbschliessen" sql-type="bit"/>
+		</property>
+		<property name="typScriptStep" type="java.lang.Boolean">
+			<column name="typScriptStep" sql-type="bit"/>
+		</property>
+		<property name="scriptname1" column="scriptName1" type="string"/>
+		<property name="typAutomatischScriptpfad" column="typAutomatischScriptpfad" type="string"/>
+		<property name="scriptname2" column="scriptName2" type="string"/>
+		<property name="typAutomatischScriptpfad2" column="typAutomatischScriptpfad2" type="string"/>
+		<property name="scriptname3" column="scriptName3" type="string"/>
+		<property name="typAutomatischScriptpfad3" column="typAutomatischScriptpfad3" type="string"/>
+		<property name="scriptname4" column="scriptName4" type="string"/>
+		<property name="typAutomatischScriptpfad4" column="typAutomatischScriptpfad4" type="string"/>
+		<property name="scriptname5" column="scriptName5" type="string"/>
+		<property name="typAutomatischScriptpfad5" column="typAutomatischScriptpfad5" type="string"/>
+		<property name="typBeimAbschliessenVerifizieren" type="java.lang.Boolean">
+			<column name="typBeimAbschliessenVerifizieren" sql-type="bit"/>
+		</property>
+		<property name="typModulName" column="typModulName" type="string"/>
+		<property name="batchStep" type="java.lang.Boolean">
+			<column name="batchStep" sql-type="bit"/>
+		</property>
+		
+		<property name="stepPlugin" column="stepPlugin" type="string"/>
+		<property name="validationPlugin" column="validationPlugin" type="string"/>
+		
+		<many-to-one name="bearbeitungsbenutzer" class="de.sub.goobi.beans.Benutzer" column="BearbeitungsBenutzerID" foreign-key="FK_Schritte_BearbeitungsBenutzerID"/>
+		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="ProzesseID" foreign-key="FK_Schritte_ProzesseID"/>
+		
+		<set name="benutzer" table="schritteberechtigtebenutzer">
+		    <key column="schritteID" foreign-key="FK_SchritteBerechtigteBenutzer_SchritteID"/>
+		    <many-to-many column="BenutzerID" class="de.sub.goobi.beans.Benutzer" foreign-key="FK_SchritteBerechtigteBenutzer_BenutzerID"/>
+		</set>
+		
+		<set name="benutzergruppen" table="schritteberechtigtegruppen">
+		    <key column="schritteID" foreign-key="FK_SchritteBerechtigtegruppen_SchritteID"/>
+		    <many-to-many column="BenutzerGruppenID" class="de.sub.goobi.beans.Benutzergruppe" foreign-key="FK_SchritteBerechtigtegruppen_BenutzerGruppenID"/>
+		</set>
+
+	</class>
+
+</hibernate-mapping>
