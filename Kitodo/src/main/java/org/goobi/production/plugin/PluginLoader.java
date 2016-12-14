@@ -37,30 +37,24 @@
  */
 package org.goobi.production.plugin;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
+import de.sub.goobi.config.ConfigMain;
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.PluginManager;
 import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 
-import de.sub.goobi.config.ConfigMain;
+import java.io.File;
+import java.util.*;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
@@ -95,6 +89,8 @@ public class PluginLoader {
 	public static List<IPlugin> getPluginList(PluginType inType) {
 		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(IPlugin.class);
+		PicaMassImport pmi = new PicaMassImport();
+		plugins.add(pmi);
 		return new ArrayList<IPlugin>(plugins);
 	}
 
@@ -106,6 +102,8 @@ public class PluginLoader {
 	public static IPlugin getPluginByTitle(PluginType inType, String inTitle) {
 		PluginManagerUtil pmu = getPluginLoader(inType);
 		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
+		PicaMassImport pmi = new PicaMassImport();
+		plugins.add(pmi);
 		for (IPlugin p : plugins) {
 			if (p.getTitle().equals(inTitle)) {
 				return p;
@@ -143,14 +141,7 @@ public class PluginLoader {
 
 	@Deprecated
 	public static IPlugin getPlugin(PluginType inType, String inTitle) {
-		PluginManagerUtil pmu = getPluginLoader(inType);
-		Collection<IPlugin> plugins = pmu.getPlugins(inType.getInterfaz());
-		for (IPlugin p : plugins) {
-			if (p.getTitle().equals(inTitle)) {
-				return p;
-			}
-		}
-		return null;
+		return getPluginByTitle(inType, inTitle);
 	}
 
 	/**
