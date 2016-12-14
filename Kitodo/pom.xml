@@ -608,7 +608,7 @@
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
-                            <directory>./../OpacPica-Plugin/target</directory>
+                            <directory>${session.executionRootDirectory}/OpacPica-Plugin/target</directory>
                             <targetPath>plugins/opac</targetPath>
                             <includes>
                                 <include>*.jar</include>
