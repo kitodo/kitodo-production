@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <local.lib.dir>${basedir}/src/main/webapp/WEB-INF/lib</local.lib.dir>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <parent.basedir>${basedir}/../</parent.basedir>
     </properties>
 
     <repositories>
@@ -780,9 +781,9 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>4.0.3</version>
                         <configuration>
-                            <url>jdbc:mysql://localhost/kitodo-new</url>
-                            <user>kitodo</user>
-                            <password>kitodo</password>
+                            <!-- local configuration file -->
+                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
+                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
                         </configuration>
                         <dependencies>
                             <dependency>
