@@ -1769,28 +1769,39 @@ public class Metadaten {
 		}
 	}
 
-	/*
-	 * ##################################################### ##################################################### ## ## Sperrung der Metadaten
-	 * aktualisieren oder prüfen ## ##################################################### ####################################################
+	/**
+	 * Checks for meta-data lock, and, on success, updates the lock time.
+	 * 
+	 * @return true, if the user holds a lock on this meta-data record
 	 */
-
 	private boolean SperrungAktualisieren() {
-		/*
-		 * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer gilt, Sperrung aktualisieren
-		 */
-		if (MetadatenSperrung.isLocked(this.myProzess.getId().intValue())
-				&& this.sperrung.getLockBenutzer(this.myProzess.getId().intValue()).equals(this.myBenutzerID)) {
-			this.sperrung.setLocked(this.myProzess.getId().intValue(), this.myBenutzerID);
-			return true;
-		} else {
+		Integer processId;
+		if (this.sperrung == null || this.myProzess == null || (processId = this.myProzess.getId()) == null) {
 			return false;
 		}
+		if (MetadatenSperrung.isLocked(processId)) {
+			String userHoldingLock = this.sperrung.getLockBenutzer(processId);
+			if (userHoldingLock != null && userHoldingLock.equals(this.myBenutzerID)) {
+				this.sperrung.setLocked(processId, this.myBenutzerID);
+				return true;
+			}
+		}
+		return false;
 	}
 
+	/**
+	 * Release meta-data lock, if any.
+	 */
 	private void SperrungAufheben() {
-		if (MetadatenSperrung.isLocked(this.myProzess.getId().intValue())
-				&& this.sperrung.getLockBenutzer(this.myProzess.getId().intValue()).equals(this.myBenutzerID)) {
-			this.sperrung.setFree(this.myProzess.getId().intValue());
+		Integer processId;
+		if (this.sperrung == null || this.myProzess == null || (processId = this.myProzess.getId()) == null) {
+			return;
+		}
+		if (MetadatenSperrung.isLocked(processId)) {
+			String userHoldingLock = this.sperrung.getLockBenutzer(processId);
+			if (userHoldingLock != null && userHoldingLock.equals(this.myBenutzerID)) {
+				this.sperrung.setFree(processId);
+			}
 		}
 	}
 
@@ -3122,8 +3133,8 @@ public class Metadaten {
 	 *             multi-select input
 	 */
 	public List<RenderableMetadataGroup> getMyGroups() throws ConfigurationException {
-		List<MetadataGroup> records = myDocStruct.getAllMetadataGroups();
-		if (records == null) {
+		List<MetadataGroup> records;
+		if (myDocStruct == null || (records = myDocStruct.getAllMetadataGroups()) == null) {
 			return Collections.emptyList();
 		}
 		List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
@@ -3164,7 +3175,7 @@ public class Metadaten {
 	 * @return whether the link to add a new metadata group shows
 	 */
 	public boolean isAddNewMetadataGroupLinkShowing() {
-		return myDocStruct.getAddableMetadataGroupTypes() != null;
+		return myDocStruct != null && myDocStruct.getAddableMetadataGroupTypes() != null;
 	}
 
 	/**
