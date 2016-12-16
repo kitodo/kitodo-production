@@ -41,6 +41,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -63,6 +76,8 @@ import org.hibernate.HibernateException;
 // exhaustive and the properties have to be named according to their respective
 // getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
 // referenced as "fieldConfig" here, not "field" as one might expect.
+@Entity
+@Table(name = "project")
 public class Projekt implements Serializable, Comparable<Projekt> {
 	private static final long serialVersionUID = -8543713331407761617L;
 
@@ -72,43 +87,117 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	 * order they have to be applied, that is the topmost anchor in first place, followed by the second one and so on.
 	 */
 	public static final String ANCHOR_SEPARATOR = "\u00A6";
-	private Integer id;
-	private String titel;
-	private Set<Benutzer> benutzer;
-	private Set<Prozess> prozesse;
-	private Set<ProjectFileGroup> filegroups;
 
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
+	private Integer id;
+
+	@Column(name = "title")
+	private String titel;
+
+	@Column(name = "useDmsImport")
 	private boolean useDmsImport = false;
+
+	@Column(name = "dmsImportTimeOut")
 	private Integer dmsImportTimeOut = 20000;
+
+	@Column(name = "dmsImportRootPath")
 	private String dmsImportRootPath;
+
+	@Column(name = "dmsImportImagesPath")
 	private String dmsImportImagesPath;
+
+	@Column(name = "dmsImportSuccessPath")
 	private String dmsImportSuccessPath;
+
+	@Column(name = "dmsImportErrorPath")
 	private String dmsImportErrorPath;
+
+	@Column(name = "dmsImportCreateProcessFolder")
 	private Boolean dmsImportCreateProcessFolder = false;
 
+	@Column(name = "fileFormatInternal")
 	private String fileFormatInternal;
+
+	@Column(name = "fileFormatDmsExport")
 	private String fileFormatDmsExport;
 
+	@Column(name = "metsRightsOwner")
 	private String metsRightsOwner = "";
+
+	@Column(name = "metsRightsOwnerLogo")
 	private String metsRightsOwnerLogo = "";
+
+	@Column(name = "metsRightsOwnerSite")
 	private String metsRightsOwnerSite = "";
+
+	@Column(name = "metsRightsOwnerMail")
 	private String metsRightsOwnerMail = "";
+
+	@Column(name = "metsDigiprovReference")
 	private String metsDigiprovReference = "";
+
+	@Column(name = "metsDigiprovPresentation")
 	private String metsDigiprovPresentation = "";
+
+	@Column(name = "metsDigiprovReferenceAnchor")
 	private String metsDigiprovReferenceAnchor = "";
+
+	@Column(name = "metsDigiprovPresentationAnchor")
 	private String metsDigiprovPresentationAnchor = "";
+
+	@Column(name = "metsPointerPath")
 	private String metsPointerPath = "";
+
+	@Column(name = "metsPointerPathAnchor")
 	private String metsPointerPathAnchor = "";
+
+	@Column(name = "metsPurl")
 	private String metsPurl = "";
+
+	@Column(name = "metsContentId")
 	private String metsContentIDs = "";
 
-	private List<StepInformation> commonWorkFlow = null;
+	@Column(name = "startDate")
 	private Date startDate;
+
+	@Column(name = "endDate")
 	private Date endDate;
+
+	@Column(name = "numberOfPages")
 	private Integer numberOfPages;
+
+	@Column(name = "numberOfVolumes")
 	private Integer numberOfVolumes;
+
+	@Column(name = "projectIsArchived")
 	private Boolean projectIsArchived = false;
 
+	@ManyToMany
+	@JoinTable(name = "project_x_user",
+			joinColumns = {
+					@JoinColumn(
+							name = "project_id",
+							foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "user_id",
+							foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")
+					) })
+	private Set<Benutzer> benutzer;
+
+	@OneToMany(mappedBy = "projekt", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Prozess> prozesse;
+
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<ProjectFileGroup> filegroups;
+
+	@Transient
+	private List<StepInformation> commonWorkFlow = null;
+
+	@Transient
 	@XmlElement(name = "template")
 	/**
 	 * The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when calling

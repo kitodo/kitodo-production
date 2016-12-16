@@ -44,58 +44,181 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+@Entity
+@Table(name = "step")
 public class Schritt implements Serializable {
 	private static final long serialVersionUID = 6831844584239811846L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "priority")
 	private Integer prioritaet;
+
+	@Column(name = "ordering")
 	private Integer reihenfolge;
+
+	@Column(name = "processingStatus")
 	private Integer bearbeitungsstatus;
+
+	@Column(name = "processingTime")
 	private Date bearbeitungszeitpunkt;
+
+	@Column(name = "processingBegin")
 	private Date bearbeitungsbeginn;
+
+	@Column(name = "processingEnd")
 	private Date bearbeitungsende;
+
+	@Column(name = "editType")
 	private Integer editType;
-	private Benutzer bearbeitungsbenutzer;
+
+	@Column(name = "homeDirectory") //not sure how to translate it
 	private short homeverzeichnisNutzen;
 
+	@Column(name = "typeMetadata")
 	private boolean typMetadaten = false;
+
+	@Column(name = "typeAutomatic")
 	private boolean typAutomatisch = false;
+
+	@Column(name = "typeImportFileUpload")
 	private boolean typImportFileUpload = false;
+
+	@Column(name = "typeExportRussian")
 	private boolean typExportRus = false;
+
+	@Column(name = "typeImagesRead")
 	private boolean typImagesLesen = false;
+
+	@Column(name = "typeImagesWrite")
 	private boolean typImagesSchreiben = false;
+
+	@Column(name = "typeExportDms")
 	private boolean typExportDMS = false;
+
+	@Column(name = "typeAcceptModule")
 	private boolean typBeimAnnehmenModul = false;
+
+	@Column(name = "typeAcceptClose")
 	private boolean typBeimAnnehmenAbschliessen = false;
+
+	@Column(name = "typeAcceptModuleAndClose")
 	private boolean typBeimAnnehmenModulUndAbschliessen = false;
+
+	@Column(name = "typeScriptStep")
 	private Boolean typScriptStep = false;
+
+	@Column(name = "scriptName1")
 	private String scriptname1;
+
+	@Column(name = "typeAutomaticScriptPath")
 	private String typAutomatischScriptpfad;
+
+	@Column(name = "scriptName2")
 	private String scriptname2;
+
+	@Column(name = "typeAutomaticScriptPath2")
 	private String typAutomatischScriptpfad2;
+
+	@Column(name = "scriptName3")
 	private String scriptname3;
+
+	@Column(name = "typeAutomaticScriptPath3")
 	private String typAutomatischScriptpfad3;
+
+	@Column(name = "scriptName4")
 	private String scriptname4;
+
+	@Column(name = "typeAutomaticScriptPath4")
 	private String typAutomatischScriptpfad4;
+
+	@Column(name = "scriptName5")
 	private String scriptname5;
+
+	@Column(name = "typeAutomaticScriptPath5")
 	private String typAutomatischScriptpfad5;
+
+	@Column(name = "typeModuleName")
 	private String typModulName;
+
+	@Column(name = "typeCloseVerify")
 	private boolean typBeimAbschliessenVerifizieren = false;
+
+	@Column(name = "batchStep")
 	private Boolean batchStep = false;
 
+	@Column(name = "stepPlugin")
+	private String stepPlugin;
+
+	@Column(name = "validationPlugin")
+	private String validationPlugin;
+
+	@ManyToOne
+	@JoinColumn(name = "processingUser_id", foreignKey = @ForeignKey(name = "FK_step_processingUser_id"))
+	private Benutzer bearbeitungsbenutzer;
+
+	@ManyToOne
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_step_process_id"))
 	private Prozess prozess;
+
+	@ManyToMany
+	@JoinTable(name = "step_x_user",
+			joinColumns = {
+					@JoinColumn(
+							name = "step_id",
+							foreignKey = @ForeignKey(name = "FK_step_x_user_step_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "user_id",
+							foreignKey = @ForeignKey(name = "FK_step_x_user_user_id")
+					) })
 	private Set<Benutzer> benutzer;
+
+	@ManyToMany
+	@JoinTable(name = "step_x_userGroup",
+			joinColumns = {
+					@JoinColumn(
+							name = "step_id",
+							foreignKey = @ForeignKey(name = "FK_step_x_userGroup_step_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "userGroup_id",
+							foreignKey = @ForeignKey(name = "FK_step_x_user_userGroup_id")
+					) })
 	private Set<Benutzergruppe> benutzergruppen;
-	private boolean panelAusgeklappt = false;
-	private boolean selected = false;
+
+	@Transient
 	private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
-	private String stepPlugin;
-	private String validationPlugin;
+	@Transient
+	private boolean panelAusgeklappt = false;
+
+	@Transient
+	private boolean selected = false;
 
 	/**
 	 *

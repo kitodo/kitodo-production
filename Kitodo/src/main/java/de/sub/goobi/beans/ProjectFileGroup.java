@@ -32,23 +32,50 @@ package de.sub.goobi.beans;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "projectFileGroup")
 public class ProjectFileGroup implements Serializable {
 	private static final long serialVersionUID = -5506252462891480484L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "name")
 	private String name;
+
+	@Column(name = "path")
 	private String path;
+
+	@Column(name = "mimeType")
 	private String mimetype; // optional
+
+	@Column(name = "suffix")
 	private String suffix; // optional
+
+	@Column(name = "folder")
 	private String folder;
+
+	@Column(name = "previewImage")
 	private boolean previewImage;
 
+	@ManyToOne
+	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
 	private Projekt project;
 
-	/*##########################################################################################################
-	 ##
-	 ##	Getter und Setter
-	 ##
-	 #########################################################################################################*/
+	/*
+	 * Getter und Setter
+	 */
 
 	public Integer getId() {
 		return this.id;

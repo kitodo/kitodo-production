@@ -34,17 +34,36 @@ import de.sub.goobi.config.ConfigMain;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.apache.log4j.Logger;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
+@Entity
+@Table(name = "ruleset")
 public class Regelsatz implements Serializable {
 	private static final long serialVersionUID = -6663371963274685060L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "file")
 	private String datei;
+
+	@Column(name = "orderMetadataByRuleset")
 	private Boolean orderMetadataByRuleset = false;
+
 	private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
 	/*##########################################################################################################

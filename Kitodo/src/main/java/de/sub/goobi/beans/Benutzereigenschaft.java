@@ -38,17 +38,46 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "userProperty")
 public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -2356566712752716107L;
 
-	private Benutzer benutzer;
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "value")
 	private String wert;
+
+	@Column(name = "isObligatory")
 	private Boolean istObligatorisch;
+
+	@Column(name = "dataType")
 	private Integer datentyp;
+
+	@Column(name = "choice")
 	private String auswahl;
+
+	@Column(name = "creationDate")
 	private Date creationDate;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private Benutzer benutzer;
 
 	/**
 	 *
@@ -59,6 +88,7 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 		this.creationDate = new Date();
 	}
 
+	@Transient
 	private List<String> valueList;
 
 	@Override

@@ -38,6 +38,7 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
+import org.kitodo.production.exceptions.NotImplementedException;
 
 /**
  * The source for this code was found at the web address
@@ -318,6 +319,18 @@ public class PaginatingCriteria implements Criteria, Serializable {
 	public Criteria setComment(String comment) {
 		this.clone.setComment(comment);
 		return this.criteria.setComment(comment);
+	}
+
+	/**
+	 * Adds a query hint on both internal Criteria instances
+	 *
+	 * @param queryHint add description
+	 * @return Criteria
+	 * @see Criteria#addQueryHint(java.lang.String)
+	 */
+	@Override
+	public Criteria addQueryHint(String queryHint) {
+		throw new NotImplementedException();
 	}
 
 	/**

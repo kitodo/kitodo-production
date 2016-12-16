@@ -32,36 +32,86 @@ package de.sub.goobi.beans;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "ldapGroup")
 public class LdapGruppe implements Serializable {
+
 	private static final long serialVersionUID = -1657514909731889712L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "homeDirectory")
 	private String homeDirectory;
+
+	@Column(name = "gidNumber")
 	private String gidNumber;
+
+	@Column(name = "userDn")
 	private String userDN;
+
+	@Column(name = "objectClasses")
 	private String objectClasses;
+
+	@Column(name = "sambaSid")
 	private String sambaSID;
+
+	@Column(name = "sn")
 	private String sn;
+
+	@Column(name = "uid")
 	private String uid;
+
+	@Column(name = "description")
 	private String description;
+
+	@Column(name = "displayName")
 	private String displayName;
+
+	@Column(name = "gecos")
 	private String gecos;
+
+	@Column(name = "loginShell")
 	private String loginShell;
+
+	@Column(name = "sambaAcctFlags")
 	private String sambaAcctFlags;
+
+	@Column(name = "sambaLogonScript")
 	private String sambaLogonScript;
+
+	@Column(name = "sambaPrimaryGroupSid")
 	private String sambaPrimaryGroupSID;
 
+	@Column(name = "sambaPasswordMustChange")
 	private String sambaPwdMustChange;
+
+	@Column(name = "sambaPasswordHistory")
 	private String sambaPasswordHistory;
+
+	@Column(name = "sambaLogonHours")
 	private String sambaLogonHours;
+
+	@Column(name = "sambaKickoffTime")
 	private String sambaKickoffTime;
 
 	public LdapGruppe() {
 	}
 
-	/*=====================================================
-	                   Getter und Setter
-	 ====================================================*/
+	/*
+	 * Getter und Setter
+	 */
 
 	public Integer getId() {
 		return this.id;

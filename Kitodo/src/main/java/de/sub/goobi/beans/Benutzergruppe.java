@@ -36,6 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.*;
+
 import org.hibernate.Hibernate;
 
 /**
@@ -46,13 +48,29 @@ import org.hibernate.Hibernate;
  * later, if so desired) 4: User only: can see current steps</p>
  *
  */
+@Entity
+@Table(name = "userGroup")
 public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> {
 	private static final long serialVersionUID = -5924845694417474352L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "permission")
 	private Integer berechtigung;
+
+	@ManyToMany(mappedBy = "benutzergruppen")
 	private Set<Benutzer> benutzer;
+
+	@ManyToMany(mappedBy = "benutzergruppen")
 	private Set<Schritt> schritte;
+
+	@Transient
 	private boolean panelAusgeklappt = false;
 
 	public Benutzergruppe() {

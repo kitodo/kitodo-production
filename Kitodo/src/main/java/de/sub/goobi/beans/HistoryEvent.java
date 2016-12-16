@@ -30,6 +30,15 @@ package de.sub.goobi.beans;
  */
 //CHECKSTYLE:ON
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import de.sub.goobi.helper.enums.HistoryEventType;
 
 import java.io.Serializable;
@@ -41,13 +50,30 @@ import java.util.Date;
  * @author Steffen Hankiewicz
  * @version 24.05.2009
  */
+@Entity
+@Table(name = "history")
 public class HistoryEvent implements Serializable {
 	private static final long serialVersionUID = 991946177515032238L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "date")
 	private Date date;
+
+	@Column(name = "numericValue")
 	private Double numericValue;
+
+	@Column(name = "stringValue")
 	private String stringValue;
+
+	@Column(name = "type")
 	private Integer type;
+
+	@ManyToOne
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_history_process_id"))
 	private Prozess process;
 
 	/**

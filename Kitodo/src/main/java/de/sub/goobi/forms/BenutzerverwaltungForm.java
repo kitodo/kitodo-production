@@ -168,7 +168,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		Integer blub = this.myClass.getId();
 		try {
 			/* prüfen, ob schon ein anderer Benutzer mit gleichem Login existiert */
-			if (this.dao.count("from Benutzer where login='" + bla + "'AND BenutzerID<>" + blub) == 0) {
+			if (this.dao.count("from Benutzer where login='" + bla + "'AND id<>" + blub) == 0) {
 				this.dao.save(this.myClass);
 				return "BenutzerAlle";
 			} else {

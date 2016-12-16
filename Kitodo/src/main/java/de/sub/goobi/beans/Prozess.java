@@ -60,9 +60,25 @@ import java.util.List;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -94,40 +110,101 @@ import ugh.fileformats.mets.XStream;
 // This annotation is to instruct the Jersey API not to generate arbitrary XML  elements. Further XML elements can be
 // added as needed by annotating with @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
+
+@Entity
+@Table(name = "process")
 public class Prozess implements Serializable {
 	private static final Logger myLogger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "outputName")
 	private String ausgabename;
+
+	@Column(name = "isTemplate")
 	private Boolean istTemplate;
+
+	@Column(name = "isChoiceListShown")
 	private Boolean inAuswahllisteAnzeigen;
-	private Projekt projekt;
+
+	@Column(name = "creationDate")
 	private Date erstellungsdatum;
-	private Set<Schritt> schritte;
-	private Set<HistoryEvent> history;
-	private Set<Werkstueck> werkstuecke;
-	private Set<Vorlage> vorlagen;
-	private Set<Prozesseigenschaft> eigenschaften;
-	private Set<Batch> batches = new HashSet<Batch>(0);
+
+	@Column(name = "sortHelperStatus")
 	private String sortHelperStatus;
+
+	@Column(name = "sortHelperImages")
 	private Integer sortHelperImages;
+
+	@Column(name = "sortHelperArticles")
 	private Integer sortHelperArticles;
+
+	@Column(name = "sortHelperMetadata")
 	private Integer sortHelperMetadata;
+
+	@Column(name = "sortHelperDocstructs")
 	private Integer sortHelperDocstructs;
-	private Regelsatz regelsatz;
+
+	@Column(name = "swappedOut")
 	private Boolean swappedOut = false;
-	private Boolean panelAusgeklappt = false;
-	private Boolean selected = false;
+
+	@Column(name = "wikiField")
+	private String wikifield = "";
+
+	@ManyToOne
+	@JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
 	private Docket docket;
 
+	@ManyToOne
+	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
+	private Projekt projekt;
+
+	@ManyToOne
+	@JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
+	private Regelsatz regelsatz;
+
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Schritt> schritte;
+
+	@OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("date ASC")
+	private Set<HistoryEvent> history;
+
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Werkstueck> werkstuecke;
+
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Vorlage> vorlagen;
+
+	@OneToMany(mappedBy = "prozess", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("title ASC")
+	private Set<Prozesseigenschaft> eigenschaften;
+
+	@ManyToMany(mappedBy = "processes")
+	private Set<Batch> batches = new HashSet<Batch>(0);
+
+	@Transient
+	private Boolean panelAusgeklappt = false;
+
+	@Transient
+	private Boolean selected = false;
+
+	@Transient
 	private final MetadatenSperrung msp = new MetadatenSperrung();
+
+	@Transient
 	Helper help = new Helper();
 
 	public static String DIRECTORY_PREFIX = "orig";
 	public static String DIRECTORY_SUFFIX = "images";
 
-	private String wikifield = "";
 	private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
 	/**

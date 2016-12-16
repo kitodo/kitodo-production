@@ -45,6 +45,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
@@ -54,6 +64,8 @@ import org.hibernate.HibernateException;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
+@Entity
+@Table(name = "batch")
 public class Batch {
 	/**
 	 * Type of batch:
@@ -71,28 +83,47 @@ public class Batch {
 	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
 	 */
 	public enum Type {
-		LOGISTIC, NEWSPAPER, SERIAL;
+		LOGISTIC, NEWSPAPER, SERIAL
 	}
 
 	/**
 	 * The field id holds the database record identifier. It is null in case that the Batch has not yet been saved
 	 * by Hibernate.
 	 */
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
 	/**
 	 * The field title holds the batch title. Using titles for batches is optional, the field may be null. If so,
 	 * the id will be shown to the user instead.
 	 */
+	@Column(name = "title")
 	private String title;
-	/**
-	 * The field processes holds the processes that belong to the batch.
-	 */
-	private Set<Prozess> processes;
 
 	/**
 	 * The field type holds the batch type.
 	 */
+	@Column(name = "type")
 	private Type type;
+
+	/**
+	 * The field processes holds the processes that belong to the batch.
+	 */
+	@ManyToMany
+	@JoinTable(name = "batch_x_process",
+			joinColumns = {
+					@JoinColumn(
+							name = "batch_id",
+							foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "process_id",
+							foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")
+					) })
+	private Set<Prozess> processes;
 
 	/**
 	 * Default constructor. Creates an empty batch object.

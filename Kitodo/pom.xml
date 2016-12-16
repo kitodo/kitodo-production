@@ -21,6 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <checkstyle.config.location>${basedir}/src/main/resources/checkstyle.xml</checkstyle.config.location>
+        <parent.basedir>${basedir}/../</parent.basedir>
     </properties>
 
     <dependencies>
@@ -355,12 +356,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.2.21.Final</version>
+            <version>4.3.11.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>4.2.21.Final</version>
+            <version>4.3.11.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
@@ -609,7 +610,7 @@
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
-                            <directory>./../OpacPica-Plugin/target</directory>
+                            <directory>${session.executionRootDirectory}/OpacPica-Plugin/target</directory>
                             <targetPath>plugins/opac</targetPath>
                             <includes>
                                 <include>*.jar</include>
@@ -729,9 +730,9 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>4.0.3</version>
                         <configuration>
-                            <url>jdbc:mysql://localhost/kitodo</url>
-                            <user>kitodo</user>
-                            <password>kitodo</password>
+                            <!-- local configuration file -->
+                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
+                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
                         </configuration>
                         <dependencies>
                             <dependency>

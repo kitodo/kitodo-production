@@ -38,17 +38,50 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "workpieceProperty")
 public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	private static final long serialVersionUID = -88407008893258729L;
-	private Werkstueck werkstueck;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "title")
 	private String titel;
+
+	@Column(name = "value")
 	private String wert;
+
+	@Column(name = "isObligatory")
 	private Boolean istObligatorisch;
+
+	@Column(name = "dataType")
 	private Integer datentyp;
+
+	@Column(name = "choice")
 	private String auswahl;
+
+	@Column(name = "creationDate")
 	private Date creationDate;
+
+	@Column(name = "container")
 	private Integer container;
+
+	@ManyToOne
+	@JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_workpieceProperty_workpiece_id"))
+	private Werkstueck werkstueck;
 
 	/**
 	 *
@@ -59,6 +92,7 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		this.creationDate = new Date();
 	}
 
+	@Transient
 	private List<String> valueList;
 
 	@Override
