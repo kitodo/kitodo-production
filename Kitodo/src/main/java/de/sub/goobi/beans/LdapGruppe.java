@@ -28,29 +28,78 @@ package de.sub.goobi.beans;
  */
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "ldapGroup")
 public class LdapGruppe implements Serializable {
    private static final long serialVersionUID = -1657514909731889712L;
-   private Integer id;
-   private String titel;
-   private String homeDirectory;
-   private String gidNumber;
-   private String userDN;
-   private String objectClasses;
-   private String sambaSID;
-   private String sn;
-   private String uid;
-   private String description;
-   private String displayName;
-   private String gecos;
-   private String loginShell;
-   private String sambaAcctFlags;
-   private String sambaLogonScript;
-   private String sambaPrimaryGroupSID;
 
-   private String sambaPwdMustChange;
-   private String sambaPasswordHistory;
-   private String sambaLogonHours;
-   private String sambaKickoffTime;
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
+	private Integer id;
+
+	@Column(name = "title")
+	private String titel;
+
+	@Column(name = "homeDirectory")
+	private String homeDirectory;
+
+	@Column(name = "gidNumber")
+	private String gidNumber;
+
+	@Column(name = "userDn")
+	private String userDN;
+
+	@Column(name = "objectClasses")
+	private String objectClasses;
+
+	@Column(name = "sambaSid")
+	private String sambaSID;
+
+	@Column(name = "sn")
+	private String sn;
+
+	@Column(name = "uid")
+	private String uid;
+
+	@Column(name = "description")
+	private String description;
+
+	@Column(name = "displayName")
+	private String displayName;
+
+	@Column(name = "gecos")
+	private String gecos;
+
+	@Column(name = "loginShell")
+	private String loginShell;
+
+	@Column(name = "sambaAcctFlags")
+	private String sambaAcctFlags;
+
+	@Column(name = "sambaLogonScript")
+	private String sambaLogonScript;
+
+	@Column(name = "sambaPrimaryGroupSid")
+	private String sambaPrimaryGroupSID;
+
+	@Column(name = "sambaPasswordMustChange")
+	private String sambaPwdMustChange;
+
+	@Column(name = "sambaPasswordHistory")
+	private String sambaPasswordHistory;
+
+	@Column(name = "sambaLogonHours")
+	private String sambaLogonHours;
+
+	@Column(name = "sambaKickoffTime")
+	private String sambaKickoffTime;
 
    public LdapGruppe() {
    }

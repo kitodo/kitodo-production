@@ -36,6 +36,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
@@ -46,29 +60,88 @@ import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.persistence.apache.UserManager;
 
+@Entity
+@Table(name = "user")
 public class Benutzer implements Serializable {
 	private static final long serialVersionUID = -7482853955996650586L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "name")
 	private String vorname;
+
+	@Column(name = "surname")
 	private String nachname;
+
+	@Column(name = "login")
 	private String login;
+
+	@Column(name = "ldapLogin")
 	private String ldaplogin;
+
+	@Column(name = "password")
 	private String passwort;
+
+	@Column(name = "isActive")
 	private boolean istAktiv = true;
+
+	@Column(name = "isVisible")
 	private String isVisible;
+
+	@Column(name = "location")
 	private String standort;
+
+	@Column(name = "tableSize")
 	private Integer tabellengroesse = Integer.valueOf(10);
+
+	@Column(name = "sessionTimeout")
 	private Integer sessiontimeout = 7200;
+
+	@Column(name = "configProductionDateShow")
 	private boolean confVorgangsdatumAnzeigen = false;
+
+	@Column(name = "metadataLanguage")
 	private String metadatenSprache;
-	private Set<Benutzergruppe> benutzergruppen;
-	private Set<Schritt> schritte;
-	private Set<Schritt> bearbeitungsschritte;
-	private Set<Projekt> projekte;
-	private Set<Benutzereigenschaft> eigenschaften;
+
+	@Column(name = "withMassDownload")
 	private boolean mitMassendownload = false;
-	private LdapGruppe ldapGruppe;
+
+	@Column(name = "css")
 	private String css;
+
+	@ManyToOne
+	@JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
+	private LdapGruppe ldapGruppe;
+
+	@ManyToMany
+	@JoinTable(name = "user_x_userGroup",
+			joinColumns = {
+					@JoinColumn(
+							name = "user_id",
+							foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")
+					) },
+			inverseJoinColumns = {
+					@JoinColumn(
+							name = "userGroup_id",
+							foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")
+					) })
+	private Set<Benutzergruppe> benutzergruppen;
+
+	@ManyToMany(mappedBy = "benutzer")
+	private Set<Schritt> schritte;
+
+	@OneToMany(mappedBy = "bearbeitungsbenutzer", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Schritt> bearbeitungsschritte;
+
+	@ManyToMany(mappedBy = "benutzer")
+	private Set<Projekt> projekte;
+
+	@OneToMany(mappedBy = "benutzer", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("title ASC")
+	private Set<Benutzereigenschaft> eigenschaften;
 
 	// private String lastFilter = null;
 

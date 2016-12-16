@@ -20,6 +20,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <parent.basedir>${basedir}/../</parent.basedir>
     </properties>
 
     <dependencies>
@@ -354,12 +355,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.2.21.Final</version>
+            <version>4.3.11.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
-            <version>4.2.21.Final</version>
+            <version>4.3.11.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
@@ -736,9 +737,9 @@
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>4.0.3</version>
                         <configuration>
-                            <url>jdbc:mysql://localhost/kitodo</url>
-                            <user>kitodo</user>
-                            <password>kitodo</password>
+                            <!-- local configuration file -->
+                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
+                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
                         </configuration>
                         <dependencies>
                             <dependency>

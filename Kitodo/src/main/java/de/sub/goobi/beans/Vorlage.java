@@ -33,16 +33,44 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
+@Entity
+@Table(name = "template")
 public class Vorlage implements Serializable {
 	private static final long serialVersionUID = 1736135433162833277L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
 	private Integer id;
+
+	@Column(name = "origin")
 	private String herkunft;
+
+	@ManyToOne
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
 	private Prozess prozess;
+
+	@OneToMany(mappedBy = "vorlage", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("title ASC")
 	private Set<Vorlageeigenschaft> eigenschaften;
 
+	@Transient
 	private boolean panelAusgeklappt = true;
 
 	public Vorlage() {
