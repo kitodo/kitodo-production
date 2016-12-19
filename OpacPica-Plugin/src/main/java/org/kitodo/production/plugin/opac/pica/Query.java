@@ -30,26 +30,22 @@ class Query {
 	private static final String NOT = "-";
 
 	private static final String FIRST_OPERATOR = "SRCH";
-	
+
 	private static final String OPERATOR = "&ACT";
 	private static final String QUERY = "&TRM";
 	private static final String FIELD = "&IKT";
-	
+
 	Query(String query, String fieldNumber) {
 		addQuery(null, query, fieldNumber);
 	}
 
 	/**
-	 * Query constructor. Constructs a query from a String. For the query
-	 * semantics, see
+	 * Query constructor. Constructs a query from a String. For the query semantics, see
 	 * {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}.
 	 * 
-	 * @param queryString
-	 *            Query string to parse
-	 * @throws IllegalArgumentException
-	 *             if the query is syntactically incomplete (i.e. unterminated
-	 *             String literal), contains fieldless tokens or bracket
-	 *             expressions
+	 * @param queryString Query string to parse
+	 * @throws IllegalArgumentException if the query is syntactically incomplete (i.e. unterminated String literal),
+	 * 					contains fieldless tokens or bracket expressions
 	 */
 	Query(String queryString) {
 		int state = 0;
@@ -101,15 +97,17 @@ class Query {
 				break;
 			case 3:
 				if (codePoint == ' ') {
-					if (term.length() == 0)
+					if (term.length() == 0) {
 						throw new IllegalArgumentException(INCOMPLETE);
+					}
 					addQuery(operator, term.toString(), field.toString());
 					operator = AND;
 					field = new StringBuilder();
 					term = new StringBuilder(32);
 					state = 5;
-				} else
+				} else {
 					term.appendCodePoint(codePoint);
+				}
 				break;
 			case 4:
 				if (codePoint == '"') {
@@ -118,8 +116,9 @@ class Query {
 					field = new StringBuilder();
 					term = new StringBuilder(32);
 					state = 5;
-				} else
+				} else {
 					term.appendCodePoint(codePoint);
+				}
 				break;
 			case 5:
 				switch (codePoint) {
@@ -143,34 +142,33 @@ class Query {
 		if (state == 3) {
 			addQuery(operator, term.toString(), field.toString());
 		}
-		if (state != 3 && state != 5)
+		if (state != 3 && state != 5) {
 			throw new IllegalArgumentException(INCOMPLETE);
+		}
 	}
 
-	//operation must be Query.AND, .OR, .NOT 
+	//operation must be Query.AND, .OR, .NOT
 	private void addQuery(String operation, String query, String fieldNumber) {
-		 
-		 //ignore boolean operation for first term
-		 if (this.queryTermNumber == 0){
-			 this.queryUrl = OPERATOR + this.queryTermNumber + "=" + FIRST_OPERATOR;
-		 }else{
-			 this.queryUrl += OPERATOR + this.queryTermNumber + "=" + operation;
-		 }
-		 
-		 
-		 this.queryUrl += FIELD + this.queryTermNumber + "=" + fieldNumber;
-		 
-		 try{
-			 this.queryUrl += QUERY + this.queryTermNumber + "=" + URLEncoder.encode(query, CharEncoding.ISO_8859_1);
-		 }catch (Exception e) {
-			 e.printStackTrace();
+
+		//ignore boolean operation for first term
+		if (this.queryTermNumber == 0) {
+			this.queryUrl = OPERATOR + this.queryTermNumber + "=" + FIRST_OPERATOR;
+		} else {
+			this.queryUrl += OPERATOR + this.queryTermNumber + "=" + operation;
 		}
-		 
-		 this.queryTermNumber++;
-	 }
-	 
+
+		this.queryUrl += FIELD + this.queryTermNumber + "=" + fieldNumber;
+		try {
+			this.queryUrl += QUERY + this.queryTermNumber + "=" + URLEncoder.encode(query, CharEncoding.ISO_8859_1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		this.queryTermNumber++;
+	}
+
 	String getQueryUrl() {
-		 return this.queryUrl;
-	 }
-	 
+		return this.queryUrl;
+	}
+
 }

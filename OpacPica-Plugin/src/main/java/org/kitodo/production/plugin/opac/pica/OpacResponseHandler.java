@@ -11,14 +11,14 @@
 
 package org.kitodo.production.plugin.opac.pica;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+
 import org.apache.commons.lang.CharEncoding;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 
 class OpacResponseHandler extends DefaultHandler {
 
@@ -41,7 +41,7 @@ class OpacResponseHandler extends DefaultHandler {
 	/**
 	 * SAX parser callback method.
 	 * 
-	 * @throws SAXException
+	 * @throws SAXException add description
 	 */
 	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {

@@ -13,10 +13,11 @@ package org.kitodo.production.plugin.opac.pica;
 
 public class UnreachableCodeException extends RuntimeException {
 
-    public UnreachableCodeException() {
-    }
+	public UnreachableCodeException() {
 
-    public UnreachableCodeException(String exceptionMessage) {
-        super(exceptionMessage);
-    }
+	}
+
+	public UnreachableCodeException(String exceptionMessage) {
+		super(exceptionMessage);
+	}
 }
