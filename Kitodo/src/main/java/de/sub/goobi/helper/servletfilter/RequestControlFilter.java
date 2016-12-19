@@ -1,5 +1,3 @@
-package de.sub.goobi.helper.servletfilter;
-
 /*
  * (c) 2004, Kevin Chipalowsky (kevin@farwestsoftware.com) and
  * Ivelin Ivanov (ivelin@apache.org)
@@ -7,6 +5,8 @@ package de.sub.goobi.helper.servletfilter;
  * Released under terms of the Artistic License
  * http://www.opensource.org/licenses/artistic-license.php
  */
+
+package de.sub.goobi.helper.servletfilter;
 
 import de.sub.goobi.helper.Helper;
 

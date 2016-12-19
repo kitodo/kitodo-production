@@ -1,6 +1,4 @@
-package de.sub.goobi.persistence;
-
-/**
+/*
  * Copyright 2005 Nick Heudecker
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +13,8 @@ package de.sub.goobi.persistence;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package de.sub.goobi.persistence;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Util;
