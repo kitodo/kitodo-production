@@ -292,22 +292,6 @@ CREATE TABLE `schritteberechtigtegruppen` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `schritteeigenschaften` (
-  `schritteeigenschaftenID` int(11) NOT NULL AUTO_INCREMENT,
-  `Titel` varchar(255) DEFAULT NULL,
-  `Wert` longtext,
-  `IstObligatorisch` tinyint(1) DEFAULT NULL,
-  `DatentypenID` int(11) DEFAULT NULL,
-  `Auswahl` varchar(255) DEFAULT NULL,
-  `creationDate` datetime DEFAULT NULL,
-  `container` int(11) DEFAULT NULL,
-  `schritteID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`schritteeigenschaftenID`),
-  KEY `FK_SchritteID` (`schritteID`)
-) DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `vorlagen` (
   `VorlagenID` int(11) NOT NULL AUTO_INCREMENT,
   `Herkunft` varchar(255) DEFAULT NULL,
