@@ -718,7 +718,7 @@
 				volumes into a larger entity.
 				topmost: (not working in GOOBI yet)
 	-->
-	
+
 	<!-- Kalliope Doc Structs -->
 	<DocStrctType>
 		<Name>Inventory</Name>

@@ -45,7 +45,7 @@
     <xsl:template match="mods:mods/mods:titleInfo/mods:title">
         <goobi:metadata name="TitleDocMain"><xsl:value-of select="replace(normalize-space(), '\(Titel\)', '')" /></goobi:metadata>
     </xsl:template>
-    
+
     <!-- ### Author, slub_Recipient ### -->
     <xsl:template match="mods:mods/mods:name/mods:namePart">
         <xsl:variable name="uri" select="../@valueURI" />
@@ -77,32 +77,32 @@
             </xsl:when>
         </xsl:choose>
     </xsl:template>
-    
+
     <!-- ### PlaceOfPublication ### -->
     <xsl:template match="mods:mods/mods:originInfo/mods:place/mods:placeTerm[@type='text']">
         <goobi:metadata name="PlaceOfPublication"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
-    
+
     <!-- ### PublicationYear ### -->
     <xsl:template match="mods:mods/mods:originInfo/mods:dateCreated[@encoding='w3cdtf']">
         <goobi:metadata name="PublicationYear"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
-    
+
     <!-- ### ShelfMarkSource ### -->
     <xsl:template match="mods:mods/mods:location/mods:shelfLocator">
         <goobi:metadata name="shelfmarksource"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
-    
+
     <!-- ### FormatSourcePrint ### -->
     <xsl:template match="mods:mods/mods:physicalDescription/mods:extent">
         <goobi:metadata name="FormatSourcePrint"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
-    
+
     <!-- ### CatalogIDDigital ### --> 
     <xsl:template match="mods:mods/mods:recordInfo/mods:recordIdentifier">
         <goobi:metadata name="CatalogIDDigital"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
-    
+
     <!-- ### slub_link, slub_linktext ### -->
     <xsl:template match="mods:mods/mods:location/mods:url">
         <goobi:metadata name="slub_link"><xsl:value-of select="normalize-space()" /></goobi:metadata>

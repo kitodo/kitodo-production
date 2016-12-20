@@ -1,23 +1,23 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,8 +38,8 @@ import javax.activity.InvalidActivityException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.configuration.SubnodeConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -49,8 +49,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.w3c.dom.Node;
 
-import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.Plugin;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -64,7 +64,7 @@ import ugh.fileformats.opac.PicaPlus;
 /**
  * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
  * implementation. It provides the public methods
- * 
+ *
  *    void    configure(Map) [*]
  *    Object  find(String, long)
  *    String  getDescription() [*]
@@ -74,13 +74,13 @@ import ugh.fileformats.opac.PicaPlus;
  *    void    setPreferences(Prefs)
  *    boolean supportsCatalogue(String)
  *    void    useCatalogue(String)
- * 
+ *
  * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
  * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
- * 
+ *
  * Parts of the code of this class have been ported from ancient class
  * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.
- * 
+ *
  * @author Partly based on previous works of other authors who didn’t leave
  *         their names
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -153,11 +153,11 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The method configure() accepts a Map with configuration parameters. Two
 	 * entries, "configDir" and "tempDir", are expected.
-	 * 
+	 *
 	 * configDir must point to a directory on the local file system where the
 	 * plug-in can read individual configuration files from. The configuration
 	 * file, "goobi_opac.xml" is expected in that directory.
-	 * 
+	 *
 	 * @param configuration
 	 *            a Map with configuration parameters
 	 * @see org.goobi.production.plugin.UnspecificPlugin#configure(Map)
@@ -171,7 +171,7 @@ public class PicaPlugin implements Plugin {
 	 * The function find() initially queries the library catalogue with the
 	 * given query. If successful, it returns a FindResult with the number of
 	 * hits.
-	 * 
+	 *
 	 * @param query
 	 *            a query String. See
 	 *            {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}
@@ -201,7 +201,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getConfigDir() provides a reference to the file system
 	 * directory where configuration files are read from.
-	 * 
+	 *
 	 * @return the file system directory with the configuration files
 	 */
 	static String getConfigDir() {
@@ -211,7 +211,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getDescription() returns a human-readable description of the
 	 * plug-in’s functionality in English. The parameter language is ignored.
-	 * 
+	 *
 	 * @param language
 	 *            desired language of the human-readable description (support is
 	 *            optional)
@@ -228,7 +228,7 @@ public class PicaPlugin implements Plugin {
 	 * hit as "fileformat", the docType as "type" and some bibliographic
 	 * metadata for Production to be able to show a short hit display as
 	 * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
-	 * 
+	 *
 	 * @param searchResult
 	 *            a FindResult created by {@link #find(String, long)}
 	 * @param index
@@ -411,14 +411,13 @@ public class PicaPlugin implements Plugin {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
-		}		
-		
+		}
 		return createResult(cod.getTitle(), myFirstHit, ff);
 	}
-	
+
 	/**
 	 * DocType (Gattung) ermitteln
-	 * 
+	 *
 	 * @param inHit
 	 * @return
 	 */
@@ -453,7 +452,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork:
 	 * 021A-9) ermitteln
-	 * 
+	 *
 	 * @param inElement
 	 * @return
 	 */
@@ -708,7 +707,7 @@ public class PicaPlugin implements Plugin {
 	 * whose “code” attribute equals the given attribute name and whose parents’
 	 * “tag” attribute equals the given field name—or an empty String if there
 	 * is no such grandchild element.
-	 * 
+	 *
 	 * @param myFirstHit
 	 *            JDOM Element whose descendant elements are to be examined
 	 * @param inFieldName
@@ -740,7 +739,7 @@ public class PicaPlugin implements Plugin {
 	 * elements from a given JDOM Element whose “code” attribute equals the
 	 * given attribute name and whose parents’ “tag” attribute equals the given
 	 * field name—or an empty Collection if there is no such grandchild element.
-	 * 
+	 *
 	 * @param myFirstHit
 	 *            JDOM Element whose descendant elements are to be examined
 	 * @param inFieldName
@@ -771,7 +770,7 @@ public class PicaPlugin implements Plugin {
 	 * The function getFieldValue() returns the value of the last elements from
 	 * a given JDOM Element whose “code” attribute equals the given attribute
 	 * value or the empty String if there is no such child element.
-	 * 
+	 *
 	 * @param inElement
 	 *            JDOM Element whose child elements are to be examined
 	 * @param attributeValue
@@ -796,7 +795,7 @@ public class PicaPlugin implements Plugin {
 	 * The function getFieldValues() returns the values of all child elements
 	 * from a given JDOM Element whose “code” attribute equals the given
 	 * attribute value or an empty Collection if there is no such child element.
-	 * 
+	 *
 	 * @param inElement
 	 *            JDOM Element whose child elements are to be examined
 	 * @param attributeValue
@@ -823,7 +822,7 @@ public class PicaPlugin implements Plugin {
 	 * as "type" and some bibliographic metadata for Production to be able to
 	 * show a short hit display as supposed in
 	 * {@link org.goobi.production.plugin.CataloguePlugin.Hit}
-	 * 
+	 *
 	 * @param docType
 	 *            the DocType of the hit
 	 * @param hit
@@ -923,7 +922,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function toRecentLocalDate() interprets a String of scheme "dd-mm-yy"
 	 * as a LocalDate within the last 100 years up to a given reference date.
-	 * 
+	 *
 	 * @param dd_mm_yy
 	 *            a date String to interpret
 	 * @param upTo
@@ -943,7 +942,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getNumberOfHits() returns the number of hits from a given
 	 * search result.
-	 * 
+	 *
 	 * @param searchResult
 	 *            the reference to the search whose number of hits shall be
 	 *            looked up
@@ -964,7 +963,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getTempDir() provides a reference to the file system
 	 * directory where temporary files are written in.
-	 * 
+	 *
 	 * @return the file system directory where to write temporary files
 	 */
 	static String getTempDir() {
@@ -974,7 +973,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getDescription() returns a human-readable name for the
 	 * plug-in in English. The parameter language is ignored.
-	 * 
+	 *
 	 * @param language
 	 *            desired language of the human-readable name (support is
 	 *            optional)
@@ -988,7 +987,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function setPreferences is called by Production to set the UGH
 	 * preferences to be used.
-	 * 
+	 *
 	 * @param preferences
 	 *            the UGH preferences
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
@@ -1001,7 +1000,7 @@ public class PicaPlugin implements Plugin {
 	 * The function supportsCatalogue() investigates whether the plug-in is able
 	 * to acceess a catalogue identified by the given String. (This depends on
 	 * the configuration.)
-	 * 
+	 *
 	 * @param catalogue
 	 *            a String indentifying the catalogue
 	 * @return whether the plug-in is able to acceess that catalogue
@@ -1021,7 +1020,7 @@ public class PicaPlugin implements Plugin {
 	public static List<String> getSupportedCatalogues() {
 		return ConfigOpac.getAllCatalogues();
 	}
-	
+
 	/**
 	 * The function getAllConfigDocTypes() returns the names of all docTypes configured
 	 * for this plugin. (This depends on the plugin configuration.)
@@ -1036,10 +1035,10 @@ public class PicaPlugin implements Plugin {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * The function useCatalogue() sets a catalogue to be used
-	 * 
+	 *
 	 * @param catalogueID
 	 *            a String indentifying the catalogue
 	 * @throws ParserConfigurationException

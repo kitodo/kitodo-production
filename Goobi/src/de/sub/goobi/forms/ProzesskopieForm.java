@@ -586,7 +586,7 @@ public class ProzesskopieForm {
 					if (field.getDocstruct().equals("boundbook")) {
 						myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
 					}
-					
+
 					/* welches Metadatum */
 					try {
 						if (field.getMetadata().equals("ListOfCreators")) {
@@ -626,7 +626,7 @@ public class ProzesskopieForm {
 			}// end for
 		} // end if myrdf==null
 	}
-	
+
 	/**
 	 * Auswahl des Prozesses auswerten
 	 *
@@ -1502,14 +1502,14 @@ public class ProzesskopieForm {
 	public List<String> getAllOpacCatalogues() {
 		try {
 			LinkedList<String> allCatalogueTitles = new LinkedList<String>();
-			
+
 			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
 				for (String catalogue : plugin.getSupportedCatalogues()) {
 					if (!allCatalogueTitles.contains(catalogue)) {
 						allCatalogueTitles.add(catalogue);
 					}
 				}
-			}			
+			}
 			return allCatalogueTitles;
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
@@ -1565,7 +1565,7 @@ public class ProzesskopieForm {
 	 */
 	public long getInstitutionCount() {
 		HashMap<String, String> institutions = getInstitutions();
-		return (long)institutions.size();
+		return institutions.size();
 	}
 
 	/**
@@ -1669,10 +1669,22 @@ public class ProzesskopieForm {
 		this.opacSuchbegriff = opacSuchbegriff;
 	}
 
+    /**
+     * Return the name of the institution that is used for filtering search results.
+     *
+     * @return String
+     *         The name of the institution that is used for filtering search results.
+     */
 	public String getInstitution() {
 		return institution;
 	}
 
+    /**
+     * Set the name of the institution that is used for filtering search results.
+     *
+     * @param institution
+     *         The name of the institution that is used for filtering search results.
+     */
 	public void setInstitution(String institution) {
 		this.institution = institution;
 	}

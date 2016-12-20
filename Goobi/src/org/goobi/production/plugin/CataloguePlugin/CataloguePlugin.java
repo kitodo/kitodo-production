@@ -1,26 +1,26 @@
 /**
  * This file is part of the Goobi Application - a Workflow tool for the support
  * of mass digitization.
- * 
+ *
  * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
- * 
+ *
  * Visit the websites for more information.
  *     		- http://www.kitodo.org/en/
  *     		- https://github.com/goobi
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Linking this library statically or dynamically with other modules is making a
  * combined work based on this library. Thus, the terms and conditions of the
  * GNU General Public License cover the whole combination. As a special
@@ -67,12 +67,12 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
  * however implement the following public methods which it is checked for upon
  * instantiation. If one of the methods is missing a NoSuchMethodException will
  * be thrown.
- * 
+ *
  * <p>
  * <code>void configure(Map)</code><br>
  * See {@link UnspecificPlugin}.
  * </p>
- * 
+ *
  * <p>
  * <code>Object find(String, long)</code><br>
  * The function find() is to perform a search request in a library catalogue.
@@ -83,12 +83,12 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
  * the given timeout and shall throw a javax.persistence.QueryTimeoutException
  * if it was cancelled by the timer. The method may throw exceptions.
  * </p>
- * 
+ *
  * <p>
  * <code>String getDescription()</code><br>
  * See {@link UnspecificPlugin}.
  * </p>
- * 
+ *
  * <p>
  * <code>Map getHit(Object, long, long)</code><br>
  * The function getHit() shall return the hit identified by its index. The hit
@@ -97,7 +97,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
  * and shall throw a javax.persistence.QueryTimeoutException if it was cancelled
  * by the timer. The method may throw exceptions.
  * </p>
- * 
+ *
  * <p>
  * <code>long getNumberOfHits(Object, long)</code><br>
  * The function getNumberOfHits() shall return the number of hits scored by the
@@ -107,25 +107,25 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
  * throw a javax.persistence.QueryTimeoutException if it was cancelled by the
  * timer. The method may throw exceptions.
  * </p>
- * 
+ *
  * <p>
  * <code>String getTitle()</code><br>
  * See {@link UnspecificPlugin}.
  * </p>
- * 
+ *
  * <p>
  * <code>void setPreferences(Prefs)</code><br>
  * The method setPreferences() is called before the first search request to the
  * plug-in and passes the UGH preferences the plugin shall use.
  * </p>
- * 
+ *
  * <p>
  * <code>boolean supportsCatalogue(String)</code><br>
  * The function supportsCatalogue() shall return whether the plug-in has
  * sufficient knowledge to query a catalogue identified by the given String
  * literal or not.
  * </p>
- * 
+ *
  * <p>
  * <code>void useCatalogue(String)</code><br>
  * The function useCatalogue() is called before the first search request to the
@@ -133,7 +133,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
  * given String literal. If the plugin doesn’t support the given catalogue
  * (supportsCatalogue() would return false) the behaviour may be unspecified.
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CataloguePlugin extends UnspecificPlugin {
@@ -141,7 +141,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	/**
 	 * Local log4j logger.
 	 */
-	private static final Logger logger = Logger.getLogger(ConfigOpac.class);
+	private static final Logger logger = Logger.getLogger(CataloguePlugin.class);
 
 	/**
 	 * The constant field THIRTY_MINUTES holds the milliseconds value
@@ -193,9 +193,9 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * supportsCatalogue() of the plug-in implementation class.
 	 */
 	private final Method supportsCatalogue;
-	
+
 	private final Method getSupportedCatalogues;
-	
+
 	private final Method getAllConfigDocTypes;
 
 	private final Method getXMLConfiguration;
@@ -214,7 +214,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * inspects the class for existence of the methods configure,
 	 * getDescription, getTitle, find, getHit, getNumberOfHits, setPreferences,
 	 * supportsCatalogue and useCatalogue.
-	 * 
+	 *
 	 * @param implementation
 	 *            plug-in implementation class
 	 * @throws SecurityException
@@ -252,7 +252,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * after the given timeout and shall throw a
 	 * javax.persistence.QueryTimeoutException in that case. The method may
 	 * throw exceptions.
-	 * 
+	 *
 	 * @param query
 	 *            Query string
 	 * @param timeout
@@ -268,7 +268,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * plugin returns for a given query. Making use of this utility method only
 	 * makes sense if there is only one result expected, which usually is the
 	 * case if a valid identifier is looked up in its respective column.
-	 * 
+	 *
 	 * @param catalogue
 	 *            catalogue in question
 	 * @param query
@@ -297,7 +297,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * method shall ensure that it returns after the given timeout and shall
 	 * throw a javax.persistence.QueryTimeoutException in that case. The method
 	 * may throw exceptions.
-	 * 
+	 *
 	 * @param searchResult
 	 *            an object identifying the search result
 	 * @param index
@@ -386,7 +386,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	/**
 	 * The function getType() returns the PluginType.Opac as it corresponds to
 	 * this class.
-	 * 
+	 *
 	 * @see org.goobi.production.plugin.UnspecificPlugin#getType()
 	 */
 	@Override
@@ -397,7 +397,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	/**
 	 * The method setPreferences() must be used to set the UGH preferences the
 	 * plugin shall use.
-	 * 
+	 *
 	 * @param preferences
 	 *            UGH preferences
 	 * @see de.sub.goobi.beans.Regelsatz#getPreferences()
@@ -410,7 +410,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * The function supportsCatalogue() returns whether the plugin has
 	 * sufficient knowledge to query a catalogue identified by the given String
 	 * literal.
-	 * 
+	 *
 	 * @param catalogue
 	 *            catalogue in question
 	 * @return whether the plugin supports that catalogue
@@ -447,14 +447,14 @@ public class CataloguePlugin extends UnspecificPlugin {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * The function useCatalogue() shall tell the plugin to use a catalogue
 	 * connection identified by the given String literal. If the plugin doesn’t
 	 * support the given catalogue (supportsCatalogue() would return false) the
 	 * behaviour is unspecified (throwing an unchecked exception is a good
 	 * option).
-	 * 
+	 *
 	 * @param catalogue
 	 *            catalogue in question
 	 */
