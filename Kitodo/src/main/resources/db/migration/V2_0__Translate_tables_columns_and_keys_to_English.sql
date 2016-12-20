@@ -22,7 +22,6 @@ RENAME TABLE
   schritte TO step,
   schritteberechtigtebenutzer TO step_x_user,
   schritteberechtigtegruppen TO step_x_userGroup,
-  schritteeigenschaften TO stepProperty,
   vorlagen TO template,
   vorlageneigenschaften TO templateProperty,
   werkstuecke TO workpiece,
@@ -36,8 +35,7 @@ RENAME TABLE
 
 -- Wrong column type in goobi.batch for column type. Found: varchar, expected: integer
 ALTER TABLE batch
-  CHANGE BatchID id INT(11) NOT NULL AUTO_INCREMENT,
-  CHANGE type type INT(10);
+  CHANGE BatchID id INT(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE batch_x_process
   CHANGE BatchID batch_id INT(11) NOT NULL,
@@ -138,15 +136,6 @@ ALTER TABLE step_x_user
 
 ALTER TABLE step_x_userGroup
   CHANGE BenutzerGruppenID userGroup_id INT(11) NOT NULL AUTO_INCREMENT,
-  CHANGE schritteID step_id INT(11);
-
-ALTER TABLE stepProperty
-  CHANGE schritteeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
-  CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value LONGTEXT,
-  CHANGE IstObligatorisch isObligatory TINYINT(1),
-  CHANGE DatentypenID dataType INT(11),
-  CHANGE Auswahl choice VARCHAR(255),
   CHANGE schritteID step_id INT(11);
 
 ALTER TABLE template
@@ -284,3 +273,8 @@ foreign key (process_id) REFERENCES process(id);
 
 ALTER TABLE workpieceProperty add constraint `FK_workpieceProperty_workpiece_id`
 foreign key (workpiece_id) REFERENCES workpiece(id);
+
+--
+-- 4. Check if table exists, if yes, remove it
+--
+DROP TABLE IF EXISTS schritteeigenschaften
