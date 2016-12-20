@@ -137,7 +137,7 @@ public class Prozess implements Serializable {
 	@Column(name = "swappedOut")
 	private Boolean swappedOut = false;
 
-	@Column(name = "wikiField")
+	@Column(name = "wikiField", columnDefinition = "longtext")
 	private String wikifield = "";
 
 	@ManyToOne

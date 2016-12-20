@@ -1,43 +1,11 @@
 --
--- Migration: Renaming to English
+-- Migration: Renaming columns to English
 --
--- 1. Rename tables
---
-
-RENAME TABLE
-  batches TO batch,
-  batchesprozesse TO batch_x_process,
-  benutzer TO user,
-  benutzereigenschaften TO userProperty,
-  benutzergruppen TO userGroup,
-  benutzergruppenmitgliedschaft TO user_x_userGroup,
-  dockets TO docket,
-  ldapgruppen TO ldapGroup,
-  metadatenkonfigurationen TO ruleset,
-  projectfilegroups TO projectFileGroup,
-  projektbenutzer TO project_x_user,
-  projekte TO project,
-  prozesse TO process,
-  prozesseeigenschaften TO processProperty,
-  schritte TO step,
-  schritteberechtigtebenutzer TO step_x_user,
-  schritteberechtigtegruppen TO step_x_userGroup,
-  schritteeigenschaften TO stepProperty,
-  vorlagen TO template,
-  vorlageneigenschaften TO templateProperty,
-  werkstuecke TO workpiece,
-  werkstueckeeigenschaften TO workpieceProperty;
-
---
--- 2. Rename columns in tables
---
--- Wrong column type in all ...property tables for column value. Found: longtext, expected: varchar(255)
+-- 1. Rename columns in tables
 --
 
--- Wrong column type in goobi.batch for column type. Found: varchar, expected: integer
 ALTER TABLE batch
-  CHANGE BatchID id INT(11) NOT NULL AUTO_INCREMENT,
-  CHANGE type type INT(10);
+  CHANGE BatchID id INT(11) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE batch_x_process
   CHANGE BatchID batch_id INT(11) NOT NULL,
@@ -59,7 +27,6 @@ ALTER TABLE ldapGroup
   CHANGE sambaPrimaryGroupSID sambaPrimaryGroupSid VARCHAR(255),
   CHANGE sambaPwdMustChange sambaPasswordMustChange VARCHAR(255);
 
--- Wrong column type in goobi.process for column wikiField. Found: longtext, expected: varchar(255)
 ALTER TABLE process
   CHANGE ProzesseID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
@@ -67,7 +34,7 @@ ALTER TABLE process
   CHANGE IstTemplate isTemplate TINYINT(1),
   CHANGE inAuswahllisteAnzeigen isChoiceListShown TINYINT(1),
   CHANGE erstellungsdatum creationDate DATETIME,
-  CHANGE wikifield wikiField VARCHAR(255),
+  CHANGE wikifield wikiField LONGTEXT,
   CHANGE ProjekteID project_id INT(11),
   CHANGE MetadatenKonfigurationID ruleset_id INT(11),
   CHANGE docketID docket_id INT(11);
@@ -75,7 +42,7 @@ ALTER TABLE process
 ALTER TABLE processProperty
   CHANGE prozesseeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value VARCHAR(255),
+  CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
@@ -140,15 +107,6 @@ ALTER TABLE step_x_userGroup
   CHANGE BenutzerGruppenID userGroup_id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE schritteID step_id INT(11);
 
-ALTER TABLE stepProperty
-  CHANGE schritteeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
-  CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value LONGTEXT,
-  CHANGE IstObligatorisch isObligatory TINYINT(1),
-  CHANGE DatentypenID dataType INT(11),
-  CHANGE Auswahl choice VARCHAR(255),
-  CHANGE schritteID step_id INT(11);
-
 ALTER TABLE template
   CHANGE VorlagenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Herkunft origin VARCHAR(255),
@@ -157,7 +115,7 @@ ALTER TABLE template
 ALTER TABLE templateProperty
   CHANGE vorlageneigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value VARCHAR(255),
+  CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
@@ -203,84 +161,8 @@ ALTER TABLE workpiece
 ALTER TABLE workpieceProperty
   CHANGE werkstueckeeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value VARCHAR(255),
+  CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
   CHANGE werkstueckeID workpiece_id INT(11);
-
---
--- 3. Add foreign keys
---
-
-ALTER TABLE batch_x_process add constraint `FK_batch_x_process_batch_id`
-foreign key (batch_id) REFERENCES batch(id);
-
-ALTER TABLE batch_x_process add constraint `FK_batch_x_process_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE history add constraint `FK_history_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE process add constraint `FK_process_project_id`
-foreign key (project_id) REFERENCES project(id);
-
-ALTER TABLE process add constraint `FK_process_ruleset_id`
-foreign key (ruleset_id) REFERENCES ruleset(id);
-
-ALTER TABLE process add constraint `FK_process_docket_id`
-foreign key (docket_id) REFERENCES docket(id);
-
-ALTER TABLE processProperty add constraint `FK_processProperty_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE project_x_user add constraint `FK_project_x_user_project_id`
-foreign key (project_id) REFERENCES project(id);
-
-ALTER TABLE project_x_user add constraint `FK_project_x_user_user_id`
-foreign key (user_id) REFERENCES user(id);
-
-ALTER TABLE projectFileGroup add constraint `FK_projectFileGroup_project_id`
-foreign key (project_id) REFERENCES project(id);
-
-ALTER TABLE step add constraint `FK_step_processingUser_id`
-foreign key (processingUser_id) REFERENCES user(id);
-
-ALTER TABLE step add constraint `FK_step_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE step_x_user add constraint `FK_step_x_user_step_id`
-foreign key (step_id) REFERENCES step(id);
-
-ALTER TABLE step_x_user add constraint `FK_step_x_user_user_id`
-foreign key (user_id) REFERENCES user(id);
-
-ALTER TABLE step_x_userGroup add constraint `FK_step_x_userGroup_step_id`
-foreign key (step_id) REFERENCES step(id);
-
-ALTER TABLE step_x_userGroup add constraint `FK_step_x_userGroup_userGroup_id`
-foreign key (userGroup_id) REFERENCES userGroup(id);
-
-ALTER TABLE template add constraint `FK_template_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE templateProperty add constraint `FK_templateProperty_template_id`
-foreign key (template_id) REFERENCES template(id);
-
-ALTER TABLE user add constraint `FK_user_ldapGroup_id`
-foreign key (ldapGroup_id) REFERENCES ldapGroup(id);
-
-ALTER TABLE user_x_userGroup add constraint `FK_user_x_userGroup_user_id`
-foreign key (user_id) REFERENCES user(id);
-
-ALTER TABLE user_x_userGroup add constraint `FK_user_x_userGroup_userGroup_id`
-foreign key (userGroup_id) REFERENCES userGroup(id);
-
-ALTER TABLE userProperty add constraint `FK_userProperty_user_id`
-foreign key (user_id) REFERENCES user(id);
-
-ALTER TABLE workpiece add constraint `FK_workpiece_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE workpieceProperty add constraint `FK_workpieceProperty_workpiece_id`
-foreign key (workpiece_id) REFERENCES workpiece(id);

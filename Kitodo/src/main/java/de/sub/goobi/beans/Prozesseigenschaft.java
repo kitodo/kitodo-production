@@ -42,7 +42,7 @@ public class Prozesseigenschaft implements Serializable, IGoobiProperty, Compara
 	@Column(name = "title")
 	private String titel;
 
-	@Column(name = "value")
+	@Column(name = "value", columnDefinition = "longtext")
 	private String wert;
 
 	@Column(name = "isObligatory")
