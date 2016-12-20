@@ -30,10 +30,7 @@ RENAME TABLE
 --
 -- 2. Rename columns in tables
 --
--- Wrong column type in all ...property tables for column value. Found: longtext, expected: varchar(255)
---
 
--- Wrong column type in goobi.batch for column type. Found: varchar, expected: integer
 ALTER TABLE batch
   CHANGE BatchID id INT(11) NOT NULL AUTO_INCREMENT;
 
@@ -57,7 +54,6 @@ ALTER TABLE ldapGroup
   CHANGE sambaPrimaryGroupSID sambaPrimaryGroupSid VARCHAR(255),
   CHANGE sambaPwdMustChange sambaPasswordMustChange VARCHAR(255);
 
--- Wrong column type in goobi.process for column wikiField. Found: longtext, expected: varchar(255)
 ALTER TABLE process
   CHANGE ProzesseID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
@@ -65,7 +61,7 @@ ALTER TABLE process
   CHANGE IstTemplate isTemplate TINYINT(1),
   CHANGE inAuswahllisteAnzeigen isChoiceListShown TINYINT(1),
   CHANGE erstellungsdatum creationDate DATETIME,
-  CHANGE wikifield wikiField VARCHAR(255),
+  CHANGE wikifield wikiField LONGTEXT,
   CHANGE ProjekteID project_id INT(11),
   CHANGE MetadatenKonfigurationID ruleset_id INT(11),
   CHANGE docketID docket_id INT(11);
@@ -73,7 +69,7 @@ ALTER TABLE process
 ALTER TABLE processProperty
   CHANGE prozesseeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value VARCHAR(255),
+  CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
@@ -146,7 +142,7 @@ ALTER TABLE template
 ALTER TABLE templateProperty
   CHANGE vorlageneigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value VARCHAR(255),
+  CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
@@ -192,7 +188,7 @@ ALTER TABLE workpiece
 ALTER TABLE workpieceProperty
   CHANGE werkstueckeeigenschaftenID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
-  CHANGE Wert value VARCHAR(255),
+  CHANGE Wert value LONGTEXT,
   CHANGE IstObligatorisch isObligatory TINYINT(1),
   CHANGE DatentypenID dataType INT(11),
   CHANGE Auswahl choice VARCHAR(255),
