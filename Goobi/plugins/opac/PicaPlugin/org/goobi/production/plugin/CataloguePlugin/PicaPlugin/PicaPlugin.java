@@ -1,26 +1,14 @@
-/**
- * This file is part of the Goobi Application - a Workflow tool for the support
- * of mass digitization.
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
- * (c) 2014 Goobi. Digitalisieren im Verein e.V. <contact@goobi.org>
+ * This file is part of the Kitodo project.
  *
- * Visit the websites for more information.
- *     		- http://www.kitodo.org/en/
- *     		- https://github.com/goobi
+ * It is licensed under GNU General Public License version 3 or later.
  *
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation; either version 2 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
  */
+
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.util.ArrayList;
