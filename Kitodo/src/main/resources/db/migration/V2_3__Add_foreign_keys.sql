@@ -34,22 +34,22 @@ foreign key (user_id) REFERENCES user(id);
 ALTER TABLE projectFileGroup add constraint `FK_projectFileGroup_project_id`
 foreign key (project_id) REFERENCES project(id);
 
-ALTER TABLE step add constraint `FK_step_processingUser_id`
-foreign key (processingUser_id) REFERENCES user(id);
-
-ALTER TABLE step add constraint `FK_step_process_id`
-foreign key (process_id) REFERENCES process(id);
-
-ALTER TABLE step_x_user add constraint `FK_step_x_user_step_id`
-foreign key (step_id) REFERENCES step(id);
-
-ALTER TABLE step_x_user add constraint `FK_step_x_user_user_id`
+ALTER TABLE task add constraint `FK_task_user_id`
 foreign key (user_id) REFERENCES user(id);
 
-ALTER TABLE step_x_userGroup add constraint `FK_step_x_userGroup_step_id`
-foreign key (step_id) REFERENCES step(id);
+ALTER TABLE task add constraint `FK_task_process_id`
+foreign key (process_id) REFERENCES process(id);
 
-ALTER TABLE step_x_userGroup add constraint `FK_step_x_userGroup_userGroup_id`
+ALTER TABLE task_x_user add constraint `FK_task_x_user_task_id`
+foreign key (task_id) REFERENCES task(id);
+
+ALTER TABLE task_x_user add constraint `FK_task_x_user_user_id`
+foreign key (user_id) REFERENCES user(id);
+
+ALTER TABLE task_x_userGroup add constraint `FK_task_x_userGroup_task_id`
+foreign key (task_id) REFERENCES task(id);
+
+ALTER TABLE task_x_userGroup add constraint `FK_task_x_userGroup_userGroup_id`
 foreign key (userGroup_id) REFERENCES userGroup(id);
 
 ALTER TABLE template add constraint `FK_template_process_id`

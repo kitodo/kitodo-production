@@ -67,7 +67,7 @@ ALTER TABLE ruleset
   CHANGE Titel title VARCHAR(255),
   CHANGE Datei file VARCHAR(255);
 
-ALTER TABLE step
+ALTER TABLE task
   CHANGE SchritteID id INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE Titel title VARCHAR(255),
   CHANGE Prioritaet priority INT(11),
@@ -96,16 +96,19 @@ ALTER TABLE step
   CHANGE typAutomatischScriptpfad5 typeAutomaticScriptPath5 VARCHAR(255),
   CHANGE typBeimAbschliessenVerifizieren typeCloseVerify TINYINT(1),
   CHANGE typModulName typeModuleName VARCHAR(255),
-  CHANGE BearbeitungsBenutzerID processingUser_id INT(11),
+  CHANGE BearbeitungsBenutzerID user_id INT(11)
+    COMMENT 'This field contains information about user, which works on this task.',
   CHANGE ProzesseID process_id INT(11);
 
-ALTER TABLE step_x_user
-  CHANGE BenutzerID user_id INT(11) NOT NULL,
-  CHANGE schritteID step_id INT(11) NOT NULL;
+ALTER TABLE task_x_user
+  CHANGE BenutzerID user_id INT(11) NOT NULL
+    COMMENT 'This field contains information about users, which are allowed to work on this task.',
+  CHANGE schritteID task_id INT(11) NOT NULL;
 
-ALTER TABLE step_x_userGroup
-  CHANGE BenutzerGruppenID userGroup_id INT(11) NOT NULL AUTO_INCREMENT,
-  CHANGE schritteID step_id INT(11);
+ALTER TABLE task_x_userGroup
+  CHANGE BenutzerGruppenID userGroup_id INT(11) NOT NULL
+    COMMENT 'This field contains information about user''s groups, which are allowed to work on this task.',
+  CHANGE schritteID task_id INT(11);
 
 ALTER TABLE template
   CHANGE VorlagenID id INT(11) NOT NULL AUTO_INCREMENT,

@@ -42,7 +42,7 @@ import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
 @Entity
-@Table(name = "step")
+@Table(name = "task")
 public class Schritt implements Serializable {
 	private static final long serialVersionUID = 6831844584239811846L;
 
@@ -156,34 +156,43 @@ public class Schritt implements Serializable {
 	@Column(name = "validationPlugin")
 	private String validationPlugin;
 
+	/**
+	 * This field contains information about user, which works on this task.
+	 */
 	@ManyToOne
-	@JoinColumn(name = "processingUser_id", foreignKey = @ForeignKey(name = "FK_step_processingUser_id"))
+	@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_user_id"))
 	private Benutzer bearbeitungsbenutzer;
 
 	@ManyToOne
-	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_step_process_id"))
+	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_task_process_id"))
 	private Prozess prozess;
 
+	/**
+	 * This field contains information about users, which are allowed to work on this task.
+	 */
 	@ManyToMany
-	@JoinTable(name = "step_x_user",
+	@JoinTable(name = "task_x_user",
 			joinColumns = {
 					@JoinColumn(
-							name = "step_id",
-							foreignKey = @ForeignKey(name = "FK_step_x_user_step_id")
+							name = "task_id",
+							foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
 							name = "user_id",
-							foreignKey = @ForeignKey(name = "FK_step_x_user_user_id")
+							foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")
 					) })
 	private Set<Benutzer> benutzer;
 
+	/**
+	 * This field contains information about user's groups, which are allowed to work on this task.
+	 */
 	@ManyToMany
-	@JoinTable(name = "step_x_userGroup",
+	@JoinTable(name = "task_x_userGroup",
 			joinColumns = {
 					@JoinColumn(
-							name = "step_id",
-							foreignKey = @ForeignKey(name = "FK_step_x_userGroup_step_id")
+							name = "task_id",
+							foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")
 					) },
 			inverseJoinColumns = {
 					@JoinColumn(
