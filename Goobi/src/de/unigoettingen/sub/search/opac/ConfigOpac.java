@@ -62,6 +62,24 @@ public class ConfigOpac {
 	}
 
 	/**
+	 * Sets the XMLConfiguration of the ConfigOpac
+	 *
+	 * @param conf the XMLConfiguration to set
+	 */
+	public static void setConfiguration (XMLConfiguration conf) {
+		config = conf;
+	}
+
+	/**
+	 * Returns the XMLConfiguration of the ConfigOpac
+	 *
+	 * @return config the XMLConfiguration of the ConfigOpac
+	 */
+	public static XMLConfiguration getConfiguration () {
+		return config;
+	}
+
+	/**
 	 * Returns all configured catalogue titles from the config file.
 	 *
 	 * @return all catalogue titles
@@ -137,11 +155,37 @@ public class ConfigOpac {
 					labels.put(language, value);
 				}
 				String inRulesetType = getConfig().getString("doctypes.type(" + i + ")[@rulesetType]");
-				String inTifHeaderType = getConfig().getString("doctypes.type(" + i + ")[@tifHeaderType]");
-				boolean periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
-				boolean multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
-				boolean containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+
 				boolean newspaper;
+				String inTifHeaderType;
+				boolean periodical;
+				boolean multiVolume;
+				boolean containedWork;
+
+				try {
+					inTifHeaderType = getConfig().getString("doctypes.type(" + i + ")[@tifHeaderType]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					inTifHeaderType = "";
+				}
+
+				try {
+					periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					periodical = false;
+				}
+
+				try {
+					multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					multiVolume = false;
+				}
+
+				try {
+					containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+				} catch (NoSuchElementException noParameterIsNewspaper) {
+					containedWork = false;
+				}
+
 				try {
 					newspaper = getConfig().getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
 				} catch (NoSuchElementException noParameterIsNewspaper) {

@@ -31,8 +31,25 @@
 	</doctypes>
 	<catalogue title="GBV">
 		<config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" iktlist="IKTLIST-GBV.xml" port="80" ucnf="UCNF=NFC" />
+		<searchFields>
+			<searchField label="Title" value="4" />
+			<searchField label="Identifier" value="12" />
+			<searchField label="ISBN" value="7" />
+			<searchField label="ISSN" value="8" />
+			<searchField label="Barcode" value="8535" />
+			<searchField label="Barcode 8200" value="8200" />
+		</searchFields>
 	</catalogue>
 	<catalogue title="ZDB">
 		<config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" iktlist="IKTLIST-ZDB.xml" port="80" />
+		<searchFields>
+			<searchField label="Title" value="4" />
+			<searchField label="Identifier" value="12" />
+			<searchField label="ISBN" value="7" />
+			<searchField label="ISSN" value="8" />
+			<searchField label="Barcode" value="8535" />
+			<searchField label="Barcode 8200" value="8200" />
+			<searchField label="ZDB-ID" value="8506" />
+		</searchFields>
 	</catalogue>
 </opacCatalogues>

@@ -39,20 +39,21 @@
 	</h:commandLink>
 	<%-- aus dem Opac auswaehlen --%>
 	<h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
-		<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
 
-		<h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px">
+		<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
+		<h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px"
+			onchange="submit();">
 			<si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
 		</h:selectOneMenu>
+
 		<h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px" />
 		<h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}" style="display:inline; margin-left:10px">
-			<f:selectItem itemLabel="Identifier" itemValue="12" />
-			<f:selectItem itemLabel="Barcode" itemValue="8535" />
-			<f:selectItem itemLabel="Barcode 8200" itemValue="8200" />
-			<f:selectItem itemLabel="ISBN" itemValue="7" />
-			<f:selectItem itemLabel="ISSN" itemValue="8" />
-			<f:selectItem itemLabel="Title" itemValue="4" />
-			<f:selectItem itemLabel="ZDB-ID" itemValue="8506" />
+			<f:selectItems value="#{ProzesskopieForm.searchFields}" />
+		</h:selectOneMenu>
+
+		<h:outputText value="#{msgs.einrichtungFiltern}" style="margin-left: 15px" rendered="#{ProzesskopieForm.institutionCount > 0}" />
+		<h:selectOneMenu id="einrichtungsauswahl" value="#{ProzesskopieForm.institution}" style="margin-left:7px" rendered="#{ProzesskopieForm.institutionCount > 0}">
+			<f:selectItems value="#{ProzesskopieForm.institutions}" />
 		</h:selectOneMenu>
 
 	</h:panelGroup>

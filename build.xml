@@ -187,6 +187,7 @@
         <mkdir dir="${test.report.dir}"/>
         <mkdir dir="${build.dir.plugins.import}/PicaMassImport"/>
         <mkdir dir="${build.dir.plugins.opac}/PicaPlugin"/>
+        <mkdir dir="${build.dir.plugins.opac}/ModsPlugin" />
         <mkdir dir="${build.dir}/scripts"/>
         <mkdir dir="${build.dir}/database-setup"/>
     </target>
@@ -295,6 +296,23 @@
         </javac>
     </target>
 
+    <target name="compile-ModsPlugin" depends="compile">
+        <javac includeAntRuntime="false" srcdir="${src.dir.plugins.opac}/ModsPlugin"
+            destdir="${build.dir.plugins.opac}/ModsPlugin"
+            source="${build.javac.source}"
+            target="${build.javac.target}" encoding="UTF8"
+            debug="true"
+            debuglevel="lines,vars,source">
+            <classpath>
+                <pathelement location="${build.classes}" />
+                <path refid="compile.classpath" />
+            </classpath>
+            <compilerarg value="${build.javac.args}" />
+            <exclude name="**/package-info.java"/>
+        </javac>
+        <copy file="${src.dir.plugins.opac}/ModsPlugin/org/kitodo/production/plugin/CataloguePlugin/ModsPlugin/kalliope2kitodo.xsl" todir="${build.classes}" />
+    </target>
+
 
     <!--==================================================
         Distribution
@@ -398,7 +416,7 @@
 
     <!-- Build of plugin jars -->
 
-    <target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, create-PicaPlugin-jar">
+    <target name="create-plugin-jar-files" depends="create-PicaMassImport-jar, create-PicaPlugin-jar, create-ModsPlugin-jar">
     </target>
 
     <target name="create-PicaMassImport-jar" depends="compile-PicaMassImport">
@@ -407,6 +425,10 @@
 
     <target name="create-PicaPlugin-jar" depends="compile-PicaPlugin">
         <jar level="9" jarfile="${build.dist.dir.plugins.opac}/PicaPlugin.jar" basedir="${build.dir.plugins.opac}/PicaPlugin" />
+    </target>
+
+    <target name="create-ModsPlugin-jar" depends="compile-ModsPlugin">
+        <jar level="9" jarfile="${build.dist.dir.plugins.opac}/ModsPlugin.jar" basedir="${build.dir.plugins.opac}/ModsPlugin" />
     </target>
 
     <!--==================================================

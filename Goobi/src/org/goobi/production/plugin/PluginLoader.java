@@ -38,7 +38,7 @@ import de.sub.goobi.config.ConfigMain;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
- * 
+ *
  * @author Based on preceding works from authors not named
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -49,15 +49,17 @@ public class PluginLoader {
 	 * The function getCataloguePluginForCatalogue() returns a redirection class
 	 * to handle the first plug-in implementation object that positively
 	 * responds to <code>supportsCatalogue(catalogue)</code>.
-	 * 
+	 *
 	 * @param catalogue
 	 *            catalogue in question
 	 * @return the first plug-in that supports the given catalogue
 	 */
 	public static CataloguePlugin getCataloguePluginForCatalogue(String catalogue) {
-		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class))
-			if (plugin.supportsCatalogue(catalogue))
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)){
+			if (plugin.supportsCatalogue(catalogue)){
 				return plugin;
+			}
+		}
 		return null;
 	}
 
@@ -93,13 +95,13 @@ public class PluginLoader {
 	 * UnspecificPlugin class type and returns a redirection class to handle the
 	 * first plug-in implementation object that responds to
 	 * <code>getTitle(language)</code> with the given title.
-	 * 
+	 *
 	 * <p>
 	 * Currently, this method is not referenced from within the Production code,
 	 * but this may change in future. The function is provided to show how the
 	 * old plug-in API can be replaced in future.
 	 * </p>
-	 * 
+	 *
 	 * @param clazz
 	 *            UnspecificPlugin class type of the plug-ins to load
 	 * @param title
@@ -131,13 +133,13 @@ public class PluginLoader {
 	 * The function getPluginConfiguration() creates a HashMap that is passed to
 	 * the plug-ins upon creation to configure them. The plug-ins may or may not
 	 * make use of the configuration provided.
-	 * 
+	 *
 	 * <p>
 	 * This is intended to be used for <em>general</em> configuration (probably)
 	 * suitable for all plug-in types. Use setters on the plug-ins to set
 	 * type-specific settings.
 	 * </p>
-	 * 
+	 *
 	 * @return a HashMap to configure the plug-ins
 	 */
 	private static HashMap<String, String> getPluginConfiguration() {
@@ -145,6 +147,7 @@ public class PluginLoader {
 		HashMap<String, String> conf = new HashMap<String, String>((int) Math.ceil(ENRIES / 0.75));
 		conf.put("configDir", ConfigMain.getParameter(Parameters.CONFIG_DIR));
 		conf.put("tempDir", ConfigMain.getParameter(Parameters.PLUGIN_TEMP_DIR));
+		conf.put("xsltDir", ConfigMain.getParameter(Parameters.XSLT_DIR));
 		return conf;
 	}
 
@@ -152,7 +155,7 @@ public class PluginLoader {
 	 * The function getPlugins() loads all plug-ins implementing the given
 	 * UnspecificPlugin class type and returns a Collection of redirection
 	 * classes, each to handle one plug-in implementation object.
-	 * 
+	 *
 	 * @param clazz
 	 *            UnspecificPlugin class type of the plug-ins to load
 	 * @return a Collection of plug-in redirection classes
@@ -175,12 +178,12 @@ public class PluginLoader {
 				plugin.configure(getPluginConfiguration());
 				result.add(plugin);
 			} catch (NoSuchMethodException e) {
-				if (logger.isEnabledFor(Level.WARN)) {
+				if(logger.isEnabledFor(Level.WARN)){
 					logger.warn("Bad implementation of " + type.getName() + " plugin "
 							+ implementation.getClass().getName(), e);
 				}
 			} catch (SecurityException e) {
-				if (logger.isEnabledFor(Level.WARN)) {
+				if(logger.isEnabledFor(Level.WARN)){
 					logger.warn("Bad implementation of " + type.getName() + " plugin "
 							+ implementation.getClass().getName(), e);
 				}
@@ -192,7 +195,7 @@ public class PluginLoader {
 	/**
 	 * The function getImportPluginsForType() returns a list of titles of import
 	 * plug-ins matching the given ImportType.
-	 * 
+	 *
 	 * @param type
 	 *            ImportType of plug-ins to look for
 	 * @return a list of titles of import plug-ins matching
@@ -212,7 +215,7 @@ public class PluginLoader {
 	/**
 	 * The function getPluginLoader() returns a PluginManagerUtil suitable for
 	 * loading plug-ins from the subdirectory defined by the given PluginType
-	 * 
+	 *
 	 * @param type
 	 *            plug-in type specifying the plug-in subdirectory to scan
 	 * @return a PluginManagerUtil to load plug-ins from that directory

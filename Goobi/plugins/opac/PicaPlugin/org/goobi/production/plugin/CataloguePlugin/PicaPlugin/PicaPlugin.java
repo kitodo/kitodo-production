@@ -11,19 +11,23 @@
 
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.activity.InvalidActivityException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.xeoh.plugins.base.Plugin;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
+import org.apache.commons.configuration.SubnodeConfiguration;
+import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -33,6 +37,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.w3c.dom.Node;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.Plugin;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -46,7 +52,7 @@ import ugh.fileformats.opac.PicaPlus;
 /**
  * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
  * implementation. It provides the public methods
- * 
+ *
  *    void    configure(Map) [*]
  *    Object  find(String, long)
  *    String  getDescription() [*]
@@ -56,13 +62,13 @@ import ugh.fileformats.opac.PicaPlus;
  *    void    setPreferences(Prefs)
  *    boolean supportsCatalogue(String)
  *    void    useCatalogue(String)
- * 
+ *
  * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
  * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
- * 
+ *
  * Parts of the code of this class have been ported from ancient class
  * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.
- * 
+ *
  * @author Partly based on previous works of other authors who didn’t leave
  *         their names
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -70,7 +76,7 @@ import ugh.fileformats.opac.PicaPlus;
 @PluginImplementation
 public class PicaPlugin implements Plugin {
 	/**
-	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
+	 * The constant LANGUAGES_MAPPING_FILE holds the name of the PICA plug-in
 	 * languages mapping file. This is a text file with lines in form
 	 * replacement—space—stringToReplace used to replace the value from PICA+
 	 * field “010@” subfield “a” (the replacement will be saved in DocStruct
@@ -112,6 +118,17 @@ public class PicaPlugin implements Plugin {
 	private ConfigOpacCatalogue configuration;
 
 	/**
+	 * Returns the XMLConfiguration of the plugin containing docType
+	 * names and conditions for structureType classification.
+	 *
+	 * @return config
+	 *            the XMLConfiguration of the plugin
+	 */
+	public XMLConfiguration getXMLConfiguration() {
+		return ConfigOpac.getConfig();
+	}
+
+	/**
 	 * The field catalogue holds the catalogue.
 	 */
 	private Catalogue catalogue;
@@ -124,11 +141,11 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The method configure() accepts a Map with configuration parameters. Two
 	 * entries, "configDir" and "tempDir", are expected.
-	 * 
+	 *
 	 * configDir must point to a directory on the local file system where the
 	 * plug-in can read individual configuration files from. The configuration
 	 * file, "goobi_opac.xml" is expected in that directory.
-	 * 
+	 *
 	 * @param configuration
 	 *            a Map with configuration parameters
 	 * @see org.goobi.production.plugin.UnspecificPlugin#configure(Map)
@@ -142,7 +159,7 @@ public class PicaPlugin implements Plugin {
 	 * The function find() initially queries the library catalogue with the
 	 * given query. If successful, it returns a FindResult with the number of
 	 * hits.
-	 * 
+	 *
 	 * @param query
 	 *            a query String. See
 	 *            {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}
@@ -172,7 +189,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getConfigDir() provides a reference to the file system
 	 * directory where configuration files are read from.
-	 * 
+	 *
 	 * @return the file system directory with the configuration files
 	 */
 	static String getConfigDir() {
@@ -182,7 +199,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getDescription() returns a human-readable description of the
 	 * plug-in’s functionality in English. The parameter language is ignored.
-	 * 
+	 *
 	 * @param language
 	 *            desired language of the human-readable description (support is
 	 *            optional)
@@ -199,7 +216,7 @@ public class PicaPlugin implements Plugin {
 	 * hit as "fileformat", the docType as "type" and some bibliographic
 	 * metadata for Production to be able to show a short hit display as
 	 * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
-	 * 
+	 *
 	 * @param searchResult
 	 *            a FindResult created by {@link #find(String, long)}
 	 * @param index
@@ -228,6 +245,7 @@ public class PicaPlugin implements Plugin {
 			 * --------------------------------
 			 */
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
+
 			/* Opac-Beautifier aufrufen */
 			myHitlist = configuration.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
@@ -387,7 +405,7 @@ public class PicaPlugin implements Plugin {
 
 	/**
 	 * DocType (Gattung) ermitteln
-	 * 
+	 *
 	 * @param inHit
 	 * @return
 	 */
@@ -399,7 +417,6 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			if (feldname.equals("002@")) {
 				return getSubelementValue(tempElement, "0");
 			}
@@ -423,7 +440,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork:
 	 * 021A-9) ermitteln
-	 * 
+	 *
 	 * @param inElement
 	 * @return
 	 */
@@ -432,7 +449,6 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			if (feldname.equals(inFeldName)) {
 				return getSubelementValue(tempElement, inSubElement);
 			}
@@ -445,7 +461,6 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
-			// System.out.println(feldname);
 			/*
 			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
 			 * Attribut zurückgeben
@@ -680,7 +695,7 @@ public class PicaPlugin implements Plugin {
 	 * whose “code” attribute equals the given attribute name and whose parents’
 	 * “tag” attribute equals the given field name—or an empty String if there
 	 * is no such grandchild element.
-	 * 
+	 *
 	 * @param myFirstHit
 	 *            JDOM Element whose descendant elements are to be examined
 	 * @param inFieldName
@@ -712,7 +727,7 @@ public class PicaPlugin implements Plugin {
 	 * elements from a given JDOM Element whose “code” attribute equals the
 	 * given attribute name and whose parents’ “tag” attribute equals the given
 	 * field name—or an empty Collection if there is no such grandchild element.
-	 * 
+	 *
 	 * @param myFirstHit
 	 *            JDOM Element whose descendant elements are to be examined
 	 * @param inFieldName
@@ -743,7 +758,7 @@ public class PicaPlugin implements Plugin {
 	 * The function getFieldValue() returns the value of the last elements from
 	 * a given JDOM Element whose “code” attribute equals the given attribute
 	 * value or the empty String if there is no such child element.
-	 * 
+	 *
 	 * @param inElement
 	 *            JDOM Element whose child elements are to be examined
 	 * @param attributeValue
@@ -768,7 +783,7 @@ public class PicaPlugin implements Plugin {
 	 * The function getFieldValues() returns the values of all child elements
 	 * from a given JDOM Element whose “code” attribute equals the given
 	 * attribute value or an empty Collection if there is no such child element.
-	 * 
+	 *
 	 * @param inElement
 	 *            JDOM Element whose child elements are to be examined
 	 * @param attributeValue
@@ -795,7 +810,7 @@ public class PicaPlugin implements Plugin {
 	 * as "type" and some bibliographic metadata for Production to be able to
 	 * show a short hit display as supposed in
 	 * {@link org.goobi.production.plugin.CataloguePlugin.Hit}
-	 * 
+	 *
 	 * @param docType
 	 *            the DocType of the hit
 	 * @param hit
@@ -888,13 +903,14 @@ public class PicaPlugin implements Plugin {
 
 		result.put("url", getElementFieldValue(hit, "209R", "a"));
 		result.put("year", getElementFieldValue(hit, "011@", "a"));
+
 		return result;
 	}
 
 	/**
 	 * The function toRecentLocalDate() interprets a String of scheme "dd-mm-yy"
 	 * as a LocalDate within the last 100 years up to a given reference date.
-	 * 
+	 *
 	 * @param dd_mm_yy
 	 *            a date String to interpret
 	 * @param upTo
@@ -914,7 +930,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getNumberOfHits() returns the number of hits from a given
 	 * search result.
-	 * 
+	 *
 	 * @param searchResult
 	 *            the reference to the search whose number of hits shall be
 	 *            looked up
@@ -935,7 +951,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getTempDir() provides a reference to the file system
 	 * directory where temporary files are written in.
-	 * 
+	 *
 	 * @return the file system directory where to write temporary files
 	 */
 	static String getTempDir() {
@@ -945,7 +961,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function getDescription() returns a human-readable name for the
 	 * plug-in in English. The parameter language is ignored.
-	 * 
+	 *
 	 * @param language
 	 *            desired language of the human-readable name (support is
 	 *            optional)
@@ -959,7 +975,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The function setPreferences is called by Production to set the UGH
 	 * preferences to be used.
-	 * 
+	 *
 	 * @param preferences
 	 *            the UGH preferences
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
@@ -972,7 +988,7 @@ public class PicaPlugin implements Plugin {
 	 * The function supportsCatalogue() investigates whether the plug-in is able
 	 * to acceess a catalogue identified by the given String. (This depends on
 	 * the configuration.)
-	 * 
+	 *
 	 * @param catalogue
 	 *            a String indentifying the catalogue
 	 * @return whether the plug-in is able to acceess that catalogue
@@ -983,8 +999,34 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
+	 * The function getSupportedCatalogues() returns the names of all catalogues supported
+	 * by this plugin. (This depends on the plugin configuration.)
+	 *
+	 * @return list of catalogue names
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getSupportedCatalogues()
+	 */
+	public static List<String> getSupportedCatalogues() {
+		return ConfigOpac.getAllCatalogues();
+	}
+
+	/**
+	 * The function getAllConfigDocTypes() returns the names of all docTypes configured
+	 * for this plugin. (This depends on the plugin configuration.)
+	 *
+	 * @return list of ConfigOapcDocTypes
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getAllConfigDocTypes()
+	 */
+	public static List<String> getAllConfigDocTypes() {
+		List<String> result = new ArrayList<String>();
+		for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
+			result.add(cod.getTitle());
+		}
+		return result;
+	}
+
+	/**
 	 * The function useCatalogue() sets a catalogue to be used
-	 * 
+	 *
 	 * @param catalogueID
 	 *            a String indentifying the catalogue
 	 * @throws ParserConfigurationException
@@ -998,5 +1040,81 @@ public class PicaPlugin implements Plugin {
 		GetOpac catalogueClient = new GetOpac(catalogue);
 		catalogueClient.setCharset(configuration.getCharset());
 		this.client = catalogueClient;
+	}
+
+	/**
+	 * The function getSearchFields(String catalogueName) loads the search fields, configured
+	 * in the configuration file of this plugin, for the catalogue with the given String 'catalogueName',
+	 * and returns them in a HashMap. The map contains the labels of the search fields as keys
+	 * and the corresponding URL parameters as values.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of search fields will be returned
+	 * @return Map containing the search fields of the selected OPAC
+	 * @throws InvalidActivityException
+	 */
+	public HashMap<String, String> getSearchFields(String catalogueName) throws InvalidActivityException {
+		LinkedHashMap<String, String> searchFields = new LinkedHashMap<String, String>();
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("searchFields.searchField")) {
+							SubnodeConfiguration searchField = (SubnodeConfiguration)fieldObject;
+							searchFields.put(searchField.getString("[@label]"), searchField.getString("[@value]"));
+						}
+					}
+				}
+			}
+		}
+		return searchFields;
+	}
+
+	/**
+	 * The function getInstitutions(String catalogueName) loads the institutions usable
+	 * for result filtering, configured in the configuration file of this plugin, for
+	 * the catalogue with the given String 'cagalogueName', and returns them in a
+	 * HashMap. The map contains the labels of the institutions as keys and the
+	 * corresponding ISIL IDs as values.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the list of search fields will be returned
+	 * @return Map containing the filter institutions of the selected OPAC
+	 */
+	public HashMap<String, String> getInstitutions(String catalogueName) {
+		LinkedHashMap<String, String> institutions = new LinkedHashMap<String, String>();
+		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
+			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
+				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
+					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
+					String currentOpacName = (String)titleAttr.getValue();
+					if (Objects.equals(catalogueName, currentOpacName)) {
+						for (Object fieldObject : catalogue.configurationsAt("filterInstitutions.institution")) {
+							SubnodeConfiguration institution = (SubnodeConfiguration)fieldObject;
+							institutions.put(institution.getString("[@label]"), institution.getString("[@value]"));
+						}
+					}
+				}
+			}
+		}
+		return institutions;
+	}
+
+	/**
+	 * The function getInstitutionFilterParameter(String catalogueName) returns the URL parameter
+	 * used for institution filtering in this plugin.
+	 *
+	 * This function is not yet used in the PicaPlugin.
+	 *
+	 * @param catalogueName
+	 *            the name of the catalogue for which the institution filter parameter is returned
+	 * @return String the URL parameter used for institution filtering
+	 */
+	public String getInstitutionFilterParameter(String catalogueName) {
+		return "";
 	}
 }

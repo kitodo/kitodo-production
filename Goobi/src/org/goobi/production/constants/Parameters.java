@@ -119,4 +119,13 @@ public class Parameters {
 	 * clicking the link “Read in pagination from images”.
 	 */
 	public static final String WITH_AUTOMATIC_PAGINATION = "MetsEditorWithAutomaticPagination";
+
+	/**
+	 * Points to a folder on the file system that XSLT files are stored which are used
+	 * to transform the "XML log" (as visible from the XML button in the processes
+	 * list) to a downloadable PDF docket which can be enclosed with the physical
+	 * binding units to digitise. XSL transformation scripts used by plugins
+	 * are also located here.
+	 */
+	public static final String XSLT_DIR = "xsltFolder";
 }

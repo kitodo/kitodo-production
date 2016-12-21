@@ -41,9 +41,10 @@
         <item from="vorlage" required="true" isdoctype="multivolume" ughbinding="true" docstruct="firstchild" metadata="CatalogIDSource"> PPN analog f-Satz </item>
         <item from="werk" required="true" isdoctype="multivolume" ughbinding="true" docstruct="firstchild" metadata="CatalogIDDigital"> PPN digital f-Satz </item>
         <!-- other metadata for all -->
-        <item from="vorlage" isdoctype="monograph|multivolume|periodical" ughbinding="true" docstruct="topstruct" metadata="PlaceOfPublication"> Erscheinungsort </item>
-        <item from="vorlage" isdoctype="monograph" ughbinding="true" docstruct="topstruct" metadata="PublicationYear"> Erscheinungsjahr </item>
-        <item from="vorlage" isdoctype="periodical|multivolume" ughbinding="true" docstruct="firstchild" metadata="PublicationYear"> Erscheinungsjahr </item>
+        <item from="vorlage" isdoctype="monograph|multivolume|periodical|inventory" ughbinding="true" docstruct="topstruct" metadata="PlaceOfPublication"> Erscheinungsort </item>
+        <item from="vorlage" isdoctype="monograph|inventory" ughbinding="true" docstruct="topstruct" metadata="PublicationYear"> Erscheinungsjahr </item>
+        <item from="vorlage" isdoctype="periodical|multivolume|inventory" ughbinding="true" docstruct="firstchild" metadata="PublicationYear"> Erscheinungsjahr </item>
+        <item from="vorlage" isdoctype="inventory" ughbinding="true" docstruct="topstruct" metadata="slub_link"> Link </item>
         <item from="vorlage" isdoctype="multivolume|periodical" ughbinding="true" docstruct="firstchild" metadata="PublisherName"> Verlag </item>
         <item from="vorlage" isdoctype="monograph" ughbinding="true" docstruct="topstruct" metadata="PublisherName"> Verlag </item>
         <item from="vorlage" ughbinding="true" docstruct="boundbook" metadata="shelfmarksource"> Signatur </item>

@@ -16,14 +16,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -31,6 +34,7 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -54,23 +58,6 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Person;
-import ugh.dl.Prefs;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.UGHException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.XStream;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Projekt;
 import de.sub.goobi.beans.Prozess;
@@ -99,6 +86,23 @@ import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.dl.Person;
+import ugh.dl.Prefs;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedAsChildException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.UGHException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.mets.XStream;
 
 public class ProzesskopieForm {
 	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
@@ -158,7 +162,11 @@ public class ProzesskopieForm {
 		 * @return a summary of this hit in bibliographic citation style as HTML
 		 */
 		public String getBibliographicCitation() {
-			return hit.getBibliographicCitation();
+			try {
+				return hit.getBibliographicCitation();
+			} catch (IllegalArgumentException e) {
+				return "";
+			}
 		}
 
 		/**
@@ -249,6 +257,7 @@ public class ProzesskopieForm {
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
+	private String institution = "-";
 	private List<String> possibleDigitalCollection;
 	private Prozess prozessVorlage = new Prozess();
 	private Prozess prozessKopie = new Prozess();
@@ -432,9 +441,12 @@ public class ProzesskopieForm {
 			String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
 			query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
 
+			if (!Objects.equals(institution, "-") && !Objects.equals("", importCatalogue.getInstitutionFilterParameter(opacKatalog))) {
+				query = QueryBuilder.appendAll(query, Arrays.asList(importCatalogue.getInstitutionFilterParameter(opacKatalog) + ":" + institution));
+			}
+
 			hitlist = importCatalogue.find(query, timeout);
 			hits = importCatalogue.getNumberOfHits(hitlist, timeout);
-
 			switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
 			case 0:
 				Helper.setFehlerMeldung("No hit found", "");
@@ -553,14 +565,12 @@ public class ProzesskopieForm {
 					/* welches Docstruct */
 					DocStruct myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
 					if (field.getDocstruct().equals("firstchild")) {
-						try {
-							myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-						} catch (RuntimeException e) {
-						}
+						myTempStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
 					}
 					if (field.getDocstruct().equals("boundbook")) {
 						myTempStruct = this.myRdf.getDigitalDocument().getPhysicalDocStruct();
 					}
+
 					/* welches Metadatum */
 					try {
 						if (field.getMetadata().equals("ListOfCreators")) {
@@ -584,7 +594,7 @@ public class ProzesskopieForm {
 							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
 									.getPreferences(), field.getMetadata());
 							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
-							if (md != null) {
+							if (md != null && md.getValue() != null) {
 								field.setWert(md.getValue());
 								md.setValue(field.getWert().replace("&amp;", "&"));
 							}
@@ -1466,19 +1476,105 @@ public class ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * The function getAllOpacCatalogues() returns a list of the names of all catalogues
+	 * supported in all plugins by compiling the results of the getSupportedCatalogues()
+	 * methods in all configured plugins.
+	 *
+	 * @return list of names of all supported catalogues of all configured plugins
+	 */
 	public List<String> getAllOpacCatalogues() {
 		try {
-			return ConfigOpac.getAllCatalogueTitles();
+			LinkedList<String> allCatalogueTitles = new LinkedList<String>();
+
+			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+				for (String catalogue : plugin.getSupportedCatalogues()) {
+					if (!allCatalogueTitles.contains(catalogue)) {
+						allCatalogueTitles.add(catalogue);
+					}
+				}
+			}
+			return allCatalogueTitles;
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
-			return new ArrayList<String>();
+			return new LinkedList<String>();
 		}
 	}
 
+	/**
+	 * The function getSearchFields() returns a HashMap of all search fields for the
+	 * currently selected OPAC catalogue. The map contains search fields keys as
+	 * labels and corresponding URL parameters as values.
+	 *
+	 * @return A map containing the search fields for the currently selected OPAC
+	 */
+	public HashMap<String, String> getSearchFields() {
+		HashMap<String, String> searchFields = new HashMap<String, String>();
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+			if (plugin.supportsCatalogue(opacKatalog)) {
+				searchFields = plugin.getSearchFields(opacKatalog);
+				break;
+			}
+		}
+		return searchFields;
+	}
+
+	/**
+	 * The function getInstitutions() returns a HashMap of all institutions usable
+	 * to filter search results in the currently selected OPAC. The map contains
+	 * institution names as labels and corresponding ISIL identifier as values.
+	 *
+	 * @return A map containing the filter institutions for the currently selected OPAC
+	 */
+	public HashMap<String, String> getInstitutions() {
+		HashMap<String, String> institutions = new HashMap<String, String>();
+		for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+			if (plugin.supportsCatalogue(opacKatalog)) {
+				institutions = plugin.getInstitutions(opacKatalog);
+				break;
+			}
+		}
+		if(institutions.size() > 0) {
+			institutions.put("Alle", "-");
+		}
+		return institutions;
+	}
+
+	/**
+	 * The function getInstitutionCount() returns the number of institutions usable
+	 * to filter search results in the currently selected OPAC.
+	 *
+	 * @return The number of filter institutions configured in the currently selected OPAC
+	 */
+	public long getInstitutionCount() {
+		HashMap<String, String> institutions = getInstitutions();
+		return institutions.size();
+	}
+
+	/**
+	 * The function getAllConfigDocTypes() returns a list of all docTypes configured
+	 * in all plugins by compiling the results of the getAllConfigDocTypes() method in
+	 * all configured plugins.
+	 *
+	 * @return list of all docTypes of all configured plugins
+	 */
 	public List<ConfigOpacDoctype> getAllDoctypes() {
 		try {
-			return ConfigOpac.getAllDoctypes();
+			XMLConfiguration originalConfiguration = ConfigOpac.getConfiguration();
+			ArrayList<ConfigOpacDoctype> allDocTypes = new ArrayList<ConfigOpacDoctype>();
+			for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
+				// set XMLConfiguration of current plugin as configuration of global ConfigOpac
+				ConfigOpac.setConfiguration(plugin.getXMLConfiguration());
+				for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
+					if (!allDocTypes.contains(cod)) {
+						allDocTypes.add(cod);
+					}
+				}
+			}
+			// reset XMLConfiguration of global ConfigOpac to 'original' configuration
+			ConfigOpac.setConfiguration(originalConfiguration);
+			return allDocTypes;
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -1555,6 +1651,26 @@ public class ProzesskopieForm {
 
 	public void setOpacSuchbegriff(String opacSuchbegriff) {
 		this.opacSuchbegriff = opacSuchbegriff;
+	}
+
+    /**
+     * Return the name of the institution that is used for filtering search results.
+     *
+     * @return String
+     *         The name of the institution that is used for filtering search results.
+     */
+	public String getInstitution() {
+		return institution;
+	}
+
+    /**
+     * Set the name of the institution that is used for filtering search results.
+     *
+     * @param institution
+     *         The name of the institution that is used for filtering search results.
+     */
+	public void setInstitution(String institution) {
+		this.institution = institution;
 	}
 
 	/*

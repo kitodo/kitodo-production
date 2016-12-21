@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -24,7 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 class ConfigOpac {
 	private static XMLConfiguration config;
 
-	private static XMLConfiguration getConfig() {
+	protected static XMLConfiguration getConfig() {
 		if (config != null) {
 			return config;
 		}
@@ -43,6 +44,16 @@ class ConfigOpac {
 		config.setReloadingStrategy(new FileChangedReloadingStrategy());
 		return config;
 	}
+
+	static List<String> getAllCatalogues(){
+		List<String> catalogueTitles = new ArrayList<String>();
+		XMLConfiguration conf = getConfig();
+		for(int i = 0; i <= conf.getMaxIndex("catalogue"); i++){
+			catalogueTitles.add(conf.getString("catalogue(" + i + ")[@title]"));
+		}
+		return catalogueTitles;
+	}
+
 
 	/**
 	 * find Catalogue in Opac-Configurationlist
@@ -138,7 +149,7 @@ class ConfigOpac {
 			String title = getConfig().getString("catalogue(" + i + ")[@title]");
 			if (title.equals(inCatalogue)) {
 
-				// alle speziell gemappten DocTypes eines Kataloges einlesen 
+				// alle speziell gemappten DocTypes eines Kataloges einlesen
 
 				HashMap<String, String> labels = new HashMap<String, String>();
 				int countLabels = getConfig().getMaxIndex("catalogue(" + i + ").specialmapping");

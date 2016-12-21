@@ -719,6 +719,63 @@
 				topmost: (not working in GOOBI yet)
 	-->
 
+	<!-- Kalliope Doc Structs -->
+	<DocStrctType>
+		<Name>Inventory</Name>
+		<language name="de">Bestand</language>
+		<language name="en">Inventory</language>
+		<allowedchildtype>Subinventory</allowedchildtype>
+		<allowedchildtype>Manuscript</allowedchildtype>
+		<metadata num="1o">ProcessID</metadata>
+		<metadata DefaultDisplay="true" num="1m">TitleDocMain</metadata>
+		<metadata num="1o">TitleDocMainShort</metadata>
+		<metadata DefaultDisplay="true" num="1m">CatalogIDDigital</metadata>
+		<metadata DefaultDisplay="true" num="1o">shelfmarksource</metadata>
+		<metadata DefaultDisplay="true" num="1o">PublicationDate</metadata>
+		<metadata num="1o">PublicationYear</metadata>
+		<metadata DefaultDisplay="true" num="*">PlaceOfPublication</metadata>
+		<metadata num="*">Author</metadata>
+		<metadata num="1o">slub_ownerOrig</metadata>
+		<metadata num="1o">slub_ownerDigi</metadata>
+		<metadata num="1o">slub_licensor</metadata>
+		<metadata num="1o">slub_link</metadata>
+		<metadata num="1o">slub_linktext</metadata>
+		<metadata num="*">singleDigCollection</metadata>
+		<metadata num="*">FormatSourcePrint</metadata>
+		<metadata DefaultDisplay="true" num="1o">SizeSourcePrint</metadata>
+		<metadata DefaultDisplay="true" num="1o">TSL_ATS</metadata>
+		<metadata num="*">slub_project</metadata>
+	</DocStrctType>
+	<DocStrctType>
+		<Name>Subinventory</Name>
+		<language name="de">Unterbestand</language>
+		<language name="en">Subinventory</language>
+		<allowedchildtype>Subinventory</allowedchildtype>
+		<allowedchildtype>Manuscript</allowedchildtype>
+		<metadata num="1o">ProcessID</metadata>
+		<metadata DefaultDisplay="true" num="1o">CurrentNo</metadata>
+		<metadata DefaultDisplay="true" num="1o">CurrentNoSorting</metadata>
+		<metadata DefaultDisplay="true" num="1m">TitleDocMain</metadata>
+		<metadata DefaultDisplay="true" num="1o">PublicationDate</metadata>
+		<metadata num="1o">PublicationYear</metadata>
+		<metadata DefaultDisplay="true" num="*">PlaceOfPublication</metadata>
+		<metadata num="1o">TitleDocMainShort</metadata>
+		<metadata num="*">Author</metadata>
+		<metadata DefaultDisplay="true" num="1m">CatalogIDDigital</metadata>
+		<metadata num="1o">slub_ownerOrig</metadata>
+		<metadata num="1o">slub_ownerDigi</metadata>
+		<metadata num="1o">slub_licensor</metadata>
+		<metadata num="1o">slub_link</metadata>
+		<metadata num="1o">slub_linktext</metadata>
+		<metadata num="*">singleDigCollection</metadata>
+		<metadata num="*">FormatSourcePrint</metadata>
+		<metadata DefaultDisplay="true" num="1o">SizeSourcePrint</metadata>
+		<metadata DefaultDisplay="true" num="1o">shelfmarksource</metadata>
+		<metadata DefaultDisplay="true" num="1o">slub_footer</metadata>
+		<metadata DefaultDisplay="true" num="*">slub_Finance</metadata>
+		<metadata num="1o">slub_script</metadata>
+		<metadata num="*">slub_project</metadata>
+	</DocStrctType>
 	<DocStrctType>
 		<Name>Acknowledgment</Name>
 		<language name="de">Danksagung</language>
@@ -1626,6 +1683,7 @@
 		<allowedchildtype>ListOfMaps</allowedchildtype>
 		<allowedchildtype>ListOfTables</allowedchildtype>
 		<allowedchildtype>Map</allowedchildtype>
+		<allowedchildtype>Manuscript</allowedchildtype>
 		<allowedchildtype>Obituary</allowedchildtype>
 		<allowedchildtype>OtherDocStrct</allowedchildtype>
 		<allowedchildtype>PartOfWork</allowedchildtype>
@@ -1666,6 +1724,7 @@
 		<metadata num="*">FormatSourcePrint</metadata>
 		<metadata num="*">IllustratorArtist</metadata>
 		<metadata num="*">Photographer</metadata>
+		<metadata DefaultDisplay="true" num="1o">PublicationDate</metadata>
 		<metadata DefaultDisplay="true" num="*">PlaceOfPublication</metadata>
 		<metadata DefaultDisplay="true" num="1o">PublicationYear</metadata>
 		<metadata num="1o">PublicationYearSorting</metadata>
@@ -1709,6 +1768,7 @@
 		<metadata num="*">slub_project</metadata>
 		<metadata num="1o">slub_rightsinfo</metadata>
 		<metadata num="1o">slub_rightsstatus</metadata>
+		<metadata num="*">slub_Recipient</metadata>
 	</DocStrctType>
 	<DocStrctType>
 		<Name>ContainedWork</Name>
