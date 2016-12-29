@@ -33,6 +33,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <parent.basedir>${basedir}/../</parent.basedir>
+        <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
     </properties>
 
     <dependencies>
@@ -675,7 +676,6 @@
                                 <id>checkstyle-check</id>
                                 <phase>compile</phase>
                                 <configuration>
-                                    <configLocation>${basedir}/src/main/resources/checkstyle.xml</configLocation>
                                     <encoding>UTF-8</encoding>
                                     <consoleOutput>true</consoleOutput>
                                     <failOnViolation>false</failOnViolation>
