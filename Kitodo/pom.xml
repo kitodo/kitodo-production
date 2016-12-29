@@ -663,7 +663,6 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>formatter</id>
             <build>
