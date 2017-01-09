@@ -599,26 +599,10 @@ public class Metadaten {
 		this.tree3 = null;
 		try {
 			XMLlesenStart();
-		} catch (SwapException e) {
-			Helper.setFehlerMeldung(e);
-			return Helper.getRequestParameter("zurueck");
-		} catch (ReadException e) {
-			Helper.setFehlerMeldung(e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (PreferencesException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (WriteException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (InterruptedException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-			return Helper.getRequestParameter("zurueck");
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
+		} catch (DAOException | IOException | InterruptedException | PreferencesException | ReadException |
+				 SwapException | WriteException e) {
+			myLogger.error(e);
+			Helper.setFehlerMeldung("metadataCorrupt", e);
 			return Helper.getRequestParameter("zurueck");
 		}
 
