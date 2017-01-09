@@ -700,7 +700,7 @@
                         <artifactId>formatter-maven-plugin</artifactId>
                         <version>0.5.2</version>
                         <configuration>
-                            <configFile>${basedir}/src/main/resources/code-formatter.xml</configFile>
+                            <configFile>${parent.basedir}/config/code-formatter.xml</configFile>
                             <directories>
                                 <directory>${project.build.sourceDirectory}/</directory>
                                 <!--<directory>${project.build.testSourceDirectory}/</directory>-->
