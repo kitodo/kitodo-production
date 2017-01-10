@@ -44,9 +44,9 @@ import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 /**
- * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
- * implementation. It provides the public methods
- * 
+ * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin implementation.
+ * It provides the public methods
+ *
  *    void    configure(Map) [*]
  *    Object  find(String, long)
  *    String  getDescription() [*]
@@ -56,47 +56,41 @@ import ugh.fileformats.opac.PicaPlus;
  *    void    setPreferences(Prefs)
  *    boolean supportsCatalogue(String)
  *    void    useCatalogue(String)
- * 
+ *
  * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
  * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
- * 
- * Parts of the code of this class have been ported from ancient class
- * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.
- * 
- * @author Partly based on previous works of other authors who didn’t leave
- *         their names
+ *
+ * <p>Parts of the code of this class have been ported from ancient class
+ * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.</p>
+ *
+ * @author Partly based on previous works of other authors who didn’t leave their names
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @PluginImplementation
 public class PicaPlugin implements Plugin {
 	/**
-	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
-	 * languages mapping file. This is a text file with lines in form
-	 * replacement—space—stringToReplace used to replace the value from PICA+
-	 * field “010@” subfield “a” (the replacement will be saved in DocStruct
-	 * “DocLanguage”) The file is optional. To use this functionality, the file
-	 * must be located in {@link #configDir}.
+	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in languages mapping file. This is a text
+	 * file with lines in form replacement—space—stringToReplace used to replace the value from PICA+
+	 * field “010@” subfield “a” (the replacement will be saved in DocStruct “DocLanguage”) The file is optional.
+	 * To use this functionality, the file must be located in {@link #configDir}.
 	 */
 	static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
 
 	/**
-	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
-	 * main configuration file. Required. The file must be located in
-	 * {@link #configDir}.
+	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in main configuration file. Required.
+	 * The file must be located in {@link #configDir}.
 	 */
 	static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
 
 	/**
-	 * The field configDir holds a reference to the file system directory where
-	 * configuration files are read from. The field is initialised by Production
-	 * that calls {@link #configure(Map)}.
+	 * The field configDir holds a reference to the file system directory where configuration files are read from.
+	 * The field is initialised by Production that calls {@link #configure(Map)}.
 	 */
 	private static String configDir;
 
 	/**
-	 * The field tempDir holds a reference to the file system directory where
-	 * temporary files are written in. Thus, servlet container needs write
-	 * access to that directory. The field is initialised by Production that
+	 * The field tempDir holds a reference to the file system directory where temporary files are written in.
+	 * Thus, servlet container needs write access to that directory. The field is initialised by Production that
 	 * calls {@link #configure(Map)}.
 	 */
 	private static String tempDir;
@@ -122,15 +116,13 @@ public class PicaPlugin implements Plugin {
 	private GetOpac client;
 
 	/**
-	 * The method configure() accepts a Map with configuration parameters. Two
-	 * entries, "configDir" and "tempDir", are expected.
+	 * The method configure() accepts a Map with configuration parameters. Two entries, "configDir" and "tempDir",
+	 * are expected.
+	 *
+	 * <p>configDir must point to a directory on the local file system where the plug-in can read individual
+	 * configuration files from. The configuration file, "goobi_opac.xml" is expected in that directory.</p>
 	 * 
-	 * configDir must point to a directory on the local file system where the
-	 * plug-in can read individual configuration files from. The configuration
-	 * file, "goobi_opac.xml" is expected in that directory.
-	 * 
-	 * @param configuration
-	 *            a Map with configuration parameters
+	 * @param configuration a Map with configuration parameters
 	 * @see org.goobi.production.plugin.UnspecificPlugin#configure(Map)
 	 */
 	public void configure(Map<String, String> configuration) {
@@ -139,19 +131,14 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function find() initially queries the library catalogue with the
-	 * given query. If successful, it returns a FindResult with the number of
-	 * hits.
+	 * The function find() initially queries the library catalogue with the given query. If successful, it returns
+	 * a FindResult with the number of hits.
 	 * 
-	 * @param query
-	 *            a query String. See
-	 *            {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}
+	 * @param query a query String. See {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}
 	 *            for the semantics of the query.
-	 * @param timeout
-	 *            timeout in milliseconds after which the operation shall return
+	 * @param timeout timeout in milliseconds after which the operation shall return
 	 * @return a FindResult that may be used for future operations on the query
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#find(String,
-	 *      long)
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#find(String, long)
 	 */
 	public Object find(String query, long timeout) {
 		try {
@@ -170,9 +157,9 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getConfigDir() provides a reference to the file system
-	 * directory where configuration files are read from.
-	 * 
+	 * The function getConfigDir() provides a reference to the file system directory where configuration files
+	 * are read from.
+	 *
 	 * @return the file system directory with the configuration files
 	 */
 	static String getConfigDir() {
@@ -180,12 +167,10 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getDescription() returns a human-readable description of the
-	 * plug-in’s functionality in English. The parameter language is ignored.
-	 * 
-	 * @param language
-	 *            desired language of the human-readable description (support is
-	 *            optional)
+	 * The function getDescription() returns a human-readable description of the plug-in’s functionality in English.
+	 * The parameter language is ignored.
+	 *
+	 * @param language desired language of the human-readable description (support is optional)
 	 * @return a human-readable description of the plug-in’s functionality
 	 * @see org.goobi.production.plugin.UnspecificPlugin#getDescription(Locale)
 	 */
@@ -194,22 +179,16 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getHit() returns the hit with the given index from the given
-	 * search result as a Map&lt;String, Object&gt;. The map contains the full
-	 * hit as "fileformat", the docType as "type" and some bibliographic
-	 * metadata for Production to be able to show a short hit display as
-	 * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
-	 * 
-	 * @param searchResult
-	 *            a FindResult created by {@link #find(String, long)}
-	 * @param index
-	 *            the zero-based index of the hit
-	 * @param timeout
-	 *            a timeout in milliseconds after which the operation shall
-	 *            return
+	 * The function getHit() returns the hit with the given index from the given search result as a Map&lt;String,
+	 * Object&gt;. The map contains the full hit as "fileformat", the docType as "type" and some bibliographic
+	 * metadata for Production to be able to show a short hit display as supposed in
+	 * {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
+	 *
+	 * @param searchResult a FindResult created by {@link #find(String, long)}
+	 * @param index the zero-based index of the hit
+	 * @param timeout a timeout in milliseconds after which the operation shall return
 	 * @return a Map with the hit
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getHit(Object,
-	 *      long, long)
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getHit(Object, long, long)
 	 */
 	public Map<String, Object> getHit(Object searchResult, long index, long timeout) {
 		if (!(searchResult instanceof FindResult)) {
@@ -223,9 +202,7 @@ public class PicaPlugin implements Plugin {
 		Fileformat ff;
 		try {
 			/*
-			 * -------------------------------- Opac abfragen und erhaltenes
-			 * Dom-Dokument in JDom-Dokument umwandeln
-			 * --------------------------------
+			 * Opac abfragen und erhaltenes Dom-Dokument in JDom-Dokument umwandeln
 			 */
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
 			/* Opac-Beautifier aufrufen */
@@ -243,9 +220,7 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
-			 * -------------------------------- wenn der Treffer ein Volume
-			 * eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
-			 * --------------------------------
+			 * wenn der Treffer ein Volume eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
 			 */
 			// if (isMultivolume()) {
 			if (cod.isMultiVolume()) {
@@ -283,9 +258,7 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
-			 * -------------------------------- wenn der Treffer ein Volume
-			 * eines Periodical-Bandes ist, dann die Serie überordnen
-			 * --------------------------------
+			 * wenn der Treffer ein Volume eines Periodical-Bandes ist, dann die Serie überordnen
 			 */
 			if (cod.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
@@ -313,8 +286,7 @@ public class PicaPlugin implements Plugin {
 						DOMOutputter doutputter = new DOMOutputter();
 						myHitlist = doutputter.output(myJdomDocMultivolumeband);
 						/*
-						 * dabei aber nicht das Document, sondern das erste Kind
-						 * nehmen
+						 * dabei aber nicht das Document, sondern das erste Kind nehmen
 						 */
 						myHitlist = myHitlist.getFirstChild();
 					}
@@ -322,9 +294,7 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
-			 * -------------------------------- wenn der Treffer ein Contained
-			 * Work ist, dann übergeordnetes Werk
-			 * --------------------------------
+			 * wenn der Treffer ein Contained Work ist, dann übergeordnetes Werk
 			 */
 			// if (isContainedWork()) {
 			if (cod.isContainedWork()) {
@@ -342,8 +312,7 @@ public class PicaPlugin implements Plugin {
 						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
 						/*
-						 * alle Elemente des Parents übernehmen, die noch nicht
-						 * selbst vorhanden sind
+						 * alle Elemente des Parents übernehmen, die noch nicht selbst vorhanden sind
 						 */
 						if (myFirstHitParent.getChildren() != null) {
 							for (@SuppressWarnings("unchecked")
@@ -361,8 +330,7 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
-			 * -------------------------------- aus Opac-Ergebnis RDF-Datei
-			 * erzeugen --------------------------------
+			 * aus Opac-Ergebnis RDF-Datei erzeugen
 			 */
 
 			/* zugriff auf ugh-Klassen */
@@ -387,9 +355,9 @@ public class PicaPlugin implements Plugin {
 
 	/**
 	 * DocType (Gattung) ermitteln
-	 * 
-	 * @param inHit
-	 * @return
+	 *
+	 * @param inHit add description
+	 * @return add description
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getGattung(Element inHit) {
@@ -421,11 +389,12 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork:
-	 * 021A-9) ermitteln
-	 * 
-	 * @param inElement
-	 * @return
+	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork: 021A-9) ermitteln
+	 *
+	 * @param inHit add description
+	 * @param inFeldName add description
+	 * @param inSubElement add description
+	 * @return add description
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
@@ -447,8 +416,7 @@ public class PicaPlugin implements Plugin {
 			String feldname = myElement.getAttributeValue("tag");
 			// System.out.println(feldname);
 			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
+			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
 			 */
 			if (feldname.equals(inTagName)) {
 				return myElement;
@@ -458,10 +426,8 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * rekursives Kopieren von Elementen, weil das Einfügen eines Elements an
-	 * einen anderen Knoten mit dem Fehler abbricht, dass das einzufügende
-	 * Element bereits einen Parent hat
-	 * ================================================================
+	 * rekursives Kopieren von Elementen, weil das Einfügen eines Elements an einen anderen Knoten mit dem Fehler
+	 * abbricht, dass das einzufügende Element bereits einen Parent hat
 	 */
 	@SuppressWarnings("unchecked")
 	private static Element getCopyFromJdomElement(Element inHit) {
@@ -486,11 +452,7 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Ergänze das
-	 * Docstruct um zusätzliche Opac-Details ##
-	 * #####################################################
-	 * ####################################################
+	 * Ergänze das Docstruct um zusätzliche Opac-Details
 	 */
 
 	private static void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit,
@@ -501,8 +463,7 @@ public class PicaPlugin implements Plugin {
 		Element mySecondHit = null;
 
 		/*
-		 * -------------------------------- bei Multivolumes noch das Child in
-		 * xml und docstruct ermitteln --------------------------------
+		 * bei Multivolumes noch das Child in xml und docstruct ermitteln
 		 */
 		// if (isMultivolume()) {
 		if (cod.isMultiVolume()) {
@@ -514,8 +475,7 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- vorhandene PPN als digitale oder
-		 * analoge einsetzen --------------------------------
+		 * vorhandene PPN als digitale oder analoge einsetzen
 		 */
 		String ppn = getElementFieldValue(myFirstHit, "003@", "0");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
@@ -526,8 +486,7 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- wenn es ein multivolume ist, dann
-		 * auch die PPN prüfen --------------------------------
+		 * wenn es ein multivolume ist, dann auch die PPN prüfen
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
@@ -540,13 +499,12 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- den Main-Title bereinigen
-		 * --------------------------------
+		 * den Main-Title bereinigen
 		 */
 		String myTitle = getElementFieldValue(myFirstHit, "021A", "a");
 		/*
-		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer
-		 * Stelle nachsehen (vor allem bei Contained-Work)
+		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer Stelle nachsehen
+		 * (vor allem bei Contained-Work)
 		 */
 		if (myTitle == null || myTitle.length() == 0) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
@@ -554,8 +512,7 @@ public class PicaPlugin implements Plugin {
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
 		/*
-		 * -------------------------------- Sorting-Titel mit
-		 * Umlaut-Konvertierung --------------------------------
+		 * Sorting-Titel mit Umlaut-Konvertierung
 		 */
 		if (myTitle.indexOf("@") != -1) {
 			myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
@@ -563,8 +520,7 @@ public class PicaPlugin implements Plugin {
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
 		/*
-		 * -------------------------------- bei multivolumes den Main-Title
-		 * bereinigen --------------------------------
+		 * bei multivolumes den Main-Title bereinigen
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
@@ -572,8 +528,7 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- bei multivolumes den Sorting-Titel
-		 * mit Umlaut-Konvertierung --------------------------------
+		 * bei multivolumes den Sorting-Titel mit Umlaut-Konvertierung
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
@@ -585,16 +540,14 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- Sprachen - Konvertierung auf zwei
-		 * Stellen --------------------------------
+		 * Sprachen - Konvertierung auf zwei Stellen
 		 */
 		Iterable<String> sprachen = getElementFieldValues(myFirstHit, "010@", "a");
 		sprachen = UGHUtils.convertLanguages(sprachen);
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprachen);
 
 		/*
-		 * -------------------------------- bei multivolumes die Sprachen -
-		 * Konvertierung auf zwei Stellen --------------------------------
+		 * bei multivolumes die Sprachen - Konvertierung auf zwei Stellen
 		 */
 		if (topstructChild != null && mySecondHit != null) {
 			Iterable<String> sprachenMulti = getElementFieldValues(mySecondHit, "010@", "a");
@@ -603,36 +556,31 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- ISSN
-		 * --------------------------------
+		 * ISSN
 		 */
 		String issn = getElementFieldValue(myFirstHit, "005A", "0");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
 
 		/*
-		 * -------------------------------- Copyright
-		 * --------------------------------
+		 * Copyright
 		 */
 		String copyright = getElementFieldValue(myFirstHit, "037I", "a");
 		UGHUtils.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
 
 		/*
-		 * -------------------------------- Format
-		 * --------------------------------
+		 * Format
 		 */
 		String format = getElementFieldValue(myFirstHit, "034I", "a");
 		UGHUtils.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
 
 		/*
-		 * -------------------------------- Umfang
-		 * --------------------------------
+		 * Umfang
 		 */
 		String umfang = getElementFieldValue(myFirstHit, "034D", "a");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
 
 		/*
-		 * -------------------------------- Signatur
-		 * --------------------------------
+		 * Signatur
 		 */
 		String sig = getElementFieldValue(myFirstHit, "209A", "c");
 		if (sig.length() > 0) {
@@ -656,8 +604,7 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- bei Zeitschriften noch ein
-		 * PeriodicalVolume als Child einfügen --------------------------------
+		 * bei Zeitschriften noch ein PeriodicalVolume als Child einfügen
 		 */
 		// if (isPeriodical()) {
 		if (cod.isPeriodical() && topstruct.getAllChildren() == null) {
@@ -675,20 +622,15 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getElementFieldValue() returns the values of the last
-	 * grandchild element of the first child element from a given JDOM Element
-	 * whose “code” attribute equals the given attribute name and whose parents’
-	 * “tag” attribute equals the given field name—or an empty String if there
-	 * is no such grandchild element.
-	 * 
-	 * @param myFirstHit
-	 *            JDOM Element whose descendant elements are to be examined
-	 * @param inFieldName
-	 *            tag attribute value to compare to
-	 * @param inAttributeName
-	 *            code attribute value to compare to
-	 * @return values of the last grandchild of the first child whose code
-	 *         attribute equals and whose parents’ tag attribute equals, too
+	 * The function getElementFieldValue() returns the values of the last grandchild element of the first child
+	 * element from a given JDOM Element whose “code” attribute equals the given attribute name and whose parents’
+	 * “tag” attribute equals the given field name—or an empty String if there is no such grandchild element.
+	 *
+	 * @param myFirstHit JDOM Element whose descendant elements are to be examined
+	 * @param inFieldName tag attribute value to compare to
+	 * @param inAttributeName code attribute value to compare to
+	 * @return values of the last grandchild of the first child whose code attribute equals and whose parents’
+	 * 				tag attribute equals, too
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getElementFieldValue(Element myFirstHit, String inFieldName, String inAttributeName) {
@@ -697,8 +639,7 @@ public class PicaPlugin implements Plugin {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
+			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
 			 */
 			if (feldname.equals(inFieldName)) {
 				return getFieldValue(myElement, inAttributeName);
@@ -708,19 +649,15 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getElementFieldValues() returns the values of all grandchild
-	 * elements from a given JDOM Element whose “code” attribute equals the
-	 * given attribute name and whose parents’ “tag” attribute equals the given
+	 * The function getElementFieldValues() returns the values of all grandchild elements from a given JDOM Element
+	 * whose “code” attribute equals the given attribute name and whose parents’ “tag” attribute equals the given
 	 * field name—or an empty Collection if there is no such grandchild element.
-	 * 
-	 * @param myFirstHit
-	 *            JDOM Element whose descendant elements are to be examined
-	 * @param inFieldName
-	 *            tag attribute value to compare to
-	 * @param inAttributeName
-	 *            code attribute value to compare to
-	 * @return values of all grandchild elements whose code attribute equals and
-	 *         whose parents’ tag attribute equals, too
+	 *
+	 * @param myFirstHit JDOM Element whose descendant elements are to be examined
+	 * @param inFieldName tag attribute value to compare to
+	 * @param inAttributeName code attribute value to compare to
+	 * @return values of all grandchild elements whose code attribute equals and whose parents’ tag attribute equals,
+	 * 				too
 	 */
 	@SuppressWarnings("unchecked")
 	private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName, String inAttributeName) {
@@ -729,8 +666,7 @@ public class PicaPlugin implements Plugin {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
+			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
 			 */
 			if (feldname.equals(inFieldName)) {
 				result.addAll(getFieldValues(myElement, inAttributeName));
@@ -740,16 +676,12 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getFieldValue() returns the value of the last elements from
-	 * a given JDOM Element whose “code” attribute equals the given attribute
-	 * value or the empty String if there is no such child element.
-	 * 
-	 * @param inElement
-	 *            JDOM Element whose child elements are to be examined
-	 * @param attributeValue
-	 *            code attribute value to compare to
-	 * @return values of all child elements whose code attribute equals the
-	 *         attribute value
+	 * The function getFieldValue() returns the value of the last elements from a given JDOM Element whose “code”
+	 * attribute equals the given attribute value or the empty String if there is no such child element.
+	 *
+	 * @param inElement JDOM Element whose child elements are to be examined
+	 * @param attributeValue code attribute value to compare to
+	 * @return values of all child elements whose code attribute equals the attribute value
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getFieldValue(Element inElement, String attributeValue) {
@@ -765,16 +697,12 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getFieldValues() returns the values of all child elements
-	 * from a given JDOM Element whose “code” attribute equals the given
-	 * attribute value or an empty Collection if there is no such child element.
-	 * 
-	 * @param inElement
-	 *            JDOM Element whose child elements are to be examined
-	 * @param attributeValue
-	 *            code attribute value to compare to
-	 * @return values of all child elements whose code attribute equals the
-	 *         attribute value
+	 * The function getFieldValues() returns the values of all child elements from a given JDOM Element whose “code”
+	 * attribute equals the given attribute value or an empty Collection if there is no such child element.
+	 *
+	 * @param inElement JDOM Element whose child elements are to be examined
+	 * @param attributeValue code attribute value to compare to
+	 * @return values of all child elements whose code attribute equals the attribute value
 	 */
 	@SuppressWarnings("unchecked")
 	private static Collection<String> getFieldValues(Element inElement, String attributeValue) {
@@ -790,18 +718,13 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function createResult() creates a Map&lt;String, Object&gt; as result
-	 * of getHit(). The map contains the full hit as "fileformat", the docType
-	 * as "type" and some bibliographic metadata for Production to be able to
-	 * show a short hit display as supposed in
-	 * {@link org.goobi.production.plugin.CataloguePlugin.Hit}
-	 * 
-	 * @param docType
-	 *            the DocType of the hit
-	 * @param hit
-	 *            the hit data as JDom Element
-	 * @param fileformat
-	 *            the hit data as Fileformat
+	 * The function createResult() creates a Map&lt;String, Object&gt; as result of getHit(). The map contains
+	 * the full hit as "fileformat", the docType as "type" and some bibliographic metadata for Production to be able to
+	 * show a short hit display as supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}
+	 *
+	 * @param docType the DocType of the hit
+	 * @param hit the hit data as JDom Element
+	 * @param fileformat  the hit data as Fileformat
 	 * @return a Map with the hit
 	 */
 	private static Map<String, Object> createResult(String docType, Element hit, Fileformat fileformat) {
@@ -892,13 +815,11 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function toRecentLocalDate() interprets a String of scheme "dd-mm-yy"
-	 * as a LocalDate within the last 100 years up to a given reference date.
-	 * 
-	 * @param dd_mm_yy
-	 *            a date String to interpret
-	 * @param upTo
-	 *            a reference date
+	 * The function toRecentLocalDate() interprets a String of scheme "dd-mm-yy" as a LocalDate within
+	 * the last 100 years up to a given reference date.
+	 *
+	 * @param dd_mm_yy a date String to interpret
+	 * @param upTo a reference date
 	 * @return the date value as LocalDate
 	 */
 	private static LocalDate toRecentLocalDate(String dd_mm_yy, LocalDate upTo) {
@@ -912,17 +833,12 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getNumberOfHits() returns the number of hits from a given
-	 * search result.
-	 * 
-	 * @param searchResult
-	 *            the reference to the search whose number of hits shall be
-	 *            looked up
-	 * @param timeout
-	 *            ignored because there is no network acceess in this step
+	 * The function getNumberOfHits() returns the number of hits from a given search result.
+	 *
+	 * @param searchResult the reference to the search whose number of hits shall be looked up
+	 * @param timeout ignored because there is no network access in this step
 	 * @return the number of hits
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getNumberOfHits(Object,
-	 *      long)
+	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getNumberOfHits(Object, long)
 	 */
 	public static long getNumberOfHits(Object searchResult, long timeout) {
 		if (searchResult instanceof FindResult) {
@@ -933,9 +849,8 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getTempDir() provides a reference to the file system
-	 * directory where temporary files are written in.
-	 * 
+	 * The function getTempDir() provides a reference to the file system directory where temporary files are written in.
+	 *
 	 * @return the file system directory where to write temporary files
 	 */
 	static String getTempDir() {
@@ -943,12 +858,10 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getDescription() returns a human-readable name for the
-	 * plug-in in English. The parameter language is ignored.
-	 * 
-	 * @param language
-	 *            desired language of the human-readable name (support is
-	 *            optional)
+	 * The function getDescription() returns a human-readable name for the plug-in in English.
+	 * The parameter language is ignored.
+	 *
+	 * @param language desired language of the human-readable name (support is optional)
 	 * @return a human-readable name for the plug-in
 	 * @see org.goobi.production.plugin.UnspecificPlugin#getTitle(Locale)
 	 */
@@ -957,11 +870,9 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function setPreferences is called by Production to set the UGH
-	 * preferences to be used.
-	 * 
-	 * @param preferences
-	 *            the UGH preferences
+	 * The function setPreferences is called by Production to set the UGH preferences to be used.
+	 *
+	 * @param preferences the UGH preferences
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
 	 */
 	public void setPreferences(Prefs preferences) {
@@ -969,13 +880,11 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function supportsCatalogue() investigates whether the plug-in is able
-	 * to acceess a catalogue identified by the given String. (This depends on
-	 * the configuration.)
-	 * 
-	 * @param catalogue
-	 *            a String indentifying the catalogue
-	 * @return whether the plug-in is able to acceess that catalogue
+	 * The function supportsCatalogue() investigates whether the plug-in is able to access a catalogue identified by
+	 * the given String. (This depends on the configuration.)
+	 *
+	 * @param catalogue a String identifying the catalogue
+	 * @return whether the plug-in is able to access that catalogue
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
 	 */
 	public static boolean supportsCatalogue(String catalogue) {
@@ -984,12 +893,10 @@ public class PicaPlugin implements Plugin {
 
 	/**
 	 * The function useCatalogue() sets a catalogue to be used
-	 * 
-	 * @param catalogueID
-	 *            a String indentifying the catalogue
-	 * @throws ParserConfigurationException
-	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested
+	 *
+	 * @param catalogueID a String identifying the catalogue
+	 * @throws ParserConfigurationException if a DocumentBuilder cannot be created which satisfies
+	 * 					the configuration requested
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {

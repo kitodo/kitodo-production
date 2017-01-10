@@ -11,13 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import java.util.HashSet;
-
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.helper.Helper;
@@ -25,6 +18,13 @@ import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.SimpleDAO;
+
+import java.util.HashSet;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 
 public class BenutzergruppenForm extends BasisForm {
 	private static final long serialVersionUID = 8051160917458068675L;
@@ -36,6 +36,9 @@ public class BenutzergruppenForm extends BasisForm {
 		return "BenutzergruppenBearbeiten";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		try {
 			this.dao.save(this.myBenutzergruppe);
@@ -46,6 +49,9 @@ public class BenutzergruppenForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Loeschen() {
 		try {
 			new SimpleDAO().refreshObject(this.myBenutzergruppe);
@@ -68,6 +74,9 @@ public class BenutzergruppenForm extends BasisForm {
 		return "BenutzergruppenAlle";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterKein() {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -88,7 +97,7 @@ public class BenutzergruppenForm extends BasisForm {
 	}
 
 	/*
- 	 * Getter und Setter 
+	 * Getter und Setter
 	 */
 
 	public Benutzergruppe getMyBenutzergruppe() {

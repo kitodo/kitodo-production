@@ -18,6 +18,9 @@ public class FileListFilter implements FilenameFilter {
 
 	private String name;
 
+	/**
+	 * @param name add description
+	 */
 	public FileListFilter(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException("No filter name given.");

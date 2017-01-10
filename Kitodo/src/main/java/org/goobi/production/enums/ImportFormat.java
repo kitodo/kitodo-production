@@ -13,25 +13,20 @@ package org.goobi.production.enums;
 
 public enum ImportFormat {
 
-	
-	
-	PICA("1", "pica"), 
-	MARC21("2", "marc21"), 
-	MARCXML ("3", "marcxml"),
-	DC ("4","dc");
-	
-	
+	PICA("1", "pica"), MARC21("2", "marc21"), MARCXML("3", "marcxml"), DC("4", "dc");
+
 	private String value;
 	private String title;
-	
+
 	private ImportFormat(String inValue, String inTitle) {
 		setValue(inValue);
 		setTitle(inTitle);
 	}
-	
-	
-	
-	
+
+	/**
+	 * @param editType add description
+	 * @return add description
+	 */
 	public static ImportFormat getTypeFromValue(String editType) {
 		if (editType != null) {
 			for (ImportFormat ss : values()) {
@@ -43,7 +38,10 @@ public enum ImportFormat {
 		return PICA;
 	}
 
-
+	/**
+	 * @param editType add description
+	 * @return add description
+	 */
 	public static ImportFormat getTypeFromTitle(String editType) {
 		if (editType != null) {
 			for (ImportFormat ss : values()) {
@@ -54,8 +52,6 @@ public enum ImportFormat {
 		}
 		return PICA;
 	}
-	
-
 
 	/**
 	 * @param value the value to set
@@ -64,18 +60,12 @@ public enum ImportFormat {
 		this.value = value;
 	}
 
-
-
-
 	/**
 	 * @return the value
 	 */
 	public String getValue() {
 		return this.value;
 	}
-
-
-
 
 	/**
 	 * @param title the title to set
@@ -84,14 +74,11 @@ public enum ImportFormat {
 		this.title = title;
 	}
 
-
-
-
 	/**
 	 * @return the title
 	 */
 	public String getTitle() {
 		return this.title;
 	}
-	
+
 }

@@ -11,15 +11,15 @@
 
 package de.sub.goobi.persistence;
 
-import java.util.List;
-
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 public class RegelsatzDAO extends BaseDAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1913256950316879121L;
 
@@ -28,6 +28,11 @@ public class RegelsatzDAO extends BaseDAO {
 		return (Regelsatz) retrieveObj(Regelsatz.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Regelsatz get(Integer id) throws DAOException {
 		Regelsatz rueckgabe = (Regelsatz) retrieveObj(Regelsatz.class, id);
 		if (rueckgabe == null) {
@@ -36,6 +41,10 @@ public class RegelsatzDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Regelsatz t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);

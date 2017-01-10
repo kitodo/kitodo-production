@@ -11,13 +11,6 @@
 
 package de.sub.goobi.helper;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
@@ -28,8 +21,19 @@ import de.sub.goobi.beans.Vorlageeigenschaft;
 import de.sub.goobi.beans.Werkstueck;
 import de.sub.goobi.beans.Werkstueckeigenschaft;
 
-public class BeanHelper {
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
+public class BeanHelper {
+	/**
+	 * @param inProzess add description
+	 * @param inTitel add description
+	 * @param inWert add description
+	 */
 	public static void EigenschaftHinzufuegen(Prozess inProzess, String inTitel, String inWert) {
 		Prozesseigenschaft eig = new Prozesseigenschaft();
 		eig.setTitel(inTitel);
@@ -42,6 +46,11 @@ public class BeanHelper {
 		eigenschaften.add(eig);
 	}
 
+	/**
+	 * @param inVorlage add description
+	 * @param inTitel add description
+	 * @param inWert add description
+	 */
 	public static void EigenschaftHinzufuegen(Vorlage inVorlage, String inTitel, String inWert) {
 		Vorlageeigenschaft eig = new Vorlageeigenschaft();
 		eig.setTitel(inTitel);
@@ -54,6 +63,11 @@ public class BeanHelper {
 		eigenschaften.add(eig);
 	}
 
+	/**
+	 * @param inWerkstueck add description
+	 * @param inTitel add description
+	 * @param inWert add description
+	 */
 	public static void EigenschaftHinzufuegen(Werkstueck inWerkstueck, String inTitel, String inWert) {
 		Werkstueckeigenschaft eig = new Werkstueckeigenschaft();
 		eig.setTitel(inTitel);
@@ -66,13 +80,17 @@ public class BeanHelper {
 		eigenschaften.add(eig);
 	}
 
+	/**
+	 * @param prozessVorlage add description
+	 * @param prozessKopie add description
+	 */
 	public static void SchritteKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		HashSet<Schritt> mySchritte = new HashSet<Schritt>();
 		for (Schritt step : prozessVorlage.getSchritteList()) {
 
-			/* --------------------------------
+			/*
 			 * Details des Schritts
-			 * --------------------------------*/
+			 */
 			Schritt stepneu = new Schritt();
 			stepneu.setTypAutomatisch(step.isTypAutomatisch());
 			stepneu.setScriptname1(step.getScriptname1());
@@ -80,7 +98,7 @@ public class BeanHelper {
 			stepneu.setScriptname3(step.getScriptname3());
 			stepneu.setScriptname4(step.getScriptname4());
 			stepneu.setScriptname5(step.getScriptname5());
-			
+
 			stepneu.setTypAutomatischScriptpfad(step.getTypAutomatischScriptpfad());
 			stepneu.setTypAutomatischScriptpfad2(step.getTypAutomatischScriptpfad2());
 			stepneu.setTypAutomatischScriptpfad3(step.getTypAutomatischScriptpfad3());
@@ -104,25 +122,25 @@ public class BeanHelper {
 			stepneu.setTitel(step.getTitel());
 			stepneu.setHomeverzeichnisNutzen(step.getHomeverzeichnisNutzen());
 			stepneu.setProzess(prozessKopie);
-			
+
 			stepneu.setStepPlugin(step.getStepPlugin());
 			stepneu.setValidationPlugin(step.getValidationPlugin());
-			
-			//Fixing a bug found by Holger Busse (Berlin)
+
+			// Fixing a bug found by Holger Busse (Berlin)
 			stepneu.setTypBeimAbschliessenVerifizieren(step.isTypBeimAbschliessenVerifizieren());
-			
-			/* --------------------------------
+
+			/*
 			 * Benutzer übernehmen
-			 * --------------------------------*/
+			 */
 			HashSet<Benutzer> myBenutzer = new HashSet<Benutzer>();
 			for (Benutzer benneu : step.getBenutzer()) {
 				myBenutzer.add(benneu);
 			}
 			stepneu.setBenutzer(myBenutzer);
 
-			/* --------------------------------
+			/*
 			 * Benutzergruppen übernehmen
-			 * --------------------------------*/
+			 */
 			HashSet<Benutzergruppe> myBenutzergruppen = new HashSet<Benutzergruppe>();
 			for (Benutzergruppe grupneu : step.getBenutzergruppen()) {
 				myBenutzergruppen.add(grupneu);
@@ -135,18 +153,22 @@ public class BeanHelper {
 		prozessKopie.setSchritte(mySchritte);
 	}
 
+	/**
+	 * @param prozessVorlage add description
+	 * @param prozessKopie add description
+	 */
 	public static void WerkstueckeKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		HashSet<Werkstueck> myWerkstuecke = new HashSet<Werkstueck>();
 		for (Werkstueck werk : prozessVorlage.getWerkstuecke()) {
-			/* --------------------------------
+			/*
 			 * Details des Werkstücks
-			 * --------------------------------*/
+			 */
 			Werkstueck werkneu = new Werkstueck();
 			werkneu.setProzess(prozessKopie);
 
-			/* --------------------------------
+			/*
 			 * Eigenschaften des Schritts
-			 * --------------------------------*/
+			 */
 			HashSet<Werkstueckeigenschaft> myEigenschaften = new HashSet<Werkstueckeigenschaft>();
 			for (Iterator<Werkstueckeigenschaft> iterator = werk.getEigenschaften().iterator(); iterator.hasNext();) {
 				Werkstueckeigenschaft eig = iterator.next();
@@ -166,9 +188,14 @@ public class BeanHelper {
 		prozessKopie.setWerkstuecke(myWerkstuecke);
 	}
 
+	/**
+	 * @param prozessVorlage add description
+	 * @param prozessKopie add description
+	 */
 	public static void EigenschaftenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		TreeSet<Prozesseigenschaft> myEigenschaften = new TreeSet<Prozesseigenschaft>();
-		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaftenList().iterator(); iterator.hasNext();) {
+		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaftenList().iterator(); iterator
+				.hasNext();) {
 			Prozesseigenschaft eig = iterator.next();
 			Prozesseigenschaft eigneu = new Prozesseigenschaft();
 			eigneu.setIstObligatorisch(eig.isIstObligatorisch());
@@ -182,19 +209,23 @@ public class BeanHelper {
 		prozessKopie.setEigenschaften(myEigenschaften);
 	}
 
+	/**
+	 * @param prozessVorlage add description
+	 * @param prozessKopie add description
+	 */
 	public static void ScanvorlagenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
 		HashSet<Vorlage> myVorlagen = new HashSet<Vorlage>();
 		for (Vorlage vor : prozessVorlage.getVorlagen()) {
-			/* --------------------------------
+			/*
 			 * Details der Vorlage
-			 * --------------------------------*/
+			 */
 			Vorlage vorneu = new Vorlage();
 			vorneu.setHerkunft(vor.getHerkunft());
 			vorneu.setProzess(prozessKopie);
 
-			/* --------------------------------
+			/*
 			 * Eigenschaften des Schritts
-			 * --------------------------------*/
+			 */
 			HashSet<Vorlageeigenschaft> myEigenschaften = new HashSet<Vorlageeigenschaft>();
 			for (Iterator<Vorlageeigenschaft> iterator = vor.getEigenschaften().iterator(); iterator.hasNext();) {
 				Vorlageeigenschaft eig = iterator.next();
@@ -214,6 +245,11 @@ public class BeanHelper {
 		prozessKopie.setVorlagen(myVorlagen);
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inEigenschaft add description
+	 * @return add description
+	 */
 	public static String WerkstueckEigenschaftErmitteln(Prozess myProzess, String inEigenschaft) {
 		String Eigenschaft = "";
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
@@ -226,6 +262,11 @@ public class BeanHelper {
 		return Eigenschaft;
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inEigenschaft add description
+	 * @return add description
+	 */
 	public static String ScanvorlagenEigenschaftErmitteln(Prozess myProzess, String inEigenschaft) {
 		String Eigenschaft = "";
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
@@ -238,6 +279,11 @@ public class BeanHelper {
 		return Eigenschaft;
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inEigenschaft add description
+	 * @param inWert add description
+	 */
 	public static void WerkstueckEigenschaftAendern(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
 			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
@@ -248,6 +294,11 @@ public class BeanHelper {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inEigenschaft add description
+	 * @param inWert add description
+	 */
 	public static void ScanvorlagenEigenschaftAendern(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
 			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
@@ -258,6 +309,11 @@ public class BeanHelper {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inEigenschaft add description
+	 * @param inWert add description
+	 */
 	public static void WerkstueckEigenschaftLoeschen(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
 			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
@@ -268,6 +324,11 @@ public class BeanHelper {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inEigenschaft add description
+	 * @param inWert add description
+	 */
 	public static void ScanvorlagenEigenschaftLoeschen(Prozess myProzess, String inEigenschaft, String inWert) {
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
 			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
@@ -278,6 +339,9 @@ public class BeanHelper {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 */
 	public static void WerkstueckEigenschaftDoppelteLoeschen(Prozess myProzess) {
 		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
 			List<String> einzelstuecke = new ArrayList<String>();
@@ -292,6 +356,9 @@ public class BeanHelper {
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 */
 	public static void ScanvorlageEigenschaftDoppelteLoeschen(Prozess myProzess) {
 		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
 			List<String> einzelstuecke = new ArrayList<String>();

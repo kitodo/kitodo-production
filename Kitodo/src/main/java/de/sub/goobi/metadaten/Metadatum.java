@@ -21,45 +21,42 @@ import org.goobi.api.display.Item;
 import ugh.dl.Metadata;
 
 public interface Metadatum {
-	
-	  public abstract ArrayList<Item> getWert();
 
-	      public abstract void setWert(String inWert);
+	public abstract ArrayList<Item> getWert();
 
-	      public abstract String getTyp();
+	public abstract void setWert(String inWert);
 
-	      public abstract void setTyp(String inTyp);
+	public abstract String getTyp();
 
-	      public abstract int getIdentifier();
+	public abstract void setTyp(String inTyp);
 
-	      public abstract void setIdentifier(int identifier);
+	public abstract int getIdentifier();
 
-	      public abstract Metadata getMd();
+	public abstract void setIdentifier(int identifier);
 
-	      public abstract void setMd(Metadata md);
+	public abstract Metadata getMd();
 
-	      /******************************************************
-	       * 
-	       * new functions for use of display configuration 
-	       * whithin xml files
-	       * 
-	       *****************************************************/
+	public abstract void setMd(Metadata md);
 
-	      public abstract String getOutputType();
+	/**
+	 * new functions for use of display configuration whithin xml files
+	 */
 
-	      public abstract List<SelectItem> getItems();
+	public abstract String getOutputType();
 
-	      public abstract void setItems(List<SelectItem> items);
+	public abstract List<SelectItem> getItems();
 
-	      public abstract List<String> getSelectedItems();
+	public abstract void setItems(List<SelectItem> items);
 
-	      public abstract void setSelectedItems(List<String> selectedItems);
+	public abstract List<String> getSelectedItems();
 
-	      public abstract String getSelectedItem();
+	public abstract void setSelectedItems(List<String> selectedItems);
 
-	      public abstract void setSelectedItem(String selectedItem);
+	public abstract String getSelectedItem();
 
-	      public abstract void setValue(String value);
+	public abstract void setSelectedItem(String selectedItem);
 
-	      public abstract String getValue();
+	public abstract void setValue(String value);
+
+	public abstract String getValue();
 }

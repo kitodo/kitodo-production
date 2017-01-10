@@ -7,31 +7,33 @@
  *
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
+>>>>>>> 76a8e41dfb1fcf3e21293a70ec22a7b0dea8d853
  */
+//CHECKSTYLE:ON
 
 package de.sub.goobi.modul;
+
+import de.sub.goobi.forms.ModuleServerForm;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.forms.ModuleServerForm;
-
 public class ModulListener implements ServletContextListener {
-   private static final Logger myLogger = Logger.getLogger(ModulListener.class);
+	private static final Logger myLogger = Logger.getLogger(ModulListener.class);
 
-   @Override
-   public void contextInitialized(ServletContextEvent event) {
-      myLogger.debug("Starte Modularisierung-Server", null);
-      new ModuleServerForm().startAllModules();
-      myLogger.debug("Gestartet: Modularisierung-Server", null);
-   }
+	@Override
+	public void contextInitialized(ServletContextEvent event) {
+		myLogger.debug("Starte Modularisierung-Server", null);
+		new ModuleServerForm().startAllModules();
+		myLogger.debug("Gestartet: Modularisierung-Server", null);
+	}
 
-   @Override
-   public void contextDestroyed(ServletContextEvent event) {
-      myLogger.debug("Stoppe Modularisierung-Server", null);
-      new ModuleServerForm().stopAllModules();
-      myLogger.debug("Gestoppt: Modularisierung-Server", null);
-   }
+	@Override
+	public void contextDestroyed(ServletContextEvent event) {
+		myLogger.debug("Stoppe Modularisierung-Server", null);
+		new ModuleServerForm().stopAllModules();
+		myLogger.debug("Gestoppt: Modularisierung-Server", null);
+	}
 }

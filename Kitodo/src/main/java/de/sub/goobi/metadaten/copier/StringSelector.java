@@ -14,9 +14,8 @@ package de.sub.goobi.metadaten.copier;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * A string selector will always return the string used to create it. It can be
- * used for static arguments.
- * 
+ * A string selector will always return the string used to create it. It can be used for static arguments.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class StringSelector extends DataSelector {
@@ -28,11 +27,9 @@ public class StringSelector extends DataSelector {
 
 	/**
 	 * Creates a new string selector with a static string value.
-	 * 
-	 * @param text
-	 *            String, in quotes
-	 * @throws ConfigurationException
-	 *             if the string isn’t enclosed in quotes
+	 *
+	 * @param text String, in quotes
+	 * @throws ConfigurationException if the string isn’t enclosed in quotes
 	 */
 	public StringSelector(String text) throws ConfigurationException {
 		if (!text.endsWith("\"")) {
@@ -43,7 +40,7 @@ public class StringSelector extends DataSelector {
 
 	/**
 	 * Returns the value of the string used to create the selector.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(de.sub.goobi.metadaten.copier.CopierData)
 	 */
 	@Override

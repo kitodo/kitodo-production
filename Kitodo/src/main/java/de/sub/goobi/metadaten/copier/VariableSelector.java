@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 
 /**
  * A VariableSelector provides methods to retrieve variables used in Goobi.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class VariableSelector extends DataSelector {
@@ -26,19 +26,16 @@ public class VariableSelector extends DataSelector {
 	private final String qualifier;
 
 	/**
-	 * If the selector passed to the constructor references a variable that is
-	 * part of an object which is held in a variable itself, then this
-	 * VariableSelector only handles the resolving of the first variable, and
-	 * the field subselector holds another VariableSelector to resolve the
-	 * remaining variable. Otherwise, this field is null.
+	 * If the selector passed to the constructor references a variable that is part of an object which is held in
+	 * a variable itself, then this VariableSelector only handles the resolving of the first variable, and the field
+	 * subselector holds another VariableSelector to resolve the remaining variable. Otherwise, this field is null.
 	 */
 	private final VariableSelector subselector;
 
 	/**
 	 * Creates a new VariableSelector.
-	 * 
-	 * @param selector
-	 *            String identifying a variable
+	 *
+	 * @param selector String identifying a variable
 	 */
 	public VariableSelector(String selector) {
 		if (selector.startsWith(VARIABLE_REFERENCE)) {
@@ -55,11 +52,10 @@ public class VariableSelector extends DataSelector {
 	}
 
 	/**
-	 * Returns the value of the variable named by the path used to construct the
-	 * variable selector. Returns null if the variable isn’t available.
-	 * 
-	 * @param data
-	 *            object to inspect
+	 * Returns the value of the variable named by the path used to construct the  variable selector. Returns null if
+	 * the variable isn’t available.
+	 *
+	 * @param data object to inspect
 	 * @return value of the variable, or null if not found
 	 * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(CopierData)
 	 */
@@ -69,11 +65,10 @@ public class VariableSelector extends DataSelector {
 	}
 
 	/**
-	 * Returns the value of the variable named by the path used to construct the
-	 * variable selector. Returns null if the variable isn’t available.
-	 * 
-	 * @param classInstance
-	 *            object to inspect
+	 * Returns the value of the variable named by the path used to construct the variable selector. Returns null if
+	 * the variable isn’t available.
+	 *
+	 * @param classInstance object to inspect
 	 * @return value of the variable, or null if not found
 	 */
 	private String findIn(Object classInstance) {
@@ -97,7 +92,7 @@ public class VariableSelector extends DataSelector {
 
 	/**
 	 * Returns a string that textually represents this LocalMetadataSelector.
-	 * 
+	 *
 	 * @return a string representation of this LocalMetadataSelector
 	 * @see java.lang.Object#toString()
 	 */

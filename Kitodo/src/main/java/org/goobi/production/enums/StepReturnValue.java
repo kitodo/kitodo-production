@@ -13,12 +13,8 @@ package org.goobi.production.enums;
 
 public enum StepReturnValue {
 
-	Finished(0, "Step finished"),
-	InvalidData(1, "Invalid data"),
-	NoData(2, "No data found"),
-	DataAllreadyExists(3, "Data already exists"),
-	WriteError(4, "Data could not be written")
-	;
+	Finished(0, "Step finished"), InvalidData(1, "Invalid data"), NoData(2, "No data found"), DataAllreadyExists(3,
+			"Data already exists"), WriteError(4, "Data could not be written");
 
 	private int id;
 	private String value;
@@ -44,6 +40,10 @@ public enum StepReturnValue {
 		return this.value;
 	}
 
+	/**
+	 * @param title add description
+	 * @return add description
+	 */
 	public static StepReturnValue getByValue(String title) {
 		for (StepReturnValue t : StepReturnValue.values()) {
 			if (t.getValue().equals(title)) {
@@ -53,6 +53,10 @@ public enum StepReturnValue {
 		return null;
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 */
 	public static StepReturnValue getById(int id) {
 		for (StepReturnValue t : StepReturnValue.values()) {
 			if (t.getId() == id) {

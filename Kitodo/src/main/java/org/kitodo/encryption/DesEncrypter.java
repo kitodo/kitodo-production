@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
@@ -8,15 +9,10 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+//CHECKSTYLE:ON
 
 package org.kitodo.encryption;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
-
-import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -25,20 +21,19 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
+
 public class DesEncrypter {
 	private Cipher encryptionCipher;
 	private Cipher decryptionCipher;
 
-	private static final byte[] defaultSalt = {
-			(byte) 0xA9,
-			(byte) 0x9B,
-			(byte) 0xC8,
-			(byte) 0x32,
-			(byte) 0x56,
-			(byte) 0x35,
-			(byte) 0xE3,
-			(byte) 0x03
-	};
+	private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
+			(byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
 	private static final Logger logger = Logger.getLogger(DesEncrypter.class);
 

@@ -11,6 +11,12 @@
 
 package de.sub.goobi.persistence.apache;
 
+
+import de.sub.goobi.helper.enums.MetadataFormat;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.metadaten.MetadatenHelper;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -23,10 +29,6 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
-import de.sub.goobi.helper.enums.MetadataFormat;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.metadaten.MetadatenHelper;
 
 public class ProcessObject {
 
@@ -46,6 +48,23 @@ public class ProcessObject {
 	private int sortHelperMetadata;
 	private String wikifield;
 
+	/**
+	 * @param processId add description
+	 * @param title add description
+	 * @param ausgabename add description
+	 * @param isTemplate add description
+	 * @param swappedOut add description
+	 * @param inAuswahllisteAnzeigen add description
+	 * @param sortHelperStatus add description
+	 * @param sortHelperImages add description
+	 * @param sortHelperArticles add description
+	 * @param erstellungsdatum add description
+	 * @param projekteID add description
+	 * @param metadatenKonfigurationID add description
+	 * @param sortHelperDocstructs add description
+	 * @param sortHelperMetadata add description
+	 * @param wikifield add description
+	 */
 	public ProcessObject(int processId, String title, String ausgabename, boolean isTemplate, boolean swappedOut,
 			boolean inAuswahllisteAnzeigen, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
 			Date erstellungsdatum, int projekteID, int metadatenKonfigurationID, int sortHelperDocstructs,
@@ -188,7 +207,16 @@ public class ProcessObject {
 		this.wikifield = wikifield;
 	}
 
-	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {
+	/**
+	 * @param metadataFile add description
+	 * @param prefs add description
+	 * @return add description
+	 * @throws IOException add description
+	 * @throws PreferencesException add description
+	 * @throws ReadException add description
+	 */
+	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException,
+			ReadException {
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(metadataFile);
 		Fileformat ff = null;
@@ -206,24 +234,37 @@ public class ProcessObject {
 		return ff;
 	}
 
-	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileformat) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
+	/**
+	 * @param gdzfile add description
+	 * @param metadataFile add description
+	 * @param prefs add description
+	 * @param fileformat add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 * @throws WriteException add description
+	 * @throws PreferencesException add description
+	 */
+	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileformat)
+			throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
-		
+
 		switch (MetadataFormat.findFileFormatsHelperByName(fileformat)) {
-		case METS:
-			ff = new MetsMods(prefs);
-			break;
+			case METS:
+				ff = new MetsMods(prefs);
+				break;
 
-		case RDF:
-			ff = new RDFFile(prefs);
-			break;
+			case RDF:
+				ff = new RDFFile(prefs);
+				break;
 
-		default:
-			ff = new XStream(prefs);
-			break;
+			default:
+				ff = new XStream(prefs);
+				break;
 		}
-		
+
 		ff.setDigitalDocument(gdzfile.getDigitalDocument());
 		ff.write(metadataFile);
 	}

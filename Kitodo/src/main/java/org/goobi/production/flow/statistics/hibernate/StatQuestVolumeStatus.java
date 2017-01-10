@@ -11,6 +11,15 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+
+import de.intranda.commons.chart.renderer.HtmlTableRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,24 +31,17 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import de.intranda.commons.chart.renderer.HtmlTableRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-
-/*****************************************************************************
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
- * 
+/**
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with predefined Values in data Table
+ *
  * @author Steffen Hankiewicz
- ****************************************************************************/
+ */
 public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+	 * org.goobi.production.flow.statistics.IDataSource)
 	 */
 	@Override
 	public List<DataTable> getDataTables(IDataSource dataSource) {
@@ -49,11 +51,13 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 		if (dataSource instanceof IEvaluableFilter) {
 			originalFilter = (IEvaluableFilter) dataSource;
 		} else {
-			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+			throw new UnsupportedOperationException(
+					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
 		Criteria crit = Helper.getHibernateSession().createCriteria(Schritt.class);
-		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
+				Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
 
 		if (originalFilter instanceof UserDefinedFilter) {
 			crit.createCriteria("prozess", "proz");
@@ -67,7 +71,8 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 		for (Object obj : crit.list()) {
 			Schritt step = (Schritt) obj;
-			String kurztitel = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
+			String kurztitel = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step
+					.getTitel());
 			dRow.addValue(kurztitel, dRow.getValue(kurztitel) + 1);
 		}
 
@@ -81,7 +86,8 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
+	 * de.intranda.commons.chart.renderer.IRenderer)
 	 */
 	@Override
 	public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -90,7 +96,8 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+	 * org.goobi.production.flow.statistics.enums.CalculationUnit)
 	 */
 	@Override
 	public void setCalculationUnit(CalculationUnit cu) {
@@ -98,7 +105,8 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+	 * org.goobi.production.flow.statistics.enums.TimeUnit)
 	 */
 	@Override
 	public void setTimeUnit(TimeUnit timeUnit) {

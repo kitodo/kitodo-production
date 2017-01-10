@@ -11,6 +11,14 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,13 +59,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 public class MassImportForm {
 	private static final Logger logger = Logger.getLogger(MassImportForm.class);
@@ -84,17 +85,19 @@ public class MassImportForm {
 
 	private List<Prozess> processList;
 
+	/**
+	 *
+	 */
 	public MassImportForm() {
-		usablePluginsForRecords = PluginLoader
-				.getImportPluginsForType(ImportType.Record);
-		usablePluginsForIDs = PluginLoader
-				.getImportPluginsForType(ImportType.ID);
-		usablePluginsForFiles = PluginLoader
-				.getImportPluginsForType(ImportType.FILE);
-		usablePluginsForFolder = PluginLoader
-				.getImportPluginsForType(ImportType.FOLDER);
+		usablePluginsForRecords = PluginLoader.getImportPluginsForType(ImportType.Record);
+		usablePluginsForIDs = PluginLoader.getImportPluginsForType(ImportType.ID);
+		usablePluginsForFiles = PluginLoader.getImportPluginsForType(ImportType.FILE);
+		usablePluginsForFolder = PluginLoader.getImportPluginsForType(ImportType.FOLDER);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String prepare() {
 		if (this.template.getContainsUnreachableSteps()) {
 			if (this.template.getSchritteList().size() == 0) {
@@ -104,8 +107,7 @@ public class MassImportForm {
 				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
 					List<String> param = new ArrayList<String>();
 					param.add(s.getTitel());
-					Helper.setFehlerMeldung(Helper.getTranslation(
-							"noUserInStep", param));
+					Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
 				}
 			}
 			return "";
@@ -124,8 +126,7 @@ public class MassImportForm {
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollections = new ArrayList<String>();
 		ArrayList<String> defaultCollections = new ArrayList<String>();
-		String filename = this.help.getGoobiConfigDirectory()
-				+ "goobi_digitalCollections.xml";
+		String filename = this.help.getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
 		if (!(new File(filename).exists())) {
 			Helper.setFehlerMeldung("File not found: ", filename);
 			return;
@@ -143,15 +144,12 @@ public class MassImportForm {
 
 				// collect default collections
 				if (projekt.getName().equals("default")) {
-					List<Element> myCols = projekt
-							.getChildren("DigitalCollection");
-					for (Iterator<Element> it2 = myCols.iterator(); it2
-							.hasNext();) {
+					List<Element> myCols = projekt.getChildren("DigitalCollection");
+					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 						Element col = it2.next();
 
 						if (col.getAttribute("default") != null
-								&& col.getAttributeValue("default")
-										.equalsIgnoreCase("true")) {
+								&& col.getAttributeValue("default").equalsIgnoreCase("true")) {
 							digitalCollections.add(col.getText());
 						}
 
@@ -160,26 +158,20 @@ public class MassImportForm {
 				} else {
 					// run through the projects
 					List<Element> projektnamen = projekt.getChildren("name");
-					for (Iterator<Element> iterator = projektnamen.iterator(); iterator
-							.hasNext();) {
+					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
 						Element projektname = iterator.next();
 						// all all collections to list
-						if (projektname.getText().equalsIgnoreCase(
-								this.template.getProjekt().getTitel())) {
-							List<Element> myCols = projekt
-									.getChildren("DigitalCollection");
-							for (Iterator<Element> it2 = myCols.iterator(); it2
-									.hasNext();) {
+						if (projektname.getText().equalsIgnoreCase(this.template.getProjekt().getTitel())) {
+							List<Element> myCols = projekt.getChildren("DigitalCollection");
+							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 								Element col = it2.next();
 
 								if (col.getAttribute("default") != null
-										&& col.getAttributeValue("default")
-												.equalsIgnoreCase("true")) {
+										&& col.getAttributeValue("default").equalsIgnoreCase("true")) {
 									digitalCollections.add(col.getText());
 								}
 
-								this.possibleDigitalCollections.add(col
-										.getText());
+								this.possibleDigitalCollections.add(col.getText());
 							}
 						}
 					}
@@ -187,12 +179,10 @@ public class MassImportForm {
 			}
 		} catch (JDOMException e1) {
 			logger.error("error while parsing digital collections", e1);
-			Helper.setFehlerMeldung("Error while parsing digital collections",
-					e1);
+			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		} catch (IOException e1) {
 			logger.error("error while parsing digital collections", e1);
-			Helper.setFehlerMeldung("Error while parsing digital collections",
-					e1);
+			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		}
 
 		if (this.possibleDigitalCollections.size() == 0) {
@@ -220,6 +210,9 @@ public class MassImportForm {
 		this.selectedFilenames = selectedFilenames;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String convertData() {
 		this.processList = new ArrayList<Prozess>();
 		if (StringUtils.isEmpty(currentPlugin)) {
@@ -236,8 +229,7 @@ public class MassImportForm {
 			this.plugin.setImportFolder(tempfolder);
 			this.plugin.setPrefs(prefs);
 			this.plugin.setOpacCatalogue(this.getOpacCatalogue());
-			this.plugin.setGoobiConfigDirectory(new Helper()
-					.getGoobiConfigDirectory());
+			this.plugin.setGoobiConfigDirectory(new Helper().getGoobiConfigDirectory());
 
 			if (StringUtils.isNotEmpty(this.idList)) {
 				List<String> ids = this.plugin.splitIds(this.idList);
@@ -259,15 +251,13 @@ public class MassImportForm {
 				}
 				answer = this.plugin.generateFiles(recordList);
 			} else if (StringUtils.isNotEmpty(this.records)) {
-				List<Record> recordList = this.plugin
-						.splitRecords(this.records);
+				List<Record> recordList = this.plugin.splitRecords(this.records);
 				for (Record r : recordList) {
 					r.setCollections(this.digitalCollections);
 				}
 				answer = this.plugin.generateFiles(recordList);
 			} else if (this.selectedFilenames.size() > 0) {
-				List<Record> recordList = this.plugin
-						.generateRecordsFromFilenames(this.selectedFilenames);
+				List<Record> recordList = this.plugin.generateRecordsFromFilenames(this.selectedFilenames);
 				for (Record r : recordList) {
 					r.setCollections(this.digitalCollections);
 				}
@@ -278,12 +268,9 @@ public class MassImportForm {
 			if (answer.size() > 1) {
 				if (importFile != null) {
 					List<String> args = Arrays.asList(new String[] {
-							FilenameUtils.getBaseName(importFile
-									.getAbsolutePath()),
-							DateTimeFormat.shortDateTime()
-									.print(new DateTime()) });
-					batch = new Batch(Helper.getTranslation(
-							"importedBatchLabel", args), Type.LOGISTIC);
+							FilenameUtils.getBaseName(importFile.getAbsolutePath()),
+							DateTimeFormat.shortDateTime().print(new DateTime()) });
+					batch = new Batch(Helper.getTranslation("importedBatchLabel", args), Type.LOGISTIC);
 				} else {
 					batch = new Batch();
 				}
@@ -293,39 +280,29 @@ public class MassImportForm {
 				if (batch != null) {
 					io.getBatches().add(batch);
 				}
-				if (io.getImportReturnValue().equals(
-						ImportReturnValue.ExportFinished)) {
+				if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
 					Prozess p = JobCreation.generateProcess(io, this.template);
 					if (p == null) {
-						if (io.getImportFileName() != null
-								&& !io.getImportFileName().isEmpty()
-								&& selectedFilenames != null
-								&& !selectedFilenames.isEmpty()) {
-							if (selectedFilenames.contains(io
-									.getImportFileName())) {
-								selectedFilenames
-										.remove(io.getImportFileName());
+						if (io.getImportFileName() != null && !io.getImportFileName().isEmpty()
+								&& selectedFilenames != null && !selectedFilenames.isEmpty()) {
+							if (selectedFilenames.contains(io.getImportFileName())) {
+								selectedFilenames.remove(io.getImportFileName());
 							}
 						}
-						Helper.setFehlerMeldung("import failed for "
-								+ io.getProcessTitle()
+						Helper.setFehlerMeldung("import failed for " + io.getProcessTitle()
 								+ ", process generation failed");
 
 					} else {
-						Helper.setMeldung(ImportReturnValue.ExportFinished
-								.getValue() + " for " + io.getProcessTitle());
+						Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
 						this.processList.add(p);
 					}
 				} else {
 					List<String> param = new ArrayList<String>();
 					param.add(io.getProcessTitle());
 					param.add(io.getErrorMessage());
-					Helper.setFehlerMeldung(Helper.getTranslation(
-							"importFailedError", param));
-					if (io.getImportFileName() != null
-							&& !io.getImportFileName().isEmpty()
-							&& selectedFilenames != null
-							&& !selectedFilenames.isEmpty()) {
+					Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
+					if (io.getImportFileName() != null && !io.getImportFileName().isEmpty()
+							&& selectedFilenames != null && !selectedFilenames.isEmpty()) {
 						if (selectedFilenames.contains(io.getImportFileName())) {
 							selectedFilenames.remove(io.getImportFileName());
 						}
@@ -378,8 +355,7 @@ public class MassImportForm {
 				basename = basename.substring(basename.lastIndexOf("\\") + 1);
 			}
 
-			String filename = ConfigMain.getParameter("tempfolder",
-					"/usr/local/goobi/temp/") + basename;
+			String filename = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/temp/") + basename;
 
 			inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
 			outputStream = new FileOutputStream(filename);
@@ -432,9 +408,7 @@ public class MassImportForm {
 	 */
 
 	private boolean testForData() {
-		if (StringUtils.isEmpty(this.idList)
-				&& StringUtils.isEmpty(this.records)
-				&& (this.importFile == null)
+		if (StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
 				&& this.selectedFilenames.size() == 0) {
 			return false;
 		}
@@ -453,6 +427,10 @@ public class MassImportForm {
 		return l;
 	}
 
+	/**
+	 * @param pluginId add description
+	 * @return add description
+	 */
 	public String getHotfolderPathForPlugin(int pluginId) {
 		for (GoobiHotfolder hotfolder : GoobiHotfolder.getInstances()) {
 			if (hotfolder.getTemplate() == pluginId) {
@@ -554,8 +532,7 @@ public class MassImportForm {
 		try {
 			return ConfigOpac.getAllCatalogueTitles();
 		} catch (Throwable t) {
-			Helper.setFehlerMeldung("Error while reading von opac-config",
-					t.getMessage());
+			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 			return new ArrayList<String>();
 		}
 	}
@@ -596,8 +573,7 @@ public class MassImportForm {
 	 * @param possibleDigitalCollection
 	 *            the possibleDigitalCollection to set
 	 */
-	public void setPossibleDigitalCollection(
-			List<String> possibleDigitalCollection) {
+	public void setPossibleDigitalCollection(List<String> possibleDigitalCollection) {
 		this.possibleDigitalCollections = possibleDigitalCollection;
 	}
 
@@ -608,8 +584,7 @@ public class MassImportForm {
 		return this.possibleDigitalCollections;
 	}
 
-	public void setPossibleDigitalCollections(
-			List<String> possibleDigitalCollections) {
+	public void setPossibleDigitalCollections(List<String> possibleDigitalCollections) {
 		this.possibleDigitalCollections = possibleDigitalCollections;
 	}
 
@@ -657,8 +632,7 @@ public class MassImportForm {
 	public void setCurrentPlugin(String currentPlugin) {
 		this.currentPlugin = currentPlugin;
 		if (currentPlugin != null && currentPlugin.length() > 0) {
-			this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(
-					PluginType.Import, this.currentPlugin);
+			this.plugin = (IImportPlugin) PluginLoader.getPluginByTitle(PluginType.Import, this.currentPlugin);
 			if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
 				this.allFilenames = this.plugin.getAllFilenames();
 			}
@@ -722,6 +696,9 @@ public class MassImportForm {
 		return this.usablePluginsForFiles;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getHasNextPage() {
 		java.lang.reflect.Method method;
 		try {
@@ -747,6 +724,9 @@ public class MassImportForm {
 		return false;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String nextPage() {
 		if (!testForData()) {
 			Helper.setFehlerMeldung("missingData");
@@ -766,6 +746,9 @@ public class MassImportForm {
 		return "MassImportFormPage2";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<ImportProperty> getProperties() {
 
 		if (this.plugin != null) {
@@ -790,28 +773,27 @@ public class MassImportForm {
 		this.usablePluginsForFolder = usablePluginsForFolder;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String downloadDocket() {
 		logger.debug("generate docket for process list");
 		String rootpath = ConfigMain.getParameter("xsltFolder");
 		File xsltfile = new File(rootpath, "docket_multipage.xsl");
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
-			HttpServletResponse response = (HttpServletResponse) facesContext
-					.getExternalContext().getResponse();
+			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			String fileName = "batch_docket" + ".pdf";
-			ServletContext servletContext = (ServletContext) facesContext
-					.getExternalContext().getContext();
+			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
 			String contentType = servletContext.getMimeType(fileName);
 			response.setContentType(contentType);
-			response.setHeader("Content-Disposition", "attachment;filename=\""
-					+ fileName + "\"");
+			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
 			// write docket to servlet output stream
 			try {
 				ServletOutputStream out = response.getOutputStream();
 				ExportDocket ern = new ExportDocket();
-				ern.startExport(this.processList, out,
-						xsltfile.getAbsolutePath());
+				ern.startExport(this.processList, out, xsltfile.getAbsolutePath());
 				out.flush();
 			} catch (IOException e) {
 				logger.error("IOException while exporting run note", e);
@@ -822,6 +804,9 @@ public class MassImportForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<? extends DocstructElement> getDocstructs() {
 		java.lang.reflect.Method method;
 		try {

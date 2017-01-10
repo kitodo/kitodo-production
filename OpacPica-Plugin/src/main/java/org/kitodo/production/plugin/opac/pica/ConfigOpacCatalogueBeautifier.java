@@ -14,9 +14,8 @@ package org.kitodo.production.plugin.opac.pica;
 import java.util.ArrayList;
 
 /**
- * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer
- * einer Opacabfrage zurückgegeben wird. Dabei soll die Eigenschaft eines Wertes
- * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
+ * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer einer Opacabfrage zurückgegeben wird.
+ * Dabei soll die Eigenschaft eines Wertes gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
  */
 class ConfigOpacCatalogueBeautifier {
 	private final ConfigOpacCatalogueBeautifierElement tagElementToChange;

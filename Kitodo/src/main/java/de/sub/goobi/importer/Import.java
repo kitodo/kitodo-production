@@ -11,6 +11,11 @@
 
 package de.sub.goobi.importer;
 
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.WrongImportFileException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,14 +30,10 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
  * Import von Metadaten aus upgeloadeten Dateien
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 25.06.2005
  */
@@ -49,6 +50,9 @@ public class Import {
 	public Import() {
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Start() {
 		myLogger.info("Import Start - start");
 		this.importFehler = "";
@@ -64,15 +68,15 @@ public class Import {
 		return "";
 	}
 
-	private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
-			MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
+	private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+			TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
+			PreferencesException, SwapException, DAOException, WriteException {
 		myLogger.debug("Einlesen() - Start");
 		BufferedReader reader = null;
 		try {
 
 			/*
-			 * -------------------------------- prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
-			 * --------------------------------
+			 * prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
 			 */
 
 			/* russischer Import */
@@ -107,8 +111,9 @@ public class Import {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## allgemeine Getter und Setter
-	 * ## ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## allgemeine Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	public String getImportFehler() {

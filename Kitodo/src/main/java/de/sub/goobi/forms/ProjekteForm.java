@@ -11,6 +11,18 @@
 
 package de.sub.goobi.forms;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.results.ChartDraw.ChartType;
+
+import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProjektDAO;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -28,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.goobi.production.chart.IProjectTask;
 import org.goobi.production.chart.IProvideProjectTaskList;
 import org.goobi.production.chart.ProjectStatusDataTable;
@@ -39,6 +52,7 @@ import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectProgressData;
 import org.goobi.production.flow.statistics.hibernate.UserProjectFilter;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -46,21 +60,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
 import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
-
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.results.ChartDraw.ChartType;
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProjektDAO;
 
 public class ProjekteForm extends BasisForm {
 	private static final long serialVersionUID = 6735912903249358786L;
@@ -99,8 +103,7 @@ public class ProjekteForm extends BasisForm {
 	/**
 	 * this method deletes filegroups by their id's in the list
 	 *
-	 * @param List
-	 *            <Integer> fileGroups
+	 * @param fileGroups List&lt;Integer&gt;
 	 */
 	private void deleteFileGroups(List<Integer> fileGroups) {
 		for (Integer id : fileGroups) {
@@ -114,7 +117,8 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting, making the removal permanent
+	 * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting,
+	 * making the removal permanent
 	 */
 	private void commitFileGroups() {
 		// resetting the List of new fileGroups
@@ -146,6 +150,9 @@ public class ProjekteForm extends BasisForm {
 		return "ProjekteBearbeiten";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Speichern() {
 		// call this to make saving and deleting permanent
 		this.commitFileGroups();
@@ -159,6 +166,9 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Apply() {
 		// call this to make saving and deleting permanent
 		myLogger.trace("Apply wird aufgerufen...");
@@ -173,22 +183,28 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String Loeschen() {
 		if (this.myProjekt.getBenutzer().size() > 0) {
 			Helper.setFehlerMeldung("userAssignedError");
 			return "";
 		} else {
-		try {
-			this.dao.remove(this.myProjekt);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("could not delete", e.getMessage());
-			myLogger.error(e.getMessage());
-			return "";
-		}
+			try {
+				this.dao.remove(this.myProjekt);
+			} catch (DAOException e) {
+				Helper.setFehlerMeldung("could not delete", e.getMessage());
+				myLogger.error(e.getMessage());
+				return "";
+			}
 		}
 		return "ProjekteAlle";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterKein() {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -209,6 +225,9 @@ public class ProjekteForm extends BasisForm {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filegroupAdd() {
 		this.myFilegroup = new ProjectFileGroup();
 		this.myFilegroup.setProject(this.myProjekt);
@@ -216,6 +235,9 @@ public class ProjekteForm extends BasisForm {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filegroupSave() {
 		if (this.myProjekt.getFilegroups() == null) {
 			this.myProjekt.setFilegroups(new HashSet<ProjectFileGroup>());
@@ -231,6 +253,9 @@ public class ProjekteForm extends BasisForm {
 		return this.zurueck;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filegroupDelete() {
 		// to be deleted fileGroups ids are listed
 		// and deleted after a commit
@@ -246,6 +271,9 @@ public class ProjekteForm extends BasisForm {
 		return this.myProjekt;
 	}
 
+	/**
+	 * @param inProjekt add description
+	 */
 	public void setMyProjekt(Projekt inProjekt) {
 		// has to be called if a page back move was done
 		this.Cancel();
@@ -253,13 +281,14 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups marked for delete are not shown
-	 * anymore
+	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups
+	 * marked for delete are not shown anymore
 	 *
 	 * @return modified ArrayList
 	 */
 	public ArrayList<ProjectFileGroup> getFileGroupList() {
-		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(this.myProjekt.getFilegroupsList());
+		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(
+				this.myProjekt.getFilegroupsList());
 
 		for (Integer id : this.deletedFileGroups) {
 			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
@@ -286,8 +315,8 @@ public class ProjekteForm extends BasisForm {
 
 	public StatisticsManager getStatisticsManager1() {
 		if (this.statisticsManager1 == null) {
-			this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager1 = new StatisticsManager(StatisticsMode.PRODUCTION, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager1;
 	}
@@ -297,8 +326,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatisticsManager getStatisticsManager2() {
 		if (this.statisticsManager2 == null) {
-			this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager2 = new StatisticsManager(StatisticsMode.THROUGHPUT, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager2;
 	}
@@ -308,8 +337,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatisticsManager getStatisticsManager3() {
 		if (this.statisticsManager3 == null) {
-			this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager3 = new StatisticsManager(StatisticsMode.CORRECTIONS, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager3;
 	}
@@ -319,8 +348,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatisticsManager getStatisticsManager4() {
 		if (this.statisticsManager4 == null) {
-			this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE, new UserProjectFilter(this.myProjekt.getId()), FacesContext
-					.getCurrentInstance().getViewRoot().getLocale());
+			this.statisticsManager4 = new StatisticsManager(StatisticsMode.STORAGE, new UserProjectFilter(
+					this.myProjekt.getId()), FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 		return this.statisticsManager4;
 	}
@@ -331,7 +360,8 @@ public class ProjekteForm extends BasisForm {
 
 	@SuppressWarnings("rawtypes")
 	public void GenerateValuesForStatistics() {
-		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class).add(Restrictions.eq("projekt", this.myProjekt));
+		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class)
+				.add(Restrictions.eq("projekt", this.myProjekt));
 		ProjectionList pl = Projections.projectionList();
 		pl.add(Projections.sum("sortHelperImages"));
 		pl.add(Projections.count("sortHelperImages"));
@@ -515,13 +545,14 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public StatQuestProjectProgressData getProjectProgressInterface() {
 
-			synchronized (this.projectProgressData) {
+		synchronized (this.projectProgressData) {
 			try {
 
 				this.projectProgressData.setCommonWorkflow(this.myProjekt.getWorkFlow());
 				this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
 				this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
-				this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(), this.getMyProjekt().getEndDate());
+				this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(), this.getMyProjekt()
+						.getEndDate());
 				this.projectProgressData.setDataSource(new UserProjectFilter(this.myProjekt.getId()));
 
 				if (this.projectProgressImage == null) {
@@ -552,7 +583,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public String getProjectProgressImage() {
 
-		if (this.projectProgressImage == null || this.projectProgressData == null || this.projectProgressData.hasChanged()) {
+		if (this.projectProgressImage == null || this.projectProgressData == null
+				|| this.projectProgressData.hasChanged()) {
 			try {
 				calcProgressCharts();
 			} catch (Exception e) {
@@ -595,8 +627,8 @@ public class ProjekteForm extends BasisForm {
 	/**
 	 *
 	 * @return string of image file projectStatVolumes
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
 	 */
 
 	public String getProjectStatVolumes() throws IOException, InterruptedException {
@@ -654,6 +686,9 @@ public class ProjekteForm extends BasisForm {
 		return this.myCurrentTable;
 	}
 
+	/**
+	 *
+	 */
 	public void CreateExcel() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
@@ -661,15 +696,12 @@ public class ProjekteForm extends BasisForm {
 			/*
 			 *  Vorbereiten der Header-Informationen
 			 */
-			HttpServletResponse response = (HttpServletResponse) facesContext
-					.getExternalContext().getResponse();
+			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 			try {
-				ServletContext servletContext = (ServletContext) facesContext
-						.getExternalContext().getContext();
+				ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
 				String contentType = servletContext.getMimeType("export.xls");
 				response.setContentType(contentType);
-				response.setHeader("Content-Disposition",
-						"attachment;filename=\"export.xls\"");
+				response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
 				ServletOutputStream out = response.getOutputStream();
 				HSSFWorkbook wb = (HSSFWorkbook) this.myCurrentTable.getExcelRenderer().getRendering();
 				wb.write(out);
@@ -682,22 +714,20 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
-
-	/*************************************************************************************
+	/**
 	 * Getter for showStatistics
 	 *
 	 * @return the showStatistics
-	 *************************************************************************************/
+	 */
 	public boolean getShowStatistics() {
 		return this.showStatistics;
 	}
 
-	/**************************************************************************************
+	/**
 	 * Setter for showStatistics
 	 *
-	 * @param showStatistics
-	 *            the showStatistics to set
-	 **************************************************************************************/
+	 * @param showStatistics the showStatistics to set
+	 */
 	public void setShowStatistics(boolean showStatistics) {
 		this.showStatistics = showStatistics;
 	}

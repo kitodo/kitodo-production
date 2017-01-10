@@ -62,8 +62,9 @@ public class Vorlage implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	public Integer getId() {
@@ -99,8 +100,9 @@ public class Vorlage implements Serializable {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Helper ##
+	 * #########################################################################################################
 	 */
 
 	public String getHerkunft() {
@@ -111,6 +113,10 @@ public class Vorlage implements Serializable {
 		this.herkunft = herkunft;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getEigenschaftenSize() {
 		try {
 			Hibernate.initialize(this.eigenschaften);
@@ -123,6 +129,10 @@ public class Vorlage implements Serializable {
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Vorlageeigenschaft> getEigenschaftenList() {
 		try {
 			Hibernate.initialize(this.eigenschaften);

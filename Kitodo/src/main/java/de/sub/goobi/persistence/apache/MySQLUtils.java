@@ -11,6 +11,9 @@
 
 package de.sub.goobi.persistence.apache;
 
+import de.sub.goobi.beans.ProjectFileGroup;
+import de.sub.goobi.beans.Regelsatz;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.ResultSetHandler;
-
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Regelsatz;
 
 public class MySQLUtils {
 
@@ -85,7 +85,8 @@ public class MySQLUtils {
 				String auswahl = rs.getString("Auswahl");
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
-				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
+				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate,
+						container);
 				answer.add(prop);
 			}
 			return answer;
@@ -105,7 +106,8 @@ public class MySQLUtils {
 				String auswahl = rs.getString("Auswahl");
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
-				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
+				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate,
+						container);
 				answer.add(prop);
 			}
 			return answer;
@@ -125,7 +127,8 @@ public class MySQLUtils {
 				String auswahl = rs.getString("Auswahl");
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
-				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
+				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate,
+						container);
 				answer.add(prop);
 			}
 			return answer;
@@ -164,19 +167,24 @@ public class MySQLUtils {
 		public List<String> handle(ResultSet rs) throws SQLException {
 			List<String> answer = new ArrayList<String>();
 			if (rs.next()) {
-				if (rs.getString("typAutomatischScriptpfad") != null && rs.getString("typAutomatischScriptpfad").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad") != null
+						&& rs.getString("typAutomatischScriptpfad").length() > 0) {
 					answer.add(rs.getString("typAutomatischScriptpfad"));
 				}
-				if (rs.getString("typAutomatischScriptpfad2") != null && rs.getString("typAutomatischScriptpfad2").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad2") != null
+						&& rs.getString("typAutomatischScriptpfad2").length() > 0) {
 					answer.add(rs.getString("typAutomatischScriptpfad2"));
 				}
-				if (rs.getString("typAutomatischScriptpfad3") != null && rs.getString("typAutomatischScriptpfad3").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad3") != null
+						&& rs.getString("typAutomatischScriptpfad3").length() > 0) {
 					answer.add(rs.getString("typAutomatischScriptpfad3"));
 				}
-				if (rs.getString("typAutomatischScriptpfad4") != null && rs.getString("typAutomatischScriptpfad4").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad4") != null
+						&& rs.getString("typAutomatischScriptpfad4").length() > 0) {
 					answer.add(rs.getString("typAutomatischScriptpfad4"));
 				}
-				if (rs.getString("typAutomatischScriptpfad5") != null && rs.getString("typAutomatischScriptpfad5").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad5") != null
+						&& rs.getString("typAutomatischScriptpfad5").length() > 0) {
 					answer.add(rs.getString("typAutomatischScriptpfad5"));
 				}
 			}
@@ -189,23 +197,28 @@ public class MySQLUtils {
 		public Map<String, String> handle(ResultSet rs) throws SQLException {
 			Map<String, String> answer = new HashMap<String, String>();
 			if (rs.next()) {
-				if (rs.getString("typAutomatischScriptpfad") != null && rs.getString("typAutomatischScriptpfad").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad") != null
+						&& rs.getString("typAutomatischScriptpfad").length() > 0) {
 					String name = rs.getString("scriptName1");
 					answer.put(name, rs.getString("typAutomatischScriptpfad"));
 				}
-				if (rs.getString("typAutomatischScriptpfad2") != null && rs.getString("typAutomatischScriptpfad2").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad2") != null
+						&& rs.getString("typAutomatischScriptpfad2").length() > 0) {
 					String name = rs.getString("scriptName2");
 					answer.put(name, rs.getString("typAutomatischScriptpfad2"));
 				}
-				if (rs.getString("typAutomatischScriptpfad3") != null && rs.getString("typAutomatischScriptpfad3").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad3") != null
+						&& rs.getString("typAutomatischScriptpfad3").length() > 0) {
 					String name = rs.getString("scriptName3");
 					answer.put(name, rs.getString("typAutomatischScriptpfad3"));
 				}
-				if (rs.getString("typAutomatischScriptpfad4") != null && rs.getString("typAutomatischScriptpfad4").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad4") != null
+						&& rs.getString("typAutomatischScriptpfad4").length() > 0) {
 					String name = rs.getString("scriptName4");
 					answer.put(name, rs.getString("typAutomatischScriptpfad4"));
 				}
-				if (rs.getString("typAutomatischScriptpfad5") != null && rs.getString("typAutomatischScriptpfad5").length() > 0) {
+				if (rs.getString("typAutomatischScriptpfad5") != null
+						&& rs.getString("typAutomatischScriptpfad5").length() > 0) {
 					String name = rs.getString("scriptName5");
 					answer.put(name, rs.getString("typAutomatischScriptpfad5"));
 				}
@@ -238,9 +251,9 @@ public class MySQLUtils {
 			String stepPlugin = rs.getString("stepPlugin");
 			String validationPlugin = rs.getString("validationPlugin");
 
-			so = new StepObject(id, title, reihenfolge, bearbeitungsstatus, bearbeitungszeitpunkt, bearbeitungsbeginn, bearbeitungsende,
-					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess, writeAccess, metadataAccess,
-					typeFinishImmediately, stepPlugin, validationPlugin);
+			so = new StepObject(id, title, reihenfolge, bearbeitungsstatus, bearbeitungszeitpunkt, bearbeitungsbeginn,
+					bearbeitungsende, bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess,
+					writeAccess, metadataAccess, typeFinishImmediately, stepPlugin, validationPlugin);
 		}
 
 		return so;
@@ -279,11 +292,13 @@ public class MySQLUtils {
 				int numberOfVolumes = rs.getInt("numberOfVolumes");
 				boolean projectIsArchived = rs.getBoolean("projectIsArchived");
 
-				ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut, dmsImportRootPath, dmsImportImagesPath,
-						dmsImportSuccessPath, dmsImportErrorPath, dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport,
-						metsRightsOwner, metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation, metsPointerPath,
-						metsPointerPathAnchor, metsDigiprovReferenceAnchor, metsDigiprovPresentationAnchor, metsPurl, metsContentIDs,
-						metsRightsOwnerMail, startDate, endDate, numberOfPages, numberOfVolumes, projectIsArchived);
+				ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut,
+						dmsImportRootPath, dmsImportImagesPath, dmsImportSuccessPath, dmsImportErrorPath,
+						dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport, metsRightsOwner,
+						metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation,
+						metsPointerPath, metsPointerPathAnchor, metsDigiprovReferenceAnchor,
+						metsDigiprovPresentationAnchor, metsPurl, metsContentIDs, metsRightsOwnerMail, startDate,
+						endDate, numberOfPages, numberOfVolumes, projectIsArchived);
 				return po;
 			}
 			return null;

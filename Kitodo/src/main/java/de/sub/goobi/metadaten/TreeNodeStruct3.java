@@ -11,11 +11,12 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.TreeNode;
+
 import java.util.ArrayList;
 
 import ugh.dl.DocStruct;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.TreeNode;
 
 public class TreeNodeStruct3 extends TreeNode {
 
@@ -37,11 +38,16 @@ public class TreeNodeStruct3 extends TreeNode {
 
 	/* =============================================================== */
 
+	/**
+	 * @param expanded add description
+	 * @param label add description
+	 * @param id add description
+	 */
 	public TreeNodeStruct3(boolean expanded, String label, String id) {
 		this.expanded = expanded;
 		this.label = label;
 		this.id = id;
-		//TODO: Use generics
+		// TODO: Use generics
 		this.children = new ArrayList<TreeNode>();
 	}
 
@@ -62,20 +68,23 @@ public class TreeNodeStruct3 extends TreeNode {
 		this.identifier = identifier;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getMainTitle() {
-		
+
 		int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);
-		if (maxSize > 0 && this.mainTitle!=null && this.mainTitle.length() > maxSize){
-			return this.mainTitle.substring(0, maxSize -1);
+		if (maxSize > 0 && this.mainTitle != null && this.mainTitle.length() > maxSize) {
+			return this.mainTitle.substring(0, maxSize - 1);
 		}
-		
+
 		return this.mainTitle;
 	}
 
 	public void setMainTitle(String mainTitle) {
 		this.mainTitle = mainTitle;
 	}
-	
+
 	public String getPpnDigital() {
 		return this.ppnDigital;
 	}

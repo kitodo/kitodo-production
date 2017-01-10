@@ -11,21 +11,23 @@
 
 package org.goobi.production.flow.helper;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.helper.Helper;
+
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.helper.Helper;
 
 public class SearchResultGeneration {
 
@@ -33,12 +35,20 @@ public class SearchResultGeneration {
 	private boolean showClosedProcesses = false;
 	private boolean showArchivedProjects = false;
 
+	/**
+	 * @param filter add description
+	 * @param showClosedProcesses add description
+	 * @param showArchivedProjects add description
+	 */
 	public SearchResultGeneration(String filter, boolean showClosedProcesses, boolean showArchivedProjects) {
 		this.filter = filter;
 		this.showClosedProcesses = showClosedProcesses;
 		this.showArchivedProjects = showArchivedProjects;
 	}
 
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("deprecation")
 	public HSSFWorkbook getResult() {
 		IEvaluableFilter myFilteredDataSource = new UserDefinedFilter(this.filter);
@@ -123,8 +133,8 @@ public class SearchResultGeneration {
 
 			HSSFCell cell6 = row.createCell(6);
 
-			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6) + " / "
-					+ p.getSortHelperStatus().substring(6));
+			cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / "
+					+ p.getSortHelperStatus().substring(3, 6) + " / " + p.getSortHelperStatus().substring(6));
 			HSSFCell cell7 = row.createCell(7);
 			cell7.setCellValue("");
 			HSSFCell cell8 = row.createCell(8);

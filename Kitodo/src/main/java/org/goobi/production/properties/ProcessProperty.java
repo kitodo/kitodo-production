@@ -11,6 +11,8 @@
 
 package org.goobi.production.properties;
 
+import de.sub.goobi.beans.Prozesseigenschaft;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import de.sub.goobi.beans.Prozesseigenschaft;
 
 public class ProcessProperty implements IProperty, Serializable {
 
@@ -39,7 +39,10 @@ public class ProcessProperty implements IProperty, Serializable {
 	private Prozesseigenschaft prozesseigenschaft;
 	private AccessCondition currentStepAccessCondition;
 	private boolean currentStepDuplicationAllowed = false;
-	
+
+	/**
+	 *
+	 */
 	public ProcessProperty() {
 		this.container = 0;
 		this.value = "";
@@ -51,7 +54,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getName()
 	 */
 	@Override
@@ -61,7 +64,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setName(java.lang.String)
 	 */
 	@Override
@@ -71,7 +74,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getContainer()
 	 */
 	@Override
@@ -81,7 +84,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setContainer(int)
 	 */
 	@Override
@@ -91,7 +94,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getValidation()
 	 */
 	@Override
@@ -101,7 +104,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setValidation(java.lang.String)
 	 */
 	@Override
@@ -111,7 +114,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getType()
 	 */
 	@Override
@@ -121,7 +124,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setType(org.goobi.production.properties.Type)
 	 */
 	@Override
@@ -131,7 +134,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getValue()
 	 */
 	@Override
@@ -141,7 +144,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setValue(java.lang.String)
 	 */
 	@Override
@@ -151,7 +154,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getPossibleValues()
 	 */
 	@Override
@@ -161,7 +164,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setPossibleValues(java.util.ArrayList)
 	 */
 	@Override
@@ -169,14 +172,12 @@ public class ProcessProperty implements IProperty, Serializable {
 		this.possibleValues = possibleValues;
 	}
 
-	
 	@Override
 	public void setDateValue(Date inDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		value= format.format(inDate);
+		value = format.format(inDate);
 	}
 
-	
 	@Override
 	public Date getDateValue() {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -191,11 +192,10 @@ public class ProcessProperty implements IProperty, Serializable {
 			return new Date();
 		}
 	}
-	
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getProjects()
 	 */
 	@Override
@@ -205,7 +205,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setProjects(java.util.ArrayList)
 	 */
 	@Override
@@ -215,7 +215,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getShowStepConditions()
 	 */
 	@Override
@@ -225,7 +225,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setShowStepConditions(java.util.ArrayList)
 	 */
 	@Override
@@ -235,7 +235,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getShowProcessGroupAccessCondition()
 	 */
 	@Override
@@ -245,8 +245,9 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.properties.IProperty#setShowProcessGroupAccessCondition(org.goobi.production.properties.AccessCondition)
+	 *
+	 * @see org.goobi.production.properties.IProperty#setShowProcessGroupAccessCondition(
+	 * org.goobi.production.properties.AccessCondition)
 	 */
 	@Override
 	public void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition) {
@@ -255,7 +256,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#isValid()
 	 */
 	@Override
@@ -271,7 +272,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
 	 */
 
@@ -281,7 +282,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#setProzesseigenschaft(de.sub.goobi.Beans.Prozesseigenschaft)
 	 */
 
@@ -291,7 +292,7 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#getClone()
 	 */
 	@Override
@@ -312,17 +313,20 @@ public class ProcessProperty implements IProperty, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.properties.IProperty#transfer()
 	 */
 	@Override
 	public void transfer() {
-			this.prozesseigenschaft.setWert(this.value);
-			this.prozesseigenschaft.setTitel(this.name);
-			this.prozesseigenschaft.setContainer(this.container);
+		this.prozesseigenschaft.setWert(this.value);
+		this.prozesseigenschaft.setTitel(this.name);
+		this.prozesseigenschaft.setContainer(this.container);
 		// }
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		String[] values = this.value.split("; ");
 		List<String> answer = new ArrayList<String>();
@@ -332,6 +336,9 @@ public class ProcessProperty implements IProperty, Serializable {
 		return answer;
 	}
 
+	/**
+	 * @param valueList add description
+	 */
 	public void setValueList(List<String> valueList) {
 		this.value = "";
 		for (String val : valueList) {
@@ -339,6 +346,9 @@ public class ProcessProperty implements IProperty, Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getBooleanValue() {
 		if (this.value != null && this.value.equalsIgnoreCase("true")) {
 			return true;
@@ -347,6 +357,9 @@ public class ProcessProperty implements IProperty, Serializable {
 		}
 	}
 
+	/**
+	 * @param val add description
+	 */
 	public void setBooleanValue(boolean val) {
 		if (val) {
 			this.value = "true";
@@ -361,12 +374,14 @@ public class ProcessProperty implements IProperty, Serializable {
 
 		@Override
 		public int compare(ProcessProperty o1, ProcessProperty o2) {
-
 			return Integer.compare(o1.getContainer(), o2.getContainer());
 		}
 
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean getIsNew() {
 		if (this.name == null || this.name.length() == 0) {
 			return true;
@@ -385,7 +400,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	public void setDuplicationAllowed(boolean duplicate) {
 		currentStepDuplicationAllowed = duplicate;
 	}
-	
+
 	public boolean getDuplicationAllowed() {
 		return currentStepDuplicationAllowed;
 	}

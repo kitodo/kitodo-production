@@ -11,6 +11,13 @@
 
 package org.goobi.production.flow.statistics;
 
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.statistik.StatistikLaufzeitSchritte;
+import de.sub.goobi.statistik.StatistikStatus;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -30,21 +37,15 @@ import org.goobi.production.flow.statistics.hibernate.StatQuestThroughput;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultValueDataset;
 
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.statistik.StatistikLaufzeitSchritte;
-import de.sub.goobi.statistik.StatistikStatus;
-
 /**
- * The Class StatisticsManager organizes all statistical questions by choosing
- * the right implementation depening on {@link StatisticsMode}
- * 
- * for old statistical question there will be generated jfreechart-datasets
- * 
+ * The Class StatisticsManager organizes all statistical questions by choosing the right implementation depending on
+ * {@link StatisticsMode}
+ *
+ * <p>for old statistical question there will be generated jfreechart-datasets</p>
+ *
  * @author Steffen Hankiewicz
  * @version 20.05.2009
- ****************************************************************************/
+ */
 public class StatisticsManager implements Serializable {
 
 	private static final long serialVersionUID = -1070332559779545423L;
@@ -74,12 +75,10 @@ public class StatisticsManager implements Serializable {
 
 	/**
 	 * public constructor
-	 * 
-	 * @param inMode
-	 *            as {@link StatisticsMode}
-	 * @param inDataSource
-	 *            as {@link IDataSource}
-	 ****************************************************************************/
+	 *
+	 * @param inMode as {@link StatisticsMode}
+	 * @param inDataSource as {@link IDataSource}
+	 */
 	public StatisticsManager(StatisticsMode inMode, IDataSource inDataSource, Locale locale) {
 		this();
 		statisticMode = inMode;
@@ -93,13 +92,13 @@ public class StatisticsManager implements Serializable {
 		if (inMode.getIsSimple()) {
 			switch (inMode) {
 
-			case SIMPLE_RUNTIME_STEPS:
-				jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(inDataSource.getSourceData());
-				break;
+				case SIMPLE_RUNTIME_STEPS:
+					jfreeDataset = StatistikLaufzeitSchritte.getDiagramm(inDataSource.getSourceData());
+					break;
 
-			default:
-				jfreeDataset = StatistikStatus.getDiagramm(inDataSource.getSourceData());
-				break;
+				default:
+					jfreeDataset = StatistikStatus.getDiagramm(inDataSource.getSourceData());
+					break;
 			}
 		}
 		if (myLocale == null) {
@@ -109,9 +108,9 @@ public class StatisticsManager implements Serializable {
 
 	/**
 	 * retrieve the jfreechart Dataset for old statistical questions
-	 * 
+	 *
 	 * @return {@link Dataset} for charting
-	 ****************************************************************************/
+	 */
 	public Dataset getJfreeDataset() {
 		if (statisticMode.getIsSimple()) {
 			return jfreeDataset;
@@ -122,22 +121,20 @@ public class StatisticsManager implements Serializable {
 
 	/**
 	 * retrieve current {@link StatisticsMode}
-	 * 
+	 *
 	 * @return {@link StatisticsMode} for current statistical question
-	 ****************************************************************************/
+	 */
 	public StatisticsMode getStatisticMode() {
 		return statisticMode;
 	}
 
 	/**
-	 * calculate statistics and retrieve List off {@link DataRow} from
-	 * {@link StatisticsMode} for presention and rendering
-	 * 
-	 ****************************************************************************/
+	 * calculate statistics and retrieve List off {@link DataRow} from {@link StatisticsMode} for presention and
+	 * rendering
+	 */
 	public void calculate() {
 		/*
-		 * -------------------------------- if to-date is before from-date, show
-		 * error message --------------------------------
+		 * if to-date is before from-date, show error message
 		 */
 		if (sourceDateFrom != null && sourceDateTo != null && sourceDateFrom.after(sourceDateTo)) {
 			Helper.setMeldung("myStatisticButton", "selectedDatesNotValide", "selectedDatesNotValide");
@@ -145,18 +142,17 @@ public class StatisticsManager implements Serializable {
 		}
 
 		/*
-		 * -------------------------------- some debugging here
-		 * --------------------------------
+		 * some debugging here
 		 */
-		if(logger.isDebugEnabled()){
-			logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - " + sourceTimeUnit + "\n" + targetTimeUnit + " - "
-					+ targetCalculationUnit + " - " + targetResultOutput + " - " + showAverage);
+		if (logger.isDebugEnabled()) {
+			logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - "
+					+ sourceTimeUnit + "\n" + targetTimeUnit + " - " + targetCalculationUnit + " - "
+					+ targetResultOutput + " - " + showAverage);
 		}
 
 		/*
-		 * -------------------------------- calculate the statistical results and
-		 * save it as List of DataTables (because some statistical questions
-		 * allow multiple tables and charts) --------------------------------
+		 * calculate the statistical results and save it as List of DataTables (because some statistical questions
+		 * allow multiple tables and charts)
 		 */
 		IStatisticalQuestion question = statisticMode.getStatisticalQuestion();
 		try {
@@ -180,14 +176,12 @@ public class StatisticsManager implements Serializable {
 			List<DataTable> myDataTables = question.getDataTables(myDataSource);
 
 			/*
-			 * -------------------------------- if DataTables exist analyze them
-			 * --------------------------------
+			 * if DataTables exist analyze them
 			 */
 			if (myDataTables != null) {
 
 				/*
-				 * -------------------------------- localize time frame for gui
-				 * --------------------------------
+				 * localize time frame for gui
 				 */
 				StringBuilder subname = new StringBuilder();
 				if (calculatedStartDate != null) {
@@ -202,8 +196,7 @@ public class StatisticsManager implements Serializable {
 				}
 
 				/*
-				 * -------------------------------- run through all DataTables
-				 * --------------------------------
+				 * run through all DataTables
 				 */
 				for (DataTable dt : myDataTables) {
 					dt.setSubname(subname.toString());
@@ -218,14 +211,11 @@ public class StatisticsManager implements Serializable {
 	}
 
 	/**
-	 * Depending on selected Dates oder time range, set the dates for the
-	 * statistical question here
-	 * 
-	 * @param question
-	 *            the {@link IStatisticalQuestion} where the dates should be
-	 *            set, if it is an implementation of
-	 *            {@link IStatisticalQuestionLimitedTimeframe}
-	 *************************************************************************************/
+	 * Depending on selected Dates oder time range, set the dates for the statistical question here
+	 *
+	 * @param question the {@link IStatisticalQuestion} where the dates should be set, if it is an implementation of
+	 *            		{@link IStatisticalQuestionLimitedTimeframe}
+	 */
 	@SuppressWarnings("incomplete-switch")
 	private void setTimeFrameToStatisticalQuestion(IStatisticalQuestion question) {
 		/* only add a date, if correct interface is implemented here */
@@ -239,39 +229,39 @@ public class StatisticsManager implements Serializable {
 				cl.setTime(new Date());
 
 				switch (sourceTimeUnit) {
-				case days:
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -1);
-					break;
+					case days:
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -1);
+						break;
 
-				case weeks:
-					cl.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -7);
-					break;
+					case weeks:
+						cl.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.DATE, -7);
+						break;
 
-				case months:
-					cl.set(Calendar.DAY_OF_MONTH, 1);
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -1);
-					break;
+					case months:
+						cl.set(Calendar.DAY_OF_MONTH, 1);
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -1);
+						break;
 
-				case quarters:
-					cl.set(Calendar.DAY_OF_MONTH, 1);
-					setCalendarToMidnight(cl);
-					while ((cl.get(Calendar.MONTH) + 0) % 3 > 0) {
-						cl.add(Calendar.MONTH, -1);
-					}
-					cl.add(Calendar.MILLISECOND, -1);
-					calculatedEndDate = cl.getTime();
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -3);
-					break;
+					case quarters:
+						cl.set(Calendar.DAY_OF_MONTH, 1);
+						setCalendarToMidnight(cl);
+						while ((cl.get(Calendar.MONTH) + 0) % 3 > 0) {
+							cl.add(Calendar.MONTH, -1);
+						}
+						cl.add(Calendar.MILLISECOND, -1);
+						calculatedEndDate = cl.getTime();
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.MONTH, -3);
+						break;
 
-				case years:
-					cl.set(Calendar.DAY_OF_YEAR, 1);
-					calculatedEndDate = calulateStartDateForTimeFrame(cl);
-					calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.YEAR, -1);
-					break;
+					case years:
+						cl.set(Calendar.DAY_OF_YEAR, 1);
+						calculatedEndDate = calulateStartDateForTimeFrame(cl);
+						calculatedStartDate = calculateEndDateForTimeFrame(cl, Calendar.YEAR, -1);
+						break;
 				}
 
 			} else {
@@ -311,64 +301,62 @@ public class StatisticsManager implements Serializable {
 
 	/**
 	 * Get all {@link TimeUnit} from enum
-	 * 
+	 *
 	 * @return all timeUnits
-	 *************************************************************************************/
+	 */
 	public List<TimeUnit> getAllTimeUnits() {
 		return Arrays.asList(TimeUnit.values());
 	}
 
 	/**
 	 * Get all {@link CalculationUnit} from enum
-	 * 
+	 *
 	 * @return all calculationUnit
-	 *************************************************************************************/
+	 */
 	public List<CalculationUnit> getAllCalculationUnits() {
 		return Arrays.asList(CalculationUnit.values());
 	}
 
 	/**
 	 * Get all {@link ResultOutput} from enum
-	 * 
+	 *
 	 * @return all resultOutput
-	 *************************************************************************************/
+	 */
 	public List<ResultOutput> getAllResultOutputs() {
 		return Arrays.asList(ResultOutput.values());
 	}
 
 	/**
 	 * @return the sourceDateFrom
-	 *************************************************************************************/
+	 */
 	public Date getSourceDateFrom() {
 		return sourceDateFrom;
 	}
 
 	/**
-	 * @param sourceDateFrom
-	 *            the sourceDateFrom to set
-	 *************************************************************************************/
+	 * @param sourceDateFrom the sourceDateFrom to set
+	 */
 	public void setSourceDateFrom(Date sourceDateFrom) {
 		this.sourceDateFrom = sourceDateFrom;
 	}
 
 	/**
 	 * @return the sourceDateTo
-	 *************************************************************************************/
+	 */
 	public Date getSourceDateTo() {
 		return sourceDateTo;
 	}
 
 	/**
-	 * @param sourceDateTo
-	 *            the sourceDateTo to set
-	 *************************************************************************************/
+	 * @param sourceDateTo the sourceDateTo to set
+	 */
 	public void setSourceDateTo(Date sourceDateTo) {
 		this.sourceDateTo = sourceDateTo;
 	}
 
 	/**
 	 * @return the sourceNumberOfTimeUnitsAsString
-	 *************************************************************************************/
+	 */
 	public String getSourceNumberOfTimeUnitsAsString() {
 		if (sourceNumberOfTimeUnits == 0) {
 			return "";
@@ -378,10 +366,8 @@ public class StatisticsManager implements Serializable {
 	}
 
 	/**
-	 * @param inUnits
-	 *            the sourceNumberOfTimeUnits to set given as String to show an
-	 *            empty text field in gui
-	 *************************************************************************************/
+	 * @param inUnits the sourceNumberOfTimeUnits to set given as String to show an empty text field in gui
+	 */
 	public void setSourceNumberOfTimeUnitsAsString(String inUnits) {
 		if (StringUtils.isNotBlank(inUnits) && StringUtils.isNumericSpace(inUnits)) {
 			sourceNumberOfTimeUnits = Integer.parseInt(inUnits);
@@ -392,75 +378,70 @@ public class StatisticsManager implements Serializable {
 
 	/**
 	 * @return the sourceTimeUnit
-	 *************************************************************************************/
+	 */
 	public TimeUnit getSourceTimeUnit() {
 		return sourceTimeUnit;
 	}
 
 	/**
-	 * @param sourceTimeUnit
-	 *            the sourceTimeUnit to set
-	 *************************************************************************************/
+	 * @param sourceTimeUnit the sourceTimeUnit to set
+	 */
 	public void setSourceTimeUnit(TimeUnit sourceTimeUnit) {
 		this.sourceTimeUnit = sourceTimeUnit;
 	}
 
 	/**
 	 * @return the targetTimeUnit
-	 *************************************************************************************/
+	 */
 	public TimeUnit getTargetTimeUnit() {
 		return targetTimeUnit;
 	}
 
 	/**
-	 * @param targetTimeUnit
-	 *            the targetTimeUnit to set
-	 *************************************************************************************/
+	 * @param targetTimeUnit the targetTimeUnit to set
+	 */
 	public void setTargetTimeUnit(TimeUnit targetTimeUnit) {
 		this.targetTimeUnit = targetTimeUnit;
 	}
 
 	/**
 	 * @return the targetResultOutput
-	 *************************************************************************************/
+	 */
 	public ResultOutput getTargetResultOutput() {
 		return targetResultOutput;
 	}
 
 	/**
-	 * @param targetResultOutput
-	 *            the targetResultOutput to set
-	 *************************************************************************************/
+	 * @param targetResultOutput the targetResultOutput to set
+	 */
 	public void setTargetResultOutput(ResultOutput targetResultOutput) {
 		this.targetResultOutput = targetResultOutput;
 	}
 
 	/**
 	 * @return the targetCalculationUnit
-	 *************************************************************************************/
+	 */
 	public CalculationUnit getTargetCalculationUnit() {
 		return targetCalculationUnit;
 	}
 
 	/**
-	 * @param targetCalculationUnit
-	 *            the targetCalculationUnit to set
-	 *************************************************************************************/
+	 * @param targetCalculationUnit the targetCalculationUnit to set
+	 */
 	public void setTargetCalculationUnit(CalculationUnit targetCalculationUnit) {
 		this.targetCalculationUnit = targetCalculationUnit;
 	}
 
 	/**
 	 * @return the showAverage
-	 *************************************************************************************/
+	 */
 	public boolean isShowAverage() {
 		return showAverage;
 	}
 
 	/**
-	 * @param showAverage
-	 *            the showAverage to set
-	 *************************************************************************************/
+	 * @param showAverage the showAverage to set
+	 */
 	public void setShowAverage(boolean showAverage) {
 		this.showAverage = showAverage;
 	}
@@ -480,7 +461,7 @@ public class StatisticsManager implements Serializable {
 	}
 
 	/**
-	 * @param includeLoops
+	 * @param includeLoops add description
 	 */
 	public void setIncludeLoops(boolean includeLoops) {
 		this.includeLoops = includeLoops;
@@ -488,13 +469,16 @@ public class StatisticsManager implements Serializable {
 
 	/**
 	 * get List of RenderingElements
-	 * 
+	 *
 	 * @return List of {@link StatisticsRenderingElement} of calculated results
-	 *************************************************************************************/
+	 */
 	public List<StatisticsRenderingElement> getRenderingElements() {
 		return renderingElements;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public static Locale getLocale() {
 		if (myLocale != null) {
 			return myLocale;

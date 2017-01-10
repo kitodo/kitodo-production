@@ -11,6 +11,31 @@
 
 package org.goobi.production.cli.helper;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Vorlage;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueck;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.forms.AdditionalField;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.BeanHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.enums.StepEditType;
+import de.sub.goobi.helper.enums.StepStatus;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.ProzessDAO;
+
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -46,29 +71,6 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.forms.AdditionalField;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.forms.ProzesskopieForm;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.enums.StepEditType;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class CopyProcess extends ProzesskopieForm {
 
@@ -101,6 +103,10 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/* =============================================================== */
 
+	/**
+	 * @param io add description
+	 * @return add description
+	 */
 	public String prepare(ImportObject io) {
 		if (this.prozessVorlage.getContainsUnreachableSteps()) {
 			return "";
@@ -133,7 +139,6 @@ public class CopyProcess extends ProzesskopieForm {
 		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
 		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
 		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
-
 
 		return this.naviFirstPage;
 	}
@@ -184,9 +189,9 @@ public class CopyProcess extends ProzesskopieForm {
 	/* =============================================================== */
 
 	private void readProjectConfigs() {
-		/*-------------------------------- 
-		 * projektabhängig die richtigen Felder in der Gui anzeigen 
-		 * --------------------------------*/
+		/*
+		 * projektabhängig die richtigen Felder in der Gui anzeigen
+		 */
 		ConfigProjects cp = null;
 		try {
 			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
@@ -205,14 +210,14 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- die auszublendenden Standard-Felder ermitteln --------------------------------
+		 * die auszublendenden Standard-Felder ermitteln
 		 */
 		for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
 			this.standardFields.put(t, false);
 		}
 
 		/*
-		 * -------------------------------- die einzublendenen (zusätzlichen) Eigenschaften ermitteln --------------------------------
+		 * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
 		 */
 		int count = cp.getParamList("createNewProcess.itemlist.item").size();
 		for (int i = 0; i < count; i++) {
@@ -230,7 +235,7 @@ public class CopyProcess extends ProzesskopieForm {
 			fa.setInitEnd(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initEnd]"));
 
 			/*
-			 * -------------------------------- Bindung an ein Metadatum eines Docstructs --------------------------------
+			 * Bindung an ein Metadatum eines Docstructs
 			 */
 			if (cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@ughbinding]")) {
 				fa.setUghbinding(true);
@@ -239,7 +244,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- prüfen, ob das aktuelle Item eine Auswahlliste werden soll --------------------------------
+			 * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
 			 */
 			int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
 			/* Children durchlaufen und SelectItems erzeugen */
@@ -247,7 +252,8 @@ public class CopyProcess extends ProzesskopieForm {
 				fa.setSelectList(new ArrayList<SelectItem>());
 			}
 			for (int j = 0; j < selectItemCount; j++) {
-				String svalue = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")[@label]");
+				String svalue = cp
+						.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")[@label]");
 				String sid = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")");
 				fa.getSelectList().add(new SelectItem(sid, svalue, null));
 			}
@@ -255,6 +261,10 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * @param io add description
+	 * @return add description
+	 */
 	public String OpacAuswerten(ImportObject io) {
 		clearValues();
 		readProjectConfigs();
@@ -263,9 +273,9 @@ public class CopyProcess extends ProzesskopieForm {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
-		
+
 			this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-		
+
 			fillFieldsFromMetadataFile(this.myRdf);
 
 			fillFieldsFromConfig();
@@ -289,9 +299,9 @@ public class CopyProcess extends ProzesskopieForm {
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
-			
+
 			this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-			
+
 			fillFieldsFromMetadataFile(this.myRdf);
 
 			fillFieldsFromConfig();
@@ -307,8 +317,8 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/**
 	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen
-	 * 
-	 * @throws PreferencesException
+	 *
+	 * @throws PreferencesException add description
 	 */
 	private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
 		if (myRdf != null) {
@@ -358,7 +368,7 @@ public class CopyProcess extends ProzesskopieForm {
 						Helper.setFehlerMeldung(e.getMessage(), "");
 					}
 				} // end if ughbinding
-			}// end for
+			} // end for
 		} // end if myrdf==null
 	}
 
@@ -376,7 +386,7 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * alle Konfigurationseigenschaften und Felder zurücksetzen ================================================================
+	 * alle Konfigurationseigenschaften und Felder zurücksetzen
 	 */
 	private void clearValues() {
 		if (this.opacKatalog == null) {
@@ -393,11 +403,10 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/**
 	 * Auswahl des Prozesses auswerten
-	 * 
-	 * @throws DAOException
-	 * @throws NamingException
-	 * @throws SQLException
-	 *             ============================================================ == ==
+	 *
+	 * @throws DAOException add description
+	 * @throws NamingException add description
+	 * @throws SQLException add description
 	 */
 	@Override
 	public String TemplateAuswahlAuswerten() throws DAOException {
@@ -453,22 +462,23 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/**
 	 * Validierung der Eingaben
-	 * 
-	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
+	 *
+	 * @return sind Fehler bei den Eingaben vorhanden?
 	 */
 	private boolean isContentValid() {
 		/*
-		 * -------------------------------- Vorbedingungen prüfen --------------------------------
+		 * Vorbedingungen prüfen
 		 */
 		boolean valide = true;
 
 		/*
-		 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
+		 * grundsätzlich den Vorgangstitel prüfen
 		 */
 		/* kein Titel */
 		if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+					+ Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 		}
 
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
@@ -488,26 +498,30 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 			if (anzahl > 0) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ") + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
+				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ")
+						+ Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
 			}
 		}
 
 		/*
-		 * -------------------------------- Prüfung der standard-Eingaben, die angegeben werden müssen --------------------------------
+		 * Prüfung der standard-Eingaben, die angegeben werden müssen
 		 */
 		/* keine Collektion ausgewählt */
 		if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorNoCollection"));
+			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+					+ Helper.getTranslation("ProcessCreationErrorNoCollection"));
 		}
 
 		/*
-		 * -------------------------------- Prüfung der additional-Eingaben, die angegeben werden müssen --------------------------------
+		 * Prüfung der additional-Eingaben, die angegeben werden müssen
 		 */
 		for (AdditionalField field : this.additionalFields) {
-			if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getWert()))) {
+			if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
+					&& (StringUtils.isBlank(field.getWert()))) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel() + " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty")); 
+				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel() + " "
+						+ Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
 			}
 		}
 		return valide;
@@ -531,17 +545,21 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public boolean testTitle() {
 		boolean valide = true;
 
 		if (ConfigMain.getBooleanParameter("MassImportUniqueTitle", true)) {
 			/*
-			 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
+			 * grundsätzlich den Vorgangstitel prüfen
 			 */
 			/* kein Titel */
 			if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+						+ Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 			}
 
 			String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
@@ -561,7 +579,8 @@ public class CopyProcess extends ProzesskopieForm {
 				}
 				if (anzahl > 0) {
 					valide = false;
-					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:") + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
+					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
+							+ Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
 				}
 			}
 		}
@@ -569,25 +588,24 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * Anlegen des Prozesses und Speichern der Metadaten ================================================================
-	 * 
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
+	 * Anlegen des Prozesses und Speichern der Metadaten
+	 *
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws WriteException add description
 	 */
 
-	public Prozess NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-			WriteException {
+	public Prozess NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException,
+			PreferencesException, SwapException, DAOException, WriteException {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
-		
+
 		addProperties(null);
 
-	
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
 			/*
-			 * -------------------------------- always save date and user for each step --------------------------------
+			 * always save date and user for each step
 			 */
 			step.setBearbeitungszeitpunkt(this.prozessKopie.getErstellungsdatum());
 			step.setEditTypeEnum(StepEditType.AUTOMATIC);
@@ -597,7 +615,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- only if its done, set edit start and end date --------------------------------
+			 * only if its done, set edit start and end date
 			 */
 			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				step.setBearbeitungsbeginn(this.prozessKopie.getErstellungsdatum());
@@ -651,17 +669,27 @@ public class CopyProcess extends ProzesskopieForm {
 
 	}
 
-	public Prozess createProcess(ImportObject io) throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
-			DAOException, WriteException {
+	/**
+	 * @param io add description
+	 * @return add description
+	 * @throws ReadException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws PreferencesException add description
+	 * @throws SwapException add description
+	 * @throws DAOException add description
+	 * @throws WriteException add description
+	 */
+	public Prozess createProcess(ImportObject io) throws ReadException, IOException, InterruptedException,
+			PreferencesException, SwapException, DAOException, WriteException {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
 		addProperties(io);
 
-	
 		for (Schritt step : this.prozessKopie.getSchritteList()) {
 			/*
-			 * -------------------------------- always save date and user for each step --------------------------------
+			 * always save date and user for each step
 			 */
 			step.setBearbeitungszeitpunkt(this.prozessKopie.getErstellungsdatum());
 			step.setEditTypeEnum(StepEditType.AUTOMATIC);
@@ -671,7 +699,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- only if its done, set edit start and end date --------------------------------
+			 * only if its done, set edit start and end date
 			 */
 			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
 				step.setBearbeitungsbeginn(this.prozessKopie.getErstellungsdatum());
@@ -704,14 +732,14 @@ public class CopyProcess extends ProzesskopieForm {
 		if (this.myRdf == null) {
 			createNewFileformat();
 		}
-		
+
 		File f = new File(this.prozessKopie.getProcessDataDirectoryIgnoreSwapping());
 		if (!f.exists() && !f.mkdir()) {
 			Helper.setFehlerMeldung("Could not create process directory");
 			myLogger.error("Could not create process directory");
 			return this.prozessKopie;
 		}
-		
+
 		this.prozessKopie.writeMetadataFile(this.myRdf);
 
 		// }
@@ -738,7 +766,7 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * alle Kollektionen eines übergebenen DocStructs entfernen ================================================================
+	 * alle Kollektionen eines übergebenen DocStructs entfernen
 	 */
 	private void removeCollections(DocStruct colStruct) {
 		try {
@@ -809,7 +837,7 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen --------------------------------
+		 * jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen
 		 */
 		if (io == null) {
 			for (AdditionalField field : this.additionalFields) {
@@ -888,7 +916,7 @@ public class CopyProcess extends ProzesskopieForm {
 
 	/*
 	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice
-	 * 
+	 *
 	 * @author Wulf
 	 */
 	@Override
@@ -898,8 +926,9 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/*
-	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use this choice
-	 * 
+	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use
+	 * this choice
+	 *
 	 * @author Wulf
 	 */
 	@Override
@@ -917,7 +946,6 @@ public class CopyProcess extends ProzesskopieForm {
 		return this.possibleDigitalCollection;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollection = new ArrayList<String>();
@@ -943,11 +971,12 @@ public class CopyProcess extends ProzesskopieForm {
 					List<Element> myCols = projekt.getChildren("DigitalCollection");
 					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 						Element col = it2.next();
-						
-						if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+
+						if (col.getAttribute("default") != null
+								&& col.getAttributeValue("default").equalsIgnoreCase("true")) {
 							digitalCollections.add(col.getText());
 						}
-					
+
 						defaultCollections.add(col.getText());
 					}
 				} else {
@@ -960,11 +989,12 @@ public class CopyProcess extends ProzesskopieForm {
 							List<Element> myCols = projekt.getChildren("DigitalCollection");
 							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 								Element col = it2.next();
-								
-								if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+
+								if (col.getAttribute("default") != null
+										&& col.getAttributeValue("default").equalsIgnoreCase("true")) {
 									digitalCollections.add(col.getText());
 								}
-							
+
 								this.possibleDigitalCollection.add(col.getText());
 							}
 						}
@@ -984,12 +1014,11 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		// if only one collection is possible take it directly
-	
+
 		if (isSingleChoiceCollection()) {
 			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
 		}
 	}
-
 
 	@Override
 	public List<String> getAllOpacCatalogues() {
@@ -1090,12 +1119,13 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Helper ##
+	 * #########################################################################################################
 	 */
 
 	/**
-	 * Prozesstitel und andere Details generieren ================================================================
+	 * Prozesstitel und andere Details generieren
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -1131,23 +1161,25 @@ public class CopyProcess extends ProzesskopieForm {
 				titeldefinition = titel;
 				break;
 			}
- 
-            /* wenn beides angegeben wurde */
-            if (!isdoctype.equals("") && !isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType) && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
-                titeldefinition = titel;
-                break;
-            }
 
-            /* wenn nur pflicht angegeben wurde */
-            if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)) {
-                titeldefinition = titel;
-                break;
-            }
-            /* wenn nur "darf nicht" angegeben wurde */
-            if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
-                titeldefinition = titel;
-                break;
-            }
+			/* wenn beides angegeben wurde */
+			if (!isdoctype.equals("") && !isnotdoctype.equals("")
+					&& StringUtils.containsIgnoreCase(isdoctype, this.docType)
+					&& !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
+				titeldefinition = titel;
+				break;
+			}
+
+			/* wenn nur pflicht angegeben wurde */
+			if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)) {
+				titeldefinition = titel;
+				break;
+			}
+			/* wenn nur "darf nicht" angegeben wurde */
+			if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
+				titeldefinition = titel;
+				break;
+			}
 		}
 
 		StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
@@ -1166,15 +1198,18 @@ public class CopyProcess extends ProzesskopieForm {
 					AdditionalField myField = (AdditionalField) it2.next();
 
 					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
+					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht
+					 * vorhanden
 					 */
-					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
+					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL"))
+							&& myField.getShowDependingOnDoctype()
 							&& (myField.getWert() == null || myField.getWert().equals(""))) {
 						myField.setWert(this.atstsl);
 					}
 
 					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
+					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype()
+							&& myField.getWert() != null) {
 						newTitle += calcProcessTitleCheck(myField.getTitel(), myField.getWert());
 					}
 				}
@@ -1224,22 +1259,22 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
 		}
-		
+
 		tif_definition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
 
 		/*
-		 * -------------------------------- evtuelle Ersetzungen --------------------------------
+		 * evtuelle Ersetzungen
 		 */
 		tif_definition = tif_definition.replaceAll("\\[\\[", "<");
 		tif_definition = tif_definition.replaceAll("\\]\\]", ">");
 
 		/*
-		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
+		 * Documentname ist im allgemeinen = Prozesstitel
 		 */
 		this.tifHeader_documentname = this.prozessKopie.getTitel();
 		this.tifHeader_imagedescription = "";
 		/*
-		 * -------------------------------- Imagedescription --------------------------------
+		 * Imagedescription
 		 */
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
 		/* jetzt den Tiffheader parsen */
@@ -1251,7 +1286,7 @@ public class CopyProcess extends ProzesskopieForm {
 			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
-			
+
 				this.tifHeader_imagedescription += this.docType;
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
@@ -1259,15 +1294,18 @@ public class CopyProcess extends ProzesskopieForm {
 					AdditionalField myField = it2.next();
 
 					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
+					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht
+					 * vorhanden
 					 */
-					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
+					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL"))
+							&& myField.getShowDependingOnDoctype()
 							&& (myField.getWert() == null || myField.getWert().equals(""))) {
 						myField.setWert(this.atstsl);
 					}
 
 					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
+					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype()
+							&& myField.getWert() != null) {
 						this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitel(), myField.getWert());
 					}
 				}

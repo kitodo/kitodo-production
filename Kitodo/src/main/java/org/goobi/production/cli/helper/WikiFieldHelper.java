@@ -11,18 +11,17 @@
 
 package org.goobi.production.cli.helper;
 
+import de.sub.goobi.beans.Prozess;
+
 import java.text.DateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
-
 public class WikiFieldHelper {
 
 	private static final Logger logger = Logger.getLogger(WikiFieldHelper.class);
 
-	
 	private static final String TAG_ERROR = "<font color=\"#FF0000\">";
 	private static final String TAG_WARN = "<font color=\"#FF6600\">";
 	private static final String TAG_INFO = "<font color=\"#0033CC\">";
@@ -32,6 +31,13 @@ public class WikiFieldHelper {
 
 	private static final String BREAK = "<br/>";
 
+	/**
+	 * @param p add description
+	 * @param currentWikifieldcontent add description
+	 * @param type add description
+	 * @param value add description
+	 * @return add description
+	 */
 	public static String getWikiMessage(Prozess p, String currentWikifieldcontent, String type, String value) {
 		String message = "";
 		if (currentWikifieldcontent != null && currentWikifieldcontent.length() > 0) {
@@ -47,23 +53,28 @@ public class WikiFieldHelper {
 			message += TAG_USER;
 		} else if (type.equals("warn")) {
 			message += TAG_WARN;
-		}else {
+		} else {
 			message += TAG_INFO;
-		}  
+		}
 
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
 		String processname = "";
 		if (p != null) {
 			processname = "processname: " + p.getTitel() + ", message: ";
 		}
-		if(logger.isInfoEnabled()){
-			logger.info(timestamp + " " + processname + " " + value );
+		if (logger.isInfoEnabled()) {
+			logger.info(timestamp + " " + processname + " " + value);
 		}
 		message = message + timestamp + ": " + value + ENDTAG;
 		return message;
 	}
-	
-	
+
+	/**
+	 * @param currentWikifieldcontent add description
+	 * @param type add description
+	 * @param value add description
+	 * @return add description
+	 */
 	public static String getWikiMessage(String currentWikifieldcontent, String type, String value) {
 		String message = "";
 		if (currentWikifieldcontent != null && currentWikifieldcontent.length() > 0) {
@@ -79,12 +90,12 @@ public class WikiFieldHelper {
 			message += TAG_USER;
 		} else if (type.equals("warn")) {
 			message += TAG_WARN;
-		}else {
+		} else {
 			message += TAG_INFO;
-		}  
+		}
 
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
-		
+
 		message = message + timestamp + ": " + value + ENDTAG;
 		return message;
 	}

@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.forms.LoginForm;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +20,10 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import de.sub.goobi.forms.LoginForm;
 
 /**
- * This class provides pagination for displaying results from a large result set over a number of pages (i.e. with a given number of results per
- * page). Taken from http://blog.hibernate.org/cgi-bin/blosxom.cgi/2004/08/14#fn.html.
+ * This class provides pagination for displaying results from a large result set over a number of pages (i.e. with
+ * a given number of results per page). Taken from http://blog.hibernate.org/cgi-bin/blosxom.cgi/2004/08/14#fn.html.
  *
  * @author Gavin King
  * @author Eric Broyles
@@ -47,8 +48,8 @@ public class Page implements Serializable { // implements Iterator
 	public Page(Criteria criteria, int page) {
 		this.page = page;
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        if (login == null || login.getMyBenutzer() == null) {
-        	this.pageSize = 10;
+		if (login == null || login.getMyBenutzer() == null) {
+			this.pageSize = 10;
 		} else {
 			this.pageSize = login.getMyBenutzer().getTabellengroesse().intValue();
 		}
@@ -59,18 +60,22 @@ public class Page implements Serializable { // implements Iterator
 				this.totalResults = ((PaginatingCriteria) criteria).count();
 			} else {
 				// this case should be avoided, especially if dealing with a large number of Objects
-				logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by PaginatingCriteria, if performance or memory is going down");
+				logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by "
+						+ "PaginatingCriteria, if performance or memory is going down");
 				this.totalResults = criteria.list().size();
 			}
 
 		} catch (HibernateException e) {
 			// no hits found, error is thrown
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Failed to get paginated results: " + e);
 			}
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getLastPageNumber() {
 		/*
 		 * We use the Math.floor() method because page numbers are zero-based (i.e. the first page is page 0).
@@ -83,11 +88,14 @@ public class Page implements Serializable { // implements Iterator
 	}
 
 	// TODO: Use generics
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("rawtypes")
 	public List getList() {
 		/*
-		 * Since we retrieved one more than the specified pageSize when the class was constructed, we now trim it down to the pageSize if a next page
-		 * exists.
+		 * Since we retrieved one more than the specified pageSize when the class was constructed, we now trim it down
+		 * to the pageSize if a next page exists.
 		 */
 
 		return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
@@ -112,19 +120,21 @@ public class Page implements Serializable { // implements Iterator
 		return getTotalResults() < fullPage ? getTotalResults() : fullPage;
 	}
 
-
-
 	// TODO: Use generics
+	/**
+	 * @return add description
+	 */
 	@SuppressWarnings("rawtypes")
 	public List getListReload() {
 		/*
-		 * Since we retrieved one more than the specified pageSize when the class was constructed, we now trim it down to the pageSize if a next page
-		 * exists.
+		 * Since we retrieved one more than the specified pageSize when the class was constructed, we now trim it down
+		 * to the pageSize if a next page exists.
 		 */
 
 		if (this.criteria != null) {
 			try {
-				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1).list();
+				this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1)
+						.list();
 				if (this.results != null && this.results.size() > 0) {
 					List answer = hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
 
@@ -172,6 +182,9 @@ public class Page implements Serializable { // implements Iterator
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String cmdMovePrevious() {
 		if (!isFirstPage()) {
 			this.page--;
@@ -179,6 +192,9 @@ public class Page implements Serializable { // implements Iterator
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String cmdMoveNext() {
 		if (!isLastPage()) {
 			this.page++;
@@ -191,6 +207,9 @@ public class Page implements Serializable { // implements Iterator
 		return "";
 	}
 
+	/**
+	 * @param neueSeite add description
+	 */
 	public void setTxtMoveTo(int neueSeite) {
 		if (neueSeite > 0 && neueSeite <= getLastPageNumber() + 1) {
 			this.page = neueSeite - 1;

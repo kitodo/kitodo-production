@@ -11,6 +11,8 @@
 
 package de.sub.goobi.beans;
 
+import de.sub.goobi.helper.enums.HistoryEventType;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,11 +25,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
-
 /**
  * HistoryItem for any kind of history event of a {@link Prozess}
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 24.05.2009
  */
@@ -58,12 +58,9 @@ public class HistoryEvent implements Serializable {
 	private Prozess process;
 
 	/**
-	 * This constructor is only public for hibernate usage. If you want to
-	 * create a new HistoryEvent please use HistoryEvent(Date date, Number
-	 * inNumericValue, String inStringValue, HistoryEventType
+	 * This constructor is only public for hibernate usage. If you want to create a new HistoryEvent please use
+	 * HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType
 	 * inHistoryEventType, Prozess process)
-	 * 
-	 * 
 	 */
 	public HistoryEvent() {
 
@@ -71,20 +68,16 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Please use only this constructor.
-	 * 
-	 * @param date
-	 *            Date of HistoryEvent
-	 * @param inNumericValue
-	 *            value as Number (pages, size,...)
-	 * @param inStringValue
-	 *            value as string
-	 * @param inHistoryEventType
-	 *            type of HistoryEvent ( {@link HistoryEventType} )
-	 * @param process
-	 *            process of HistoryEvent
+	 *
+	 * @param date Date of HistoryEvent
+	 * @param inNumericValue value as Number (pages, size,...)
+	 * @param inStringValue value as string
+	 * @param inHistoryEventType type of HistoryEvent ( {@link HistoryEventType} )
+	 * @param process process of HistoryEvent
 	 */
 
-	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process) {
+	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType,
+			Prozess process) {
 		super();
 		this.date = date;
 		numericValue = inNumericValue.doubleValue();
@@ -95,7 +88,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for ID
-	 * 
+	 *
 	 * @return the id
 	 */
 	public Integer getId() {
@@ -104,9 +97,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for ID
-	 * 
-	 * @param id
-	 *            the id to set
+	 *
+	 * @param id the id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -114,7 +106,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for date as {@link Date}
-	 * 
+	 *
 	 * @return the date
 	 */
 	public Date getDate() {
@@ -123,9 +115,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for date
-	 * 
-	 * @param date
-	 *            the date to set
+	 *
+	 * @param date the date to set
 	 */
 	public void setDate(Date date) {
 		this.date = date;
@@ -133,7 +124,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for {@link Prozess}
-	 * 
+	 *
 	 * @return the process
 	 */
 	public Prozess getProcess() {
@@ -142,9 +133,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for {@link Prozess}
-	 * 
-	 * @param process
-	 *            the process to set
+	 *
+	 * @param process the process to set
 	 */
 	public void setProcess(Prozess process) {
 		this.process = process;
@@ -152,7 +142,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for numericValue
-	 * 
+	 *
 	 * @return numericValue as Double
 	 */
 	public Double getNumericValue() {
@@ -161,9 +151,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for numericValue
-	 * 
-	 * @param numericValue
-	 *            as Double
+	 *
+	 * @param numericValue as Double
 	 */
 	public void setNumericValue(Double numericValue) {
 		this.numericValue = numericValue;
@@ -171,7 +160,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for stringValue
-	 * 
+	 *
 	 * @return stringValue as String
 	 */
 	public String getStringValue() {
@@ -180,9 +169,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for stringValue
-	 * 
-	 * @param stringValue
-	 *            as String
+	 *
+	 * @param stringValue as String
 	 */
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
@@ -190,7 +178,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for type as private method for Hibernate only
-	 * 
+	 *
 	 * @return the type
 	 */
 	@SuppressWarnings("unused")
@@ -200,9 +188,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for type as private method for Hibernate only
-	 * 
-	 * @param type
-	 *            the type to set
+	 *
+	 * @param type the type to set
 	 */
 	@SuppressWarnings("unused")
 	private void setType(Integer type) {
@@ -211,7 +198,7 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Getter for type
-	 * 
+	 *
 	 * @return type as HistoryEventType
 	 */
 	public HistoryEventType getHistoryType() {
@@ -220,9 +207,8 @@ public class HistoryEvent implements Serializable {
 
 	/**
 	 * Setter for type
-	 * 
-	 * @param type
-	 *            as HistoryEventType
+	 *
+	 * @param type as HistoryEventType
 	 */
 	public void setHistoryType(HistoryEventType type) {
 		this.type = type.getValue();
@@ -264,7 +250,7 @@ public class HistoryEvent implements Serializable {
 
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

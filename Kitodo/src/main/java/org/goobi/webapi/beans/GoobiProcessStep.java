@@ -16,40 +16,45 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class GoobiProcessStep {
 
-    private Integer sequence;
-    private Integer state;
-    private String title;
+	private Integer sequence;
+	private Integer state;
+	private String title;
 
-    public GoobiProcessStep() {
-    }
+	public GoobiProcessStep() {
+	}
 
-    public GoobiProcessStep(Integer sequence, Integer state, String title) {
-        this.sequence = sequence;
-        this.state = state;
-        this.title = title;
-    }
+	/**
+	 * @param sequence add description
+	 * @param state add description
+	 * @param title add description
+	 */
+	public GoobiProcessStep(Integer sequence, Integer state, String title) {
+		this.sequence = sequence;
+		this.state = state;
+		this.title = title;
+	}
 
-    public Integer getSequence() {
-        return sequence;
-    }
+	public Integer getSequence() {
+		return sequence;
+	}
 
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 
-    public Integer getState() {
-        return state;
-    }
+	public Integer getState() {
+		return state;
+	}
 
-    public void setState(Integer state) {
-        this.state = state;
-    }
+	public void setState(Integer state) {
+		this.state = state;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }

@@ -11,15 +11,15 @@
 
 package org.kitodo.production.plugin.opac.pica;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.io.FilenameUtils;
 
 class ConfigOpac {
 	private static XMLConfiguration config;
@@ -46,7 +46,6 @@ class ConfigOpac {
 
 	/**
 	 * find Catalogue in Opac-Configurationlist
-	 * ================================================================
 	 */
 	static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
@@ -79,7 +78,8 @@ class ConfigOpac {
 							getConfig().getString(tempJ + "[@value]").replaceAll("\u2423", " "), getConfig().getString(
 									tempJ + "[@mode]", "replace"));
 
-					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert werden soll
+					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert
+					// werden soll
 
 					ArrayList<ConfigOpacCatalogueBeautifierElement> proofElements = new ArrayList<ConfigOpacCatalogueBeautifierElement>();
 					for (int k = 0; k <= getConfig().getMaxIndex(tempJ + ".condition"); k++) {
@@ -103,7 +103,6 @@ class ConfigOpac {
 
 	/**
 	 * return all configured Doctype-Titles from Configfile
-	 * ================================================================
 	 */
 	private static ArrayList<String> getAllDoctypeTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
@@ -117,7 +116,6 @@ class ConfigOpac {
 
 	/**
 	 * return all configured Doctype-Titles from Configfile
-	 * ================================================================
 	 */
 	static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
 		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
@@ -128,9 +126,7 @@ class ConfigOpac {
 	}
 
 	/**
-	 * get doctype from mapping of opac response first check if there is a
-	 * special mapping for this
-	 * ================================================================
+	 * get doctype from mapping of opac response first check if there is a special mapping for this
 	 */
 	static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
@@ -166,7 +162,6 @@ class ConfigOpac {
 
 	/**
 	 * get doctype from title
-	 * ================================================================
 	 */
 	@SuppressWarnings("unchecked")
 	private static ConfigOpacDoctype getDoctypeByName(String inTitle) {

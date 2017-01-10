@@ -11,13 +11,22 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.beans.Vorlageeigenschaft;
+import de.sub.goobi.beans.Werkstueckeigenschaft;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.StepStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import de.sub.goobi.config.ConfigMain;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
@@ -26,15 +35,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
 
 public class SearchForm {
 
@@ -71,7 +71,7 @@ public class SearchForm {
 	private String processTitle = ""; // proc:
 
 	private String projectOperand = "";
-	private String processOperand ="";
+	private String processOperand = "";
 	private String processPropertyOperand = "";
 	private String masterpiecePropertyOperand = "";
 	private String templatePropertyOperand = "";
@@ -103,7 +103,7 @@ public class SearchForm {
 	protected void initProjects() {
 		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Projekt.class);
+		Criteria crit = session.createCriteria(Projekt.class);
 
 		crit.addOrder(Order.asc("titel"));
 		if (restriction > 2) {
@@ -210,6 +210,9 @@ public class SearchForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public SearchForm() {
 		initStepStatus();
 		initProjects();
@@ -380,51 +383,63 @@ public class SearchForm {
 		this.user = user;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String filter() {
 		String search = "";
 		if (!this.processTitle.isEmpty()) {
-			
-			search += "\"" + this.processOperand +  this.processTitle + "\" ";
+
+			search += "\"" + this.processOperand + this.processTitle + "\" ";
 		}
 		if (!this.idin.isEmpty()) {
 			search += "\"" + FilterString.ID + this.idin + "\" ";
 		}
 		if (!this.project.isEmpty() && !this.project.equals(Helper.getTranslation("notSelected"))) {
-			search += "\""+ this.projectOperand + FilterString.PROJECT + this.project + "\" ";
+			search += "\"" + this.projectOperand + FilterString.PROJECT + this.project + "\" ";
 		}
 		if (!this.processPropertyValue.isEmpty()) {
-			if (!this.processPropertyTitle.isEmpty() && !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
+			if (!this.processPropertyTitle.isEmpty()
+					&& !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
+				search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle
+						+ ":" + this.processPropertyValue + "\" ";
 			} else {
-				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
+				search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue
+						+ "\" ";
 			}
 		}
 		if (!this.masterpiecePropertyValue.isEmpty()) {
-			if (!this.masterpiecePropertyTitle.isEmpty() && !this.masterpiecePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
+			if (!this.masterpiecePropertyTitle.isEmpty()
+					&& !this.masterpiecePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
+				search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE
+						+ this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
 			} else {
-				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyValue + "\" ";
+				search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE
+						+ this.masterpiecePropertyValue + "\" ";
 			}
 		}
 		if (!this.templatePropertyValue.isEmpty()) {
-			if (!this.templatePropertyTitle.isEmpty() && !this.templatePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
+			if (!this.templatePropertyTitle.isEmpty()
+					&& !this.templatePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
+				search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle
+						+ ":" + this.templatePropertyValue + "\" ";
 			} else {
-				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyValue + "\" ";
+				search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyValue
+						+ "\" ";
 			}
 		}
 
 		if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
-			search += "\""+ this.stepOperand +  this.status + ":" + this.stepname + "\" ";
+			search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
 		}
-		if (!this.stepdonetitle.isEmpty()
-				&& !this.stepdoneuser.isEmpty()
+		if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
 				&& !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
 				&& ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
-			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE + this.stepdonetitle + "\" ";
+			search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE
+					+ this.stepdonetitle + "\" ";
 		}
-		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
-				.get("ProzessverwaltungForm");
+		ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext()
+				.getSessionMap().get("ProzessverwaltungForm");
 		if (form != null) {
 			form.filter = search;
 			form.setModusAnzeige("aktuell");
@@ -433,6 +448,9 @@ public class SearchForm {
 		return "";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<SelectItem> getOperands() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		SelectItem and = new SelectItem("", Helper.getTranslation("AND"));

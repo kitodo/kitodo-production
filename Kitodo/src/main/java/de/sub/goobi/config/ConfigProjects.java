@@ -11,6 +11,8 @@
 
 package de.sub.goobi.config;
 
+import de.sub.goobi.helper.Helper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,8 +24,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.helper.Helper;
-
 public class ConfigProjects {
 	XMLConfiguration config;
 	private String projektTitel;
@@ -33,6 +33,11 @@ public class ConfigProjects {
 		this(projectTitle, new Helper().getGoobiConfigDirectory() + "goobi_projects.xml");
 	}
 
+	/**
+	 * @param projectTitle add description
+	 * @param configPfad add description
+	 * @throws IOException add description
+	 */
 	public ConfigProjects(String projectTitle, String configPfad) throws IOException {
 		if (!(new File(configPfad)).exists()) {
 			throw new IOException("File not found: " + configPfad);
@@ -60,10 +65,8 @@ public class ConfigProjects {
 		} catch (NoSuchElementException e) {
 			this.projektTitel = "project(0).";
 		}
-		
-	}
 
-	
+	}
 
 	/**
 	 * Ermitteln eines bestimmten Parameters der Konfiguration als String
@@ -80,8 +83,6 @@ public class ConfigProjects {
 		}
 	}
 
-	
-
 	private String cleanXmlFormatedString(String inString) {
 		if (inString != null) {
 			inString = inString.replaceAll("\t", " ");
@@ -92,8 +93,6 @@ public class ConfigProjects {
 		}
 		return inString;
 	}
-
-	
 
 	/**
 	 * Ermitteln eines bestimmten Parameters der Konfiguration mit Angabe eines Default-Wertes
@@ -110,8 +109,6 @@ public class ConfigProjects {
 		}
 	}
 
-	
-
 	/**
 	 * Ermitteln eines boolean-Parameters der Konfiguration
 	 * @return Parameter als String
@@ -123,8 +120,6 @@ public class ConfigProjects {
 			return false;
 		}
 	}
-
-	
 
 	/**
 	 * Ermitteln eines long-Parameters der Konfiguration
@@ -138,8 +133,6 @@ public class ConfigProjects {
 			return 0;
 		}
 	}
-
-	
 
 	/**
 	 * Ermitteln einer Liste von Parametern der Konfiguration

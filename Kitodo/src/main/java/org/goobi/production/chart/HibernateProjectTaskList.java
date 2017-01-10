@@ -11,6 +11,11 @@
 
 package org.goobi.production.chart;
 
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.enums.StepStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +27,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
-
 public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
 	@Override
@@ -36,7 +36,8 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 		return myTaskList;
 	}
 
-	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages,
+			Integer inMax) {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Schritt.class);
 		crit.addOrder(Order.asc("reihenfolge"));
@@ -48,7 +49,8 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
 		while (list.next()) {
 			Schritt step = (Schritt) list.get(0);
-			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
+			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step
+					.getTitel());
 
 			IProjectTask pt = null;
 			for (IProjectTask task : myTaskList) {

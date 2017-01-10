@@ -11,6 +11,11 @@
 
 package org.goobi.production.properties;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Prozesseigenschaft;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,22 +25,22 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-
 public class PropertyParser {
 	private static final Logger logger = Logger.getLogger(PropertyParser.class);
 
+	/**
+	 * @param args add description
+	 */
 	public static void main(String[] args) {
 		PropertyParser parser = new PropertyParser();
 		parser.readConfigAsSample();
-//		System.out.println("finish");
+		// System.out.println("finish");
 	}
 
-	
-
+	/**
+	 * @param mySchritt add description
+	 * @return add description
+	 */
 	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
 		Hibernate.initialize(mySchritt.getProzess());
 		Hibernate.initialize(mySchritt.getProzess().getProjekt());
@@ -90,7 +95,7 @@ public class PropertyParser {
 						pp.setDuplicationAllowed(duplicate);
 						pp.setCurrentStepAccessCondition(AccessCondition.getAccessConditionByName(access));
 					}
-					
+
 					pp.getShowStepConditions().add(ssc);
 				}
 
@@ -103,7 +108,7 @@ public class PropertyParser {
 					} else {
 						pp.setShowProcessGroupAccessCondition(AccessCondition.WRITE);
 					}
-					
+
 					// validation expression
 					pp.setValidation(config.getString("property(" + i + ").validation"));
 					// type
@@ -121,7 +126,8 @@ public class PropertyParser {
 			}
 		}
 
-		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
+		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of
+		// them with already existing
 		// 'eigenschaften'
 		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = mySchritt.getProzess().getEigenschaftenList();
@@ -152,6 +158,10 @@ public class PropertyParser {
 		return properties;
 	}
 
+	/**
+	 * @param process add description
+	 * @return add description
+	 */
 	public static ArrayList<ProcessProperty> getPropertiesForProcess(Prozess process) {
 		Hibernate.initialize(process.getProjekt());
 		String projectTitle = process.getProjekt().getTitel();
@@ -210,14 +220,14 @@ public class PropertyParser {
 				for (int j = 0; j <= count; j++) {
 					pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
 				}
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("add property A " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 				}
 				properties.add(pp);
 
 			}
-		}// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
-			// 'eigenschaften'
+		} // add existing 'eigenschaften' to properties from config, so we have all properties from config and some of
+		// them with already existing 'eigenschaften'
 		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
 		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
 		for (Prozesseigenschaft pe : plist) {
@@ -238,8 +248,9 @@ public class PropertyParser {
 							pnew.setProzesseigenschaft(pe);
 							pnew.setValue(pe.getWert());
 							pnew.setContainer(pe.getContainer());
-							if(logger.isDebugEnabled()){
-								logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
+							if (logger.isDebugEnabled()) {
+								logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - "
+										+ pp.getContainer());
 							}
 							properties.add(pnew);
 						}
@@ -264,29 +275,20 @@ public class PropertyParser {
 				pp.setValue(pe.getWert());
 				pp.setContainer(pe.getContainer());
 				pp.setType(Type.TEXT);
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("add property C " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
 				}
 				properties.add(pp);
 
 			}
 		}
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("all properties are " + properties.size());
 		}
 
 		return properties;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	private void readConfigAsSample() {
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 

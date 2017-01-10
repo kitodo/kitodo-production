@@ -10,7 +10,6 @@
  */
 
 package de.sub.goobi.forms;
-import java.util.List;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.tasks.EmptyTask;
@@ -18,29 +17,27 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
 
+import java.util.List;
 
 public class LongRunningTasksForm {
 	/**
-	 * When adding demo tasks, the task number is incremented and passed in as
-	 * task detail. This is to have some task detail showing, so they can be
-	 * told apart from each other in the screen.
+	 * When adding demo tasks, the task number is incremented and passed in as task detail. This is to have some task
+	 * detail showing, so they can be told apart from each other in the screen.
 	 */
 	private static long demoTaskNo = 0;
 
 	/**
-	 * The field task can be populated by a task object by the Tomahawk
-	 * updateActionListener tag which updates the value of a backing bean
-	 * property when an action event is fired by the parent UI component. This
-	 * circumvents the JSF object model which expects <em>all</em> actions on
-	 * list items being implemented on the list <em>elements</em>, thus
-	 * rendering a simpler method design passing in an object when it actually
-	 * is the patient acted on—not the agent acting—possible.
+	 * The field task can be populated by a task object by the Tomahawk updateActionListener tag which updates the
+	 * value of a backing bean property when an action event is fired by the parent UI component. This circumvents
+	 * the JSF object model which expects <em>all</em> actions on list items being implemented on the list
+	 * <em>elements</em>, thus rendering a simpler method design passing in an object when it actually is the patient
+	 * acted on—not the agent acting—possible.
 	 */
 	private EmptyTask task;
 
 	/**
 	 * The method getTasks() returns the task list held in the task manager.
-	 * 
+	 *
 	 * @return the task list
 	 */
 	public List<EmptyTask> getTasks() {
@@ -48,9 +45,8 @@ public class LongRunningTasksForm {
 	}
 
 	/**
-	 * The method addDemoTask() in executed if the user clicks the link to
-	 * "add a sample task" in the task manager. This is—if for anything at
-	 * all—useful for debugging or demonstration purposes only.
+	 * The method addDemoTask() in executed if the user clicks the link to "add a sample task" in the task manager.
+	 * This is—if for anything at all—useful for debugging or demonstration purposes only.
 	 */
 	public void addDemoTask() {
 		task = new EmptyTask("#".concat(Long.toString(++demoTaskNo)));
@@ -87,29 +83,23 @@ public class LongRunningTasksForm {
 	}
 
 	/**
-	 * The function isDemoTasksLinkShowing() returns true, if the boolean
-	 * parameter <code>taskManager.showSampleTask</code> is set to true in the
-	 * global configuration file. Depending on this an option to
-	 * "add a sample task" in been shown in the task manager. This is—if for
-	 * anything at all—useful for debugging or demonstration purposes only.
-	 * Defaults to false.
-	 * 
-	 * @return whether <code>taskManager.showSampleTask</code> is set true in
-	 *         the configuration
+	 * The function isDemoTasksLinkShowing() returns true, if the boolean parameter
+	 * <code>taskManager.showSampleTask</code> is set to true in the global configuration file. Depending on this
+	 * an option to "add a sample task" in been shown in the task manager. This is—if for anything at all—useful for
+	 * debugging or demonstration purposes only. Defaults to false.
+	 *
+	 * @return whether <code>taskManager.showSampleTask</code> is set true in the configuration
 	 */
 	public boolean isDemoTasksLinkShowing() {
 		return ConfigMain.getBooleanParameter("taskManager.showSampleTask", false);
 	}
 
 	/**
-	 * The method setTask() provides write access to the property "task" and
-	 * will be called by the Tomahawk updateActionListener tag when an action
-	 * event is fired by the parent UI component. This can be used to pass an
-	 * object to a method when it actually is the patient acted on—not the agent
-	 * acting.
-	 * 
-	 * @param task
-	 *            value to populate the property field
+	 * The method setTask() provides write access to the property "task" and will be called by the Tomahawk
+	 * updateActionListener tag when an action event is fired by the parent UI component. This can be used to pass an
+	 * object to a method when it actually is the patient acted on—not the agent acting.
+	 *
+	 * @param task value to populate the property field
 	 */
 	public void setTask(EmptyTask task) {
 		this.task = task;

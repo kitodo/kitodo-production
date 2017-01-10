@@ -13,7 +13,6 @@ package org.goobi.production.search.api;
 
 import java.util.ArrayList;
 
-
 /**
  * This interface defines a search engine for goobi.
  * @author Robert Sehr
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 public interface ISearch {
 
 	/**
-	 *
 	 * @param query the search query
 	 * @return an ArrayList with identifier for the resulting objects
 	 */
@@ -30,12 +28,9 @@ public interface ISearch {
 	public ArrayList<Integer> getSearchResults(String query);
 
 	/**
-	 *
 	 * @param query the search query
 	 * @return count of the resulting objects
 	 */
 	public int getSearchCount(String query);
-
-
 
 }

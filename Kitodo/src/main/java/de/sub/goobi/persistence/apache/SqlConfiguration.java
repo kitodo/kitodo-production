@@ -22,8 +22,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-public class SqlConfiguration {
 
+public class SqlConfiguration {
 
 	private String dbDriverName = "com.mysql.jdbc.Driver";
 	private String dbUser = "goobi";
@@ -45,7 +45,7 @@ public class SqlConfiguration {
 			}
 
 			File f = new File(fileResource.toURI());
-			if(logger.isInfoEnabled()){
+			if (logger.isInfoEnabled()) {
 				logger.info("loading configuration from " + f.getAbsolutePath());
 			}
 			SAXBuilder sb = new SAXBuilder(false);
@@ -62,38 +62,38 @@ public class SqlConfiguration {
 			logger.debug("found session-factory element");
 			@SuppressWarnings("unchecked")
 			List<Element> properties = sessionFactory.getChildren("property");
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("found " + properties.size() + " property elements");
 			}
 			for (Element property : properties) {
 				if (property.getAttribute("name").getValue().equals("hibernate.connection.url")) {
 					this.dbURI = property.getText().replace("&", "&amp;").trim();
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("found uri element: " + this.dbURI);
 					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.connection.driver_class")) {
 					this.dbDriverName = property.getText().trim();
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("found driver element: " + this.dbDriverName);
 					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.connection.username")) {
 					this.dbUser = property.getText().trim();
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("found user element: " + this.dbUser);
 					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.connection.password")) {
 					this.dbPassword = property.getText().trim();
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("found password element: " + this.dbPassword);
 					}
 				} else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.max_size")) {
 					this.dbPoolMaxSize = Integer.parseInt(property.getText().trim());
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("found max poolsize element: " + this.dbPoolMaxSize);
 					}
-				}else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.min_size")) {
+				} else if (property.getAttribute("name").getValue().equals("hibernate.c3p0.min_size")) {
 					this.dbPoolMinSize = Integer.parseInt(property.getText().trim());
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("found min poolsize element: " + this.dbPoolMinSize);
 					}
 				}

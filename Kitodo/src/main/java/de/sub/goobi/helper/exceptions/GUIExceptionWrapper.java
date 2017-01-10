@@ -11,20 +11,18 @@
 
 package de.sub.goobi.helper.exceptions;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
- * This class provides the tools it takes to generate a configurable Error
- * message for Errors which are unexpected An example for the area in
- * GoobiProperties.config is given after the class declaration in the source
- * code.
+ * This class provides the tools it takes to generate a configurable Error message for Errors which are unexpected An
+ * example for the area in GoobiProperties.config is given after the class declaration in the source code.
  *
- * Besides building up the information in the constructor the other important
- * method is getLocalizedMessage(), which provides the build up message in html
+ * <p>Besides building up the information in the constructor the other important method is getLocalizedMessage(),
+ * which provides the build up message in html.</p>
  *
  * @author Wulf
  * @version 12/10/2009
@@ -36,16 +34,9 @@ import de.sub.goobi.helper.Helper;
  * err_linkText -> message in which the link from GoobiConfig: err_linkToPage=
  * err_noMailService -> message if email is disabled in GoobiConfig: err_emailEnabled=false
  * err_subjectLine -> message in Subject Line of email
- *
  */
 public class GUIExceptionWrapper extends Exception {
-
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
-
-
 
 	private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
 
@@ -125,7 +116,8 @@ public class GUIExceptionWrapper extends Exception {
 			}
 
 		} catch (Exception e) {
-			this.internalErrorMsg = this.internalErrorMsg + "Error on loading Config items:<br/>" + e.getMessage() + "<br/><br/>";
+			this.internalErrorMsg = this.internalErrorMsg + "Error on loading Config items:<br/>" + e.getMessage()
+					+ "<br/><br/>";
 			this.userSeenErrorMessage = this.fallBackErrorMessage;
 
 		} finally {
@@ -133,7 +125,8 @@ public class GUIExceptionWrapper extends Exception {
 	}
 
 	/**
-	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes it into html format for display in browsers
+	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes
+	 * it into html format for display in browsers
 	 */
 	@Override
 	public String getLocalizedMessage() {
@@ -160,28 +153,22 @@ public class GUIExceptionWrapper extends Exception {
 
 		// only elaborate email part if
 		if (this.emailAddresses.size() > 0) {
-			emailPart = this.err_emailMessage.replace("{0}",
-					mailtoLinkHrefMailTo + getAddresses() +
-					mailtoLinkSubject + this.err_subjectLine +
-					mailtoLinkBody +  this.err_emailBody +
-					htmlLineFeed + htmlLineFeed +
-					htmlLineFeed + getContextInfo() +
-					htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
+			emailPart = this.err_emailMessage.replace("{0}", mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject
+					+ this.err_subjectLine + mailtoLinkBody + this.err_emailBody + htmlLineFeed + htmlLineFeed
+					+ htmlLineFeed + getContextInfo() + htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
 		} else {
 			// if no address a general text will be provided by this class
 			emailPart = Helper.getTranslation("err_noMailService");
 		}
 
-		this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed
-				+ emailPart;
+		this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed + emailPart;
 
 		return this.userSeenErrorMessage;
 	}
 
 	/**
-	 *
-	 * @return collected addresses as a string to be used after <a href="mailto:"
+	 * @return collected addresses as a string to be used after <a href="mailto:"></a>
 	 */
 	private String getAddresses() {
 		StringBuffer addresses = new StringBuffer();
@@ -193,7 +180,7 @@ public class GUIExceptionWrapper extends Exception {
 
 	/**
 	 *
-	 * @param aThrowable
+	 * @param stackTrace add description
 	 * @return stack trace as String
 	 */
 	private String getStackTrace(StackTraceElement[] stackTrace) {
@@ -202,20 +189,21 @@ public class GUIExceptionWrapper extends Exception {
 		Integer counter = 0;
 		for (StackTraceElement itStackTrace : stackTrace) {
 			// only taking those elements from the stack trace, which contain goobi and the top level element
-			if (counter++==1 || itStackTrace.toString().toLowerCase().contains("goobi")){
-				stackTraceReturn = stackTraceReturn +  "<br/>" + itStackTrace.toString();
+			if (counter++ == 1 || itStackTrace.toString().toLowerCase().contains("goobi")) {
+				stackTraceReturn = stackTraceReturn + "<br/>" + itStackTrace.toString();
 				tempTraceReturn = "";
-			}else{
-				if (tempTraceReturn.length()<1){
+			} else {
+				if (tempTraceReturn.length() < 1) {
 					stackTraceReturn = stackTraceReturn + "<br/> ---- skipping non goobi class(es) .";
-				}else{
+				} else {
 					stackTraceReturn = stackTraceReturn + " .";
 				}
 				tempTraceReturn = "<br/>" + itStackTrace.toString();
 			}
 
-			if (stackTraceReturn.length()>1000) {
-				return stackTraceReturn + tempTraceReturn + "<br/><br/>	---- truncated rest of stack trace to avoid overflow ---- ";
+			if (stackTraceReturn.length() > 1000) {
+				return stackTraceReturn + tempTraceReturn
+						+ "<br/><br/>	---- truncated rest of stack trace to avoid overflow ---- ";
 			}
 		}
 		return stackTraceReturn + tempTraceReturn + "<br/><br/>	---- bottom of stack trace ---- ";
@@ -225,7 +213,7 @@ public class GUIExceptionWrapper extends Exception {
 	 *
 	 * @return the Class of the initial Exception if possible
 	 */
-	private String getContextInfo(){
+	private String getContextInfo() {
 		String getContextInfo = "";
 		getContextInfo = getContextInfo + "ThrowingClass=" + this.additionalMessage;
 		getContextInfo = getContextInfo + "Time=" + new Date().toString() + "<br/>";

@@ -11,7 +11,11 @@
 
 package de.sub.goobi.helper;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.download.TiffHeader;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,10 +30,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.download.TiffHeader;
+import org.goobi.io.SafeFile;
 
 public class WebDav implements Serializable {
 
@@ -41,14 +42,13 @@ public class WebDav implements Serializable {
 	 */
 
 	private static String DONEDIRECTORYNAME = "fertig/";
-	public WebDav(){
-		DONEDIRECTORYNAME =ConfigMain.getParameter("doneDirectoryName", "fertig/");
-	}
 
+	public WebDav() {
+		DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+	}
 
 	/**
 	 * Retrieve all folders from one directory
-	 * ================================================================
 	 */
 
 	public List<String> UploadFromHomeAlle(String inVerzeichnis) {
@@ -107,17 +107,24 @@ public class WebDav implements Serializable {
 
 		for (Iterator<String> it = inList.iterator(); it.hasNext();) {
 			String myname = it.next();
-            FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
+			FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
 		}
 	}
 
+	/**
+	 * @param myProzess add description
+	 */
 	public void UploadFromHome(Prozess myProzess) {
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
-        if (aktuellerBenutzer != null) {
-        	UploadFromHome(aktuellerBenutzer, myProzess);
-        }
+		if (aktuellerBenutzer != null) {
+			UploadFromHome(aktuellerBenutzer, myProzess);
+		}
 	}
 
+	/**
+	 * @param inBenutzer add description
+	 * @param myProzess add description
+	 */
 	public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {
 		String nach = "";
 
@@ -132,7 +139,7 @@ public class WebDav implements Serializable {
 		/* prüfen, ob Benutzer Massenupload macht */
 		if (inBenutzer.isMitMassendownload()) {
 			nach += myProzess.getProjekt().getTitel() + File.separator;
-			SafeFile projectDirectory = new SafeFile (nach = nach.replaceAll(" ", "__"));
+			SafeFile projectDirectory = new SafeFile(nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
 				List<String> param = new ArrayList<String>();
 				param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -147,9 +154,14 @@ public class WebDav implements Serializable {
 		nach = nach.replaceAll(" ", "__");
 		SafeFile benutzerHome = new SafeFile(nach);
 
-        FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
+		FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
 
+	/**
+	 * @param myProzess add description
+	 * @param inSchrittID add description
+	 * @param inNurLesen add description
+	 */
 	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
 		saveTiffHeader(myProzess);
 		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
@@ -167,10 +179,10 @@ public class WebDav implements Serializable {
 			 */
 			if (aktuellerBenutzer.isMitMassendownload()) {
 				SafeFile projekt = new SafeFile(userHome + myProzess.getProjekt().getTitel());
-                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
 				projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
-                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+				FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 			}
 
 		} catch (Exception ioe) {
@@ -194,7 +206,7 @@ public class WebDav implements Serializable {
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
 
-		if(myLogger.isInfoEnabled()){
+		if (myLogger.isInfoEnabled()) {
 			myLogger.info("von: " + von);
 			myLogger.info("nach: " + nach);
 		}
@@ -215,8 +227,8 @@ public class WebDav implements Serializable {
 			command += aktuellerBenutzer.getLogin();
 		}
 		try {
-            	ShellScript.legacyCallShell2(command);
-            } catch (java.io.IOException ioe) {
+			ShellScript.legacyCallShell2(command);
+		} catch (java.io.IOException ioe) {
 			myLogger.error("IOException DownloadToHome()", ioe);
 			Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
 		} catch (InterruptedException e) {
@@ -233,11 +245,8 @@ public class WebDav implements Serializable {
 				return;
 			}
 			TiffHeader tif = new TiffHeader(inProzess);
-			try (
-				BufferedWriter outfile =
-					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
-						+ "tiffwriter.conf"), StandardCharsets.UTF_8));
-			) {
+			try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
+					inProzess.getImagesDirectory() + "tiffwriter.conf"), StandardCharsets.UTF_8));) {
 				outfile.write(tif.getTiffAlles());
 			}
 		} catch (Exception e) {
@@ -246,6 +255,10 @@ public class WebDav implements Serializable {
 		}
 	}
 
+	/**
+	 * @param inVerzeichnis add description
+	 * @return add description
+	 */
 	public int getAnzahlBaende(String inVerzeichnis) {
 		try {
 			Benutzer aktuellerBenutzer = Helper.getCurrentUser();

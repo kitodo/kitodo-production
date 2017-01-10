@@ -11,6 +11,16 @@
 
 package org.goobi.production.flow.statistics;
 
+import de.intranda.commons.chart.renderer.CSVRenderer;
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.ExcelRenderer;
+import de.intranda.commons.chart.renderer.HtmlTableRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.renderer.PieChartRenderer;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.config.ConfigMain;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,15 +29,6 @@ import java.io.Serializable;
 import javax.imageio.ImageIO;
 
 import org.apache.log4j.Logger;
-
-import de.intranda.commons.chart.renderer.CSVRenderer;
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.ExcelRenderer;
-import de.intranda.commons.chart.renderer.HtmlTableRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.renderer.PieChartRenderer;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.config.ConfigMain;
 
 public class StatisticsRenderingElement implements Serializable {
 
@@ -46,10 +47,12 @@ public class StatisticsRenderingElement implements Serializable {
 		myQuestion = inQuestion;
 	}
 
+	/**
+	 * @param inShowAverage add description
+	 */
 	public void createRenderer(Boolean inShowAverage) {
 		/*
-		 * -------------------------------- create image path
-		 * --------------------------------
+		 * create image path
 		 */
 		localImagePath = ConfigMain.getTempImagesPathAsCompleteDirectory();
 
@@ -60,9 +63,9 @@ public class StatisticsRenderingElement implements Serializable {
 
 	}
 
-	/*************************************************************************************
+	/**
 	 * generate html presentation of datatable
-	 *************************************************************************************/
+	 */
 	private void createHtmlRenderer() {
 		htmlTableRenderer = new HtmlTableRenderer();
 		csvRenderer = new CSVRenderer();
@@ -81,9 +84,9 @@ public class StatisticsRenderingElement implements Serializable {
 		excelRenderer.setFormatPattern(myQuestion.getNumberFormatPattern());
 	}
 
-	/*************************************************************************************
+	/**
 	 * generate chart at defined folder of datatable
-	 *************************************************************************************/
+	 */
 	private void createChart(Boolean inShowAverage) {
 		imageUrl = System.currentTimeMillis() + ".png";
 
@@ -110,38 +113,38 @@ public class StatisticsRenderingElement implements Serializable {
 
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for dataTable
-	 * 
+	 *
 	 * @return the dataTable
-	 *************************************************************************************/
+	 */
 	public DataTable getDataTable() {
 		return dataTable;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for htmlTableRenderer
-	 * 
+	 *
 	 * @return the htmlTableRenderer
-	 *************************************************************************************/
+	 */
 	public HtmlTableRenderer getHtmlTableRenderer() {
 		return htmlTableRenderer;
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for title
-	 * 
+	 *
 	 * @return the title
-	 *************************************************************************************/
+	 */
 	public String getTitle() {
 		return dataTable.getName() + " " + dataTable.getSubname();
 	}
 
-	/*************************************************************************************
+	/**
 	 * Getter for imageUrl
-	 * 
+	 *
 	 * @return the imageUrl
-	 *************************************************************************************/
+	 */
 	public String getImageUrl() {
 		return imageUrl;
 	}

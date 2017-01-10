@@ -20,6 +20,10 @@ import org.apache.log4j.Logger;
 public class UserManager {
 	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
+	/**
+	 * @param userId add description
+	 * @param filterstring add description
+	 */
 	public static void addFilter(int userId, String filterstring) {
 		if (getFilters(userId).contains(filterstring)) {
 			return;
@@ -32,6 +36,10 @@ public class UserManager {
 
 	}
 
+	/**
+	 * @param userId add description
+	 * @param filterstring add description
+	 */
 	public static void removeFilter(int userId, String filterstring) {
 		if (!getFilters(userId).contains(filterstring)) {
 			return;
@@ -44,6 +52,10 @@ public class UserManager {
 
 	}
 
+	/**
+	 * @param userId add description
+	 * @return add description
+	 */
 	public static List<String> getFilters(int userId) {
 		List<String> answer = new ArrayList<String>();
 		try {

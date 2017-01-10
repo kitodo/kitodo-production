@@ -18,25 +18,22 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
 /**
- * The class Issue represents the regular appearance of one (or the) issue of a
- * newspaper.
- * 
+ * The class Issue represents the regular appearance of one (or the) issue of a newspaper.
+ *
  * <p>
- * Newspapers, especially bigger ones, can have several issues that may differ
- * in time of publication (morning issue, evening issue, …), geographic
- * distribution (Edinburgh issue, London issue, …) and/or their days of
- * appearance (weekday issue: Mon—Fri, weekend issue: Sat, sports supplement:
- * Mon, property market: Wed, broadcasting programme: Thu). Furthermore there
- * may be exceptions in either that an issue didn’t appear on a date where, due
- * to the day of week, it usually does (i.e. on holidays) or an issue may have
- * appeared where, due to the day of week, it should not have.
+ * Newspapers, especially bigger ones, can have several issues that may differ in time of publication (morning issue,
+ * evening issue, …), geographic distribution (Edinburgh issue, London issue, …) and/or their days of  appearance
+ * (weekday issue: Mon—Fri, weekend issue: Sat, sports supplement: Mon, property market: Wed, broadcasting programme:
+ * Thu). Furthermore there  may be exceptions in either that an issue didn’t appear on a date where, due to the day of
+ * week, it usually does (i.e. on holidays) or an issue may have appeared where, due to the day of week, it should not
+ * have.
  * </p>
- * 
+ *
  * <p>
- * Each issue can be modeled by one Issue object each, which are held by a Block
- * object which provides the dates of first and last appearance.
+ * Each issue can be modeled by one Issue object each, which are held by a Block object which provides the dates of
+ * first and last appearance.
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Issue {
@@ -48,31 +45,30 @@ public class Issue {
 
 	/**
 	 * Dates with issue on days of week without regular appearance
-	 * 
+	 *
 	 * <p>
-	 * Implementors note: SortedSet and SortedMap do not declare HashCode &
-	 * Equals and cannot be used in a sensible way here.
+	 * Implementors note: SortedSet and SortedMap do not declare HashCode & Equals and cannot be used in a sensible way
+	 * here.
 	 * </p>
 	 */
 	private Set<LocalDate> additions;
 
 	/**
-	 * Days of week of regular appearance. JodaTime uses int in [1 = monday … 7
-	 * = Sunday]
-	 * 
+	 * Days of week of regular appearance. JodaTime uses int in [1 = monday … 7 = Sunday]
+	 *
 	 * <p>
-	 * Implementors note: SortedSet and SortedMap do not declare HashCode &
-	 * Equals and cannot be used in a sensible way here.
+	 * Implementors note: SortedSet and SortedMap do not declare HashCode &  Equals and cannot be used in a sensible way
+	 * here.
 	 * </p>
 	 */
 	private Set<Integer> daysOfWeek;
 
 	/**
 	 * Dates of days without issue on days of regular appearance (i.e. holidays)
-	 * 
+	 *
 	 * <p>
-	 * Implementors note: SortedSet and SortedMap do not declare HashCode &
-	 * Equals and cannot be used in a sensible way here.
+	 * Implementors note: SortedSet and SortedMap do not declare HashCode & Equals and cannot be used in a sensible way
+	 * here.
 	 * </p>
 	 */
 	private Set<LocalDate> exclusions;
@@ -84,9 +80,8 @@ public class Issue {
 
 	/**
 	 * Empty issue constructor.
-	 * 
-	 * @param course
-	 *            course of appearance this issue is in
+	 *
+	 * @param course course of appearance this issue is in
 	 */
 	public Issue(Course course) {
 		this.course = course;
@@ -98,11 +93,9 @@ public class Issue {
 
 	/**
 	 * Issue constructor with the option to set the issue heading.
-	 * 
-	 * @param course
-	 *            course of appearance this issue is in
-	 * @param heading
-	 *            issue heading
+	 *
+	 * @param course course of appearance this issue is in
+	 * @param heading issue heading
 	 */
 	public Issue(Course course, String heading) {
 		this.course = course;
@@ -114,9 +107,8 @@ public class Issue {
 
 	/**
 	 * Adds a LocalDate to the set of exclusions.
-	 * 
-	 * @param addition
-	 *            date to add
+	 *
+	 * @param addition date to add
 	 * @return true if the set was changed
 	 */
 	public boolean addAddition(LocalDate addition) {
@@ -126,9 +118,8 @@ public class Issue {
 
 	/**
 	 * Adds the given dayOfWeek to the Set of daysOfWeek
-	 * 
-	 * @param dayOfWeek
-	 *            An int representing the day of week (1 = monday … 7 = sunday)
+	 *
+	 * @param dayOfWeek An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
 	private boolean addDayOfWeek(int dayOfWeek) {
@@ -141,9 +132,8 @@ public class Issue {
 
 	/**
 	 * Adds a LocalDate to the set of exclusions.
-	 * 
-	 * @param exclusion
-	 *            date to add
+	 *
+	 * @param exclusion date to add
 	 * @return true if the set was changed
 	 */
 	public boolean addExclusion(LocalDate exclusion) {
@@ -153,7 +143,7 @@ public class Issue {
 
 	/**
 	 * Adds Monday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addMonday() {
@@ -162,7 +152,7 @@ public class Issue {
 
 	/**
 	 * Adds Tuesday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addTuesday() {
@@ -171,7 +161,7 @@ public class Issue {
 
 	/**
 	 * Adds Wednesday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addWednesday() {
@@ -180,7 +170,7 @@ public class Issue {
 
 	/**
 	 * Adds Thursday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addThursday() {
@@ -189,7 +179,7 @@ public class Issue {
 
 	/**
 	 * Adds Friday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addFriday() {
@@ -198,7 +188,7 @@ public class Issue {
 
 	/**
 	 * Adds Saturday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addSaturday() {
@@ -207,7 +197,7 @@ public class Issue {
 
 	/**
 	 * Adds Sunday to the set of days of week of regular appearance.
-	 * 
+	 *
 	 * @return true if the set was changed
 	 */
 	public boolean addSunday() {
@@ -215,12 +205,10 @@ public class Issue {
 	}
 
 	/**
-	 * Creates a copy of the object. All instance variables will be copied—this
-	 * is done in the getter methods—so that modifications to the copied object
-	 * will not impact to the copy master.
-	 * 
-	 * @param course
-	 *            course the copy shall belong to
+	 * Creates a copy of the object. All instance variables will be copied—this is done in the getter methods—so that
+	 * modifications to the copied object will not impact to the copy master.
+	 *
+	 * @param course course the copy shall belong to
 	 * @return a copy of this object for the new course
 	 */
 	public Issue clone(Course course) {
@@ -233,17 +221,13 @@ public class Issue {
 	}
 
 	/**
-	 * The function countIndividualIssues() determines how many stampings of
-	 * this issue physically appeared without generating a list of
-	 * IndividualIssue objects.
-	 * 
-	 * @param firstAppearance
-	 *            first day of the time range to inspect
-	 * @param lastAppearance
-	 *            last day of the time range to inspect
+	 * The function countIndividualIssues() determines how many stampings of this issue physically appeared without
+	 * generating a list of IndividualIssue objects.
+	 *
+	 * @param firstAppearance first day of the time range to inspect
+	 * @param lastAppearance last day of the time range to inspect
 	 * @return the count of issues
-	 * @throws IllegalArgumentException
-	 *             if lastAppearance is null
+	 * @throws IllegalArgumentException if lastAppearance is null
 	 */
 	long countIndividualIssues(LocalDate firstAppearance, LocalDate lastAppearance) {
 		long result = 0;
@@ -257,7 +241,7 @@ public class Issue {
 
 	/**
 	 * Getter function for the Set of additions.
-	 * 
+	 *
 	 * @return the set of additions
 	 */
 	public Set<LocalDate> getAdditions() {
@@ -266,7 +250,7 @@ public class Issue {
 
 	/**
 	 * Getter function for the Set of days of week the issue regularly appears.
-	 * 
+	 *
 	 * @return the set of days of week the issue regularly appears
 	 */
 	public Set<Integer> getDaysOfWeek() {
@@ -275,7 +259,7 @@ public class Issue {
 
 	/**
 	 * Getter function for the Set of exclusions.
-	 * 
+	 *
 	 * @return the set of exclusions
 	 */
 	public Set<LocalDate> getExclusions() {
@@ -284,7 +268,7 @@ public class Issue {
 
 	/**
 	 * Getter function for the issue’s name
-	 * 
+	 *
 	 * @return the issue’s name
 	 */
 	public String getHeading() {
@@ -293,9 +277,8 @@ public class Issue {
 
 	/**
 	 * Returns whether the issue regularly appeared on the given day of week.
-	 * 
-	 * @param dayOfWeek
-	 *            day of week to look up
+	 *
+	 * @param dayOfWeek day of week to look up
 	 * @return whether the issue appeared on that day of week
 	 */
 	public boolean isDayOfWeek(int dayOfWeek) {
@@ -303,12 +286,10 @@ public class Issue {
 	}
 
 	/**
-	 * The function isMatch() returns whether the issue appeared on a given
-	 * LocalDate, taking into consideration the daysOfWeek of regular
-	 * appearance, the Set of exclusions and the Set of additions.
-	 * 
-	 * @param date
-	 *            a LocalDate to examine
+	 * The function isMatch() returns whether the issue appeared on a given LocalDate, taking into consideration
+	 * the daysOfWeek of regular appearance, the Set of exclusions and the Set of additions.
+	 *
+	 * @param date a LocalDate to examine
 	 * @return whether the issue appeared that day
 	 */
 	public boolean isMatch(LocalDate date) {
@@ -316,9 +297,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isMonday() can be used to determine whether the issue
-	 * regularly appears on Mondays.
-	 * 
+	 * The function isMonday() can be used to determine whether the issue regularly appears on Mondays.
+	 *
 	 * @return true, if the issue regularly appears on Mondays.
 	 */
 	public boolean isMonday() {
@@ -326,9 +306,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isTuesday() can be used to determine whether the issue
-	 * regularly appears on Tuesdays.
-	 * 
+	 * The function isTuesday() can be used to determine whether the issue regularly appears on Tuesdays.
+	 *
 	 * @return true, if the issue regularly appears on Tuesdays.
 	 */
 	public boolean isTuesday() {
@@ -336,9 +315,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isWednesday() can be used to determine whether the issue
-	 * regularly appears on Wednesdays.
-	 * 
+	 * The function isWednesday() can be used to determine whether the issue regularly appears on Wednesdays.
+	 *
 	 * @return true, if the issue regularly appears on Wednesdays.
 	 */
 	public boolean isWednesday() {
@@ -346,9 +324,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isThursday() can be used to determine whether the issue
-	 * regularly appears on Sundays.
-	 * 
+	 * The function isThursday() can be used to determine whether the issue regularly appears on Sundays.
+	 *
 	 * @return true, if the issue regularly appears on Thursdays.
 	 */
 	public boolean isThursday() {
@@ -356,9 +333,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isFriday() can be used to determine whether the issue
-	 * regularly appears on Fridays.
-	 * 
+	 * The function isFriday() can be used to determine whether the issue regularly appears on Fridays.
+	 *
 	 * @return true, if the issue regularly appears on Fridays.
 	 */
 	public boolean isFriday() {
@@ -366,9 +342,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isSaturday() can be used to determine whether the issue
-	 * regularly appears on Saturdays.
-	 * 
+	 * The function isSaturday() can be used to determine whether the issue regularly appears on Saturdays.
+	 *
 	 * @return true, if the issue regularly appears on Saturdays.
 	 */
 	public boolean isSaturday() {
@@ -376,9 +351,8 @@ public class Issue {
 	}
 
 	/**
-	 * The function isSunday() can be used to determine whether the issue
-	 * regularly appears on Sundays.
-	 * 
+	 * The function isSunday() can be used to determine whether the issue regularly appears on Sundays.
+	 *
 	 * @return true, if the issue regularly appears on Sundays.
 	 */
 	public boolean isSunday() {
@@ -386,16 +360,12 @@ public class Issue {
 	}
 
 	/**
-	 * The method recalculateRegularityOfIssues() recalculates for each Issue
-	 * the daysOfWeek of its regular appearance within the given interval of
-	 * time. This is especially sensible to detect the underlying regularity
-	 * after lots of individual issues whose existence is known have been added
-	 * one by one as additions.
-	 * 
-	 * @param firstAppearance
-	 *            first day of the date range
-	 * @param lastAppearance
-	 *            last day of the date range
+	 * The method recalculateRegularityOfIssues() recalculates for each Issue the daysOfWeek of its regular appearance
+	 * within the given interval of time. This is especially sensible to detect the underlying regularity
+	 * after lots of individual issues whose existence is known have been added one by one as additions.
+	 *
+	 * @param firstAppearance first day of the date range
+	 * @param lastAppearance last day of the date range
 	 */
 	void recalculateRegularity(LocalDate firstAppearance, LocalDate lastAppearance) {
 		final int APPEARED = 1;
@@ -431,10 +401,8 @@ public class Issue {
 
 	/**
 	 * Removes the given LocalDate from the set of addition
-	 * 
-	 * @param addition
-	 *            date to remove
-	 * 
+	 *
+	 * @param addition date to remove
 	 * @return true if the Set was changed
 	 */
 	public boolean removeAddition(LocalDate addition) {
@@ -444,9 +412,8 @@ public class Issue {
 
 	/**
 	 * Removes the given dayOfWeek from the Set of daysOfWeek
-	 * 
-	 * @param dayOfWeek
-	 *            An int representing the day of week (1 = monday … 7 = sunday)
+	 *
+	 * @param dayOfWeek An int representing the day of week (1 = monday … 7 = sunday)
 	 * @return true if the Set was changed
 	 */
 	private boolean removeDayOfWeek(int dayOfWeek) {
@@ -459,10 +426,9 @@ public class Issue {
 
 	/**
 	 * Removes the given LocalDate from the set of exclusions
-	 * 
-	 * @param exclusion
-	 *            date to remove
-	 * 
+	 *
+	 * @param exclusion date to remove
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeExclusion(LocalDate exclusion) {
@@ -472,7 +438,7 @@ public class Issue {
 
 	/**
 	 * Removes Monday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeMonday() {
@@ -481,7 +447,7 @@ public class Issue {
 
 	/**
 	 * Removes Tuesday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeTuesday() {
@@ -490,7 +456,7 @@ public class Issue {
 
 	/**
 	 * Removes Wednesday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeWednesday() {
@@ -499,7 +465,7 @@ public class Issue {
 
 	/**
 	 * Removes Thursday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeThursday() {
@@ -508,7 +474,7 @@ public class Issue {
 
 	/**
 	 * Removes Friday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeFriday() {
@@ -517,7 +483,7 @@ public class Issue {
 
 	/**
 	 * Removes Saturday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeSaturday() {
@@ -526,7 +492,7 @@ public class Issue {
 
 	/**
 	 * Removes Sunday from daysOfWeek
-	 * 
+	 *
 	 * @return true if the Set was changed
 	 */
 	public boolean removeSunday() {
@@ -535,9 +501,8 @@ public class Issue {
 
 	/**
 	 * Setter method for the issue’s name
-	 * 
-	 * @param heading
-	 *            heading to be used
+	 *
+	 * @param heading  heading to be used
 	 */
 	public void setHeading(String heading) {
 		if (this.heading == null ? heading != null : !this.heading.equals(heading)) {
@@ -547,10 +512,9 @@ public class Issue {
 	}
 
 	/**
-	 * The function toString() provides returns a string that contains a concise
-	 * but informative representation of this issue that is easy for a person to
-	 * read.
-	 * 
+	 * The function toString() provides returns a string that contains a concise but informative representation of this
+	 * issue that is easy for a person to read.
+	 *
 	 * @return a string representation of the issue
 	 * @see java.lang.Object#toString()
 	 */
@@ -586,16 +550,14 @@ public class Issue {
 	}
 
 	/**
-	 * Returns a hash code for the object which depends on the content of its
-	 * variables. Whenever Issue objects are held in HashSet objects, a
-	 * hashCode() is essentially necessary.
-	 * 
+	 * Returns a hash code for the object which depends on the content of its variables. Whenever Issue objects are
+	 * held in HashSet objects, a hashCode() is essentially necessary.
+	 *
 	 * <p>
-	 * The method was generated by Eclipse using right-click → Source → Generate
-	 * hashCode() and equals()…. If you will ever change the classes’ fields,
-	 * just re-generate it.
+	 * The method was generated by Eclipse using right-click → Source → Generate hashCode() and equals()…. If you
+	 * will ever change the classes’ fields, just re-generate it.
 	 * </p>
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -610,15 +572,13 @@ public class Issue {
 	}
 
 	/**
-	 * Returns whether two individual issues are equal; the decision depends on
-	 * the content of its variables.
-	 * 
+	 * Returns whether two individual issues are equal; the decision depends on the content of its variables.
+	 *
 	 * <p>
-	 * The method was generated by Eclipse using right-click → Source → Generate
-	 * hashCode() and equals()…. If you will ever change the classes’ fields,
-	 * just re-generate it.
+	 * The method was generated by Eclipse using right-click → Source → Generate hashCode() and equals()…. If you
+	 * will ever change the classes’ fields, just re-generate it.
 	 * </p>
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override

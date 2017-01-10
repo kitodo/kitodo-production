@@ -13,10 +13,9 @@ package org.goobi.production.importer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
- * 
  * @author Igor Toker
- *
  */
 @XStreamAlias("property")
 public class FireburnProperty {
@@ -30,7 +29,7 @@ public class FireburnProperty {
 	@XStreamAlias("date")
 	public String date;
 
-	//Anzahl der Cd's
+	// Anzahl der Cd's
 	@XStreamAlias("cdnumber")
 	@XStreamAsAttribute
 	public int cdnumber = 1;
@@ -41,6 +40,14 @@ public class FireburnProperty {
 	@XStreamAsAttribute
 	public String type;
 
+	/**
+	 * @param cdName add description
+	 * @param titel add description
+	 * @param date add description
+	 * @param cdnumber add description
+	 * @param type add description
+	 * @param size add description
+	 */
 	public FireburnProperty(String cdName, String titel, String date, int cdnumber, String type, long size) {
 		super();
 		this.cdName = cdName;
@@ -51,6 +58,5 @@ public class FireburnProperty {
 		this.type = type;
 		this.size = size;
 	}
-
 
 }

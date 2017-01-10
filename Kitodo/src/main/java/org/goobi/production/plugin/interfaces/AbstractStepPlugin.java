@@ -11,6 +11,8 @@
 
 package org.goobi.production.plugin.interfaces;
 
+import de.sub.goobi.beans.Schritt;
+
 import java.util.HashMap;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -18,8 +20,6 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.enums.StepReturnValue;
-
-import de.sub.goobi.beans.Schritt;
 
 @PluginImplementation
 public abstract class AbstractStepPlugin implements IStepPlugin {
@@ -44,13 +44,11 @@ public abstract class AbstractStepPlugin implements IStepPlugin {
 		return this.name + " v" + this.version;
 	}
 
-
-	
 	@Override
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	@Override
 	public PluginType getType() {
 		return PluginType.Step;

@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.StatisticsManager;
 
 /**
- * class helps to convert results returned from Projections or Queries, 
- * where data types don't match the target data type 
- * 
+ * class helps to convert results returned from Projections or Queries, where data types don't match the target
+ * data type
+ *
  * @author Wulf Riebensahm
  * @version 23.05.2009
  */
@@ -33,23 +33,20 @@ class Converter {
 	SimpleDateFormat sdf;
 
 	/**
-	 * constructor retrieves current locale and uses it for formatting data 
+	 * constructor retrieves current locale and uses it for formatting data
 	 */
 	private Converter() {
 		try {
-			this.sdf = new SimpleDateFormat("yyyy.MM.dd",
-					new DateFormatSymbols(StatisticsManager.getLocale()));
+			this.sdf = new SimpleDateFormat("yyyy.MM.dd", new DateFormatSymbols(StatisticsManager.getLocale()));
 		} catch (NullPointerException e) {
-			logger
-					.error("Class statistics.hibernate.Converter Error, can't get FacesContext");
+			logger.error("Class statistics.hibernate.Converter Error, can't get FacesContext");
 		}
 	}
 
 	/**
 	 * constructor (parameterless constructor is set to private)
-	 * 
-	 * @param Object
-	 *            which will get converted
+	 *
+	 * @param obj which will get converted
 	 */
 	protected Converter(Object obj) {
 		this();
@@ -60,7 +57,6 @@ class Converter {
 	}
 
 	/**
-	 * 
 	 * @return Integer if possible
 	 */
 	protected Integer getInteger() {
@@ -78,7 +74,6 @@ class Converter {
 	}
 
 	/**
-	 * 
 	 * @return Double if possible
 	 */
 	protected Double getDouble() {
@@ -99,7 +94,6 @@ class Converter {
 	}
 
 	/**
-	 * 
 	 * @return String, fall back is toString() method
 	 */
 	protected String getString() {
@@ -112,9 +106,7 @@ class Converter {
 	}
 
 	/**
-	 * 
-	 * @return Double value of GB, calculated on the basis
-	 * of Bytes
+	 * @return Double value of GB, calculated on the basis of Bytes
 	 */
 	protected Double getGB() {
 		return getDouble() / (1024 * 1024 * 1024);

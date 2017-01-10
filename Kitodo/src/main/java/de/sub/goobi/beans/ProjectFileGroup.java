@@ -54,13 +54,9 @@ public class ProjectFileGroup implements Serializable {
 	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
 	private Projekt project;
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##				Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*
+	 * Getter und Setter
+	 */
 
 	public Integer getId() {
 		return this.id;

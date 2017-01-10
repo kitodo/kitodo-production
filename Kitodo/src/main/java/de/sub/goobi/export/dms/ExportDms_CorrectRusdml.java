@@ -11,6 +11,11 @@
 
 package de.sub.goobi.export.dms;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.BeanHelper;
+import de.sub.goobi.helper.exceptions.ExportFileException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,10 +33,6 @@ import ugh.dl.Prefs;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class ExportDms_CorrectRusdml {
 	private final Prefs myPrefs;
@@ -40,6 +41,12 @@ public class ExportDms_CorrectRusdml {
 	private final DigitalDocument mydocument;
 	private static final Logger logger = Logger.getLogger(ExportDms_CorrectRusdml.class);
 
+	/**
+	 * @param inProzess add description
+	 * @param inPrefs add description
+	 * @param inGdzfile add description
+	 * @throws PreferencesException add description
+	 */
 	public ExportDms_CorrectRusdml(Prozess inProzess, Prefs inPrefs, Fileformat inGdzfile) throws PreferencesException {
 		myPrefs = inPrefs;
 		mydocument = inGdzfile.getDigitalDocument();
@@ -48,14 +55,21 @@ public class ExportDms_CorrectRusdml {
 
 	/* =============================================================== */
 
-	public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException {
+	/**
+	 * @return add description
+	 * @throws DocStructHasNoTypeException add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws ExportFileException add description
+	 * @throws UghHelperException add description
+	 */
+	public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException {
 		String atsPpnBand;
 		DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
 		docStructsOhneSeiten = new ArrayList<DocStruct>();
 
 		/*
-		 * -------------------------------- Prozesseigenschaften ermitteln
-		 * --------------------------------
+		 * Prozesseigenschaften ermitteln
 		 */
 		atsPpnBand = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "ATS")
 				+ BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "TSL") + "_";
@@ -70,8 +84,7 @@ public class ExportDms_CorrectRusdml {
 		}
 
 		/*
-		 * -------------------------------- DocStruct rukursiv durchlaufen und
-		 * die Metadaten prüfen --------------------------------
+		 * DocStruct rukursiv durchlaufen und die Metadaten prüfen
 		 */
 		RusdmlDocStructPagesAuswerten(logicalTopstruct);
 		RusdmlPathImageFilesKorrigieren(mydocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_tif");
@@ -83,14 +96,14 @@ public class ExportDms_CorrectRusdml {
 	/* =============================================================== */
 
 	/**
-	 * alle Strukturelemente rekursiv durchlaufen und den Elternelementen die
-	 * Seiten der Kinder zuweisen
-	 * 
-	 * @param inStruct
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws DocStructHasNoTypeException
+	 * alle Strukturelemente rekursiv durchlaufen und den Elternelementen die Seiten der Kinder zuweisen
+	 *
+	 * @param inStruct add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws DocStructHasNoTypeException add description
 	 */
-	private void RusdmlDocStructPagesAuswerten(DocStruct inStruct) throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
+	private void RusdmlDocStructPagesAuswerten(DocStruct inStruct) throws DocStructHasNoTypeException,
+			MetadataTypeNotAllowedException {
 		RusdmlDropMetadata(inStruct);
 		RusdmlDropPersons(inStruct);
 		RusdmlUmlauteDemaskieren(inStruct);
@@ -114,15 +127,16 @@ public class ExportDms_CorrectRusdml {
 
 	/**
 	 * alle nicht benötigten Metadaten des RUSDML-Projektes rauswerfen
-	 * 
-	 * @param inStruct
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws DocStructHasNoTypeException
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws DocStructHasNoTypeException
+	 *
+	 * @param inStruct add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws DocStructHasNoTypeException add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws DocStructHasNoTypeException add description
 	 */
 
-	private void RusdmlDropMetadata(DocStruct inStruct) throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
+	private void RusdmlDropMetadata(DocStruct inStruct) throws DocStructHasNoTypeException,
+			MetadataTypeNotAllowedException {
 		String titelRu = "";
 		String titelOther = "";
 		String language = "";
@@ -133,8 +147,7 @@ public class ExportDms_CorrectRusdml {
 				// Metadata meta = (Metadata) iter.next();
 
 				/*
-				 * -------------------------------- jetzt alle nicht benötigten
-				 * Metadaten löschen --------------------------------
+				 * jetzt alle nicht benötigten Metadaten löschen
 				 */
 				if (meta.getType().getName().equals("RUSMainTitle")) {
 					titelRu = meta.getValue();
@@ -183,8 +196,7 @@ public class ExportDms_CorrectRusdml {
 				}
 
 				/*
-				 * den Abstrakt des ZBLs übernehmen, aber nur die 255 ersten
-				 * Zeichen
+				 * den Abstrakt des ZBLs übernehmen, aber nur die 255 ersten Zeichen
 				 */
 				if (meta.getType().getName().equals("ZBLAbstract")) {
 					MetadataType mdt = myPrefs.getMetadataTypeByName("Abstract");
@@ -197,9 +209,8 @@ public class ExportDms_CorrectRusdml {
 		}
 
 		/*
-		 * -------------------------------- nachdem alle Metadaten durchlaufen
-		 * wurden, jetzt abhängig vom Sprachcode den richtigen MainTitle
-		 * zuweisen --------------------------------
+		 * nachdem alle Metadaten durchlaufen wurden, jetzt abhängig vom Sprachcode den richtigen MainTitle
+		 * zuweisen
 		 */
 		MetadataType mdt_org = myPrefs.getMetadataTypeByName("TitleDocMain");
 		Metadata meta_org = new Metadata(mdt_org);
@@ -225,8 +236,8 @@ public class ExportDms_CorrectRusdml {
 
 	/**
 	 * alle nicht benötigten Personen rauswerfen
-	 * 
-	 * @param inStruct
+	 *
+	 * @param inStruct add description
 	 */
 	private void RusdmlDropPersons(DocStruct inStruct) {
 		if (inStruct.getAllPersons() != null) {
@@ -244,8 +255,8 @@ public class ExportDms_CorrectRusdml {
 
 	/**
 	 * alle zu ändernden Metadaten ändern
-	 * 
-	 * @param inStruct
+	 *
+	 * @param inStruct add description
 	 */
 	private void RusdmlCheckMetadata(DocStruct inStruct) {
 		/*
@@ -275,20 +286,19 @@ public class ExportDms_CorrectRusdml {
 	/* =============================================================== */
 
 	/**
-	 * dabei die zentralen Projekteinstellungen in der xml-Konfiguration
-	 * berücksichtigen
-	 * 
-	 * @param inTopStruct
-	 * @param myProzess
-	 * @throws ExportFileException
-	 * @throws UghHelperException
-	 * @throws DocStructHasNoTypeException
-	 * @throws MetadataTypeNotAllowedException
+	 * dabei die zentralen Projekteinstellungen in der xml-Konfiguration berücksichtigen
+	 *
+	 * @param inTopStruct add description
+	 * @param myProzess add description
+	 * @throws ExportFileException add description
+	 * @throws UghHelperException add description
+	 * @throws DocStructHasNoTypeException add description
+	 * @throws MetadataTypeNotAllowedException add description
 	 */
-	private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Prozess myProzess) throws ExportFileException, UghHelperException {
+	private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Prozess myProzess) throws ExportFileException,
+			UghHelperException {
 		/*
-		 * -------------------------------- bei fehlender digitaler PPN:
-		 * Fehlermeldung und raus --------------------------------
+		 * bei fehlender digitaler PPN: Fehlermeldung und raus
 		 */
 		String PPN = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "PPN digital");
 		if (PPN.length() == 0) {
@@ -299,15 +309,14 @@ public class ExportDms_CorrectRusdml {
 
 	/**
 	 * Fehlende Metadaten für Rusdml ergänzen
-	 * 
-	 * @param inTopStruct
-	 * @param myProzess
-	 * @param PPN
+	 *
+	 * @param inTopStruct add description
+	 * @param myProzess add description
+	 * @param PPN add description
 	 */
 	private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Prozess myProzess, String PPN) {
 		/*
-		 * -------------------------------- Eigenschaften aus dem Werkstück
-		 * holen --------------------------------
+		 * Eigenschaften aus dem Werkstück holen
 		 */
 		String Titel = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Haupttitel");
 		String Verlag = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Verlag");
@@ -316,8 +325,7 @@ public class ExportDms_CorrectRusdml {
 		String BandNummer = BeanHelper.WerkstueckEigenschaftErmitteln(myProzess, "Band");
 
 		/*
-		 * -------------------------------- die Metadaten erzeugen
-		 * --------------------------------
+		 * die Metadaten erzeugen
 		 */
 		Metadata mdVerlag = null;
 		Metadata mdOrt = null;
@@ -349,8 +357,7 @@ public class ExportDms_CorrectRusdml {
 		}
 
 		/*
-		 * -------------------------------- die Metadaten der Zeitschrift
-		 * zuweisen --------------------------------
+		 * die Metadaten der Zeitschrift zuweisen
 		 */
 		inTopStruct.getAllMetadataByType(myPrefs.getMetadataTypeByName("TitleDocMain")).get(0).setValue(Titel);
 
@@ -363,8 +370,7 @@ public class ExportDms_CorrectRusdml {
 		}
 
 		/*
-		 * -------------------------------- die Metadaten dem Band zuweisen
-		 * --------------------------------
+		 * die Metadaten dem Band zuweisen
 		 */
 		DocStruct structBand = inTopStruct.getAllChildren().get(0);
 		if (structBand != null) {
@@ -386,10 +392,9 @@ public class ExportDms_CorrectRusdml {
 	/* =============================================================== */
 
 	/**
-	 * Alle Metadaten eines Strukturelements durchlaufen und deren Umlaute
-	 * maskieren
-	 * 
-	 * @param inStruct
+	 * Alle Metadaten eines Strukturelements durchlaufen und deren Umlaute maskieren
+	 *
+	 * @param inStruct add description
 	 */
 
 	private void RusdmlUmlauteDemaskieren(DocStruct inStruct) {

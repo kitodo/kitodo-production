@@ -11,35 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import org.goobi.io.SafeFile;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.flow.jobs.JobManager;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
-import org.kitodo.encryption.DesEncrypter;
-
-import org.quartz.SchedulerException;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.dl.MetadataType;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.beans.Prozess;
@@ -62,13 +33,44 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.RegelsatzDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.flow.jobs.JobManager;
+
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
+import org.kitodo.encryption.DesEncrypter;
+
+import org.quartz.SchedulerException;
+
+import ugh.dl.DocStruct;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.dl.MetadataType;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
 	private static final Logger myLogger = Logger.getLogger(AdministrationForm.class);
 	private String passwort;
 	private boolean istPasswortRichtig = false;
 	private boolean rusFullExport = false;
-
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -126,11 +128,13 @@ public class AdministrationForm implements Serializable {
 	public boolean isIstPasswortRichtig() {
 		return this.istPasswortRichtig;
 	}
-	
-	public void createIndex () {
+
+	public void createIndex() {
 	}
 
-
+	/**
+	 * @throws DAOException add description
+	 */
 	public void ProzesseDurchlaufen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
 		List<Prozess> auftraege = dao.search("from Prozess");
@@ -140,6 +144,12 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 * @throws IOException add description
+	 * @throws InterruptedException add description
+	 * @throws SwapException add description
+	 */
 	public void AnzahlenErmitteln() throws DAOException, IOException, InterruptedException, SwapException {
 		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 		ProzessDAO dao = new ProzessDAO();
@@ -160,14 +170,18 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
-	//TODO: Remove this
+	// TODO: Remove this
+
+	/**
+	 * @throws DAOException add description
+	 */
 	public void SiciKorr() throws DAOException {
 		Benutzergruppe gruppe = new BenutzergruppenDAO().get(Integer.valueOf(15));
 		Set<Benutzergruppe> neueGruppen = new HashSet<Benutzergruppe>();
 		neueGruppen.add(gruppe);
 
 		SchrittDAO dao = new SchrittDAO();
-		//TODO: Try to avoid SQL
+		// TODO: Try to avoid SQL
 		List<Schritt> schritte = dao.search("from Schritt where titel='Automatische Generierung der SICI'");
 		for (Schritt auf : schritte) {
 			auf.setBenutzergruppen(neueGruppen);
@@ -176,6 +190,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	public void StandardRegelsatzSetzen() throws DAOException {
 		Regelsatz mk = new RegelsatzDAO().get(Integer.valueOf(1));
 
@@ -183,7 +200,7 @@ public class AdministrationForm implements Serializable {
 		List<Prozess> auftraege = dao.search("from Prozess");
 		int i = 0;
 		for (Prozess auf : auftraege) {
-			
+
 			auf.setRegelsatz(mk);
 			dao.save(auf);
 			myLogger.debug(auf.getId() + " - " + i++ + "von" + auftraege.size());
@@ -191,7 +208,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Standard-ruleset successful set");
 	}
 
-
+	/**
+	 *
+	 */
 	public void PasswoerterVerschluesseln() {
 		try {
 			DesEncrypter encrypter = new DesEncrypter();
@@ -208,15 +227,16 @@ public class AdministrationForm implements Serializable {
 		}
 	}
 
-	
+	/**
+	 * @throws DAOException add description
+	 */
 	public void ProzesseDatumSetzen() throws DAOException {
 		ProzessDAO dao = new ProzessDAO();
 		List<Prozess> auftraege = dao.search("from Prozess");
 		for (Prozess auf : auftraege) {
-			
 
-			for (Schritt s  : auf.getSchritteList()) {
-			
+			for (Schritt s : auf.getSchritteList()) {
+
 				if (s.getBearbeitungsbeginn() != null) {
 					auf.setErstellungsdatum(s.getBearbeitungsbeginn());
 					break;
@@ -227,24 +247,23 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "created date");
 	}
 
-	
-
+	/**
+	 * @throws DAOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public void ImagepfadKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Prozess.class);
 
-	
 		List<Prozess> auftraege = crit.list();
 
 		/* alle Prozesse durchlaufen */
 		for (Prozess p : auftraege) {
-			
 
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
-				if(myLogger.isDebugEnabled()){
+				if (myLogger.isDebugEnabled()) {
 					myLogger.debug("Prozess: " + p.getTitel());
 				}
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
@@ -253,19 +272,20 @@ public class AdministrationForm implements Serializable {
 					gdzfile = p.readMetadataFile();
 
 					MetadataType mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
-					List<? extends Metadata> alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
+					List<? extends Metadata> alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct()
+							.getAllMetadataByType(mdt);
 					if (alleMetadaten != null && alleMetadaten.size() > 0) {
 						Metadata md = alleMetadaten.get(0);
 						myLogger.debug(md.getValue());
 
-					
 						if (SystemUtils.IS_OS_WINDOWS) {
 							md.setValue("file:/" + p.getImagesDirectory() + p.getTitel().trim() + DIRECTORY_SUFFIX);
 						} else {
 							md.setValue("file://" + p.getImagesDirectory() + p.getTitel().trim() + DIRECTORY_SUFFIX);
 						}
 						p.writeMetadataFile(gdzfile);
-						Helper.setMeldung(null, "", "Image path set: " + p.getTitel() + ": ./" + p.getTitel() + DIRECTORY_SUFFIX);
+						Helper.setMeldung(null, "", "Image path set: " + p.getTitel() + ": ./" + p.getTitel()
+								+ DIRECTORY_SUFFIX);
 					} else {
 						Helper.setMeldung(null, "", "No Image path available: " + p.getTitel());
 					}
@@ -294,7 +314,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Image paths set");
 	}
 
-	
+	/**
+	 * @throws DAOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public void PPNsKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
@@ -302,12 +324,12 @@ public class AdministrationForm implements Serializable {
 		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
 		crit.createCriteria("projekt", "proj");
 		crit.add(Restrictions.like("proj.titel", "DigiZeitschriften"));
-		
+
 		List<Prozess> auftraege = crit.list();
 
 		/* alle Prozesse durchlaufen */
 		for (Prozess p : auftraege) {
-		
+
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
@@ -357,11 +379,12 @@ public class AdministrationForm implements Serializable {
 					List<String> myKollektionenTitel = new ArrayList<String>();
 					MetadataType coltype = UghHelper.getMetadataType(myPrefs, "singleDigCollection");
 					ArrayList<Metadata> myCollections;
-					if (dsTop.getAllMetadataByType(coltype) != null && dsTop.getAllMetadataByType(coltype).size() != 0) {
+					if (dsTop.getAllMetadataByType(coltype) != null
+							&& dsTop.getAllMetadataByType(coltype).size() != 0) {
 						myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
 						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
-							
+
 								if (myKollektionenTitel.contains(md.getValue())) {
 									dsTop.removeMetadata(md);
 								} else {
@@ -375,7 +398,7 @@ public class AdministrationForm implements Serializable {
 						myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
 						if (myCollections.size() > 0) {
 							for (Metadata md : myCollections) {
-//								Metadata md = (Metadata) it.next();
+								// Metadata md = (Metadata) it.next();
 								if (myKollektionenTitel.contains(md.getValue())) {
 									dsFirst.removeMetadata(md);
 								} else {
@@ -412,9 +435,11 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "PPNs adjusted");
 	}
 
+	// TODO: Remove this
 
-
-	//TODO: Remove this
+	/**
+	 *
+	 */
 	@SuppressWarnings("unchecked")
 	public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
 		Session session = Helper.getHibernateSession();
@@ -424,7 +449,7 @@ public class AdministrationForm implements Serializable {
 		/* alle Prozesse durchlaufen */
 		List<Prozess> pl = crit.list();
 		for (Prozess p : pl) {
-		
+
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: " + p.getTitel());
 			} else {
@@ -472,6 +497,9 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung("PPNs adjusted");
 	}
 
+	/**
+	 * @throws DAOException add description
+	 */
 	@SuppressWarnings("unchecked")
 	public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
@@ -570,8 +598,6 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "------------------------------------------------------------------");
 		Helper.setMeldung(null, "", "PPNs adjusted");
 	}
-
-	
 
 	public boolean isRusFullExport() {
 		return this.rusFullExport;

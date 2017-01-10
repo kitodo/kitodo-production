@@ -23,39 +23,33 @@ import ugh.dl.Fileformat;
 
 /**
  * The class Hit represents a hit retrieved from the search plug-in.
- * 
- * The class Hit unwraps the contents of a hit result of the basic java types
- * <code>Map&lt;String, Object&gt;</code>. The map should contain a key
- * <code>fileformat</code> holding an instance of {@link ugh.dl.Fileformat} with
+ *
+ * <p>
+ * The class Hit unwraps the contents of a hit result of the basic java types <code>Map&lt;String, Object&gt;</code>.
+ * The map should contain a key <code>fileformat</code> holding an instance of {@link ugh.dl.Fileformat} with
  * the record data and a field <code>type</code> holding the DocType.
- * 
- * <p>
- * The following additional basic bibliographic metadata entries in the map are
- * supported and will be used to display a summary of the hit in bibliographic
- * citation style. All of them must be String except for year where both Integer
- * and String are supported. The field <kbd>format</kbd> is used to pick the
- * appropriate citation formatting style.
  * </p>
- * 
+ *
  * <p>
- * <kbd>accessed</kbd> − Date and time of last access (for internet ressources
- * and online journals)<br>
+ * The following additional basic bibliographic metadata entries in the map are upported and will be used to display
+ * a summary of the hit in bibliographic citation style. All of them must be String except for year where both Integer
+ * and String are supported. The field <kbd>format</kbd> is used to pick the appropriate citation formatting style.
+ * </p>
+ *
+ * <p>
+ * <kbd>accessed</kbd> − Date and time of last access (for internet resources and online journals)<br>
  * <kbd>article</kbd> − Title of an article<br>
  * <kbd>contributor</kbd> − Editors, compilers, translators … of an anthology<br/>
- * <kbd>creator</kbd> − Author name(s), scheme: Lastname, Firstname ; Lastname,
- * Firstname<br>
+ * <kbd>creator</kbd> − Author name(s), scheme: Lastname, Firstname ; Lastname, Firstname<br>
  * <kbd>date</kbd> − Date of publication, if year is insufficient<br>
  * <kbd>department</kbd> − Department (for academic writings)<br>
  * <kbd>edition</kbd> − Edition identifier<br>
- * <kbd>employer</kbd> − Employer of an academic writer, usually the name of the
- * university<br>
- * <kbd>format</kbd> − Record type. Supported values are “monograph” (books),
- * “thesis” (academic writings), “standard” (standards) and “internet” (online
- * ressources) for physical media and “anthology” and “periodical” for articles
- * from these two kinds of publishing.<br>
- * <kbd>number</kbd> − For monographs and antologies that appeared as part of a
- * series the number in that series. For journals the number of the issue. For
- * standards their identification number, i.e. “ICD-10”.<br>
+ * <kbd>employer</kbd> − Employer of an academic writer, usually the name of the university<br>
+ * <kbd>format</kbd> − Record type. Supported values are “monograph” (books), “thesis” (academic writings), “standard”
+ * (standards) and “internet” (online resources) for physical media and “anthology” and “periodical” for articles from
+ * these two kinds of publishing.<br>
+ * <kbd>number</kbd> − For monographs and antologies that appeared as part of a series the number in that series.
+ * For journals the number of the issue. For standards their identification number, i.e. “ICD-10”.<br>
  * <kbd>pages</kbd> − Page range of an article<br>
  * <kbd>part</kbd> − Part or parts of an article<br>
  * <kbd>place</kbd> − Place of publication<br>
@@ -69,7 +63,7 @@ import ugh.dl.Fileformat;
  * <kbd>volumetitle</kbd> − Title of the volume, if any<br/>
  * <kbd>year</kbd> − 4-digit year of publication
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Hit {
@@ -80,9 +74,8 @@ public class Hit {
 	private final Map<String, Object> data;
 
 	/**
-	 * Hit constructor. The constructor saves a reference to the map holding the
-	 * hit result in the final field data.
-	 * 
+	 * Hit constructor. The constructor saves a reference to the map holding the hit result in the final field data.
+	 *
 	 * @param data
 	 *            map holding the hit result
 	 */
@@ -91,9 +84,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getAuthors() returns the creators of the work described in
-	 * this hit.
-	 * 
+	 * The function getAuthors() returns the creators of the work described in this hit.
+	 *
 	 * @return the creators of the work
 	 */
 	public String getAuthors() {
@@ -101,9 +93,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getBibliographicCitation() returns a summary of this hit in
-	 * bibliographic citation style as HTML.
-	 * 
+	 * The function getBibliographicCitation() returns a summary of this hit in bibliographic citation style as HTML.
+	 *
 	 * @return a summary of this hit in bibliographic citation style as HTML
 	 */
 	public String getBibliographicCitation() {
@@ -134,7 +125,7 @@ public class Hit {
 
 	/**
 	 * The function getDocType() returns the DocType of this hit.
-	 * 
+	 *
 	 * @return the DocType of this hit
 	 */
 	public String getDocType() {
@@ -142,9 +133,9 @@ public class Hit {
 	}
 
 	/**
-	 * The function getFileformat() returns the full hit record as provided by
-	 * the library catalogue as {@link ugh.dl.Fileformat} object.
-	 * 
+	 * The function getFileformat() returns the full hit record as provided by the library catalogue as
+	 * {@link ugh.dl.Fileformat} object.
+	 *
 	 * @return the full hit record
 	 */
 	public Fileformat getFileformat() {
@@ -152,9 +143,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getTitle() returns the title of the work described in this
-	 * hit.
-	 * 
+	 * The function getTitle() returns the title of the work described in this hit.
+	 *
 	 * @return the title of the work
 	 */
 	public String getTitle() {
@@ -162,9 +152,9 @@ public class Hit {
 	}
 
 	/**
-	 * The function getAccessTime() returns the point in time when the work was
-	 * last accessed as {@link org.joda.time.DateTime} object.
-	 * 
+	 * The function getAccessTime() returns the point in time when the work was last accessed as
+	 * {@link org.joda.time.DateTime} object.
+	 *
 	 * @return the point in time when the work was last accessed
 	 */
 	private DateTime getAccessTime() {
@@ -173,9 +163,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getArticleTitle() returns the title of the article described
-	 * in this hit as String.
-	 * 
+	 * The function getArticleTitle() returns the title of the article described in this hit as String.
+	 *
 	 * @return the title of the article
 	 */
 	private String getArticleTitle() {
@@ -183,35 +172,30 @@ public class Hit {
 	}
 
 	/**
-	 * The function getAs() returns an entry form the map holding the hit result
-	 * as an object of the given class (which may be null). If the object cannot
-	 * be casted to the desired result type, a ClassCastException will be
+	 * The function getAs() returns an entry form the map holding the hit result as an object of the given class
+	 * (which may be null). If the object cannot be casted to the desired result type, a ClassCastException will be
 	 * thrown.
-	 * 
-	 * @param key
-	 *            the key whose associated value is to be returned
-	 * @param clazz
-	 *            desired result type
-	 * @return the value to which the specified key is mapped, or null if the
-	 *         map contains no mapping for the key
-	 * @throws ClassCastException
-	 *             if the content type of field cannot be cast to the desired
-	 *             result type
+	 *
+	 * @param key the key whose associated value is to be returned
+	 * @param clazz desired result type
+	 * @return the value to which the specified key is mapped, or null if the map contains no mapping for the key
+	 * @throws ClassCastException if the content type of field cannot be cast to the desired result type
 	 */
 	@SuppressWarnings("unchecked")
 	private <T> T getAs(String key, Class<T> clazz) {
 		Object value = data.get(key);
-		if (value == null || clazz.isAssignableFrom(value.getClass()))
+		if (value == null || clazz.isAssignableFrom(value.getClass())) {
 			return (T) value;
-		else
+		} else {
 			throw new ClassCastException("Bad content type of field " + key + " (" + value.getClass().getName()
 					+ "), must be " + clazz.getName());
+		}
 	}
 
 	/**
-	 * The function getDatePublished() returns the day when the work was
-	 * published as {@link org.joda.time.LocalDate} object.
-	 * 
+	 * The function getDatePublished() returns the day when the work was published as {@link org.joda.time.LocalDate}
+	 * object.
+	 *
 	 * @return the day when the work was published
 	 */
 	private LocalDate getDatePublished() {
@@ -220,9 +204,9 @@ public class Hit {
 	}
 
 	/**
-	 * The function getDepartment() returns the department of the author of the
-	 * academic writing described in this hit is in.
-	 * 
+	 * The function getDepartment() returns the department of the author of the academic writing described in this hit
+	 * is in.
+	 *
 	 * @return the department of the author of the academic writing
 	 */
 	private String getDepartment() {
@@ -230,9 +214,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getEdition() returns edition information of the work
-	 * described by this hit
-	 * 
+	 * The function getEdition() returns edition information of the work described by this hit
+	 *
 	 * @return edition information
 	 */
 	private String getEdition() {
@@ -240,9 +223,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getEditors() returns the editors, compilers, translators, …
-	 * of the anthology described in this hit.
-	 * 
+	 * The function getEditors() returns the editors, compilers, translators, … of the anthology described in this hit.
+	 *
 	 * @return the editors of the anthology
 	 */
 	private String getEditors() {
@@ -250,9 +232,9 @@ public class Hit {
 	}
 
 	/**
-	 * The function getEmployer() returns the employer—usually a university—of
-	 * the author of the academic writing described in this hit is in.
-	 * 
+	 * The function getEmployer() returns the employer—usually a university—of the author of the academic writing
+	 * described in this hit is in.
+	 *
 	 * @return the employer of the author of the academic writing
 	 */
 	private String getEmployer() {
@@ -260,12 +242,11 @@ public class Hit {
 	}
 
 	/**
-	 * The function getFormat() returns the citation format that is to be
-	 * preferred to summarise the contents of this hit. Supported values are
-	 * “monograph” (books), “thesis” (academic writings), “standard” (standards)
-	 * and “internet” (online resources) for physical media and “anthology” and
-	 * “periodical” for articles from these two kinds of publishing
-	 * 
+	 * The function getFormat() returns the citation format that is to be preferred to summarise the contents of this
+	 * hit. Supported values are “monograph” (books), “thesis” (academic writings), “standard” (standards) and
+	 * “internet” (online resources) for physical media and “anthology” and “periodical” for articles from these two
+	 * kinds of publishing
+	 *
 	 * @return the format that is to be preferred to cite this hit.
 	 */
 	private String getFormat() {
@@ -273,9 +254,9 @@ public class Hit {
 	}
 
 	/**
-	 * The function getPublisher() returns the name of the publishing house that
-	 * published the work described in this hit.
-	 * 
+	 * The function getPublisher() returns the name of the publishing house that published the work described in
+	 * this hit.
+	 *
 	 * @return the name of the house of publish
 	 */
 	private String getPublisher() {
@@ -283,9 +264,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getNumber() returns the number of the work described in this
-	 * hit.
-	 * 
+	 * The function getNumber() returns the number of the work described in this hit.
+	 *
 	 * @return the number
 	 */
 	private String getNumber() {
@@ -293,9 +273,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getOverallTitle() returns the title of the series that the
-	 * work described in this hit appeared in.
-	 * 
+	 * The function getOverallTitle() returns the title of the series that the work described in this hit appeared in.
+	 *
 	 * @return the title of the series
 	 */
 	private String getOverallTitle() {
@@ -303,9 +282,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getPages() returns the page range covered by the article
-	 * described in this hit.
-	 * 
+	 * The function getPages() returns the page range covered by the article described in this hit.
+	 *
 	 * @return the page range covered by this article
 	 */
 	private String getPages() {
@@ -313,20 +291,20 @@ public class Hit {
 		String pages = getAs("pages", String.class);
 		if (pages != null) {
 			Matcher pageRangeMatcher = pageRange.matcher(pages);
-			if (pageRangeMatcher.matches() && pageRangeMatcher.group(3).length() < pageRangeMatcher.group(1).length())
+			if (pageRangeMatcher.matches() && pageRangeMatcher.group(3).length() < pageRangeMatcher.group(1).length()) {
 				pages = pageRangeMatcher.group(1)
 						+ pageRangeMatcher.group(2)
 						+ pageRangeMatcher.group(1).substring(0,
-								pageRangeMatcher.group(1).length() - pageRangeMatcher.group(3).length())
+						pageRangeMatcher.group(1).length() - pageRangeMatcher.group(3).length())
 						+ pageRangeMatcher.group(3);
+			}
 		}
 		return pages;
 	}
 
 	/**
-	 * The function getPart() returns the part of the article described in this
-	 * hit.
-	 * 
+	 * The function getPart() returns the part of the article described in this hit.
+	 *
 	 * @return the part of the article
 	 */
 	private String getPart() {
@@ -334,9 +312,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getPlaceOfPublication() returns the place of publication of
-	 * the work described in this hit.
-	 * 
+	 * The function getPlaceOfPublication() returns the place of publication of the work described in this hit.
+	 *
 	 * @return the place of publication
 	 */
 	private String getPlaceOfPublication() {
@@ -344,9 +321,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getSubseries() returns the subseries of the work described
-	 * in this hit appared in.
-	 * 
+	 * The function getSubseries() returns the subseries of the work described in this hit appared in.
+	 *
 	 * @return the subseries
 	 */
 	private String getSubseries() {
@@ -354,9 +330,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getTheses() returns the kind of academic writing described
-	 * in this hit, i.e. “Diss.”.
-	 * 
+	 * The function getTheses() returns the kind of academic writing described in this hit, i.e. “Diss.”.
+	 *
 	 * @return the kind of academic writing
 	 */
 	private String getTheses() {
@@ -364,9 +339,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getURL() returns the Internet address of the online resource
-	 * described in this hit.
-	 * 
+	 * The function getURL() returns the Internet address of the online resource described in this hit.
+	 *
 	 * @return the Internet address
 	 */
 	private String getURL() {
@@ -374,9 +348,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getVolume() returns the volume count of the work described
-	 * in this hit.
-	 * 
+	 * The function getVolume() returns the volume count of the work described in this hit.
+	 *
 	 * @return the volume number
 	 */
 	private String getVolume() {
@@ -384,9 +357,8 @@ public class Hit {
 	}
 
 	/**
-	 * The function getVolumeTitle() returns the volume title of the work
-	 * described in this hit.
-	 * 
+	 * The function getVolumeTitle() returns the volume title of the work described in this hit.
+	 *
 	 * @return the volume title
 	 */
 	private String getVolumeTitle() {
@@ -394,10 +366,9 @@ public class Hit {
 	}
 
 	/**
-	 * The function getYearPublished() returns the year the work described in
-	 * this hit was created as Integer. A String value is also supported, if it
-	 * can be parsed to an Integer.
-	 * 
+	 * The function getYearPublished() returns the year the work described in this hit was created as Integer.
+	 * A String value is also supported, if it can be parsed to an Integer.
+	 *
 	 * @return the year the work was created
 	 */
 	private Integer getYearPublished() {

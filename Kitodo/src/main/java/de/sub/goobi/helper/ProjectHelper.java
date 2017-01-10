@@ -1,5 +1,6 @@
 /*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+>>>>>>> 76a8e41dfb1fcf3e21293a70ec22a7b0dea8d853
  *
  * This file is part of the Kitodo project.
  *
@@ -10,6 +11,11 @@
  */
 
 package de.sub.goobi.helper;
+
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.enums.StepStatus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,26 +31,21 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.enums.StepStatus;
-
 public class ProjectHelper {
 
 	/**
 	 * static to reduce load
 	 *
-	 * @param project
+	 * @param project add description
 	 * @return a GoobiCollection of the following structure:
-	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
-	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method
-	 *
-	 *                  standard workflow of the project according to the definition that only steps shared by all processes are returned. The
-	 *                  workflow order is returned according to the average order returen by a grouping by step titel
-	 *
-	 *                  consider workflow structure to be a prototype, it would probably make things easier, to either assemble the underlying
-	 *                  construction in separate classes or to create a new class with these properties
+	 * 				GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,
+	 * 				stepOrder, stepCount,stepImageCount, totalProcessCount, totalImageCount which can get extracted by
+	 * 				the IGoobiCollection Inteface using the getItem(&lt;name&gt;) method standard workflow of
+	 * 				the project according to the definition that only steps shared by all processes are returned.
+	 * 				The workflow order is returned according to the average order returen by a grouping by step titel
+	 * 				consider workflow structure to be a prototype, it would probably make things easier, to either
+	 * 				assemble the underlying construction in separate classes or to create a new class with these
+	 * 				properties
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -53,8 +54,6 @@ public class ProjectHelper {
 		Long totalNumberOfImages = 0l;
 
 		Session session = Helper.getHibernateSession();
-
-
 
 		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
 		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
@@ -80,8 +79,6 @@ public class ProjectHelper {
 		proList = null;
 		list = null;
 
-
-
 		Criteria critSteps = session.createCriteria(Schritt.class);
 
 		critSteps.createCriteria("prozess", "proc");
@@ -95,7 +92,6 @@ public class ProjectHelper {
 		proList.add(Projections.groupProperty(("titel")));
 		proList.add(Projections.count("id"));
 		proList.add(Projections.avg("reihenfolge"));
-
 
 		critSteps.setProjection(proList);
 

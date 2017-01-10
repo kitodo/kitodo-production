@@ -16,36 +16,42 @@ import java.util.regex.Pattern;
 
 public class IdentifierPPN {
 
-    private String ppn;
+	private String ppn;
 
-    public IdentifierPPN(String ppn) {
-        if (!isValid(ppn)) {
-            throw new IllegalArgumentException("Given string is not a valid PPN identifier.");
-        }
-        this.ppn = ppn;
-    }
+	/**
+	 * @param ppn add description
+	 */
+	public IdentifierPPN(String ppn) {
+		if (!isValid(ppn)) {
+			throw new IllegalArgumentException("Given string is not a valid PPN identifier.");
+		}
+		this.ppn = ppn;
+	}
 
-    public static boolean isValid(String identifier) {
-        Boolean result;
-        int flags = Pattern.CASE_INSENSITIVE;
-        Pattern pattern;
-        Matcher matcher;
+	/**
+	 * @param identifier add description
+	 * @return add description
+	 */
+	public static boolean isValid(String identifier) {
+		Boolean result;
+		int flags = Pattern.CASE_INSENSITIVE;
+		Pattern pattern;
+		Matcher matcher;
 
-        if ((identifier == null) || (identifier.length() == 0)) {
-            result = false;
-        } else {
-            pattern = Pattern.compile("^[0-9]{8}[0-9LXYZ]{1}$", flags);
-            matcher = pattern.matcher(identifier);
-            result = matcher.matches();
-        }
+		if ((identifier == null) || (identifier.length() == 0)) {
+			result = false;
+		} else {
+			pattern = Pattern.compile("^[0-9]{8}[0-9LXYZ]{1}$", flags);
+			matcher = pattern.matcher(identifier);
+			result = matcher.matches();
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public String toString() {
-        return ppn;
-    }
-
+	@Override
+	public String toString() {
+		return ppn;
+	}
 
 }

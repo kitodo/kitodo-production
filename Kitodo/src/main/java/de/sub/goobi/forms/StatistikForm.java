@@ -11,6 +11,14 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.BenutzerDAO;
+import de.sub.goobi.persistence.ProzessDAO;
+import de.sub.goobi.persistence.SchrittDAO;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -24,14 +32,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.persistence.SchrittDAO;
-
 public class StatistikForm {
 	private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
 	Calendar cal = new GregorianCalendar();
@@ -39,20 +39,20 @@ public class StatistikForm {
 
 	/**
 	 * @return Anzahl aller Literatureinträge
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public Integer getAnzahlLiteraturGesamt() {
 		return Integer.valueOf(0);
 	}
 
 	/**
-	 * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment. Since user accounts are not hard
-	 * deleted from the database when the delete button is pressed a where clause is used in the SQL statement to exclude the deleted accounts from
-	 * the sum.
-	 * 
+	 * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment. Since
+	 * user accounts are not hard deleted from the database when the delete button is pressed a where clause is used
+	 * in the SQL statement to exclude the deleted accounts from the sum.
+	 *
 	 * @return the count of valid user accounts
-	 * @throws DAOException
-	 *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
+	 * @throws DAOException if the current session can't be retrieved or an exception is thrown while performing the
+	 * 						rollback.
 	 */
 
 	public Long getAnzahlBenutzer() {
@@ -66,7 +66,7 @@ public class StatistikForm {
 
 	/**
 	 * @return Anzahl der Benutzer
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public Long getAnzahlBenutzergruppen() {
 		try {
@@ -79,7 +79,7 @@ public class StatistikForm {
 
 	/**
 	 * @return Anzahl der Benutzer
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public Long getAnzahlProzesse() {
 		try {
@@ -92,7 +92,7 @@ public class StatistikForm {
 
 	/**
 	 * @return Anzahl der Benutzer
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public Long getAnzahlSchritte() {
 		try {
@@ -106,7 +106,7 @@ public class StatistikForm {
 
 	/**
 	 * @return Anzahl der Benutzer
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public Long getAnzahlVorlagen() {
 		Session session = Helper.getHibernateSession();
@@ -115,7 +115,7 @@ public class StatistikForm {
 
 	/**
 	 * @return Anzahl der Benutzer
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public Long getAnzahlWerkstuecke() {
 		Session session = Helper.getHibernateSession();
@@ -124,7 +124,7 @@ public class StatistikForm {
 
 	/**
 	 * @return Dummy-Rückgabe
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	public int getDummy() {
 		this.n++;
@@ -159,7 +159,7 @@ public class StatistikForm {
 			List<Integer> trefferListe = new ArrayList<Integer>();
 
 			/*
-			 * -------------------------------- die Treffer der Benutzergruppen --------------------------------
+			 * die Treffer der Benutzergruppen
 			 */
 			Criteria critGruppen = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet) {
@@ -188,7 +188,7 @@ public class StatistikForm {
 			}
 
 			/*
-			 * -------------------------------- Treffer der Benutzer --------------------------------
+			 * Treffer der Benutzer
 			 */
 			Criteria critBenutzer = session.createCriteria(Schritt.class);
 			if (!inOffen && !inBearbeitet) {
@@ -217,7 +217,7 @@ public class StatistikForm {
 			}
 
 			/*
-			 * -------------------------------- nun nur die Treffer übernehmen, die in der Liste sind --------------------------------
+			 * nun nur die Treffer übernehmen, die in der Liste sind
 			 */
 			crit.add(Restrictions.in("id", trefferListe));
 			return crit.list().size();

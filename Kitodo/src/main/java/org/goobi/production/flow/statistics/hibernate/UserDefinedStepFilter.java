@@ -11,6 +11,10 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,24 +24,17 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
-
 /**
- * This filter replaces the filter, which was integrated in class
- * AktuelleSchritteForm ... the purpose of refactoring was the goal to access
- * filter functions on the level of processes, which were already implemented in
+ * This filter replaces the filter, which was integrated in class AktuelleSchritteForm ... the purpose of refactoring
+ * was the goal to access filter functions on the level of processes, which were already implemented in
  * UserDefinedFilter and combine them for the step filter.
- * 
- * 
+ *
  * @author Wulf Riebensahm
- * 
  */
 public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 7134772860962768932L;
 	private String myFilter = null;
@@ -47,14 +44,16 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	private Boolean stepOpenOnly = false;
 	private boolean userAssignedStepsOnly = false;
 	private boolean clearSession = false;
-	
+
 	public UserDefinedStepFilter(boolean clearSession) {
 		this.clearSession = clearSession;
 	}
-	
-	
-	/*
+
+	/**
 	 * setting basic filter modes
+	 *
+	 * @param stepOpenOnly add description
+	 * @param userAssignedStepsOnly add description
 	 */
 	public void setFilterModes(Boolean stepOpenOnly, boolean userAssignedStepsOnly) {
 		myCriteria = null;
@@ -64,15 +63,14 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
 	 * ()
 	 */
 	@Override
 	public Criteria getCriteria() {
-		// myCriteria is a WeakReference ... both cases needs to be evaluated,
-		// after gc the WeakReference
+		// myCriteria is a WeakReference ... both cases needs to be evaluated, after gc the WeakReference
 		// object is still referenced but not the object referenced by it
 		if (myCriteria == null || myCriteria.get() == null) {
 			if (myIds == null) {
@@ -108,7 +106,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 		// following was moved to Filter Helper
 		// limitToUserAssignedSteps(crit);
 
-		String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly, userAssignedStepsOnly, clearSession);
+		String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly,
+				userAssignedStepsOnly, clearSession);
 
 		if (message.length() > 0) {
 			myObservable.setMessage(message);
@@ -119,30 +118,32 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
 	 * ()
 	 */
 	@Override
 	public List<Integer> getIDList() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getIDList() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getIDList() ");
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
 	 */
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getName() ");
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
 	 * ()
@@ -171,7 +172,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
 	 * (java.lang.String)
@@ -184,61 +185,65 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
 	 * (java.lang.String)
 	 */
 	@Override
 	public void setName(String name) {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement setName() ");
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
 	 * (java.lang.String)
 	 */
 	@Override
 	public void setSQL(String sqlString) {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement setSQL() ");
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
 	 * ()
 	 */
 	@Override
 	public Integer stepDone() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement stepDone() ");
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
 	 */
 	@Override
 	public List<Object> getSourceData() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getSourceData() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement getSourceData() ");
 	}
 
 	@Override
 	public UserDefinedStepFilter clone() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement clone() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement clone() ");
 
 	}
 
 	@Override
 	public String stepDoneName() {
-		throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDoneName() ");
+		throw new UnsupportedOperationException("The class " + this.getClass().getName()
+				+ " does not implement stepDoneName() ");
 	}
-
-	
 
 }

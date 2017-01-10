@@ -11,15 +11,15 @@
 
 package de.sub.goobi.persistence;
 
-import java.util.List;
-
 import de.sub.goobi.beans.Benutzergruppe;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 public class BenutzergruppenDAO extends BaseDAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 4987176626562271217L;
 
@@ -28,6 +28,11 @@ public class BenutzergruppenDAO extends BaseDAO {
 		return (Benutzergruppe) retrieveObj(Benutzergruppe.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Benutzergruppe get(Integer id) throws DAOException {
 		Benutzergruppe rueckgabe = (Benutzergruppe) retrieveObj(Benutzergruppe.class, id);
 		if (rueckgabe == null) {
@@ -36,6 +41,10 @@ public class BenutzergruppenDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Benutzergruppe t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);

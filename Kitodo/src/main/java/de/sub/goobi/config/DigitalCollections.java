@@ -11,6 +11,8 @@
 
 package de.sub.goobi.config;
 
+import de.sub.goobi.beans.Prozess;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,21 +28,24 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
-
 public class DigitalCollections {
 
+	/**
+	 * @param process add description
+	 * @return add description
+	 * @throws JDOMException add description
+	 * @throws IOException add description
+	 */
 	@SuppressWarnings("unchecked")
-	public static List<String> possibleDigitalCollectionsForProcess(
-			Prozess process) throws JDOMException, IOException {
-		
+	public static List<String> possibleDigitalCollectionsForProcess(Prozess process) throws JDOMException, IOException {
+
 		List<String> result = new ArrayList<String>();
 		String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
 				FileNames.DIGITAL_COLLECTIONS_FILE);
 		if (!(new File(filename).exists())) {
 			throw new FileNotFoundException("File not found: " + filename);
 		}
-		
+
 		/* Datei einlesen und Root ermitteln */
 		SAXBuilder builder = new SAXBuilder();
 		Document doc = builder.build(new File(filename));

@@ -32,25 +32,19 @@ import org.xml.sax.SAXException;
 
 /**
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class XMLUtils {
 
 	/**
-	 * The method documentToByteArray() converts an org.w3c.dom.Document to a
-	 * ByteArray for Downloading
-	 * 
-	 * @param data
-	 *            The document to convert
-	 * @param indent
-	 *            No of spaces to use for indenting. Use “null” to disable
+	 * The method documentToByteArray() converts an org.w3c.dom.Document to a ByteArray for Downloading
+	 *
+	 * @param data The document to convert
+	 * @param indent No of spaces to use for indenting. Use “null” to disable
 	 * @return the XML data as byte[]
-	 * 
-	 * @throws TransformerException
-	 *             when it is not possible to create a Transformer instance or
-	 *             if an unrecoverable error occurs during the course of the
-	 *             transformation
+	 * @throws TransformerException when it is not possible to create a Transformer instance or if an unrecoverable
+	 * 								error occurs during the course of the transformation
 	 */
 	public static byte[] documentToByteArray(Document data, Integer indent) throws TransformerException {
 		ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -65,43 +59,35 @@ public class XMLUtils {
 	}
 
 	/**
-	 * The function getFirstChildWithTagName() returns the first child node from
-	 * a node, identified by its node name
-	 * 
-	 * @param data
-	 *            Document or Element whose children shall be examined
-	 * @param tagName
-	 *            name of the node to find
+	 * The function getFirstChildWithTagName() returns the first child node from a node, identified by its node name
+	 *
+	 * @param data Document or Element whose children shall be examined
+	 * @param tagName name of the node to find
 	 * @return first child node with that node name
-	 * @throws NoSuchElementException
-	 *             if no child node with that name can be found
+	 * @throws NoSuchElementException if no child node with that name can be found
 	 */
 	public static Element getFirstChildWithTagName(Node data, String tagName) throws NoSuchElementException {
 		for (Node element = data.getFirstChild(); element != null; element = element.getNextSibling()) {
-			if (!(element instanceof Element))
+			if (!(element instanceof Element)) {
 				continue;
-			if (element.getNodeName().equals(tagName))
+			}
+			if (element.getNodeName().equals(tagName)) {
 				return (Element) element;
+			}
 		}
 		throw new NoSuchElementException(tagName);
 	}
 
 	/**
-	 * The function load() is a convenience method load a DOM Document object
-	 * from an input stream.
-	 * 
-	 * @param data
-	 *            InputStream to read from
+	 * The function load() is a convenience method load a DOM Document object from an input stream.
+	 *
+	 * @param data InputStream to read from
 	 * @return the DOM Document encoded in the input stream’s data
-	 * @throws SAXException
-	 *             if any parse errors occur
-	 * @throws IOException
-	 *             if any IO errors occur
-	 * @throws RuntimeException
-	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested—which never happens because we use
-	 *             the default configuration here and that is definitely
-	 *             supported
+	 * @throws SAXException if any parse errors occur
+	 * @throws IOException if any IO errors occur
+	 * @throws RuntimeException if a DocumentBuilder cannot be created which satisfies the  configuration
+	 * 							requested—which never happens because we use the default configuration here and that
+	 * 							is definitely supported
 	 */
 	public static Document load(InputStream data) throws SAXException, IOException {
 		try {
@@ -112,15 +98,12 @@ public class XMLUtils {
 	}
 
 	/**
-	 * The function newDocument() is a convenience method to obtain a new
-	 * instance of a DOM Document object.
-	 * 
+	 * The function newDocument() is a convenience method to obtain a new instance of a DOM Document object.
+	 *
 	 * @return A new DOM Document
-	 * @throws RuntimeException
-	 *             if a DocumentBuilder cannot be created which satisfies the
-	 *             configuration requested—which never happens because we use
-	 *             the default configuration here and that is definitely
-	 *             supported
+	 * @throws RuntimeException  if a DocumentBuilder cannot be created which satisfies the configuration
+	 * 							requested—which never happens because we use the default configuration here and that
+	 * 							is definitely supported
 	 */
 	public static Document newDocument() {
 		try {

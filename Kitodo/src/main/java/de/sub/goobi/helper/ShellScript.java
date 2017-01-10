@@ -24,10 +24,9 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 /**
- * The class ShellScript is intended to run shell scripts (or other system
- * commands).
- * 
- * @author Matthias Ronge <matthias.ronge@zeutschel.de>
+ * The class ShellScript is intended to run shell scripts (or other system commands).
+ *
+ * @author Matthias Ronge matthias.ronge@zeutschel.de
  */
 public class ShellScript {
 	private static final Logger logger = Logger.getLogger(ShellScript.class);
@@ -35,12 +34,13 @@ public class ShellScript {
 	public static final int ERRORLEVEL_ERROR = 1;
 
 	private final String command;
-	private LinkedList<String> outputChannel, errorChannel;
+	private LinkedList<String> outputChannel;
+	private LinkedList<String> errorChannel;
 	private Integer errorLevel;
 
 	/**
 	 * This returns the command.
-	 * 
+	 *
 	 * @return the command
 	 */
 	public File getCommand() {
@@ -49,7 +49,7 @@ public class ShellScript {
 
 	/**
 	 * This returns the command string.
-	 * 
+	 *
 	 * @return the command
 	 */
 	public String getCommandString() {
@@ -57,9 +57,8 @@ public class ShellScript {
 	}
 
 	/**
-	 * Provides the results of the script written on standard out. Null if the
-	 * script has not been run yet.
-	 * 
+	 * Provides the results of the script written on standard out. Null if the script has not been run yet.
+	 *
 	 * @return the output channel
 	 */
 	public LinkedList<String> getStdOut() {
@@ -67,9 +66,8 @@ public class ShellScript {
 	}
 
 	/**
-	 * Provides the content of the standard error channel. Null if the script
-	 * has not been run yet.
-	 * 
+	 * Provides the content of the standard error channel. Null if the script has not been run yet.
+	 *
 	 * @return the error channel
 	 */
 	public LinkedList<String> getStdErr() {
@@ -78,7 +76,7 @@ public class ShellScript {
 
 	/**
 	 * Provides the result error level.
-	 * 
+	 *
 	 * @return the error level
 	 */
 	public Integer getErrorLevel() {
@@ -86,13 +84,10 @@ public class ShellScript {
 	}
 
 	/**
-	 * A shell script must be initialised with an existing file on the local
-	 * file system.
-	 * 
-	 * @param executable
-	 *            Script to run
-	 * @throws FileNotFoundException
-	 *             is thrown if the given executable does not exist.
+	 * A shell script must be initialised with an existing file on the local file system.
+	 *
+	 * @param executable Script to run
+	 * @throws FileNotFoundException is thrown if the given executable does not exist.
 	 */
 	public ShellScript(File executable) throws FileNotFoundException {
 		if (!executable.exists()) {
@@ -102,41 +97,34 @@ public class ShellScript {
 	}
 
 	/**
-	 * The function run() will execute the system command. This is a shorthand
-	 * to run the script without arguments.
-	 * 
+	 * The function run() will execute the system command. This is a shorthand to run the script without arguments.
+	 *
 	 * @return the exit value of the script
-	 * @throws IOException
-	 *             If an I/O error occurs.
+	 * @throws IOException If an I/O error occurs.
 	 */
 	public int run() throws IOException {
 		return run(null);
 	}
 
 	/**
-	 * The function run() will execute the system command. First, the call
-	 * sequence is created, including the parameters passed to run(). Then, the
-	 * underlying OS is contacted to run the command. Afterwards, the results
+	 * The function run() will execute the system command. First, the call sequence is created, including the
+	 * parameters passed to run(). Then, the underlying OS is contacted to run the command. Afterwards, the results
 	 * are being processed and stored.
-	 * 
-	 * On interrupt request, the function will continue waiting for the script
-	 * and then set interrupted state again to allow the executing thread to
-	 * exit gracefully where defined.
-	 * 
-	 * The behaviour is slightly different from the legacy callShell2() command,
-	 * as it returns the error level as reported from the system process. Use
-	 * this to get the old behaviour:
-	 * 
+	 *
+	 * <p>On interrupt request, the function will continue waiting for the script and then set interrupted state again
+	 * to allow the executing thread to exit gracefully where defined.</p>
+	 *
+	 * <p>The behaviour is slightly different from the legacy callShell2() command, as it returns the error level as
+	 * reported from the system process. Use this to get the old behaviour:</p>
+	 *
 	 * <pre>
 	 *   Integer err = scr.run(args);
 	 *   if (scr.getStdErr().size() &gt; 0) err = ShellScript.ERRORLEVEL_ERROR;
 	 * </pre>
-	 * 
-	 * @param args
-	 *            A list of arguments passed to the script. May be null.
+	 *
+	 * @param args A list of arguments passed to the script. May be null.
 	 * @return the exit value of the script
-	 * @throws IOException
-	 *             If an I/O error occurs.
+	 * @throws IOException If an I/O error occurs.
 	 */
 	public int run(List<String> args) throws IOException {
 
@@ -147,8 +135,7 @@ public class ShellScript {
 		}
 		Process process = null;
 		try {
-			String[] callSequence = commandLine.toArray(new String[commandLine
-					.size()]);
+			String[] callSequence = commandLine.toArray(new String[commandLine.size()]);
 			process = new ProcessBuilder(callSequence).start();
 			outputChannel = inputStreamToLinkedList(process.getInputStream());
 			errorChannel = inputStreamToLinkedList(process.getErrorStream());
@@ -171,23 +158,21 @@ public class ShellScript {
 				Thread.interrupted();
 				interrupt = true;
 			}
-		} while (interrupted);
-		if (interrupt){
+		}
+		while (interrupted);
+		if (interrupt) {
 			Thread.currentThread().interrupt();
 		}
 		return errorLevel;
 	}
 
 	/**
-	 * The function inputStreamToLinkedList() reads an InputStream and returns
-	 * it as a LinkedList.
-	 * 
-	 * @param myInputStream
-	 *            Stream to convert
+	 * The function inputStreamToLinkedList() reads an InputStream and returns it as a LinkedList.
+	 *
+	 * @param myInputStream Stream to convert
 	 * @return A linked list holding the single lines.
 	 */
-	public static LinkedList<String> inputStreamToLinkedList(
-			InputStream myInputStream) {
+	public static LinkedList<String> inputStreamToLinkedList(InputStream myInputStream) {
 		LinkedList<String> result = new LinkedList<String>();
 		Scanner inputLines = null;
 		try {
@@ -206,9 +191,8 @@ public class ShellScript {
 
 	/**
 	 * This behaviour was already implemented. I can’t say if it’s necessary.
-	 * 
-	 * @param inputStream
-	 *            A stream to close.
+	 *
+	 * @param inputStream A stream to close.
 	 */
 	private static void closeStream(Closeable inputStream) {
 		if (inputStream == null) {
@@ -223,21 +207,16 @@ public class ShellScript {
 	}
 
 	/**
-	 * This implements the legacy Helper.callShell2() command. This is subject
-	 * to whitespace problems and is maintained here for backward compatibility
-	 * only. Please don’t use.
-	 * 
-	 * @param nonSpacesafeScriptingCommand
-	 *            A single line command which mustn’t contain parameters
-	 *            containing white spaces.
+	 * This implements the legacy Helper.callShell2() command. This is subject to whitespace problems and is maintained
+	 * here for backward compatibility only. Please don’t use.
+	 *
+	 * @param nonSpacesafeScriptingCommand A single line command which mustn’t contain parameters containing white
+	 *                                        spaces.
 	 * @return error level on success, 1 if an error occurs
-	 * @throws InterruptedException
-	 *             In case the script was interrupted due to concurrency
-	 * @throws IOException
-	 *             If an I/O error happens
+	 * @throws InterruptedException  In case the script was interrupted due to concurrency
+	 * @throws IOException If an I/O error happens
 	 */
-	public static int legacyCallShell2(String nonSpacesafeScriptingCommand)
-			throws IOException, InterruptedException {
+	public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException, InterruptedException {
 		String[] tokenisedCommand = nonSpacesafeScriptingCommand.split("\\s");
 		ShellScript s;
 		int err = ShellScript.ERRORLEVEL_ERROR;
@@ -259,9 +238,7 @@ public class ShellScript {
 			}
 		} catch (FileNotFoundException e) {
 			logger.error("FileNotFoundException in callShell2()", e);
-			Helper.setFehlerMeldung(
-					"Couldn't find script file in callShell2(), error",
-					e.getMessage());
+			Helper.setFehlerMeldung("Couldn't find script file in callShell2(), error", e.getMessage());
 		}
 		return err;
 	}

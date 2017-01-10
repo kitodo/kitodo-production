@@ -11,6 +11,19 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import de.sub.goobi.persistence.apache.ProcessManager;
+import de.sub.goobi.persistence.apache.ProcessObject;
+import de.sub.goobi.persistence.apache.ProjectManager;
+import de.sub.goobi.persistence.apache.ProjectObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,18 +42,6 @@ import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
 
 public class MetadatenVerifizierungWithoutHibernate {
 	List<DocStruct> docStructsOhneSeiten;
@@ -48,10 +49,14 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	private String title;
 
+	/**
+	 * @param inProzess add description
+	 * @return add description
+	 */
 	public boolean validate(Prozess inProzess) {
 		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
 		/*
-		 * -------------------------------- Fileformat einlesen --------------------------------
+		 * Fileformat einlesen
 		 */
 		Fileformat gdzfile;
 		try {
@@ -63,6 +68,13 @@ public class MetadatenVerifizierungWithoutHibernate {
 		return validate(gdzfile, myPrefs, inProzess.getId(), this.title);
 	}
 
+	/**
+	 * @param gdzfile add description
+	 * @param inPrefs add description
+	 * @param processId add description
+	 * @param title add description
+	 * @return add description
+	 */
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, int processId, String title) {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
 		ProjectObject project = ProjectManager.getProjectById(process.getProjekteID());
@@ -83,24 +95,28 @@ public class MetadatenVerifizierungWithoutHibernate {
 		if (logical.getAllIdentifierMetadata() != null && logical.getAllIdentifierMetadata().size() > 0) {
 			Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
 			try {
-				if (!identifierTopStruct.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+				if (!identifierTopStruct.getValue()
+						.replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
 							+ identifierTopStruct.getType().getNameByLanguage(metadataLanguage) + " in DocStruct "
-							+ logical.getType().getNameByLanguage(metadataLanguage) + Helper.getTranslation("MetadataInvalidCharacter"));
+							+ logical.getType().getNameByLanguage(metadataLanguage)
+							+ Helper.getTranslation("MetadataInvalidCharacter"));
 					ergebnis = false;
 				}
 				DocStruct firstChild = logical.getAllChildren().get(0);
 				Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
 				if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 						&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
-					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
-							+ Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName() + " and "
-							+ firstChild.getType().getName());
+					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
+							+ identifierTopStruct.getType().getName() + Helper.getTranslation("MetadataIdentifierSame")
+							+ logical.getType().getName() + " and " + firstChild.getType().getName());
 					ergebnis = false;
 				}
-				if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
-					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierFirstChild.getType().getName()
-							+ " in DocStruct " + firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
+				if (!identifierFirstChild.getValue()
+						.replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+					Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
+							+ identifierFirstChild.getType().getName() + " in DocStruct "
+							+ firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
 					ergebnis = false;
 				}
 			} catch (Exception e) {
@@ -159,7 +175,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 		/*
 		 * -------------------------------- auf mandatory Values der Metadaten prüfen --------------------------------
 		 */
-		List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<String>(), metadataLanguage);
+		List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<String>(),
+				metadataLanguage);
 		if (mandatoryList.size() != 0) {
 			for (Iterator<String> iter = mandatoryList.iterator(); iter.hasNext();) {
 				String temp = iter.next();
@@ -169,11 +186,10 @@ public class MetadatenVerifizierungWithoutHibernate {
 		}
 
 		/*
-		 * -------------------------------- auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
-		 * --------------------------------
+		 * auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
 		 */
-		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<String>(), inPrefs, metadataLanguage,
-				project);
+		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(),
+				new ArrayList<String>(), inPrefs, metadataLanguage, project);
 		if (configuredList.size() != 0) {
 			for (Iterator<String> iter = configuredList.iterator(); iter.hasNext();) {
 				String temp = iter.next();
@@ -296,18 +312,21 @@ public class MetadatenVerifizierungWithoutHibernate {
 			int real = 0;
 			real = ll.size();
 
-			if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
+			if ((number.equals("1m") || number.equals("+")) && real == 1
+					&& (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
 				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
 						+ Helper.getTranslation("MetadataIsEmpty"));
 			}
 			/* jetzt die Typen prüfen */
 			if (number.equals("1m") && real != 1) {
 				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-						+ Helper.getTranslation("MetadataNotOneElement") + " " + real + Helper.getTranslation("MetadataTimes"));
+						+ Helper.getTranslation("MetadataNotOneElement") + " " + real
+						+ Helper.getTranslation("MetadataTimes"));
 			}
 			if (number.equals("1o") && real > 1) {
 				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-						+ Helper.getTranslation("MetadataToManyElements") + " " + real + " " + Helper.getTranslation("MetadataTimes"));
+						+ Helper.getTranslation("MetadataToManyElements") + " " + real + " "
+						+ Helper.getTranslation("MetadataTimes"));
 			}
 			if (number.equals("+") && real == 0) {
 				inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
@@ -325,12 +344,12 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
+	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten
 	 */
-	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language,
-			ProjectObject project) {
+	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList,
+			Prefs inPrefs, String language, ProjectObject project) {
 		/*
-		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
+		 * Konfiguration öffnen und die Validierungsdetails auslesen
 		 */
 		ConfigProjects cp = null;
 		try {
@@ -356,7 +375,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 				Helper.setFehlerMeldung("[" + this.title + "] " + "Metadatatype does not exist: ", prop_metadatatype);
 			}
 			/*
-			 * wenn das Metadatum des FirstChilds überprüfen werden soll, dann dieses jetzt (sofern vorhanden) übernehmen
+			 * wenn das Metadatum des FirstChilds überprüfen werden soll, dann dieses jetzt (sofern vorhanden)
+			 * übernehmen
 			 */
 			if (prop_doctype != null && prop_doctype.equals("firstchild")) {
 				if (myStruct.getAllChildren() != null && myStruct.getAllChildren().size() > 0) {
@@ -395,15 +415,15 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
-	 * vorhanden ================================================================
+	 * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an der jeweiligen
+	 * Stelle erlaubt und noch nicht vorhanden
 	 */
-	private void checkCreateElementFrom(ArrayList<String> inFehlerList, ArrayList<MetadataType> inListOfFromMdts, DocStruct myStruct,
-			MetadataType mdt, String language) {
+	private void checkCreateElementFrom(ArrayList<String> inFehlerList, ArrayList<MetadataType> inListOfFromMdts,
+			DocStruct myStruct, MetadataType mdt, String language) {
 
 		/*
-		 * -------------------------------- existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
-		 * in das neue Element schreiben --------------------------------
+		 * existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
+		 * in das neue Element schreiben
 		 */
 		List<? extends Metadata> createMetadaten = myStruct.getAllMetadataByType(mdt);
 		if (createMetadaten == null || createMetadaten.size() == 0) {
@@ -423,7 +443,8 @@ public class MetadatenVerifizierungWithoutHibernate {
 						for (Person p : fromElemente) {
 
 							if (p.getRole() == null) {
-								Helper.setFehlerMeldung("[" + this.title + " " + myStruct.getType().getNameByLanguage(language) + "] "
+								Helper.setFehlerMeldung("[" + this.title + " "
+										+ myStruct.getType().getNameByLanguage(language) + "] "
 										+ Helper.getTranslation("MetadataPersonWithoutRole"));
 								break;
 							} else {
@@ -452,7 +473,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 		}
 
 		/*
-		 * -------------------------------- alle Kinder durchlaufen --------------------------------
+		 * alle Kinder durchlaufen
 		 */
 		List<DocStruct> children = myStruct.getAllChildren();
 		if (children != null && children.size() > 0) {
@@ -463,10 +484,10 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * Metadatum soll mit bestimmten String beginnen oder enden ================================================================
+	 * Metadatum soll mit bestimmten String beginnen oder enden
 	 */
-	private void checkStartsEndsWith(List<String> inFehlerList, String prop_startswith, String prop_endswith, DocStruct myStruct, MetadataType mdt,
-			String language) {
+	private void checkStartsEndsWith(List<String> inFehlerList, String prop_startswith, String prop_endswith,
+			DocStruct myStruct, MetadataType mdt, String language) {
 		/* startswith oder endswith */
 		List<? extends Metadata> alleMetadaten = myStruct.getAllMetadataByType(mdt);
 		if (alleMetadaten != null && alleMetadaten.size() > 0) {
@@ -484,8 +505,9 @@ public class MetadatenVerifizierungWithoutHibernate {
 						}
 					}
 					if (!isOk && !this.autoSave) {
-						inFehlerList.add(md.getType().getNameByLanguage(language) + " " + Helper.getTranslation("MetadataWithValue") + " "
-								+ md.getValue() + " " + Helper.getTranslation("MetadataDoesNotStartWith") + " " + prop_startswith);
+						inFehlerList.add(md.getType().getNameByLanguage(language) + " "
+								+ Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
+								+ Helper.getTranslation("MetadataDoesNotStartWith") + " " + prop_startswith);
 					}
 					if (!isOk && this.autoSave) {
 						md.setValue(new StringTokenizer(prop_startswith, "|").nextToken() + md.getValue());
@@ -502,8 +524,9 @@ public class MetadatenVerifizierungWithoutHibernate {
 						}
 					}
 					if (!isOk && !this.autoSave) {
-						inFehlerList.add(md.getType().getNameByLanguage(language) + " " + Helper.getTranslation("MetadataWithValue") + " "
-								+ md.getValue() + " " + Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
+						inFehlerList.add(md.getType().getNameByLanguage(language) + " "
+								+ Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
+								+ Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
 					}
 					if (!isOk && this.autoSave) {
 						md.setValue(md.getValue() + new StringTokenizer(prop_endswith, "|").nextToken());
@@ -514,7 +537,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * automatisch speichern lassen, wenn Änderungen nötig waren ================================================================
+	 * automatisch speichern lassen, wenn Änderungen nötig waren
 	 */
 	public boolean isAutoSave() {
 		return this.autoSave;
@@ -523,25 +546,32 @@ public class MetadatenVerifizierungWithoutHibernate {
 	public void setAutoSave(boolean autoSave) {
 		this.autoSave = autoSave;
 	}
-	
-	
+
+	/**
+	 * @param uppermostStruct add description
+	 * @return add description
+	 */
 	public boolean validateIdentifier(DocStruct uppermostStruct) {
-		
+
 		if (uppermostStruct.getType().getAnchorClass() != null) {
 			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
 
-			if (uppermostStruct.getAllIdentifierMetadata() != null && uppermostStruct.getAllIdentifierMetadata().size() > 0) {
+			if (uppermostStruct.getAllIdentifierMetadata() != null
+					&& uppermostStruct.getAllIdentifierMetadata().size() > 0) {
 				Metadata identifierTopStruct = uppermostStruct.getAllIdentifierMetadata().get(0);
 				try {
 					if (identifierTopStruct.getValue() == null || identifierTopStruct.getValue().length() == 0) {
-						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in " + uppermostStruct.getType().getNameByLanguage(language) + " "
+						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in "
+								+ uppermostStruct.getType().getNameByLanguage(language) + " "
 								+ Helper.getTranslation("MetadataIsEmpty"));
 						return false;
 					}
-					if (!identifierTopStruct.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+					if (!identifierTopStruct.getValue()
+							.replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
 						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
 								+ identifierTopStruct.getType().getNameByLanguage(language) + " in DocStruct "
-								+ uppermostStruct.getType().getNameByLanguage(language) + Helper.getTranslation("MetadataInvalidCharacter"));
+								+ uppermostStruct.getType().getNameByLanguage(language)
+								+ Helper.getTranslation("MetadataInvalidCharacter"));
 						return false;
 					}
 					DocStruct firstChild = uppermostStruct.getAllChildren().get(0);
@@ -549,16 +579,19 @@ public class MetadatenVerifizierungWithoutHibernate {
 					if (identifierFirstChild.getValue() == null || identifierFirstChild.getValue().length() == 0) {
 						return false;
 					}
-					if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
-						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in " + uppermostStruct.getType().getNameByLanguage(language) + " "
+					if (!identifierFirstChild.getValue()
+							.replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+						Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in "
+								+ uppermostStruct.getType().getNameByLanguage(language) + " "
 								+ Helper.getTranslation("MetadataIsEmpty"));
 						return false;
 					}
 					if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
 							&& identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
-						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError") + identifierTopStruct.getType().getName()
-								+ Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName() + " and "
-								+ firstChild.getType().getName());
+						Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
+								+ identifierTopStruct.getType().getName()
+								+ Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName()
+								+ " and " + firstChild.getType().getName());
 						return false;
 					}
 				} catch (Exception e) {
@@ -566,6 +599,6 @@ public class MetadatenVerifizierungWithoutHibernate {
 				}
 			}
 		}
-		return true;	
+		return true;
 	}
 }

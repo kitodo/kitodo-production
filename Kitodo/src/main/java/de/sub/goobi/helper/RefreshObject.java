@@ -11,24 +11,27 @@
 
 package de.sub.goobi.helper;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
-
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.persistence.HibernateUtilOld;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+
 public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
+	/**
+	 * @param processID add description
+	 */
 	public static void refreshProcess(int processID) {
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("refreshing process with id " + processID);
 		}
 		try {
 			Session session = HibernateUtilOld.getSessionFactory().openSession();
 			if (session != null) {
-				if(logger.isDebugEnabled()){
+				if (logger.isDebugEnabled()) {
 					logger.debug("session is connected: " + session.isConnected());
 					logger.debug("session is open: " + session.isOpen());
 				}
@@ -56,8 +59,11 @@ public class RefreshObject {
 		}
 	}
 
+	/**
+	 * @param processID add description
+	 */
 	public static void refreshProcess_GUI(int processID) {
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("refreshing process with id " + processID);
 		}
 		Session session = null;
@@ -86,6 +92,9 @@ public class RefreshObject {
 		}
 	}
 
+	/**
+	 * @param stepID add description
+	 */
 	public static void refreshStep(int stepID) {
 		try {
 

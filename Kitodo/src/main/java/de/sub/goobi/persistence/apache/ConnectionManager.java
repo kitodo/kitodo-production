@@ -27,7 +27,6 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.log4j.Logger;
 
 /**
- * 
  * @author Robert Sehr
  *
  */
@@ -71,12 +70,15 @@ public class ConnectionManager {
 		try {
 			java.lang.Class.forName(config.getDbDriverName()).newInstance();
 		} catch (Exception e) {
-			logger.error("Error when attempting to obtain DB Driver: " + config.getDbDriverName() + " on " + new Date().toString(), e);
+			logger.error(
+					"Error when attempting to obtain DB Driver: " + config.getDbDriverName() + " on "
+							+ new Date().toString(), e);
 		}
 
 		logger.debug("Trying to connect to database...");
 		try {
-			this.ds = setupDataSource(config.getDbURI(), config.getDbUser(), config.getDbPassword(), config.getDbPoolMinSize(), config.getDbPoolMaxSize());
+			this.ds = setupDataSource(config.getDbURI(), config.getDbUser(), config.getDbPassword(),
+					config.getDbPoolMinSize(), config.getDbPoolMaxSize());
 			logger.debug("Connection attempt to database succeeded.");
 		} catch (Exception e) {
 			logger.error("Error when attempting to connect to DB ", e);
@@ -84,26 +86,19 @@ public class ConnectionManager {
 	}
 
 	/**
-	 * 
-	 * @param connectURI
-	 *            - JDBC Connection URI
-	 * @param username
-	 *            - JDBC Connection username
-	 * @param password
-	 *            - JDBC Connection password
-	 * @param minIdle
-	 *            - Minimum number of idel connection in the connection pool
-	 * @param maxActive
-	 *            - Connection Pool Maximum Capacity (Size)
-	 * @throws Exception
+	 * @param connectURI - JDBC Connection URI
+	 * @param username - JDBC Connection username
+	 * @param password - JDBC Connection password
+	 * @param minIdle - Minimum number of idel connection in the connection pool
+	 * @param maxActive - Connection Pool Maximum Capacity (Size)
+	 * @throws Exception add description
 	 */
-	public static DataSource setupDataSource(String connectURI, String username, String password, int minIdle, int maxActive) {
+	public static DataSource setupDataSource(String connectURI, String username, String password, int minIdle,
+			int maxActive) {
 		//
-		// First, we'll need a ObjectPool that serves as the
-		// actual pool of connections.
+		// First, we'll need a ObjectPool that serves as the actual pool of connections.
 		//
-		// We'll use a GenericObjectPool instance, although
-		// any ObjectPool implementation will suffice.
+		// We'll use a GenericObjectPool instance, although any ObjectPool implementation will suffice.
 		//
 		GenericObjectPool connectionPool = new GenericObjectPool(null);
 
@@ -136,27 +131,27 @@ public class ConnectionManager {
 		return dataSource;
 	}
 
+	/**
+	 * @throws Exception add description
+	 */
 	public static void printDriverStats() throws Exception {
 		ObjectPool connectionPool = ConnectionManager._pool;
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("NumActive: " + connectionPool.getNumActive());
 			logger.debug("NumIdle: " + connectionPool.getNumIdle());
 		}
 	}
 
 	/**
-	 * getNumLockedProcesses - gets the number of currently locked processes on
-	 * the MySQL db
-	 * 
+	 * getNumLockedProcesses - gets the number of currently locked processes on the MySQL db
+	 *
 	 * @return Number of locked processes
 	 */
 	public int getNumLockedProcesses() {
 		int num_locked_connections = 0;
-		try (
-			Connection con = this.ds.getConnection();
-			PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
-			ResultSet rs = p_stmt.executeQuery()
-		) {
+		try (Connection con = this.ds.getConnection();
+				PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
+				ResultSet rs = p_stmt.executeQuery()) {
 			while (rs.next()) {
 				if (rs.getString("State") != null && rs.getString("State").equals("Locked")) {
 					num_locked_connections++;
@@ -165,7 +160,7 @@ public class ConnectionManager {
 		} catch (java.sql.SQLException ex) {
 			logger.error(ex.toString());
 		} catch (Exception e) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Failed to get Locked Connections - Exception: " + e.toString());
 			}
 		}

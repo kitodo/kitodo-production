@@ -18,19 +18,18 @@ import org.goobi.production.flow.statistics.IDataSource;
 import org.hibernate.Criteria;
 
 /**
- * This interface defines a filter, which can be used in the goobi/hibernate
- * context. It may be implemented serializable so it could be saved and loaded.
- * It manages the creation and building of a criteria according to the users
- * or programmers input, holding the result.
- * 
+ * This interface defines a filter, which can be used in the goobi/hibernate context. It may be implemented
+ * serializable so it could be saved and loaded. It manages the creation and building of a criteria according to
+ * the users or programmers input, holding the result.
+ *
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public interface IEvaluableFilter extends IDataSource {
 
 	/**
-	 * As an option name could be set, so that user could select filter by name
-	 * in case this feature is going to be implemented in leter versions 
-	 ****************************************************************************/
+	 * As an option name could be set, so that user could select filter by name in case this feature is going to be
+	 * implemented in later versions
+	 */
 	public void setName(String name);
 
 	/**
@@ -39,7 +38,7 @@ public interface IEvaluableFilter extends IDataSource {
 	public String getName();
 
 	/**
-	 * @return Criteria based on the implemented filter  
+	 * @return Criteria based on the implemented filter
 	 */
 	public Criteria getCriteria();
 
@@ -50,7 +49,6 @@ public interface IEvaluableFilter extends IDataSource {
 
 	/**
 	 * @param Filter - allows passing on a String which may define a filter
-	 * 
 	 */
 	public void setFilter(String Filter);
 
@@ -65,14 +63,12 @@ public interface IEvaluableFilter extends IDataSource {
 	public List<Integer> getIDList();
 
 	/**
-	 * 
 	 * @return Observable, exposing an Observable Object to register an Observer
 	 */
 
 	public Observable getObservable();
 
 	/**
-	 * 
 	 * @return Integer step if an exact stepDone filter is set (needed for Statistic AP2)
 	 */
 	public Integer stepDone();

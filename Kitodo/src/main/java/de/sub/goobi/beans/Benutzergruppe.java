@@ -17,19 +17,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 
 /**
  * Usergroups owning different access rights, represented by integer values
- * 
- * 1: Administration - can do anything 2: Projectmanagement - may do a lot (but
- * not user management, no user switch, no administrative form) 3: User and
- * process (basically like 4 but can be used for setting aditional boundaries
- * later, if so desired) 4: User only: can see current steps
- * 
- * ================================================================
+ *
+ * <p>1: Administration - can do anything 2: Projectmanagement - may do a lot (but not user management, no user switch,
+ * no administrative form) 3: User and  process (basically like 4 but can be used for setting aditional boundaries
+ * later, if so desired) 4: User only: can see current steps</p>
+ *
  */
 @Entity
 @Table(name = "userGroup")
@@ -73,6 +77,10 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		this.id = id;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Integer getBerechtigung() {
 		if (this.berechtigung == null) {
 			this.berechtigung = 4;
@@ -86,6 +94,10 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		this.berechtigung = berechtigung;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public String getBerechtigungAsString() {
 		if (this.berechtigung == null) {
 			this.berechtigung = 4;
@@ -99,6 +111,10 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		this.berechtigung = Integer.parseInt(berechtigung);
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public String getTitel() {
 		if (this.titel == null) {
 			return "";
@@ -119,6 +135,10 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		this.benutzer = benutzer;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Benutzer> getBenutzerList() {
 		try {
 			Hibernate.initialize(getBenutzer());
@@ -141,6 +161,10 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		this.schritte = schritte;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public int getSchritteSize() {
 		Hibernate.initialize(getSchritte());
 		if (this.schritte == null) {
@@ -150,6 +174,10 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		}
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public List<Schritt> getSchritteList() {
 		Hibernate.initialize(getSchritte());
 		if (this.schritte == null) {
@@ -171,7 +199,6 @@ public class Benutzergruppe implements Serializable, Comparable<Benutzergruppe> 
 		return this.getTitel().compareTo(o.getTitel());
 	}
 
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Benutzergruppe)) {

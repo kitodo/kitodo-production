@@ -11,6 +11,9 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +28,11 @@ import org.goobi.api.display.enums.BindState;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
- * 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der
+ * Schrittdetails
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
@@ -53,7 +55,8 @@ public class MetadatumImpl implements Metadatum {
 		this.myPrefs = inPrefs;
 		this.myProcess = inProcess;
 		for (BindState state : BindState.values()) {
-			this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));
+			this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(), this.md.getType()
+					.getName()));
 		}
 	}
 
@@ -79,7 +82,8 @@ public class MetadatumImpl implements Metadatum {
 
 	@Override
 	public String getTyp() {
-		String label = this.md.getType().getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String label = this.md.getType().getLanguage(
+				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 		if (label == null) {
 			label = this.md.getType().getName();
 		}
@@ -93,8 +97,9 @@ public class MetadatumImpl implements Metadatum {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * ##########################################################################################################
+	 * ## ## Getter und Setter ##
+	 * #########################################################################################################
 	 */
 
 	@Override
@@ -117,12 +122,9 @@ public class MetadatumImpl implements Metadatum {
 		this.md = md;
 	}
 
-	/******************************************************
-	 * 
+	/**
 	 * new functions for use of display configuration whithin xml files
-	 * 
-	 *****************************************************/
-
+	 */
 	@Override
 	public String getOutputType() {
 		return this.myValues.get(Modes.getBindState().getTitle()).getDisplayType().getTitle();
@@ -186,7 +188,7 @@ public class MetadatumImpl implements Metadatum {
 		} else {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getIsSelected()) {
-					values = values+ ";" + i.getValue();
+					values = values + ";" + i.getValue();
 					this.selectedItems.add(i.getLabel());
 				}
 			}
@@ -213,7 +215,7 @@ public class MetadatumImpl implements Metadatum {
 	@Override
 	public String getSelectedItem() {
 		String value = this.md.getValue();
-		if (value!=null && value.length() != 0) {
+		if (value != null && value.length() != 0) {
 			for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
 				if (i.getValue().equals(value)) {
 					return i.getLabel();

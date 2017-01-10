@@ -11,20 +11,24 @@
 
 package org.goobi.production.cli;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
-import de.sub.goobi.helper.Helper;
-
 public class WebInterfaceConfig {
-
+	/**
+	 * @param requestIp add description
+	 * @param requestPassword add description
+	 * @return add description
+	 */
 	public static List<String> getCredentials(String requestIp, String requestPassword) {
 		ArrayList<String> allowed = new ArrayList<String>();
 		try {
-			XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() +"goobi_webapi.xml");
+			XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_webapi.xml");
 			config.setListDelimiter('&');
 			config.setReloadingStrategy(new FileChangedReloadingStrategy());
 

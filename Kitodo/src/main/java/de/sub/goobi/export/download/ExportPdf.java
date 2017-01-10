@@ -11,28 +11,6 @@
 
 package de.sub.goobi.export.download;
 
-import java.io.BufferedWriter;
-import org.goobi.io.SafeFile;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.net.URL;
-import java.util.TreeSet;
-
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.goobi.io.FileListFilter;
-
-import ugh.dl.Fileformat;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
@@ -44,32 +22,57 @@ import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
+import java.io.BufferedWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.TreeSet;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.httpclient.methods.GetMethod;
+
+import org.goobi.io.FileListFilter;
+import org.goobi.io.SafeFile;
+
+import ugh.dl.Fileformat;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+
 public class ExportPdf extends ExportMets {
 
 	private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
 	private static final String PDF_EXTENSION = ".pdf";
 
 	@Override
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException,
+			PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
+			TypeNotAllowedForParentException {
 
 		/*
-		 * -------------------------------- Read Document --------------------------------
+		 * Read Document
 		 */
 		Fileformat gdzfile = myProzess.readMetadataFile();
 		String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 		this.myPrefs = myProzess.getRegelsatz().getPreferences();
 
 		/*
-		 * -------------------------------- first of all write mets-file in images-Folder of process --------------------------------
+		 * irst of all write mets-file in images-Folder of process
 		 */
 		SafeFile metsTempFile = SafeFile.createTempFile(myProzess.getTitel(), ".xml");
 		writeMetsFile(myProzess, metsTempFile.toString(), gdzfile, true);
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
 
-		if(myLogger.isDebugEnabled()){
+		if (myLogger.isDebugEnabled()) {
 			myLogger.debug("METS file created: " + metsTempFile);
 		}
 
@@ -81,13 +84,13 @@ public class ExportPdf extends ExportMets {
 
 		if (!ConfigMain.getBooleanParameter("pdfAsDownload")) {
 			/*
-			 * -------------------------------- use contentserver api for creation of pdf-file --------------------------------
+			 * use contentserver api for creation of pdf-file
 			 */
 			CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
 			pdf.setMetsURL(metsTempFile.toURI().toURL());
 			pdf.setTargetFolder(new SafeFile(zielVerzeichnis));
 			pdf.setInternalServletPath(myBasisUrl);
-			if(myLogger.isDebugEnabled()){
+			if (myLogger.isDebugEnabled()) {
 				myLogger.debug("Taget directory: " + zielVerzeichnis);
 				myLogger.debug("Using ContentServer2 base URL: " + myBasisUrl);
 			}
@@ -98,14 +101,14 @@ public class ExportPdf extends ExportMets {
 			GetMethod method = null;
 			try {
 				/*
-				 * -------------------------------- define path for mets and pdfs --------------------------------
+				 * define path for mets and pdfs
 				 */
 				URL goobiContentServerUrl = null;
 				String contentServerUrl = ConfigMain.getParameter("goobiContentServerUrl");
 				Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
 
 				/*
-				 * -------------------------------- using mets file --------------------------------
+				 * using mets file
 				 */
 
 				if (new MetadatenVerifizierung().validate(myProzess) && metsTempFile.toURI().toURL() != null) {
@@ -113,9 +116,10 @@ public class ExportPdf extends ExportMets {
 					if (contentServerUrl == null || contentServerUrl.length() == 0) {
 						contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
 					}
-					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL() + AND_TARGET_FILE_NAME_IS + myProzess.getTitel() + PDF_EXTENSION);
+					goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL()
+							+ AND_TARGET_FILE_NAME_IS + myProzess.getTitel() + PDF_EXTENSION);
 					/*
-					 * -------------------------------- mets data does not exist or is invalid --------------------------------
+					 *  mets data does not exist or is invalid
 					 */
 
 				} else {
@@ -137,9 +141,9 @@ public class ExportPdf extends ExportMets {
 					url.append(contentServerUrl);
 					boolean subsequent = false;
 					for (String f : filenames) {
-						if(subsequent){
+						if (subsequent) {
 							url.append('$');
-						}else{
+						} else {
 							subsequent = true;
 						}
 						url.append(f);
@@ -151,7 +155,7 @@ public class ExportPdf extends ExportMets {
 				}
 
 				/*
-				 * -------------------------------- get pdf from servlet and forward response to file --------------------------------
+				 * get pdf from servlet and forward response to file
 				 */
 
 				method = new GetMethod(goobiContentServerUrl.toString());
@@ -174,7 +178,7 @@ public class ExportPdf extends ExportMets {
 			} catch (Exception e) {
 
 				/*
-				 * -------------------------------- report Error to User as Error-Log --------------------------------
+				 * report Error to User as Error-Log
 				 */
 				String text = "error while pdf creation: " + e.getMessage();
 				SafeFile file = new SafeFile(zielVerzeichnis, myProzess.getTitel() + ".PDF-ERROR.log");

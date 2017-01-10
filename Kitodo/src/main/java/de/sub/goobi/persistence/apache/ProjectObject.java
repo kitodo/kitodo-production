@@ -44,12 +44,44 @@ public class ProjectObject {
 	private int numberOfVolumes;
 	private boolean projectIsArchived;
 
-	public ProjectObject(int projekteID, String titel, boolean useDmsImport, int dmsImportTimeOut, String dmsImportRootPath,
-			String dmsImportImagesPath, String dmsImportSuccessPath, String dmsImportErrorPath, boolean dmsImportCreateProcessFolder,
-			String fileFormatInternal, String fileFormatDmsExport, String metsRightsOwner, String metsRightsOwnerLogo, String metsRightsOwnerSite,
-			String metsDigiprovReference, String metsDigiprovPresentation, String metsPointerPath, String metsPointerPathAnchor,
-			String metsDigiprovReferenceAnchor, String metsDigiprovPresentationAnchor, String metsPurl, String metsContentIDs,
-			String metsRightsOwnerMail, Date startDate, Date endDate, int numberOfPages, int numberOfVolumes, boolean projectIsArchived) {
+	/**
+	 * @param projekteID add description
+	 * @param titel add description
+	 * @param useDmsImport add description
+	 * @param dmsImportTimeOut add description
+	 * @param dmsImportRootPath add description
+	 * @param dmsImportImagesPath add description
+	 * @param dmsImportSuccessPath add description
+	 * @param dmsImportErrorPath add description
+	 * @param dmsImportCreateProcessFolder add description
+	 * @param fileFormatInternal add description
+	 * @param fileFormatDmsExport add description
+	 * @param metsRightsOwner add description
+	 * @param metsRightsOwnerLogo add description
+	 * @param metsRightsOwnerSite add description
+	 * @param metsDigiprovReference add description
+	 * @param metsDigiprovPresentation add description
+	 * @param metsPointerPath add description
+	 * @param metsPointerPathAnchor add description
+	 * @param metsDigiprovReferenceAnchor add description
+	 * @param metsDigiprovPresentationAnchor add description
+	 * @param metsPurl add description
+	 * @param metsContentIDs add description
+	 * @param metsRightsOwnerMail add description
+	 * @param startDate add description
+	 * @param endDate add description
+	 * @param numberOfPages add description
+	 * @param numberOfVolumes add description
+	 * @param projectIsArchived add description
+	 */
+	public ProjectObject(int projekteID, String titel, boolean useDmsImport, int dmsImportTimeOut,
+			String dmsImportRootPath, String dmsImportImagesPath, String dmsImportSuccessPath,
+			String dmsImportErrorPath, boolean dmsImportCreateProcessFolder, String fileFormatInternal,
+			String fileFormatDmsExport, String metsRightsOwner, String metsRightsOwnerLogo, String metsRightsOwnerSite,
+			String metsDigiprovReference, String metsDigiprovPresentation, String metsPointerPath,
+			String metsPointerPathAnchor, String metsDigiprovReferenceAnchor, String metsDigiprovPresentationAnchor,
+			String metsPurl, String metsContentIDs, String metsRightsOwnerMail, Date startDate, Date endDate,
+			int numberOfPages, int numberOfVolumes, boolean projectIsArchived) {
 		this.id = projekteID;
 		this.Titel = titel;
 		this.useDmsImport = useDmsImport;

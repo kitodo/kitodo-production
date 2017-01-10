@@ -16,13 +16,18 @@ public class ImportConflicts {
 	 * simple POJO class
 	 * @author Igor Toker
 	 */
-	
+
 	private String storeidentifier;
 	private String property;
 	private String goobiValue;
 	private String productionValue;
-	
-	
+
+	/**
+	 * @param storeidentifier add description
+	 * @param property add description
+	 * @param goobiValue add description
+	 * @param productionValue add description
+	 */
 	public ImportConflicts(String storeidentifier, String property, String goobiValue, String productionValue) {
 		super();
 		this.storeidentifier = storeidentifier;
@@ -30,30 +35,37 @@ public class ImportConflicts {
 		this.goobiValue = goobiValue;
 		this.productionValue = productionValue;
 	}
-	
+
 	public void setStoreidentifier(String storeidentifier) {
 		this.storeidentifier = storeidentifier;
 	}
+
 	public String getStoreidentifier() {
 		return storeidentifier;
 	}
+
 	public void setProperty(String property) {
 		this.property = property;
 	}
+
 	public String getProperty() {
 		return property;
 	}
+
 	public void setGoobiValue(String goobiValue) {
 		this.goobiValue = goobiValue;
 	}
+
 	public String getGoobiValue() {
 		return goobiValue;
 	}
+
 	public void setProductionValue(String productionValue) {
 		this.productionValue = productionValue;
 	}
+
 	public String getProductionValue() {
 		return productionValue;
 	}
-	
+
 }

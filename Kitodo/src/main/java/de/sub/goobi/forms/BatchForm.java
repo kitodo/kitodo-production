@@ -11,6 +11,20 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.beans.Batch;
+import de.sub.goobi.beans.Batch.Type;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.helper.BatchProcessHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
+import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
+import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.persistence.BatchDAO;
+import de.sub.goobi.persistence.ProzessDAO;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +45,7 @@ import org.goobi.production.constants.Parameters;
 import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
@@ -38,20 +53,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.BatchProcessHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
-import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.persistence.BatchDAO;
-import de.sub.goobi.persistence.ProzessDAO;
 
 public class BatchForm extends BasisForm {
 
@@ -66,7 +67,7 @@ public class BatchForm extends BasisForm {
 	private String batchfilter;
 	private String processfilter;
 	private IEvaluableFilter myFilteredDataSource;
-	
+
 	private final ProzessDAO dao = new ProzessDAO();
 	private String modusBearbeiten = "";
 
@@ -80,6 +81,9 @@ public class BatchForm extends BasisForm {
 		this.currentProcesses = currentProcesses;
 	}
 
+	/**
+	 *
+	 */
 	public void loadBatchData() {
 		if (selectedProcesses == null || selectedProcesses.size() == 0) {
 			this.currentBatches = BatchDAO.readAll();
@@ -96,6 +100,9 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void loadProcessData() {
 		Set<Prozess> processes = new HashSet<Prozess>();
 		try {
@@ -110,6 +117,9 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	@SuppressWarnings("unchecked")
 	public void filterProcesses() {
 
@@ -131,6 +141,9 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void filterBatches() {
 		currentBatches = new ArrayList<Batch>();
 		for (Batch batch : BatchDAO.readAll()) {
@@ -140,6 +153,9 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<SelectItem> getCurrentProcessesAsSelectItems() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		for (Prozess p : this.currentProcesses) {
@@ -196,12 +212,18 @@ public class BatchForm extends BasisForm {
 		this.selectedBatches = selectedBatches;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String FilterAlleStart() {
 		filterBatches();
 		filterProcesses();
 		return "BatchesAll";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String downloadDocket() {
 		logger.debug("generate docket for process list");
 		String rootpath = ConfigMain.getParameter("xsltFolder");
@@ -268,6 +290,9 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void addProcessesToBatch() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -285,7 +310,7 @@ public class BatchForm extends BasisForm {
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Prozess p : this.selectedProcesses) {
 						p.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+								Helper.getTranslation("addToBatch", Arrays.asList(new String[] {batch.getLabel() })));
 					}
 					this.dao.saveList(this.selectedProcesses);
 				}
@@ -297,6 +322,9 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void removeProcessesFromBatch() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -316,7 +344,7 @@ public class BatchForm extends BasisForm {
 						p.addToWikiField(
 								"debug",
 								Helper.getTranslation("removeFromBatch",
-										Arrays.asList(new String[] { batch.getLabel() })));
+										Arrays.asList(new String[] {batch.getLabel() })));
 					}
 					this.dao.saveList(this.selectedProcesses);
 				}
@@ -329,6 +357,9 @@ public class BatchForm extends BasisForm {
 		FilterAlleStart();
 	}
 
+	/**
+	 *
+	 */
 	public void renameBatch() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -354,12 +385,15 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
+	/**
+	 *
+	 */
 	public void createNewBatch() {
 		if (selectedProcesses.size() > 0) {
 			Batch batch = null;
-			if(batchTitle != null && batchTitle.trim().length() > 0){
+			if (batchTitle != null && batchTitle.trim().length() > 0) {
 				batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
-			}else{
+			} else {
 				batch = new Batch(Type.LOGISTIC, selectedProcesses);
 			}
 			try {
@@ -367,7 +401,7 @@ public class BatchForm extends BasisForm {
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Prozess p : selectedProcesses) {
 						p.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+								Helper.getTranslation("addToBatch", Arrays.asList(new String[] {batch.getLabel() })));
 					}
 					this.dao.saveList(selectedProcesses);
 				}
@@ -385,6 +419,9 @@ public class BatchForm extends BasisForm {
 	 */
 	private BatchProcessHelper batchHelper;
 
+	/**
+	 * @return add description
+	 */
 	public String editProperties() {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
@@ -393,7 +430,8 @@ public class BatchForm extends BasisForm {
 			Helper.setFehlerMeldung("tooManyBatchesSelected");
 			return "";
 		} else {
-			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("") && !this.selectedBatches.get(0).equals("null")) {
+			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("")
+					&& !this.selectedBatches.get(0).equals("null")) {
 				Batch batch;
 				try {
 					batch = BatchDAO.read(Integer.valueOf(selectedBatches.get(0)));
@@ -428,13 +466,11 @@ public class BatchForm extends BasisForm {
 	}
 
 	/**
-	 * Creates a batch export task to export the selected batch. The type of
-	 * export task depends on the batch type. If asynchronous tasks have been
-	 * created, the user will be redirected to the task manager page where it
+	 * Creates a batch export task to export the selected batch. The type of export task depends on the batch type.
+	 * If asynchronous tasks have been created, the user will be redirected to the task manager page where it
 	 * can observe the task progressing.
-	 * 
-	 * @return the next page to show as named in a &lt;from-outcome&gt; element
-	 *         in faces_config.xml
+	 *
+	 * @return the next page to show as named in a &lt;from-outcome&gt; element in faces_config.xml
 	 */
 	public String exportBatch() {
 		if (this.selectedBatches.size() == 0) {
@@ -445,24 +481,24 @@ public class BatchForm extends BasisForm {
 			try {
 				Batch batch = BatchDAO.read(Integer.valueOf(batchID));
 				switch (batch.getType()) {
-				case LOGISTIC:
-					for (Prozess prozess : batch.getProcesses()) {
-						Hibernate.initialize(prozess.getProjekt());
-						Hibernate.initialize(prozess.getProjekt().getFilegroups());
-						Hibernate.initialize(prozess.getRegelsatz());
-						ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
-								true));
-						dms.startExport(prozess);
-					}
-					return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
-				case NEWSPAPER:
-					TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-					return "taskmanager";
-				case SERIAL:
-					TaskManager.addTask(new ExportSerialBatchTask(batch));
-					return "taskmanager";
-				default:
-					throw new UnreachableCodeException("Complete switch statement");
+					case LOGISTIC:
+						for (Prozess prozess : batch.getProcesses()) {
+							Hibernate.initialize(prozess.getProjekt());
+							Hibernate.initialize(prozess.getProjekt().getFilegroups());
+							Hibernate.initialize(prozess.getRegelsatz());
+							ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
+									true));
+							dms.startExport(prozess);
+						}
+						return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+					case NEWSPAPER:
+						TaskManager.addTask(new ExportNewspaperBatchTask(batch));
+						return "taskmanager";
+					case SERIAL:
+						TaskManager.addTask(new ExportSerialBatchTask(batch));
+						return "taskmanager";
+					default:
+						throw new UnreachableCodeException("Complete switch statement");
 				}
 			} catch (Exception e) {
 				logger.error(e);
@@ -498,9 +534,8 @@ public class BatchForm extends BasisForm {
 	/**
 	 * Sets the type of all currently selected batches to the named one,
 	 * overriding a previously set type, if any.
-	 * 
-	 * @param type
-	 *            type to set
+	 *
+	 * @param type type to set
 	 */
 	private void setType(Type type) {
 		try {

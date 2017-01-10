@@ -14,11 +14,15 @@ package org.goobi.production.properties;
 public enum AccessCondition {
 	READ, WRITE, WRITEREQUIRED;
 
-	public static AccessCondition getAccessConditionByName(String inName){
-		if (inName.equalsIgnoreCase("write")){
+	/**
+	 * @param inName add description
+	 * @return add description
+	 */
+	public static AccessCondition getAccessConditionByName(String inName) {
+		if (inName.equalsIgnoreCase("write")) {
 			return WRITE;
 		}
-		if (inName.equalsIgnoreCase("writerequired")){
+		if (inName.equalsIgnoreCase("writerequired")) {
 			return WRITEREQUIRED;
 		}
 		return READ;

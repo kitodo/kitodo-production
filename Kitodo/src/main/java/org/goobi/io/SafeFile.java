@@ -1,3 +1,4 @@
+//CHECKSTYLE:OFF
 /*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
  * A {@link java.io.File} delegate class that does not return {@code null} from
  * its {@code list()} functions. It also provides method calls of
  * {@link org.apache.commons.io.FileUtils} for an object oriented usage.
- * 
+ *
  * @author Matthias Ronge
  */
 public class SafeFile implements Comparable<SafeFile> {
@@ -46,6 +47,10 @@ public class SafeFile implements Comparable<SafeFile> {
 
 	private static final String[] NO_STRING = new String[0];
 
+	/**
+	 * @param files add description
+	 * @return add description
+	 */
 	public static List<SafeFile> createAll(List<File> files) {
 		ArrayList<SafeFile> result = new ArrayList<SafeFile>(files.size());
 		for (File file : files) {
@@ -96,9 +101,8 @@ public class SafeFile implements Comparable<SafeFile> {
 	/**
 	 * Copy directory.
 	 *
-	 * @param destDir
-	 *            the destination directory
-	 * @throws IOException
+	 * @param destDir the destination directory
+	 * @throws IOException add description
 	 */
 	public void copyDir(SafeFile destDir) throws IOException {
 		if (!destDir.exists()) {
@@ -128,8 +132,9 @@ public class SafeFile implements Comparable<SafeFile> {
 
 	private SafeFile[] createAll(File[] files) {
 		SafeFile[] result = new SafeFile[files.length];
-		for (int i = 0; i < files.length; i++)
+		for (int i = 0; i < files.length; i++) {
 			result[i] = new SafeFile(files[i]);
+		}
 		return result;
 	}
 
@@ -202,6 +207,9 @@ public class SafeFile implements Comparable<SafeFile> {
 		return delegate.getCanonicalPath();
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<File> getCurrentFiles() {
 		File[] result = this.delegate.listFiles();
 		if (result != null) {
@@ -211,6 +219,10 @@ public class SafeFile implements Comparable<SafeFile> {
 		}
 	}
 
+	/**
+	 * @param filter add description
+	 * @return add description
+	 */
 	public List<File> getFilesByFilter(FilenameFilter filter) {
 		File[] result = this.delegate.listFiles(filter);
 		if (result != null) {

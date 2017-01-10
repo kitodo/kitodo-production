@@ -20,15 +20,14 @@ import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
+import org.kitodo.production.exceptions.UnreachableCodeException;
+
 import ugh.dl.DocStruct;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
-import org.kitodo.production.exceptions.UnreachableCodeException;
-
 /**
- * A MetadataPathSelector provides methods to retrieve or modify document
- * structure nodes on a document structure node.
+ * A MetadataPathSelector provides methods to retrieve or modify document structure nodes on a document structure node.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -46,29 +45,26 @@ public class MetadataPathSelector extends MetadataSelector {
 	@SuppressWarnings("javadoc")
 	private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
 	/**
-	 * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
-	 * to extract the first metadata path segment.
+	 * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used to extract the first metadata path
+	 * segment.
 	 */
 	private static final Pattern METADATA_SPLIT_PATH_SCHEME = Pattern.compile("^" + METADATA_PATH_SEPARATOR + "([^"
 			+ METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+)");
 
 	/**
-	 * The constant SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME holds a regular
-	 * expression used to detect and extract a quantifier expression at the end
-	 * of the string.
+	 * The constant SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME holds a regular expression used to detect and extract
+	 * a quantifier expression at the end of the string.
 	 */
 	private static final Pattern SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME = Pattern.compile("(.*?)\\[(.+?)\\]");
 
 	/**
-	 * DocStructType name of the structure element to look for or create. "*"
-	 * may be used to look up "any element", but will not work if an element
-	 * needs to be constructed at this level.
+	 * DocStructType name of the structure element to look for or create. "*" may be used to look up "any element",
+	 * but will not work if an element needs to be constructed at this level.
 	 */
 	private final String docStructType;
 
 	/**
-	 * Integer of the element referenced, where Integer.MAX_VALUE indicates the
-	 * "last" element, or null if none.
+	 * Integer of the element referenced, where Integer.MAX_VALUE indicates the "last" element, or null if none.
 	 */
 	private final Object index;
 
@@ -80,11 +76,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	/**
 	 * Creates a new MetadataPathSelector.
 	 *
-	 * @param path
-	 *            path to create sub-selector, passed to {
-	 *            {@link #create(String)}.
-	 * @throws ConfigurationException
-	 *             if the path is invalid
+	 * @param path path to create sub-selector, passed to { {@link #create(String)}.
+	 * @throws ConfigurationException  if the path is invalid
 	 */
 
 	public MetadataPathSelector(String path) throws ConfigurationException {
@@ -109,15 +102,11 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Creates a new metadata path selector as specified by the arguments
-	 * passed.
+	 * Creates a new metadata path selector as specified by the arguments passed.
 	 *
-	 * @param docStructType
-	 *            docStructType name to match
-	 * @param index
-	 *            index to match
-	 * @param selector
-	 *            selector for the subsequent path
+	 * @param docStructType docStructType name to match
+	 * @param index index to match
+	 * @param selector selector for the subsequent path
 	 */
 	private MetadataPathSelector(String docStructType, int index, MetadataSelector selector) {
 		this.docStructType = docStructType;
@@ -126,19 +115,14 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Creates a metadatum with the given value if the full path is applied and
-	 * no such metadatum is already available under at the path. Leaves the
-	 * document structure element unchanged if such a metadatum already exists.
-	 * This works recursively, by calling itself on the subnode, if found, or
-	 * returning null otherwise. Metadata creation is, by definition, always
-	 * done in a {@link LocalMetadataSelector}.
+	 * Creates a metadatum with the given value if the full path is applied and no such metadatum is already available
+	 * under at the path. Leaves the document structure element unchanged if such a metadatum already exists.
+	 * This works recursively, by calling itself on the subnode, if found, or returning null otherwise. Metadata
+	 * creation is, by definition, always done in a {@link LocalMetadataSelector}.
 	 *
-	 * @param data
-	 *            data to work on
-	 * @param logicalNode
-	 *            document structure node to start from, intended for recursion
-	 * @param value
-	 *            value to write if no metadatum is available at the path’s end
+	 * @param data data to work on
+	 * @param logicalNode document structure node to start from, intended for recursion
+	 * @param value value to write if no metadatum is available at the path’s end
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(CopierData,
 	 *      DocStruct, String)
 	 */
@@ -152,17 +136,13 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Sets the metadatum identified by the given path if available, otherwise
-	 * creates the path and metadatum. This works recursively. Metadata creation
-	 * is done in a {@link LocalMetadataSelector}. If the DocStructType is set
+	 * Sets the metadatum identified by the given path if available, otherwise creates the path and metadatum. This
+	 * works recursively. Metadata creation is done in a {@link LocalMetadataSelector}. If the DocStructType is set
 	 * to "*", no path will be created if no path exists.
 	 *
-	 * @param data
-	 *            data to work on
-	 * @param logicalNode
-	 *            document structure node to start from, intended for recursion
-	 * @param value
-	 *            value to write
+	 * @param data data to work on
+	 * @param logicalNode document structure node to start from, intended for recursion
+	 * @param value value to write
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#createOrOverwrite(CopierData,
 	 *      DocStruct, String)
 	 */
@@ -176,7 +156,7 @@ public class MetadataPathSelector extends MetadataSelector {
 				// copy rules aren’t related to the rule set but depend on it,
 				// so copy rules that don’t work with the current rule set are
 				// ignored
-				if(LOG.isDebugEnabled()){
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("Cannot create structural element " + docStructType + " as child of "
 							+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
 							+ " because it isn’t allowed by the rule set.");
@@ -187,9 +167,11 @@ public class MetadataPathSelector extends MetadataSelector {
 				throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
 			} catch (Exception e) {
 				// copy rule failed, skip it
-				if(LOG.isDebugEnabled()){
+				if (LOG.isDebugEnabled()) {
 					LOG.debug(
-							"Cannot create structural element " + docStructType + " as child of "
+							"Cannot create structural element "
+									+ docStructType
+									+ " as child of "
 									+ (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
 									+ ": Accessing the rule set failed with exception: "
 									+ (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
@@ -204,11 +186,10 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * The function findAll() returns all concrete metadata selectors the
-	 * potentially generic metadata selector expression resolves to.
+	 * The function findAll() returns all concrete metadata selectors the potentially generic metadata selector
+	 * expression resolves to.
 	 *
-	 * @param logicalNode
-	 *            Node of the logical document structure to work on
+	 * @param logicalNode Node of the logical document structure to work on
 	 * @return all metadata selectors the expression resolves to
 	 *
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findAll(ugh.dl.DocStruct)
@@ -234,9 +215,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Returns the value of the metadatum named by the path used to construct
-	 * the metadata selector, or null if either the path or the metadatum at the
-	 * end of the path aren’t available. This works recursively, by calling
+	 * Returns the value of the metadatum named by the path used to construct the metadata selector, or null if either
+	 * the path or the metadatum at the end of the path aren’t available. This works recursively, by calling
 	 * itself on the subnode, if found, or returning null otherwise.
 	 *
 	 * @see de.sub.goobi.metadaten.copier.MetadataSelector#findIn(ugh.dl.DocStruct)
@@ -252,9 +232,8 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Returns the numeric index of the metadata selector, if any. If no index
-	 * is specified ({@code null}), or generically refers to all or the last
-	 * element, {@code -1} is returned.
+	 * Returns the numeric index of the metadata selector, if any. If no index is specified ({@code null}), or
+	 * generically refers to all or the last element, {@code -1} is returned.
 	 *
 	 * @return the index number of the metadata selector
 	 */
@@ -269,14 +248,11 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * The function getIndexValue() returns the numerical value represented by
-	 * the symbolic (String) representation passed in. Since the method is
-	 * called from the constructor it must not be overridden in subclasses.
+	 * The function getIndexValue() returns the numerical value represented by the symbolic (String) representation
+	 * passed in. Since the method is called from the constructor it must not be overridden in subclasses.
 	 *
-	 * @param indexSymbol
-	 *            an integer value or ">" to refer to Integer.MAX_VALUE
-	 * @return the integer value of the string, or Integer.MAX_VALUE for the
-	 *         symbol ">".
+	 * @param indexSymbol an integer value or ">" to refer to Integer.MAX_VALUE
+	 * @return the integer value of the string, or Integer.MAX_VALUE for the symbol ">".
 	 */
 	private final Object getIndexValue(String indexSymbol) {
 		try {
@@ -300,15 +276,12 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * Returns the subnode identified by the path segment this metadata path
-	 * selector is responsible for. Returns null if no such node can be found.
+	 * Returns the subnode identified by the path segment this metadata path selector is responsible for. Returns null
+	 * if no such node can be found.
 	 *
-	 * @param logicalNode
-	 *            document structure node to retrieve the subnode from
+	 * @param logicalNode document structure node to retrieve the subnode from
 	 * @return the subnode in question
-	 * @throws RuntimeException
-	 *             if there is more than one element matching but no index was
-	 *             given to chose among them
+	 * @throws RuntimeException if there is more than one element matching but no index was given to chose among them
 	 */
 	private DocStruct getSubnode(DocStruct logicalNode) {
 		List<DocStruct> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
@@ -317,20 +290,20 @@ public class MetadataPathSelector extends MetadataSelector {
 			children = Collections.emptyList();
 		}
 		switch (children.size()) {
-		case 0:
-			return null;
-		case 1:
-			if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
-				return children.get(0);
-			}
+			case 0:
+				return null;
+			case 1:
+				if (index == null || index.equals(0) || index.equals(Integer.MAX_VALUE)) {
+					return children.get(0);
+				}
 		}
 
 		if (index == null) {
 			throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
 					+ docStructType);
 		} else if (!(index instanceof Integer)) {
-			throw new RuntimeException("Could not resolve metadata path: In this regard, index \""
-					+ index + "\" is not allowed.");
+			throw new RuntimeException("Could not resolve metadata path: In this regard, index \"" + index
+					+ "\" is not allowed.");
 		} else if (index.equals(Integer.MAX_VALUE)) {
 			return children.get(children.size() - 1);
 		} else if (children.size() >= ((Integer) index).intValue()) {
@@ -341,22 +314,18 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * The function indexCheck() calculates whether the given child’s index is
-	 * to be matched by this metadata path selector. A child index is to match
-	 * if
+	 * The function indexCheck() calculates whether the given child’s index is to be matched by this metadata path
+	 * selector. A child index is to match if
 	 * <ul>
-	 * <li>the metadata path selector doesn’t specify an index and the index of
-	 * the last child is equal to {@code 0},</li>
+	 * <li>the metadata path selector doesn’t specify an index and the index of the last child is equal to {@code 0},
+	 * </li>
 	 * <li>the metadata path selector specifies all children,</li>
 	 * <li>the metadata path selector exactly points to the given index, or</li>
-	 * <li>generically to the last element, and the given index is the last
-	 * index.</li>
+	 * <li>generically to the last element, and the given index is the last index.</li>
 	 * </ul>
 	 *
-	 * @param childIndex
-	 *            index to check
-	 * @param lastChildIndex
-	 *            last available index
+	 * @param childIndex index to check
+	 * @param lastChildIndex last available index
 	 * @return whether the index is to be matched
 	 */
 	private boolean indexCheck(int childIndex, int lastChildIndex) {
@@ -371,15 +340,12 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * The function matchCurrentPathSegment() returns the path segment this
-	 * metadata path selector is responsible to represent. Since the method is
-	 * called from the constructor it must not be overridden in subclasses.
+	 * The function matchCurrentPathSegment() returns the path segment this metadata path selector is responsible to
+	 * represent. Since the method is called from the constructor it must not be overridden in subclasses.
 	 *
-	 * @param path
-	 *            path expression to parse
+	 * @param path path expression to parse
 	 * @return the path segment for this selector
-	 * @throws ConfigurationException
-	 *             if the path cannot be parsed
+	 * @throws ConfigurationException if the path cannot be parsed
 	 */
 	private final String matchCurrentPathSegment(String path) throws ConfigurationException {
 		Matcher metadataPathSplitter = METADATA_SPLIT_PATH_SCHEME.matcher(path);
@@ -411,16 +377,14 @@ public class MetadataPathSelector extends MetadataSelector {
 	}
 
 	/**
-	 * The function typeCheck() calculates whether the given child is to be
-	 * matched by type name by this metadata path selector. A child is to match
-	 * if
+	 * The function typeCheck() calculates whether the given child is to be matched by type name by this metadata path
+	 * selector. A child is to match if
 	 * <ul>
 	 * <li>the metadata path selector specifies all children, or</li>
 	 * <li>the metadata path selector specifies exactly the type of the child.</li>
 	 * </ul>
 	 *
-	 * @param child
-	 *            child whose type shall be checked
+	 * @param child child whose type shall be checked
 	 * @return whether the child type is to be matched
 	 */
 	private boolean typeCheck(DocStruct child) {

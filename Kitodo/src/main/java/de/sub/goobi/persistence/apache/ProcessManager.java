@@ -11,18 +11,22 @@
 
 package de.sub.goobi.persistence.apache;
 
+import de.sub.goobi.beans.Regelsatz;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Regelsatz;
-
 public class ProcessManager {
 
 	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 */
 	public static ProcessObject getProcessObjectForId(int processId) {
 		try {
 			return MySQLHelper.getProcessObjectForId(processId);
@@ -32,6 +36,10 @@ public class ProcessManager {
 		return null;
 	}
 
+	/**
+	 * @param value add description
+	 * @param processId add description
+	 */
 	public static void updateProcessStatus(String value, int processId) {
 		try {
 			MySQLHelper.getInstance().updateProcessStatus(value, processId);
@@ -40,6 +48,10 @@ public class ProcessManager {
 		}
 	}
 
+	/**
+	 * @param numberOfFiles add description
+	 * @param processId add description
+	 */
 	public static void updateImages(Integer numberOfFiles, int processId) {
 		try {
 			MySQLHelper.getInstance().updateImages(numberOfFiles, processId);
@@ -49,6 +61,10 @@ public class ProcessManager {
 
 	}
 
+	/**
+	 * @param value add description
+	 * @param processId add description
+	 */
 	public static void addLogfile(String value, int processId) {
 		try {
 			MySQLHelper.getInstance().updateProcessLog(value, processId);
@@ -57,6 +73,10 @@ public class ProcessManager {
 		}
 	}
 
+	/**
+	 * @param rulesetId add description
+	 * @return add description
+	 */
 	public static Regelsatz getRuleset(int rulesetId) {
 		try {
 			return MySQLHelper.getRulesetForId(rulesetId);
@@ -66,6 +86,10 @@ public class ProcessManager {
 		return null;
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 */
 	public static List<Property> getProcessProperties(int processId) {
 		List<Property> answer = new ArrayList<Property>();
 		try {
@@ -76,6 +100,10 @@ public class ProcessManager {
 		return answer;
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 */
 	public static List<Property> getTemplateProperties(int processId) {
 		List<Property> answer = new ArrayList<Property>();
 		try {
@@ -86,6 +114,10 @@ public class ProcessManager {
 		return answer;
 	}
 
+	/**
+	 * @param processId add description
+	 * @return add description
+	 */
 	public static List<Property> getProductProperties(int processId) {
 		List<Property> answer = new ArrayList<Property>();
 		try {
@@ -96,6 +128,10 @@ public class ProcessManager {
 		return answer;
 	}
 
+	/**
+	 * @param rulesetId add description
+	 * @return add description
+	 */
 	public static int getNumberOfProcessesWithRuleset(int rulesetId) {
 		Integer answer = null;
 		try {
@@ -105,7 +141,11 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
+	/**
+	 * @param docketId add description
+	 * @return add description
+	 */
 	public static int getNumberOfProcessesWithDocket(int docketId) {
 		Integer answer = null;
 		try {
@@ -115,9 +155,13 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
+	/**
+	 * @param title add description
+	 * @return add description
+	 */
 	public static int getNumberOfProcessesWithTitle(String title) {
-		int answer = 0;	
+		int answer = 0;
 		try {
 			answer = MySQLHelper.getCountOfProcessesWithTitle(title);
 		} catch (SQLException e) {
@@ -125,5 +169,5 @@ public class ProcessManager {
 		}
 		return answer;
 	}
-	
+
 }

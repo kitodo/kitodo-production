@@ -11,6 +11,11 @@
 
 package de.sub.goobi.beans;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.goobi.persistence.apache.UserManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -38,11 +43,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 
 import org.kitodo.encryption.DesEncrypter;
-
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.ldap.Ldap;
-import de.sub.goobi.persistence.apache.UserManager;
 
 @Entity
 @Table(name = "user")
@@ -129,6 +129,9 @@ public class Benutzer implements Serializable {
 
 	// private String lastFilter = null;
 
+	/**
+	 *
+	 */
 	public Benutzer() {
 		this.benutzergruppen = new HashSet<Benutzergruppe>();
 		this.projekte = new HashSet<Projekt>();
@@ -137,11 +140,7 @@ public class Benutzer implements Serializable {
 	}
 
 	/*
-	 * =======================================================
-	 * 
 	 * Getter und Setter
-	 * 
-	 * ========================================================
 	 */
 
 	public Integer getId() {
@@ -176,12 +175,18 @@ public class Benutzer implements Serializable {
 		this.passwort = inpasswort;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getPasswortCrypt() {
 		DesEncrypter encrypter = new DesEncrypter();
 		String decrypted = encrypter.decrypt(this.passwort);
 		return decrypted;
 	}
 
+	/**
+	 * @param inpasswort add description
+	 */
 	public void setPasswortCrypt(String inpasswort) {
 		DesEncrypter encrypter = new DesEncrypter();
 		String encrypted = encrypter.encrypt(inpasswort);
@@ -220,6 +225,10 @@ public class Benutzer implements Serializable {
 		this.vorname = vorname;
 	}
 
+	/**
+	 * Translate this method.
+	 * @return add description
+	 */
 	public Integer getTabellengroesse() {
 		if (this.tabellengroesse == null) {
 			return Integer.valueOf(10);
@@ -259,6 +268,9 @@ public class Benutzer implements Serializable {
 		this.benutzergruppen = benutzergruppen;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getBenutzergruppenSize() {
 		if (this.benutzergruppen == null) {
 			return 0;
@@ -267,6 +279,9 @@ public class Benutzer implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<Benutzergruppe> getBenutzergruppenList() {
 		try {
 			Hibernate.initialize(this.benutzergruppen);
@@ -295,6 +310,9 @@ public class Benutzer implements Serializable {
 		this.schritte = schritte;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getSchritteSize() {
 		try {
 			Hibernate.initialize(this.schritte);
@@ -307,6 +325,9 @@ public class Benutzer implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<Schritt> getSchritteList() {
 		try {
 			Hibernate.initialize(this.schritte);
@@ -331,6 +352,9 @@ public class Benutzer implements Serializable {
 		this.bearbeitungsschritte = bearbeitungsschritte;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getBearbeitungsschritteSize() {
 		try {
 			Hibernate.initialize(this.bearbeitungsschritte);
@@ -343,6 +367,9 @@ public class Benutzer implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<Schritt> getBearbeitungsschritteList() {
 		try {
 			Hibernate.initialize(this.bearbeitungsschritte);
@@ -367,6 +394,9 @@ public class Benutzer implements Serializable {
 		this.projekte = projekte;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getProjekteSize() {
 		try {
 			Hibernate.initialize(this.projekte);
@@ -379,6 +409,9 @@ public class Benutzer implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<Projekt> getProjekteList() {
 		try {
 			Hibernate.initialize(this.projekte);
@@ -422,6 +455,10 @@ public class Benutzer implements Serializable {
 	 * ## Helper ##
 	 */
 
+	/**
+	 * @param inPasswort add description
+	 * @return add description
+	 */
 	public boolean istPasswortKorrekt(String inPasswort) {
 		if (inPasswort == null || inPasswort.length() == 0) {
 
@@ -447,10 +484,10 @@ public class Benutzer implements Serializable {
 
 	/**
 	 * BenutzerHome ermitteln und zurückgeben (entweder aus dem LDAP oder direkt aus der Konfiguration)
-	 * 
+	 *
 	 * @return Path as String
-	 * @throws InterruptedException
-	 * @throws IOException
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
 	 */
 	public String getHomeDir() throws IOException, InterruptedException {
 		String rueckgabe = "";
@@ -471,10 +508,13 @@ public class Benutzer implements Serializable {
 			rueckgabe += File.separator;
 		}
 		/* wenn das Verzeichnis nicht "" ist, aber noch nicht existiert, dann jetzt anlegen */
-        FilesystemHelper.createDirectoryForUser(rueckgabe, login);
+		FilesystemHelper.createDirectoryForUser(rueckgabe, login);
 		return rueckgabe;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public Integer getSessiontimeout() {
 		if (this.sessiontimeout == null) {
 			this.sessiontimeout = 7200;
@@ -490,6 +530,9 @@ public class Benutzer implements Serializable {
 		return getSessiontimeout() / 60;
 	}
 
+	/**
+	 * @param sessiontimeout add description
+	 */
 	public void setSessiontimeoutInMinutes(Integer sessiontimeout) {
 		if (sessiontimeout.intValue() < 5) {
 			this.sessiontimeout = 5 * 60;
@@ -498,6 +541,9 @@ public class Benutzer implements Serializable {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getCss() {
 		if (this.css == null || this.css.length() == 0) {
 			this.css = "/css/default.css";
@@ -521,7 +567,6 @@ public class Benutzer implements Serializable {
 	}
 
 	/**
-	 * 
 	 * @param eigenschaften
 	 *            set of all properties
 	 */
@@ -531,7 +576,6 @@ public class Benutzer implements Serializable {
 	}
 
 	/**
-	 * 
 	 * @return size of properties
 	 */
 
@@ -548,7 +592,6 @@ public class Benutzer implements Serializable {
 	}
 
 	/**
-	 * 
 	 * @return List of all properties
 	 */
 	public List<Benutzereigenschaft> getEigenschaftenList() {
@@ -564,7 +607,6 @@ public class Benutzer implements Serializable {
 	}
 
 	/**
-	 * 
 	 * @return List of filters as strings
 	 */
 
@@ -574,9 +616,8 @@ public class Benutzer implements Serializable {
 
 	/**
 	 * adds a new filter to list
-	 * 
-	 * @param inFilter
-	 *            the filter to add
+	 *
+	 * @param inFilter the filter to add
 	 */
 
 	public void addFilter(String inFilter) {
@@ -585,21 +626,20 @@ public class Benutzer implements Serializable {
 
 	/**
 	 * removes filter from list
-	 * 
-	 * @param inFilter
-	 *            the filter to remove
+	 *
+	 * @param inFilter the filter to remove
 	 */
 	public void removeFilter(String inFilter) {
 		UserManager.removeFilter(this.id, inFilter);
 	}
 
 	/**
-	 * The function selfDestruct() removes a user from the environment. Since the user ID may still be referenced somewhere, the user is not hard
-	 * deleted from the database, instead the account is set inactive and invisible.
-	 * 
-	 * To allow recreation of an account with the same login the login is cleaned - otherwise it would be blocked eternally by the login existence
-	 * test performed in the BenutzerverwaltungForm.Speichern() function. In addition, all personally identifiable information is removed from the
-	 * database as well.
+	 * The function selfDestruct() removes a user from the environment. Since the user ID may still be referenced
+	 * somewhere, the user is not hard deleted from the database, instead the account is set inactive and invisible.
+	 *
+	 * <p>To allow recreation of an account with the same login the login is cleaned - otherwise it would be blocked
+	 * eternally by the login existence test performed in the BenutzerverwaltungForm.Speichern() function. In addition,
+	 * all personally identifiable information is removed from the database as well.</p>
 	 */
 
 	public Benutzer selfDestruct() {

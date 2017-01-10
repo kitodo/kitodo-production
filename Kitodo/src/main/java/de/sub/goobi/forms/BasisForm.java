@@ -11,17 +11,16 @@
 
 package de.sub.goobi.forms;
 
-import java.io.Serializable;
-
-import org.apache.log4j.Logger;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
+import java.io.Serializable;
+
+import org.apache.log4j.Logger;
+
 public class BasisForm implements Serializable {
-	private static final Logger logger = Logger
-	.getLogger(BasisForm.class);
+	private static final Logger logger = Logger.getLogger(BasisForm.class);
 	private static final long serialVersionUID = 2950419497162710096L;
 	protected Page page;
 	protected String zurueck = "";
@@ -41,15 +40,18 @@ public class BasisForm implements Serializable {
 	public void setZurueck(String zurueck) {
 		this.zurueck = zurueck;
 	}
-	
+
+	/**
+	 * @return add description
+	 */
 	public Benutzer getUser() {
-		if(this.user==null) {
+		if (this.user == null) {
 			LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 			this.user = login.getMyBenutzer();
 		}
 		return this.user;
 	}
-	
+
 	public String getFilter() {
 		return this.filter;
 	}
@@ -66,27 +68,33 @@ public class BasisForm implements Serializable {
 		this.sortierung = sortierung;
 	}
 
-	public void addFilterToUser(){
-		if (this.filter==null || this.filter.length()==0){
+	/**
+	 *
+	 */
+	public void addFilterToUser() {
+		if (this.filter == null || this.filter.length() == 0) {
 			return;
 		}
 		this.user.addFilter(this.filter);
-//		try {
-//			new BenutzerDAO().save(this.user);
-//		} catch (DAOException e) {
-//			logger.error(e);
-//		}
+		// try {
+		// new BenutzerDAO().save(this.user);
+		// } catch (DAOException e) {
+		// logger.error(e);
+		// }
 	}
-	
-	public void removeFilterFromUser(){
-		if (this.filter==null || this.filter.length()==0){
+
+	/**
+	 *
+	 */
+	public void removeFilterFromUser() {
+		if (this.filter == null || this.filter.length() == 0) {
 			return;
 		}
 		this.user.removeFilter(this.filter);
-//		try {
-//			new BenutzerDAO().save(this.user);
-//		} catch (DAOException e) {
-//			logger.error(e);
-//		}		
+		// try {
+		// new BenutzerDAO().save(this.user);
+		// } catch (DAOException e) {
+		// logger.error(e);
+		// }
 	}
 }

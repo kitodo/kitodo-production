@@ -18,7 +18,7 @@ import org.quartz.JobExecutionException;
 
 /**
  * SimpleGoobiJob as basis class for all big jobs
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 21.10.2009
  */
@@ -35,7 +35,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		if (getIsRunning() == false) {
-			if(logger.isTraceEnabled()){
+			if (logger.isTraceEnabled()) {
 				logger.trace("Start scheduled Job: " + getJobName());
 			}
 			if (isRunning == false) {
@@ -44,7 +44,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
 				execute();
 				setIsRunning(false);
 			}
-			if(logger.isTraceEnabled()){
+			if (logger.isTraceEnabled()) {
 				logger.trace("End scheduled Job: " + getJobName());
 			}
 		}

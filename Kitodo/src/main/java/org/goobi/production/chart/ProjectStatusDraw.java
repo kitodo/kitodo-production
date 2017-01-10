@@ -11,6 +11,9 @@
 
 package org.goobi.production.chart;
 
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -24,10 +27,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-
-/*************************************************************************************
+/**
  * ProjectStatusDraw class creates and paints the chart depending on given parameters.
  * The value parameters are transferred as {@link ProjectStatusDataTable}-Object.
  * Width and height have to be set as pixel values.
@@ -36,7 +36,7 @@ import de.intranda.commons.chart.results.DataTable;
  * @author Hendrik Söhnholz
  * @author Steffen Hankiewicz
  * @version 27.10.2009
- * *************************************************************************************/
+ */
 
 public class ProjectStatusDraw {
 	private static final Logger myLogger = Logger.getLogger(ProjectStatusDraw.class);
@@ -63,18 +63,14 @@ public class ProjectStatusDraw {
 
 	private FontMetrics fm;
 
-	/************************************************************************************
+	/**
 	 * Instantiates a new ProjectStatusDraw.
 	 *
-	 * @param inDataTable
-	 *            the {@link DataTable} (contains the {@link DataRow}-objects)
-	 * @param g2d
-	 *            the {@link Graphics2D}-object, where to paint
-	 * @param width
-	 *            the width of the image
-	 * @param height
-	 *            the height of the image
-	 ************************************************************************************/
+	 * @param inDataTable the {@link DataTable} (contains the {@link DataRow}-objects)
+	 * @param g2d the {@link Graphics2D}-object, where to paint
+	 * @param width the width of the image
+	 * @param height the height of the image
+	 */
 	public ProjectStatusDraw(ProjectStatusDataTable inDataTable, Graphics2D g2d, int width, int height) {
 		this.dataTable = inDataTable;
 		this.g2d = g2d;
@@ -85,9 +81,9 @@ public class ProjectStatusDraw {
 		fm = g2d.getFontMetrics();
 	}
 
-	/************************************************************************************
+	/**
 	 * Paint the chart
-	 ************************************************************************************/
+	 */
 	public void paint() {
 		int w; // This is used to determine the width of strings in pixels.
 
@@ -143,54 +139,58 @@ public class ProjectStatusDraw {
 			// Choose color of the bar depending on current date
 			ChartColor chartcolor = ChartColor.red;
 			int nonNullMaxSteps = t.getStepsMax();
-			if (nonNullMaxSteps==0){
-				nonNullMaxSteps=1;
+			if (nonNullMaxSteps == 0) {
+				nonNullMaxSteps = 1;
 			}
 			if (Math.abs((1.0 * t.getStepsCompleted() / nonNullMaxSteps) - (1.0 * datePosition / duration)) < 0.01) {
 				// Deviation of max 1.0 percent leads to a yellow bar
-				chartcolor=ChartColor.yellow;
-			} else if (t.getStepsCompleted() * duration /nonNullMaxSteps < datePosition) {
-				chartcolor=ChartColor.red;
+				chartcolor = ChartColor.yellow;
+			} else if (t.getStepsCompleted() * duration / nonNullMaxSteps < datePosition) {
+				chartcolor = ChartColor.red;
 			} else if (t.getStepsCompleted() * duration / nonNullMaxSteps > datePosition) {
-				chartcolor=ChartColor.green;
+				chartcolor = ChartColor.green;
 			}
 
 			// Draw the bar
 			// fixed width: 15 pixels
-			drawHorizontalBar(borderLeft, y, t.getStepsCompleted() * chartWidth / nonNullMaxSteps, BARWIDTH, chartcolor.getColor());
+			drawHorizontalBar(borderLeft, y, t.getStepsCompleted() * chartWidth / nonNullMaxSteps, BARWIDTH,
+					chartcolor.getColor());
 
 			// Print number of steps completed
 			String stepsCompletedString = t.getStepsCompleted().toString() + "/" + t.getStepsMax().toString();
-			if ((borderLeft + t.getStepsCompleted() * chartWidth /nonNullMaxSteps + fm.getHeight() + fm.stringWidth(stepsCompletedString)) >= borderLeft
-					+ chartWidth) {
+			if ((borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight() + fm
+					.stringWidth(stepsCompletedString)) >= borderLeft + chartWidth) {
 				g2d.setColor(Color.white);
-				drawRightAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
+				drawRightAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth
+						/ nonNullMaxSteps - fm.getHeight(), y);
 			} else {
 				g2d.setColor(Color.black);
-				drawLeftAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth /nonNullMaxSteps + fm.getHeight(), y);
+				drawLeftAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted() * chartWidth
+						/ nonNullMaxSteps + fm.getHeight(), y);
 			}
 		}
 
 		// Draw a line showing the current date
-		if (duration==0) {
-			duration=1;
+		if (duration == 0) {
+			duration = 1;
 		}
-		if(myLogger.isDebugEnabled()){
+		if (myLogger.isDebugEnabled()) {
 			myLogger.debug(datePosition + " / " + duration);
 		}
-		float dash1[] = { 2.0f };
+		float dash1[] = {2.0f };
 		BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash1, 0.0f);
 		g2d.setStroke(dashed);
 		g2d.setColor(Color.black);
-		g2d.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration, BORDERTOP + dataTable.getNumberOfTasks() * BARSPACING
-				- BARWIDTH, borderLeft + datePosition * chartWidth / duration, BORDERTOP - 1 * fm.getHeight()));
-		drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration, BORDERTOP - 2.5 * fm.getHeight());
+		g2d.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration, BORDERTOP
+				+ dataTable.getNumberOfTasks() * BARSPACING - BARWIDTH, borderLeft + datePosition * chartWidth
+				/ duration, BORDERTOP - 1 * fm.getHeight()));
+		drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration, BORDERTOP
+				- 2.5 * fm.getHeight());
 	}
 
-
-	/************************************************************************************
+	/**
 	 * Draw horizontal bar with given color
-	 ************************************************************************************/
+	 */
 	private void drawHorizontalBar(int xpos, int ypos, int length, int width, Color col) {
 		int padding = 3;
 		g2d.setColor(Color.black);
@@ -203,54 +203,44 @@ public class ProjectStatusDraw {
 
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw centered string.
 	 *
-	 * @param str
-	 *            the string to show
-	 * @param xpos
-	 *            the x-position (middle of string)
-	 * @param ypos
-	 *            the y-position
-	 ************************************************************************************/
+	 * @param str the string to show
+	 * @param xpos the x-position (middle of string)
+	 * @param ypos the y-position
+	 */
 	private void drawCenteredString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos - fm.stringWidth(str) / 2.0), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw left aligned string.
 	 *
-	 * @param str
-	 *            the string to show
-	 * @param xpos
-	 *            the x-position (start of string)
-	 * @param ypos
-	 *            the y-position
-	 ************************************************************************************/
+	 * @param str the string to show
+	 * @param xpos the x-position (start of string)
+	 * @param ypos the y-position
+	 */
 	private void drawLeftAlignedString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
-	/************************************************************************************
+	/**
 	 * Draw right aligned string.
 	 *
-	 * @param str
-	 *            the string to show
-	 * @param xpos
-	 *            the x-position (end of string)
-	 * @param ypos
-	 *            the y-position
-	 ************************************************************************************/
+	 * @param str the string to show
+	 * @param xpos the x-position (end of string)
+	 * @param ypos the y-position
+	 */
 	private void drawRightAlignedString(String str, double xpos, double ypos) {
 		g2d.drawString(str, (int) (xpos - fm.stringWidth(str)), (int) (ypos + 0.5 * fm.getAscent() - 1));
 	}
 
-
-	/************************************************************************************
+	/**
 	 * Get size of Image for rendering
 	 *
-	 * @param count
-	 ************************************************************************************/
+	 * @param count add description
+	 */
 	public static int getImageHeight(int count) {
 		return BORDERTOP + count * BARSPACING;
 	}

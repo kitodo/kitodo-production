@@ -11,10 +11,9 @@
 
 package de.sub.goobi.beans.property;
 
-import java.util.Date;
-
-
 import de.sub.goobi.helper.enums.PropertyType;
+
+import java.util.Date;
 
 public interface IGoobiProperty {
 
@@ -44,26 +43,24 @@ public interface IGoobiProperty {
 
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 *
+	 * @param inType as {@link PropertyType}
 	 */
 	public void setType(PropertyType inType);
 
 	/**
 	 * get datentyp as {@link PropertyType}
-	 * 
+	 *
 	 * @return current datentyp
 	 */
 	public PropertyType getType();
 
-
 	public void setContainer(Integer order);
-	
+
 	public Integer getContainer();
-	
+
 	public String getNormalizedTitle();
-	
+
 	public String getNormalizedValue();
-	
+
 }

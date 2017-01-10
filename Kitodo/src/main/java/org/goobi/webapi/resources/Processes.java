@@ -12,56 +12,68 @@
 package org.goobi.webapi.resources;
 
 import com.sun.jersey.api.NotFoundException;
-import org.goobi.webapi.beans.GoobiProcess;
-import org.goobi.webapi.beans.GoobiProcessStep;
-import org.goobi.webapi.beans.IdentifierPPN;
-import org.goobi.webapi.dao.GoobiProcessDAO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.goobi.webapi.beans.GoobiProcess;
+import org.goobi.webapi.beans.GoobiProcessStep;
+import org.goobi.webapi.beans.IdentifierPPN;
+import org.goobi.webapi.dao.GoobiProcessDAO;
 
 @Path("/processes")
 public class Processes {
+	/**
+	 * @return add description
+	 */
+	@GET
+	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public List<GoobiProcess> getProcesses() {
+		List<GoobiProcess> processes = new ArrayList<GoobiProcess>();
 
-    @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public List<GoobiProcess> getProcesses() {
-        List<GoobiProcess> processes = new ArrayList<GoobiProcess>();
+		processes.addAll(GoobiProcessDAO.getAllProcesses());
 
-        processes.addAll(GoobiProcessDAO.getAllProcesses());
+		return processes;
+	}
 
-        return processes;
-    }
+	/**
+	 * @param ippn add description
+	 * @return add description
+	 */
+	@GET
+	@Path("{ppnIdentifier}")
+	public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-    @GET
-    @Path("{ppnIdentifier}")
-    public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
+		GoobiProcess process = GoobiProcessDAO.getProcessByPPN(ippn);
 
-        GoobiProcess process = GoobiProcessDAO.getProcessByPPN(ippn);
+		if (process == null) {
+			throw new NotFoundException("No such process.");
+		}
 
-        if (process == null) {
-            throw new NotFoundException("No such process.");
-        }
+		return process;
+	}
 
-        return process;
-    }
+	/**
+	 * @param ippn add description
+	 * @return add description
+	 */
+	@GET
+	@Path("{ppnIdentifier}/steps")
+	public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-    @GET
-    @Path("{ppnIdentifier}/steps")
-    public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
+		List<GoobiProcessStep> resultList = GoobiProcessDAO.getAllProcessSteps(ippn);
 
-        List<GoobiProcessStep> resultList = GoobiProcessDAO.getAllProcessSteps(ippn);
+		if (resultList.isEmpty()) {
+			throw new NotFoundException("No such process.");
+		}
 
-        if (resultList.isEmpty()) {
-            throw new NotFoundException("No such process.");
-        }
-
-        return resultList;
-    }
+		return resultList;
+	}
 
 }

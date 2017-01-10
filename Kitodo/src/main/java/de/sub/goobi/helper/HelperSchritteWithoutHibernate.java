@@ -11,23 +11,6 @@
 
 package de.sub.goobi.helper;
 
-import org.goobi.io.SafeFile;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.AutomaticDmsExportWithoutHibernate;
@@ -45,20 +28,37 @@ import de.sub.goobi.persistence.apache.ProcessObject;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 
 public class HelperSchritteWithoutHibernate {
 	private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
 	public final static String DIRECTORY_PREFIX = "orig_";
 
 	/**
-	 * The field task holds an optional task instance. Its progress
-	 * and its errors will be passed to the task manager screen (if available)
-	 * for visualisation.
+	 * The field task holds an optional task instance. Its progress and its errors will be passed to the task manager
+	 * screen (if available) for visualisation.
 	 */
 	private EmptyTask task;
 
 	/**
-	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen ================================================================
+	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen
 	 */
 
 	public void CloseStepObjectAutomatic(StepObject currentStep) {
@@ -70,7 +70,7 @@ public class HelperSchritteWithoutHibernate {
 	}
 
 	private void closeStepObject(StepObject currentStep, int processId, boolean requestFromGUI) {
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("closing step with id " + currentStep.getId() + " and process id " + processId);
 		}
 		currentStep.setBearbeitungsstatus(3);
@@ -109,7 +109,8 @@ public class HelperSchritteWithoutHibernate {
 		List<StepObject> allehoeherenSchritte = new ArrayList<StepObject>();
 		int offeneSchritteGleicherReihenfolge = 0;
 		for (StepObject so : steps) {
-			if (so.getReihenfolge() == currentStep.getReihenfolge() && so.getBearbeitungsstatus() != 3 && so.getId() != currentStep.getId()) {
+			if (so.getReihenfolge() == currentStep.getReihenfolge() && so.getBearbeitungsstatus() != 3
+					&& so.getId() != currentStep.getId()) {
 				offeneSchritteGleicherReihenfolge++;
 			} else if (so.getReihenfolge() > currentStep.getReihenfolge()) {
 				allehoeherenSchritte.add(so);
@@ -117,7 +118,7 @@ public class HelperSchritteWithoutHibernate {
 		}
 		/* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
 		if (offeneSchritteGleicherReihenfolge == 0) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("found " + allehoeherenSchritte.size() + " tasks");
 			}
 			int reihenfolge = 0;
@@ -127,11 +128,12 @@ public class HelperSchritteWithoutHibernate {
 					reihenfolge = myStep.getReihenfolge();
 				}
 
-				if (reihenfolge == myStep.getReihenfolge() && myStep.getBearbeitungsstatus() != 3 && myStep.getBearbeitungsstatus() != 2) {
+				if (reihenfolge == myStep.getReihenfolge() && myStep.getBearbeitungsstatus() != 3
+						&& myStep.getBearbeitungsstatus() != 2) {
 					/*
 					 * den Schritt aktivieren, wenn es kein vollautomatischer ist
 					 */
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("open step " + myStep.getTitle());
 					}
 					myStep.setBearbeitungsstatus(1);
@@ -141,7 +143,7 @@ public class HelperSchritteWithoutHibernate {
 					StepManager.addHistory(myDate, myStep.getReihenfolge(), myStep.getTitle(),
 							HistoryEventType.stepOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
-					if(logger.isDebugEnabled()){
+					if (logger.isDebugEnabled()) {
 						logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
 					}
 					if (myStep.isTypAutomatisch()) {
@@ -164,15 +166,16 @@ public class HelperSchritteWithoutHibernate {
 		ProcessObject po = ProcessManager.getProcessObjectForId(processId);
 		FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
 		if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true)))) {
-			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true))), processId);
+			ProcessManager.updateImages(FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true))),
+					processId);
 		}
 		logger.debug("update process status");
 		updateProcessStatus(processId);
-		if(logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
 		}
 		for (StepObject automaticStep : automatischeSchritte) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
 						+ automaticStep.getProcessId());
 			}
@@ -180,7 +183,7 @@ public class HelperSchritteWithoutHibernate {
 			TaskManager.addTask(myThread);
 		}
 		for (StepObject finish : stepsToFinish) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("closing task " + finish.getTitle());
 			}
 			CloseStepObjectAutomatic(finish);
@@ -188,12 +191,12 @@ public class HelperSchritteWithoutHibernate {
 		// TODO remove this later
 		try {
 			logger.debug("update hibernate cache");
-			if (requestFromGUI && ConfigMain.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)){
+			if (requestFromGUI && ConfigMain.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)) {
 				RefreshObject.refreshProcess_GUI(processId);
-			}else {
-			 if (ConfigMain.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
-				RefreshObject.refreshProcess(processId);
-				 }
+			} else {
+				if (ConfigMain.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
+					RefreshObject.refreshProcess(processId);
+				}
 			}
 		} catch (Exception e) {
 			if (task != null) {
@@ -203,6 +206,9 @@ public class HelperSchritteWithoutHibernate {
 		}
 	}
 
+	/**
+	 * @param processId add description
+	 */
 	public void updateProcessStatus(int processId) {
 
 		int offen = 0;
@@ -236,13 +242,17 @@ public class HelperSchritteWithoutHibernate {
 		ProcessManager.updateProcessStatus(value, processId);
 	}
 
+	/**
+	 * @param step add description
+	 * @param automatic add description
+	 */
 	public void executeAllScriptsForStep(StepObject step, boolean automatic) {
 		List<String> scriptpaths = StepManager.loadScripts(step.getId());
 		int count = 1;
 		int size = scriptpaths.size();
 		int returnParameter = 0;
 		for (String script : scriptpaths) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("starting script " + script);
 			}
 			if (returnParameter != 0) {
@@ -256,12 +266,18 @@ public class HelperSchritteWithoutHibernate {
 				returnParameter = executeScriptForStepObject(step, script, automatic && (count == size));
 			}
 			if (task != null) {
-				task.setProgress((int) (100d*count/size));
+				task.setProgress((int) (100d * count / size));
 			}
 			count++;
 		}
 	}
 
+	/**
+	 * @param step add description
+	 * @param script add description
+	 * @param automatic add description
+	 * @return add description
+	 */
 	public int executeScriptForStepObject(StepObject step, String script, boolean automatic) {
 		if (script == null || script.length() == 0) {
 			return -1;
@@ -296,16 +312,17 @@ public class HelperSchritteWithoutHibernate {
 		script = replacer.replace(script);
 		int rueckgabe = -1;
 		try {
-			if(logger.isInfoEnabled()){
+			if (logger.isInfoEnabled()) {
 				logger.info("Calling the shell: " + script);
 			}
-            rueckgabe = ShellScript.legacyCallShell2(script);
-            if (automatic) {
+			rueckgabe = ShellScript.legacyCallShell2(script);
+			if (automatic) {
 				if (rueckgabe == 0) {
 					step.setEditType(StepEditType.AUTOMATIC.getValue());
 					step.setBearbeitungsstatus(StepStatus.DONE.getValue());
-					if (step.getValidationPlugin() != null && step.getValidationPlugin().length() >0) {
-						IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, step.getValidationPlugin());
+					if (step.getValidationPlugin() != null && step.getValidationPlugin().length() > 0) {
+						IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
+								step.getValidationPlugin());
 						ivp.setStepObject(step);
 						if (!ivp.validate()) {
 							step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
@@ -337,9 +354,13 @@ public class HelperSchritteWithoutHibernate {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param step add description
+	 * @param automatic add description
+	 */
 	public void executeDmsExport(StepObject step, boolean automatic) {
-		AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(ConfigMain.getBooleanParameter("automaticExportWithImages",
-				true));
+		AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(ConfigMain.getBooleanParameter(
+				"automaticExportWithImages", true));
 		if (!ConfigMain.getBooleanParameter("automaticExportWithOcr", true)) {
 			dms.setExportFulltext(false);
 		}

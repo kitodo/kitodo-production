@@ -13,7 +13,6 @@ package org.goobi.production.search.api;
 
 import de.sub.goobi.beans.Prozess;
 
-
 /**
  * This interface can be used to implement a search index engine for goobi.
  * @author Robert Sehr

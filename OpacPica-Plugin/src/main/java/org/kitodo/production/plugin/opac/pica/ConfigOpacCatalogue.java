@@ -11,17 +11,6 @@
 
 package org.kitodo.production.plugin.opac.pica;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.DOMOutputter;
-import org.jdom.output.XMLOutputter;
-import org.w3c.dom.Node;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -31,6 +20,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.DOMBuilder;
+import org.jdom.output.DOMOutputter;
+import org.jdom.output.XMLOutputter;
+
+import org.w3c.dom.Node;
 
 class ConfigOpacCatalogue {
 	private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);
@@ -42,9 +44,9 @@ class ConfigOpacCatalogue {
 	private String cbs;
 	private String charset = "iso-8859-1";
 	private final ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
+
 	private ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
-			int port,
-			ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
+			int port, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		this.title = title;
 		this.description = desciption;
 		this.address = address;
@@ -96,12 +98,12 @@ class ConfigOpacCatalogue {
 		}
 
 		/*
-		 * --------------------- aus dem Dom-Node ein JDom-Object machen -------------------
+		 * aus dem Dom-Node ein JDom-Object machen
 		 */
 		Document doc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 	
 		/*
-		 * --------------------- Im JDom-Object alle Felder durchlaufen und die notwendigen Ersetzungen vornehmen -------------------
+		 * Im JDom-Object alle Felder durchlaufen und die notwendigen Ersetzungen vornehmen
 		 */
 		/* alle Records durchlaufen */
 		List<Element> elements = doc.getRootElement().getChildren();
@@ -112,7 +114,7 @@ class ConfigOpacCatalogue {
 		}
 
 		/*
-		 * --------------------- aus dem JDom-Object wieder ein Dom-Node machen -------------------
+		 * aus dem JDom-Object wieder ein Dom-Node machen
 		 */
 		DOMOutputter doutputter = new DOMOutputter();
 		try {
@@ -130,7 +132,7 @@ class ConfigOpacCatalogue {
 	}
 
 	/**
-	 * Beautifier für ein JDom-Object durchführen ================================================================
+	 * Beautifier für ein JDom-Object durchführen
 	 */
 	@SuppressWarnings("unchecked")
 	private void executeBeautifierForElement(Element el) {
@@ -157,24 +159,29 @@ class ConfigOpacCatalogue {
 					String value = subfield.getText();
 
 					if (beautifier.getTagElementToChange().getTag().equals(tag)) {
-						if (!merelyCount) tagged = field;
-						if (beautifier.getTagElementToChange().getSubtag().equals(subtag) && !processed.contains(subfield)) {
-							if(!merelyCount) elementToChange = subfield;
+						if (!merelyCount) {
+							tagged = field;
+						}
+						if (beautifier.getTagElementToChange().getSubtag().equals(subtag)
+								&& !processed.contains(subfield)) {
+							if (!merelyCount) {
+								elementToChange = subfield;
+							}
 							moreOccurrences++;
 						}
 					}
 					/*
-					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen, dieses aus der Liste der Beautifier
-					 * entfernen
+					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen, dieses aus
+					 * der Liste der Beautifier entfernen
 					 */
-					if(!merelyCount){
+					if (!merelyCount) {
 					for (ConfigOpacCatalogueBeautifierElement cocbe : beautifier.getTagElementsToProof()) {
 							if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)
 									&& !processed.contains(subfield)) {
 							matcher = Pattern.compile(cocbe.getValue()).matcher(value);
 							if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
 								prooflist.remove(cocbe);
-								if (prooflist.size() == 0 && subfield.equals(elementToChange)){
+								if (prooflist.size() == 0 && subfield.equals(elementToChange)) {
 									merelyCount = true;
 								}
 							}
@@ -184,8 +191,8 @@ class ConfigOpacCatalogue {
 				}
 			}
 			/*
-			 * --------------------- wenn in der Kopie der zu prüfenden Elemente keine Elemente mehr enthalten sind, kann der zu ändernde Wert
-			 * wirklich geändert werden -------------------
+			 * wenn in der Kopie der zu prüfenden Elemente keine Elemente mehr enthalten sind, kann der zu ändernde
+			 * Wert wirklich geändert werden
 			 */
 			if (prooflist.size() == 0) {
 				if (elementToChange == null) {
@@ -211,35 +218,30 @@ class ConfigOpacCatalogue {
 							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
 				}
 			}
-			if(elementToChange != null) {
+			if (elementToChange != null) {
 				processed.add(elementToChange);
 			}
-			} while (moreOccurrences > 1);
+			}
+			while (moreOccurrences > 1);
 		}
 
 	}
 
 	/**
-	 * The function fillIn() replaces marks in a given string by values derived
-	 * from match results. There are two different mechanisms available for
-	 * replacement.
-	 * 
-	 * If the marked string contains the replacement mark <code>{@}</code>, the
-	 * matcher’s find() operation will be invoked over and over again and all
-	 * match results are concatenated and inserted in place of the replacement
-	 * marks.
-	 * 
-	 * Otherwise, all replacement marks <code>{1}</code>, <code>{2}</code>,
-	 * <code>{3}</code>, … will be replaced by the capturing groups matched by
-	 * the matcher.
-	 * 
-	 * @param markedString
-	 *            a string with replacement markers
-	 * @param matcher
-	 *            a matcher who’s values shall be inserted
+	 * The function fillIn() replaces marks in a given string by values derived from match results. There are
+	 * two different mechanisms available for replacement.
+	 *
+	 * <p>If the marked string contains the replacement mark <code>{\@}</code>, the matcher’s find() operation
+	 * will be invoked over and over again and all match results are concatenated and inserted in place of
+	 * the replacement marks.</p>
+	 *
+	 * <p>Otherwise, all replacement marks <code>{1}</code>, <code>{2}</code>, <code>{3}</code>, …
+	 * will be replaced by the capturing groups matched by the matcher.</p>
+	 *
+	 * @param markedString a string with replacement markers
+	 * @param matcher a matcher who’s values shall be inserted
 	 * @return the string with the replacements filled in
-	 * @throws IndexOutOfBoundsException
-	 *             If there is no capturing group in the pattern with the given
+	 * @throws IndexOutOfBoundsException If there is no capturing group in the pattern with the given
 	 *             index
 	 */
 	private static String fillIn(String markedString, Matcher matcher) {
@@ -265,7 +267,7 @@ class ConfigOpacCatalogue {
 	}
 
 	/**
-	 * Print given DomNode to defined File ================================================================
+	 * Print given DomNode to defined File
 	 */
 	private void debugMyNode(Node inNode, String fileName) {
 		try (FileOutputStream output = new FileOutputStream(fileName)) {
@@ -281,8 +283,7 @@ class ConfigOpacCatalogue {
 	}
 
 	/**
-	 * @param cbs
-	 *            the cbs to set
+	 * @param cbs the cbs to set
 	 */
 	private void setCbs(String cbs) {
 		this.cbs = cbs;

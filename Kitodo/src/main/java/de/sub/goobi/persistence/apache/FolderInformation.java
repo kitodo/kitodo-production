@@ -11,7 +11,9 @@
 
 package de.sub.goobi.persistence.apache;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -25,9 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import org.goobi.io.SafeFile;
 
 public class FolderInformation {
 
@@ -42,7 +42,10 @@ public class FolderInformation {
 		this.title = goobititle;
 	}
 
-
+	/**
+	 * @param useFallBack add description
+	 * @return add description
+	 */
 	public String getImagesTifDirectory(boolean useFallBack) {
 		SafeFile dir = new SafeFile(getImagesDirectory());
 		DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -106,7 +109,7 @@ public class FolderInformation {
 		return rueckgabe;
 	}
 
-	/*
+	/**
 	 * @return true if the Tif-Image-Directory exists, false if not
 	 */
 	public Boolean getTifDirectoryExists() {
@@ -124,6 +127,10 @@ public class FolderInformation {
 		}
 	}
 
+	/**
+	 * @param useFallBack add description
+	 * @return add description
+	 */
 	public String getImagesOrigDirectory(boolean useFallBack) {
 		if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
 			SafeFile dir = new SafeFile(getImagesDirectory());
@@ -184,12 +191,18 @@ public class FolderInformation {
 		}
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getImagesDirectory() {
 		String pfad = getProcessDataDirectory() + "images" + File.separator;
 
 		return pfad;
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getProcessDataDirectory() {
 		String pfad = metadataPath + this.id + File.separator;
 		pfad = pfad.replaceAll(" ", "__");
@@ -224,6 +237,9 @@ public class FolderInformation {
 		return getProcessDataDirectory() + "meta.xml";
 	}
 
+	/**
+	 * @return add description
+	 */
 	public String getSourceDirectory() {
 		SafeFile dir = new SafeFile(getImagesDirectory());
 		FilenameFilter filterVerz = new FilenameFilter() {
@@ -246,6 +262,10 @@ public class FolderInformation {
 		return sourceFolder.getAbsolutePath();
 	}
 
+	/**
+	 * @param useFallBack add description
+	 * @return add description
+	 */
 	public Map<String, String> getFolderForProcess(boolean useFallBack) {
 		Map<String, String> answer = new HashMap<String, String>();
 		String processpath = getProcessDataDirectory().replace("\\", "/");
@@ -273,10 +293,12 @@ public class FolderInformation {
 			sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
 		}
 		if (ocrBasisPath.endsWith(File.separator)) {
-			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\", "/");
+			ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length())
+					.replace("\\", "/");
 		}
 		if (ocrPlaintextPath.endsWith(File.separator)) {
-			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length()).replace("\\", "/");
+			ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
+					.replace("\\", "/");
 		}
 		if (SystemUtils.IS_OS_WINDOWS) {
 			answer.put("(tifurl)", "file:/" + tifpath);
@@ -305,6 +327,10 @@ public class FolderInformation {
 		return answer;
 	}
 
+	/**
+	 * @param methodName add description
+	 * @return add description
+	 */
 	public String getMethodFromName(String methodName) {
 		java.lang.reflect.Method method;
 		try {
@@ -328,6 +354,10 @@ public class FolderInformation {
 		return null;
 	}
 
+	/**
+	 * @return add description
+	 * @throws InvalidImagesException add description
+	 */
 	public List<String> getDataFiles() throws InvalidImagesException {
 		SafeFile dir;
 		try {

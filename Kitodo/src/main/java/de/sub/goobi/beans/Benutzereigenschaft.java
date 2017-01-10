@@ -11,6 +11,9 @@
 
 package de.sub.goobi.beans;
 
+import de.sub.goobi.beans.property.IGoobiProperty;
+import de.sub.goobi.helper.enums.PropertyType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,9 +27,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.sub.goobi.beans.property.IGoobiProperty;
-import de.sub.goobi.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "userProperty")
@@ -60,6 +60,9 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	@JoinColumn(name = "user_id")
 	private Benutzer benutzer;
 
+	/**
+	 *
+	 */
 	public Benutzereigenschaft() {
 		this.istObligatorisch = false;
 		this.datentyp = PropertyType.String.getId();
@@ -133,10 +136,8 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * getter for datentyp set to private for hibernate
-	 * 
-	 * for use in program use getType instead
-	 * 
+	 * getter for datentyp set to private for hibernate for use in program use getType instead
+	 *
 	 * @return datentyp as integer
 	 */
 	@SuppressWarnings("unused")
@@ -145,10 +146,10 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
-	 * 
-	 * @param datentyp
-	 *            as Integer
+	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType
+	 * instead
+	 *
+	 * @param datentyp as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setDatentyp(Integer datentyp) {
@@ -157,9 +158,8 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 *
+	 * @param inType as {@link PropertyType}
 	 */
 	@Override
 	public void setType(PropertyType inType) {
@@ -168,7 +168,7 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * get datentyp as {@link PropertyType}
-	 * 
+	 *
 	 * @return current datentyp
 	 */
 	@Override
@@ -179,6 +179,9 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 		return PropertyType.getById(this.datentyp);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		if (this.valueList == null) {
 			this.valueList = new ArrayList<String>();
@@ -191,7 +194,6 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * 
 	 * @return user (owner) of property
 	 */
 
@@ -201,14 +203,12 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * sets the user(owner) of property
-	 * @param benutzer
+	 * @param benutzer add description
 	 */
-	
+
 	public void setBenutzer(Benutzer benutzer) {
 		this.benutzer = benutzer;
 	}
-
-	
 
 	@Override
 	public Integer getContainer() {
@@ -217,7 +217,7 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 
 	@Override
 	public void setContainer(Integer order) {
-		
+
 	}
 
 	@Override
@@ -229,9 +229,5 @@ public class Benutzereigenschaft implements Serializable, IGoobiProperty {
 	public String getNormalizedValue() {
 		return this.wert.replace(" ", "_").trim();
 	}
-	
-
-		
-	
 
 }

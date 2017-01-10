@@ -12,29 +12,33 @@
 package org.goobi.production.properties;
 
 public class ShowStepCondition {
-	
+
 	private String name;
 	private AccessCondition accessCondition = AccessCondition.READ;
 	private boolean duplication = false;
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public AccessCondition getAccessCondition() {
 		return accessCondition;
 	}
+
 	public void setAccessCondition(AccessCondition accessCondition) {
 		this.accessCondition = accessCondition;
 	}
+
 	public boolean isDuplication() {
 		return duplication;
 	}
+
 	public void setDuplication(boolean duplication) {
 		this.duplication = duplication;
 	}
-	
-	
+
 }

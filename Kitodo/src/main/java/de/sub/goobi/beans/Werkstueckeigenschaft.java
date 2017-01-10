@@ -11,6 +11,9 @@
 
 package de.sub.goobi.beans;
 
+import de.sub.goobi.beans.property.IGoobiProperty;
+import de.sub.goobi.helper.enums.PropertyType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,9 +28,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import de.sub.goobi.beans.property.IGoobiProperty;
-import de.sub.goobi.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "workpieceProperty")
@@ -64,6 +64,9 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	@JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_workpieceProperty_workpiece_id"))
 	private Werkstueck werkstueck;
 
+	/**
+	 *
+	 */
 	public Werkstueckeigenschaft() {
 		this.istObligatorisch = false;
 		this.datentyp = PropertyType.String.getId();
@@ -137,10 +140,8 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * getter for datentyp set to private for hibernate
-	 * 
-	 * for use in program use getType instead
-	 * 
+	 * getter for datentyp set to private for hibernate for use in program use getType instead
+	 *
 	 * @return datentyp as integer
 	 */
 	@SuppressWarnings("unused")
@@ -149,10 +150,10 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	/**
-	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
-	 * 
-	 * @param datentyp
-	 *            as Integer
+	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType
+	 * instead
+	 *
+	 * @param datentyp as Integer
 	 */
 	@SuppressWarnings("unused")
 	private void setDatentyp(Integer datentyp) {
@@ -161,9 +162,8 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 *
+	 * @param inType as {@link PropertyType}
 	 */
 	@Override
 	public void setType(PropertyType inType) {
@@ -172,7 +172,7 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 
 	/**
 	 * get datentyp as {@link PropertyType}
-	 * 
+	 *
 	 * @return current datentyp
 	 */
 	@Override
@@ -183,6 +183,9 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		return PropertyType.getById(this.datentyp);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		if (this.valueList == null) {
 			this.valueList = new ArrayList<String>();
@@ -202,8 +205,6 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		this.werkstueck = werkstueck;
 	}
 
-	
-	
 	@Override
 	public Integer getContainer() {
 		if (this.container == null) {
@@ -219,8 +220,7 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		}
 		this.container = order;
 	}
-	
-	
+
 	@Override
 	public String getNormalizedTitle() {
 		return this.titel.replace(" ", "_").trim();

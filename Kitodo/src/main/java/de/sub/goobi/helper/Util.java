@@ -20,71 +20,64 @@ import java.util.ResourceBundle;
 
 /**
  * Collection of simple utility methods.
- * 
+ *
  * @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 
 public final class Util {
 
-    private Util() {
-    }
-
-    /**
-       Returns an HQL query from the resource bundle.
-
-       @param key the resource key
-       @return String
-    */
-    public static String getQuery(String key) {
-        ResourceBundle bundle = getResourceBundle();
-        return bundle.getString(key);
-    }
-
-    /**
-       Utility method to create a <code>Date</code> class
-       from <code>dateString</code>.
-
-       @param dateString
-       @return Date
-       @throws RuntimeException is dateString is invalid
-    */
-    public static Date parseDate(String dateString) {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
-            return sdf.parse(dateString);
-        }
-        catch (ParseException pe) {
-            throw new RuntimeException("Not a valid date: "+dateString+
-                                       ". Must be of YYYY-MMM-DD format.");
-        }
-    }
-
-    /**
-       Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
-
-       @return ResourceBundle
-    */
-    private static ResourceBundle getResourceBundle() {
-        if(bundle == null) {
-            bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH,
-                                              Thread.currentThread()
-                                              .getContextClassLoader());
-        }
-        return bundle;
-    }
-
-    private static ResourceBundle bundle;
-    public static final String RESOURCE_BUNDLE = "example_app";
+	private Util() {
+	}
 
 	/**
-	 * Calculates the optimal initial capacity for a HashMap or HashSet instance
-	 * that is to be populated with the given collection and isn’t intended to
-	 * grow any further.
-	 * 
-	 * @param collection
-	 *            collection whose size shall be used to determine the initial
-	 *            capacity for a HashMap
+	 * Returns an HQL query from the resource bundle.
+	 *
+	 * @param key the resource key
+	 * @return String
+	*/
+	public static String getQuery(String key) {
+		ResourceBundle bundle = getResourceBundle();
+		return bundle.getString(key);
+	}
+
+	/**
+	 * Utility method to create a <code>Date</code> class from <code>dateString</code>.
+	 *
+	 * @param dateString add description
+	 * @return Date
+	 * @throws RuntimeException is dateString is invalid
+	*/
+	public static Date parseDate(String dateString) {
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
+			return sdf.parse(dateString);
+		} catch (ParseException pe) {
+			throw new RuntimeException("Not a valid date: " + dateString + ". Must be of YYYY-MMM-DD format.");
+		}
+	}
+
+	/**
+	 * Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
+	 *
+	 * @return ResourceBundle
+	 */
+	private static ResourceBundle getResourceBundle() {
+		if (bundle == null) {
+			bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH, Thread.currentThread()
+					.getContextClassLoader());
+		}
+		return bundle;
+	}
+
+	private static ResourceBundle bundle;
+	public static final String RESOURCE_BUNDLE = "example_app";
+
+	/**
+	 * Calculates the optimal initial capacity for a HashMap or HashSet instance that is to be populated with the
+	 * given collection and isn’t intended to grow any further.
+	 *
+	 * @param collection collection whose size shall be used to determine the initial capacity for a HashMap
 	 * @return the appropriate capacity
 	 */
 	public static int hashCapacityFor(Collection<?> collection) {

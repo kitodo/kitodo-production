@@ -12,9 +12,9 @@
 package org.goobi.api.display.enums;
 
 public enum BindState {
-	
-	create("0","create"), edit("1","edit"); 
-	
+
+	create("0", "create"), edit("1", "edit");
+
 	private String id;
 	private String title;
 
@@ -26,12 +26,16 @@ public enum BindState {
 	public String getId() {
 		return id;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
-	
-	public static BindState getByTitle(String inTitle){
+
+	/**
+	 * @param inTitle add description
+	 * @return add description
+	 */
+	public static BindState getByTitle(String inTitle) {
 		for (BindState type : BindState.values()) {
 			if (type.getTitle().equals(inTitle)) {
 				return type;
@@ -39,8 +43,5 @@ public enum BindState {
 		}
 		return edit; // edit is default
 	}
-	
-	
-	
-	
+
 }

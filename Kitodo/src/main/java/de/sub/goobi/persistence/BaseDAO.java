@@ -16,6 +16,10 @@
 
 package de.sub.goobi.persistence;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Util;
+import de.sub.goobi.helper.exceptions.DAOException;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -23,17 +27,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Util;
-import de.sub.goobi.helper.exceptions.DAOException;
-
 /**
  * Base class for DAOs. This class defines common CRUD methods. 
- * 
- * Changes have been made by Steffen Hankiewicz.
- * 
- * @author Nick Heudecker <nick@systemmobile.com>
- * @author Steffen Hankiewicz <steffen.hankiewicz@intranda.com>
+ *
+ * <p>Changes have been made by Steffen Hankiewicz.</p>
+ *
+ * @author Nick Heudecker nick@systemmobile.com
+ * @author Steffen Hankiewicz steffen.hankiewicz@intranda.com
  */
 
 public abstract class BaseDAO implements Serializable {
@@ -41,10 +41,9 @@ public abstract class BaseDAO implements Serializable {
 
 	/**
 	 * Removes the object from the database.
-	 * 
-	 * @param obj
-	 *            the class to remove
-	 * @throws DAOException
+	 *
+	 * @param obj the class to remove
+	 * @throws DAOException add description
 	 */
 	protected void removeObj(Object obj) throws DAOException {
 		try {
@@ -63,20 +62,17 @@ public abstract class BaseDAO implements Serializable {
 
 	/**
 	 * Removes the object from the database with with specified class type and <code>id</code>.
-	 * 
-	 * @param c
-	 *            the class type to remove
-	 * @param id
-	 *            the id of the class type
-	 * @throws DAOException
+	 *
+	 * @param c the class type to remove
+	 * @param id the id of the class type
+	 * @throws DAOException add description
 	 */
 	@SuppressWarnings("rawtypes")
 	protected static void removeObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
 			// first load the object with the current session.
-			// the object must be loaded in this session before it
-			// is deleted.
+			// the object must be loaded in this session before it is deleted.
 			synchronized (c) {
 				Object obj = session.load(c, id);
 				session.delete(obj);
@@ -90,15 +86,15 @@ public abstract class BaseDAO implements Serializable {
 	}
 
 	/**
-	 * Retrieves and <code>Object</code> of the class type specified by <code>c</code>, and having the given <code>id</code>.
-	 * 
-	 * @param c
-	 *            the class to load
-	 * @param id
+	 * Retrieves and <code>Object</code> of the class type specified by <code>c</code>, and having the given
+	 * <code>id</code>.
+	 *
+	 * @param c the class to load
+	 * @param id add description
 	 * @return Object may be null if object with ID doesn't exist
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({"rawtypes" })
 	protected static Object retrieveObj(Class c, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
@@ -157,9 +153,9 @@ public abstract class BaseDAO implements Serializable {
 
 	/**
 	 * Stores <code>obj</code>, making it persistent.
-	 * 
-	 * @param obj
-	 * @throws DAOException
+	 *
+	 * @param obj add description
+	 * @throws DAOException add description
 	 */
 	protected static void storeObj(Object obj) throws DAOException {
 		try {
@@ -192,9 +188,9 @@ public abstract class BaseDAO implements Serializable {
 
 	/**
 	 * Performs a rollback on the current session. Exceptions are logged.
-	 * 
-	 * @throws DAOException
-	 *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
+	 *
+	 * @throws DAOException if the current session can't be retrieved or an exception is thrown while performing
+	 * 						the rollback.
 	 */
 	protected static void rollback() throws DAOException {
 		try {
@@ -209,9 +205,8 @@ public abstract class BaseDAO implements Serializable {
 
 	/**
 	 * Retrieves the HQL query from the resource bundle.
-	 * 
-	 * @param key
-	 *            the HQL query to lookup
+	 *
+	 * @param key the HQL query to lookup
 	 */
 	protected String getQuery(String key) {
 		return Util.getQuery(key);
@@ -272,7 +267,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @param namedParameter Name of named parameter
 	 * @param parameter Parameter value
 	 * @return List
-	 * @throws DAOException
+	 * @throws DAOException add description
 	 */
 	protected List retrieveObjs(String queryString, String namedParameter, String parameter) throws DAOException {
 		try {

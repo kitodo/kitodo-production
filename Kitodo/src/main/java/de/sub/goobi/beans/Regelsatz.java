@@ -11,6 +11,8 @@
 
 package de.sub.goobi.beans;
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -23,7 +25,6 @@ import org.apache.log4j.Logger;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.config.ConfigMain;
 
 @Entity
 @Table(name = "ruleset")
@@ -46,13 +47,11 @@ public class Regelsatz implements Serializable {
 
 	private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+	/*##########################################################################################################
+	 ##
+	 ##	Getter und Setter
+	 ##
+	 #########################################################################################################*/
 
 	public String getDatei() {
 		return this.datei;
@@ -78,6 +77,10 @@ public class Regelsatz implements Serializable {
 		this.titel = titel;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Prefs getPreferences() {
 		Prefs mypreferences = new Prefs();
 		try {
@@ -96,6 +99,10 @@ public class Regelsatz implements Serializable {
 		this.orderMetadataByRuleset = orderMetadataByRuleset;
 	}
 
+	/**
+	 *
+	 * @return add description
+	 */
 	public Boolean isOrderMetadataByRulesetHibernate() {
 		if (this.orderMetadataByRuleset == null) {
 			this.orderMetadataByRuleset = false;
@@ -103,8 +110,7 @@ public class Regelsatz implements Serializable {
 		return this.orderMetadataByRuleset;
 	}
 
-	public void setOrderMetadataByRulesetHibernate(
-			Boolean orderMetadataByRuleset) {
+	public void setOrderMetadataByRulesetHibernate(Boolean orderMetadataByRuleset) {
 		this.orderMetadataByRuleset = orderMetadataByRuleset;
 	}
 }

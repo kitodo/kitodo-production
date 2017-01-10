@@ -16,14 +16,12 @@ import java.util.List;
 
 public class Record {
 
-
 	private List<String> collections = new ArrayList<String>();
 	private String data = "";
 	private String id = "";
 
 	/**
-	 * @param data
-	 *            the data to set
+	 * @param data the data to set
 	 */
 	public void setData(String data) {
 		this.data = data;
@@ -37,8 +35,7 @@ public class Record {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;
@@ -57,5 +54,5 @@ public class Record {
 
 	public List<String> getCollections() {
 		return this.collections;
-	}	
+	}
 }

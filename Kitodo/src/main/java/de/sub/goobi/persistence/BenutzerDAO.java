@@ -11,15 +11,15 @@
 
 package de.sub.goobi.persistence;
 
-import java.util.List;
-
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 public class BenutzerDAO extends BaseDAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 834210840673022251L;
 
@@ -28,6 +28,11 @@ public class BenutzerDAO extends BaseDAO {
 		return (Benutzer) retrieveObj(Benutzer.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Benutzer get(Integer id) throws DAOException {
 		Benutzer rueckgabe = (Benutzer) retrieveObj(Benutzer.class, id);
 		if (rueckgabe == null) {
@@ -37,14 +42,11 @@ public class BenutzerDAO extends BaseDAO {
 	}
 
 	/**
-	 * 
-	 * The function remove() removes a user from the environment. Since the user ID may still be referenced somewhere, the user account is invalidated
-	 * instead.
-	 * 
-	 * @param user
-	 *            User to be removed
-	 * @throws DAOException
-	 *             An exception that can be thrown from the underlying save() procedure upon database failure.
+	 * The function remove() removes a user from the environment. Since the user ID may still be referenced somewhere,
+	 * the user account is invalidated instead.
+	 *
+	 * @param user User to be removed
+	 * @throws DAOException An exception that can be thrown from the underlying save() procedure upon database failure.
 	 */
 
 	public void remove(Benutzer user) throws DAOException {
@@ -77,8 +79,8 @@ public class BenutzerDAO extends BaseDAO {
 	 * @param query Search query
 	 * @param namedParameter Name of named parameter
 	 * @param parameter Parameter value
-	 * @return List<Benutzer>
-	 * @throws DAOException
+	 * @return List	&lt;Benutzer&gt;
+	 * @throws DAOException add description
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Benutzer> search(String query, String namedParameter, String parameter) throws DAOException {

@@ -1,5 +1,6 @@
 /*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+>>>>>>> 76a8e41dfb1fcf3e21293a70ec22a7b0dea8d853
  *
  * This file is part of the Kitodo project.
  *
@@ -10,6 +11,9 @@
  */
 
 package de.unigoettingen.sub.search.opac;
+
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,9 +34,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
-
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
@@ -69,11 +70,11 @@ public class ConfigOpac {
 	public static ArrayList<String> getAllCatalogueTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		try {
-		int countCatalogues = getConfig().getMaxIndex("catalogue");
-		for (int i = 0; i <= countCatalogues; i++) {
-			String title = getConfig().getString("catalogue(" + i + ")[@title]");
-			myList.add(title);
-		}
+			int countCatalogues = getConfig().getMaxIndex("catalogue");
+			for (int i = 0; i <= countCatalogues; i++) {
+				String title = getConfig().getString("catalogue(" + i + ")[@title]");
+				myList.add(title);
+			}
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -88,11 +89,11 @@ public class ConfigOpac {
 	private static ArrayList<String> getAllDoctypeTitles() {
 		ArrayList<String> myList = new ArrayList<String>();
 		try {
-		int countTypes = getConfig().getMaxIndex("doctypes.type");
-		for (int i = 0; i <= countTypes; i++) {
-			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
-			myList.add(title);
-		}
+			int countTypes = getConfig().getMaxIndex("doctypes.type");
+			for (int i = 0; i <= countTypes; i++) {
+				String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
+				myList.add(title);
+			}
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -108,9 +109,9 @@ public class ConfigOpac {
 	public static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
 		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
 		try {
-		for (String title : getAllDoctypeTitles()) {
-			myList.add(getDoctypeByName(title));
-		}
+			for (String title : getAllDoctypeTitles()) {
+				myList.add(getDoctypeByName(title));
+			}
 		} catch (Throwable t) {
 			myLogger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
@@ -164,14 +165,11 @@ public class ConfigOpac {
 	 * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
 	 * <kbd>goobi_opac.xml</kbd>.
 	 *
-	 * The function will return an empty list if there are no such entries for
-	 * the given catalogue.
+	 * <p>The function will return an empty list if there are no such entries for the given catalogue.</p>
 	 *
-	 * @param title
-	 *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
-	 *            examine
+	 * @param title Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to examine
 	 * @return List
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException add description
 	 */
 	public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
 		List<String> result = new LinkedList<String>();
@@ -189,8 +187,8 @@ public class ConfigOpac {
 	}
 
 	/**
-	 * Returns all configured catalogue titles from the config file. The Jersey
-	 * API cannot invoke static methods, so we need this wrapper method.
+	 * Returns all configured catalogue titles from the config file. The Jersey API cannot invoke static methods,
+	 * so we need this wrapper method.
 	 *
 	 * @return all catalogue titles
 	 */

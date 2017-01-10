@@ -11,14 +11,14 @@
 
 package org.goobi.production.flow.helper;
 
+import de.sub.goobi.beans.Schritt;
+import de.sub.goobi.helper.enums.StepStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.enums.StepStatus;
-
-public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
+public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
 
 	private String stepTitle = "";
 	private Integer stepOrder = null;
@@ -26,6 +26,9 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
 	private HashMap<String, String> scripts = new HashMap<String, String>();
 	private boolean exportDMS = false;
 
+	/**
+	 * @param s add description
+	 */
 	public BatchDisplayItem(Schritt s) {
 		this.stepTitle = s.getTitel();
 		this.stepOrder = s.getReihenfolge();
@@ -60,7 +63,7 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
 
 	@Override
 	public int compareTo(BatchDisplayItem o) {
-	
+
 		return this.getStepOrder().compareTo(o.getStepOrder());
 	}
 
@@ -71,14 +74,17 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
 	public void setScripts(HashMap<String, String> scripts) {
 		this.scripts = scripts;
 	}
-	
+
 	public int getScriptSize() {
 		return this.scripts.size();
 	}
-	
+
+	/**
+	 * @return add description
+	 */
 	public List<String> getScriptnames() {
 		List<String> answer = new ArrayList<String>();
-		answer.addAll(this.scripts.keySet());		
+		answer.addAll(this.scripts.keySet());
 		return answer;
 	}
 

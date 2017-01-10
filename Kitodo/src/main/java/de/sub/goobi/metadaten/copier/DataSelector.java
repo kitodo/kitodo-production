@@ -14,24 +14,21 @@ package de.sub.goobi.metadaten.copier;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * A DataSelector is useful to access a data object. There are different
- * DataSelectors available to access metadata and program variables.
- * 
- * The factory method {{@link #create(String)} can be used to retrieve a
- * DataSelector instance for a given path.
- * 
+ * A DataSelector is useful to access a data object. There are different DataSelectors available to access metadata and
+ * program variables.
+ *
+ * <p>The factory method {{@link #create(String)} can be used to retrieve a DataSelector instance for a given path.</p>
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class DataSelector {
 	/**
-	 * Symbol indicating that the element of several to choose shall be the last
-	 * one
+	 * Symbol indicating that the element of several to choose shall be the last  one
 	 */
 	protected final static String LAST_CHILD_QUANTIFIER = ">";
 
 	/**
-	 * Symbol indicating that the next segment of the path is a document
-	 * structure hierarchy level
+	 * Symbol indicating that the next segment of the path is a document structure hierarchy level
 	 */
 	protected final static String METADATA_PATH_SEPARATOR = "/";
 
@@ -41,9 +38,8 @@ public abstract class DataSelector {
 	protected final static String METADATA_SEPARATOR = "@";
 
 	/**
-	 * Symbol indicating that the next segment of the path is a reference to the
-	 * node of the logical document structure that the metadata will be written
-	 * to.
+	 * Symbol indicating that the next segment of the path is a reference to the  node of the logical document
+	 * structure that the metadata will be written to.
 	 */
 	protected static final String RESPECTIVE_DESTINATION_REFERENCE = "#";
 
@@ -59,13 +55,10 @@ public abstract class DataSelector {
 
 	/**
 	 * Factory method to create a DataSelector.
-	 * 
-	 * @param path
-	 *            path to the data object to access
-	 * @return a subclass implementing the data selector required for the given
-	 *         path
-	 * @throws ConfigurationException
-	 *             if the path cannot be evaluated
+	 *
+	 * @param path path to the data object to access
+	 * @return a subclass implementing the data selector required for the given path
+	 * @throws ConfigurationException if the path cannot be evaluated
 	 */
 	public static DataSelector create(String path) throws ConfigurationException {
 		if (path.startsWith(METADATA_PATH_SEPARATOR) || path.startsWith(METADATA_SEPARATOR)) {
@@ -85,16 +78,13 @@ public abstract class DataSelector {
 	}
 
 	/**
-	 * Calling findIn() on the implementing instance should return the value of
-	 * the metadatum named by the path used to construct the metadata selector.
-	 * Should return null if either the path or the metadatum at the end of the
+	 * Calling findIn() on the implementing instance should return the value of the metadatum named by the path used
+	 * to construct the metadata selector. Should return null if either the path or the metadatum at the end of the
 	 * path aren’t available.
-	 * 
-	 * @param data
-	 *            data collection to locate the metadatum in
+	 *
+	 * @param data data collection to locate the metadatum in
 	 * @return the value the path points to, or null if absent
-	 * @throws RuntimeException
-	 *             if the path cannot be resolved
+	 * @throws RuntimeException if the path cannot be resolved
 	 */
 	public abstract String findIn(CopierData data);
 }

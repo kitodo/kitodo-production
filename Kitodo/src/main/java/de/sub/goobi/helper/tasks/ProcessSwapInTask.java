@@ -11,22 +11,22 @@
 
 package de.sub.goobi.helper.tasks;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.DAOException;
+import de.sub.goobi.persistence.ProzessDAO;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.goobi.io.SafeFile;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapInTask extends LongRunningTask {
 
@@ -38,12 +38,10 @@ public class ProcessSwapInTask extends LongRunningTask {
 	}
 
 	/**
-	 * The clone constructor creates a new instance of this object. This is
-	 * necessary for Threads that have terminated in order to render to run them
-	 * again possible.
-	 * 
-	 * @param processSwapInTask
-	 *            copy master to create a clone of
+	 * The clone constructor creates a new instance of this object. This is necessary for Threads that have terminated
+	 * in order to render to run them again possible.
+	 *
+	 * @param processSwapInTask copy master to create a clone of
 	 */
 	public ProcessSwapInTask(ProcessSwapInTask processSwapInTask) {
 		super(processSwapInTask);
@@ -57,7 +55,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -66,7 +64,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 	}
 
 	/**
-	 * Aufruf als Thread ================================================================
+	 * Aufruf als Thread
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -99,7 +97,8 @@ public class ProcessSwapInTask extends LongRunningTask {
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
-			setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - " + e.getMessage());
+			setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - "
+					+ e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}
@@ -126,13 +125,14 @@ public class ProcessSwapInTask extends LongRunningTask {
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
-			setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName() + " - " + e.getMessage());
+			setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName()
+					+ " - " + e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}
 
 		/*
-		 * --------------------- alte Checksummen in HashMap schreiben -------------------
+		 * alte Checksummen in HashMap schreiben
 		 */
 		setStatusMessage("reading checksums");
 		Element rootOld = docOld.getRootElement();
@@ -147,14 +147,14 @@ public class ProcessSwapInTask extends LongRunningTask {
 		ProcessSwapOutTask.deleteDataInDir(fileIn);
 
 		/*
-		 * --------------------- Dateien kopieren und Checksummen ermitteln -------------------
+		 * Dateien kopieren und Checksummen ermitteln
 		 */
 		Document doc = new Document();
 		Element root = new Element("goobiArchive");
 		doc.setRootElement(root);
 
 		/*
-		 * --------------------- Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren -------------------
+		 * Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren
 		 */
 		setStatusProgress(50);
 		try {
@@ -169,7 +169,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusProgress(80);
 
 		/*
-		 * --------------------- Checksummen vergleichen -------------------
+		 * Checksummen vergleichen
 		 */
 		setStatusMessage("checking checksums");
 		// TODO: Don't use Iterators
@@ -187,7 +187,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 
 		setStatusProgress(85);
 		/*
-		 * --------------------- prüfen, ob noch Dateien fehlen -------------------
+		 * prüfen, ob noch Dateien fehlen
 		 */
 		setStatusMessage("checking missing files");
 		if (crcMap.size() > 0) {
@@ -217,10 +217,9 @@ public class ProcessSwapInTask extends LongRunningTask {
 	}
 
 	/**
-	 * Calls the clone constructor to create a not yet executed instance of this
-	 * thread object. This is necessary for threads that have terminated in
-	 * order to render possible to restart them.
-	 * 
+	 * Calls the clone constructor to create a not yet executed instance of this thread object. This is necessary for
+	 * threads that have terminated in order to render possible to restart them.
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */

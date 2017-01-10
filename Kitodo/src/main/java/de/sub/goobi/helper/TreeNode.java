@@ -18,189 +18,190 @@ import java.util.List;
 
 public class TreeNode {
 
-   protected boolean expanded = false;
-   protected boolean selected = false;
-   protected String label;
-   protected String id;
-   protected List<TreeNode> children;
+	protected boolean expanded = false;
+	protected boolean selected = false;
+	protected String label;
+	protected String id;
+	protected List<TreeNode> children;
 
-   public TreeNode() {
-      this.children = new ArrayList<TreeNode>();
-   }
+	public TreeNode() {
+		this.children = new ArrayList<TreeNode>();
+	}
 
-   public TreeNode(boolean expanded, String label, String id) {
-      this.expanded = expanded;
-      this.label = label;
-      this.id = id;
-      this.children = new ArrayList<TreeNode>();
-   }
+	/**
+	 * @param expanded add description
+	 * @param label add description
+	 * @param id add description
+	 */
+	public TreeNode(boolean expanded, String label, String id) {
+		this.expanded = expanded;
+		this.label = label;
+		this.id = id;
+		this.children = new ArrayList<TreeNode>();
+	}
 
-   
+	public void addChild(TreeNode inNode) {
+		this.children.add(inNode);
+	}
 
-   public void addChild(TreeNode inNode) {
-      this.children.add(inNode);
-   }
+	/**
+	 * @return add description
+	 */
+	public List<HashMap<String, Object>> getChildrenAsList() {
+		List<HashMap<String, Object>> myList = new ArrayList<HashMap<String, Object>>();
+		getChildrenAsListMitStrichen(myList, 0, this, true, true, new ArrayList<Boolean>());
+		return myList;
+	}
 
-   
+	/**
+	 * @return add description
+	 */
+	public List<HashMap<String, Object>> getChildrenAsListAlle() {
+		List<HashMap<String, Object>> myList = new ArrayList<HashMap<String, Object>>();
+		getChildrenAsListAlle(myList, 0, this, true, true, new ArrayList<Boolean>());
+		return myList;
+	}
 
-   public List<HashMap<String,Object>> getChildrenAsList() {
-      List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
-      getChildrenAsListMitStrichen(myList, 0, this, true,true, new ArrayList<Boolean>());
-      return myList;
-   }
+	/**
+	* alle Children des übergebenen Knotens expanden oder collapsen
+	*/
+	public void expandNodes(Boolean inExpand) {
+		expandNode(this, inExpand.booleanValue());
+	}
 
-   
-
-   public List<HashMap<String,Object>> getChildrenAsListAlle() {
-      List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
-      getChildrenAsListAlle(myList, 0, this, true,true, new ArrayList<Boolean>());
-      return myList;
-   }
-   
-   /**
-   	 * alle Children des übergebenen Knotens expanden oder collapsen 
-* ================================================================
-   */
-   public void expandNodes(Boolean inExpand){
-      expandNode(this, inExpand.booleanValue());
-   }
-   
-   private void expandNode(TreeNode inNode, boolean inExpand){
-      inNode.expanded = inExpand;
-      for (Iterator<TreeNode> iter = inNode.children.iterator(); iter.hasNext();) {
-         TreeNode t = iter.next();
-         expandNode(t, inExpand);
-      }
-   }
-   
-   
-
-   @SuppressWarnings({ "unused", "unchecked", "rawtypes" })
-	private List getChildrenAsList(List inList, int niveau,List inStriche,boolean VaterIstLetzter) {
-      for (Iterator<TreeNode> it = this.children.iterator(); it.hasNext();) {
-         TreeNode kind = it.next();
-         HashMap map = new HashMap();
-         map.put("node", kind);
-         map.put("niveau", Integer.valueOf(niveau));
-         map.put("islast", Boolean.valueOf(!it.hasNext()));
-
-//       die Striche vorbereiten
-         List striche = new ArrayList(inStriche);
-         striche.add(Boolean.valueOf(VaterIstLetzter));
-         map.put("striche", striche);
-         
-         inList.add(map);
-         if (kind.expanded && kind.getHasChildren()) {
-			kind.getChildrenAsList(inList, niveau + 1, striche,!it.hasNext());
+	private void expandNode(TreeNode inNode, boolean inExpand) {
+		inNode.expanded = inExpand;
+		for (Iterator<TreeNode> iter = inNode.children.iterator(); iter.hasNext();) {
+			TreeNode t = iter.next();
+			expandNode(t, inExpand);
 		}
-      }
-       return inList;
-   }
+	}
 
-   
+	@SuppressWarnings({"unused", "unchecked", "rawtypes" })
+	private List getChildrenAsList(List inList, int niveau, List inStriche, boolean VaterIstLetzter) {
+		for (Iterator<TreeNode> it = this.children.iterator(); it.hasNext();) {
+			TreeNode kind = it.next();
+			HashMap map = new HashMap();
+			map.put("node", kind);
+			map.put("niveau", Integer.valueOf(niveau));
+			map.put("islast", Boolean.valueOf(!it.hasNext()));
 
-   private List<HashMap<String, Object>> getChildrenAsListMitStrichen(List<HashMap<String, Object>> inList,
-      int niveau, TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
+			// die Striche vorbereiten
+			List striche = new ArrayList(inStriche);
+			striche.add(Boolean.valueOf(VaterIstLetzter));
+			map.put("striche", striche);
 
-      HashMap<String,Object> map = new HashMap<String,Object>();
-      map.put("node", inNode);
-      map.put("niveau", niveau);
-      map.put("islast", istLetzter);
+			inList.add(map);
+			if (kind.expanded && kind.getHasChildren()) {
+				kind.getChildrenAsList(inList, niveau + 1, striche, !it.hasNext());
+			}
+		}
+		return inList;
+	}
 
-      // die Striche vorbereiten
-      List<Boolean> striche = new ArrayList<Boolean>(inStriche);
-      striche.add(vaterIstLetzter);
-      map.put("striche", striche);
+	private List<HashMap<String, Object>> getChildrenAsListMitStrichen(List<HashMap<String, Object>> inList,
+			int niveau, TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-      inList.add(map);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("node", inNode);
+		map.put("niveau", niveau);
+		map.put("islast", istLetzter);
 
-      if (inNode.getHasChildren() && inNode.expanded) {
-         for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
-            TreeNode kind = it.next();
-            getChildrenAsListMitStrichen(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
-         }
-      }
+		// die Striche vorbereiten
+		List<Boolean> striche = new ArrayList<Boolean>(inStriche);
+		striche.add(vaterIstLetzter);
+		map.put("striche", striche);
 
-      return inList;
-   }
-   
-   
+		inList.add(map);
 
-   private List<HashMap<String, Object>> getChildrenAsListAlle(List<HashMap<String, Object>> inList, int niveau,
-      TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
+		if (inNode.getHasChildren() && inNode.expanded) {
+			for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
+				TreeNode kind = it.next();
+				getChildrenAsListMitStrichen(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
+			}
+		}
 
-      HashMap<String,Object> map = new HashMap<String,Object>();
-      map.put("node", inNode);
-      map.put("niveau", niveau);
-      map.put("islast", istLetzter);
+		return inList;
+	}
 
-      // die Striche vorbereiten
-      List<Boolean> striche = new ArrayList<Boolean>(inStriche);
-      striche.add(vaterIstLetzter);
-      map.put("striche", striche);
+	private List<HashMap<String, Object>> getChildrenAsListAlle(List<HashMap<String, Object>> inList, int niveau,
+			TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-      inList.add(map);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("node", inNode);
+		map.put("niveau", niveau);
+		map.put("islast", istLetzter);
 
-      if (inNode.getHasChildren()) {
-         for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
-            TreeNode kind = it.next();
-            getChildrenAsListAlle(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
-         }
-      }
+		// die Striche vorbereiten
+		List<Boolean> striche = new ArrayList<Boolean>(inStriche);
+		striche.add(vaterIstLetzter);
+		map.put("striche", striche);
 
-      return inList;
-   }
+		inList.add(map);
 
-   /*                                       
-    * Getter und Setter                         
-    */
+		if (inNode.getHasChildren()) {
+			for (Iterator<TreeNode> it = inNode.getChildren().iterator(); it.hasNext();) {
+				TreeNode kind = it.next();
+				getChildrenAsListAlle(inList, niveau + 1, kind, !it.hasNext(), istLetzter, striche);
+			}
+		}
 
-   public List<TreeNode> getChildren() {
-      return this.children;
-   }
+		return inList;
+	}
+
+	/*
+	 * Getter und Setter
+	 */
+
+	public List<TreeNode> getChildren() {
+		return this.children;
+	}
 
 	public void setChildren(List<TreeNode> children) {
-      this.children = children;
-   }
-
-   public boolean isExpanded() {
-      return this.expanded;
-   }
-
-   public void setExpanded(boolean expanded) {
-      this.expanded = expanded;
-   }
-
-   public String getId() {
-      return this.id;
-   }
-
-   public void setId(String id) {
-      this.id = id;
-   }
-   
-   public boolean isSelected() {
-      return this.selected;
-   }
-
-   public void setSelected(boolean selected) {
-      this.selected = selected;
-   }
-
-   public String getLabel() {
-      return this.label;
-   }
-
-   public void setLabel(String label) {
-      this.label = label;
-   }
-
-   public boolean getHasChildren() {
-      if (this.children == null || this.children.size() == 0) {
-		return false;
-	} else {
-		return true;
+		this.children = children;
 	}
-   }
+
+	public boolean isExpanded() {
+		return this.expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public boolean isSelected() {
+		return this.selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	public String getLabel() {
+		return this.label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	/**
+	 * @return add description
+	 */
+	public boolean getHasChildren() {
+		if (this.children == null || this.children.size() == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
 }

@@ -11,6 +11,12 @@
 
 package de.sub.goobi.helper.ldap;
 
+import de.sub.goobi.beans.Benutzer;
+import de.sub.goobi.beans.LdapGruppe;
+import de.sub.goobi.config.ConfigMain;
+
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -40,17 +46,12 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.LdapGruppe;
-import de.sub.goobi.config.ConfigMain;
-
 /**
- * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like the LDAP system providers.
+ * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like
+ * the LDAP system providers.
  */
 public class LdapUser implements DirContext {
 	private static final Logger myLogger = Logger.getLogger(LdapUser.class);
@@ -66,16 +67,16 @@ public class LdapUser implements DirContext {
 
 	/**
 	 * configure LdapUser with Userdetails
-	 * 
-	 * @param inUser
-	 * @param inPassword
-	 * @throws NamingException
-	 * @throws NoSuchAlgorithmException
-	 * @throws InterruptedException
-	 * @throws IOException
+	 *
+	 * @param inUser add description
+	 * @param inPassword add description
+	 * @throws NamingException add description
+	 * @throws NoSuchAlgorithmException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
 	 */
-	public void configure(Benutzer inUser, String inPassword, String inUidNumber) throws NamingException, NoSuchAlgorithmException, IOException,
-			InterruptedException {
+	public void configure(Benutzer inUser, String inPassword, String inUidNumber) throws NamingException,
+			NoSuchAlgorithmException, IOException, InterruptedException {
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 
 			this.type = inUser.getLogin();
@@ -103,11 +104,13 @@ public class LdapUser implements DirContext {
 
 			this.myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
 			this.myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
-			this.myAttrs.put("sambaPrimaryGroupSID", ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPrimaryGroupSID",
+					ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
 			this.myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
 
 			this.myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
-			this.myAttrs.put("sambaPasswordHistory", ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
+			this.myAttrs.put("sambaPasswordHistory",
+					ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
 			this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
 			this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
 			this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000l));
@@ -116,7 +119,7 @@ public class LdapUser implements DirContext {
 			this.myAttrs.put("gidNumber", ReplaceVariables(lp.getGidNumber(), inUser, inUidNumber));
 
 			/*
-			 * -------------------------------- Samba passwords --------------------------------
+			 * Samba passwords
 			 */
 			/* LanMgr */
 			try {
@@ -133,24 +136,22 @@ public class LdapUser implements DirContext {
 			}
 
 			/*
-			 * -------------------------------- Encryption of password und Base64-Enconding --------------------------------
+			 * Encryption of password und Base64-Enconding
 			 */
 
 			MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
 			md.update(inPassword.getBytes(StandardCharsets.UTF_8));
 			String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}"
+					+ digestBase64);
 		}
 	}
-	
-	
-	
 
 	/**
 	 * Replace Variables with current user details
-	 * 
-	 * @param inString
-	 * @param inUser
+	 *
+	 * @param inString add description
+	 * @param inUser add description
 	 * @return String with replaced variables
 	 */
 	private String ReplaceVariables(String inString, Benutzer inUser, String inUidNumber) {
@@ -159,9 +160,11 @@ public class LdapUser implements DirContext {
 		}
 		String rueckgabe = inString.replaceAll("\\{login\\}", inUser.getLogin());
 		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
-		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
-		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-		if(myLogger.isDebugEnabled()){
+		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}",
+				String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
+		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}",
+				String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
+		if (myLogger.isDebugEnabled()) {
 			myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
 			myLogger.debug("Replace outstring: " + rueckgabe);
 		}
@@ -170,10 +173,8 @@ public class LdapUser implements DirContext {
 
 	/**
 	 * Creates the LM Hash of the user's password.
-	 * 
-	 * @param password
-	 *            The password.
-	 * 
+	 *
+	 * @param password The password.
 	 * @return The LM Hash of the given password, used in the calculation of the LM Response.
 	 */
 	public static byte[] lmHash(String password) throws Exception {
@@ -197,13 +198,11 @@ public class LdapUser implements DirContext {
 
 	/**
 	 * Creates a DES encryption key from the given key material.
-	 * 
-	 * @param bytes
-	 *            A byte array containing the DES key material.
-	 * @param offset
-	 *            The offset in the given byte array at which the 7-byte key material starts.
-	 * 
-	 * @return A DES encryption key created from the key material starting at the specified offset in the given byte array.
+	 *
+	 * @param bytes A byte array containing the DES key material.
+	 * @param offset The offset in the given byte array at which the 7-byte key material starts.
+	 * @return A DES encryption key created from the key material starting at the specified offset in the given byte
+	 *			array.
 	 */
 	private static Key createDESKey(byte[] bytes, int offset) {
 		byte[] keyBytes = new byte[7];
@@ -223,14 +222,14 @@ public class LdapUser implements DirContext {
 
 	/**
 	 * Applies odd parity to the given byte array.
-	 * 
-	 * @param bytes
-	 *            The data whose parity bits are to be adjusted for odd parity.
+	 *
+	 * @param bytes The data whose parity bits are to be adjusted for odd parity.
 	 */
 	private static void oddParity(byte[] bytes) {
 		for (int i = 0; i < bytes.length; i++) {
 			byte b = bytes[i];
-			boolean needsParity = (((b >>> 7) ^ (b >>> 6) ^ (b >>> 5) ^ (b >>> 4) ^ (b >>> 3) ^ (b >>> 2) ^ (b >>> 1)) & 0x01) == 0;
+			boolean needsParity = (((b >>> 7) ^ (b >>> 6) ^ (b >>> 5) ^ (b >>> 4) ^ (b >>> 3) ^ (b >>> 2) ^ (b >>> 1))
+					& 0x01) == 0;
 			if (needsParity) {
 				bytes[i] |= (byte) 0x01;
 			} else {
@@ -239,6 +238,10 @@ public class LdapUser implements DirContext {
 		}
 	}
 
+	/**
+	 * @param bytes add description
+	 * @return add description
+	 */
 	public static String toHexString(byte bytes[]) {
 		StringBuffer retString = new StringBuffer();
 		for (int i = 0; i < bytes.length; ++i) {
@@ -501,12 +504,14 @@ public class LdapUser implements DirContext {
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(Name name, Attributes matchingAttributes, String[] attributesToReturn) throws NamingException {
+	public NamingEnumeration<SearchResult> search(Name name, Attributes matchingAttributes, String[] attributesToReturn)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes, String[] attributesToReturn) throws NamingException {
+	public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes,
+			String[] attributesToReturn) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
@@ -521,22 +526,26 @@ public class LdapUser implements DirContext {
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(Name name, String filter, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(Name name, String filter, SearchControls cons)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(String name, String filter, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(String name, String filter, SearchControls cons)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(Name name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(Name name, String filterExpr, Object[] filterArgs, SearchControls cons)
+			throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 
 	@Override
-	public NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs, SearchControls cons) throws NamingException {
+	public NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs,
+			SearchControls cons) throws NamingException {
 		throw new OperationNotSupportedException();
 	}
 

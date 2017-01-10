@@ -55,7 +55,7 @@ public interface IProperty {
 	public abstract boolean isValid();
 
 	public void setDateValue(Date inDate);
-	
+
 	public Date getDateValue();
 
 	public abstract IProperty getClone(int containerNumber);

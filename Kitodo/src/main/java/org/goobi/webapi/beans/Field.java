@@ -11,6 +11,9 @@
 
 package org.goobi.webapi.beans;
 
+import de.sub.goobi.beans.Projekt;
+import de.sub.goobi.config.ConfigProjects;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.config.ConfigProjects;
-
-@XmlType(propOrder = { "required", "from", "option", "ughbinding", "docstruct" })
+@XmlType(propOrder = {"required", "from", "option", "ughbinding", "docstruct" })
 public class Field {
 
 	@XmlAttribute
@@ -35,13 +35,18 @@ public class Field {
 	private boolean required;
 	@XmlElement
 	private List<Label> option;
-	@XmlElement(name="source")
+	@XmlElement(name = "source")
 	private String from;
 	@XmlElement
 	private Boolean ughbinding;
-	@XmlElement(name="insertionLevel")
+	@XmlElement(name = "insertionLevel")
 	private String docstruct;
 
+	/**
+	 * @param project add description
+	 * @return add description
+	 * @throws IOException add description
+	 */
 	public static List<Field> getFieldConfigForProject(Projekt project) throws IOException {
 		List<Field> fields = new ArrayList<Field>();
 

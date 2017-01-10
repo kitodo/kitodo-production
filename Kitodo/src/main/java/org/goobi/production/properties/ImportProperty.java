@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ImportProperty implements IProperty{
+public class ImportProperty implements IProperty {
 
 	private String name = "";
 	private Integer container = 0;
@@ -30,7 +30,7 @@ public class ImportProperty implements IProperty{
 	private List<String> possibleValues = new ArrayList<String>();
 	private List<String> projects = new ArrayList<String>();
 	private boolean required = false;
-	
+
 	public ImportProperty() {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
@@ -100,52 +100,51 @@ public class ImportProperty implements IProperty{
 	public List<String> getProjects() {
 		return this.projects;
 	}
-	
+
 	@Override
 	public void setProjects(List<String> projects) {
 		this.projects = projects;
 	}
-	
+
 	@Override
 	public ArrayList<ShowStepCondition> getShowStepConditions() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public void setShowStepConditions(List<ShowStepCondition> showStepConditions) {
 	}
-	
+
 	@Override
 	public AccessCondition getShowProcessGroupAccessCondition() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	@Override
 	public void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition) {
 	}
 
 	@Override
-	public boolean isValid(){
+	public boolean isValid() {
 		Pattern pattern = Pattern.compile(this.validation);
 		Matcher matcher = pattern.matcher(this.value);
 		return matcher.matches();
 	}
-		
-	
-	
-	
+
 	@Override
-	public ImportProperty getClone(int containerNumber){
+	public ImportProperty getClone(int containerNumber) {
 		ImportProperty p = new ImportProperty();
 		return p;
 	}
-	
+
 	@Override
-	public void transfer(){
-		
+	public void transfer() {
+
 	}
 
-	
+	/**
+	 * @return add description
+	 */
 	public List<String> getValueList() {
 		String[] values = this.value.split("; ");
 		List<String> answer = new ArrayList<String>();
@@ -155,13 +154,19 @@ public class ImportProperty implements IProperty{
 		return answer;
 	}
 
+	/**
+	 * @param valueList add description
+	 */
 	public void setValueList(List<String> valueList) {
 		this.value = "";
 		for (String val : valueList) {
 			this.value = this.value + val + "; ";
 		}
 	}
-	
+
+	/**
+	 * @return add description
+	 */
 	public boolean getBooleanValue() {
 		if (this.value.equalsIgnoreCase("true")) {
 			return true;
@@ -169,6 +174,10 @@ public class ImportProperty implements IProperty{
 			return false;
 		}
 	}
+
+	/**
+	 * @param val add description
+	 */
 	public void setBooleanValue(boolean val) {
 		if (val) {
 			this.value = "true";
@@ -180,10 +189,9 @@ public class ImportProperty implements IProperty{
 	@Override
 	public void setDateValue(Date inDate) {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		value= format.format(inDate);
+		value = format.format(inDate);
 	}
 
-	
 	@Override
 	public Date getDateValue() {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");

@@ -11,24 +11,23 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.constants.Parameters;
+
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 
-import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import de.sub.goobi.config.ConfigMain;
-
 /**
- * Backing bean for a single line input box element to edit a metadatum
- * renderable by JSF.
- * 
+ * Backing bean for a single line input box element to edit a metadatum renderable by JSF.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
@@ -41,14 +40,10 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 
 	/**
 	 * Constructor. Creates a RenderableEdit.
-	 * 
-	 * @param metadataType
-	 *            metadata type editable by this drop-down list
-	 * @param binding
-	 *            metadata group that shall instantly be updated if a setter is
-	 *            invoked
-	 * @param container
-	 *            metadata group this drop-down list is showing in
+	 *
+	 * @param metadataType metadata type editable by this drop-down list
+	 * @param binding metadata group that shall instantly be updated if a setter is invoked
+	 * @param container metadata group this drop-down list is showing in
 	 */
 	public RenderableEdit(MetadataType metadataType, MetadataGroup binding, RenderableMetadataGroup container) {
 		super(metadataType, binding, container);
@@ -60,12 +55,10 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Adds the data passed from the metadata element as content to the input.
-	 * If there is data already (shouldn’t be, but however) it is appended for
-	 * not being lost.
-	 * 
-	 * @param data
-	 *            data to add
+	 * Adds the data passed from the metadata element as content to the input. If there is data already (shouldn’t be,
+	 * but however) it is appended for not being lost.
+	 *
+	 * @param data data to add
 	 */
 	@Override
 	public void addContent(Metadata data) {
@@ -78,9 +71,9 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 
 	/**
 	 * Returns the edit field value.
-	 * 
+	 *
 	 * @return the value from or for the edit field
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
 	 */
 	@Override
@@ -90,10 +83,9 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 
 	/**
 	 * Sets the value or saves the value entered by the user.
-	 * 
-	 * @param value
-	 *            value to set
-	 * 
+	 *
+	 * @param value value to set
+	 *
 	 * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
 	 */
 	@Override
@@ -104,7 +96,7 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 
 	/**
 	 * Returns the value of this edit component as metadata element
-	 * 
+	 *
 	 * @return a list with one metadata element with the value of this component
 	 * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
 	 */
@@ -116,10 +108,9 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 	}
 
 	/**
-	 * Specialised version of updateBinding() which is capable to update a
-	 * metadata type of kind “person” if the input box is part of a
-	 * RenderablePersonMetadataGroup.
-	 * 
+	 * Specialised version of updateBinding() which is capable to update a metadata type of kind “person” if the input
+	 * box is part of a RenderablePersonMetadataGroup.
+	 *
 	 * @see de.sub.goobi.metadaten.RenderableMetadatum#updateBinding()
 	 */
 	@Override
@@ -132,21 +123,21 @@ public class RenderableEdit extends RenderableMetadatum implements RenderableGro
 			} else {
 				for (Person found : binding.getPersonByType(personType)) {
 					switch (RenderablePersonMetadataGroup.getPersonField(typeName)) {
-					case FIRSTNAME:
-						found.setFirstname(value);
-						break;
-					case LASTNAME:
-						found.setLastname(value);
-						break;
-					case NORMDATA_RECORD:
-						if (value != null && value.length() > 0
-								&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
-							String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
-							found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-						}
-						break;
-					default:
-						throw new UnreachableCodeException("Complete switch");
+						case FIRSTNAME:
+							found.setFirstname(value);
+							break;
+						case LASTNAME:
+							found.setLastname(value);
+							break;
+						case NORMDATA_RECORD:
+							if (value != null && value.length() > 0
+									&& !value.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
+								String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
+								found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+							}
+							break;
+						default:
+							throw new UnreachableCodeException("Complete switch");
 					}
 				}
 			}

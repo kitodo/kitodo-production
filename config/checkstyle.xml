@@ -26,7 +26,13 @@
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
+    <property name="localeLanguage" value="en"/>
+
+    <module name="SuppressionCommentFilter"/>
+
     <module name="TreeWalker">
+        <property name="tabWidth" value="4"/>
+
         <module name="OuterTypeFilename"/>
 
         <module name="IllegalTokenText">
@@ -224,10 +230,6 @@
 
         <module name="JavadocTagContinuationIndentation"/>
 
-        <module name="SummaryJavadoc">
-            <property name="forbiddenSummaryFragments" value="^@return the *|^This method returns |^A [{]@code [a-zA-Z0-9]+[}]( is a )"/>
-        </module>
-
         <module name="JavadocParagraph">
             <property name="allowNewlineParagraph" value="false"/>
         </module>
@@ -262,7 +264,10 @@
         </module>
 
         <module name="CommentsIndentation"/>
+
+        <module name="FileContentsHolder"/>
     </module>
+
     <module name="NewlineAtEndOfFile">
         <property name="lineSeparator" value="lf"/>
     </module>

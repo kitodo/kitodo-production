@@ -11,6 +11,8 @@
 
 package org.goobi.production.cli;
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,8 +32,6 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-import de.sub.goobi.config.ConfigMain;
-
 public class WebInterface extends HttpServlet {
 	private static final Logger logger = Logger.getLogger(WebInterface.class);
 	private static final long serialVersionUID = 6187229284187412768L;
@@ -50,7 +50,7 @@ public class WebInterface extends HttpServlet {
 						ip = "127.0.0.1";
 					}
 				}
-				
+
 				Map<String, String[]> map = req.getParameterMap();
 				String[] pwMap = map.get("token");
 				password = pwMap[0];
@@ -64,7 +64,7 @@ public class WebInterface extends HttpServlet {
 			Map<String, String[]> parameter = req.getParameterMap();
 			// command
 			if (parameter.size() == 0) {
-				generateAnswer(resp, 400,"Empty request", "no parameters given");
+				generateAnswer(resp, 400, "Empty request", "no parameters given");
 				return;
 			}
 			if (parameter.get("command") == null) {
@@ -76,10 +76,11 @@ public class WebInterface extends HttpServlet {
 			String command = parameter.get("command")[0];
 			if (command == null) {
 				// error, no command found
-				generateAnswer(resp, 400,"Empty command", "No command given. Use help as command to get more information.");
+				generateAnswer(resp, 400, "Empty command",
+						"No command given. Use help as command to get more information.");
 				return;
 			}
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("command: " + command);
 			}
 
@@ -87,9 +88,8 @@ public class WebInterface extends HttpServlet {
 			List<String> allowedCommands = WebInterfaceConfig.getCredentials(ip, password);
 			if (!allowedCommands.contains(command)) {
 				// error, no command found
-				generateAnswer(resp, 401, "command not allowed",
-					"command " + StringEscapeUtils.escapeHtml(command) +
-					" not allowed for your IP (" + StringEscapeUtils.escapeHtml(ip) + ")");
+				generateAnswer(resp, 401, "command not allowed", "command " + StringEscapeUtils.escapeHtml(command)
+						+ " not allowed for your IP (" + StringEscapeUtils.escapeHtml(ip) + ")");
 				return;
 			}
 
@@ -97,10 +97,10 @@ public class WebInterface extends HttpServlet {
 				generateHelp(resp);
 				return;
 			}
-			
-			
+
 			// get correct plugin from list
-			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.Command, command);
+			ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader
+					.getPluginByTitle(PluginType.Command, command);
 			if (myCommandPlugin == null) {
 				generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
 				return;
@@ -111,7 +111,7 @@ public class WebInterface extends HttpServlet {
 			HashMap<String, String> params = new HashMap<String, String>();
 			Iterator<Entry<String, String[]>> i = map.entrySet().iterator();
 			while (i.hasNext()) {
-				Entry<String, String[]> entry =  i.next();
+				Entry<String, String[]> entry = i.next();
 				if (entry.getValue()[0] != null) {
 					params.put(entry.getKey(), entry.getValue()[0]);
 				}

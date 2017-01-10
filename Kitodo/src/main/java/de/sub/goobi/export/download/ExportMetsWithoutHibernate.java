@@ -11,27 +11,6 @@
 
 package de.sub.goobi.export.download;
 
-import org.goobi.io.SafeFile;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import ugh.dl.ContentFile;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.dl.VirtualFileGroup;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.mets.MetsModsImportExport;
 import de.sub.goobi.beans.Benutzer;
 import de.sub.goobi.beans.ProjectFileGroup;
 import de.sub.goobi.beans.Projekt;
@@ -50,6 +29,29 @@ import de.sub.goobi.persistence.apache.ProcessObject;
 import de.sub.goobi.persistence.apache.ProjectManager;
 import de.sub.goobi.persistence.apache.ProjectObject;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+
+import ugh.dl.ContentFile;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.Fileformat;
+import ugh.dl.Prefs;
+import ugh.dl.VirtualFileGroup;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.mets.MetsModsImportExport;
+
 public class ExportMetsWithoutHibernate {
 	protected Helper help = new Helper();
 	protected Prefs myPrefs;
@@ -61,22 +63,23 @@ public class ExportMetsWithoutHibernate {
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis
 	 *
-	 * @param process
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws ReadException
-	 * @throws UghHelperException
-	 * @throws ExportFileException
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws WriteException
-	 * @throws PreferencesException
-	 * @throws DocStructHasNoTypeException
-	 * @throws TypeNotAllowedForParentException
+	 * @param process add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws ReadException add description
+	 * @throws UghHelperException add description
+	 * @throws ExportFileException add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws WriteException add description
+	 * @throws PreferencesException add description
+	 * @throws DocStructHasNoTypeException add description
+	 * @throws TypeNotAllowedForParentException add description
 	 */
-	public boolean startExport(ProcessObject process) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
-			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
+	public boolean startExport(ProcessObject process) throws IOException, InterruptedException,
+			DocStructHasNoTypeException, PreferencesException, WriteException, MetadataTypeNotAllowedException,
+			ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		String benutzerHome = "";
@@ -89,27 +92,28 @@ public class ExportMetsWithoutHibernate {
 	/**
 	 * DMS-Export an eine gewünschte Stelle
 	 *
-	 * @param process
-	 * @param inZielVerzeichnis
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws PreferencesException
-	 * @throws WriteException
-	 * @throws UghHelperException
-	 * @throws ExportFileException
-	 * @throws MetadataTypeNotAllowedException
-	 * @throws DocStructHasNoTypeException
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws ReadException
-	 * @throws TypeNotAllowedForParentException
+	 * @param process add description
+	 * @param inZielVerzeichnis add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws PreferencesException add description
+	 * @throws WriteException add description
+	 * @throws UghHelperException add description
+	 * @throws ExportFileException add description
+	 * @throws MetadataTypeNotAllowedException add description
+	 * @throws DocStructHasNoTypeException add description
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws ReadException add description
+	 * @throws TypeNotAllowedForParentException add description
 	 */
-	public boolean startExport(ProcessObject process, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(ProcessObject process, String inZielVerzeichnis) throws IOException,
+			InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
+			MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+			DAOException, TypeNotAllowedForParentException {
 
 		/*
-		 * -------------------------------- Read Document --------------------------------
+		 * Read Document
 		 */
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
 
@@ -135,8 +139,8 @@ public class ExportMetsWithoutHibernate {
 		String target = inTargetFolder;
 		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		try {
-            	FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
-            } catch (Exception e) {
+			FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+		} catch (Exception e) {
 			Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
 		}
 		return target;
@@ -145,21 +149,18 @@ public class ExportMetsWithoutHibernate {
 	/**
 	 * write MetsFile to given Path
 	 *
-	 * @param process
-	 *            the Process to use
-	 * @param targetFileName
-	 *            the filename where the metsfile should be written
-	 * @param gdzfile
-	 *            the FileFormat-Object to use for Mets-Writing
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 * @throws TypeNotAllowedForParentException
+	 * @param process the Process to use
+	 * @param targetFileName the filename where the metsfile should be written
+	 * @param gdzfile the FileFormat-Object to use for Mets-Writing
+	 * @throws DAOException add description
+	 * @throws SwapException add description
+	 * @throws InterruptedException add description
+	 * @throws IOException add description
+	 * @throws TypeNotAllowedForParentException add description
 	 */
-	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
-			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
-			TypeNotAllowedForParentException {
+	protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile,
+			boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException,
+			InterruptedException, SwapException, DAOException, TypeNotAllowedForParentException {
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
 		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
 		this.project = ProjectManager.getProjectById(process.getProjekteID());
@@ -182,20 +183,24 @@ public class ExportMetsWithoutHibernate {
 		DocStruct topElement = dd.getLogicalDocStruct();
 		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
-				throw new PreferencesException(process.getTitle()
-						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
+				throw new PreferencesException(
+						process.getTitle()
+								+ ": the topstruct element is marked as anchor, "
+								+ "but does not have any children for physical docstrucs");
 			} else {
 				topElement = topElement.getAllChildren().get(0);
 			}
 		}
 
 		/*
-		 * -------------------------------- if the top element does not have any image related, set them all --------------------------------
+		 * if the top element does not have any image related, set them all
 		 */
-		if (topElement.getAllToReferences("logical_physical") == null || topElement.getAllToReferences("logical_physical").size() == 0) {
+		if (topElement.getAllToReferences("logical_physical") == null
+				|| topElement.getAllToReferences("logical_physical").size() == 0) {
 			if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
 				Helper.setMeldung(process.getTitle()
-						+ ": topstruct element does not have any referenced images yet; temporarily adding them for mets file creation");
+						+ ": topstruct element does not have any referenced images yet; "
+						+ "temporarily adding them for mets file creation");
 				for (DocStruct mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
@@ -220,12 +225,12 @@ public class ExportMetsWithoutHibernate {
 		mm.setDigitalDocument(dd);
 
 		/*
-		 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
-		 * --------------------------------
+		 * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
 		 */
 		// Replace all paths with the given VariableReplacer, also the file
 		// group paths!
-		VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(), this.myPrefs, process, null);
+		VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(),
+				this.myPrefs, process, null);
 		List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId());
 
 		if (myFilegroups != null && myFilegroups.size() > 0) {

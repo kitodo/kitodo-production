@@ -11,10 +11,10 @@
 
 package de.sub.goobi.persistence;
 
-import java.util.List;
-
 import de.sub.goobi.beans.LdapGruppe;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class LdapGruppenDAO extends BaseDAO {
@@ -24,6 +24,11 @@ public class LdapGruppenDAO extends BaseDAO {
 		return (LdapGruppe) retrieveObj(LdapGruppe.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public LdapGruppe get(Integer id) throws DAOException {
 		LdapGruppe rueckgabe = (LdapGruppe) retrieveObj(LdapGruppe.class, id);
 		if (rueckgabe == null) {
@@ -32,6 +37,10 @@ public class LdapGruppenDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(LdapGruppe t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);

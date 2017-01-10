@@ -11,15 +11,15 @@
 
 package de.sub.goobi.persistence;
 
-import java.util.List;
-
 import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.helper.exceptions.DAOException;
+
+import java.util.List;
 
 public class SchrittDAO extends BaseDAO {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -2368830124391080142L;
 
@@ -28,6 +28,11 @@ public class SchrittDAO extends BaseDAO {
 		return (Schritt) retrieveObj(Schritt.class, t.getId());
 	}
 
+	/**
+	 * @param id add description
+	 * @return add description
+	 * @throws DAOException add description
+	 */
 	public Schritt get(Integer id) throws DAOException {
 		Schritt rueckgabe = (Schritt) retrieveObj(Schritt.class, id);
 		if (rueckgabe == null) {
@@ -36,12 +41,20 @@ public class SchrittDAO extends BaseDAO {
 		return rueckgabe;
 	}
 
+	/**
+	 * @param t add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Schritt t) throws DAOException {
 		if (t.getId() != null) {
 			removeObj(t);
 		}
 	}
 
+	/**
+	 * @param id add description
+	 * @throws DAOException add description
+	 */
 	public void remove(Integer id) throws DAOException {
 		@SuppressWarnings("unused")
 		Schritt t = (Schritt) retrieveObj(Schritt.class, id);
@@ -61,12 +74,12 @@ public class SchrittDAO extends BaseDAO {
 		Object o = t;
 		refresh(o);
 	}
-	
+
 	public void update(Schritt t) {
 		Object o = t;
 		updateObj(o);
 	}
-	
+
 	public Schritt load(int id) throws DAOException {
 		return (Schritt) loadObj(Schritt.class, id);
 	}

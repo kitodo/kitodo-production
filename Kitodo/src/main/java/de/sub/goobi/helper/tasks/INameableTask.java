@@ -12,9 +12,8 @@
 package de.sub.goobi.helper.tasks;
 
 /**
- * A task implementing this interface provides its readable name by a method
- * caal.
- * 
+ * A task implementing this interface provides its readable name by a method caal.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public interface INameableTask {

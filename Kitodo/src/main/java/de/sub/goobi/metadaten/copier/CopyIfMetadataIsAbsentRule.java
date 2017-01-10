@@ -16,23 +16,21 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * The CopyIfMetadataIsAbsentRule defines that a metadatum is copied right to
- * left in case that the structure node defined on the left exists but doesn’t
- * yet have a metadatum as named. Examples:
- * 
- * <code>/@CurrentNoSorting ""= /*[0]@CurrentNoSorting</code> − copy the sort
- * number form the first child to the top struct if it doesn’t have a sort
- * number yet
- * 
- * <code>/*[0]@TitleDocMain ""= /@TitleDocMain</code> − copy the main title from
- * the top struct to its first child element if it doesn’t have a main tile yet
- * 
+ * The CopyIfMetadataIsAbsentRule defines that a metadatum is copied right to left in case that the structure node
+ * defined on the left exists but doesn’t yet have a metadatum as named. Examples:
+ *
+ * <code>/@CurrentNoSorting ""= /*[0]@CurrentNoSorting</code> − copy the sort number form the first child to the top
+ * struct if it doesn’t have a sort number yet
+ *
+ * <code>/*[0]@TitleDocMain ""= /@TitleDocMain</code> − copy the main title from the top struct to its first child
+ * element if it doesn’t have a main tile yet
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 
 	/**
-	 * Sybolic operator representing the rule: ""=
+	 * Symbolic operator representing the rule: ""=
 	 */
 	protected static final String OPERATOR = "\"\"=";
 
@@ -48,7 +46,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 
 	/**
 	 * This method actually applies the rule to the given fileformat.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
 	 */
 	@Override
@@ -62,7 +60,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 
 	/**
 	 * Returns the maximum number of objects this rule can accept, always 1.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()
 	 */
 	@Override
@@ -72,7 +70,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 
 	/**
 	 * Returns the minimum number of objects this rule requires, always 1.
-	 * 
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
 	 */
 	@Override
@@ -81,9 +79,9 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	}
 
 	/**
-	 * Saves the source object path and creates a selector for it. The source
-	 * selector can be arbitrary DataSelector, which may be read-only.
-	 * 
+	 * Saves the source object path and creates a selector for it. The source selector can be arbitrary DataSelector,
+	 * which may be read-only.
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
 	 */
 	@Override
@@ -92,9 +90,9 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 	}
 
 	/**
-	 * Saves the destination object path and creates a selector for it. The
-	 * destination selector must be a writable MetadataSelector.
-	 * 
+	 * Saves the destination object path and creates a selector for it. The destination selector must be a writable
+	 * MetadataSelector.
+	 *
 	 * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
 	 */
 	@Override
@@ -104,7 +102,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 
 	/**
 	 * Returns a string that textually represents this copy rule.
-	 * 
+	 *
 	 * @return a string representation of this copy rule
 	 * @see java.lang.Object#toString()
 	 */

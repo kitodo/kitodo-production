@@ -11,6 +11,10 @@
 
 package org.goobi.production;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.jar.Manifest;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -18,9 +22,6 @@ import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.jar.Manifest;
 
 /**
  * Listener to set up Goobi versioning information from Manifest on application startup.
@@ -44,7 +45,7 @@ public class GoobiVersionListener implements ServletContextListener, HttpSession
 			} catch (IOException e) {
 				context.log(e.getMessage());
 			}
-		} 		
+		}
 	}
 
 	@Override

@@ -18,21 +18,25 @@ import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 
 public enum PluginType {
-	// TODO: Use upper case for constants; use „CATALOGUE“ instead of „Opac“ 
-	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation", IValidatorPlugin.class), 
- 	Command(4, "command", ICommandPlugin.class), Opac(5, "opac", null);
-	
+	// TODO: Use upper case for constants; use „CATALOGUE“ instead of „Opac“
+	Import(1, "import", IImportPlugin.class), Step(2, "step", IStepPlugin.class), Validation(3, "validation",
+			IValidatorPlugin.class), Command(4, "command", ICommandPlugin.class), Opac(5, "opac", null);
+
 	private int id;
 	private String name;
 	private Class<IPlugin> interfaz;
-	
+
 	@SuppressWarnings("unchecked")
 	private PluginType(int id, String name, Class<? extends IPlugin> inInterfaz) {
-		this.id =id;
+		this.id = id;
 		this.name = name;
 		this.interfaz = (Class<IPlugin>) inInterfaz;
 	}
-	
+
+	/**
+	 * @param pluginType add description
+	 * @return add description
+	 */
 	public static PluginType getTypeFromValue(String pluginType) {
 		if (pluginType != null) {
 			for (PluginType type : PluginType.values()) {
@@ -43,10 +47,14 @@ public enum PluginType {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * @param pluginType add description
+	 * @return add description
+	 */
 	public static PluginType getTypesFromId(int pluginType) {
 		for (PluginType type : PluginType.values()) {
-			if (type.getId()== pluginType) {
+			if (type.getId() == pluginType) {
 				return type;
 			}
 		}
@@ -56,7 +64,7 @@ public enum PluginType {
 	public int getId() {
 		return this.id;
 	}
-	
+
 	/**
 	 * @deprecated Using this function is discouraged. Use
 	 *             {@link org.goobi.production.plugin.UnspecificPlugin#typeOf(Class)}
@@ -70,5 +78,5 @@ public enum PluginType {
 	public String getName() {
 		return this.name;
 	}
-	
+
 }

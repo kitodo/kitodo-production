@@ -65,8 +65,10 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 	private int compareMetadata(Object o1, Object o2) {
 		Metadata s1 = (Metadata) o1;
 		Metadata s2 = (Metadata) o2;
-		String name1 = s1.getType().getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
-		String name2 = s2.getType().getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String name1 = s1.getType().getNameByLanguage(
+				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String name2 = s2.getType().getNameByLanguage(
+				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 		if (name1 == null) {
 			name1 = s1.getType().getName();
 		}
@@ -79,8 +81,10 @@ public class HelperComparator implements Comparator<Object>, Serializable {
 	private int compareDocStructTypen(Object o1, Object o2) {
 		DocStructType s1 = (DocStructType) o1;
 		DocStructType s2 = (DocStructType) o2;
-		String name1 = s1.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
-		String name2 = s2.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String name1 = s1.getNameByLanguage((String) Helper
+				.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String name2 = s2.getNameByLanguage((String) Helper
+				.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
 		if (name1 == null) {
 			name1 = "";
 		}

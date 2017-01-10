@@ -11,19 +11,18 @@
 
 package org.goobi.production.flow.helper;
 
-import java.util.List;
-
 import de.sub.goobi.helper.enums.StepStatus;
+
+import java.util.List;
 
 public class BatchDisplayHelper {
 
 	private List<BatchDisplayItem> stepList = null;
 	private boolean panelOpen = false;
-	
+
 	public BatchDisplayHelper() {
 	}
-	
-	
+
 	public boolean isPanelOpen() {
 		return this.panelOpen;
 	}
@@ -31,21 +30,20 @@ public class BatchDisplayHelper {
 	public void setPanelOpen(boolean panelOpen) {
 		this.panelOpen = panelOpen;
 	}
-	
-	
+
 	public List<BatchDisplayItem> getStepList() {
 		return this.stepList;
 	}
-	
+
 	public void setStepList(List<BatchDisplayItem> stepList) {
 		this.stepList = stepList;
 	}
-	
-	
-	/*
-	 * Auswertung des Fortschritts
-	 */
 
+	/**
+	 * Auswertung des Fortschritts
+	 *
+	 * @return add description
+	 */
 	public String getFortschritt() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -76,6 +74,11 @@ public class BatchDisplayHelper {
 		return df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
 	}
 
+	/**
+	 * Auswertung des Fortschritts
+	 *
+	 * @return add description
+	 */
 	public int getFortschritt1() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -96,6 +99,9 @@ public class BatchDisplayHelper {
 		return (offen * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getFortschritt2() {
 		int offen = 0;
 		int inBearbeitung = 0;
@@ -116,6 +122,9 @@ public class BatchDisplayHelper {
 		return (inBearbeitung * 100) / (offen + inBearbeitung + abgeschlossen);
 	}
 
+	/**
+	 * @return add description
+	 */
 	public int getFortschritt3() {
 		int offen = 0;
 		int inBearbeitung = 0;

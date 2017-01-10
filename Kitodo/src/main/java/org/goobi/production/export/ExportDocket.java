@@ -11,6 +11,9 @@
 
 package org.goobi.production.export;
 
+import de.sub.goobi.beans.Prozess;
+import de.sub.goobi.helper.exceptions.ExportFileException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,27 +32,24 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.goobi.production.IProcessDataExport;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.ExportFileException;
+import org.goobi.production.IProcessDataExport;
 
 /**
  * This class provides generating a run note based on the generated xml log
- * 
+ *
  * @author Steffen Hankiewicz
  */
 public class ExportDocket implements IProcessDataExport {
 
 	/**
-	 * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in the config-folder
-	 * 
-	 * @param process
-	 *            the process to export
-	 * @param os
-	 *            the OutputStream to write the contents to
-	 * @throws IOException
-	 * @throws ExportFileException
+	 * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in the
+	 * config-folder
+	 *
+	 * @param process the process to export
+	 * @param os the OutputStream to write the contents to
+	 * @throws IOException add description
+	 * @throws ExportFileException add description
 	 */
 	@Override
 	public void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException {
@@ -81,14 +81,18 @@ public class ExportDocket implements IProcessDataExport {
 		os.write(pdfBytes);
 	}
 
+	/**
+	 * @param processList add description
+	 * @param os add description
+	 * @param xsltfile add description
+	 * @throws IOException add description
+	 */
 	public void startExport(Iterable<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
 
 		ExportXmlLog exl = new ExportXmlLog();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		exl.startExport(processList, out, null);
 
-		
-		
 		// generate pdf file
 		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
 		StreamSource transformSource = new StreamSource(xsltfile);
@@ -120,6 +124,5 @@ public class ExportDocket implements IProcessDataExport {
 		}
 		return null;
 	}
-
 
 }
