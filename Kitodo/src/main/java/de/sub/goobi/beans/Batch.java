@@ -17,6 +17,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -80,6 +82,7 @@ public class Batch {
 	 * The field type holds the batch type.
 	 */
 	@Column(name = "type")
+	@Enumerated(EnumType.STRING)
 	private Type type;
 
 	/**

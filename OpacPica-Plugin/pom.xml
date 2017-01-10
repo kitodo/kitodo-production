@@ -31,6 +31,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <parent.basedir>${basedir}/../</parent.basedir>
+        <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
     </properties>
 
     <dependencies>
