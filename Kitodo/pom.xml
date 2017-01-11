@@ -672,7 +672,7 @@
                         <artifactId>formatter-maven-plugin</artifactId>
                         <version>0.5.2</version>
                         <configuration>
-                            <configFile>${basedir}/src/main/resources/code-formatter.xml</configFile>
+                            <configFile>${parent.basedir}/config/code-formatter.xml</configFile>
                             <directories>
                                 <directory>${project.build.sourceDirectory}/</directory>
                                 <!--<directory>${project.build.testSourceDirectory}/</directory>-->
@@ -683,31 +683,6 @@
                         <goals>
                             <goal>format</goal>
                         </goals>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>findbugs</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>3.0.4</version>
-                        <configuration>
-                            <effort>Max</effort>
-                            <failOnError>false</failOnError>
-                            <threshold>Low</threshold>
-                            <xmlOutput>true</xmlOutput>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
