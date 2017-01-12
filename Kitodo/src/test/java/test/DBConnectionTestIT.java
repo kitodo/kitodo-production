@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package integration;
+package test;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.persistence.ProzessDAO;

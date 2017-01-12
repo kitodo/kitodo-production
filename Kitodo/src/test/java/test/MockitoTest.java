@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package unit;
+package test;
 
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
