@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper;
+package org.kitodo.data.database.helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -48,13 +48,11 @@ import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
 
+import org.kitodo.data.database.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
-
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.helper.Util;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
 //TODO: split this class! here should be only parts of Helper which are needed for Beans and Persistence
