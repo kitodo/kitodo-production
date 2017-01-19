@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.kitodo.data</groupId>
+    <artifactId>kitodo-data-management</artifactId>
+    <version>3.0-SNAPSHOT</version>
+    <parent>
+        <artifactId>kitodo-production</artifactId>
+        <groupId>org.kitodo</groupId>
+        <version>3.0-SNAPSHOT</version>
+    </parent>
+    <organization>
+        <name>kitodo.org</name>
+        <url>http://kitodo.org</url>
+    </organization>
+    <name>Kitodo - Data Management</name>
+    <url>https://github.com/kitodo/kitodo-production</url>
+
+    <properties>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <parent.basedir>${basedir}/../</parent.basedir>
+        <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
+    </properties>
+
+    <dependencies>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>formatter</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>net.revelc.code</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
+                        <version>0.5.2</version>
+                        <configuration>
+                            <configFile>${parent.basedir}/config/code-formatter.xml</configFile>
+                            <directories>
+                                <directory>${project.build.sourceDirectory}/</directory>
+                                <!--<directory>${project.build.testSourceDirectory}/</directory>-->
+                            </directories>
+                            <encoding>UTF-8</encoding>
+                            <lineEnding>LF</lineEnding>
+                        </configuration>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

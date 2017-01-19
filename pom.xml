@@ -76,6 +76,7 @@
 
     <modules>
         <module>OpacPica-Plugin</module>
+        <module>Kitodo-DataManagement</module>
         <module>Kitodo</module>
     </modules>
 

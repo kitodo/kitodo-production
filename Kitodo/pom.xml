@@ -24,7 +24,7 @@
         <name>kitodo.org</name>
         <url>http://kitodo.org</url>
     </organization>
-    <name>Kitodo</name>
+    <name>Kitodo - Core</name>
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
@@ -41,6 +41,12 @@
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
             <version>7.0.68</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kitodo.data</groupId>
+            <artifactId>kitodo-data-management</artifactId>
+            <version>3.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -621,8 +627,7 @@
                 <configuration>
                     <webResources>
                         <resource>
-                            <!-- this is relative to the pom.xml directory -->
-                            <directory>${session.executionRootDirectory}/OpacPica-Plugin/target</directory>
+                            <directory>${parent.basedir}/OpacPica-Plugin/target</directory>
                             <targetPath>plugins/opac</targetPath>
                             <includes>
                                 <include>*.jar</include>
