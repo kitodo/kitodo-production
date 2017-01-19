@@ -51,10 +51,10 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Batch.Type;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;

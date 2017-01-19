@@ -11,8 +11,8 @@
 
 package org.goobi.webapi.dao;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 import org.apache.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcess;

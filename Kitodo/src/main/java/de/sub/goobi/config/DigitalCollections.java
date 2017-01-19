@@ -26,7 +26,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 
 public class DigitalCollections {
 

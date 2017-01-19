@@ -39,16 +39,16 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Schritt;
+import org.kitodo.data.database.beans.Vorlage;
+import org.kitodo.data.database.beans.Vorlageeigenschaft;
+import org.kitodo.data.database.beans.Werkstueck;
+import org.kitodo.data.database.beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 

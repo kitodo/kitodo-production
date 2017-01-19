@@ -27,13 +27,13 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 
 /**

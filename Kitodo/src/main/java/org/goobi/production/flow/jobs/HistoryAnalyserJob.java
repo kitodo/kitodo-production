@@ -23,12 +23,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.HistoryEvent;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.HistoryEvent;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.HistoryEventType;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.unigoettingen.sub.commons.util.file.FileUtils;

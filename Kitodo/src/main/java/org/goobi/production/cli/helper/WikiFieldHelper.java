@@ -16,7 +16,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 
 public class WikiFieldHelper {
 

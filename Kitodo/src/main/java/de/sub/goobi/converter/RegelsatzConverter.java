@@ -18,9 +18,9 @@ import javax.faces.convert.ConverterException;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.RegelsatzDAO;
+import org.kitodo.data.database.beans.Regelsatz;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.RegelsatzDAO;
 
 
 public class RegelsatzConverter implements Converter {

@@ -81,9 +81,9 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Vorlageeigenschaft;
+import org.kitodo.data.database.beans.Werkstueckeigenschaft;
 import org.kitodo.production.plugin.importer.massimport.UghUtils;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
 

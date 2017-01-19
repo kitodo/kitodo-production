@@ -31,14 +31,14 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.modul.ExtendedDataImpl;
 import de.sub.goobi.modul.ExtendedProzessImpl;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.persistence.ProzessDAO;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.exception.GoobiModuleException;
 import de.unigoettingen.goobi.module.api.message.Message;

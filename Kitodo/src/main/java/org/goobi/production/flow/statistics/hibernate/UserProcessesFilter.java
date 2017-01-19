@@ -17,7 +17,7 @@ import java.util.Observable;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 

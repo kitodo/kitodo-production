@@ -27,12 +27,12 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.Projekt;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Schritt;
+import org.kitodo.data.database.beans.Vorlageeigenschaft;
+import org.kitodo.data.database.beans.Werkstueckeigenschaft;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.StepStatus;
 

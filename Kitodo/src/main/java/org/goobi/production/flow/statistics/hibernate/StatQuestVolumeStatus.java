@@ -26,7 +26,7 @@ import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 
 /*****************************************************************************

@@ -13,7 +13,7 @@ package de.sub.goobi.helper.tasks;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 /**

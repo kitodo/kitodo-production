@@ -25,9 +25,9 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Projekt;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.enums.StepStatus;
 
 public class ProjectHelper {

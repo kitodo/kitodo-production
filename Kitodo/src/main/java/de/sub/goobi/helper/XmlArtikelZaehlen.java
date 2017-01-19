@@ -19,9 +19,9 @@ import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
 import ugh.dl.Person;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.ProzessDAO;
 
 public class XmlArtikelZaehlen {
 	private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);

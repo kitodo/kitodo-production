@@ -18,10 +18,10 @@ import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Vorlageeigenschaft;
+import org.kitodo.data.database.beans.Werkstueckeigenschaft;
 
 public class ImportObject {
 

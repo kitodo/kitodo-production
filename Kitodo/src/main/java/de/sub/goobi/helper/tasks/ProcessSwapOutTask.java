@@ -22,12 +22,12 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 

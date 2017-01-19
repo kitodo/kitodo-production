@@ -20,7 +20,7 @@ import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class UghHelper {

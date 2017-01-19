@@ -25,7 +25,7 @@ import org.goobi.api.display.enums.BindState;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 /**

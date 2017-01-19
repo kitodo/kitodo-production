@@ -26,8 +26,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.download.TiffHeader;
 

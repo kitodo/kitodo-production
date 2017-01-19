@@ -39,19 +39,19 @@ import org.hibernate.criterion.Restrictions;
 
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Batch.Type;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.persistence.BatchDAO;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.persistence.BatchDAO;
+import org.kitodo.data.database.persistence.ProzessDAO;
 
 public class BatchForm extends BasisForm {
 

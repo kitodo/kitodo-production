@@ -20,9 +20,9 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.Helper;
 
 public class PropertyParser {

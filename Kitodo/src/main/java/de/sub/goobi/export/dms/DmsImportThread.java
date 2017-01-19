@@ -18,7 +18,7 @@ import org.goobi.io.SafeFile;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 
 public class DmsImportThread extends Thread {

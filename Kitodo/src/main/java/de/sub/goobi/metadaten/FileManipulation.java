@@ -33,10 +33,10 @@ import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.io.SafeFile;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;

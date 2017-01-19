@@ -16,11 +16,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.LdapGruppe;
+import org.kitodo.data.database.beans.LdapGruppe;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.LdapGruppenDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.LdapGruppenDAO;
 
 public class LdapGruppenForm extends BasisForm {
 	private static final long serialVersionUID = -5644561256582235244L;

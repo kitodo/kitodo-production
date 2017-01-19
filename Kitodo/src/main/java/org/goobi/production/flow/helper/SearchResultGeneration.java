@@ -23,8 +23,8 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
 import de.sub.goobi.helper.Helper;
 
 public class SearchResultGeneration {

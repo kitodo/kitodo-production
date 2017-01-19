@@ -28,8 +28,8 @@ import org.goobi.webapi.beans.ProjectsRootNode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Projekt;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.helper.Helper;
 
 /**

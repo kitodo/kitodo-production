@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.sub.goobi.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
 
 public class ProcessProperty implements IProperty, Serializable {
 
@@ -282,7 +282,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.goobi.production.properties.IProperty#setProzesseigenschaft(de.sub.goobi.Beans.Prozesseigenschaft)
+	 * @see org.goobi.production.properties.IProperty#setProzesseigenschaft(org.kitodo.data.database.beans.Prozesseigenschaft)
 	 */
 
 	public void setProzesseigenschaft(Prozesseigenschaft prozesseigenschaft) {

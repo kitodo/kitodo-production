@@ -23,11 +23,11 @@ import org.apache.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.ProzessDAO;
 
 public class BatchProcessHelper {
 

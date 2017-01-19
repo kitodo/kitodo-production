@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.enums.StepReturnValue;
 
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Schritt;
 
 @PluginImplementation
 public abstract class AbstractStepPlugin implements IStepPlugin {

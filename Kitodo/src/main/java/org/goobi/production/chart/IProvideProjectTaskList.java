@@ -13,7 +13,7 @@ package org.goobi.production.chart;
 
 import java.util.List;
 
-import de.sub.goobi.beans.Projekt;
+import org.kitodo.data.database.beans.Projekt;
 
 
 

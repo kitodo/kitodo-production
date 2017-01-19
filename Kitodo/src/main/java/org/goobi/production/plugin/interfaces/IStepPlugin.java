@@ -16,7 +16,7 @@ import java.util.HashMap;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.StepReturnValue;
 
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.persistence.apache.StepObject;
 
 public interface IStepPlugin extends IPlugin {

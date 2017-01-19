@@ -29,14 +29,14 @@ import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 
-import de.sub.goobi.beans.Docket;
-import de.sub.goobi.beans.Regelsatz;
+import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Regelsatz;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.MetadataFormat;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.DocketDAO;
-import de.sub.goobi.persistence.RegelsatzDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.DocketDAO;
+import org.kitodo.data.database.persistence.RegelsatzDAO;
 
 /**
  * @author Wulf Riebensahm

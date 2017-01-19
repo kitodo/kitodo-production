@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 
-import de.sub.goobi.beans.Projekt;
+import org.kitodo.data.database.beans.Projekt;
 
 
 

@@ -24,13 +24,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.persistence.SchrittDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.BenutzerDAO;
+import org.kitodo.data.database.persistence.ProzessDAO;
+import org.kitodo.data.database.persistence.SchrittDAO;
 
 public class StatistikForm {
 	private static final Logger myLogger = Logger.getLogger(StatistikForm.class);

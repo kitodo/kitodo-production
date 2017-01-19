@@ -29,7 +29,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.encryption.DesEncrypter;
+import org.kitodo.data.encryption.DesEncrypter;
 
 import org.quartz.SchedulerException;
 
@@ -40,11 +40,11 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.Benutzergruppe;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Regelsatz;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.FileUtils;
@@ -53,14 +53,14 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.encryption.MD5;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.persistence.RegelsatzDAO;
-import de.sub.goobi.persistence.SchrittDAO;
+import org.kitodo.data.database.persistence.BenutzerDAO;
+import org.kitodo.data.database.persistence.BenutzergruppenDAO;
+import org.kitodo.data.database.persistence.ProzessDAO;
+import org.kitodo.data.database.persistence.RegelsatzDAO;
+import org.kitodo.data.database.persistence.SchrittDAO;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;

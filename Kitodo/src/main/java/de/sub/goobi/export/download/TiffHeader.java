@@ -20,9 +20,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Werkstueck;
+import org.kitodo.data.database.beans.Werkstueckeigenschaft;
 
 
 /**

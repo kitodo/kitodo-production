@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Regelsatz;
+import org.kitodo.data.database.beans.Regelsatz;
 
 public class ProcessManager {
 

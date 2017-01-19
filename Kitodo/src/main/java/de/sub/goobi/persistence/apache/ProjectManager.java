@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.ProjectFileGroup;
 
 public class ProjectManager {
 	private static final Logger logger = Logger.getLogger(MySQLHelper.class);

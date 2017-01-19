@@ -45,8 +45,8 @@ import edu.sysu.virgoftp.ftp.encrypt.MD4;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.LdapGruppe;
+import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.LdapGruppe;
 import de.sub.goobi.config.ConfigMain;
 
 /**

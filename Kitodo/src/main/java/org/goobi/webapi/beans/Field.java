@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
 
-import de.sub.goobi.beans.Projekt;
+import org.kitodo.data.database.beans.Projekt;
 import de.sub.goobi.config.ConfigProjects;
 
 @XmlType(propOrder = { "required", "from", "option", "ughbinding", "docstruct" })

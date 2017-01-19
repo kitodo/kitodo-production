@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.enums.StepStatus;
 
 public class BatchDisplayItem implements Comparable<BatchDisplayItem>{

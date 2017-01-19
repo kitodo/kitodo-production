@@ -23,8 +23,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Regelsatz;
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Regelsatz;
 
 public class MySQLHelper {
 

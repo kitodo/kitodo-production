@@ -11,8 +11,8 @@
 
 package org.goobi.production.plugin.interfaces;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.persistence.apache.StepObject;
 
 public interface IValidatorPlugin extends IPlugin {

@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.commons.dbutils.ResultSetHandler;
 
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Regelsatz;
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Regelsatz;
 
 public class MySQLUtils {
 

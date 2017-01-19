@@ -295,7 +295,7 @@ public class CataloguePlugin extends UnspecificPlugin {
 	 * 
 	 * @param preferences
 	 *            UGH preferences
-	 * @see de.sub.goobi.beans.Regelsatz#getPreferences()
+	 * @see org.kitodo.data.database.beans.Regelsatz#getPreferences()
 	 */
 	public void setPreferences(Prefs preferences) {
 		invokeQuietly(plugin, setPreferences, preferences, null);

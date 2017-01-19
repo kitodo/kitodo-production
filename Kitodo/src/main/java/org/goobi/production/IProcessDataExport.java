@@ -14,7 +14,7 @@ package org.goobi.production;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 
 public interface IProcessDataExport {
 	

@@ -14,9 +14,9 @@ package de.sub.goobi.helper;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.persistence.HibernateUtilOld;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Schritt;
+import org.kitodo.data.database.persistence.HibernateUtilOld;
 
 public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);

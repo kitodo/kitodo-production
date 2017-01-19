@@ -37,18 +37,18 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Projekt;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.BatchDAO;
+import org.kitodo.data.database.persistence.BatchDAO;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);

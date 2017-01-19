@@ -11,11 +11,12 @@
 
 package org.goobi.production.search.api;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Prozess;
 
 
 /**
  * This interface can be used to implement a search index engine for goobi.
+ * TODO: remove it
  * @author Robert Sehr
  */
 @Deprecated

@@ -17,11 +17,11 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import de.sub.goobi.beans.Projekt;
+import org.kitodo.data.database.beans.Projekt;
 
 /**
  * The ProjectsRootNode class is necessary to control the XML root element’s
- * name to be ‘projects’. Simply annotating the de.sub.goobi.beans.Projekt class
+ * name to be ‘projects’. Simply annotating the org.kitodo.data.database.beans.Projekt class
  * with @XmlRootElement(name = "project") results in a wrapping element named
  * <projekts> who’s name is still derived from the classes’ name, not from the
  * ‘name’ property set in the annotation and cannot be changed otherwise.

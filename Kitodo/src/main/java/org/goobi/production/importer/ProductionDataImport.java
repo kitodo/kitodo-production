@@ -35,27 +35,27 @@ import org.hibernate.criterion.Restrictions;
 
 import com.thoughtworks.xstream.XStream;
 
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.HistoryEvent;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Benutzergruppe;
+import org.kitodo.data.database.beans.HistoryEvent;
+import org.kitodo.data.database.beans.Projekt;
+import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Prozesseigenschaft;
+import org.kitodo.data.database.beans.Regelsatz;
+import org.kitodo.data.database.beans.Schritt;
+import org.kitodo.data.database.beans.Vorlage;
+import org.kitodo.data.database.beans.Vorlageeigenschaft;
+import org.kitodo.data.database.beans.Werkstueck;
+import org.kitodo.data.database.beans.Werkstueckeigenschaft;
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.enums.HistoryEventType;
-import de.sub.goobi.helper.enums.PropertyType;
+import org.kitodo.data.database.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.PropertyType;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
-import de.sub.goobi.persistence.HibernateUtilOld;
-import de.sub.goobi.persistence.ProjektDAO;
-import de.sub.goobi.persistence.RegelsatzDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.BenutzergruppenDAO;
+import org.kitodo.data.database.persistence.HibernateUtilOld;
+import org.kitodo.data.database.persistence.ProjektDAO;
+import org.kitodo.data.database.persistence.RegelsatzDAO;
 
 /**
  * 

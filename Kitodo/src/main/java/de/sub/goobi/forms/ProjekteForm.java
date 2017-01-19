@@ -53,14 +53,14 @@ import org.joda.time.Years;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Projekt;
+import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProjektDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.ProjektDAO;
 
 public class ProjekteForm extends BasisForm {
 	private static final long serialVersionUID = 6735912903249358786L;

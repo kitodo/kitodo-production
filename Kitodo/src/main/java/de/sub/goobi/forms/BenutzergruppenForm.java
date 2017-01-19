@@ -18,13 +18,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
+import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.Benutzergruppe;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BenutzergruppenDAO;
-import de.sub.goobi.persistence.SimpleDAO;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.BenutzergruppenDAO;
+import org.kitodo.data.database.persistence.SimpleDAO;
 
 public class BenutzergruppenForm extends BasisForm {
 	private static final long serialVersionUID = 8051160917458068675L;
