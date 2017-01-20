@@ -18,40 +18,61 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class DocketDAO extends BaseDAO {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1913256950316879121L;
 
-	public Docket save(Docket t) throws DAOException {
-		storeObj(t);
-		return (Docket) retrieveObj(Docket.class, t.getId());
-	}
-
-	public Docket get(Integer id) throws DAOException {
-		Docket rueckgabe = (Docket) retrieveObj(Docket.class, id);
-		if (rueckgabe == null) {
+	/**
+	 * Find docket object by id.
+	 *
+	 * @param id of searched object
+	 * @return result
+	 * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+	 */
+	public Docket find(Integer id) throws DAOException {
+		Docket result = (Docket) retrieveObject(Docket.class, id);
+		if (result == null) {
 			throw new DAOException("Object can not be found in database");
 		}
-		return rueckgabe;
+		return result;
 	}
 
-	public void remove(Docket t) throws DAOException {
-		if (t.getId() != null) {
-			removeObj(t);
+	/**
+	 * The function findAll() retrieves all docket from the database.
+	 *
+	 * @return all persisted users
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Docket> findAll() {
+		return retrieveAllObjects(Docket.class);
+	}
+
+	public Docket save(Docket docket) throws DAOException {
+		storeObject(docket);
+		return (Docket) retrieveObject(Docket.class, docket.getId());
+	}
+
+	/**
+	 * The function remove() removes a docket from database.
+	 *
+	 * @param docket to be removed
+	 * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
+	 * 				failure.
+	 */
+	public void remove(Docket docket) throws DAOException {
+		if (docket.getId() != null) {
+			removeObject(docket);
 		}
 	}
 
 	public void remove(Integer id) throws DAOException {
-		removeObj(Docket.class, id);
+		removeObject(Docket.class, id);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<Docket> search(String query) throws DAOException {
-		return retrieveObjs(query);
+		return retrieveObjects(query);
 	}
 
 	public Long count(String query) throws DAOException {
-		return retrieveAnzahl(query);
+		return retrieveAmount(query);
 	}
 }
