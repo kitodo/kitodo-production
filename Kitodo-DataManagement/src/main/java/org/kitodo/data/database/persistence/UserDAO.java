@@ -28,16 +28,26 @@ public class UserDAO extends BaseDAO {
 	 * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
 	 */
 	public User find(Integer id) throws DAOException {
-		User result = (User) retrieveObj(User.class, id);
+		User result = (User) retrieveObject(User.class, id);
 		if (result == null) {
 			throw new DAOException("Object can not be found in database");
 		}
 		return result;
 	}
 
+	/**
+	 * The function findAll() retrieves all users from the database.
+	 *
+	 * @return all persisted users
+	 */
+	@SuppressWarnings("unchecked")
+	public List<User> findAll() {
+		return retrieveAllObjects(User.class);
+	}
+
 	public User save(User user) throws DAOException {
 		storeObject(user);
-		return (User) retrieveObj(User.class, user.getId());
+		return (User) retrieveObject(User.class, user.getId());
 	}
 
 	/**

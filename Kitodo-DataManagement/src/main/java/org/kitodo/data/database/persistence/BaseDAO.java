@@ -19,6 +19,7 @@ package org.kitodo.data.database.persistence;
 import java.io.Serializable;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -69,7 +70,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @throws DAOException add description
 	 */
 	@SuppressWarnings("rawtypes")
-	protected static void removeObj(Class cls, Integer id) throws DAOException {
+	protected static void removeObject(Class cls, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
 			// first load the object with the current session.
@@ -96,7 +97,7 @@ public abstract class BaseDAO implements Serializable {
 	 * @throws DAOException add description
 	 */
 	@SuppressWarnings({ "rawtypes" })
-	protected static Object retrieveObj(Class cls, Integer id) throws DAOException {
+	protected static Object retrieveObject(Class cls, Integer id) throws DAOException {
 		try {
 			Session session = Helper.getHibernateSession();
 			if (session == null) {
@@ -188,6 +189,12 @@ public abstract class BaseDAO implements Serializable {
 		} catch (HibernateException he) {
 			throw new DAOException(he);
 		}
+	}
+
+	protected List retrieveAllObjects(Class cls) {
+		Session session = Helper.getHibernateSession();
+		Criteria criteria = session.createCriteria(cls);
+		return criteria.list();
 	}
 
 	/**
