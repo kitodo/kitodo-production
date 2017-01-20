@@ -26,12 +26,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.kitodo.data.database.beans.property.IGoobiProperty;
+import org.kitodo.data.database.beans.property.GoobiPropertyInterface;
 import org.kitodo.data.database.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "workpieceProperty")
-public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
+public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
 	private static final long serialVersionUID = -88407008893258729L;
 
 	@Id
@@ -40,19 +40,19 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	private Integer id;
 
 	@Column(name = "title")
-	private String titel;
+	private String title;
 
 	@Column(name = "value", columnDefinition = "longtext")
-	private String wert;
+	private String value;
 
 	@Column(name = "isObligatory")
-	private Boolean istObligatorisch;
+	private Boolean isObligatory;
 
 	@Column(name = "dataType")
-	private Integer datentyp;
+	private Integer dataType;
 
 	@Column(name = "choice")
-	private String auswahl;
+	private String choice;
 
 	@Column(name = "creationDate")
 	private Date creationDate;
@@ -62,25 +62,18 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 
 	@ManyToOne
 	@JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_workpieceProperty_workpiece_id"))
-	private Werkstueck werkstueck;
-
-	public Werkstueckeigenschaft() {
-		this.istObligatorisch = false;
-		this.datentyp = PropertyType.String.getId();
-		this.creationDate = new Date();
-	}
+	private Werkstueck workpiece;
 
 	@Transient
 	private List<String> valueList;
 
-	@Override
-	public String getAuswahl() {
-		return this.auswahl;
-	}
-
-	@Override
-	public void setAuswahl(String auswahl) {
-		this.auswahl = auswahl;
+	/**
+	 * Constructor.
+	 */
+	public WorkpieceProperty() {
+		this.isObligatory = false;
+		this.dataType = PropertyType.String.getId();
+		this.creationDate = new Date();
 	}
 
 	@Override
@@ -94,41 +87,46 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 	}
 
 	@Override
-	public Boolean isIstObligatorisch() {
-		if (this.istObligatorisch == null) {
-			this.istObligatorisch = false;
+	public String getTitle() {
+		return this.title;
+	}
+
+	@Override
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Override
+	public String getValue() {
+		return this.value;
+	}
+
+	@Override
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	@Override
+	public String getChoice() {
+		return this.choice;
+	}
+
+	@Override
+	public void setChoice(String choice) {
+		this.choice = choice;
+	}
+
+	@Override
+	public Boolean isObligatory() {
+		if (this.isObligatory == null) {
+			this.isObligatory = false;
 		}
-		return this.istObligatorisch;
+		return this.isObligatory;
 	}
 
 	@Override
-	public void setIstObligatorisch(Boolean istObligatorisch) {
-		this.istObligatorisch = istObligatorisch;
-	}
-
-	@Override
-	public String getTitel() {
-		return this.titel;
-	}
-
-	@Override
-	public void setTitel(String titel) {
-		this.titel = titel;
-	}
-
-	@Override
-	public String getWert() {
-		return this.wert;
-	}
-
-	@Override
-	public void setWert(String wert) {
-		this.wert = wert;
-	}
-
-	@Override
-	public void setCreationDate(Date creation) {
-		this.creationDate = creation;
+	public void setIsObligatory(Boolean isObligatory) {
+		this.isObligatory = isObligatory;
 	}
 
 	@Override
@@ -136,51 +134,53 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		return this.creationDate;
 	}
 
-	/**
-	 * getter for datentyp set to private for hibernate
-	 * 
-	 * for use in program use getType instead
-	 * 
-	 * @return datentyp as integer
-	 */
-	@SuppressWarnings("unused")
-	private Integer getDatentyp() {
-		return this.datentyp;
+	@Override
+	public void setCreationDate(Date creation) {
+		this.creationDate = creation;
 	}
 
 	/**
-	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
+	 * Getter for data type set to private for hibernate, for use in program use getType instead.
 	 * 
-	 * @param datentyp
-	 *            as Integer
+	 * @return dataType as integer
 	 */
 	@SuppressWarnings("unused")
-	private void setDatentyp(Integer datentyp) {
-		this.datentyp = datentyp;
+	private Integer getDataType() {
+		return this.dataType;
 	}
 
 	/**
-	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
+	 * Set data type to defined integer. only for internal use through hibernate, for changing data type
+	 * use setType instead.
+	 *
+	 * @param dataType as Integer
+	 */
+	@SuppressWarnings("unused")
+	private void setDataType(Integer dataType) {
+		this.dataType = dataType;
+	}
+
+	/**
+	 * Set data type to specific value from {@link PropertyType}.
+	 *
+	 * @param inputType as {@link PropertyType}
 	 */
 	@Override
-	public void setType(PropertyType inType) {
-		this.datentyp = inType.getId();
+	public void setType(PropertyType inputType) {
+		this.dataType = inputType.getId();
 	}
 
 	/**
-	 * get datentyp as {@link PropertyType}
-	 * 
-	 * @return current datentyp
+	 * Get data type as {@link PropertyType}.
+	 *
+	 * @return current data type
 	 */
 	@Override
 	public PropertyType getType() {
-		if (this.datentyp == null) {
-			this.datentyp = PropertyType.String.getId();
+		if (this.dataType == null) {
+			this.dataType = PropertyType.String.getId();
 		}
-		return PropertyType.getById(this.datentyp);
+		return PropertyType.getById(this.dataType);
 	}
 
 	public List<String> getValueList() {
@@ -194,16 +194,6 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		this.valueList = valueList;
 	}
 
-	public Werkstueck getWerkstueck() {
-		return this.werkstueck;
-	}
-
-	public void setWerkstueck(Werkstueck werkstueck) {
-		this.werkstueck = werkstueck;
-	}
-
-	
-	
 	@Override
 	public Integer getContainer() {
 		if (this.container == null) {
@@ -219,15 +209,12 @@ public class Werkstueckeigenschaft implements Serializable, IGoobiProperty {
 		}
 		this.container = order;
 	}
-	
-	
-	@Override
-	public String getNormalizedTitle() {
-		return this.titel.replace(" ", "_").trim();
+
+	public Werkstueck getWorkpiece() {
+		return this.workpiece;
 	}
 
-	@Override
-	public String getNormalizedValue() {
-		return this.wert.replace(" ", "_").trim();
+	public void setWorkpiece(Werkstueck workpiece) {
+		this.workpiece = workpiece;
 	}
 }
