@@ -1,0 +1,144 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+package org.kitodo.data.database.beans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hibernate.Hibernate;
+
+/**
+ * User groups owning different access rights, represented by integer values.
+ *
+ * <p>1: Administration - can do anything
+ * 2: Projectmanagement - may do a lot (but not user management, no user switch, no administrative form)
+ * 3: User and process (basically like 4 but can be used for setting additional boundaries later, if so desired)
+ * 4: User only: can see current steps</p>
+ */
+@Entity
+@Table(name = "userGroup")
+public class UserGroup implements Serializable, Comparable<UserGroup> {
+	private static final long serialVersionUID = -5924845694417474352L;
+
+	@Id
+	@Column(name = "id")
+	@GeneratedValue
+	private Integer id;
+
+	@Column(name = "title")
+	private String title;
+
+	@Column(name = "permission")
+	private Integer permission;
+
+	@ManyToMany(mappedBy = "userGroups")
+	private List<User> users;
+
+	@ManyToMany(mappedBy = "userGroups")
+	private List<Schritt> steps;
+
+	@Transient
+	private boolean panelShown = false;
+
+	public UserGroup() {
+		this.steps = new ArrayList<>();
+		this.users = new ArrayList<>();
+	}
+
+	public Integer getId() {
+		return this.id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getTitle() {
+		if (this.title == null) {
+			return "";
+		} else {
+			return this.title;
+		}
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public Integer getPermission() {
+		if (this.permission == null) {
+			this.permission = 4;
+		} else if (this.permission == 3) {
+			this.permission = 4;
+		}
+		return this.permission;
+	}
+
+	public void setPermission(int permission) {
+		this.permission = permission;
+	}
+
+	public List<User> getUsers() {
+		return this.users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
+	public List<Schritt> getSteps() {
+		return this.steps;
+	}
+
+	public void setSteps(List<Schritt> steps) {
+		this.steps = steps;
+	}
+
+	public boolean isPanelShown() {
+		return this.panelShown;
+	}
+
+	public void setPanelShown(boolean panelShown) {
+		this.panelShown = panelShown;
+	}
+
+	@Override
+	public int compareTo(UserGroup o) {
+		return this.getTitle().compareTo(o.getTitle());
+	}
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof UserGroup)) {
+			return false;
+		}
+		UserGroup other = (UserGroup) obj;
+		return this.getTitle().equals(other.getTitle());
+	}
+
+	@Override
+	public int hashCode() {
+		return this.getTitle().hashCode();
+	}
+}
