@@ -39,7 +39,7 @@ public class ProjectFileGroup implements Serializable {
 	private String path;
 
 	@Column(name = "mimeType")
-	private String mimetype; // optional
+	private String mimeType; // optional
 
 	@Column(name = "suffix")
 	private String suffix; // optional
@@ -53,14 +53,6 @@ public class ProjectFileGroup implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
 	private Projekt project;
-
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##				Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
 
 	public Integer getId() {
 		return this.id;
@@ -94,12 +86,12 @@ public class ProjectFileGroup implements Serializable {
 		this.path = path;
 	}
 
-	public String getMimetype() {
-		return this.mimetype;
+	public String getMimeType() {
+		return this.mimeType;
 	}
 
-	public void setMimetype(String mimetype) {
-		this.mimetype = mimetype;
+	public void setMimeType(String mimeType) {
+		this.mimeType = mimeType;
 	}
 
 	public String getSuffix() {
