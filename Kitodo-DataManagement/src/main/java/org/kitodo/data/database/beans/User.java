@@ -85,7 +85,7 @@ public class User implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
-	private LdapGruppe ldapGroup;
+	private LdapGroup ldapGroup;
 
 	@ManyToMany
 	@JoinTable(name = "user_x_userGroup",
@@ -99,20 +99,20 @@ public class User implements Serializable {
 							name = "userGroup_id",
 							foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")
 					) })
-	private List<Benutzergruppe> userGroups;
+	private List<UserGroup> userGroups;
 
 	@ManyToMany(mappedBy = "benutzer")
-	private List<Schritt> steps;
+	private List<Task> tasks;
 
 	@OneToMany(mappedBy = "bearbeitungsbenutzer", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Schritt> processingSteps;
+	private List<Task> processingTasks;
 
 	@ManyToMany(mappedBy = "benutzer")
-	private List<Projekt> projects;
+	private List<Project> projects;
 
 	@OneToMany(mappedBy = "benutzer", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
-	private List<Benutzereigenschaft> properties;
+	private List<UserProperty> properties;
 
 	/**
 	 * Constructor for User Entity.
@@ -120,7 +120,7 @@ public class User implements Serializable {
 	public User() {
 		this.userGroups = new ArrayList<>();
 		this.projects = new ArrayList<>();
-		this.steps = new ArrayList<>();
+		this.tasks = new ArrayList<>();
 		this.properties = new ArrayList<>();
 	}
 
@@ -214,43 +214,43 @@ public class User implements Serializable {
 		this.withMassDownload = withMassDownload;
 	}
 
-	public LdapGruppe getLdapGroup() {
+	public LdapGroup getLdapGroup() {
 		return this.ldapGroup;
 	}
 
-	public void setLdapGroup(LdapGruppe ldapGroup) {
+	public void setLdapGroup(LdapGroup ldapGroup) {
 		this.ldapGroup = ldapGroup;
 	}
 
-	public List<Benutzergruppe> getUserGroups() {
+	public List<UserGroup> getUserGroups() {
 		return this.userGroups;
 	}
 
-	public void setUserGroups(List<Benutzergruppe> userGroups) {
+	public void setUserGroups(List<UserGroup> userGroups) {
 		this.userGroups = userGroups;
 	}
 
-	public List<Schritt> getSteps() {
-		return this.steps;
+	public List<Task> getTasks() {
+		return this.tasks;
 	}
 
-	public void setSteps(List<Schritt> steps) {
-		this.steps = steps;
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
 	}
 
-	public List<Schritt> getProcessingSteps() {
-		return this.processingSteps;
+	public List<Task> getProcessingTasks() {
+		return this.processingTasks;
 	}
 
-	public void setProcessingSteps(List<Schritt> processingSteps) {
-		this.processingSteps = processingSteps;
+	public void setProcessingTasks(List<Task> processingTask) {
+		this.processingTasks = processingTasks;
 	}
 
-	public List<Projekt> getProjects() {
+	public List<Project> getProjects() {
 		return this.projects;
 	}
 
-	public void setProjects(List<Projekt> projects) {
+	public void setProjects(List<Project> projects) {
 		this.projects = projects;
 	}
 
@@ -294,11 +294,11 @@ public class User implements Serializable {
 		this.css = css;
 	}
 
-	public List<Benutzereigenschaft> getProperties() {
+	public List<UserProperty> getProperties() {
 		return this.properties;
 	}
 
-	public void setProperties(List<Benutzereigenschaft> properties) {
+	public void setProperties(List<UserProperty> properties) {
 		this.properties = properties;
 	}
 
