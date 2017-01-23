@@ -16,7 +16,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Process;
 
 public class WikiFieldHelper {
 
@@ -32,10 +32,10 @@ public class WikiFieldHelper {
 
 	private static final String BREAK = "<br/>";
 
-	public static String getWikiMessage(Prozess p, String currentWikifieldcontent, String type, String value) {
+	public static String getWikiMessage(Process p, String currentWikiFieldContent, String type, String value) {
 		String message = "";
-		if (currentWikifieldcontent != null && currentWikifieldcontent.length() > 0) {
-			message += currentWikifieldcontent;
+		if (currentWikiFieldContent != null && currentWikiFieldContent.length() > 0) {
+			message += currentWikiFieldContent;
 			message += BREAK;
 		}
 
@@ -52,22 +52,22 @@ public class WikiFieldHelper {
 		}  
 
 		String timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date());
-		String processname = "";
+		String processName = "";
 		if (p != null) {
-			processname = "processname: " + p.getTitel() + ", message: ";
+			processName = "processname: " + p.getTitle() + ", message: ";
 		}
 		if(logger.isInfoEnabled()){
-			logger.info(timestamp + " " + processname + " " + value );
+			logger.info(timestamp + " " + processName + " " + value );
 		}
 		message = message + timestamp + ": " + value + ENDTAG;
 		return message;
 	}
 	
 	
-	public static String getWikiMessage(String currentWikifieldcontent, String type, String value) {
+	public static String getWikiMessage(String currentWikiFieldContent, String type, String value) {
 		String message = "";
-		if (currentWikifieldcontent != null && currentWikifieldcontent.length() > 0) {
-			message += currentWikifieldcontent;
+		if (currentWikiFieldContent != null && currentWikiFieldContent.length() > 0) {
+			message += currentWikiFieldContent;
 			message += BREAK;
 		}
 

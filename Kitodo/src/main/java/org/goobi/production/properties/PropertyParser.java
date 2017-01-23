@@ -11,6 +11,8 @@
 
 package org.goobi.production.properties;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +22,8 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 
-import org.kitodo.data.database.beans.Prozess;
-import org.kitodo.data.database.beans.Prozesseigenschaft;
-import org.kitodo.data.database.beans.Schritt;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 
 public class PropertyParser {
 	private static final Logger logger = Logger.getLogger(PropertyParser.class);
@@ -34,16 +34,14 @@ public class PropertyParser {
 //		System.out.println("finish");
 	}
 
-	
-
-	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
-		Hibernate.initialize(mySchritt.getProzess());
-		Hibernate.initialize(mySchritt.getProzess().getProjekt());
-		String stepTitle = mySchritt.getTitel();
-		String projectTitle = mySchritt.getProzess().getProjekt().getTitel();
+	public static ArrayList<ProcessProperty> getPropertiesForStep(Task mySchritt) {
+		Hibernate.initialize(mySchritt.getProcess());
+		Hibernate.initialize(mySchritt.getProcess().getProject());
+		String stepTitle = mySchritt.getTitle();
+		String projectTitle = mySchritt.getProcess().getProject().getTitle();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 
-		if (mySchritt.getProzess().isIstTemplate()) {
+		if (mySchritt.getProcess().isTemplate()) {
 			return properties;
 		}
 
@@ -124,24 +122,24 @@ public class PropertyParser {
 		// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
 		// 'eigenschaften'
 		ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
-		List<Prozesseigenschaft> plist = mySchritt.getProzess().getEigenschaftenList();
-		for (Prozesseigenschaft pe : plist) {
+		List<org.kitodo.data.database.beans.ProcessProperty> plist = mySchritt.getProcess().getProperties();
+		for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
 
 			for (ProcessProperty pp : listClone) {
 				// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
-				if (pe.getTitel() != null) {
+				if (pe.getTitle() != null) {
 
-					if (pe.getTitel().equals(pp.getName())) {
+					if (pe.getTitle().equals(pp.getName())) {
 						// pp has no pe assigned
 						if (pp.getProzesseigenschaft() == null) {
 							pp.setProzesseigenschaft(pe);
-							pp.setValue(pe.getWert());
+							pp.setValue(pe.getValue());
 							pp.setContainer(pe.getContainer());
 						} else {
 							// clone pp
 							ProcessProperty pnew = pp.getClone(pe.getContainer());
 							pnew.setProzesseigenschaft(pe);
-							pnew.setValue(pe.getWert());
+							pnew.setValue(pe.getValue());
 							pnew.setContainer(pe.getContainer());
 							properties.add(pnew);
 						}
@@ -152,18 +150,18 @@ public class PropertyParser {
 		return properties;
 	}
 
-	public static ArrayList<ProcessProperty> getPropertiesForProcess(Prozess process) {
-		Hibernate.initialize(process.getProjekt());
-		String projectTitle = process.getProjekt().getTitel();
+	public static ArrayList<ProcessProperty> getPropertiesForProcess(Process process) {
+		Hibernate.initialize(process.getProject());
+		String projectTitle = process.getProject().getTitle();
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
-		if (process.isIstTemplate()) {
-			List<Prozesseigenschaft> plist = process.getEigenschaftenList();
-			for (Prozesseigenschaft pe : plist) {
+		if (process.isTemplate()) {
+			List<org.kitodo.data.database.beans.ProcessProperty> plist = process.getProperties();
+			for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
 				ProcessProperty pp = new ProcessProperty();
-				pp.setName(pe.getTitel());
+				pp.setName(pe.getTitle());
 				pp.setProzesseigenschaft(pe);
 				pp.setType(Type.TEXT);
-				pp.setValue(pe.getWert());
+				pp.setValue(pe.getValue());
 				pp.setContainer(pe.getContainer());
 				properties.add(pp);
 			}
@@ -216,27 +214,27 @@ public class PropertyParser {
 				properties.add(pp);
 
 			}
-		}// add existing 'eigenschaften' to properties from config, so we have all properties from config and some of them with already existing
-			// 'eigenschaften'
+		} // add existing 'eigenschaften' to properties from config, so we have all properties from config and some
+		// of them with already existing 'eigenschaften'
 		List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
-		List<Prozesseigenschaft> plist = process.getEigenschaftenList();
-		for (Prozesseigenschaft pe : plist) {
+		List<org.kitodo.data.database.beans.ProcessProperty> plist = process.getProperties();
+		for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
 
 			// TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
-			if (pe.getTitel() != null) {
+			if (pe.getTitle() != null) {
 
 				for (ProcessProperty pp : listClone) {
-					if (pe.getTitel().equals(pp.getName())) {
+					if (pe.getTitle().equals(pp.getName())) {
 						// pp has no pe assigned
 						if (pp.getProzesseigenschaft() == null) {
 							pp.setProzesseigenschaft(pe);
-							pp.setValue(pe.getWert());
+							pp.setValue(pe.getValue());
 							pp.setContainer(pe.getContainer());
 						} else {
 							// clone pp
 							ProcessProperty pnew = pp.getClone(pe.getContainer());
 							pnew.setProzesseigenschaft(pe);
-							pnew.setValue(pe.getWert());
+							pnew.setValue(pe.getValue());
 							pnew.setContainer(pe.getContainer());
 							if(logger.isDebugEnabled()){
 								logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());
@@ -257,11 +255,11 @@ public class PropertyParser {
 		}
 		// create ProcessProperties to remaining 'eigenschaften'
 		if (plist.size() > 0) {
-			for (Prozesseigenschaft pe : plist) {
+			for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
 				ProcessProperty pp = new ProcessProperty();
 				pp.setProzesseigenschaft(pe);
-				pp.setName(pe.getTitel());
-				pp.setValue(pe.getWert());
+				pp.setName(pe.getTitle());
+				pp.setValue(pe.getValue());
 				pp.setContainer(pe.getContainer());
 				pp.setType(Type.TEXT);
 				if(logger.isDebugEnabled()){
@@ -277,16 +275,7 @@ public class PropertyParser {
 
 		return properties;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	private void readConfigAsSample() {
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 

@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import org.kitodo.data.database.beans.Regelsatz;
+import org.kitodo.data.database.beans.Ruleset;
 
 public class ProcessManager {
 
@@ -57,7 +57,7 @@ public class ProcessManager {
 		}
 	}
 
-	public static Regelsatz getRuleset(int rulesetId) {
+	public static Ruleset getRuleset(int rulesetId) {
 		try {
 			return MySQLHelper.getRulesetForId(rulesetId);
 		} catch (SQLException e) {

@@ -11,25 +11,43 @@
 
 package de.sub.goobi.forms;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.BeanHelper;
+import de.sub.goobi.helper.FileUtils;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.XmlArtikelZaehlen;
+import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
+import de.sub.goobi.helper.encryption.MD5;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.flow.jobs.JobManager;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.services.*;
 
 import org.quartz.SchedulerException;
 
@@ -40,27 +58,6 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.Benutzergruppe;
-import org.kitodo.data.database.beans.Prozess;
-import org.kitodo.data.database.beans.Regelsatz;
-import org.kitodo.data.database.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.FileUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import de.sub.goobi.helper.encryption.MD5;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import org.kitodo.data.database.persistence.BenutzerDAO;
-import org.kitodo.data.database.persistence.BenutzergruppenDAO;
-import org.kitodo.data.database.persistence.ProzessDAO;
-import org.kitodo.data.database.persistence.RegelsatzDAO;
-import org.kitodo.data.database.persistence.SchrittDAO;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
@@ -68,11 +65,13 @@ public class AdministrationForm implements Serializable {
 	private String passwort;
 	private boolean istPasswortRichtig = false;
 	private boolean rusFullExport = false;
-
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+	private TaskService taskService = new TaskService();
+	private UserService userService = new UserService();
+	private UserGroupService userGroupService = new UserGroupService();
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
-
-	/* =============================================================== */
 
 	/**
 	 * Passwort eingeben
@@ -86,8 +85,6 @@ public class AdministrationForm implements Serializable {
 		}
 		return "";
 	}
-
-	/* =============================================================== */
 
 	public String getPasswort() {
 		return this.passwort;
@@ -132,46 +129,44 @@ public class AdministrationForm implements Serializable {
 
 
 	public void ProzesseDurchlaufen() throws DAOException {
-		ProzessDAO dao = new ProzessDAO();
-		List<Prozess> auftraege = dao.search("from Prozess");
-		for (Prozess auf : auftraege) {
-			dao.save(auf);
+		List<Process> auftraege = processService.search("from Prozess");
+		for (Process auf : auftraege) {
+			processService.save(auf);
 		}
 		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
 	public void AnzahlenErmitteln() throws DAOException, IOException, InterruptedException, SwapException {
 		XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
-		ProzessDAO dao = new ProzessDAO();
-		List<Prozess> auftraege = dao.search("from Prozess");
-		for (Prozess auf : auftraege) {
+		List<Process> auftraege = processService.search("from Prozess");
+		for (Process auf : auftraege) {
 
 			try {
 				auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
 				auf.setSortHelperMetadata(zaehlen.getNumberOfUghElements(auf, CountType.METADATA));
-				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(auf.getImagesOrigDirectory(true))));
-				dao.save(auf);
+				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(
+						processService.getImagesOrigDirectory(true, auf))));
+				processService.save(auf);
 			} catch (RuntimeException e) {
-				myLogger.error("Fehler bei Band: " + auf.getTitel(), e);
+				myLogger.error("Fehler bei Band: " + auf.getTitle(), e);
 			}
 
-			dao.save(auf);
+			processService.save(auf);
 		}
 		Helper.setMeldung(null, "", "Elements successful counted");
 	}
 
 	//TODO: Remove this
 	public void SiciKorr() throws DAOException {
-		Benutzergruppe gruppe = new BenutzergruppenDAO().get(Integer.valueOf(15));
-		Set<Benutzergruppe> neueGruppen = new HashSet<Benutzergruppe>();
+		UserGroup gruppe = userGroupService.find(Integer.valueOf(15));
+		List<UserGroup> neueGruppen = new ArrayList<>();
 		neueGruppen.add(gruppe);
 
-		SchrittDAO dao = new SchrittDAO();
 		//TODO: Try to avoid SQL
-		List<Schritt> schritte = dao.search("from Schritt where titel='Automatische Generierung der SICI'");
-		for (Schritt auf : schritte) {
-			auf.setBenutzergruppen(neueGruppen);
-			dao.save(auf);
+		List<Task> schritte = taskService.search("from Schritt where titel='Automatische Generierung der SICI'");
+		for (Task auf : schritte) {
+			auf.setUserGroups(neueGruppen);
+			taskService.save(auf);
 		}
 		Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
 	}

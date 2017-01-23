@@ -20,9 +20,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.kitodo.data.database.beans.Prozess;
-import org.kitodo.data.database.beans.Werkstueck;
-import org.kitodo.data.database.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.WorkpieceService;
 
 
 /**
@@ -32,6 +34,8 @@ import org.kitodo.data.database.beans.Werkstueckeigenschaft;
  * @version 1.00 - 12.04.2005
  */
 public class TiffHeader {
+	private ProcessService processService = new ProcessService();
+	private WorkpieceService workpieceService = new WorkpieceService();
 	// private String Haupttitel="";
 	// private String Autor="";
 	// private String DocType="";
@@ -49,25 +53,25 @@ public class TiffHeader {
 	private String tifHeader_documentname = "";
 
 	/**
-	 * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der Eigenschaften des Werkstücks bzw. der Scanvorlage
+	 * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der Eigenschaften des Werkstücks bzw.
+	 * der Scanvorlage
 	 */
-	public TiffHeader(Prozess inProzess) {
-		if (inProzess.getWerkstueckeSize() > 0) {
-			Werkstueck myWerkstueck = inProzess.getWerkstueckeList().get(0);
-			if (myWerkstueck.getEigenschaftenSize() > 0) {
-				for (Werkstueckeigenschaft eig : myWerkstueck.getEigenschaftenList()) {
+	public TiffHeader(Process process) {
+		if (processService.getWorkpiecesSize(process) > 0) {
+			Workpiece myWerkstueck = process.getWorkpieces().get(0);
+			if (workpieceService.getPropertiesSize(myWerkstueck) > 0) {
+				for (WorkpieceProperty eig : myWerkstueck.getProperties()) {
 					// Werkstueckeigenschaft eig = (Werkstueckeigenschaft) iter.next();
 
-					if (eig.getTitel().equals("TifHeaderDocumentname")) {
-						this.tifHeader_documentname = eig.getWert();
+					if (eig.getTitle().equals("TifHeaderDocumentname")) {
+						this.tifHeader_documentname = eig.getValue();
 					}
-					if (eig.getTitel().equals("TifHeaderImagedescription")) {
-						this.tifHeader_imagedescription = eig.getWert();
+					if (eig.getTitle().equals("TifHeaderImagedescription")) {
+						this.tifHeader_imagedescription = eig.getValue();
 					}
 
-					if (eig.getTitel().equals("Artist"))
-					 {
-						this.Artist = eig.getWert();
+					if (eig.getTitle().equals("Artist")) {
+						this.Artist = eig.getValue();
 					}
 				}
 			}
@@ -122,7 +126,7 @@ public class TiffHeader {
 			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 			ServletOutputStream out = response.getOutputStream();
 			/*
-			 * -------------------------------- die txt-Datei direkt in den Stream schreiben lassen --------------------------------
+			 * die txt-Datei direkt in den Stream schreiben lassen
 			 */
 			out.print(getTiffAlles());
 

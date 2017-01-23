@@ -11,20 +11,6 @@
 
 package de.sub.goobi.export.download;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
-
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.ProjectFileGroup;
-import org.kitodo.data.database.beans.Projekt;
-import org.kitodo.data.database.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms;
@@ -33,7 +19,6 @@ import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
-import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -41,6 +26,27 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
+import org.kitodo.services.UserService;
+
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -56,6 +62,9 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+	private UserService userService = new UserService();
 	protected Helper help = new Helper();
 	protected Prefs myPrefs;
 
@@ -64,7 +73,7 @@ public class ExportMets {
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis
 	 * 
-	 * @param myProzess
+	 * @param myProcess
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws DAOException
@@ -78,21 +87,22 @@ public class ExportMets {
 	 * @throws DocStructHasNoTypeException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(Prozess myProzess) throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
-			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException, DAOException,
-			TypeNotAllowedForParentException {
+	public boolean startExport(Process myProcess)
+			throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
+			WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
+			SwapException, DAOException, TypeNotAllowedForParentException {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		String benutzerHome = "";
+		String userHome = "";
 		if (login != null) {
-			benutzerHome = login.getMyBenutzer().getHomeDir();
+			userHome = userService.getHomeDirectory(login.getMyBenutzer());
 		}
-		return startExport(myProzess, benutzerHome);
+		return startExport(myProcess, userHome);
 	}
 
 	/**
 	 * DMS-Export an eine gewünschte Stelle
 	 * 
-	 * @param myProzess
+	 * @param myProcess
 	 * @param inZielVerzeichnis
 	 * @throws InterruptedException
 	 * @throws IOException
@@ -107,21 +117,22 @@ public class ExportMets {
 	 * @throws ReadException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(Process myProcess, String inZielVerzeichnis)
+			throws IOException, InterruptedException, PreferencesException, WriteException,
+			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
+			ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
 
 		/*
-		 * -------------------------------- Read Document --------------------------------
+		 * Read Document
 		 */
-		this.myPrefs = myProzess.getRegelsatz().getPreferences();
-		String atsPpnBand = myProzess.getTitel();
-		Fileformat gdzfile = myProzess.readMetadataFile();
+		this.myPrefs = rulesetService.getPreferences(myProcess.getRuleset());
+		String atsPpnBand = myProcess.getTitle();
+		Fileformat gdzfile = processService.readMetadataFile(myProcess);
 
 		String rules = ConfigMain.getParameter("copyData.onExport");
 		if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
 			try {
-				new DataCopier(rules).process(new CopierData(gdzfile, myProzess));
+				new DataCopier(rules).process(new CopierData(gdzfile, myProcess));
 			} catch (ConfigurationException e) {
 				Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
 				return false;
@@ -132,17 +143,16 @@ public class ExportMets {
 		}
 
 		/* nur beim Rusdml-Projekt die Metadaten aufbereiten */
-		ConfigProjects cp = new ConfigProjects(myProzess.getProjekt().getTitel());
+		ConfigProjects cp = new ConfigProjects(myProcess.getProject().getTitle());
 		if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-			ExportDms_CorrectRusdml expcorr = new ExportDms_CorrectRusdml(myProzess, this.myPrefs, gdzfile);
+			ExportDms_CorrectRusdml expcorr = new ExportDms_CorrectRusdml(myProcess, this.myPrefs, gdzfile);
 			atsPpnBand = expcorr.correctionStart();
 		}
 
 		String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
-		return writeMetsFile(myProzess, targetFileName, gdzfile, false);
-
+		return writeMetsFile(myProcess, targetFileName, gdzfile, false);
 	}
 
 	/**
@@ -152,7 +162,7 @@ public class ExportMets {
 	 */
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
-		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		if (myBenutzer != null) {
 			try {
 				FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
@@ -166,7 +176,7 @@ public class ExportMets {
 	/**
 	 * write MetsFile to given Path
 	 * 
-	 * @param myProzess the Process to use
+	 * @param myProcess the Process to use
 	 * @param targetFileName the filename where the metsfile should be written
 	 * @param gdzfile the FileFormat-Object to use for Mets-Writing
 	 * @throws DAOException
@@ -176,23 +186,23 @@ public class ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 
-	protected boolean writeMetsFile(Prozess myProzess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
+	protected boolean writeMetsFile(Process myProcess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
 			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
-		String imageFolderPath = myProzess.getImagesDirectory();
+		String imageFolderPath = processService.getImagesDirectory(myProcess);
 		SafeFile imageFolder = new SafeFile(imageFolderPath);
 		/*
 		 * before creating mets file, change relative path to absolute -
 		 */
 		DigitalDocument dd = gdzfile.getDigitalDocument();
 		if (dd.getFileSet() == null) {
-			Helper.setMeldung(myProzess.getTitel() + ": digital document does not contain images; temporarily adding them for mets file creation");
-
+			Helper.setMeldung(myProcess.getTitle()
+					+ ": digital document does not contain images; temporarily adding them for mets file creation");
 			MetadatenImagesHelper mih = new MetadatenImagesHelper(this.myPrefs, dd);
-			mih.createPagination(myProzess, null);
+			mih.createPagination(myProcess, null);
 		}
 
 		/*
@@ -201,7 +211,7 @@ public class ExportMets {
 		DocStruct topElement = dd.getLogicalDocStruct();
 		if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
 			if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
-				throw new PreferencesException(myProzess.getTitel()
+				throw new PreferencesException(myProcess.getTitle()
 						+ ": the topstruct element is marked as anchor, but does not have any children for physical docstrucs");
 			} else {
 				topElement = topElement.getAllChildren().get(0);
@@ -209,21 +219,22 @@ public class ExportMets {
 		}
 
 		/*
-		 * -------------------------------- if the top element does not have any image related, set them all --------------------------------
+		 * if the top element does not have any image related, set them all
 		 */
-		if (topElement.getAllToReferences("logical_physical") == null || topElement.getAllToReferences("logical_physical").size() == 0) {
+		if (topElement.getAllToReferences("logical_physical") == null
+				|| topElement.getAllToReferences("logical_physical").size() == 0) {
 			if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
-				Helper.setMeldung(myProzess.getTitel()
+				Helper.setMeldung(myProcess.getTitle()
 						+ ": topstruct element does not have any referenced images yet; temporarily adding them for mets file creation");
 				for (DocStruct mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
 					topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
 				}
 			} else {
 				if (this instanceof ExportDms && ((ExportDms) this).exportDmsTask != null) {
-					((ExportDms) this).exportDmsTask.setException(new RuntimeException(myProzess.getTitel()
+					((ExportDms) this).exportDmsTask.setException(new RuntimeException(myProcess.getTitle()
 							+ ": could not find any referenced images, export aborted"));
 				} else {
-					Helper.setFehlerMeldung(myProzess.getTitel()
+					Helper.setFehlerMeldung(myProcess.getTitle()
 							+ ": could not find any referenced images, export aborted");
 				}
 				return false;
@@ -245,24 +256,22 @@ public class ExportMets {
 		mm.setDigitalDocument(dd);
 
 		/*
-		 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
-		 * --------------------------------
+		 * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
 		 */
-		// Replace all paths with the given VariableReplacer, also the file
-		// group paths!
-		VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProzess, null);
-		Set<ProjectFileGroup> myFilegroups = myProzess.getProjekt().getFilegroups();
+		// Replace all paths with the given VariableReplacer, also the file group paths!
+		VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProcess, null);
+		List<ProjectFileGroup> myFilegroups = myProcess.getProject().getProjectFileGroups();
 
 		if (myFilegroups != null && myFilegroups.size() > 0) {
 			for (ProjectFileGroup pfg : myFilegroups) {
 				// check if source files exists
 				if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-					SafeFile folder = new SafeFile(myProzess.getMethodFromName(pfg.getFolder()));
+					SafeFile folder = new SafeFile(processService.getMethodFromName(pfg.getFolder(), myProcess));
 					if (folder.exists() && folder.list().length > 0) {
 						VirtualFileGroup v = new VirtualFileGroup();
 						v.setName(pfg.getName());
 						v.setPathToFiles(vp.replace(pfg.getPath()));
-						v.setMimetype(pfg.getMimetype());
+						v.setMimetype(pfg.getMimeType());
 						v.setFileSuffix(pfg.getSuffix());
 						v.setOrdinary(!pfg.isPreviewImage());
 						mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
@@ -272,7 +281,7 @@ public class ExportMets {
 					VirtualFileGroup v = new VirtualFileGroup();
 					v.setName(pfg.getName());
 					v.setPathToFiles(vp.replace(pfg.getPath()));
-					v.setMimetype(pfg.getMimetype());
+					v.setMimetype(pfg.getMimeType());
 					v.setFileSuffix(pfg.getSuffix());
 					v.setOrdinary(!pfg.isPreviewImage());
 					mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
@@ -281,17 +290,17 @@ public class ExportMets {
 		}
 
 		// Replace rights and digiprov entries.
-		mm.setRightsOwner(vp.replace(myProzess.getProjekt().getMetsRightsOwner()));
-		mm.setRightsOwnerLogo(vp.replace(myProzess.getProjekt().getMetsRightsOwnerLogo()));
-		mm.setRightsOwnerSiteURL(vp.replace(myProzess.getProjekt().getMetsRightsOwnerSite()));
-		mm.setRightsOwnerContact(vp.replace(myProzess.getProjekt().getMetsRightsOwnerMail()));
-		mm.setDigiprovPresentation(vp.replace(myProzess.getProjekt().getMetsDigiprovPresentation()));
-		mm.setDigiprovReference(vp.replace(myProzess.getProjekt().getMetsDigiprovReference()));
-		mm.setDigiprovPresentationAnchor(vp.replace(myProzess.getProjekt().getMetsDigiprovPresentationAnchor()));
-		mm.setDigiprovReferenceAnchor(vp.replace(myProzess.getProjekt().getMetsDigiprovReferenceAnchor()));
+		mm.setRightsOwner(vp.replace(myProcess.getProject().getMetsRightsOwner()));
+		mm.setRightsOwnerLogo(vp.replace(myProcess.getProject().getMetsRightsOwnerLogo()));
+		mm.setRightsOwnerSiteURL(vp.replace(myProcess.getProject().getMetsRightsOwnerSite()));
+		mm.setRightsOwnerContact(vp.replace(myProcess.getProject().getMetsRightsOwnerMail()));
+		mm.setDigiprovPresentation(vp.replace(myProcess.getProject().getMetsDigiprovPresentation()));
+		mm.setDigiprovReference(vp.replace(myProcess.getProject().getMetsDigiprovReference()));
+		mm.setDigiprovPresentationAnchor(vp.replace(myProcess.getProject().getMetsDigiprovPresentationAnchor()));
+		mm.setDigiprovReferenceAnchor(vp.replace(myProcess.getProject().getMetsDigiprovReferenceAnchor()));
 
-		mm.setPurlUrl(vp.replace(myProzess.getProjekt().getMetsPurl()));
-		mm.setContentIDs(vp.replace(myProzess.getProjekt().getMetsContentIDs()));
+		mm.setPurlUrl(vp.replace(myProcess.getProject().getMetsPurl()));
+		mm.setContentIDs(vp.replace(myProcess.getProject().getMetsContentIDs()));
 
 		// Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl  is the
 		// pointer used to point to the superordinate (anchor) file, that is
@@ -299,24 +308,23 @@ public class ExportMets {
 		// pointer paths can be defined/ since it is possible to define several
 		// levels of superordinate structures (such as the complete edition of
 		// a daily newspaper, one year ouf of that edition, …)
-		String anchorPointersToReplace = myProzess.getProjekt().getMetsPointerPath();
+		String anchorPointersToReplace = myProcess.getProject().getMetsPointerPath();
 		mm.setMptrUrl(null);
-		for (String anchorPointerToReplace : anchorPointersToReplace.split(Projekt.ANCHOR_SEPARATOR)) {
+		for (String anchorPointerToReplace : anchorPointersToReplace.split(Project.ANCHOR_SEPARATOR)) {
 			String anchorPointer = vp.replace(anchorPointerToReplace);
 			mm.setMptrUrl(anchorPointer);
 		}
 
-		// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
-		// from the (lowest) superordinate (anchor) file to the lowest level
-		// file (the non-anchor file). 
-		String metsPointerToReplace = myProzess.getProjekt().getMetsPointerPathAnchor();
+		// metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point from the (lowest) superordinate
+		// (anchor) file to the lowest level file (the non-anchor file).
+		String metsPointerToReplace = myProcess.getProject().getMetsPointerPathAnchor();
 		String metsPointer = vp.replace(metsPointerToReplace);
 		mm.setMptrAnchorUrl(metsPointer);
 
 		if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
 			try {
 				// TODO andere Dateigruppen nicht mit image Namen ersetzen
-				List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProzess);
+				List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProcess);
 				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 				if (images != null) {
 					int sizeOfImages = images.size();
@@ -343,7 +351,7 @@ public class ExportMets {
 
 		}
 		mm.write(targetFileName);
-		Helper.setMeldung(null, myProzess.getTitel() + ": ", "ExportFinished");
+		Helper.setMeldung(null, myProcess.getTitle() + ": ", "ExportFinished");
 		return true;
 	}
 }

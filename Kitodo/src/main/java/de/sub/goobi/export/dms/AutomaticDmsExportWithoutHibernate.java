@@ -11,33 +11,11 @@
 
 package de.sub.goobi.export.dms;
 
-import org.goobi.io.SafeFile;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-
-import ugh.dl.DocStruct;
-import ugh.dl.Fileformat;
-import ugh.dl.Metadata;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import ugh.fileformats.excel.RDFFile;
-import ugh.fileformats.mets.MetsModsImportExport;
-import org.kitodo.data.database.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMetsWithoutHibernate;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.MetadataFormat;
-import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
@@ -51,11 +29,36 @@ import de.sub.goobi.persistence.apache.ProcessObject;
 import de.sub.goobi.persistence.apache.ProjectManager;
 import de.sub.goobi.persistence.apache.ProjectObject;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.RulesetService;
+
+import ugh.dl.DocStruct;
+import ugh.dl.Fileformat;
+import ugh.dl.Metadata;
+import ugh.exceptions.DocStructHasNoTypeException;
+import ugh.exceptions.MetadataTypeNotAllowedException;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.excel.RDFFile;
+import ugh.fileformats.mets.MetsModsImportExport;
+
 public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHibernate {
 	private static final Logger myLogger = Logger.getLogger(AutomaticDmsExportWithoutHibernate.class);
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
-	private boolean exportFulltext = true;
+	private boolean exportFullText = true;
 	private FolderInformation fi;
 	private ProjectObject project;
 
@@ -75,14 +78,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		this.exportWithImages = exportImages;
 	}
 
-	public void setExportFulltext(boolean exportFulltext) {
-		this.exportFulltext = exportFulltext;
+	public void setExportFulltext(boolean exportFullText) {
+		this.exportFullText = exportFullText;
 	}
 
 	/**
-	 * DMS-Export an eine gewünschte Stelle
+	 * DMS-Export an eine gewünschte Stelle.
 	 * 
-	 * @param process
+	 * @param process object
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws WriteException
@@ -98,7 +101,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	
 	@Override
 	public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException, WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
-		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
+		RulesetService rulesetService = new RulesetService();
+		this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));;
 	
 		this.project =ProjectManager.getProjectById(process.getProjekteID());
 		
@@ -107,8 +111,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		String atsPpnBand = process.getTitle();
 
 		/*
-		 * -------------------------------- Dokument einlesen
-		 * --------------------------------
+		 * Dokument einlesen
 		 */
 		Fileformat gdzfile;
 		Fileformat newfile;
@@ -161,8 +164,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
 		/*
-		 * -------------------------------- Metadaten validieren
-		 * --------------------------------
+		 * Metadaten validieren
 		 */
 
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
@@ -174,8 +176,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 
 		/*
-		 * -------------------------------- Speicherort vorbereiten und
-		 * downloaden --------------------------------
+		 * Speicherort vorbereiten und downloaden
 		 */
 		String zielVerzeichnis;
 		SafeFile benutzerHome;
@@ -214,14 +215,13 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 
 		/*
-		 * -------------------------------- der eigentliche Download der Images
-		 * --------------------------------
+		 * der eigentliche Download der Images
 		 */
 		try {
 			if (this.exportWithImages) {
 				imageDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 				fulltextDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
-			} else if (this.exportFulltext) {
+			} else if (this.exportFullText) {
 				fulltextDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
 			
@@ -236,10 +236,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 
 		/*
-		 * -------------------------------- zum Schluss Datei an gewünschten Ort
-		 * exportieren entweder direkt in den Import-Ordner oder ins
+		 * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den Import-Ordner oder ins
 		 * Benutzerhome anschliessend den Import-Thread starten
-		 * --------------------------------
 		 */
 		if (this.project.isUseDmsImport()) {
 			if (task != null) {
@@ -277,8 +275,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	}
 
 	/**
-	 * run through all metadata and children of given docstruct to trim the
-	 * strings calls itself recursively
+	 * Run through all metadata and children of given docstruct to trim the strings calls itself recursively.
 	 */
 	private void trimAllMetadata(DocStruct inStruct) {
 		/* trimm all metadata values */
@@ -298,13 +295,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 	}
 
-	public void fulltextDownload(ProcessObject myProzess, SafeFile benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
+	public void fulltextDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
+			throws IOException,
 			InterruptedException, SwapException, DAOException {
 
 		// download sources
 		SafeFile sources = new SafeFile(fi.getSourceDirectory());
 		if (sources.exists() && sources.list().length > 0) {
-			SafeFile destination = new SafeFile(benutzerHome + File.separator
+			SafeFile destination = new SafeFile(userHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
@@ -325,7 +323,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 			for (SafeFile dir : folder) {
 				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-					SafeFile destination = new SafeFile(benutzerHome + File.separator + atsPpnBand + suffix);
+					SafeFile destination = new SafeFile(userHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
@@ -341,20 +339,18 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		}
 	}
 
-	public void imageDownload(ProcessObject myProzess, SafeFile benutzerHome, String atsPpnBand, final String ordnerEndung) throws IOException,
-			InterruptedException, SwapException, DAOException {
+	public void imageDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
+			throws IOException, InterruptedException, SwapException, DAOException {
 		/*
-		 * -------------------------------- den Ausgangspfad ermitteln
-		 * --------------------------------
+		 * den Ausgangspfad ermitteln
 		 */
 		SafeFile tifOrdner = new SafeFile(this.fi.getImagesTifDirectory(true));
 
 		/*
-		 * -------------------------------- jetzt die Ausgangsordner in die
-		 * Zielordner kopieren --------------------------------
+		 * jetzt die Ausgangsordner in die Zielordner kopieren
 		 */
 		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-			SafeFile zielTif = new SafeFile(benutzerHome + File.separator + atsPpnBand + ordnerEndung);
+			SafeFile zielTif = new SafeFile(userHome + File.separator + atsPpnBand + ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
 			if (this.project.isUseDmsImport()) {
@@ -363,12 +359,11 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				}
 			} else {
 				/*
-				 * wenn kein Agora-Import, dann den Ordner mit
-				 * Benutzerberechtigung neu anlegen
+				 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
 				 */
-				Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
+					FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
 				} catch (Exception e) {
 					if (task != null) {
 						task.setException(e);
@@ -403,20 +398,22 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	}
 
 	/**
-	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder 
-	 * 
-	 * @param myProzess the process object
+	 * Starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder.
+	 *
+	 * @param myProcess the process object
 	 * @param zielVerzeichnis the destination directory
-	 * @throws IOException
+	 * @throws IOException add description
 	 */		
-	private void directoryDownload(ProcessObject myProzess, String zielVerzeichnis) throws IOException{
+	private void directoryDownload(ProcessObject myProcess, String zielVerzeichnis) throws IOException{
 	
 		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
 		
-		for(String processDir : processDirs) {
+		for (String processDir : processDirs) {
 		
-			SafeFile srcDir = new SafeFile(FilenameUtils.concat(fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitle())));
-			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitle())));
+			SafeFile srcDir = new SafeFile(FilenameUtils.concat(
+					fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProcess.getTitle())));
+			SafeFile dstDir = new SafeFile(FilenameUtils.concat(
+					zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
 		
 			if(srcDir.isDirectory()) {
 			    srcDir.copyDir(dstDir);
@@ -425,13 +422,11 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	}
 
 	/**
-	 * The method setTask() can be used to pass in a task instance. If that is
-	 * passed in, the progress in it will be updated during processing and
-	 * occurring errors will be passed to it to be visible in the task manager
+	 * The method setTask() can be used to pass in a task instance. If that is passed in, the progress in it will
+	 * be updated during processing and occurring errors will be passed to it to be visible in the task manager
 	 * screen.
-	 * 
-	 * @param task
-	 *            task object to submit progress updates and errors to
+	 *
+	 * @param task object to submit progress updates and errors to
 	 */
 	public void setTask(EmptyTask task) {
 		this.task = task;

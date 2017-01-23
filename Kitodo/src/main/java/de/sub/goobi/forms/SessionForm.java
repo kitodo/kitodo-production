@@ -22,7 +22,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.services.UserService;
 
 /**
  * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions
@@ -36,6 +37,7 @@ public class SessionForm {
 	private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 	private String aktuelleZeit = this.formatter.format(new Date());
 	private String bitteAusloggen = "";
+	private UserService userService = new UserService();
 
 	public int getAktiveSessions() {
 		if (this.alleSessions == null) {
@@ -138,16 +140,16 @@ public class SessionForm {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void sessionBenutzerAktualisieren(HttpSession insession, Benutzer inBenutzer) {
+	public void sessionBenutzerAktualisieren(HttpSession insession, User inBenutzer) {
 		// logger.debug("sessionBenutzerAktualisieren-start");
 		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
 			HashMap map = (HashMap) iter.next();
 			if (map.get("id").equals(insession.getId())) {
 				if (inBenutzer != null) {
-					insession.setAttribute("User", inBenutzer.getNachVorname());
-					map.put("user", inBenutzer.getNachVorname());
+					insession.setAttribute("User", userService.getFullName(inBenutzer));
+					map.put("user", userService.getFullName(inBenutzer));
 					map.put("userid", inBenutzer.getId());
-					insession.setMaxInactiveInterval(inBenutzer.getSessiontimeout());
+					insession.setMaxInactiveInterval(inBenutzer.getSessionTimeout());
 				} else {
 					map.put("user", "- ausgeloggt - ");
 					map.put("userid", Integer.valueOf(0));
@@ -159,7 +161,7 @@ public class SessionForm {
 
 	/* prüfen, ob der Benutzer in einer anderen Session aktiv ist */
 	@SuppressWarnings("rawtypes")
-	public boolean BenutzerInAndererSessionAktiv(HttpSession insession, Benutzer inBenutzer) {
+	public boolean BenutzerInAndererSessionAktiv(HttpSession insession, User inBenutzer) {
 		boolean rueckgabe = false;
 		for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
 			HashMap map = (HashMap) iter.next();
@@ -174,7 +176,7 @@ public class SessionForm {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, Benutzer inBenutzer) {
+	public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession,User inBenutzer) {
 		List alleSessionKopie = new ArrayList(this.alleSessions);
 		for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {
 			HashMap map = (HashMap) iter.next();

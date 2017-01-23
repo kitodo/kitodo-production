@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.commons.dbutils.ResultSetHandler;
 
 import org.kitodo.data.database.beans.ProjectFileGroup;
-import org.kitodo.data.database.beans.Regelsatz;
+import org.kitodo.data.database.beans.Ruleset;
 
 public class MySQLUtils {
 
@@ -53,18 +53,18 @@ public class MySQLUtils {
 		}
 	};
 
-	public static final ResultSetHandler<Regelsatz> resultSetToRulesetHandler = new ResultSetHandler<Regelsatz>() {
+	public static final ResultSetHandler<Ruleset> resultSetToRulesetHandler = new ResultSetHandler<Ruleset>() {
 		@Override
-		public Regelsatz handle(ResultSet rs) throws SQLException {
+		public Ruleset handle(ResultSet rs) throws SQLException {
 			if (rs.next()) {
 				int id = rs.getInt("MetadatenKonfigurationID");
 				String title = rs.getString("Titel");
 				String file = rs.getString("Datei");
 				boolean order = rs.getBoolean("orderMetadataByRuleset");
-				Regelsatz r = new Regelsatz();
+				Ruleset r = new Ruleset();
 				r.setId(id);
-				r.setTitel(title);
-				r.setDatei(file);
+				r.setTitle(title);
+				r.setFile(file);
 				r.setOrderMetadataByRuleset(order);
 				return r;
 			}
@@ -306,7 +306,7 @@ public class MySQLUtils {
 				pfg.setId(ProjectFileGroupID);
 				pfg.setName(name);
 				pfg.setPath(path);
-				pfg.setMimetype(mimetype);
+				pfg.setMimeType(mimetype);
 				pfg.setSuffix(suffix);
 				// ProjekteId?
 				pfg.setFolder(folder);

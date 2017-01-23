@@ -18,9 +18,9 @@ import javax.faces.convert.ConverterException;
 
 import org.apache.log4j.Logger;
 
-import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.ProzessDAO;
+import org.kitodo.services.ProcessService;
 
 
 public class ProcessConverter implements Converter {
@@ -28,13 +28,14 @@ public class ProcessConverter implements Converter {
    private static final Logger logger = Logger.getLogger(ProcessConverter.class);
    
    @Override
-public Object getAsObject(FacesContext context, UIComponent component, String value)
+	public Object getAsObject(FacesContext context, UIComponent component, String value)
          throws ConverterException {
       if (value == null) {
          return null;
       } else {
          try {
-              return getProzessDao().get(Integer.valueOf(value));
+         	ProcessService processService = new ProcessService();
+              return processService.find(Integer.valueOf(value));
 			} catch (NumberFormatException e) {
 				logger.error(e);
 				return "0";
@@ -43,14 +44,15 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
 				return "0";
 			}
       }
-   }
+	}
 
-    /**
-     *
+	/**
+     * Replace ProzessDAO with ProcessService.
+	 *
      * @return a new ProzessDAO
      */
-    public ProzessDAO getProzessDao() {
-        return new ProzessDAO();
+    public ProcessService getProzessService() {
+        return new ProcessService();
     }
 
     @Override
@@ -58,8 +60,8 @@ public String getAsString(FacesContext context, UIComponent component, Object va
          throws ConverterException {
       if (value == null) {
          return null;
-      } else if (value instanceof Prozess) {
-         return String.valueOf(((Prozess) value).getId().intValue());
+      } else if (value instanceof Process) {
+         return String.valueOf(((Process) value).getId().intValue());
       } else if (value instanceof String) {
          return (String) value;
       } else {

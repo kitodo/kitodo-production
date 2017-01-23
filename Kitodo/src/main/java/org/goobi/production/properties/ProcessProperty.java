@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.kitodo.data.database.beans.Prozesseigenschaft;
-
 public class ProcessProperty implements IProperty, Serializable {
 
 	private static final long serialVersionUID = 6413183995622426678L;
@@ -36,7 +34,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	private List<String> projects;
 	private List<ShowStepCondition> showStepConditions;
 	private AccessCondition showProcessGroupAccessCondition;
-	private Prozesseigenschaft prozesseigenschaft;
+	private org.kitodo.data.database.beans.ProcessProperty prozesseigenschaft;
 	private AccessCondition currentStepAccessCondition;
 	private boolean currentStepDuplicationAllowed = false;
 	
@@ -46,7 +44,7 @@ public class ProcessProperty implements IProperty, Serializable {
 		this.possibleValues = new ArrayList<String>();
 		this.projects = new ArrayList<String>();
 		this.showStepConditions = new ArrayList<ShowStepCondition>();
-		this.prozesseigenschaft = new Prozesseigenschaft();
+		this.prozesseigenschaft = new org.kitodo.data.database.beans.ProcessProperty();
 	}
 
 	/*
@@ -275,7 +273,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	 * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
 	 */
 
-	public Prozesseigenschaft getProzesseigenschaft() {
+	public org.kitodo.data.database.beans.ProcessProperty getProzesseigenschaft() {
 		return this.prozesseigenschaft;
 	}
 
@@ -285,7 +283,7 @@ public class ProcessProperty implements IProperty, Serializable {
 	 * @see org.goobi.production.properties.IProperty#setProzesseigenschaft(org.kitodo.data.database.beans.Prozesseigenschaft)
 	 */
 
-	public void setProzesseigenschaft(Prozesseigenschaft prozesseigenschaft) {
+	public void setProzesseigenschaft(org.kitodo.data.database.beans.ProcessProperty prozesseigenschaft) {
 		this.prozesseigenschaft = prozesseigenschaft;
 	}
 
@@ -317,8 +315,8 @@ public class ProcessProperty implements IProperty, Serializable {
 	 */
 	@Override
 	public void transfer() {
-			this.prozesseigenschaft.setWert(this.value);
-			this.prozesseigenschaft.setTitel(this.name);
+			this.prozesseigenschaft.setValue(this.value);
+			this.prozesseigenschaft.setTitle(this.name);
 			this.prozesseigenschaft.setContainer(this.container);
 		// }
 	}

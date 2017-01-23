@@ -14,10 +14,10 @@ package org.goobi.production;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Process;
 
 public interface IProcessDataExport {
 	
-	abstract void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException;
+	abstract void startExport(Process process, OutputStream os, String xsltfile) throws IOException;
 	
 }

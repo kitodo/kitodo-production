@@ -34,11 +34,8 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new DocketDAO().get(Integer.valueOf(value));
-			} catch (NumberFormatException e) {
-				logger.error(e);
-				return "0";
-			} catch (DAOException e) {
+				return new DocketDAO().find(Integer.valueOf(value));
+			} catch (DAOException | NumberFormatException e) {
 				logger.error(e);
 				return "0";
 			}

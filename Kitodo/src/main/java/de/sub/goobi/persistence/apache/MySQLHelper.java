@@ -24,7 +24,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.ProjectFileGroup;
-import org.kitodo.data.database.beans.Regelsatz;
+import org.kitodo.data.database.beans.Ruleset;
 
 public class MySQLHelper {
 
@@ -166,14 +166,14 @@ public class MySQLHelper {
 
 	}
 	
-	public static Regelsatz getRulesetForId(int rulesetId) throws SQLException {
+	public static Ruleset getRulesetForId(int rulesetId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM ruleset WHERE id = ? ");
 		try {
 			Object[] params = { rulesetId };
 			logger.debug(sql.toString() + ", " + rulesetId);
-			Regelsatz ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler, params);
+			Ruleset ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler, params);
 			return ret;
 		} finally {
 			closeConnection(connection);

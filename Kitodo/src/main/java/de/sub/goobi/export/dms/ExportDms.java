@@ -11,7 +11,19 @@
 
 package de.sub.goobi.export.dms;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.export.download.ExportMets;
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.tasks.EmptyTask;
+import de.sub.goobi.helper.tasks.ExportDmsTask;
+import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.helper.tasks.TaskSitter;
+import de.sub.goobi.metadaten.MetadatenVerifizierung;
+import de.sub.goobi.metadaten.copier.CopierData;
+import de.sub.goobi.metadaten.copier.DataCopier;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +32,18 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+
 import org.hibernate.Hibernate;
 
+import org.goobi.io.SafeFile;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
+
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -32,29 +54,12 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsModsImportExport;
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.MetadataFormat;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.helper.tasks.ExportDmsTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.helper.tasks.TaskSitter;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
-import de.sub.goobi.metadaten.copier.CopierData;
-import de.sub.goobi.metadaten.copier.DataCopier;
 
 public class ExportDms extends ExportMets {
 	private static final Logger myLogger = Logger.getLogger(ExportDms.class);
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
-	private boolean exportFulltext = true;
+	private boolean exportFullText = true;
 
 	/**
 	 * The field exportDmsTask holds an optional task instance. Its progress
@@ -65,6 +70,9 @@ public class ExportDms extends ExportMets {
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+
 	public ExportDms() {
 	}
 
@@ -72,14 +80,14 @@ public class ExportDms extends ExportMets {
 		this.exportWithImages = exportImages;
 	}
 
-	public void setExportFulltext(boolean exportFulltext) {
-		this.exportFulltext = exportFulltext;
+	public void setExportFullText(boolean exportFullText) {
+		this.exportFullText = exportFullText;
 	}
 
 	/**
-	 * DMS-Export an eine gewünschte Stelle
+	 * DMS-Export an eine gewünschte Stelle.
 	 *
-	 * @param myProzess
+	 * @param process
 	 * @param inZielVerzeichnis
 	 * @throws InterruptedException
 	 * @throws IOException
@@ -90,21 +98,21 @@ public class ExportDms extends ExportMets {
 	 * @throws TypeNotAllowedForParentException
 	 */
 	@Override
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis)
+	public boolean startExport(Process process, String inZielVerzeichnis)
 			throws IOException, InterruptedException, WriteException,
 			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 
-		Hibernate.initialize(myProzess.getProjekt().getFilegroups());
-		if (myProzess.getProjekt().isUseDmsImport()
+		Hibernate.initialize(process.getProject().getProjectFileGroups());
+		if (process.getProject().isUseDmsImport()
 				&& ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
-			Hibernate.initialize(myProzess.getRegelsatz());
-			TaskManager.addTask(new ExportDmsTask(this, myProzess, inZielVerzeichnis));
+			Hibernate.initialize(process.getRuleset());
+			TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
 			Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
-					myProzess.getTitel());
+					process.getTitle());
 			return true;
 		} else {
-			return startExport(myProzess, inZielVerzeichnis, (ExportDmsTask) null);
+			return startExport(process, inZielVerzeichnis, (ExportDmsTask) null);
 		}
 	}
 
@@ -114,7 +122,7 @@ public class ExportDms extends ExportMets {
 	 * in, the progress in it will be updated during processing and occurring
 	 * errors will be passed to it to be visible in the task manager screen.
 	 *
-	 * @param myProzess
+	 * @param process
 	 *            process to export
 	 * @param inZielVerzeichnis
 	 *            work directory of the user who triggered the export
@@ -145,42 +153,40 @@ public class ExportDms extends ExportMets {
 	 *             but never thrown, see
 	 *             https://github.com/kitodo/kitodo-ugh/issues/2
 	 */
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
+	public boolean startExport(Process process, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
 			throws IOException, InterruptedException, WriteException, PreferencesException,
 			SwapException, DAOException, TypeNotAllowedForParentException {
-
 		this.exportDmsTask = exportDmsTask;
-		try{
-			return startExport(myProzess, inZielVerzeichnis, myProzess.readMetadataFile().getDigitalDocument());
+		try {
+			return startExport(process, inZielVerzeichnis, processService.readMetadataFile(process).getDigitalDocument());
 		} catch (Exception e) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setException(e);
 			} else {
 				Helper.setFehlerMeldung(Helper.getTranslation("exportError")
-						+ myProzess.getTitel(), e);
+						+ process.getTitle(), e);
 			}
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
 		}
 	}
 
-	public boolean startExport(Prozess myProzess, String inZielVerzeichnis, DigitalDocument newfile)
+	public boolean startExport(Process process, String inZielVerzeichnis, DigitalDocument newFile)
 			throws IOException, InterruptedException, WriteException,
 			PreferencesException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 
-		this.myPrefs = myProzess.getRegelsatz().getPreferences();
-		this.cp = new ConfigProjects(myProzess.getProjekt().getTitel());
-		String atsPpnBand = myProzess.getTitel();
+		this.myPrefs = rulesetService.getPreferences(process.getRuleset());
+		this.cp = new ConfigProjects(process.getProject().getTitle());
+		String atsPpnBand = process.getTitle();
 
 		/*
-		 * -------------------------------- Dokument einlesen
-		 * --------------------------------
+		 * Dokument einlesen
 		 */
 		Fileformat gdzfile;
 		try {
-			switch (MetadataFormat.findFileFormatsHelperByName(myProzess
-					.getProjekt().getFileFormatDmsExport())) {
+			switch (MetadataFormat.findFileFormatsHelperByName(process
+					.getProject().getFileFormatDmsExport())) {
 			case METS:
 				gdzfile = new MetsModsImportExport(this.myPrefs);
 				break;
@@ -191,14 +197,14 @@ public class ExportDms extends ExportMets {
 				break;
 			}
 
-			gdzfile.setDigitalDocument(newfile);
+			gdzfile.setDigitalDocument(newFile);
 
 		} catch (Exception e) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setException(e);
 			} else {
 				Helper.setFehlerMeldung(Helper.getTranslation("exportError")
-						+ myProzess.getTitel(), e);
+						+ process.getTitle(), e);
 			}
 			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
@@ -207,7 +213,7 @@ public class ExportDms extends ExportMets {
 		String rules = ConfigMain.getParameter("copyData.onExport");
 		if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
 			try {
-				new DataCopier(rules).process(new CopierData(gdzfile, myProzess));
+				new DataCopier(rules).process(new CopierData(gdzfile, process));
 			} catch (ConfigurationException e) {
 				if (exportDmsTask != null) {
 					exportDmsTask.setException(e);
@@ -228,74 +234,64 @@ public class ExportDms extends ExportMets {
 		trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
 		/*
-		 * -------------------------------- Metadaten validieren
-		 * --------------------------------
+		 * Metadaten validieren
 		 */
 
 		if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
 			MetadatenVerifizierung mv = new MetadatenVerifizierung();
-			if (!mv.validate(gdzfile, this.myPrefs, myProzess)) {
+			if (!mv.validate(gdzfile, this.myPrefs, process)) {
 				return false;
 			}
 		}
 
 		/*
-		 * -------------------------------- Speicherort vorbereiten und
-		 * downloaden --------------------------------
+		 * Speicherort vorbereiten und downloaden
 		 */
 		String zielVerzeichnis;
-		SafeFile benutzerHome;
-		if (myProzess.getProjekt().isUseDmsImport()) {
-			zielVerzeichnis = myProzess.getProjekt().getDmsImportImagesPath();
-			benutzerHome = new SafeFile(zielVerzeichnis);
+		SafeFile userHome;
+		if (process.getProject().isUseDmsImport()) {
+			zielVerzeichnis = process.getProject().getDmsImportImagesPath();
+			userHome = new SafeFile(zielVerzeichnis);
 
 			/* ggf. noch einen Vorgangsordner anlegen */
-			if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-				benutzerHome = new SafeFile(benutzerHome + File.separator
-						+ myProzess.getTitel());
-				zielVerzeichnis = benutzerHome.getAbsolutePath();
+			if (process.getProject().isDmsImportCreateProcessFolder()) {
+				userHome = new SafeFile(userHome + File.separator + process.getTitle());
+				zielVerzeichnis = userHome.getAbsolutePath();
 				/* alte Import-Ordner löschen */
-				if (!benutzerHome.deleteDir()) {
-					Helper.setFehlerMeldung("Export canceled, Process: "
-							+ myProzess.getTitel(),
+				if (!userHome.deleteDir()) {
+					Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
 							"Import folder could not be cleared");
 					return false;
 				}
 				/* alte Success-Ordner löschen */
-				SafeFile successFile = new SafeFile(myProzess.getProjekt()
-						.getDmsImportSuccessPath()
-						+ File.separator
-						+ myProzess.getTitel());
+				SafeFile successFile = new SafeFile(process.getProject().getDmsImportSuccessPath()
+						+ File.separator + process.getTitle());
 				if (!successFile.deleteDir()) {
-					Helper.setFehlerMeldung("Export canceled, Process: "
-							+ myProzess.getTitel(),
+					Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
 							"Success folder could not be cleared");
 					return false;
 				}
 				/* alte Error-Ordner löschen */
-				SafeFile errorfile = new SafeFile(myProzess.getProjekt()
-						.getDmsImportErrorPath()
-						+ File.separator
-						+ myProzess.getTitel());
+				SafeFile errorfile = new SafeFile(process.getProject().getDmsImportErrorPath()
+						+ File.separator + process.getTitle());
 				if (!errorfile.deleteDir()) {
-					Helper.setFehlerMeldung("Export canceled, Process: "
-							+ myProzess.getTitel(),
+					Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
 							"Error folder could not be cleared");
 					return false;
 				}
 
-				if (!benutzerHome.exists()) {
-					benutzerHome.mkdir();
+				if (!userHome.exists()) {
+					userHome.mkdir();
 				}
 			}
 
 		} else {
 			zielVerzeichnis = inZielVerzeichnis + atsPpnBand + File.separator;
 			// wenn das Home existiert, erst löschen und dann neu anlegen
-			benutzerHome = new SafeFile(zielVerzeichnis);
-			if (!benutzerHome.deleteDir()) {
+			userHome = new SafeFile(zielVerzeichnis);
+			if (!userHome.deleteDir()) {
 				Helper.setFehlerMeldung(
-						"Export canceled: " + myProzess.getTitel(),
+						"Export canceled: " + process.getTitle(),
 						"could not delete home directory");
 				return false;
 			}
@@ -306,70 +302,59 @@ public class ExportDms extends ExportMets {
 		}
 
 		/*
-		 * -------------------------------- der eigentliche Download der Images
-		 * --------------------------------
+		 * der eigentliche Download der Images
 		 */
 		try {
 			if (this.exportWithImages) {
-				imageDownload(myProzess, benutzerHome, atsPpnBand,
-						DIRECTORY_SUFFIX);
-				fulltextDownload(myProzess, benutzerHome, atsPpnBand,
-						DIRECTORY_SUFFIX);
-			}else if (this.exportFulltext){
-				fulltextDownload(myProzess, benutzerHome, atsPpnBand,
-						DIRECTORY_SUFFIX);
+				imageDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
+				fulltextDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
+			} else if (this.exportFullText){
+				fulltextDownload(process, userHome, atsPpnBand, DIRECTORY_SUFFIX);
 			}
-
-			directoryDownload(myProzess, zielVerzeichnis);
-
+			directoryDownload(process, zielVerzeichnis);
 		} catch (Exception e) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setException(e);
 			} else {
 				Helper.setFehlerMeldung(
-						"Export canceled, Process: " + myProzess.getTitel(), e);
+						"Export canceled, Process: " + process.getTitle(), e);
 			}
 			return false;
 		}
 
 		/*
-		 * -------------------------------- zum Schluss Datei an gewünschten Ort
-		 * exportieren entweder direkt in den Import-Ordner oder ins
+		 * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den Import-Ordner oder ins
 		 * Benutzerhome anschliessend den Import-Thread starten
-		 * --------------------------------
 		 */
-		if (myProzess.getProjekt().isUseDmsImport()) {
+		if (process.getProject().isUseDmsImport()) {
 			if (exportDmsTask != null) {
 				exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
 			}
-			if (MetadataFormat.findFileFormatsHelperByName(myProzess
-					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
+			if (MetadataFormat.findFileFormatsHelperByName(process
+					.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
 				/* Wenn METS, dann per writeMetsFile schreiben... */
-				writeMetsFile(myProzess, benutzerHome + File.separator
+				writeMetsFile(process, userHome + File.separator
 						+ atsPpnBand + ".xml", gdzfile, false);
 			} else {
 				/* ...wenn nicht, nur ein Fileformat schreiben. */
-				gdzfile.write(benutzerHome + File.separator + atsPpnBand
-						+ ".xml");
+				gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
 			}
 
 			/* ggf. sollen im Export mets und rdf geschrieben werden */
-			if (MetadataFormat.findFileFormatsHelperByName(myProzess
-					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-				writeMetsFile(myProzess, benutzerHome + File.separator
-						+ atsPpnBand + ".mets.xml", gdzfile, false);
+			if (MetadataFormat.findFileFormatsHelperByName(process
+					.getProject().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
+				writeMetsFile(process, userHome + File.separator + atsPpnBand
+						+ ".mets.xml", gdzfile, false);
 			}
 
-			Helper.setMeldung(null, myProzess.getTitel() + ": ",
+			Helper.setMeldung(null, process.getTitle() + ": ",
 					"DMS-Export started");
 			if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
-			DmsImportThread agoraThread = new DmsImportThread(myProzess,
-					atsPpnBand);
+			DmsImportThread agoraThread = new DmsImportThread(process, atsPpnBand);
 			agoraThread.start();
 				try {
 					/* 30 Sekunden auf den Thread warten, evtl. killen */
-					agoraThread.join(myProzess.getProjekt()
-							.getDmsImportTimeOut().longValue());
+					agoraThread.join(process.getProject().getDmsImportTimeOut().longValue());
 					if (agoraThread.isAlive()) {
 						agoraThread.stopThread();
 					}
@@ -377,33 +362,31 @@ public class ExportDms extends ExportMets {
 					if (exportDmsTask != null) {
 						exportDmsTask.setException(e);
 					} else {
-						Helper.setFehlerMeldung(myProzess.getTitel()
+						Helper.setFehlerMeldung(process.getTitle()
 								+ ": error on export - ", e.getMessage());
 					}
-					myLogger.error(myProzess.getTitel() + ": error on export",
-							e);
+					myLogger.error(process.getTitle() + ": error on export", e);
 				}
-				if (agoraThread.rueckgabe.length() > 0) {
+				if (agoraThread.result.length() > 0) {
 					if (exportDmsTask != null) {
-						exportDmsTask.setException(new RuntimeException(myProzess.getTitel() + ": "
-								+ agoraThread.rueckgabe));
+						exportDmsTask.setException(new RuntimeException(process.getTitle() + ": "
+								+ agoraThread.result));
 					} else {
-						Helper.setFehlerMeldung(myProzess.getTitel() + ": ",
-								agoraThread.rueckgabe);
+						Helper.setFehlerMeldung(process.getTitle() + ": ",
+								agoraThread.result);
 					}
 				} else {
 					if (exportDmsTask != null) {
 						exportDmsTask.setProgress(100);
 					} else {
-						Helper.setMeldung(null, myProzess.getTitel() + ": ",
+						Helper.setMeldung(null, process.getTitle() + ": ",
 								"ExportFinished");
 					}
 					/* Success-Ordner wieder löschen */
-					if (myProzess.getProjekt().isDmsImportCreateProcessFolder()) {
-						SafeFile successFile = new SafeFile(myProzess.getProjekt()
-								.getDmsImportSuccessPath()
-								+ File.separator
-								+ myProzess.getTitel());
+					if (process.getProject().isDmsImportCreateProcessFolder()) {
+						SafeFile successFile = new SafeFile(process.getProject()
+								.getDmsImportSuccessPath() + File.separator
+								+ process.getTitle());
 						successFile.deleteDir();
 					}
 				}
@@ -413,15 +396,15 @@ public class ExportDms extends ExportMets {
 			}
 		} else {
 			/* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
-			if (MetadataFormat.findFileFormatsHelperByName(myProzess
-					.getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
-				writeMetsFile(myProzess, zielVerzeichnis + atsPpnBand + ".xml",
+			if (MetadataFormat.findFileFormatsHelperByName(process
+					.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
+				writeMetsFile(process, zielVerzeichnis + atsPpnBand + ".xml",
 						gdzfile, false);
 			} else {
 				gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
 			}
 
-			Helper.setMeldung(null, myProzess.getTitel() + ": ",
+			Helper.setMeldung(null, process.getTitle() + ": ",
 					"ExportFinished");
 		}
 		return true;
@@ -460,38 +443,38 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	public void fulltextDownload(Prozess myProzess, SafeFile benutzerHome,
-			String atsPpnBand, final String ordnerEndung) throws IOException,
+	public void fulltextDownload(Process process, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
+			throws IOException,
 			InterruptedException, SwapException, DAOException {
 
 		// download sources
-		SafeFile sources = new SafeFile(myProzess.getSourceDirectory());
+		SafeFile sources = new SafeFile(processService.getSourceDirectory(process));
 		if (sources.exists() && sources.list().length > 0) {
-			SafeFile destination = new SafeFile(benutzerHome + File.separator
+			SafeFile destination = new SafeFile(userHome + File.separator
 					+ atsPpnBand + "_src");
 			if (!destination.exists()) {
 				destination.mkdir();
 			}
-			SafeFile[] dateien = sources.listFiles();
-			for (int i = 0; i < dateien.length; i++) {
-				if(dateien[i].isFile()) {
+			SafeFile[] files = sources.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if(files[i].isFile()) {
 					if (exportDmsTask != null) {
-						exportDmsTask.setWorkDetail(dateien[i].getName());
+						exportDmsTask.setWorkDetail(files[i].getName());
 					}
 					SafeFile meinZiel = new SafeFile(destination + File.separator
-							+ dateien[i].getName());
-					dateien[i].copyFile(meinZiel, false);
+							+ files[i].getName());
+					files[i].copyFile(meinZiel, false);
 				}
 			}
 		}
 
-		SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+		SafeFile ocr = new SafeFile(processService.getOcrDirectory(process));
 		if (ocr.exists()) {
 			SafeFile[] folder = ocr.listFiles();
 			for (SafeFile dir : folder) {
 				if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
 					String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-					SafeFile destination = new SafeFile(benutzerHome + File.separator + atsPpnBand + suffix);
+					SafeFile destination = new SafeFile(userHome + File.separator + atsPpnBand + suffix);
 					if (!destination.exists()) {
 						destination.mkdir();
 					}
@@ -513,38 +496,34 @@ public class ExportDms extends ExportMets {
 		}
 	}
 
-	public void imageDownload(Prozess myProzess, SafeFile benutzerHome,
+	public void imageDownload(Process process, SafeFile userHome,
 			String atsPpnBand, final String ordnerEndung) throws IOException,
 			InterruptedException, SwapException, DAOException {
 
 		/*
-		 * -------------------------------- dann den Ausgangspfad ermitteln
-		 * --------------------------------
+		 * dann den Ausgangspfad ermitteln
 		 */
-		SafeFile tifOrdner = new SafeFile(myProzess.getImagesTifDirectory(true));
+		SafeFile tifOrdner = new SafeFile(processService.getImagesTifDirectory(true, process));
 
 		/*
-		 * -------------------------------- jetzt die Ausgangsordner in die
-		 * Zielordner kopieren --------------------------------
+		 * jetzt die Ausgangsordner in die Zielordner kopieren
 		 */
 		if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-			SafeFile zielTif = new SafeFile(benutzerHome + File.separator + atsPpnBand
+			SafeFile zielTif = new SafeFile(userHome + File.separator + atsPpnBand
 					+ ordnerEndung);
 
 			/* bei Agora-Import einfach den Ordner anlegen */
-			if (myProzess.getProjekt().isUseDmsImport()) {
+			if (process.getProject().isUseDmsImport()) {
 				if (!zielTif.exists()) {
 					zielTif.mkdir();
 				}
 			} else {
 				/*
-				 * wenn kein Agora-Import, dann den Ordner mit
-				 * Benutzerberechtigung neu anlegen
+				 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
 				 */
-				Benutzer myBenutzer = (Benutzer) Helper
-						.getManagedBeanValue("#{LoginForm.myBenutzer}");
+				User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				try {
-                    	FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myBenutzer.getLogin());
+                    	FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
                     } catch (Exception e) {
 					if (exportDmsTask != null) {
 						exportDmsTask.setException(e);
@@ -588,9 +567,10 @@ public class ExportDms extends ExportMets {
 	}
 
 	/**
-	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder
+	 * Starts copying all directories configured in goobi_config.properties parameter "processDirs"
+	 * to export folder.
 	 *
-	 * @param myProzess the process object
+	 * @param process object
 	 * @param zielVerzeichnis the destination directory
 	 * @throws SwapException
 	 * @throws DAOException
@@ -598,16 +578,18 @@ public class ExportDms extends ExportMets {
 	 * @throws InterruptedException
 	 *
 	 */
-	private void directoryDownload(Prozess myProzess, String zielVerzeichnis) throws SwapException, DAOException, IOException, InterruptedException{
+	private void directoryDownload(Process process, String zielVerzeichnis)
+			throws SwapException, DAOException, IOException, InterruptedException{
 
 		String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
 
-		for(String processDir : processDirs) {
+		for (String processDir : processDirs) {
+			SafeFile srcDir = new SafeFile(FilenameUtils.concat(
+					processService.getProcessDataDirectory(process), processDir.replace("(processtitle)", process.getTitle())));
+			SafeFile dstDir = new SafeFile(FilenameUtils.concat(
+					zielVerzeichnis, processDir.replace("(processtitle)", process.getTitle())));
 
-			SafeFile srcDir = new SafeFile(FilenameUtils.concat(myProzess.getProcessDataDirectory(), processDir.replace("(processtitle)", myProzess.getTitel())));
-			SafeFile dstDir = new SafeFile(FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProzess.getTitel())));
-
-			if(srcDir.isDirectory()) {
+			if (srcDir.isDirectory()) {
 			    srcDir.copyDir(dstDir);
 			}
 		}

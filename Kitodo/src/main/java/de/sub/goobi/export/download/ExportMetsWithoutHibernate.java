@@ -11,7 +11,20 @@
 
 package de.sub.goobi.export.download;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
+import de.sub.goobi.helper.exceptions.ExportFileException;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import de.sub.goobi.persistence.apache.ProcessManager;
+import de.sub.goobi.persistence.apache.ProcessObject;
+import de.sub.goobi.persistence.apache.ProjectManager;
+import de.sub.goobi.persistence.apache.ProjectObject;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,6 +32,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import org.goobi.io.SafeFile;
+
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+
+import org.kitodo.services.RulesetService;
+import org.kitodo.services.UserService;
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -32,29 +54,14 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.ProjectFileGroup;
-import org.kitodo.data.database.beans.Projekt;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
 
 public class ExportMetsWithoutHibernate {
 	protected Helper help = new Helper();
 	protected Prefs myPrefs;
 	private FolderInformation fi;
 	private ProjectObject project;
+	private RulesetService rulesetService = new RulesetService();
+	private UserService userService = new UserService();
 
 	protected static final Logger myLogger = Logger.getLogger(ExportMetsWithoutHibernate.class);
 
@@ -81,7 +88,7 @@ public class ExportMetsWithoutHibernate {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		String benutzerHome = "";
 		if (login != null) {
-			benutzerHome = login.getMyBenutzer().getHomeDir();
+			benutzerHome = userService.getHomeDirectory(login.getMyBenutzer());
 		}
 		return startExport(process, benutzerHome);
 	}
@@ -104,14 +111,15 @@ public class ExportMetsWithoutHibernate {
 	 * @throws ReadException
 	 * @throws TypeNotAllowedForParentException
 	 */
-	public boolean startExport(ProcessObject process, String inZielVerzeichnis) throws IOException, InterruptedException, PreferencesException,
-			WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-			SwapException, DAOException, TypeNotAllowedForParentException {
+	public boolean startExport(ProcessObject process, String inZielVerzeichnis)
+			throws IOException, InterruptedException, PreferencesException, WriteException,
+			DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
+			ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
 
 		/*
-		 * -------------------------------- Read Document --------------------------------
+		 * Read Document
 		 */
-		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
+		this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
 
 		this.project = ProjectManager.getProjectById(process.getProjekteID());
 		String atsPpnBand = process.getTitle();
@@ -122,7 +130,6 @@ public class ExportMetsWithoutHibernate {
 
 		String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
 		return writeMetsFile(process, targetFileName, gdzfile, false);
-
 	}
 
 	/**
@@ -133,7 +140,7 @@ public class ExportMetsWithoutHibernate {
 	 */
 	protected String prepareUserDirectory(String inTargetFolder) {
 		String target = inTargetFolder;
-		Benutzer myBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		try {
             	FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
             } catch (Exception e) {
@@ -161,7 +168,7 @@ public class ExportMetsWithoutHibernate {
 			throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
 			TypeNotAllowedForParentException {
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
-		this.myPrefs = ProcessManager.getRuleset(process.getRulesetId()).getPreferences();
+		this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
 		this.project = ProjectManager.getProjectById(process.getProjekteID());
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
@@ -190,9 +197,10 @@ public class ExportMetsWithoutHibernate {
 		}
 
 		/*
-		 * -------------------------------- if the top element does not have any image related, set them all --------------------------------
+		 * if the top element does not have any image related, set them all
 		 */
-		if (topElement.getAllToReferences("logical_physical") == null || topElement.getAllToReferences("logical_physical").size() == 0) {
+		if (topElement.getAllToReferences("logical_physical") == null
+				|| topElement.getAllToReferences("logical_physical").size() == 0) {
 			if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
 				Helper.setMeldung(process.getTitle()
 						+ ": topstruct element does not have any referenced images yet; temporarily adding them for mets file creation");
@@ -220,8 +228,7 @@ public class ExportMetsWithoutHibernate {
 		mm.setDigitalDocument(dd);
 
 		/*
-		 * -------------------------------- wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
-		 * --------------------------------
+		 * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
 		 */
 		// Replace all paths with the given VariableReplacer, also the file
 		// group paths!
@@ -237,7 +244,7 @@ public class ExportMetsWithoutHibernate {
 						VirtualFileGroup v = new VirtualFileGroup();
 						v.setName(pfg.getName());
 						v.setPathToFiles(vp.replace(pfg.getPath()));
-						v.setMimetype(pfg.getMimetype());
+						v.setMimetype(pfg.getMimeType());
 						v.setFileSuffix(pfg.getSuffix());
 						mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
 					}
@@ -246,7 +253,7 @@ public class ExportMetsWithoutHibernate {
 					VirtualFileGroup v = new VirtualFileGroup();
 					v.setName(pfg.getName());
 					v.setPathToFiles(vp.replace(pfg.getPath()));
-					v.setMimetype(pfg.getMimetype());
+					v.setMimetype(pfg.getMimeType());
 					v.setFileSuffix(pfg.getSuffix());
 					mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
 				}
@@ -274,7 +281,7 @@ public class ExportMetsWithoutHibernate {
 		// a daily newspaper, one year ouf of that edition, …)
 		String anchorPointersToReplace = this.project.getMetsPointerPath();
 		mm.setMptrUrl(null);
-		for (String anchorPointerToReplace : anchorPointersToReplace.split(Projekt.ANCHOR_SEPARATOR)) {
+		for (String anchorPointerToReplace : anchorPointersToReplace.split(Project.ANCHOR_SEPARATOR)) {
 			String anchorPointer = vp.replace(anchorPointerToReplace);
 			mm.setMptrUrl(anchorPointer);
 		}

@@ -19,34 +19,34 @@ import javax.faces.convert.ConverterException;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
 /**
- * TimeUnitConverter for statistics TimeUnits as select-items in jsf-guis
+ * TimeUnitConverter for statistics TimeUnits as select-items in jsf-guis.
  * 
  * @author Steffen Hankiewicz
  * @version 21.05.2009
- **************************************************************************************/
+ */
 public class StatisticsTimeUnitConverter implements Converter {
 	public static final String CONVERTER_ID = "StatisticsTimeUnitConverter";
 
 	/**
-	 * convert String to TimeUnit 
-	 **************************************************************************************/
+	 * Convert String to TimeUnit
+	 */
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-		if (value==null){
+		if (value == null) {
 			return TimeUnit.days;
-		}else {
+		} else {
 			return TimeUnit.getById(value);
 		}
 	}
-	
+
 	/**
-	 * convert TimeUnit to String
-	 **************************************************************************************/
+	 * Convert TimeUnit to String.
+	 */
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
 		if (value == null || !(value instanceof TimeUnit)) {
 			return TimeUnit.days.getId();
-		} else{
+		} else {
 			return ((TimeUnit) value).getId();
 		}
 	}
