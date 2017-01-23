@@ -11,13 +11,10 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -38,36 +35,28 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.goobi.production.flow.statistics.StepInformation;
-import org.goobi.webapi.beans.Field;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-
-import de.sub.goobi.helper.ProjectHelper;
-import de.sub.goobi.helper.enums.MetadataFormat;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
 
 @XmlAccessorType(XmlAccessType.NONE)
-// This annotation is to instruct the Jersey API not to generate arbitrary XML
-// elements. Further XML elements can be added as needed by annotating with
-// @XmlElement, but their respective names should be wisely chosen according to
+// This annotation is to instruct the Jersey API not to generate arbitrary XML elements. Further XML elements can be
+// added as needed by annotating with  @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
+// TODO: get rid of this xml attributes
 @XmlType(propOrder = { "template", "fieldConfig" })
-// This annotation declares the desired order of XML elements generated and
-// rather serves for better legibility of the generated XML. The list must be
-// exhaustive and the properties have to be named according to their respective
-// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
-// referenced as "fieldConfig" here, not "field" as one might expect.
+// This annotation declares the desired order of XML elements generated and rather serves for better legibility of
+// the generated XML. The list must be exhaustive and the properties have to be named according to their respective
+// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be referenced as "fieldConfig" here, not
+// "field" as one might expect.
 @Entity
 @Table(name = "project")
-public class Projekt implements Serializable, Comparable<Projekt> {
+public class Project implements Serializable, Comparable<Project> {
 	private static final long serialVersionUID = -8543713331407761617L;
 
 	/**
-	 * The constant ANCHOR_SEPARATOR holds the character U+00A6
-	 * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
-	 * if several of them are needed in one project. The anchors must then be
-	 * listed the hierarchical order they have to be applied, that is the
-	 * topmost anchor in first place, followed by the second one and so on.
+	 * The constant ANCHOR_SEPARATOR holds the character U+00A6 (&ldquo;&brvbar;&rdquo;) which can be used to
+	 * separate  multiple anchors, if several of them are needed in one project. The anchors must then be
+	 * listed the hierarchical order they have to be applied, that is the topmost anchor in first place, followed by
+	 * the second one and so on.
 	 */
 	public static final String ANCHOR_SEPARATOR = "\u00A6";
 
@@ -77,7 +66,7 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	private Integer id;
 
 	@Column(name = "title")
-	private String titel;
+	private String title;
 
 	@Column(name = "useDmsImport")
 	private boolean useDmsImport = false;
@@ -169,24 +158,26 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 							name = "user_id",
 							foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")
 					) })
-	private Set<Benutzer> benutzer;
-
-	@OneToMany(mappedBy = "projekt", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<Prozess> prozesse;
+	private List<User> users;
 
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<ProjectFileGroup> filegroups;
+	private List<Process> processes;
 
-	@Transient
-	private List<StepInformation> commonWorkFlow = null;
+	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProjectFileGroup> projectFileGroups;
 
 	@Transient
 	@XmlElement(name = "template")
-	public List<Prozess> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects when calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child nodes of the respective project.
+	public List<Process> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects
+	// when calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child
+	// nodes of the respective project.
 
-	public Projekt() {
-		this.prozesse = new HashSet<Prozess>();
-		this.benutzer = new HashSet<Benutzer>();
+	/**
+	 * Constructor.
+	 */
+	public Project() {
+		this.processes = new ArrayList<>();
+		this.users = new ArrayList<>();
 		this.useDmsImport = false;
 		this.dmsImportTimeOut = 0;
 		this.dmsImportImagesPath = "";
@@ -197,13 +188,6 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
 	}
 
-	/*
-	 * #####################################################
-	 * ##################################################### ## ## Getter und
-	 * Setter ## #####################################################
-	 * ####################################################
-	 */
-
 	public Integer getId() {
 		return this.id;
 	}
@@ -212,29 +196,29 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.id = id;
 	}
 
-	public Set<Benutzer> getBenutzer() {
-		return this.benutzer;
+	@XmlAttribute(name = "key")
+	public String getTitle() {
+		return this.title;
 	}
 
-	public void setBenutzer(Set<Benutzer> benutzer) {
-		this.benutzer = benutzer;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public Set<Prozess> getProzesse() {
-		return this.prozesse;
+	public List<User> getUsers() {
+		return this.users;
 	}
 
-	public void setProzesse(Set<Prozess> prozesse) {
-		this.prozesse = prozesse;
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
-	@XmlAttribute(name="key")
-	public String getTitel() {
-		return this.titel;
+	public List<Process> getProcesses() {
+		return this.processes;
 	}
 
-	public void setTitel(String titel) {
-		this.titel = titel;
+	public void setProcesses(List<Process> processes) {
+		this.processes = processes;
 	}
 
 	public String getDmsImportImagesPath() {
@@ -286,10 +270,8 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/**
-	 * here differet Getters and Setters for the same value, because Hibernate
-	 * does not like bit-Fields with null Values (thats why Boolean) and MyFaces
-	 * seams not to like Boolean (thats why boolean for the GUI)
-	 * ================================================================
+	 * Here different Getters and Setters for the same value, because Hibernate  does not like bit-Fields with null
+	 * Values (that's why Boolean) and MyFaces seams not to like Boolean (that's why boolean for the GUI).
 	 */
 	public boolean isDmsImportCreateProcessFolder() {
 		if (this.dmsImportCreateProcessFolder == null) {
@@ -310,26 +292,12 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.dmsImportCreateProcessFolder = inFolder;
 	}
 
-	public boolean isDeleteAble() {
-		return this.prozesse.size() == 0;
+	public List<ProjectFileGroup> getProjectFileGroups() {
+		return this.projectFileGroups;
 	}
 
-	public Set<ProjectFileGroup> getFilegroups() {
-		return this.filegroups;
-	}
-
-	public void setFilegroups(Set<ProjectFileGroup> filegroups) {
-		this.filegroups = filegroups;
-	}
-
-	public ArrayList<ProjectFileGroup> getFilegroupsList() {
-		try {
-			Hibernate.initialize(this.filegroups);
-		} catch (HibernateException e) {
-		}		if (this.filegroups == null) {
-			this.filegroups = new HashSet<ProjectFileGroup>();
-		}
-		return new ArrayList<ProjectFileGroup>(this.filegroups);
+	public void setProjectFileGroups(List<ProjectFileGroup> projectFileGroups) {
+		this.projectFileGroups = projectFileGroups;
 	}
 
 	public String getMetsRightsOwner() {
@@ -356,17 +324,10 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		this.metsRightsOwnerSite = metsRightsOwnerSite;
 	}
 
-	/**
-	 * @return the metsRigthsOwnerMail
-	 */
 	public String getMetsRightsOwnerMail() {
 		return this.metsRightsOwnerMail;
 	}
 
-	/**
-	 * @param metsRigthsOwnerMail
-	 *            the metsRigthsOwnerMail to set
-	 */
 	public void setMetsRightsOwnerMail(String metsRigthsOwnerMail) {
 		this.metsRightsOwnerMail = metsRigthsOwnerMail;
 	}
@@ -452,22 +413,7 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/**
-	 *
-	 * @return a list with informations for each step on workflow
-	 */
-
-	public List<StepInformation> getWorkFlow() {
-		if (this.commonWorkFlow == null) {
-			if (this.id != null) {
-				this.commonWorkFlow = ProjectHelper.getProjectWorkFlowOverview(this);
-			} else {
-				this.commonWorkFlow = new ArrayList<StepInformation>();
-			}
-		}
-		return this.commonWorkFlow;
-	}
-
-	/**
+	 * Get number of volumes.
 	 *
 	 * @return number of volumes for this project
 	 */
@@ -480,20 +426,20 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	/**
+	 * Set number of volumes.
 	 *
-	 * @param numberOfVolumes
-	 *            for this project
+	 * @param numberOfVolumes for this project
 	 */
 
 	public void setNumberOfVolumes(Integer numberOfVolumes) {
 		this.numberOfVolumes = numberOfVolumes;
 	}
 
-	/*************************************************************************************
-	 * Getter for numberOfPages
+	/**
+	 * Get number of pages.
 	 *
-	 * @return the number of pages
-	 *************************************************************************************/
+	 * @return number of pages
+	 */
 	public Integer getNumberOfPages() {
 		if (this.numberOfPages == null) {
 			this.numberOfPages = 0;
@@ -501,21 +447,20 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		return this.numberOfPages;
 	}
 
-	/**************************************************************************************
-	 * Setter for numberOfPages
-	 *
-	 * @param numberOfPages
-	 *            the number of pages to set
-	 **************************************************************************************/
+	/**
+	 * Set number of pages.
+
+	 * @param numberOfPages the number of pages to set
+	 */
 	public void setNumberOfPages(Integer numberOfPages) {
 		this.numberOfPages = numberOfPages;
 	}
 
-	/*************************************************************************************
-	 * Getter for startDate
+	/**
+	 * Get start date.
 	 *
 	 * @return the start date
-	 *************************************************************************************/
+	 */
 	public Date getStartDate() {
 		if (this.startDate == null) {
 			this.startDate = new Date();
@@ -523,21 +468,15 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		return this.startDate;
 	}
 
-	/**************************************************************************************
-	 * Setter for startDate
-	 *
-	 * @param startDate
-	 *            the start date to set
-	 **************************************************************************************/
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
-	/*************************************************************************************
-	 * Getter for endDate
+	/**
+	 * Get end date.
 	 *
 	 * @return the end date
-	 *************************************************************************************/
+	 */
 	public Date getEndDate() {
 		if (this.endDate == null) {
 			this.endDate = new Date();
@@ -545,16 +484,15 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 		return this.endDate;
 	}
 
-	/**************************************************************************************
-	 * Setter for endDate
-	 *
-	 * @param endDate
-	 *            the end date to set
-	 **************************************************************************************/
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
+	/**
+	 * Set if projects is archived.
+	 *
+	 * @param projectIsArchived true or false
+	 */
 	public void setProjectIsArchived(Boolean projectIsArchived) {
 		if (projectIsArchived == null) {
 			projectIsArchived = false;
@@ -567,26 +505,21 @@ public class Projekt implements Serializable, Comparable<Projekt> {
 	}
 
 	@Override
-	public int compareTo(Projekt o) {
-		return this.getTitel().compareTo(o.getTitel());
+	public int compareTo(Project project) {
+		return this.getTitle().compareTo(project.getTitle());
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Projekt)) {
+	public boolean equals(Object object) {
+		if (!(object instanceof Project)) {
 			return false;
 		}
-		Projekt other = (Projekt) obj;
-		return this.titel == null ? other.titel == null : this.titel.equals(other.titel);
+		Project other = (Project) object;
+		return this.title == null ? other.title == null : this.title.equals(other.title);
 	}
 
 	@Override
 	public int hashCode() {
-		return this.titel == null ? 0 : this.titel.hashCode();
-	}
-
-	@XmlElement(name = "field")
-	public List<Field> getFieldConfig() throws IOException {
-		return Field.getFieldConfigForProject(this);
+		return this.title == null ? 0 : this.title.hashCode();
 	}
 }

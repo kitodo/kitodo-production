@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.enums;
+package org.kitodo.data.database.helper.enums;
 
 import ugh.dl.Fileformat;
 import ugh.fileformats.excel.RDFFile;
@@ -17,10 +17,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.XStream;
 
 public enum MetadataFormat {
-/*
- *
- */
-	
+
 	RDF("Rdf", true, RDFFile.class),
 	METS("Mets", true, MetsMods.class),
 	XSTREAM("XStream", true, XStream.class),
@@ -44,10 +41,16 @@ public enum MetadataFormat {
 		return this.usableForInternal;
 	}
 
-	public static MetadataFormat findFileFormatsHelperByName(String inName){
-		for (MetadataFormat s : MetadataFormat.values()) {
-			if (s.getName().equals(inName)) {
-				return s;
+	/**
+	 * Find file formats helper by name.
+	 *
+	 * @param inputName name
+	 * @return file format
+	 */
+	public static MetadataFormat findFileFormatsHelperByName(String inputName) {
+		for (MetadataFormat metadataFormat : MetadataFormat.values()) {
+			if (metadataFormat.getName().equals(inputName)) {
+				return metadataFormat;
 			}
 		}
 		return XSTREAM;
@@ -57,8 +60,7 @@ public enum MetadataFormat {
 		return XSTREAM;
 	}
 	
-	public Class<? extends Fileformat> getImplClass () {
+	public Class<? extends Fileformat> getImplClass() {
 		return this.clazz;
 	}
-	
 }
