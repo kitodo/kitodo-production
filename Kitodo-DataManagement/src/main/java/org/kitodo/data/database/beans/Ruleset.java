@@ -21,13 +21,9 @@ import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
 
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import de.sub.goobi.config.ConfigMain;
-
 @Entity
 @Table(name = "ruleset")
-public class Regelsatz implements Serializable {
+public class Ruleset implements Serializable {
 	private static final long serialVersionUID = -6663371963274685060L;
 
 	@Id
@@ -36,31 +32,15 @@ public class Regelsatz implements Serializable {
 	private Integer id;
 
 	@Column(name = "title")
-	private String titel;
+	private String title;
 
 	@Column(name = "file")
-	private String datei;
+	private String file;
 
 	@Column(name = "orderMetadataByRuleset")
 	private Boolean orderMetadataByRuleset = false;
 
-	private static final Logger logger = Logger.getLogger(Regelsatz.class);
-
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
-
-	public String getDatei() {
-		return this.datei;
-	}
-
-	public void setDatei(String datei) {
-		this.datei = datei;
-	}
+	private static final Logger logger = Logger.getLogger(Ruleset.class);
 
 	public Integer getId() {
 		return this.id;
@@ -70,22 +50,20 @@ public class Regelsatz implements Serializable {
 		this.id = id;
 	}
 
-	public String getTitel() {
-		return this.titel;
+	public String getTitle() {
+		return this.title;
 	}
 
-	public void setTitel(String titel) {
-		this.titel = titel;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public Prefs getPreferences() {
-		Prefs mypreferences = new Prefs();
-		try {
-			mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + getDatei());
-		} catch (PreferencesException e) {
-			logger.error(e);
-		}
-		return mypreferences;
+	public String getFile() {
+		return this.file;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
 	}
 
 	public boolean isOrderMetadataByRuleset() {
