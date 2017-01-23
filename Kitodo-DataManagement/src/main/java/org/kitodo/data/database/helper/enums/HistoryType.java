@@ -19,57 +19,76 @@ import org.kitodo.data.database.helper.Helper;
  * @author Steffen Hankiewicz
  * @version 24.05.2009
  */
-public enum HistoryEventType {
+public enum HistoryType {
 	/**
-	 * default type is unknown for all properties, which still don't have a specific
-	 * type
+	 * Default type is unknown for all properties, which still don't have a specific type.
 	 */
 	unknown(0, "unknown",false, false, null),
 
-	/** storageDifference */
+	/**
+	 * storageDifference.
+	 */
 	storageDifference(1, "storageDifference", true, false, null),
 
-	/** imagesWorkDiff */
+	/**
+	 * imagesWorkDiff.
+	 */
 	imagesWorkDiff(2, "imagesWorkDiff", true, false, null),
 
-	/** imagesMasterDiff */
+	/**
+	 imagesMasterDiff.
+	 */
 	imagesMasterDiff(3, "imagesMasterDiff", true, false, null),
 
-	/** metadataDiff */
+	/**
+	 * metadataDiff.
+	 */
 	metadataDiff(4, "metadataDiff", true, false, null),
 	
-	/** docstructDiff, */
+	/**
+	 * docstructDiff.
+	 */
 	docstructDiff(5, "docstructDiff", true, false, null),
-	
-	/** stepDone, order number and title */
-	stepDone(6, "stepDone", true, true, "min"),
-	
-	/** stepOpen, order number and title */
-	stepOpen(7, "stepOpen", true, true, "min"),
-	
-	/** stepInWork, order number and title */
-	stepInWork(8, "stepInWork", true, true, null ),
-	
-	/** stepError, step order number, step title */
-	stepError(9, "stepError", true, true, null),
-	
-	/** stepError, step order number, step title */
-	stepLocked(10, "stepLocked", true, true, "max"),
-	
-	/** bitonal Difference - without function yet */
+
+	/**
+	 * taskDone, order number and title.
+	 */
+	taskDone(6, "stepDone", true, true, "min"),
+
+	/**
+	 * taskOpen, order number and title.
+	 */
+	taskOpen(7, "stepOpen", true, true, "min"),
+
+	/**
+	 * taskInWork, order number and title.
+	 */
+	taskInWork(8, "stepInWork", true, true, null ),
+
+	/**
+	 * taskError, step order number, step title.
+	 */
+	taskError(9, "stepError", true, true, null),
+
+	/**
+	 * taskError, step order number, step title.
+	 */
+	taskLocked(10, "stepLocked", true, true, "max"),
+
+	/**
+	 * bitonal Difference - without function yet.
+	 * */
 	bitonal(11, "imagesBitonalDiff", true, false, null),
-	
-	/** grayscale Difference - without function yet */
+
+	/**
+	 * greyscale Difference - without function yet.
+	 */
 	grayScale(12, "imagesGrayScaleDiff", true, false, null),
-	
-	/** color Difference - without function yet */
-	color(13, "imagesColorDiff", true, false, null)
-	
-	
-	
-	;
-	
-	
+
+	/**
+	 * color Difference - without function yet.
+	 */
+	color(13, "imagesColorDiff", true, false, null);
 
 	private int value;
 	private String title;
@@ -78,10 +97,10 @@ public enum HistoryEventType {
 	private String groupingExpression;
 
 	/**
-	 * private constructor, initializes integer value, title and sets boolean, 
-	 * if EventType contains string and/or numeric content
+	 * Private constructor, initializes integer value, title and sets boolean, if EventType contains string
+	 * and/or numeric content.
 	 */
-	private HistoryEventType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString, String groupingExpression) {
+	private HistoryType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString, String groupingExpression) {
 		this.value = inValue;
 		this.title = inTitle;
 		this.isNumeric = inIsNumeric;
@@ -90,8 +109,8 @@ public enum HistoryEventType {
 	}
 
 	/**
-	 * return integer value for database savings
-	 * 
+	 * Return integer value for database savings.
+	 *
 	 * @return value as integer
 	 */
 	public Integer getValue() {
@@ -99,54 +118,53 @@ public enum HistoryEventType {
 	}
 
 	/**
-	 * get title from type
-	 * 
+	 * Get title from type.
+	 *
 	 * @return title as translated string for current locale from standard-jsf-messages
 	 */
 	public String getTitle() {
 		return Helper.getTranslation(this.title);
 	}
 
-	
 	/**
-	 * return if type contains numeric content
-	 * 
+	 * Return if type contains numeric content.
+	 *
 	 * @return isNumeric as {@link Boolean}
 	 */
-	
+
 	public Boolean isNumeric() {
 		return this.isNumeric;
 	}
 
 	/**
-	 * return if type contains string content
-	 * 
+	 * Return if type contains string content.
+	 *
 	 * @return isNumeric as {@link String}
 	 */
 	public Boolean isString() {
 		return this.isString;
 	}
-	
+
 	/**
-	 * return grouping function if needed
-	 * 
+	 * Return grouping function if needed.
+	 *
 	 * @return groupingExpression as{@link String}
 	 */
-	public String getGroupingFunction(){
+	public String getGroupingFunction() {
 		return this.groupingExpression;
 	}
 
 	/**
-	 * retrieve history event type by integer value, necessary for database handlings,
-	 * where only integer is saved but not type safe
-	 * 
+	 * Retrieve history event type by integer value, necessary for database handlings, where only integer is saved
+	 * but not type safe.
+	 *
 	 * @param inType
 	 *            as integer value
-	 * @return {@link HistoryEventType} for given integer
+	 * @return {@link HistoryType} for given integer
 	 */
-	public static HistoryEventType getTypeFromValue(Integer inType) {
+	public static HistoryType getTypeFromValue(Integer inType) {
 		if (inType != null) {
-			for (HistoryEventType ss : values()) {
+			for (HistoryType ss : values()) {
 				if (ss.getValue() == inType.intValue()) {
 					return ss;
 				}
@@ -154,5 +172,4 @@ public enum HistoryEventType {
 		}
 		return unknown;
 	}
-
 }

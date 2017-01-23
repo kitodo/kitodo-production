@@ -23,17 +23,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /**
- * HistoryItem for any kind of history event of a {@link Prozess}
+ * HistoryItem for any kind of history event of a {@link Process}
  * 
  * @author Steffen Hankiewicz
  * @version 24.05.2009
  */
 @Entity
 @Table(name = "history")
-public class HistoryEvent implements Serializable {
+public class History implements Serializable {
 	private static final long serialVersionUID = 991946177515032238L;
 
 	@Id
@@ -55,36 +55,28 @@ public class HistoryEvent implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_history_process_id"))
-	private Prozess process;
+	private Process process;
 
 	/**
-	 * This constructor is only public for hibernate usage. If you want to
-	 * create a new HistoryEvent please use HistoryEvent(Date date, Number
-	 * inNumericValue, String inStringValue, HistoryEventType
-	 * inHistoryEventType, Prozess process)
-	 * 
-	 * 
+	 * This constructor is only public for hibernate usage. If you want to create a new History please use
+	 * History(Date date, Number inNumericValue, String inStringValue, HistoryEventType
+	 * inHistoryEventType, Process process)
 	 */
-	public HistoryEvent() {
+	public History() {
 
 	}
 
 	/**
 	 * Please use only this constructor.
 	 * 
-	 * @param date
-	 *            Date of HistoryEvent
-	 * @param inNumericValue
-	 *            value as Number (pages, size,...)
-	 * @param inStringValue
-	 *            value as string
-	 * @param inHistoryEventType
-	 *            type of HistoryEvent ( {@link HistoryEventType} )
-	 * @param process
-	 *            process of HistoryEvent
+	 * @param date Date of history event
+	 * @param inNumericValue value as Number (pages, size,...)
+	 * @param inStringValue value as string
+	 * @param inHistoryEventType type of History event( {@link HistoryType} )
+	 * @param process process of History
 	 */
 
-	public HistoryEvent(Date date, Number inNumericValue, String inStringValue, HistoryEventType inHistoryEventType, Prozess process) {
+	public History(Date date, Number inNumericValue, String inStringValue, HistoryType inHistoryEventType, Process process) {
 		super();
 		this.date = date;
 		numericValue = inNumericValue.doubleValue();
@@ -93,104 +85,49 @@ public class HistoryEvent implements Serializable {
 		this.process = process;
 	}
 
-	/**
-	 * Getter for ID
-	 * 
-	 * @return the id
-	 */
 	public Integer getId() {
 		return id;
 	}
 
-	/**
-	 * Setter for ID
-	 * 
-	 * @param id
-	 *            the id to set
-	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	/**
-	 * Getter for date as {@link Date}
-	 * 
-	 * @return the date
-	 */
 	public Date getDate() {
 		return date;
 	}
 
-	/**
-	 * Setter for date
-	 * 
-	 * @param date
-	 *            the date to set
-	 */
 	public void setDate(Date date) {
 		this.date = date;
 	}
 
-	/**
-	 * Getter for {@link Prozess}
-	 * 
-	 * @return the process
-	 */
-	public Prozess getProcess() {
+	public Process getProcess() {
 		return process;
 	}
 
-	/**
-	 * Setter for {@link Prozess}
-	 * 
-	 * @param process
-	 *            the process to set
-	 */
-	public void setProcess(Prozess process) {
+	public void setProcess(Process process) {
 		this.process = process;
 	}
 
-	/**
-	 * Getter for numericValue
-	 * 
-	 * @return numericValue as Double
-	 */
 	public Double getNumericValue() {
 		return numericValue;
 	}
 
-	/**
-	 * Setter for numericValue
-	 * 
-	 * @param numericValue
-	 *            as Double
-	 */
 	public void setNumericValue(Double numericValue) {
 		this.numericValue = numericValue;
 	}
 
-	/**
-	 * Getter for stringValue
-	 * 
-	 * @return stringValue as String
-	 */
 	public String getStringValue() {
 		return stringValue;
 	}
 
-	/**
-	 * Setter for stringValue
-	 * 
-	 * @param stringValue
-	 *            as String
-	 */
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
 	}
 
 	/**
-	 * Getter for type as private method for Hibernate only
-	 * 
+	 * Getter for type as private method for Hibernate only.
+	 *
 	 * @return the type
 	 */
 	@SuppressWarnings("unused")
@@ -199,32 +136,20 @@ public class HistoryEvent implements Serializable {
 	}
 
 	/**
-	 * Setter for type as private method for Hibernate only
-	 * 
-	 * @param type
-	 *            the type to set
+	 * Setter for type as private method for Hibernate only.
+	 *
+	 * @param type to set
 	 */
 	@SuppressWarnings("unused")
 	private void setType(Integer type) {
 		this.type = type;
 	}
 
-	/**
-	 * Getter for type
-	 * 
-	 * @return type as HistoryEventType
-	 */
-	public HistoryEventType getHistoryType() {
-		return HistoryEventType.getTypeFromValue(type);
+	public HistoryType getHistoryType() {
+		return HistoryType.getTypeFromValue(type);
 	}
 
-	/**
-	 * Setter for type
-	 * 
-	 * @param type
-	 *            as HistoryEventType
-	 */
-	public void setHistoryType(HistoryEventType type) {
+	public void setHistoryType(HistoryType type) {
 		this.type = type.getValue();
 	}
 
@@ -239,7 +164,7 @@ public class HistoryEvent implements Serializable {
 				return false;
 			}
 
-			HistoryEvent event = (HistoryEvent) obj;
+			History event = (History) obj;
 			if (event.getDate() == null) {
 				return false;
 			}
@@ -264,7 +189,7 @@ public class HistoryEvent implements Serializable {
 
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
