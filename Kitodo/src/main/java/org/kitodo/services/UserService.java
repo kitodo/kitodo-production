@@ -117,11 +117,11 @@ public class UserService  {
 	 * @param user object
 	 * @return result size of steps
 	 */
-	public int getStepsSize(User user) {
-		if (user.getSteps() == null) {
+	public int getTasksSize(User user) {
+		if (user.getTasks() == null) {
 			return 0;
 		} else {
-			return user.getSteps().size();
+			return user.getTasks().size();
 		}
 	}
 
@@ -131,11 +131,11 @@ public class UserService  {
 	 * @param user object
 	 * @return result size of processing steps
 	 */
-	public int getProcessingStepsSize(User user) {
-		if (user.getProcessingSteps() == null) {
+	public int getProcessingTasksSize(User user) {
+		if (user.getProcessingTasks() == null) {
 			return 0;
 		} else {
-			return user.getProcessingSteps().size();
+			return user.getProcessingTasks().size();
 		}
 	}
 
