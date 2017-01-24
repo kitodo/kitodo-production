@@ -62,7 +62,7 @@ public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
 
 	@ManyToOne
 	@JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_workpieceProperty_workpiece_id"))
-	private Werkstueck workpiece;
+	private Workpiece workpiece;
 
 	@Transient
 	private List<String> valueList;
@@ -210,11 +210,11 @@ public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
 		this.container = order;
 	}
 
-	public Werkstueck getWorkpiece() {
+	public Workpiece getWorkpiece() {
 		return this.workpiece;
 	}
 
-	public void setWorkpiece(Werkstueck workpiece) {
+	public void setWorkpiece(Workpiece workpiece) {
 		this.workpiece = workpiece;
 	}
 }
