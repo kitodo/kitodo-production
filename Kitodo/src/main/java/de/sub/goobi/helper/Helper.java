@@ -53,7 +53,7 @@ import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
 
-import org.kitodo.data.database.beans.Benutzer;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
@@ -433,7 +433,7 @@ public class Helper implements Serializable, Observer {
 		return fullpath.substring(0, fullpath.indexOf(servletpath));
 	}
 
-	public static Benutzer getCurrentUser() {
+	public static User getCurrentUser() {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		return login != null ? login.getMyBenutzer() : null;
 	}

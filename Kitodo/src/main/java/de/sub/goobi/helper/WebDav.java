@@ -11,7 +11,9 @@
 
 package de.sub.goobi.helper;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.download.TiffHeader;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -26,12 +28,17 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.download.TiffHeader;
+import org.goobi.io.SafeFile;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.UserService;
 
 public class WebDav implements Serializable {
+
+	private ProcessService processService = new ProcessService();
+	private UserService userService = new UserService();
 
 	private static final long serialVersionUID = -1929234096626965538L;
 	private static final Logger myLogger = Logger.getLogger(WebDav.class);
@@ -47,17 +54,16 @@ public class WebDav implements Serializable {
 
 
 	/**
-	 * Retrieve all folders from one directory
-	 * ================================================================
+	 * Retrieve all folders from one directory.
 	 */
 
 	public List<String> UploadFromHomeAlle(String inVerzeichnis) {
 		List<String> rueckgabe = new ArrayList<String>();
-		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
+		User aktuellerBenutzer = Helper.getCurrentUser();
 		String VerzeichnisAlle;
 
 		try {
-			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
+			VerzeichnisAlle = userService.getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
 		} catch (Exception ioe) {
 			myLogger.error("Exception UploadFromHomeAlle()", ioe);
 			Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
@@ -90,15 +96,14 @@ public class WebDav implements Serializable {
 	}
 
 	/**
-	 * Remove Folders from Directory
-	 * ================================================================
+	 * Remove Folders from Directory.
 	 */
 	// TODO: Use generic types
 	public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
 		String VerzeichnisAlle;
-		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
+		User aktuellerBenutzer = Helper.getCurrentUser();
 		try {
-			VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
+			VerzeichnisAlle = userService.getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
 		} catch (Exception ioe) {
 			myLogger.error("Exception RemoveFromHomeAlle()", ioe);
 			Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
@@ -111,18 +116,18 @@ public class WebDav implements Serializable {
 		}
 	}
 
-	public void UploadFromHome(Prozess myProzess) {
-		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
+	public void UploadFromHome(Process myProcess) {
+		User aktuellerBenutzer = Helper.getCurrentUser();
         if (aktuellerBenutzer != null) {
-        	UploadFromHome(aktuellerBenutzer, myProzess);
+        	UploadFromHome(aktuellerBenutzer, myProcess);
         }
 	}
 
-	public void UploadFromHome(Benutzer inBenutzer, Prozess myProzess) {
+	public void UploadFromHome(User inBenutzer, Process myProcess) {
 		String nach = "";
 
 		try {
-			nach = inBenutzer.getHomeDir();
+			nach = userService.getHomeDirectory(inBenutzer);
 		} catch (Exception ioe) {
 			myLogger.error("Exception UploadFromHome(...)", ioe);
 			Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
@@ -130,8 +135,8 @@ public class WebDav implements Serializable {
 		}
 
 		/* prüfen, ob Benutzer Massenupload macht */
-		if (inBenutzer.isMitMassendownload()) {
-			nach += myProzess.getProjekt().getTitel() + File.separator;
+		if (inBenutzer.isWithMassDownload()) {
+			nach += myProcess.getProject().getTitle() + File.separator;
 			SafeFile projectDirectory = new SafeFile (nach = nach.replaceAll(" ", "__"));
 			if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
 				List<String> param = new ArrayList<String>();
@@ -141,7 +146,7 @@ public class WebDav implements Serializable {
 				return;
 			}
 		}
-		nach += myProzess.getTitel() + " [" + myProzess.getId() + "]";
+		nach += myProcess.getTitle() + " [" + myProcess.getId() + "]";
 
 		/* Leerzeichen maskieren */
 		nach = nach.replaceAll(" ", "__");
@@ -150,23 +155,23 @@ public class WebDav implements Serializable {
         FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
 	}
 
-	public void DownloadToHome(Prozess myProzess, int inSchrittID, boolean inNurLesen) {
-		saveTiffHeader(myProzess);
-		Benutzer aktuellerBenutzer = Helper.getCurrentUser();
+	public void DownloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
+		saveTiffHeader(myProcess);
+		User aktuellerBenutzer = Helper.getCurrentUser();
 		String von = "";
 		String userHome = "";
 
 		try {
-			von = myProzess.getImagesDirectory();
+			von = processService.getImagesDirectory(myProcess);
 			/* UserHome ermitteln */
-			userHome = aktuellerBenutzer.getHomeDir();
+			userHome = userService.getHomeDirectory(aktuellerBenutzer);
 
 			/*
 			 * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
 			 * existieren
 			 */
-			if (aktuellerBenutzer.isMitMassendownload()) {
-				SafeFile projekt = new SafeFile(userHome + myProzess.getProjekt().getTitel());
+			if (aktuellerBenutzer.isWithMassDownload()) {
+				SafeFile projekt = new SafeFile(userHome + myProcess.getProject().getTitle());
                 FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
 				projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
@@ -180,14 +185,13 @@ public class WebDav implements Serializable {
 		}
 
 		/*
-		 * abhängig davon, ob der Download als "Massendownload" in einen
-		 * Projektordner erfolgen soll oder nicht, das Zielverzeichnis
-		 * definieren
+		 * abhängig davon, ob der Download als "Massendownload" in einen Projektordner erfolgen soll oder nicht,
+		 * das Zielverzeichnis definieren
 		 */
-		String processLinkName = myProzess.getTitel() + "__[" + myProzess.getId() + "]";
+		String processLinkName = myProcess.getTitle() + "__[" + myProcess.getId() + "]";
 		String nach = userHome;
-		if (aktuellerBenutzer.isMitMassendownload() && myProzess.getProjekt() != null) {
-			nach += myProzess.getProjekt().getTitel() + File.separator;
+		if (aktuellerBenutzer.isWithMassDownload() && myProcess.getProject() != null) {
+			nach += myProcess.getProject().getTitle() + File.separator;
 		}
 		nach += processLinkName;
 
@@ -226,17 +230,18 @@ public class WebDav implements Serializable {
 		}
 	}
 
-	private void saveTiffHeader(Prozess inProzess) {
+	private void saveTiffHeader(Process inProcess) {
 		try {
 			/* prüfen, ob Tiff-Header schon existiert */
-			if (new SafeFile(inProzess.getImagesDirectory() + "tiffwriter.conf").exists()) {
+			if (new SafeFile(processService.getImagesDirectory(inProcess) + "tiffwriter.conf").exists()) {
 				return;
 			}
-			TiffHeader tif = new TiffHeader(inProzess);
+			TiffHeader tif = new TiffHeader(inProcess);
 			try (
 				BufferedWriter outfile =
-					new BufferedWriter(new OutputStreamWriter(new FileOutputStream(inProzess.getImagesDirectory()
-						+ "tiffwriter.conf"), StandardCharsets.UTF_8));
+					new BufferedWriter(new OutputStreamWriter(
+							new FileOutputStream(processService.getImagesDirectory(inProcess)
+									+ "tiffwriter.conf"), StandardCharsets.UTF_8));
 			) {
 				outfile.write(tif.getTiffAlles());
 			}
@@ -248,8 +253,8 @@ public class WebDav implements Serializable {
 
 	public int getAnzahlBaende(String inVerzeichnis) {
 		try {
-			Benutzer aktuellerBenutzer = Helper.getCurrentUser();
-			String VerzeichnisAlle = aktuellerBenutzer.getHomeDir() + inVerzeichnis;
+			User aktuellerBenutzer = Helper.getCurrentUser();
+			String VerzeichnisAlle = userService.getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
 			SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
 			FilenameFilter filter = new FilenameFilter() {
 				@Override
