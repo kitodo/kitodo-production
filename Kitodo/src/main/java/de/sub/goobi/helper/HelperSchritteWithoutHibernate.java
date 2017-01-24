@@ -11,31 +11,9 @@
 
 package de.sub.goobi.helper;
 
-import org.goobi.io.SafeFile;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.plugin.PluginLoader;
-import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-
-import ugh.dl.DigitalDocument;
-import ugh.dl.Prefs;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
-import org.kitodo.data.database.beans.Benutzer;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.export.dms.AutomaticDmsExportWithoutHibernate;
 import de.sub.goobi.forms.LoginForm;
-import org.kitodo.data.database.helper.enums.HistoryEventType;
-import de.sub.goobi.helper.enums.StepEditType;
-import de.sub.goobi.helper.enums.StepStatus;
-import org.kitodo.data.database.exceptions.DAOException;
 import de.sub.goobi.helper.exceptions.SwapException;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.TaskManager;
@@ -45,10 +23,38 @@ import de.sub.goobi.persistence.apache.ProcessObject;
 import de.sub.goobi.persistence.apache.StepManager;
 import de.sub.goobi.persistence.apache.StepObject;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import org.goobi.io.SafeFile;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
+
+import org.kitodo.data.database.beans.Ruleset;
+import ugh.dl.DigitalDocument;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
+
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.TaskEditType;
+import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.services.RulesetService;
 
 public class HelperSchritteWithoutHibernate {
 	private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
 	public final static String DIRECTORY_PREFIX = "orig_";
+
+	private RulesetService rulesetService = new RulesetService();
 
 	/**
 	 * The field task holds an optional task instance. Its progress
@@ -58,7 +64,7 @@ public class HelperSchritteWithoutHibernate {
 	private EmptyTask task;
 
 	/**
-	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen ================================================================
+	 * Schritt abschliessen und dabei parallele Schritte berücksichtigen.
 	 */
 
 	public void CloseStepObjectAutomatic(StepObject currentStep) {
@@ -80,7 +86,7 @@ public class HelperSchritteWithoutHibernate {
 		try {
 			LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 			if (lf != null) {
-				Benutzer ben = lf.getMyBenutzer();
+				User ben = lf.getMyBenutzer();
 				if (ben != null) {
 					logger.debug("set new user");
 					currentStep.setBearbeitungsbenutzer(ben.getId());
@@ -102,7 +108,7 @@ public class HelperSchritteWithoutHibernate {
 		logger.debug("create history events for step");
 
 		StepManager.addHistory(myDate, currentStep.getReihenfolge(), currentStep.getTitle(),
-				HistoryEventType.stepDone.getValue(), processId);
+				HistoryType.taskDone.getValue(), processId);
 		/* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
 
 		List<StepObject> steps = StepManager.getStepsForProcess(processId);
@@ -139,7 +145,7 @@ public class HelperSchritteWithoutHibernate {
 					myStep.setEditType(4);
 					logger.debug("create history events for next step");
 					StepManager.addHistory(myDate, myStep.getReihenfolge(), myStep.getTitle(),
-							HistoryEventType.stepOpen.getValue(), processId);
+							HistoryType.taskOpen.getValue(), processId);
 					/* wenn es ein automatischer Schritt mit Script ist */
 					if(logger.isDebugEnabled()){
 						logger.debug("check if step is an automatic task: " + myStep.isTypAutomatisch());
@@ -271,7 +277,7 @@ public class HelperSchritteWithoutHibernate {
 		ProcessObject po = ProcessManager.getProcessObjectForId(step.getProcessId());
 
 		FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-		Prefs prefs = ProcessManager.getRuleset(po.getRulesetId()).getPreferences();
+		Prefs prefs = rulesetService.getPreferences(ProcessManager.getRuleset(po.getRulesetId()));
 
 		try {
 			dd = po.readMetadataFile(fi.getMetadataFilePath(), prefs).getDigitalDocument();
@@ -302,13 +308,13 @@ public class HelperSchritteWithoutHibernate {
             rueckgabe = ShellScript.legacyCallShell2(script);
             if (automatic) {
 				if (rueckgabe == 0) {
-					step.setEditType(StepEditType.AUTOMATIC.getValue());
-					step.setBearbeitungsstatus(StepStatus.DONE.getValue());
+					step.setEditType(TaskEditType.AUTOMATIC.getValue());
+					step.setBearbeitungsstatus(TaskStatus.DONE.getValue());
 					if (step.getValidationPlugin() != null && step.getValidationPlugin().length() >0) {
 						IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation, step.getValidationPlugin());
 						ivp.setStepObject(step);
 						if (!ivp.validate()) {
-							step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
+							step.setBearbeitungsstatus(TaskStatus.OPEN.getValue());
 							StepManager.updateStep(step);
 						} else {
 							CloseStepObjectAutomatic(step);
@@ -318,8 +324,8 @@ public class HelperSchritteWithoutHibernate {
 					}
 
 				} else {
-					step.setEditType(StepEditType.AUTOMATIC.getValue());
-					step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
+					step.setEditType(TaskEditType.AUTOMATIC.getValue());
+					step.setBearbeitungsstatus(TaskStatus.OPEN.getValue());
 					StepManager.updateStep(step);
 				}
 			}
@@ -407,8 +413,8 @@ public class HelperSchritteWithoutHibernate {
 
 	private void abortStep(StepObject step) {
 
-		step.setBearbeitungsstatus(StepStatus.OPEN.getValue());
-		step.setEditType(StepEditType.AUTOMATIC.getValue());
+		step.setBearbeitungsstatus(TaskStatus.OPEN.getValue());
+		step.setEditType(TaskEditType.AUTOMATIC.getValue());
 
 		StepManager.updateStep(step);
 	}

@@ -10,7 +10,6 @@
  */
 
 package de.sub.goobi.forms;
-import java.util.List;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.tasks.EmptyTask;
@@ -18,6 +17,7 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.helper.tasks.TaskSitter;
 
+import java.util.List;
 
 public class LongRunningTasksForm {
 	/**

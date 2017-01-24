@@ -11,15 +11,19 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import de.sub.goobi.config.ConfigMain;
 import org.apache.log4j.Logger;
+
 import org.goobi.production.flow.statistics.hibernate.FilterString;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -27,14 +31,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.Projekt;
-import org.kitodo.data.database.beans.Prozesseigenschaft;
-import org.kitodo.data.database.beans.Schritt;
-import org.kitodo.data.database.beans.Vorlageeigenschaft;
-import org.kitodo.data.database.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 
 public class SearchForm {
 
@@ -59,11 +62,11 @@ public class SearchForm {
 	private String templatePropertyValue = "";
 
 	private List<String> stepTitles = new ArrayList<String>(); // step:
-	private List<StepStatus> stepstatus = new ArrayList<StepStatus>();
+	private List<TaskStatus> stepstatus = new ArrayList<TaskStatus>();
 	private String status = "";
 	private String stepname = "";
 
-	private List<Benutzer> user = new ArrayList<Benutzer>();
+	private List<User> user = new ArrayList<User>();
 	private String stepdonetitle = "";
 	private String stepdoneuser = "";
 
@@ -78,11 +81,11 @@ public class SearchForm {
 	private String stepOperand = "";
 
 	/**
-	 * Initialise drop down list of master piece property titles
+	 * Initialise drop down list of master piece property titles.
 	 */
 	protected void initMasterpiecePropertyTitles() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Werkstueckeigenschaft.class);
+		Criteria crit = session.createCriteria(WorkpieceProperty.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
@@ -98,12 +101,12 @@ public class SearchForm {
 	}
 
 	/**
-	 * Initialise drop down list of projects
+	 * Initialise drop down list of projects.
 	 */
 	protected void initProjects() {
 		int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
 		Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(Projekt.class);
+		Criteria crit = session.createCriteria(Project.class);
 
 		crit.addOrder(Order.asc("titel"));
 		if (restriction > 2) {
@@ -113,9 +116,9 @@ public class SearchForm {
 
 		try {
 			@SuppressWarnings("unchecked")
-			List<Projekt> projektList = crit.list();
-			for (Projekt p : projektList) {
-				this.projects.add(p.getTitel());
+			List<Project> projektList = crit.list();
+			for (Project p : projektList) {
+				this.projects.add(p.getTitle());
 			}
 		} catch (HibernateException hbe) {
 			logger.warn("Catched HibernateException. List of projects could be empty!");
@@ -123,11 +126,11 @@ public class SearchForm {
 	}
 
 	/**
-	 * Initialise drop down list of process property titles
+	 * Initialise drop down list of process property titles.
 	 */
 	protected void initProcessPropertyTitles() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Prozesseigenschaft.class);
+		Criteria crit = session.createCriteria(ProcessProperty.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
@@ -145,20 +148,20 @@ public class SearchForm {
 	}
 
 	/**
-	 * Initialise drop down list of step status
+	 * Initialise drop down list of step status.
 	 */
 	protected void initStepStatus() {
-		for (StepStatus s : StepStatus.values()) {
+		for (TaskStatus s : TaskStatus.values()) {
 			this.stepstatus.add(s);
 		}
 	}
 
 	/**
-	 * Initialise drop down list of step titles
+	 * Initialise drop down list of step titles.
 	 */
 	protected void initStepTitles() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Schritt.class);
+		Criteria crit = session.createCriteria(Task.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
@@ -174,11 +177,11 @@ public class SearchForm {
 	}
 
 	/**
-	 * Initialise drop down list of template property titles
+	 * Initialise drop down list of template property titles.
 	 */
 	protected void initTemplatePropertyTitles() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Vorlageeigenschaft.class);
+		Criteria crit = session.createCriteria(TemplateProperty.class);
 		crit.addOrder(Order.asc("titel"));
 		crit.setProjection(Projections.distinct(Projections.property("titel")));
 		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
@@ -194,11 +197,11 @@ public class SearchForm {
 	}
 
 	/**
-	 * Initialise drop down list of user list
+	 * Initialise drop down list of user list.
 	 */
 	protected void initUserList() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Benutzer.class);
+		Criteria crit = session.createCriteria(User.class);
 		crit.add(Restrictions.isNull("isVisible"));
 		crit.add(Restrictions.eq("istAktiv", true));
 		crit.addOrder(Order.asc("nachname"));
@@ -260,11 +263,11 @@ public class SearchForm {
 		this.stepTitles = stepTitles;
 	}
 
-	public List<StepStatus> getStepstatus() {
+	public List<TaskStatus> getStepstatus() {
 		return this.stepstatus;
 	}
 
-	public void setStepstatus(List<StepStatus> stepstatus) {
+	public void setStepstatus(List<TaskStatus> stepstatus) {
 		this.stepstatus = stepstatus;
 	}
 
@@ -372,11 +375,11 @@ public class SearchForm {
 		this.stepname = stepname;
 	}
 
-	public List<Benutzer> getUser() {
+	public List<User> getUser() {
 		return this.user;
 	}
 
-	public void setUser(List<Benutzer> user) {
+	public void setUser(List<User> user) {
 		this.user = user;
 	}
 
@@ -394,21 +397,26 @@ public class SearchForm {
 		}
 		if (!this.processPropertyValue.isEmpty()) {
 			if (!this.processPropertyTitle.isEmpty() && !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
+				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle
+						+ ":" + this.processPropertyValue + "\" ";
 			} else {
-				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue + "\" ";
+				search += "\""+ this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyValue
+						+ "\" ";
 			}
 		}
 		if (!this.masterpiecePropertyValue.isEmpty()) {
 			if (!this.masterpiecePropertyTitle.isEmpty() && !this.masterpiecePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
+				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyTitle
+						+ ":" + this.masterpiecePropertyValue + "\" ";
 			} else {
-				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyValue + "\" ";
+				search += "\""+ this.masterpiecePropertyOperand + FilterString.WORKPIECE + this.masterpiecePropertyValue
+						+ "\" ";
 			}
 		}
 		if (!this.templatePropertyValue.isEmpty()) {
 			if (!this.templatePropertyTitle.isEmpty() && !this.templatePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
-				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
+				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":"
+						+ this.templatePropertyValue + "\" ";
 			} else {
 				search += "\""+ this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyValue + "\" ";
 			}

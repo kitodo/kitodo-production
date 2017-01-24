@@ -133,7 +133,7 @@ public class BeanHelper {
 		processCopy.setTasks(myTasks);
 	}
 
-	public static void copyWorkpiece(Process processTemplate, Process processCopy) {
+	public static void copyWorkpieces(Process processTemplate, Process processCopy) {
 		List<Workpiece> myWorkpieces = new ArrayList<>();
 		for (Workpiece workpiece : processTemplate.getWorkpieces()) {
 			/*
@@ -164,7 +164,7 @@ public class BeanHelper {
 		processCopy.setWorkpieces(myWorkpieces);
 	}
 
-	public static void copyProperty(Process processTemplate, Process processCopy) {
+	public static void copyProperties(Process processTemplate, Process processCopy) {
 		List<ProcessProperty> myProperties = new ArrayList<>();
 		for (Iterator<ProcessProperty> iterator = processTemplate.getProperties().iterator(); iterator.hasNext();) {
 			ProcessProperty property = iterator.next();
@@ -180,7 +180,7 @@ public class BeanHelper {
 		processCopy.setProperties(myProperties);
 	}
 
-	public static void copyScanTemplate(Process processTemplate, Process processCopy) {
+	public static void copyScanTemplates(Process processTemplate, Process processCopy) {
 		List<Template> myTemplates = new ArrayList<>();
 		for (Template template : processTemplate.getTemplates()) {
 			/*

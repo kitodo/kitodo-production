@@ -11,22 +11,25 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
-import org.kitodo.data.database.beans.Benutzer;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.services.UserService;
 
 public class BasisForm implements Serializable {
+	private UserService userService = new UserService();
 	private static final Logger logger = Logger
 	.getLogger(BasisForm.class);
 	private static final long serialVersionUID = 2950419497162710096L;
 	protected Page page;
 	protected String zurueck = "";
 	protected String filter = "";
-	protected Benutzer user;
+	protected User user;
 
 	protected String sortierung = "prozessAsc";
 
@@ -42,7 +45,7 @@ public class BasisForm implements Serializable {
 		this.zurueck = zurueck;
 	}
 	
-	public Benutzer getUser() {
+	public User getUser() {
 		if(this.user==null) {
 			LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 			this.user = login.getMyBenutzer();
@@ -70,7 +73,7 @@ public class BasisForm implements Serializable {
 		if (this.filter==null || this.filter.length()==0){
 			return;
 		}
-		this.user.addFilter(this.filter);
+		userService.addFilter(this.user, this.filter);
 //		try {
 //			new BenutzerDAO().save(this.user);
 //		} catch (DAOException e) {
@@ -82,7 +85,7 @@ public class BasisForm implements Serializable {
 		if (this.filter==null || this.filter.length()==0){
 			return;
 		}
-		this.user.removeFilter(this.filter);
+		userService.removeFilter(this.user, this.filter);
 //		try {
 //			new BenutzerDAO().save(this.user);
 //		} catch (DAOException e) {

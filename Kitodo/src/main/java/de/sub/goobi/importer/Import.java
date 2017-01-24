@@ -11,6 +11,9 @@
 
 package de.sub.goobi.importer;
 
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.WrongImportFileException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,16 +22,15 @@ import java.nio.charset.StandardCharsets;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
+
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import org.kitodo.data.database.beans.Schritt;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
  * Import von Metadaten aus upgeloadeten Dateien
@@ -40,11 +42,11 @@ public class Import {
 	private static final Logger myLogger = Logger.getLogger(Import.class);
 	private String importFehler = "";
 	private String importMeldung = "";
-	private Schritt mySchritt;
+	private Task mySchritt;
 	private UploadedFile upDatei;
 
 	/**
-	 * Allgemeiner Konstruktor ()
+	 * Allgemeiner Konstruktor ().
 	 */
 	public Import() {
 	}
@@ -71,25 +73,24 @@ public class Import {
 		try {
 
 			/*
-			 * -------------------------------- prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
-			 * --------------------------------
+			 * prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
 			 */
 
 			/* russischer Import */
-			if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == true) {
+			if (this.mySchritt.isTypeImportFileUpload() && this.mySchritt.isTypeExportRussian() == true) {
 				String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
 				reader = new BufferedReader(new StringReader(gesamteDatei));
 				ImportRussland myImport = new ImportRussland();
-				myImport.Parsen(reader, this.mySchritt.getProzess());
+				myImport.Parsen(reader, this.mySchritt.getProcess());
 				this.importMeldung = "Der russische Import wurde erfolgreich abgeschlossen";
 			}
 
 			/* Zentralblatt-Import */
-			if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == false) {
+			if (this.mySchritt.isTypeImportFileUpload() && this.mySchritt.isTypeExportRussian() == false) {
 				String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
 				reader = new BufferedReader(new StringReader(gesamteDatei));
 				ImportZentralblatt myImport = new ImportZentralblatt();
-				myImport.Parsen(reader, this.mySchritt.getProzess());
+				myImport.Parsen(reader, this.mySchritt.getProcess());
 				this.importMeldung = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
 			}
 
@@ -107,8 +108,7 @@ public class Import {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## allgemeine Getter und Setter
-	 * ## ##################################################### ####################################################
+	 * allgemeine Getter und Setter
 	 */
 
 	public String getImportFehler() {
@@ -127,11 +127,11 @@ public class Import {
 		this.upDatei = inUpDatei;
 	}
 
-	public Schritt getMySchritt() {
+	public Task getMySchritt() {
 		return this.mySchritt;
 	}
 
-	public void setMySchritt(Schritt mySchritt) {
+	public void setMySchritt(Task mySchritt) {
 		this.mySchritt = mySchritt;
 	}
 

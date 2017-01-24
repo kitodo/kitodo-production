@@ -50,7 +50,7 @@ public class Page implements Serializable { // implements Iterator
         if (login == null || login.getMyBenutzer() == null) {
         	this.pageSize = 10;
 		} else {
-			this.pageSize = login.getMyBenutzer().getTabellengroesse().intValue();
+			this.pageSize = login.getMyBenutzer().getTableSize();
 		}
 		this.criteria = criteria;
 		try {

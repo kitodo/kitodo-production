@@ -11,7 +11,8 @@
 
 package de.sub.goobi.forms;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -25,23 +26,24 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.goobi.io.SafeFile;
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 
 import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.Regelsatz;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.MetadataFormat;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.database.persistence.RegelsatzDAO;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.services.DocketService;
+import org.kitodo.services.RulesetService;
 
 /**
  * @author Wulf Riebensahm
  */
 public class HelperForm {
+	private DocketService docketService = new DocketService();
+	private RulesetService rulesetService = new RulesetService();
 
 	public static final String MAIN_JSF_PATH = "/newpages";
 	public static final String IMAGE_PATH = "/newpages/images";
@@ -123,10 +125,10 @@ public class HelperForm {
 
 	public List<SelectItem> getRegelsaetze() throws DAOException {
 		List<SelectItem> myPrefs = new ArrayList<SelectItem>();
-		List<Regelsatz> temp = new RegelsatzDAO().search("from Regelsatz ORDER BY titel");
-		for (Iterator<Regelsatz> iter = temp.iterator(); iter.hasNext();) {
-			Regelsatz an = iter.next();
-			myPrefs.add(new SelectItem(an, an.getTitel(), null));
+		List<Ruleset> temp = rulesetService.search("from Ruleset ORDER BY title");
+		for (Iterator<Ruleset> iter = temp.iterator(); iter.hasNext();) {
+			Ruleset an = iter.next();
+			myPrefs.add(new SelectItem(an, an.getTitle(), null));
 		}
 		return myPrefs;
 	}
@@ -134,7 +136,7 @@ public class HelperForm {
 	public List<SelectItem> getDockets() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		try {
-			List<Docket> temp = new DocketDAO().search("from Docket ORDER BY name");
+			List<Docket> temp = docketService.search("from Docket ORDER BY name");
 			for (Docket d : temp) {
 				answer.add(new SelectItem(d, d.getName(), null));
 			}

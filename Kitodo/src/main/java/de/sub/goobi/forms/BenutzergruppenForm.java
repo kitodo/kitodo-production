@@ -11,6 +11,10 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.hibernate.Criteria;
@@ -18,27 +22,25 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import org.kitodo.data.database.beans.Benutzer;
-import org.kitodo.data.database.beans.Benutzergruppe;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.BenutzergruppenDAO;
 import org.kitodo.data.database.persistence.SimpleDAO;
+import org.kitodo.services.UserGroupService;
 
 public class BenutzergruppenForm extends BasisForm {
 	private static final long serialVersionUID = 8051160917458068675L;
-	private Benutzergruppe myBenutzergruppe = new Benutzergruppe();
-	private BenutzergruppenDAO dao = new BenutzergruppenDAO();
+	private UserGroup myBenutzergruppe = new UserGroup();
+	private UserGroupService userGroupService = new UserGroupService();
 
 	public String Neu() {
-		this.myBenutzergruppe = new Benutzergruppe();
+		this.myBenutzergruppe = new UserGroup();
 		return "BenutzergruppenBearbeiten";
 	}
 
 	public String Speichern() {
 		try {
-			this.dao.save(this.myBenutzergruppe);
+			this.userGroupService.save(this.myBenutzergruppe);
 			return "BenutzergruppenAlle";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
@@ -49,18 +51,18 @@ public class BenutzergruppenForm extends BasisForm {
 	public String Loeschen() {
 		try {
 			new SimpleDAO().refreshObject(this.myBenutzergruppe);
-			if (this.myBenutzergruppe.getBenutzer().size() > 0) {
-				for (Benutzer b : this.myBenutzergruppe.getBenutzer()) {
-					b.getBenutzergruppen().remove(this.myBenutzergruppe);
+			if (this.myBenutzergruppe.getUsers().size() > 0) {
+				for (User b : this.myBenutzergruppe.getUsers()) {
+					b.getUserGroups().remove(this.myBenutzergruppe);
 				}
-				this.myBenutzergruppe.setBenutzer(new HashSet<Benutzer>());
-				this.dao.save(this.myBenutzergruppe);
+				this.myBenutzergruppe.setUsers(new ArrayList<User>());
+				this.userGroupService.save(this.myBenutzergruppe);
 			}
-			if (this.myBenutzergruppe.getSchritte().size() > 0) {
+			if (this.myBenutzergruppe.getTasks().size() > 0) {
 				Helper.setFehlerMeldung("userGroupAssignedError");
 				return "";
 			}
-			this.dao.remove(this.myBenutzergruppe);
+			this.userGroupService.remove(this.myBenutzergruppe);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
 			return "";
@@ -72,7 +74,7 @@ public class BenutzergruppenForm extends BasisForm {
 		try {
 			Session session = Helper.getHibernateSession();
 			session.clear();
-			Criteria crit = session.createCriteria(Benutzergruppe.class);
+			Criteria crit = session.createCriteria(UserGroup.class);
 			crit.addOrder(Order.asc("titel"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
@@ -91,11 +93,11 @@ public class BenutzergruppenForm extends BasisForm {
  	 * Getter und Setter 
 	 */
 
-	public Benutzergruppe getMyBenutzergruppe() {
+	public UserGroup getMyBenutzergruppe() {
 		return this.myBenutzergruppe;
 	}
 
-	public void setMyBenutzergruppe(Benutzergruppe myBenutzergruppe) {
+	public void setMyBenutzergruppe(UserGroup myBenutzergruppe) {
 		Helper.getHibernateSession().clear();
 		this.myBenutzergruppe = myBenutzergruppe;
 	}

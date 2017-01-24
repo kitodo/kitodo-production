@@ -592,20 +592,20 @@ public class AktuelleSchritteForm extends BasisForm {
 			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
 			List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-					.add(Restrictions.le("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.gt("reihenfolge", temp.getReihenfolge()))
-					.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
-			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
-				step.setBearbeitungsstatusEnum(StepStatus.LOCKED);
-				step.setCorrectionStep();
-				step.setBearbeitungsende(null);
-				dao.save(step);
+					.add(Restrictions.le("reihenfolge", this.mySchritt.getOrdering())).add(Restrictions.gt("reihenfolge", temp.getOrdering()))
+					.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+			for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
+				Task step = iter.next();
+				step.setProcessingStatusEnum(TaskStatus.LOCKED);
+				step = taskService.setCorrectionStep(step);
+				step.setProcessingEnd(null);
+				taskService.save(step);
 			}
 
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			this.pdao.save(this.mySchritt.getProzess());
+			this.processService.save(this.mySchritt.getProcess());
 		} catch (DAOException e) {
 		}
 
@@ -619,10 +619,10 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public List<Schritt> getNextStepsForProblemSolution() {
-		List<Schritt> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Schritt.class)
-				.add(Restrictions.gt("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.eq("prioritaet", 10))
-				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
+	public List<Task> getNextStepsForProblemSolution() {
+		List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
+				.add(Restrictions.gt("reihenfolge", this.mySchritt.getOrdering())).add(Restrictions.eq("prioritaet", 10))
+				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
 		return alleNachfolgendenSchritte;
 	}
 
@@ -632,62 +632,63 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public String SolveProblem() {
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		if (ben == null) {
 			Helper.setFehlerMeldung("userNotFound");
 			return "";
 		}
 		Date now = new Date();
-		this.myDav.UploadFromHome(this.mySchritt.getProzess());
-		this.mySchritt.setBearbeitungsstatusEnum(StepStatus.DONE);
-		this.mySchritt.setBearbeitungsende(now);
-		this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_SINGLE);
-		mySchritt.setBearbeitungszeitpunkt(new Date());
-		mySchritt.setBearbeitungsbenutzer(ben);
+		this.myDav.UploadFromHome(this.mySchritt.getProcess());
+		this.mySchritt.setProcessingStatusEnum(TaskStatus.DONE);
+		this.mySchritt.setProcessingEnd(now);
+		this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+		mySchritt.setProcessingTime(new Date());
+		mySchritt.setProcessingUser(ben);
 
 		try {
-			SchrittDAO dao = new SchrittDAO();
-			Schritt temp = dao.get(this.mySolutionID);
+			Task temp = taskService.find(this.mySolutionID);
 			/*
 			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
-			List<Schritt> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Schritt.class)
-					.add(Restrictions.ge("reihenfolge", this.mySchritt.getReihenfolge())).add(Restrictions.le("reihenfolge", temp.getReihenfolge()))
-					.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProzess().getId())).list();
-			for (Iterator<Schritt> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
-				step.setBearbeitungsstatusEnum(StepStatus.DONE);
-				step.setBearbeitungsende(now);
-				step.setPrioritaet(Integer.valueOf(0));
+			List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
+					.add(Restrictions.ge("reihenfolge", this.mySchritt.getOrdering())).add(Restrictions.le("reihenfolge", temp.getOrdering()))
+					.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+			for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
+				Task step = iter.next();
+				step.setProcessingStatusEnum(TaskStatus.DONE);
+				step.setProcessingEnd(now);
+				step.setPriority(0);
 				if (step.getId().intValue() == temp.getId().intValue()) {
-					step.setBearbeitungsstatusEnum(StepStatus.OPEN);
-					step.setCorrectionStep();
-					step.setBearbeitungsende(null);
+					step.setProcessingStatusEnum(TaskStatus.OPEN);
+					step = taskService.setCorrectionStep(step);
+					step.setProcessingEnd(null);
 					// step.setBearbeitungsbeginn(null);
-					step.setBearbeitungszeitpunkt(now);
+					step.setProcessingTime(now);
 				}
-				mySchritt.setBearbeitungszeitpunkt(new Date());
-				mySchritt.setBearbeitungsbenutzer(ben);
-				dao.save(step);
+				mySchritt.setProcessingTime(new Date());
+				mySchritt.setProcessingUser(ben);
+				taskService.save(step);
 			}
 
 			/*
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
-			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage + " ("
-					+ ben.getNachVorname() + ")";
-			this.mySchritt.getProzess().setWikifield(
-					WikiFieldHelper.getWikiMessage(this.mySchritt.getProzess(), this.mySchritt.getProzess().getWikifield(), "info", message));
+			String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
+					+ this.solutionMessage + " (" + userService.getFullName(ben) + ")";
+			this.mySchritt.getProcess().setWikiField(
+					WikiFieldHelper.getWikiMessage(this.mySchritt.getProcess(), this.mySchritt.getProcess().getWikiField(),
+							"info", message));
 
-			Prozesseigenschaft pe = new Prozesseigenschaft();
-			pe.setTitel(Helper.getTranslation("Korrektur durchgefuehrt"));
-			pe.setWert("[" + this.formatter.format(new Date()) + ", " + ben.getNachVorname() + "] "
-					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitel() + ": " + this.solutionMessage);
+			org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
+			pe.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
+			pe.setValue("[" + this.formatter.format(new Date()) + ", " + userService.getFullName(ben) + "] "
+					+ Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
+					+ this.solutionMessage);
 			pe.setType(PropertyType.messageImportant);
-			pe.setProzess(this.mySchritt.getProzess());
-			this.mySchritt.getProzess().getEigenschaften().add(pe);
+			pe.setProcess(this.mySchritt.getProcess());
+			this.mySchritt.getProcess().getProperties().add(pe);
 
-			this.pdao.save(this.mySchritt.getProzess());
+			this.processService.save(this.mySchritt.getProcess());
 		} catch (DAOException e) {
 		}
 
@@ -701,28 +702,28 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 
 	public String UploadFromHome() {
-		mySchritt.setBearbeitungszeitpunkt(new Date());
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		mySchritt.setProcessingTime(new Date());
+		User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		if (ben != null) {
-			mySchritt.setBearbeitungsbenutzer(ben);
+			mySchritt.setProcessingUser(ben);
 		}
-		this.myDav.UploadFromHome(this.mySchritt.getProzess());
-		Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProzess().getTitel());
+		this.myDav.UploadFromHome(this.mySchritt.getProcess());
+		Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProcess().getTitle());
 		return "";
 	}
 
 	public String DownloadToHome() {
 		try {
-			new File(this.mySchritt.getProzess().getImagesOrigDirectory(false));
+			new File(processService.getImagesOrigDirectory(false, this.mySchritt.getProcess()));
 		} catch (Exception e1) {
 
 		}
-		mySchritt.setBearbeitungszeitpunkt(new Date());
-		Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		mySchritt.setProcessingTime(new Date());
+		User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		if (ben != null) {
-			mySchritt.setBearbeitungsbenutzer(ben);
+			mySchritt.setProcessingUser(ben);
 		}
-		this.myDav.DownloadToHome(this.mySchritt.getProzess(), this.mySchritt.getId().intValue(), !this.mySchritt.isTypImagesSchreiben());
+		this.myDav.DownloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId().intValue(), !this.mySchritt.isTypeImagesWrite());
 
 		return "";
 	}
@@ -732,7 +733,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		List<String> fertigListe = this.myDav.UploadFromHomeAlle(DONEDIRECTORYNAME);
 		List<String> geprueft = new ArrayList<String>();
 		/*
-		 * -------------------------------- die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen setzen --------------------------------
+		 * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen setzen
 		 */
 		if (fertigListe != null && fertigListe.size() > 0 && this.nurOffeneSchritte) {
 			this.nurOffeneSchritte = false;
@@ -742,47 +743,49 @@ public class AktuelleSchritteForm extends BasisForm {
 			String element = iter.next();
 			String myID = element.substring(element.indexOf("[") + 1, element.indexOf("]")).trim();
 
-			for (Iterator<Schritt> iterator = this.page.getCompleteList().iterator(); iterator.hasNext();) {
-				Schritt step = iterator.next();
+			for (Iterator<Task> iterator = this.page.getCompleteList().iterator(); iterator.hasNext();) {
+				Task step = iterator.next();
 				/*
 				 * nur wenn der Schritt bereits im Bearbeitungsmodus ist, abschliessen
 				 */
-				if (step.getProzess().getId().intValue() == Integer.parseInt(myID) && step.getBearbeitungsstatusEnum() == StepStatus.INWORK) {
+				if (step.getProcess().getId() == Integer.parseInt(myID)
+						&& step.getProcessingStatusEnum() == TaskStatus.INWORK) {
 					this.mySchritt = step;
 					if (!SchrittDurchBenutzerAbschliessen().isEmpty()) {
 						geprueft.add(element);
 					}
-					this.mySchritt.setEditTypeEnum(StepEditType.MANUAL_MULTI);
+					this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
 				}
 			}
 		}
 
 		this.myDav.removeFromHomeAlle(geprueft, DONEDIRECTORYNAME);
-		Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", DONEDIRECTORYNAME);
+		Helper.setMeldung(null, "removed " + geprueft.size()
+				+ " directories from user home:", DONEDIRECTORYNAME);
 		return "";
 	}
 
 	@SuppressWarnings("unchecked")
 	public String DownloadToHomePage() {
 
-		for (Iterator<Schritt> iter = this.page.getListReload().iterator(); iter.hasNext();) {
-			Schritt step = iter.next();
-			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
-				step.setBearbeitungsstatusEnum(StepStatus.INWORK);
-				step.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-				mySchritt.setBearbeitungszeitpunkt(new Date());
-				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		for (Iterator<Task> iter = this.page.getListReload().iterator(); iter.hasNext();) {
+			Task step = iter.next();
+			if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
+				step.setProcessingStatusEnum(TaskStatus.INWORK);
+				step.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+				mySchritt.setProcessingTime(new Date());
+				User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				if (ben != null) {
-					mySchritt.setBearbeitungsbenutzer(ben);
+					mySchritt.setProcessingUser(ben);
 				}
-				step.setBearbeitungsbeginn(new Date());
-				Prozess proz = step.getProzess();
+				step.setProcessingBegin(new Date());
+				Process proz = step.getProcess();
 				try {
-					this.pdao.save(proz);
+					this.processService.save(proz);
 				} catch (DAOException e) {
-					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitel());
+					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
 				}
-				this.myDav.DownloadToHome(proz, step.getId().intValue(), false);
+				this.myDav.DownloadToHome(proz, step.getId(), false);
 			}
 		}
 		// calcHomeImages();
@@ -793,24 +796,24 @@ public class AktuelleSchritteForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public String DownloadToHomeHits() {
 
-		for (Iterator<Schritt> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
-			Schritt step = iter.next();
-			if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
-				step.setBearbeitungsstatusEnum(StepStatus.INWORK);
-				step.setEditTypeEnum(StepEditType.MANUAL_MULTI);
-				mySchritt.setBearbeitungszeitpunkt(new Date());
-				Benutzer ben = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		for (Iterator<Task> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
+			Task step = iter.next();
+			if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
+				step.setProcessingStatusEnum(TaskStatus.INWORK);
+				step.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+				mySchritt.setProcessingTime(new Date());
+				User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 				if (ben != null) {
-					mySchritt.setBearbeitungsbenutzer(ben);
+					mySchritt.setProcessingUser(ben);
 				}
-				step.setBearbeitungsbeginn(new Date());
-				Prozess proz = step.getProzess();
+				step.setProcessingBegin(new Date());
+				Process proz = step.getProcess();
 				try {
-					this.pdao.save(proz);
+					this.processService.save(proz);
 				} catch (DAOException e) {
-					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitel());
+					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
 				}
-				this.myDav.DownloadToHome(proz, step.getId().intValue(), false);
+				this.myDav.DownloadToHome(proz, step.getId(), false);
 			}
 		}
 		// calcHomeImages();
@@ -834,7 +837,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/**
-	 * call module for this step ================================================================
+	 * call module for this step.
 	 *
 	 * @throws IOException
 	 */
@@ -885,15 +888,15 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void calcHomeImages() {
 		this.gesamtAnzahlImages = 0;
 		this.pageAnzahlImages = 0;
-		Benutzer aktuellerBenutzer = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-		if (aktuellerBenutzer != null && aktuellerBenutzer.isMitMassendownload()) {
-			for (Iterator<Schritt> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
+		User aktuellerBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+		if (aktuellerBenutzer != null && aktuellerBenutzer.isWithMassDownload()) {
+			for (Iterator<Task> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
+				Task step = iter.next();
 				try {
-					if (step.getBearbeitungsstatusEnum() == StepStatus.OPEN) {
+					if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
 						// gesamtAnzahlImages +=
 						// myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
-						this.gesamtAnzahlImages += FileUtils.getNumberOfFiles(step.getProzess().getImagesOrigDirectory(false));
+						this.gesamtAnzahlImages += FileUtils.getNumberOfFiles(processService.getImagesOrigDirectory(false, step.getProcess()));
 					}
 				} catch (Exception e) {
 					myLogger.error(e);
@@ -906,15 +909,15 @@ public class AktuelleSchritteForm extends BasisForm {
 	 *  Getter und Setter
 	 */
 
-	public Prozess getMyProzess() {
-		return this.myProzess;
+	public Process getMyProzess() {
+		return this.myProcess;
 	}
 
-	public void setMyProzess(Prozess myProzess) {
-		this.myProzess = myProzess;
+	public void setMyProzess(Process myProzess) {
+		this.myProcess = myProzess;
 	}
 
-	public Schritt getMySchritt() {
+	public Task getMySchritt() {
 		try {
 			schrittPerParameterLaden();
 		} catch (NumberFormatException e) {
@@ -925,18 +928,18 @@ public class AktuelleSchritteForm extends BasisForm {
 		return this.mySchritt;
 	}
 
-	public void setMySchritt(Schritt mySchritt) {
+	public void setMySchritt(Task mySchritt) {
 		this.modusBearbeiten = "";
 		this.mySchritt = mySchritt;
 		loadProcessProperties();
 	}
 
-	public void setStep(Schritt step) {
+	public void setStep(Task step) {
 		this.mySchritt = step;
 		loadProcessProperties();
 	}
 
-	public Schritt getStep() {
+	public Task getStep() {
 		return this.mySchritt;
 	}
 
@@ -996,12 +999,12 @@ public class AktuelleSchritteForm extends BasisForm {
 			/*
 			 * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
 			 */
-			if (this.page == null && (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
+			if (this.page == null && (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
 				FilterAlleStart();
 			}
 			Integer inParam = Integer.valueOf(param);
 			if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
-				this.mySchritt = new SchrittDAO().get(inParam);
+				this.mySchritt = taskService.find(inParam);
 			}
 		}
 	}
@@ -1012,16 +1015,16 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	@SuppressWarnings("unchecked")
 	public void SelectionAll() {
-		for (Iterator<Schritt> iter = this.page.getList().iterator(); iter.hasNext();) {
-			Schritt s = iter.next();
+		for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
+			Task s = iter.next();
 			s.setSelected(true);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void SelectionNone() {
-		for (Iterator<Schritt> iter = this.page.getList().iterator(); iter.hasNext();) {
-			Schritt s = iter.next();
+		for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
+			Task s = iter.next();
 			s.setSelected(false);
 		}
 	}
@@ -1031,15 +1034,14 @@ public class AktuelleSchritteForm extends BasisForm {
 	 */
 
 	public void DownloadTiffHeader() throws IOException {
-		TiffHeader tiff = new TiffHeader(this.mySchritt.getProzess());
+		TiffHeader tiff = new TiffHeader(this.mySchritt.getProcess());
 		tiff.ExportStart();
 	}
-
 
 	public void ExportDMS() {
 		ExportDms export = new ExportDms();
 		try {
-			export.startExport(this.mySchritt.getProzess());
+			export.startExport(this.mySchritt.getProcess());
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on export", e.getMessage());
 			myLogger.error(e);
@@ -1074,7 +1076,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	 * @return values for wiki field
 	 */
 	public String getWikiField() {
-		return this.mySchritt.getProzess().getWikifield();
+		return this.mySchritt.getProcess().getWikiField();
 
 	}
 
@@ -1084,7 +1086,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	 * @param inString
 	 */
 	public void setWikiField(String inString) {
-		this.mySchritt.getProzess().setWikifield(inString);
+		this.mySchritt.getProcess().setWikiField(inString);
 	}
 
 	public String getAddToWikiField() {
@@ -1097,11 +1099,11 @@ public class AktuelleSchritteForm extends BasisForm {
 
 	public void addToWikiField() {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
-			Benutzer user = (Benutzer) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-			this.mySchritt.getProzess().addToWikiField(user, this.addToWikiField);
+			User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+			this.mySchritt.setProcess(processService.addToWikiField(this.addToWikiField, this.mySchritt.getProcess()));
 			this.addToWikiField = "";
 			try {
-				this.pdao.save(this.mySchritt.getProzess());
+				this.processService.save(this.mySchritt.getProcess());
 			} catch (DAOException e) {
 				myLogger.error(e);
 			}
@@ -1128,10 +1130,10 @@ public class AktuelleSchritteForm extends BasisForm {
 
 		for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getProzesseigenschaft() == null) {
-                Prozesseigenschaft pe = new Prozesseigenschaft();
-                pe.setProzess(this.mySchritt.getProzess());
+                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
+                pe.setProcess(this.mySchritt.getProcess());
                 pt.setProzesseigenschaft(pe);
-                this.mySchritt.getProzess().getEigenschaftenInitialized().add(pe);
+                processService.getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
                 pt.transfer();
             }
 			if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1161,26 +1163,26 @@ public class AktuelleSchritteForm extends BasisForm {
 		if (valid) {
 			for (ProcessProperty p : this.processPropertyList) {
 				if (p.getProzesseigenschaft() == null) {
-					Prozesseigenschaft pe = new Prozesseigenschaft();
-					pe.setProzess(this.mySchritt.getProzess());
+					org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
+					pe.setProcess(this.mySchritt.getProcess());
 					p.setProzesseigenschaft(pe);
-					this.mySchritt.getProzess().getEigenschaftenInitialized().add(pe);
+					processService.getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
 				}
 				p.transfer();
-				if (!this.mySchritt.getProzess().getEigenschaftenInitialized().contains(p.getProzesseigenschaft())) {
-					this.mySchritt.getProzess().getEigenschaftenInitialized().add(p.getProzesseigenschaft());
+				if (!processService.getPropertiesInitialized(this.mySchritt.getProcess()).contains(p.getProzesseigenschaft())) {
+					processService.getPropertiesInitialized(this.mySchritt.getProcess()).add(p.getProzesseigenschaft());
 				}
 			}
-			Prozess p = this.mySchritt.getProzess();
-			List<Prozesseigenschaft> props = p.getEigenschaftenList();
-			for (Prozesseigenschaft pe : props) {
-				if (pe.getTitel() == null) {
-					p.getEigenschaftenInitialized().remove(pe);
+			Process p = this.mySchritt.getProcess();
+			List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
+			for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
+				if (pe.getTitle() == null) {
+					processService.getPropertiesInitialized(p).remove(pe);
 				}
 			}
 
 			try {
-				this.pdao.save(p);
+				this.processService.save(p);
 				Helper.setMeldung("propertiesSaved");
 			} catch (DAOException e) {
 				myLogger.error(e);
@@ -1202,25 +1204,26 @@ public class AktuelleSchritteForm extends BasisForm {
 				return;
 			}
 			if (this.processProperty.getProzesseigenschaft() == null) {
-				Prozesseigenschaft pe = new Prozesseigenschaft();
-				pe.setProzess(this.mySchritt.getProzess());
+				org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
+				pe.setProcess(this.mySchritt.getProcess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.myProzess.getEigenschaftenInitialized().add(pe);
+				processService.getPropertiesInitialized(this.myProcess).add(pe);
 			}
 			this.processProperty.transfer();
 
-			List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
-			for (Prozesseigenschaft pe : props) {
-				if (pe.getTitel() == null) {
-					this.mySchritt.getProzess().getEigenschaftenInitialized().remove(pe);
+			List<org.kitodo.data.database.beans.ProcessProperty> props = this.mySchritt.getProcess().getProperties();
+			for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
+				if (pe.getTitle() == null) {
+					//TODO: check carefully how this list is modified
+					processService.getPropertiesInitialized(this.mySchritt.getProcess()).remove(pe);
 				}
 			}
-			if (!this.mySchritt.getProzess().getEigenschaftenInitialized().contains(this.processProperty.getProzesseigenschaft())) {
-				this.mySchritt.getProzess().getEigenschaftenInitialized().add(this.processProperty.getProzesseigenschaft());
-				this.processProperty.getProzesseigenschaft().setProzess(this.mySchritt.getProzess());
+			if (!processService.getPropertiesInitialized(this.mySchritt.getProcess()).contains(this.processProperty.getProzesseigenschaft())) {
+				processService.getPropertiesInitialized(this.mySchritt.getProcess()).add(this.processProperty.getProzesseigenschaft());
+				this.processProperty.getProzesseigenschaft().setProcess(this.mySchritt.getProcess());
 			}
 			try {
-				this.pdao.save(this.mySchritt.getProzess());
+				this.processService.save(this.mySchritt.getProcess());
 				Helper.setMeldung("propertySaved");
 			} catch (DAOException e) {
 				myLogger.error(e);
@@ -1254,18 +1257,18 @@ public class AktuelleSchritteForm extends BasisForm {
 	public void deleteProperty() {
 		this.processPropertyList.remove(this.processProperty);
 		// if (this.processProperty.getProzesseigenschaft().getId() != null) {
-		this.mySchritt.getProzess().getEigenschaftenInitialized().remove(this.processProperty.getProzesseigenschaft());
+		processService.getPropertiesInitialized(this.mySchritt.getProcess()).remove(this.processProperty.getProzesseigenschaft());
 		// this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
 		// }
 
-		List<Prozesseigenschaft> props = this.mySchritt.getProzess().getEigenschaftenList();
-		for (Prozesseigenschaft pe : props) {
-			if (pe.getTitel() == null) {
-				this.mySchritt.getProzess().getEigenschaftenInitialized().remove(pe);
+		List<org.kitodo.data.database.beans.ProcessProperty> props = this.mySchritt.getProcess().getProperties();
+		for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
+			if (pe.getTitle() == null) {
+				processService.getPropertiesInitialized(this.mySchritt.getProcess()).remove(pe);
 			}
 		}
 		try {
-			this.pdao.save(this.mySchritt.getProzess());
+			this.processService.save(this.mySchritt.getProcess());
 		} catch (DAOException e) {
 			myLogger.error(e);
 			Helper.setFehlerMeldung("propertiesNotDeleted");
@@ -1356,16 +1359,16 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.processPropertyList.add(newProp);
 			this.processProperty = newProp;
 			if (this.processProperty.getProzesseigenschaft() == null) {
-				Prozesseigenschaft pe = new Prozesseigenschaft();
-				pe.setProzess(this.mySchritt.getProzess());
+				org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
+				pe.setProcess(this.mySchritt.getProcess());
 				this.processProperty.setProzesseigenschaft(pe);
-				this.mySchritt.getProzess().getEigenschaftenInitialized().add(pe);
+				processService.getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
 			}
 			this.processProperty.transfer();
 
 		}
 		try {
-			this.pdao.save(this.mySchritt.getProzess());
+			this.processService.save(this.mySchritt.getProcess());
 			Helper.setMeldung("propertySaved");
 		} catch (DAOException e) {
 			myLogger.error(e);

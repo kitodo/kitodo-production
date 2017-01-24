@@ -15,6 +15,8 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,8 +45,6 @@ import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
-
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;

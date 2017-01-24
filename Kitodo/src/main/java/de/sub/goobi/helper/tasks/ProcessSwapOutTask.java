@@ -11,6 +11,10 @@
 
 package de.sub.goobi.helper.tasks;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.CopyFile;
+import de.sub.goobi.helper.Helper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,15 +26,13 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.CopyFile;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.ProzessDAO;
+import org.kitodo.services.ProcessService;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
+	private ProcessService processService = new ProcessService();
 
 	/**
 	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
@@ -105,20 +107,19 @@ public class ProcessSwapOutTask extends LongRunningTask {
 	}
 
 	@Override
-   public void initialize(Prozess inProzess) {
+   public void initialize(Process inProzess) {
       super.initialize(inProzess);
-      setTitle("Auslagerung: " + inProzess.getTitel());
+      setTitle("Auslagerung: " + inProzess.getTitle());
    }
 
    /**
-    * Aufruf als Thread
-    * ================================================================*/
+    * Aufruf als Thread.
+    */
    @Override
 public void run() {
       setStatusProgress(5);
       Helper help = new Helper();
       String swapPath = null;
-      ProzessDAO dao = new ProzessDAO();
       String processDirectory = "";
 
       if (ConfigMain.getBooleanParameter("useSwapping")) {
@@ -140,7 +141,7 @@ public void run() {
          return;
       }
       try {
-         processDirectory = getProzess().getProcessDataDirectoryIgnoreSwapping();
+         processDirectory = processService.getProcessDataDirectoryIgnoreSwapping(getProcess());
          //TODO: Don't catch Exception (the super class)
       } catch (Exception e) {
     	  logger.warn("Exception:", e);
@@ -151,32 +152,32 @@ public void run() {
       }
 
       SafeFile fileIn = new SafeFile(processDirectory);
-      SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + File.separator);
+      SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
       if (fileOut.exists()) {
-         setStatusMessage(getProzess().getTitel() + ": swappingOutTarget already exists");
+         setStatusMessage(getProcess().getTitle() + ": swappingOutTarget already exists");
          setStatusProgress(-1);
          return;
       }
       fileOut.mkdir();
 
-      /* ---------------------
+      /*
        * Xml-Datei vorbereiten
-      * -------------------*/
+      */
       Document doc = new Document();
       Element root = new Element("goobiArchive");
       doc.setRootElement(root);
       Element source = new Element("source").setText(fileIn.getAbsolutePath());
       Element target = new Element("target").setText(fileOut.getAbsolutePath());
-      Element title = new Element("title").setText(getProzess().getTitel());
+      Element title = new Element("title").setText(getProcess().getTitle());
       Element mydate = new Element("date").setText(new Date().toString());
       root.addContent(source);
       root.addContent(target);
       root.addContent(title);
       root.addContent(mydate);
 
-      /* ---------------------
+      /*
        * Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren
-      * -------------------*/
+      */
       setStatusProgress(50);
       try {
         setStatusMessage("copying process folder");
@@ -190,9 +191,9 @@ public void run() {
       setStatusProgress(80);
       deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
 
-      /* ---------------------
+      /*
        * xml-Datei schreiben
-      * -------------------*/
+      */
       Format format = Format.getPrettyFormat();
       format.setEncoding("UTF-8");
       try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
@@ -211,9 +212,9 @@ public void run() {
       /* in Prozess speichern */
       try {
          setStatusMessage("saving process");
-         Prozess myProzess = dao.get(getProzess().getId());
+         Process myProzess = processService.find(getProcess().getId());
          myProzess.setSwappedOutGui(true);
-         dao.save(myProzess);
+         processService.save(myProzess);
       } catch (DAOException e) {
          setStatusMessage("DAOException while saving process: " + e.getMessage());
          logger.warn("DAOException:", e);

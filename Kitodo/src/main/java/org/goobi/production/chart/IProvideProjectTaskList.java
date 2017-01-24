@@ -13,13 +13,10 @@ package org.goobi.production.chart;
 
 import java.util.List;
 
-import org.kitodo.data.database.beans.Projekt;
-
-
+import org.kitodo.data.database.beans.Project;
 
 /**
- * This interface is used to provide a data source for the extended
- * Project Statistics
+ * This interface is used to provide a data source for the extended Project Statistics.
  *
  * @author Steffen Hankiewicz
  * @author Wulf Riebensahm
@@ -35,5 +32,5 @@ public interface IProvideProjectTaskList {
 	 * @return List
 	 */
 
-	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax);
+	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax);
 }

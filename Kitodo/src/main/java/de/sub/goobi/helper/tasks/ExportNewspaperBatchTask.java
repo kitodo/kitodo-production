@@ -11,6 +11,14 @@
 
 package de.sub.goobi.helper.tasks;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.ArrayListMap;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.exceptions.SwapException;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +31,16 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.HibernateException;
+
 import org.joda.time.LocalDate;
+
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.BatchService;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -37,23 +54,15 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
-import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Projekt;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.ArrayListMap;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.VariableReplacer;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import org.kitodo.data.database.persistence.BatchDAO;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
 	private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
 
 	private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
+
+	private BatchService batchService = new BatchService();
+	private RulesetService rulesetService = new RulesetService();
+	private ProcessService processService = new ProcessService();
 
 	/**
 	 * Name of the structural element used to represent the day of month in the
@@ -103,7 +112,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 * implementation, so we use an iterator to walk through and do not use an
 	 * index.
 	 */
-	private Iterator<Prozess> processesIterator;
+	private Iterator<Process> processesIterator;
 
 	/**
 	 * The field dividend holds the number of processes that have been processed
@@ -155,14 +164,16 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 */
 	public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException {
-		super(batch.getLabel());
+		//TODO: find a way to call it!
+		super("test");
+		//super(batchService.getLabel(batch));
 		batchId = batch.getId();
 		action = 1;
 		aggregation = new ArrayListMap<LocalDate, String>();
 		collectedYears = new HashMap<Integer, String>();
 		dividend = 0;
 		divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
-		DocStruct dsNewspaper = batch.getProcesses().iterator().next().getDigitalDocument().getLogicalDocStruct();
+		DocStruct dsNewspaper = processService.getDigitalDocument(batch.getProcesses().iterator().next()).getLogicalDocStruct();
 		DocStruct dsYear = dsNewspaper.getAllChildren().get(0);
 		yearLevelName = dsYear.getType().getName();
 		DocStruct dsMonth = dsYear.getAllChildren().get(0);
@@ -176,7 +187,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	/**
 	 * The copy constructor creates a new thread from a given one. This is
 	 * required to call the copy constructor of the parent.
-	 * 
+	 *
 	 * @param master
 	 *            copy master
 	 */
@@ -205,10 +216,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 */
 	@Override
 	public void run() {
-		Prozess process = null;
+		Process process = null;
 		try {
 			if(processesIterator == null){
-				batch = BatchDAO.read(batchId);
+				batch = batchService.find(batchId);
 				processesIterator = batch.getProcesses().iterator();
 			}
 			if (action == 1) {
@@ -217,11 +228,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 						return;
 					}
 					process = processesIterator.next();
-					Integer processesYear = Integer.valueOf(getYear(process.getDigitalDocument()));
+					Integer processesYear = Integer.valueOf(getYear(processService.getDigitalDocument(process)));
 					if (!collectedYears.containsKey(processesYear)) {
 						collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
 					}
-					aggregation.addAll(getIssueDates(process.getDigitalDocument()), getMetsPointerURL(process));
+					aggregation.addAll(getIssueDates(processService.getDigitalDocument(process)), getMetsPointerURL(process));
 					setProgress(++dividend / divisor);
 				}
 				action = 2;
@@ -245,7 +256,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 			}
 		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
-					+ (process != null ? process.getTitel() : "") + ": " + e.getMessage();
+					+ (process != null ? process.getTitle() : "") + ": " + e.getMessage();
 			setException(new RuntimeException(message, e));
 			return;
 		}
@@ -340,14 +351,15 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             it is waiting for the shell script to create the directory to
 	 *             finish
 	 */
-	private static String getMetsYearAnchorPointerURL(Prozess process) throws PreferencesException, ReadException,
+	private static String getMetsYearAnchorPointerURL(Process process) throws PreferencesException, ReadException,
 			SwapException, DAOException, IOException, InterruptedException {
-
-		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
-				.getPreferences(), process, null);
-		String metsPointerPathAnchor = process.getProjekt().getMetsPointerPath();
-		if (metsPointerPathAnchor.contains(Projekt.ANCHOR_SEPARATOR)) {
-			metsPointerPathAnchor = metsPointerPathAnchor.split(Projekt.ANCHOR_SEPARATOR)[1];
+		ProcessService processService = new ProcessService();
+		RulesetService rulesetService = new RulesetService();
+		VariableReplacer replacer = new VariableReplacer(processService.getDigitalDocument(process), rulesetService
+				.getPreferences(process.getRuleset()), process, null);
+		String metsPointerPathAnchor = process.getProject().getMetsPointerPath();
+		if (metsPointerPathAnchor.contains(Project.ANCHOR_SEPARATOR)) {
+			metsPointerPathAnchor = metsPointerPathAnchor.split(Project.ANCHOR_SEPARATOR)[1];
 		}
 		return replacer.replace(metsPointerPathAnchor);
 	}
@@ -457,11 +469,13 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             it is waiting for the shell script to create the directory to
 	 *             finish
 	 */
-	static String getMetsPointerURL(Prozess process) throws PreferencesException, ReadException, SwapException,
+	static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException {
-		VariableReplacer replacer = new VariableReplacer(process.getDigitalDocument(), process.getRegelsatz()
-				.getPreferences(), process, null);
-		return replacer.replace(process.getProjekt().getMetsPointerPathAnchor());
+		ProcessService processService = new ProcessService();
+		RulesetService rulesetService = new RulesetService();
+		VariableReplacer replacer = new VariableReplacer(processService.getDigitalDocument(process), rulesetService
+				.getPreferences(process.getRuleset()), process, null);
+		return replacer.replace(process.getProject().getMetsPointerPathAnchor());
 	}
 
 	/**
@@ -505,14 +519,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private MetsMods buildExportableMetsMods(Prozess process, HashMap<Integer, String> years,
+	private MetsMods buildExportableMetsMods(Process process, HashMap<Integer, String> years,
 			ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, SwapException,
 			DAOException, IOException, InterruptedException, TypeNotAllowedForParentException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
-		Prefs ruleSet = process.getRegelsatz().getPreferences();
+		Prefs ruleSet = rulesetService.getPreferences(process.getRuleset());
 		MetsMods result = new MetsMods(ruleSet);
-		result.read(process.getMetadataFilePath());
+		result.read(processService.getMetadataFilePath(process));
 
 		DigitalDocument caudexDigitalis = result.getDigitalDocument();
 		int ownYear = getMetadataIntValueByName(caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator()
@@ -528,7 +542,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 * The function insertReferencesToYears() inserts METS pointer references to
 	 * all years into the logical hierarchy of the document. For all but the
 	 * current year, an additional child node will be created.
-	 * 
+	 *
 	 * @param act
 	 *            level of the logical document structure tree that holds years
 	 *            (that is the top level)
@@ -679,14 +693,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 	 * pointer references to other issues which have been published in the same
 	 * year as this process contains data for, but which are contained in other
 	 * processes, into the logical document hierarchy of this process.
-	 * 
+	 *
 	 * @param issues
 	 *            the root of the logical document hierarchy to modify
-	 * @param ownYear
+	 * @param currentYear
 	 *            a map of all issue dates along with their pointer URLs
 	 * @param ownMetsPointerURL
 	 *            the current year—issues of other years are skipped
-	 * @param caudexDigitalis
+	 * @param ownMetsPointerURL
 	 *            my own METS pointer URL—issues that share the same URL are
 	 *            also skipped
 	 * @param ruleSet

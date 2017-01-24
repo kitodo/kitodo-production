@@ -11,6 +11,11 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -50,19 +55,23 @@ import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
-import ugh.dl.Prefs;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
-import org.kitodo.data.database.beans.Prozess;
-import org.kitodo.data.database.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.services.ProcessService;
+
+import org.kitodo.services.RulesetService;
+import org.kitodo.services.TaskService;
+import ugh.dl.Prefs;
 
 public class MassImportForm {
 	private static final Logger logger = Logger.getLogger(MassImportForm.class);
-	private Prozess template;
-	private List<Prozess> processes;
+	private Process template;
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+	private TaskService taskService = new TaskService();
+	private List<Process> processes;
 	private List<String> digitalCollections;
 	private List<String> possibleDigitalCollections;
 	private String opacCatalogue;
@@ -82,7 +91,7 @@ public class MassImportForm {
 
 	private UploadedFile uploadedFile = null;
 
-	private List<Prozess> processList;
+	private List<Process> processList;
 
 	public MassImportForm() {
 		usablePluginsForRecords = PluginLoader
@@ -96,14 +105,14 @@ public class MassImportForm {
 	}
 
 	public String prepare() {
-		if (this.template.getContainsUnreachableSteps()) {
-			if (this.template.getSchritteList().size() == 0) {
+		if (processService.getContainsUnreachableSteps(this.template)) {
+			if (this.template.getTasks().size() == 0) {
 				Helper.setFehlerMeldung("noStepsInWorkflow");
 			}
-			for (Schritt s : this.template.getSchritteList()) {
-				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
+			for (Task s : this.template.getTasks()) {
+				if (taskService.getUserGroupsSize(s) == 0 && taskService.getUsersSize(s) == 0) {
 					List<String> param = new ArrayList<String>();
-					param.add(s.getTitel());
+					param.add(s.getTitle());
 					Helper.setFehlerMeldung(Helper.getTranslation(
 							"noUserInStep", param));
 				}
@@ -115,9 +124,7 @@ public class MassImportForm {
 	}
 
 	/**
-	 * generate a list with all possible collections for given project
-	 *
-	 *
+	 * generate a list with all possible collections for given project.
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -165,7 +172,7 @@ public class MassImportForm {
 						Element projektname = iterator.next();
 						// all all collections to list
 						if (projektname.getText().equalsIgnoreCase(
-								this.template.getProjekt().getTitel())) {
+								this.template.getProject().getTitle())) {
 							List<Element> myCols = projekt
 									.getChildren("DigitalCollection");
 							for (Iterator<Element> it2 = myCols.iterator(); it2
@@ -221,7 +228,7 @@ public class MassImportForm {
 	}
 
 	public String convertData() {
-		this.processList = new ArrayList<Prozess>();
+		this.processList = new ArrayList<Process>();
 		if (StringUtils.isEmpty(currentPlugin)) {
 			Helper.setFehlerMeldung("missingPlugin");
 			return "";
@@ -231,7 +238,7 @@ public class MassImportForm {
 			Batch batch = null;
 
 			// found list with ids
-			Prefs prefs = this.template.getRegelsatz().getPreferences();
+			Prefs prefs = rulesetService.getPreferences(this.template.getRuleset());
 			String tempfolder = ConfigMain.getParameter("tempfolder");
 			this.plugin.setImportFolder(tempfolder);
 			this.plugin.setPrefs(prefs);
@@ -295,7 +302,7 @@ public class MassImportForm {
 				}
 				if (io.getImportReturnValue().equals(
 						ImportReturnValue.ExportFinished)) {
-					Prozess p = JobCreation.generateProcess(io, this.template);
+					Process p = JobCreation.generateProcess(io, this.template);
 					if (p == null) {
 						if (io.getImportFileName() != null
 								&& !io.getImportFileName().isEmpty()
@@ -519,14 +526,14 @@ public class MassImportForm {
 	 * @param processes
 	 *            the process list to set
 	 */
-	public void setProcess(List<Prozess> processes) {
+	public void setProcess(List<Process> processes) {
 		this.processes = processes;
 	}
 
 	/**
 	 * @return the process
 	 */
-	public List<Prozess> getProcess() {
+	public List<Process> getProcess() {
 		return this.processes;
 	}
 
@@ -534,7 +541,7 @@ public class MassImportForm {
 	 * @param template
 	 *            the template to set
 	 */
-	public void setTemplate(Prozess template) {
+	public void setTemplate(Process template) {
 		this.template = template;
 
 	}
@@ -542,7 +549,7 @@ public class MassImportForm {
 	/**
 	 * @return the template
 	 */
-	public Prozess getTemplate() {
+	public Process getTemplate() {
 		return this.template;
 	}
 
@@ -613,7 +620,7 @@ public class MassImportForm {
 		this.possibleDigitalCollections = possibleDigitalCollections;
 	}
 
-	public void setProcesses(List<Prozess> processes) {
+	public void setProcesses(List<Process> processes) {
 		this.processes = processes;
 	}
 
@@ -662,7 +669,7 @@ public class MassImportForm {
 			if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
 				this.allFilenames = this.plugin.getAllFilenames();
 			}
-			plugin.setPrefs(template.getRegelsatz().getPreferences());
+			plugin.setPrefs(rulesetService.getPreferences(template.getRuleset()));
 		}
 	}
 
@@ -774,11 +781,11 @@ public class MassImportForm {
 		return new ArrayList<ImportProperty>();
 	}
 
-	public List<Prozess> getProcessList() {
+	public List<Process> getProcessList() {
 		return this.processList;
 	}
 
-	public void setProcessList(List<Prozess> processList) {
+	public void setProcessList(List<Process> processList) {
 		this.processList = processList;
 	}
 

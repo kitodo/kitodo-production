@@ -11,12 +11,26 @@
 
 package de.sub.goobi.helper.tasks;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.SwapException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.goobi.production.constants.Parameters;
+
 import org.hibernate.Hibernate;
+
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.BatchService;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -27,20 +41,12 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
-import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.Helper;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
 
 /**
  * Thread implementation to export a batch holding a serial publication as set,
  * cross-over inserting METS pointer references to the respective other volumes
  * in the anchor file.
- * 
+ *
  * Requires the {@code MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE} metadata
  * type ("MetsPointerURL") to be available for adding to the first level child
  * of the logical document structure hierarchy (typically "Volume").
@@ -49,41 +55,44 @@ import de.sub.goobi.helper.exceptions.SwapException;
  */
 public class ExportSerialBatchTask extends EmptyTask {
 
+	private BatchService batchService = new BatchService();
+
 	/**
-	 * The batch to export
+	 * The batch to export.
 	 */
 	private final Batch batch;
 
 	/**
-	 * The METS pointers of all volumes belonging to this serial publication
+	 * The METS pointers of all volumes belonging to this serial publication.
 	 */
 	private final ArrayList<String> pointers;
 
 	/**
-	 * Counter used for incrementing the progress bar, starts from 0 and ends
+	 * Counter used for incrementing the progress bar, starts from 0 and ends.
 	 * with “maxsize”.
 	 */
 	private int stepcounter;
 
 	/**
-	 * Iterator along the processes of the batch during export
+	 * Iterator along the processes of the batch during export.
 	 */
-	private Iterator<Prozess> processesIterator;
+	private Iterator<Process> processesIterator;
 
 	/**
-	 * Value indicating 100% on the progress bar
+	 * Value indicating 100% on the progress bar.
 	 */
 	private final int maxsize;
 
 	/**
-	 * Creates a new ExportSerialBatchTask from a batch of processes belonging
-	 * to a serial publication.
-	 * 
+	 * Creates a new ExportSerialBatchTask from a batch of processes belonging to a serial publication.
+	 *
 	 * @param batch
 	 *            batch holding a serial publication
 	 */
 	public ExportSerialBatchTask(Batch batch) {
-		super(batch.getLabel());
+		super("Test");
+		//TODO: the same problem
+		//super(batch.getLabel());
 		this.batch = batch;
 		int batchSize = batch.getProcesses().size();
 		pointers = new ArrayList<String>(batchSize);
@@ -95,7 +104,7 @@ public class ExportSerialBatchTask extends EmptyTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override
@@ -111,9 +120,9 @@ public class ExportSerialBatchTask extends EmptyTask {
 	 * @param processes
 	 *            collection of processes whose rulesets are to be initialised
 	 */
-	private static final void initialiseRuleSets(Iterable<Prozess> processes) {
-		for (Prozess process : processes) {
-			Hibernate.initialize(process.getRegelsatz());
+	private static final void initialiseRuleSets(Iterable<Process> processes) {
+		for (Process process : processes) {
+			Hibernate.initialize(process.getRuleset());
 		}
 	}
 
@@ -139,16 +148,16 @@ public class ExportSerialBatchTask extends EmptyTask {
 	 * It will aggregate the data from all processes and then export all
 	 * processes with the recombined data. The statusProgress variable is being
 	 * updated to show the operator how far the task has proceeded.
-	 * 
+	 *
 	 * @see java.lang.Thread#run()
 	 */
 	@Override
 	public void run() {
-		Prozess process = null;
+		Process process = null;
 		try {
 			if (stepcounter == 0) {
 				pointers.clear();
-				for (Prozess process1 : batch.getProcesses()) {
+				for (Process process1 : batch.getProcesses()) {
 					process = process1;
 					pointers.add(ExportNewspaperBatchTask.getMetsPointerURL(process));
 				}
@@ -173,7 +182,7 @@ public class ExportSerialBatchTask extends EmptyTask {
 			}
 		} catch (Exception e) { // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException and some runtime exceptions
 			String message = e.getClass().getSimpleName() + " while "
-					+ (stepcounter == 0 ? "examining " : "exporting ") + (process != null ? process.getTitel() : "")
+					+ (stepcounter == 0 ? "examining " : "exporting ") + (process != null ? process.getTitle() : "")
 					+ ": " + e.getMessage();
 			setException(new RuntimeException(message, e));
 			return;
@@ -185,7 +194,7 @@ public class ExportSerialBatchTask extends EmptyTask {
 	 * whose logical document structure tree has been enriched with all nodes
 	 * that have to be exported along with the data to make cross-volume
 	 * referencing work.
-	 * 
+	 *
 	 * @param process
 	 *            process to get the METS/MODS data from
 	 * @param allPointers
@@ -218,11 +227,13 @@ public class ExportSerialBatchTask extends EmptyTask {
 	 *             if a child should be added, but it's DocStruct type isn't
 	 *             member of this instance's DocStruct type
 	 */
-	private static DigitalDocument buildExportDocument(Prozess process, Iterable<String> allPointers)
+	private static DigitalDocument buildExportDocument(Process process, Iterable<String> allPointers)
 			throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException,
 			MetadataTypeNotAllowedException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
 
-		DigitalDocument result = process.readMetadataFile().getDigitalDocument();
+		ProcessService processService = new ProcessService();
+		RulesetService rulesetService = new RulesetService();
+		DigitalDocument result = processService.readMetadataFile(process).getDigitalDocument();
 		DocStruct root = result.getLogicalDocStruct();
 		String type = "Volume";
 		try {
@@ -230,7 +241,7 @@ public class ExportSerialBatchTask extends EmptyTask {
 		} catch (NullPointerException e) {
 		}
 		String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
-		Prefs ruleset = process.getRegelsatz().getPreferences();
+		Prefs ruleset = rulesetService.getPreferences(process.getRuleset());
 		for (String pointer : allPointers) {
 			if (!pointer.equals(ownPointer)) {
 				root.createChild(type, result, ruleset).addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE,

@@ -11,6 +11,11 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import de.sub.goobi.persistence.apache.ProcessManager;
+
 import java.io.File;
 
 import org.apache.log4j.Logger;
@@ -19,29 +24,25 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import org.kitodo.data.database.beans.Regelsatz;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.RegelsatzDAO;
-import de.sub.goobi.persistence.apache.ProcessManager;
+import org.kitodo.services.RulesetService;
 
 public class RegelsaetzeForm extends BasisForm {
 	private static final long serialVersionUID = -445707928042517243L;
-	private Regelsatz myRegelsatz = new Regelsatz();
-	private RegelsatzDAO dao = new RegelsatzDAO();
+	private Ruleset myRegelsatz = new Ruleset();
+	private RulesetService rulesetService = new RulesetService();
 	private static final Logger logger = Logger.getLogger(RegelsaetzeForm.class);
 
 	public String Neu() {
-		this.myRegelsatz = new Regelsatz();
+		this.myRegelsatz = new Ruleset();
 		return "RegelsaetzeBearbeiten";
 	}
 
 	public String Speichern() {
 		try {
 			if (hasValidRulesetFilePath(myRegelsatz, ConfigMain.getParameter("RegelsaetzeVerzeichnis"))) {
-				dao.save(myRegelsatz);
+				rulesetService.save(myRegelsatz);
 				return "RegelsaetzeAlle";
 			} else {
 				Helper.setFehlerMeldung("RulesetNotFound");
@@ -54,8 +55,8 @@ public class RegelsaetzeForm extends BasisForm {
 		}
 	}
 
-	private boolean hasValidRulesetFilePath(Regelsatz r, String pathToRulesets) {
-		File rulesetFile = new File(pathToRulesets + r.getDatei());
+	private boolean hasValidRulesetFilePath(Ruleset r, String pathToRulesets) {
+		File rulesetFile = new File(pathToRulesets + r.getFile());
 		return rulesetFile.exists();
 	}
 
@@ -65,7 +66,7 @@ public class RegelsaetzeForm extends BasisForm {
 				Helper.setFehlerMeldung("RulesetInUse");
 				return "";
 			} else {
-				dao.remove(myRegelsatz);
+				rulesetService.remove(myRegelsatz);
 			}
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
@@ -74,7 +75,7 @@ public class RegelsaetzeForm extends BasisForm {
 		return "RegelsaetzeAlle";
 	}
 
-	private boolean hasAssignedProcesses(Regelsatz r) {
+	private boolean hasAssignedProcesses(Ruleset r) {
 		Integer number = ProcessManager.getNumberOfProcessesWithRuleset(r.getId());
 		if (number != null && number > 0) {
 			return true;
@@ -86,7 +87,7 @@ public class RegelsaetzeForm extends BasisForm {
 		try {
 			Session session = Helper.getHibernateSession();
 			session.clear();
-			Criteria crit = session.createCriteria(Regelsatz.class);
+			Criteria crit = session.createCriteria(Ruleset.class);
 			crit.addOrder(Order.asc("titel"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
@@ -105,11 +106,11 @@ public class RegelsaetzeForm extends BasisForm {
 	 * Getter und Setter 
 	 */
 
-	public Regelsatz getMyRegelsatz() {
+	public Ruleset getMyRegelsatz() {
 		return this.myRegelsatz;
 	}
 
-	public void setMyRegelsatz(Regelsatz inPreference) {
+	public void setMyRegelsatz(Ruleset inPreference) {
 		Helper.getHibernateSession().clear();
 		this.myRegelsatz = inPreference;
 	}
