@@ -52,7 +52,7 @@ public class ProjectFileGroup implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
-	private Projekt project;
+	private Project project;
 
 	public Integer getId() {
 		return this.id;
@@ -70,11 +70,11 @@ public class ProjectFileGroup implements Serializable {
 		this.name = name;
 	}
 
-	public Projekt getProject() {
+	public Project getProject() {
 		return this.project;
 	}
 
-	public void setProject(Projekt project) {
+	public void setProject(Project project) {
 		this.project = project;
 	}
 

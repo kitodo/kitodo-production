@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.persistence.exceptions;
+package org.kitodo.data.database.exceptions;
 
 public class InfrastructureException extends RuntimeException {
 

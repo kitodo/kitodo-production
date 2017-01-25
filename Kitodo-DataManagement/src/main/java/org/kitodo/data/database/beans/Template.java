@@ -45,7 +45,7 @@ public class Template implements Serializable {
 	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
 	private Process process;
 
-	@OneToMany(mappedBy = "vorlage", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private List<TemplateProperty> properties;
 

@@ -101,16 +101,16 @@ public class User implements Serializable {
 					) })
 	private List<UserGroup> userGroups;
 
-	@ManyToMany(mappedBy = "benutzer")
+	@ManyToMany(mappedBy = "users")
 	private List<Task> tasks;
 
-	@OneToMany(mappedBy = "bearbeitungsbenutzer", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "processingUser", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Task> processingTasks;
 
-	@ManyToMany(mappedBy = "benutzer")
+	@ManyToMany(mappedBy = "users")
 	private List<Project> projects;
 
-	@OneToMany(mappedBy = "benutzer", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("title ASC")
 	private List<UserProperty> properties;
 

@@ -11,8 +11,6 @@
 
 package org.kitodo.data.database.helper.enums;
 
-import org.kitodo.data.database.helper.Helper;
-
 /**
  * Enum for edit type of task steps each one has an integer value, and a title
  * 
@@ -68,10 +66,11 @@ public enum TaskEditType {
 	/**
 	 * Get title from editType.
 	 *
-	 * @return title as translated string for current locale
+	 * @return title
 	 */
 	public String getTitle() {
-		return Helper.getTranslation(this.title);
+		return this.title;
+		//return Helper.getTranslation(this.title);
 	}
 
 	/**

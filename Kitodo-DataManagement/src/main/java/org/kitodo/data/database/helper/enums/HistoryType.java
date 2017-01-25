@@ -11,8 +11,6 @@
 
 package org.kitodo.data.database.helper.enums;
 
-import org.kitodo.data.database.helper.Helper;
-
 /**
  * Enum of all history event types for all history events for processes
  * 
@@ -120,10 +118,11 @@ public enum HistoryType {
 	/**
 	 * Get title from type.
 	 *
-	 * @return title as translated string for current locale from standard-jsf-messages
+	 * @return title
 	 */
 	public String getTitle() {
-		return Helper.getTranslation(this.title);
+		return this.title;
+		//return Helper.getTranslation(this.title);
 	}
 
 	/**

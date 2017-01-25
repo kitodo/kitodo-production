@@ -55,13 +55,13 @@ public class UserGroup implements Serializable, Comparable<UserGroup> {
 	private List<User> users;
 
 	@ManyToMany(mappedBy = "userGroups")
-	private List<Schritt> steps;
+	private List<Task> tasks;
 
 	@Transient
 	private boolean panelShown = false;
 
 	public UserGroup() {
-		this.steps = new ArrayList<>();
+		this.tasks = new ArrayList<>();
 		this.users = new ArrayList<>();
 	}
 
@@ -106,12 +106,12 @@ public class UserGroup implements Serializable, Comparable<UserGroup> {
 		this.users = users;
 	}
 
-	public List<Schritt> getSteps() {
-		return this.steps;
+	public List<Task> getTasks() {
+		return this.tasks;
 	}
 
-	public void setSteps(List<Schritt> steps) {
-		this.steps = steps;
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
 	}
 
 	public boolean isPanelShown() {
