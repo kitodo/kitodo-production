@@ -21,12 +21,12 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 public class SQLStepRequestsTest {
 
 	static SQLStepRequests request;
-	static HistoryEventType typeSelection;
+	static HistoryType typeSelection;
 
 	@BeforeClass
 	public static void setUp() {
@@ -35,7 +35,7 @@ public class SQLStepRequestsTest {
 		cal1.set(2009, 01, 01);
 		cal2.set(2009, 03, 31);
 		request = new SQLStepRequests(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
-		typeSelection = HistoryEventType.storageDifference;
+		typeSelection = HistoryType.storageDifference;
 	}
 
 	@Test

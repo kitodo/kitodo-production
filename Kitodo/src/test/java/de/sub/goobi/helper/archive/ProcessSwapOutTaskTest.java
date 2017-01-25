@@ -21,18 +21,20 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
-import de.sub.goobi.persistence.ProzessDAO;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ProcessService;
 
 @Ignore("Crashing") 
 public class ProcessSwapOutTaskTest {
-   static Prozess proz = null;
+   static Process proz = null;
+   static ProcessService processService = new ProcessService();
    
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
-      proz = new ProzessDAO().get(119);
+      proz = processService.find(119);
    }
 
    @AfterClass
