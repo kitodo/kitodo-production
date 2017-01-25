@@ -11,6 +11,9 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +23,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
+import org.kitodo.data.database.beans.Task;
 
 /**
  * This filter replaces the filter, which was integrated in class
@@ -30,15 +31,11 @@ import de.sub.goobi.helper.PaginatingCriteria;
  * filter functions on the level of processes, which were already implemented in
  * UserDefinedFilter and combine them for the step filter.
  * 
- * 
  * @author Wulf Riebensahm
  * 
  */
 public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7134772860962768932L;
 	private String myFilter = null;
 	private WeakReference<Criteria> myCriteria = null;
@@ -89,7 +86,7 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 
 	private Criteria createCriteriaFromIDList() {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = new PaginatingCriteria(Schritt.class, session);
+		Criteria crit = new PaginatingCriteria(Task.class, session);
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}
@@ -97,12 +94,10 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
 	private Criteria createCriteriaFromFilterString(String filter) {
 		Session session = Helper.getHibernateSession();
 
-		PaginatingCriteria crit = new PaginatingCriteria(Schritt.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Task.class, session);
 
 		/*
-		 * -------------------------------- combine all parameters together this
-		 * part was exported to FilterHelper so that other Filters could access
-		 * it --------------------------------
+		 * combine all parameters together this part was exported to FilterHelper so that other Filters could access it
 		 */
 
 		// following was moved to Filter Helper

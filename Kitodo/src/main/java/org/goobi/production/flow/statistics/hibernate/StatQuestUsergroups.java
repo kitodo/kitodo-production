@@ -11,6 +11,13 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.intranda.commons.chart.renderer.HtmlTableRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,13 +29,8 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import de.intranda.commons.chart.renderer.HtmlTableRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import org.kitodo.data.database.beans.Benutzergruppe;
-import org.kitodo.data.database.beans.Schritt;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.UserGroup;
 
 /*****************************************************************************
  * Implementation of {@link IStatisticalQuestion}. 
@@ -53,7 +55,7 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
 		}
 
-		Criteria crit = Helper.getHibernateSession().createCriteria(Schritt.class);
+		Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
 		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
 
 		if (originalFilter instanceof UserDefinedFilter) {
@@ -67,9 +69,9 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
 		DataRow dRow = new DataRow(Helper.getTranslation("count"));
 
 		for (Object obj : crit.list()) {
-			Schritt step = (Schritt) obj;
-			for (Benutzergruppe group : step.getBenutzergruppenList()) {
-				dRow.addValue(group.getTitel(), dRow.getValue(group.getTitel()) + 1);
+			Task step = (Task) obj;
+			for (UserGroup group : step.getUserGroups()) {
+				dRow.addValue(group.getTitle(), dRow.getValue(group.getTitle()) + 1);
 			}
 		}
 

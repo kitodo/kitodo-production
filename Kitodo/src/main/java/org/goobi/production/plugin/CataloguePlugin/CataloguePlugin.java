@@ -290,12 +290,11 @@ public class CataloguePlugin extends UnspecificPlugin {
 	}
 
 	/**
-	 * The method setPreferences() must be used to set the UGH preferences the
-	 * plugin shall use.
-	 * 
+	 * The method setPreferences() must be used to set the UGH preferences the plugin shall use.
+	 *
 	 * @param preferences
 	 *            UGH preferences
-	 * @see org.kitodo.data.database.beans.Regelsatz#getPreferences()
+	 * @see org.kitodo.services.RulesetService#getPreferences()
 	 */
 	public void setPreferences(Prefs preferences) {
 		invokeQuietly(plugin, setPreferences, preferences, null);

@@ -11,6 +11,13 @@
 
 package org.goobi.mq.processors;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.AdditionalField;
+import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.Helper;
+
+import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,12 +31,7 @@ import org.goobi.mq.MapMessageObjectReader;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.AdditionalField;
-import de.sub.goobi.forms.ProzesskopieForm;
-import de.sub.goobi.helper.Helper;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+import org.kitodo.data.database.beans.Process;
 
 /**
  * CreateNewProcessProcessor is an Apache Active MQ consumer which registers to
@@ -142,9 +144,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	}
 
 	/**
-	 * The function newProcessFromTemplate() derives a ProzesskopieForm object
-	 * from a given template.
-	 * 
+	 * The function newProcessFromTemplate() derives a ProzesskopieForm object from a given template.
+	 *
 	 * @param templateTitle
 	 *            titel value of the template to look for
 	 * @return a ProzesskopieForm object, prepared from a given template
@@ -154,7 +155,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	public static ProzesskopieForm newProcessFromTemplate(String templateTitle) throws IllegalArgumentException {
 		ProzesskopieForm result = new ProzesskopieForm();
 
-		Prozess selectedTemplate = getTemplateByTitle(templateTitle);
+		Process selectedTemplate = getTemplateByTitle(templateTitle);
 		result.setProzessVorlage(selectedTemplate);
 		result.prepare();
 		return result;
@@ -163,7 +164,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	/**
 	 * The function getTemplateByTitle() fetches the first Prozess with
 	 * istTemplate and the given templateTitle from the database.
-	 * 
+	 *
 	 * @param templateTitle
 	 *            the title of the template to be picked up
 	 * @return the template, if found
@@ -171,14 +172,14 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 *             is thrown, if there is no template matching the given
 	 *             templateTitle
 	 */
-	private static Prozess getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
+	private static Process getTemplateByTitle(String templateTitle) throws IllegalArgumentException {
 
-		Criteria request = Helper.getHibernateSession().createCriteria(Prozess.class);
+		Criteria request = Helper.getHibernateSession().createCriteria(Process.class);
 		request.add(Restrictions.eq("istTemplate", Boolean.TRUE));
 		request.add(Restrictions.like("titel", templateTitle));
 
 		@SuppressWarnings("unchecked")
-		List<Prozess> response = request.list();
+		List<Process> response = request.list();
 
 		if (response.size() > 0)
 			return response.get(0);
@@ -190,7 +191,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * The function validCollectionsForProcess() tests whether a given set of
 	 * collections can be assigned to new process. If so, the set of collections
 	 * is returned as a list ready for assignment.
-	 * 
+	 *
 	 * @param collections
 	 *            a set of collection names to be tested
 	 * @param process
@@ -207,7 +208,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		HashSet<String> possibleCollections = new HashSet<String>(process.getPossibleDigitalCollections());
 		if (!possibleCollections.containsAll(collections))
 			throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not available for template \""
-					+ process.getProzessVorlage().getTitel() + "\".");
+					+ process.getProzessVorlage().getTitle() + "\".");
 		return new ArrayList<String>(collections);
 	}
 
@@ -265,16 +266,14 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 	 * Sets the bibliographic data for a new process from a library catalogue.
 	 * This is equal to manually choosing a catalogue and a search field,
 	 * entering the search string and clicking “Apply”.
-	 * 
+	 *
 	 * Since the underlying OpacAuswerten() method doesn’t raise exceptions, we
 	 * count the populated “additional details” fields before and after running
 	 * the request and assume the method to have failed if not even one more
 	 * field was populated by the method call.
-	 * 
+	 *
 	 * @param inputForm
 	 *            the ProzesskopieForm to be set
-	 * @param id
-	 *            the ticket’s id
 	 * @param opac
 	 *            the value for “Search in Opac”
 	 * @param field

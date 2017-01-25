@@ -11,13 +11,17 @@
 
 package org.goobi.webapi.dao;
 
-import org.kitodo.data.database.beans.Prozess;
-import org.kitodo.data.database.beans.Schritt;
 import de.sub.goobi.helper.Helper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
+
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.beans.IdentifierPPN;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -26,8 +30,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 
 public class GoobiProcessDAO {
 
@@ -42,7 +46,7 @@ public class GoobiProcessDAO {
         try {
 
             Criteria criteria = session
-                    .createCriteria(Prozess.class)
+                    .createCriteria(Process.class)
                     .createAlias("vorlagen", "v")
                     .createAlias("vorlagen.eigenschaften", "ve")
                     .createAlias("werkstuecke", "w")
@@ -76,7 +80,7 @@ public class GoobiProcessDAO {
         try {
 
             Criteria criteria = session
-                    .createCriteria(Prozess.class)
+                    .createCriteria(Process.class)
                     .createAlias("vorlagen", "v")
                     .createAlias("vorlagen.eigenschaften", "ve")
                     .createAlias("werkstuecke", "w")
@@ -113,7 +117,7 @@ public class GoobiProcessDAO {
         try {
 
             Criteria criteria = session
-                    .createCriteria(Schritt.class)
+                    .createCriteria(Task.class)
                     .createAlias("prozess", "p")
                     .createAlias("prozess.werkstuecke", "w")
                     .createAlias("prozess.werkstuecke.eigenschaften", "we")

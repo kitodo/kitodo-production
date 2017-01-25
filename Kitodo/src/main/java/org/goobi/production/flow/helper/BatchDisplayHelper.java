@@ -13,7 +13,7 @@ package org.goobi.production.flow.helper;
 
 import java.util.List;
 
-import de.sub.goobi.helper.enums.StepStatus;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 
 public class BatchDisplayHelper {
 
@@ -52,9 +52,9 @@ public class BatchDisplayHelper {
 		int abgeschlossen = 0;
 
 		for (BatchDisplayItem bdi : this.stepList) {
-			if (bdi.getStepStatus() == StepStatus.DONE) {
+			if (bdi.getStepStatus() == TaskStatus.DONE) {
 				abgeschlossen++;
-			} else if (bdi.getStepStatus() == StepStatus.LOCKED) {
+			} else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
 				offen++;
 			} else {
 				inBearbeitung++;
@@ -82,9 +82,9 @@ public class BatchDisplayHelper {
 		int abgeschlossen = 0;
 
 		for (BatchDisplayItem bdi : this.stepList) {
-			if (bdi.getStepStatus() == StepStatus.DONE) {
+			if (bdi.getStepStatus() == TaskStatus.DONE) {
 				abgeschlossen++;
-			} else if (bdi.getStepStatus() == StepStatus.LOCKED) {
+			} else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
 				offen++;
 			} else {
 				inBearbeitung++;
@@ -102,9 +102,9 @@ public class BatchDisplayHelper {
 		int abgeschlossen = 0;
 
 		for (BatchDisplayItem bdi : this.stepList) {
-			if (bdi.getStepStatus() == StepStatus.DONE) {
+			if (bdi.getStepStatus() == TaskStatus.DONE) {
 				abgeschlossen++;
-			} else if (bdi.getStepStatus() == StepStatus.LOCKED) {
+			} else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
 				offen++;
 			} else {
 				inBearbeitung++;
@@ -122,9 +122,9 @@ public class BatchDisplayHelper {
 		int abgeschlossen = 0;
 
 		for (BatchDisplayItem bdi : this.stepList) {
-			if (bdi.getStepStatus() == StepStatus.DONE) {
+			if (bdi.getStepStatus() == TaskStatus.DONE) {
 				abgeschlossen++;
-			} else if (bdi.getStepStatus() == StepStatus.LOCKED) {
+			} else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
 				offen++;
 			} else {
 				inBearbeitung++;

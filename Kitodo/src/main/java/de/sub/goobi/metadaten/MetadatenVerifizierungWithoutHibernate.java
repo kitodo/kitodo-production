@@ -11,11 +11,27 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import de.sub.goobi.persistence.apache.ProcessManager;
+import de.sub.goobi.persistence.apache.ProcessObject;
+import de.sub.goobi.persistence.apache.ProjectManager;
+import de.sub.goobi.persistence.apache.ProjectObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -29,18 +45,6 @@ import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
 
 public class MetadatenVerifizierungWithoutHibernate {
 	List<DocStruct> docStructsOhneSeiten;
@@ -48,14 +52,17 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	private String title;
 
-	public boolean validate(Prozess inProzess) {
-		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+
+	public boolean validate(Process inProzess) {
+		Prefs myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
 		/*
-		 * -------------------------------- Fileformat einlesen --------------------------------
+		 * Fileformat einlesen
 		 */
 		Fileformat gdzfile;
 		try {
-			gdzfile = inProzess.readMetadataFile();
+			gdzfile = processService.readMetadataFile(inProzess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + this.title, e.getMessage());
 			return false;

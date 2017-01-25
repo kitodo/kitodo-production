@@ -67,7 +67,7 @@ public class LoginForm {
 			/* prüfen, ob schon ein Benutzer mit dem Login existiert */
 			List<User> treffer;
 			try {
-				treffer = userService.search("from Benutzer where login = :username", "username",
+				treffer = userService.search("from User where login = :username", "username",
 						this.login);
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("could not read database", e.getMessage());

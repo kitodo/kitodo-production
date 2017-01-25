@@ -81,9 +81,9 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
-import org.kitodo.data.database.beans.Prozesseigenschaft;
-import org.kitodo.data.database.beans.Vorlageeigenschaft;
-import org.kitodo.data.database.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.production.plugin.importer.massimport.UghUtils;
 import de.sub.goobi.helper.exceptions.ImportPluginException;
 
@@ -107,9 +107,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] { "036D", "9" };
 
 	protected String ats;
-	protected List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
-	protected List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
-	protected List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
+	protected List<ProcessProperty> processProperties = new ArrayList<ProcessProperty>();
+	protected List<WorkpieceProperty> workProperties = new ArrayList<WorkpieceProperty>();
+	protected List<TemplateProperty> templateProperties = new ArrayList<TemplateProperty>();
 
 	protected String currentTitle;
 	protected String docType;
@@ -241,16 +241,16 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 			}
 
 			{
-			    Vorlageeigenschaft prop = new Vorlageeigenschaft();
-				prop.setTitel("Titel");
-				prop.setWert(currentTitle);
+			    TemplateProperty prop = new TemplateProperty();
+				prop.setTitle("Titel");
+				prop.setValue(currentTitle);
 				templateProperties.add(prop);
 			}
 			{
 				if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
-				    Vorlageeigenschaft prop = new Vorlageeigenschaft();
-					prop.setTitel("Bandnummer");
-					prop.setWert(volumeNumber);
+				    TemplateProperty prop = new TemplateProperty();
+					prop.setTitle("Bandnummer");
+					prop.setValue(volumeNumber);
 					templateProperties.add(prop);
 				}
 			}
@@ -260,9 +260,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 				if (mdList != null && mdList.size() > 0) {
 					String analog = mdList.get(0).getValue();
 
-					Vorlageeigenschaft prop = new Vorlageeigenschaft();
-					prop.setTitel("Identifier");
-					prop.setWert(analog);
+					TemplateProperty prop = new TemplateProperty();
+					prop.setTitle("Identifier");
+					prop.setValue(analog);
 					templateProperties.add(prop);
 
 				}
@@ -273,30 +273,30 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 					mdList = child.getAllMetadataByType(identifierType);
 					if (mdList != null && mdList.size() > 0) {
 						Metadata identifier = mdList.get(0);
-						Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-						prop.setTitel("Identifier Band");
-						prop.setWert(identifier.getValue());
+						WorkpieceProperty prop = new WorkpieceProperty();
+						prop.setTitle("Identifier Band");
+						prop.setValue(identifier.getValue());
 						workProperties.add(prop);
 					}
 
 				}
 			}
 			{
-			    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-				prop.setTitel("Artist");
-				prop.setWert(author);
+			    WorkpieceProperty prop = new WorkpieceProperty();
+				prop.setTitle("Artist");
+				prop.setValue(author);
 				workProperties.add(prop);
 			}
 			{
-			    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-				prop.setTitel("ATS");
-				prop.setWert(ats);
+			    WorkpieceProperty prop = new WorkpieceProperty();
+				prop.setTitle("ATS");
+				prop.setValue(ats);
 				workProperties.add(prop);
 			}
 			{
-			    Werkstueckeigenschaft prop = new Werkstueckeigenschaft();
-				prop.setTitel("Identifier");
-				prop.setWert(currentIdentifier);
+			    WorkpieceProperty prop = new WorkpieceProperty();
+				prop.setTitle("Identifier");
+				prop.setValue(currentIdentifier);
 				workProperties.add(prop);
 			}
 
@@ -414,8 +414,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	 * @param field
 	 *            field value to return
 	 * @return field value, or ""
-	 * @see org.kitodo.production.plugin.opac.pica.PicaPlugin#getPpnFromParent(Element,
-	 *      String, String)
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getFieldValueFromRecord(Element record, String[] field) {
@@ -438,8 +437,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 	 * @param attributeValue
 	 *            attribute to locate
 	 * @return value, or "" if not found
-	 * @see org.kitodo.production.plugin.opac.pica.PicaPlugin#getSubelementValue(Element,
-	 *      String)
+
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getSubelementValue(Element inElement, String attributeValue) {

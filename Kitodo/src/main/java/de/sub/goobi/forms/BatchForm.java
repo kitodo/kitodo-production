@@ -67,8 +67,8 @@ public class BatchForm extends BasisForm {
 	private String processfilter;
 	private IEvaluableFilter myFilteredDataSource;
 
-	private final BatchService batchService = new BatchService();
-	private final ProcessService processService = new ProcessService();
+	private BatchService batchService = new BatchService();
+	private ProcessService processService = new ProcessService();
 	private String modusBearbeiten = "";
 
 	private String batchTitle;
@@ -285,8 +285,7 @@ public class BatchForm extends BasisForm {
 				batchService.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Process p : this.selectedProcesses) {
-						processService.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })));
+						processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
 					}
 					this.processService.saveList(this.selectedProcesses);
 				}
@@ -310,14 +309,13 @@ public class BatchForm extends BasisForm {
 		try {
 			for (String entry : this.selectedBatches) {
 				Batch batch = batchService.find(Integer.parseInt(entry));
-				batchService.removeAll(this.selectedProcesses);
+				batchService.removeAll(batch, this.selectedProcesses);
 				batchService.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Process p : this.selectedProcesses) {
 						processService.addToWikiField(
-								"debug",
 								Helper.getTranslation("removeFromBatch",
-										Arrays.asList(new String[] { batchService.getLabel(batch) })));
+										Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
 					}
 					this.processService.saveList(this.selectedProcesses);
 				}
@@ -367,8 +365,7 @@ public class BatchForm extends BasisForm {
 				batchService.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
 					for (Process p : selectedProcesses) {
-						processService.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })));
+						processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
 					}
 					this.processService.saveList(selectedProcesses);
 				}

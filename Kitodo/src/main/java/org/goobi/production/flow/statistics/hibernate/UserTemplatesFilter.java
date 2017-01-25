@@ -11,21 +11,22 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.util.List;
 import java.util.Observable;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
+import org.kitodo.data.database.beans.Process;
 
 /**
  * This class of IEvaluable filter implements the template filter
  * 
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 	private static final long serialVersionUID = -4062754600698521285L;
 	private boolean clearSession = false;
@@ -46,7 +47,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
 	public Criteria getCriteria() {
 
 		Session session = Helper.getHibernateSession();
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
 		FilterHelper.criteriaBuilder(session, null, crit, true, null, false, null, clearSession);
 
 		return crit;

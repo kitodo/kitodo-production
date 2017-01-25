@@ -11,6 +11,11 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.forms.SpracheForm;
+import de.sub.goobi.helper.enums.ReportLevel;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -47,11 +52,6 @@ import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
-
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.forms.SpracheForm;
-import de.sub.goobi.helper.enums.ReportLevel;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;

@@ -23,13 +23,14 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.configuration.ConfigurationException;
 
+import org.kitodo.data.database.helper.Util;
+
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataGroupType;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.helper.Util;
 
 /**
  * Backing bean for a set of backing beans for input elements to edit a metadata

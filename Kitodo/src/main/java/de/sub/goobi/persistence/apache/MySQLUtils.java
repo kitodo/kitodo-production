@@ -24,6 +24,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Ruleset;
 
+//TODO: fix it!
 public class MySQLUtils {
 
 	public static final ResultSetHandler<List<StepObject>> resultSetToStepObjectListHandler = new ResultSetHandler<List<StepObject>>() {

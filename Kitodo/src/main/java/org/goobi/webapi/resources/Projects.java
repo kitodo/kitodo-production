@@ -11,6 +11,8 @@
 
 package org.goobi.webapi.resources;
 
+import de.sub.goobi.helper.Helper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +30,8 @@ import org.goobi.webapi.beans.ProjectsRootNode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Projekt;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 
 /**
  * The CatalogueConfiguration class provides the Jersey API URL pattern
@@ -45,20 +46,20 @@ public class Projects {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
-		Map<Projekt, Set<Prozess>> data = new HashMap<Projekt, Set<Prozess>>();
+		Map<Project, Set<Process>> data = new HashMap<Project, Set<Process>>();
 
-		Criteria query = Helper.getHibernateSession().createCriteria(Prozess.class);
+		Criteria query = Helper.getHibernateSession().createCriteria(Process.class);
 		@SuppressWarnings("unchecked")
-		List<Prozess> processTemplates = query.add(Restrictions.eq("istTemplate", Boolean.TRUE)).list();
-		for (Prozess processTemplate : processTemplates) {
-			Projekt project = processTemplate.getProjekt();
-			Set<Prozess> templates = data.containsKey(project) ? data.get(project) : new HashSet<Prozess>();
+		List<Process> processTemplates = query.add(Restrictions.eq("istTemplate", Boolean.TRUE)).list();
+		for (Process processTemplate : processTemplates) {
+			Project project = processTemplate.getProject();
+			Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<Process>();
 			templates.add(processTemplate);
 			data.put(project, templates);
 		}
-		List<Projekt> result = new ArrayList<Projekt>();
-		for (Projekt project : data.keySet()) {
-			project.template = new ArrayList<Prozess>(data.get(project));
+		List<Project> result = new ArrayList<Project>();
+		for (Project project : data.keySet()) {
+			project.template = new ArrayList<Process>(data.get(project));
 			result.add(project);
 		}
 		return new ProjectsRootNode(result);

@@ -11,6 +11,13 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,18 +31,13 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Process;
 
 /**
  * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data about the productivity of the
  * selected processes, which are passed into this class via implemetations of the IDataSource interface.
  * 
- * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of the selected {@link Prozess}es is
+ * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of the selected {@link Process}es is
  * evaluated.
  * 
  * @author Wulf Riebensahm

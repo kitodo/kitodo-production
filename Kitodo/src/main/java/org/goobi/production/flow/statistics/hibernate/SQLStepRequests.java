@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /**
  * Class provides SQL for Step Requests statistics on the history table
@@ -48,7 +48,7 @@ public class SQLStepRequests extends SQLGenerator {
 	 *
 	 * @return SQLExpression for MySQL DBMS - default fields stepCount and intervall
 	 */
-	public String getSQL(HistoryEventType typeSelection, Integer stepOrder,
+	public String getSQL(HistoryType typeSelection, Integer stepOrder,
 			Boolean stepOrderGrouping, Boolean includeLoops) {
 
 		String timeLimiter = "history.date" ;
@@ -167,7 +167,7 @@ public class SQLStepRequests extends SQLGenerator {
 	 * @param eventSelection
 	 * @return SQL String to retrieve the highest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
-	public String SQLMaxStepOrder(HistoryEventType eventSelection) {
+	public String SQLMaxStepOrder(HistoryType eventSelection) {
 
 		String timeRestriction;
 		String innerWhereClause = null;
@@ -198,7 +198,7 @@ public class SQLStepRequests extends SQLGenerator {
 	 * @param eventSelection
 	 * @return SQL String to retrieve the lowest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
-	public String SQLMinStepOrder(HistoryEventType eventSelection) {
+	public String SQLMinStepOrder(HistoryType eventSelection) {
 
 		String timeRestriction;
 		String innerWhereClause = null;

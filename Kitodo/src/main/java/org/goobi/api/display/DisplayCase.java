@@ -17,33 +17,33 @@ import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
 
-import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Process;
 
 
 public class DisplayCase {
 	private DisplayType displayType = null;
 	private ArrayList<Item> itemList = new ArrayList<Item>();
 	private ConfigDispayRules configDisplay;
-	private Prozess myProcess;
+	private Process myProcess;
 	private String metaName;
 	private BindState myBindState;
 	
 	/**
-	 * gets items with current bind state
+	 * gets items with current bind state.
 	 * 
 	 * @param inProcess
 	 * @param metaType
 	 */
 	
-	public DisplayCase(Prozess inProcess, String metaType ){
+	public DisplayCase(Process inProcess, String metaType ){
 		metaName = metaType;
 		myProcess = inProcess;
 		myBindState = Modes.getBindState();
 		try {
 			configDisplay = ConfigDispayRules.getInstance();
 			if (configDisplay != null) {
-			displayType = configDisplay.getElementTypeByName(myProcess.getProjekt().getTitel(), myBindState.getTitle(), metaName);
-			itemList = configDisplay.getItemsByNameAndType(myProcess.getProjekt().getTitel(), myBindState.getTitle(), metaName, displayType);
+			displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(), myBindState.getTitle(), metaName);
+			itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(), myBindState.getTitle(), metaName, displayType);
 			} else {
 				// no ruleset file
 				displayType = DisplayType.getByTitle("textarea");
@@ -65,15 +65,15 @@ public class DisplayCase {
 	 * @param metaType
 	 */
 	
-	public DisplayCase(Prozess inProcess, String bind, String metaType ){
+	public DisplayCase(Process inProcess, String bind, String metaType ){
 		metaName = metaType;
 		myProcess = inProcess;
 		myBindState = Modes.getBindState();
 		try {
 			configDisplay = ConfigDispayRules.getInstance();
 			if (configDisplay != null) {
-				displayType = configDisplay.getElementTypeByName(myProcess.getProjekt().getTitel(), bind, metaName);
-				itemList = configDisplay.getItemsByNameAndType(myProcess.getProjekt().getTitel(), bind, metaName, displayType);
+				displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(), bind, metaName);
+				itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(), bind, metaName, displayType);
 			} else {
 				// no ruleset file
 				displayType = DisplayType.getByTitle("textarea");

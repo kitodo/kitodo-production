@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /**
  * Class provides SQL for storage statistics
@@ -55,11 +55,11 @@ public class SQLStorage extends SQLGenerator {
 		if (myIdsCondition != null) {
 			// adding ids to the where clause
 			innerWhereClause = "(history.type="
-					+ HistoryEventType.storageDifference.getValue().toString()
+					+ HistoryType.storageDifference.getValue().toString()
 					+ ")  AND (" + myIdsCondition + ")";
 		} else {
 			innerWhereClause = "(history.type="
-					+ HistoryEventType.storageDifference.getValue().toString()
+					+ HistoryType.storageDifference.getValue().toString()
 					+ ") ";
 		}
 

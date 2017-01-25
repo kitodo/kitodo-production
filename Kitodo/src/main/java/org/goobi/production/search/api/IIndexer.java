@@ -11,7 +11,7 @@
 
 package org.goobi.production.search.api;
 
-import org.kitodo.data.database.beans.Prozess;
+import org.kitodo.data.database.beans.Process;
 
 
 /**
@@ -26,18 +26,18 @@ public interface IIndexer {
 	 * adds an object to index
 	 * @param process the process to add
 	 */
-	public void addObject(Prozess process);
+	public void addObject(Process process);
 
 	/**
 	 * removes an object from index
 	 * @param process the process to remove
 	 */
-	public void removeObject(Prozess process);
+	public void removeObject(Process process);
 
 	/**
 	 * updates an object in index
 	 * @param process the process to update
 	 */
-	public void updateObject(Prozess process);
+	public void updateObject(Process process);
 
 }

@@ -11,6 +11,8 @@
 
 package org.goobi.production.chart;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,23 +24,22 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Projekt;
-import org.kitodo.data.database.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 
 public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
 	@Override
-	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
+	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
 		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
 		calculate(inProject, myTaskList, countImages, inMax);
 		return myTaskList;
 	}
 
-	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+	private synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Schritt.class);
+		Criteria crit = session.createCriteria(Task.class);
 		crit.addOrder(Order.asc("reihenfolge"));
 		crit.createCriteria("prozess", "proz");
 		crit.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
@@ -47,8 +48,8 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 		ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
 
 		while (list.next()) {
-			Schritt step = (Schritt) list.get(0);
-			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
+			Task step = (Task) list.get(0);
+			String shorttitle = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step.getTitle());
 
 			IProjectTask pt = null;
 			for (IProjectTask task : myTaskList) {
@@ -62,16 +63,16 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 				myTaskList.add(pt);
 			}
 
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
+			if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
 				if (countImages) {
-					pt.setStepsCompleted(pt.getStepsCompleted() + step.getProzess().getSortHelperImages());
+					pt.setStepsCompleted(pt.getStepsCompleted() + step.getProcess().getSortHelperImages());
 				} else {
 					pt.setStepsCompleted(pt.getStepsCompleted() + 1);
 				}
 			}
 
 			if (countImages) {
-				pt.setStepsMax(pt.getStepsMax() + step.getProzess().getSortHelperImages());
+				pt.setStepsMax(pt.getStepsMax() + step.getProcess().getSortHelperImages());
 			} else {
 				pt.setStepsMax(pt.getStepsMax() + 1);
 			}

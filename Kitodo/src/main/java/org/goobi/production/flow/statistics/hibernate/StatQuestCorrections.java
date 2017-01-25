@@ -11,6 +11,13 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,12 +32,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /*****************************************************************************
  * Implementation of {@link IStatisticalQuestion}. 
@@ -92,7 +94,7 @@ public class StatQuestCorrections implements
 		
 		// adding time restrictions
 		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo,
-				getTimeUnit(), IDlist).getSQL(HistoryEventType.stepError, null,
+				getTimeUnit(), IDlist).getSQL(HistoryType.taskError, null,
 				false, false);
 
 		Session session = Helper.getHibernateSession();

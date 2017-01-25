@@ -11,7 +11,16 @@
 
 package de.sub.goobi.metadaten;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FileUtils;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.HelperComparator;
+import de.sub.goobi.helper.Transliteration;
+import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.XmlArtikelZaehlen;
+import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.SwapException;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -29,12 +38,19 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
+
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.io.SafeFile;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -55,22 +71,10 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FileUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
-import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import org.kitodo.data.database.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import org.kitodo.data.database.persistence.ProzessDAO;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
+ * der Schrittdetails
  * 
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
@@ -89,7 +93,9 @@ public class Metadaten {
 	private MetadatumImpl curMetadatum;
 	private MetaPerson curPerson;
 	private DigitalDocument mydocument;
-	private Prozess myProzess;
+	private Process myProzess;
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
 	private Prefs myPrefs;
 	private String myBenutzerID;
 	private String tempTyp;
@@ -162,7 +168,7 @@ public class Metadaten {
 	private RenderableMetadataGroup newMetadataGroup;
 
 	/**
-	 * Konstruktor ================================================================
+	 * Konstruktor.
 	 */
 	public Metadaten() {
 		this.treeProperties = new HashMap<String, Boolean>();
@@ -366,10 +372,10 @@ public class Metadaten {
 	 * authorityURI may end in # or / otherwise. The authority’s name id must be
 	 * configured in the main configuration file like referencing the
 	 * authorityURI (remember to escape colons):
-	 * 
+	 *
 	 * <code>authority.http\://d-nb.info/gnd/.id=gnd</code>
 	 * 
-	 * @param an
+	 * @param valueURI
 	 *            URI in an authority file
 	 * @return a String[] with authority, authorityURI and valueURI
 	 */
@@ -412,7 +418,7 @@ public class Metadaten {
 	}
 
 	/**
-	 * die noch erlaubten Rollen zurückgeben ================================================================
+	 * die noch erlaubten Rollen zurückgeben.
 	 */
 	public ArrayList<SelectItem> getAddableRollen() {
 		return this.metahelper.getAddablePersonRoles(this.myDocStruct, "");
@@ -443,12 +449,12 @@ public class Metadaten {
 	}
 
 	/**
-	 * die noch erlaubten Metadaten zurückgeben ================================================================
+	 * die noch erlaubten Metadaten zurückgeben.
 	 */
 	public ArrayList<SelectItem> getAddableMetadataTypes() {
 		ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
 		/*
-		 * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
+		 * zuerst mal alle addierbaren Metadatentypen ermitteln
 		 */
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 		if (types == null) {
@@ -456,7 +462,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * --------------------- alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen -------------------
+		 * alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
 		 */
 		for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
 			if (mdt.getIsPerson()) {
@@ -465,7 +471,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren --------------------------------
+		 * die Metadatentypen sortieren
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");
@@ -497,11 +503,11 @@ public class Metadaten {
 	}
 
 	/**
-	 * die MetadatenTypen zurückgeben ================================================================
+	 * die MetadatenTypen zurückgeben.
 	 */
 	public SelectItem[] getMetadatenTypen() {
 		/*
-		 * -------------------------------- zuerst mal die addierbaren Metadatentypen ermitteln --------------------------------
+		 * zuerst mal die addierbaren Metadatentypen ermitteln
 		 */
 		List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
 
@@ -510,20 +516,20 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- die Metadatentypen sortieren --------------------------------
+		 * die Metadatentypen sortieren
 		 */
 		HelperComparator c = new HelperComparator();
 		c.setSortierart("MetadatenTypen");
 		Collections.sort(types, c);
 
 		/*
-		 * -------------------------------- nun ein Array mit der richtigen Größe anlegen --------------------------------
+		 * nun ein Array mit der richtigen Größe anlegen
 		 */
 		int zaehler = types.size();
 		SelectItem myTypen[] = new SelectItem[zaehler];
 
 		/*
-		 * -------------------------------- und anschliessend alle Elemente in das Array packen --------------------------------
+		 * und anschliessend alle Elemente in das Array packen
 		 */
 		zaehler = 0;
 		for (MetadataType mdt : types) {
@@ -534,7 +540,7 @@ public class Metadaten {
 		}
 
 		/*
-		 * -------------------------------- alle Typen, die einen Unterstrich haben nochmal rausschmeissen --------------------------------
+		 * alle Typen, die einen Unterstrich haben nochmal rausschmeissen
 		 */
 		SelectItem myTypenOhneUnterstrich[] = new SelectItem[zaehler];
 		for (int i = 0; i < zaehler; i++) {
@@ -544,8 +550,7 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Metadaten lesen und schreiben
-	 * ## ##################################################### ####################################################
+	 * Metadaten lesen und schreiben
 	 */
 
 	/**
@@ -582,7 +587,7 @@ public class Metadaten {
 		Modes.setBindState(BindState.edit);
 		try {
 			Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
-			this.myProzess = new ProzessDAO().get(id);
+			this.myProzess = processService.find(id);
 		} catch (NumberFormatException e1) {
 			Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
 			return Helper.getRequestParameter("zurueck");
@@ -633,7 +638,7 @@ public class Metadaten {
 	 * @throws ReadException
 	 * @throws InterruptedException
 	 * @throws IOException
-	 * @throws PreferencesException ============================================================ == ==
+	 * @throws PreferencesException
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -642,7 +647,7 @@ public class Metadaten {
 	public String XMLlesenStart() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
 	    currentRepresentativePage = "";
-		this.myPrefs = this.myProzess.getRegelsatz().getPreferences();
+		this.myPrefs = rulesetService.getPreferences(this.myProzess.getRuleset());
 		this.modusAnsicht = "Metadaten";
 		this.modusHinzufuegen = false;
 		this.modusHinzufuegenPerson = false;
@@ -655,16 +660,16 @@ public class Metadaten {
 		readAllTifFolders();
 
 		/*
-		 * -------------------------------- Dokument einlesen --------------------------------
+		 * Dokument einlesen
 		 */
-		this.gdzfile = this.myProzess.readMetadataFile();
+		this.gdzfile = processService.readMetadataFile(this.myProzess);
 		this.mydocument = this.gdzfile.getDigitalDocument();
 		this.mydocument.addAllContentFiles();
 		this.metahelper = new MetadatenHelper(this.myPrefs, this.mydocument);
 		this.imagehelper = new MetadatenImagesHelper(this.myPrefs, this.mydocument);
 
 		/*
-		 * -------------------------------- Das Hauptelement ermitteln --------------------------------
+		 * Das Hauptelement ermitteln
 		 */
 
 		// TODO: think something up, how to handle a not matching ruleset
@@ -734,8 +739,8 @@ public class Metadaten {
 		this.myProzess.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
 		this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
 		try {
-			this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(this.myProzess.getImagesOrigDirectory(true))));
-			new ProzessDAO().save(this.myProzess);
+			this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(processService.getImagesOrigDirectory(true, this.myProzess))));
+			processService.save(this.myProzess);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
 			myLogger.error(e);
@@ -747,7 +752,7 @@ public class Metadaten {
 	
     private void cleanupMetadata() {
 		/*
-		 * --------------------- vor dem Speichern alle ungenutzen Docstructs rauswerfen -------------------
+		 * vor dem Speichern alle ungenutzen Docstructs rauswerfen
 		 */
 		this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
 		
@@ -777,12 +782,11 @@ public class Metadaten {
             }
         }
     }
-	
 
 	private boolean storeMetadata() {
 		boolean result = true;
 		try {
-			this.myProzess.writeMetadataFile(this.gdzfile);
+			processService.writeMetadataFile(this.gdzfile, this.myProzess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
 			myLogger.error(e);
@@ -791,14 +795,12 @@ public class Metadaten {
 		}
 		return result;
 	}
-		
-		
+
 	/**
 	 * Metadaten Schreiben
 	 * 
 	 * @throws InterruptedException
 	 * @throws IOException
-	 *             ============================================================ == ==
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
@@ -825,11 +827,11 @@ public class Metadaten {
         }
         return false;
     }
-	
+
 	/**
-	 * vom aktuellen Strukturelement alle Metadaten einlesen
-	 * 
-	 * @param inStrukturelement ============================================================== ==
+	 * vom aktuellen Strukturelement alle Metadaten einlesen.
+	 *
+	 * @param inStrukturelement
 	 */
 
 	private void MetadatenalsBeanSpeichern(DocStruct inStrukturelement) {
@@ -838,7 +840,7 @@ public class Metadaten {
 		LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
 
 		/*
-		 * -------------------------------- alle Metadaten und die DefaultDisplay-Werte anzeigen --------------------------------
+		 * alle Metadaten und die DefaultDisplay-Werte anzeigen
 		 */
 		List<? extends Metadata> myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), false, this.myProzess);
@@ -850,9 +852,8 @@ public class Metadaten {
 			}
 		}
 
-	
 		/*
-		 * -------------------------------- alle Personen und die DefaultDisplay-Werte ermitteln --------------------------------
+		 * alle Personen und die DefaultDisplay-Werte ermitteln
 		 */
 		myTempMetadata = this.metahelper.getMetadataInclDefaultDisplay(inStrukturelement,
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"), true, this.myProzess);
@@ -866,14 +867,13 @@ public class Metadaten {
 		this.myPersonen = lsPers;
 
 		/*
-		 * -------------------------------- die zugehörigen Seiten ermitteln --------------------------------
+		 * die zugehörigen Seiten ermitteln
 		 */
 		StructSeitenErmitteln(this.myDocStruct);
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Treeview ##
-	 * ##################################################### ####################################################
+	 * Treeview
 	 */
 
 	@SuppressWarnings("rawtypes")
@@ -883,7 +883,7 @@ public class Metadaten {
 		List<DocStruct> status = new ArrayList<DocStruct>();
 
 		/*
-		 * -------------------------------- den Ausklapp-Zustand aller Knoten erfassen --------------------------------
+		 * den Ausklapp-Zustand aller Knoten erfassen
 		 */
 		if (this.tree3 != null) {
 			for (Iterator iter = this.tree3.getChildrenAsList().iterator(); iter.hasNext();) {
@@ -899,7 +899,7 @@ public class Metadaten {
 			return "Metadaten3links";
 		}
 		/*
-		 * -------------------------------- Die Struktur als Tree3 aufbereiten --------------------------------
+		 * Die Struktur als Tree3 aufbereiten
 		 */
 		String label = this.logicalTopstruct.getType().getNameByLanguage(
 				(String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
@@ -911,7 +911,7 @@ public class Metadaten {
 		MetadatenalsTree3Einlesen2(this.logicalTopstruct, this.tree3);
 
 		/*
-		 * -------------------------------- den Ausklappzustand nach dem neu-Einlesen wieder herstellen --------------------------------
+		 * den Ausklappzustand nach dem neu-Einlesen wieder herstellen
 		 */
 		for (Iterator iter = this.tree3.getChildrenAsListAlle().iterator(); iter.hasNext();) {
 			map = (HashMap) iter.next();
@@ -1566,7 +1566,7 @@ public class Metadaten {
 
 	public void readAllTifFolders() throws IOException, InterruptedException, SwapException, DAOException {
 		this.allTifFolders = new ArrayList<String>();
-		SafeFile dir = new SafeFile(this.myProzess.getImagesDirectory());
+		SafeFile dir = new SafeFile(processService.getImagesDirectory(this.myProzess));
 
 		/* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
 		// TODO: Remove this, we have several implementions of this, use an
@@ -1594,7 +1594,7 @@ public class Metadaten {
 		}
 
 		if (!this.allTifFolders.contains(this.currentTifFolder)) {
-			this.currentTifFolder = new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName();
+			this.currentTifFolder = new SafeFile(processService.getImagesTifDirectory(true, this.myProzess)).getName();
 		}
 	}
 
@@ -1713,14 +1713,18 @@ public class Metadaten {
 
 	                    /* das neue Bild zuweisen */
 	                    try {
-	                        String tiffconverterpfad = this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild;
+	                        String tiffconverterpfad = processService.getImagesDirectory(this.myProzess)
+									+ this.currentTifFolder + File.separator + this.myBild;
 	                        if(myLogger.isTraceEnabled()){
 	                        	myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
 	                        }
 	                        if (!new SafeFile(tiffconverterpfad).exists()) {
-	                            tiffconverterpfad = this.myProzess.getImagesTifDirectory(true) + this.myBild;
-	                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.myBild + " does not exist in folder "
-	                                    + this.currentTifFolder + ", using image from " + new SafeFile(this.myProzess.getImagesTifDirectory(true)).getName());
+	                            tiffconverterpfad = processService.getImagesTifDirectory(true, this.myProzess)
+										+ this.myBild;
+	                            Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image "
+										+ this.myBild + " does not exist in folder "+ this.currentTifFolder
+										+ ", using image from "
+										+ new SafeFile(processService.getImagesTifDirectory(true, this.myProzess)).getName());
 	                        }
 	                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse, this.myImageRotation);
 	                        myLogger.trace("scaleFile");
@@ -1740,7 +1744,8 @@ public class Metadaten {
 		boolean exists = false;
 		try {
 			if (this.currentTifFolder != null && this.myBild != null) {
-				exists = (new SafeFile(this.myProzess.getImagesDirectory() + this.currentTifFolder + File.separator + this.myBild)).exists();
+				exists = (new SafeFile(processService.getImagesDirectory(this.myProzess)
+						+ this.currentTifFolder + File.separator + this.myBild)).exists();
 			} 
 		} catch (Exception e) {
 			this.myBildNummer = -1;
@@ -1753,8 +1758,7 @@ public class Metadaten {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Sperrung der Metadaten
-	 * aktualisieren oder prüfen ## ##################################################### ####################################################
+	 * Sperrung der Metadaten aktualisieren oder prüfen
 	 */
 
 	private boolean SperrungAktualisieren() {
@@ -2426,7 +2430,7 @@ public class Metadaten {
 		this.structSeitenAuswahl = structSeitenAuswahl;
 	}
 
-	public Prozess getMyProzess() {
+	public Process getMyProzess() {
 		return this.myProzess;
 	}
 
@@ -2873,7 +2877,7 @@ public class Metadaten {
     public void reOrderPagination() {
         String imageDirectory = "";
         try {
-            imageDirectory = myProzess.getImagesDirectory();
+            imageDirectory = processService.getImagesDirectory(myProzess);
         } catch (SwapException e) {
             myLogger.error(e);
         } catch (DAOException e) {
@@ -2902,7 +2906,7 @@ public class Metadaten {
             }
 
             try {
-                SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+                SafeFile ocr = new SafeFile(processService.getOcrDirectory(myProzess));
                 if (ocr.exists()) {
                     SafeFile[] allOcrFolder = ocr.listFiles();
                     for (SafeFile folder : allOcrFolder) {
@@ -2934,7 +2938,7 @@ public class Metadaten {
                 mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName.toURI().toString());
             }
             try {
-                SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+                SafeFile ocr = new SafeFile(processService.getOcrDirectory(myProzess));
                 if (ocr.exists()) {
                     SafeFile[] allOcrFolder = ocr.listFiles();
                     for (SafeFile folder : allOcrFolder) {
@@ -2966,7 +2970,7 @@ public class Metadaten {
             // TODO check what happens with .tar.gz
             String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
             for (String folder : allTifFolders) {
-                SafeFile[] filesInFolder = new SafeFile(myProzess.getImagesDirectory() + folder).listFiles();
+                SafeFile[] filesInFolder = new SafeFile(processService.getImagesDirectory(myProzess) + folder).listFiles();
                 for (SafeFile currentFile : filesInFolder) {
                     String filename = currentFile.getName();
                     String filenamePrefix = filename.replace(getFileExtension(filename), "");
@@ -2976,7 +2980,7 @@ public class Metadaten {
                 }
             }
 
-            SafeFile ocr = new SafeFile(myProzess.getOcrDirectory());
+            SafeFile ocr = new SafeFile(processService.getOcrDirectory(myProzess));
             if (ocr.exists()) {
                 SafeFile[] folder = ocr.listFiles();
                 for (SafeFile dir : folder) {
@@ -3111,7 +3115,7 @@ public class Metadaten {
 		}
 		List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
 		String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
-		String projectName = myProzess.getProjekt().getTitel();
+		String projectName = myProzess.getProject().getTitle();
 		for (MetadataGroup record : records) {
 			result.add(new RenderableMetadataGroup(record, this, language, projectName));
 		}
@@ -3119,9 +3123,8 @@ public class Metadaten {
 	}
 
 	/**
-	 * Returns a backing bean object to display the form to create a new
-	 * metadata group.
-	 * 
+	 * Returns a backing bean object to display the form to create a new metadata group.
+	 *
 	 * @return a bean to create a new metadata group
 	 */
 	public RenderableMetadataGroup getNewMetadataGroup() {
@@ -3131,9 +3134,8 @@ public class Metadaten {
 	}
 
 	/**
-	 * Returns whether the metadata editor is showing the subpage to add a new
-	 * metadata group.
-	 * 
+	 * Returns whether the metadata editor is showing the subpage to add a new metadata group.
+	 *
 	 * @return whether the page to add a new metadata group shows
 	 */
 	public boolean isAddMetadataGroupMode() {
@@ -3179,7 +3181,7 @@ public class Metadaten {
 
 	/**
 	 * Toggles the form to show the subpage to add a new metadata group.
-	 * 
+	 *
 	 * @return "" to indicate JSF not to navigate anywhere or
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
 	 *         time is up and the user must leave the editor and open it anew
@@ -3187,7 +3189,7 @@ public class Metadaten {
 	public String showAddNewMetadataGroup() {
 		try {
 			newMetadataGroup = new RenderableMetadataGroup(myDocStruct.getAddableMetadataGroupTypes(), myProzess
-					.getProjekt().getTitel());
+					.getProject().getTitle());
 		} catch (ConfigurationException e) {
 			Helper.setFehlerMeldung("Form_configuration_mismatch", e.getMessage());
 			myLogger.error(e.getMessage());
@@ -3202,7 +3204,7 @@ public class Metadaten {
 	/**
 	 * Leaves the subpage to add a new metadata group without saving any input
 	 * and toggles the form to show the page “Metadata”.
-	 * 
+	 *
 	 * @return "" to indicate JSF not to navigate anywhere or
 	 *         "SperrungAbgelaufen" to make JSF show the message that the lock
 	 *         time is up and the user must leave the editor and open it anew

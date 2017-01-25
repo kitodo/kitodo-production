@@ -11,6 +11,9 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,15 +25,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
+import org.kitodo.data.database.beans.Process;
 
 public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 441692997066826360L;
 
 	private Integer projectID;
@@ -62,7 +60,7 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 
 	private Criteria createCriteriaFromProjectID() {
 		Session session = Helper.getHibernateSession();
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		crit.createCriteria("projekt", "proj");
 		crit.add(Restrictions.eq("proj.id", projectID));
@@ -70,11 +68,11 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 	}
 
 	/**
-	 * filter processes by id
-	 ****************************************************************************/
+	 * filter processes by id.
+	 */
 	private PaginatingCriteria createCriteriaFromIDList() {
 		Session session = Helper.getHibernateSession();
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}
@@ -83,7 +81,7 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
 		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			Prozess p = (Prozess) it.next();
+			Process p = (Process) it.next();
 			myIds.add(p.getId());
 			myCriteria = null;
 		}

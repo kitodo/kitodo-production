@@ -24,10 +24,6 @@ public class Property {
 	private Date creationDate;
 	private int container;
 	
-	
-	
-	
-	
 	public Property(int id, String title, String value, boolean istObligatorisch, int datentypenID, String auswahl, 
 			Date creationDate, int container) {
 		this.id = id;
@@ -87,9 +83,5 @@ public class Property {
 	public void setContainer(int container) {
 		this.container = container;
 	}
-
-	
-
-
 
 }

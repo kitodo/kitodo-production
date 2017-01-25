@@ -92,7 +92,7 @@ public class MySQLHelper {
 		Connection connection = helper.getConnection();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM step WHERE process_id = ? ");
+		sql.append("SELECT * FROM task WHERE process_id = ? ");
 		sql.append("ORDER BY ordering ASC");
 		try {
 			Object[] params = { processId };
@@ -149,7 +149,6 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
-
 	
 	public static ProcessObject getProcessObjectForId(int processId) throws SQLException {
 		Connection connection = helper.getConnection();
@@ -179,13 +178,12 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
-
 	
 	public static StepObject getStepByStepId(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("SELECT * FROM step WHERE id = ?");
+		sql.append("SELECT * FROM task WHERE id = ?");
 		// sql.append(" ORDER BY Reihenfolge ASC");
 
 		try {
@@ -197,12 +195,11 @@ public class MySQLHelper {
 			closeConnection(connection);
 		}
 	}
-
 	
 	public static List<String> getScriptsForStep(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM step WHERE id = ? ");
+		sql.append("SELECT * FROM task WHERE id = ? ");
 		try {
 			Object[] params = { stepId };
 			logger.debug(sql.toString() + ", " + stepId);
@@ -213,11 +210,10 @@ public class MySQLHelper {
 		}
 	}
 
-
 	public static Map<String, String> getScriptMapForStep(int stepId) throws SQLException {
 		Connection connection = helper.getConnection();
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM step WHERE id = ? ");
+		sql.append("SELECT * FROM task WHERE id = ? ");
 		try {
 			Object[] params = { stepId };
 			logger.debug(sql.toString() + ", " + stepId);
@@ -228,7 +224,6 @@ public class MySQLHelper {
 		}
 	}
 
-
 	
 	public int updateStep(StepObject step) throws SQLException {
 		int ret = -1;
@@ -237,7 +232,7 @@ public class MySQLHelper {
 
 			QueryRunner run = new QueryRunner();
 			StringBuilder sql = new StringBuilder();
-			sql.append("UPDATE step SET title = ? , ");
+			sql.append("UPDATE task SET title = ? , ");
 			sql.append("ordering = ? , ");
 			sql.append("processingStatus = ? , ");
 			Timestamp time = null;

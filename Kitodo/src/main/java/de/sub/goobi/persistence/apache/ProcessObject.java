@@ -11,8 +11,14 @@
 
 package de.sub.goobi.persistence.apache;
 
+import de.sub.goobi.helper.exceptions.SwapException;
+import de.sub.goobi.metadaten.MetadatenHelper;
+
 import java.io.IOException;
 import java.util.Date;
+
+import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.data.database.exceptions.DAOException;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
@@ -23,10 +29,6 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
-import de.sub.goobi.helper.enums.MetadataFormat;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.metadaten.MetadatenHelper;
 
 public class ProcessObject {
 

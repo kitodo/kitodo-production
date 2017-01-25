@@ -11,6 +11,8 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,11 +24,11 @@ import org.goobi.api.display.Item;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 
+import org.kitodo.data.database.beans.Process;
+
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.helper.Helper;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
@@ -39,7 +41,7 @@ public class MetadatumImpl implements Metadatum {
 	private Metadata md;
 	private int identifier;
 	private Prefs myPrefs;
-	private Prozess myProcess;
+	private Process myProcess;
 	private HashMap<String, DisplayCase> myValues = new HashMap<String, DisplayCase>();
 	private List<SelectItem> items;
 	private List<String> selectedItems;
@@ -47,7 +49,7 @@ public class MetadatumImpl implements Metadatum {
 	/**
 	 * Allgemeiner Konstruktor ()
 	 */
-	public MetadatumImpl(Metadata m, int inID, Prefs inPrefs, Prozess inProcess) {
+	public MetadatumImpl(Metadata m, int inID, Prefs inPrefs, Process inProcess) {
 		this.md = m;
 		this.identifier = inID;
 		this.myPrefs = inPrefs;

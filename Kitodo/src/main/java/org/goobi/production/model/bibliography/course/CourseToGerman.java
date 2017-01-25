@@ -139,7 +139,7 @@ public class CourseToGerman {
 	 * The function irregularitiesToString() formulates the irregularities of a
 	 * given issue in German language.
 	 * 
-	 * @param issues
+	 * @param issue
 	 *            issues whose irregularities shall be formulated
 	 */
 	private static String irregularitiesToString(Issue issue) {

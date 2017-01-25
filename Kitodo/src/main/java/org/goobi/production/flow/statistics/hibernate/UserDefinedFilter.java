@@ -11,6 +11,9 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 //import java.lang.ref.WeakReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -23,9 +26,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
+import org.kitodo.data.database.beans.Process;
 
 /**
  * This class UserDefinedFilter implements the IEvaluateFilter interface It
@@ -158,30 +159,26 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	}
 
 	/**
-	 * generates a hibernate criteria based on the string filter
-	 ****************************************************************************/
+	 * generates a hibernate criteria based on the string filter.
+	 */
 	private Criteria createCriteriaFromFilterString(String inFilter) {
 		Session session = Helper.getHibernateSession();
 
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		/*
-		 * -------------------------------- combine all parameters together this
-		 * part was exported to FilterHelper so that other Filters could access
-		 * it * --------------------------------
+		 * combine all parameters together this part was exported to FilterHelper so that other Filters could access it
 		 */
 		String message = FilterHelper.criteriaBuilder(session, inFilter, crit, null, myParameter, false, null, true);
 		if (message.length() > 0) {
 			myObservable.setMessage(message);
 		}
 
-		/**
-		 * used for step filter if query conditions include more than one step
-		 * by using a range the Criteria produces more than one item per
-		 * process, for each step it involves
-		 **/
-
+		/*
+		 * used for step filter if query conditions include more than one step by using a range the Criteria produces
+		 * more than one item per process, for each step it involves
+		 */
 		createIDListFromCriteria(crit);
 		crit = null;
 		crit = createCriteriaFromIDList();
@@ -191,26 +188,26 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
 	}
 
 	/**
-	 * creates an ID list from the criteria in parameter
-	 * 
+	 * creates an ID list from the criteria in parameter.
+	 *
 	 * @param crit
-	 ****************************************************************************/
+	 */
 	@SuppressWarnings("unchecked")
 	private void createIDListFromCriteria(Criteria crit) {
 		myIds = new ArrayList<Integer>();
 		for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
-			Prozess p = (Prozess) it.next();
+			Process p = (Process) it.next();
 			myIds.add(p.getId());
 			myCriteria = null;
 		}
 	}
 
 	/**
-	 * filter processes by id
-	 ****************************************************************************/
+	 * filter processes by id.
+	 */
 	private PaginatingCriteria createCriteriaFromIDList() {
 		Session session = Helper.getHibernateSession();
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
 		crit.add(Restrictions.in("id", myIds));
 		return crit;
 	}
