@@ -22,6 +22,8 @@ import org.kitodo.data.database.persistence.RulesetDAO;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
+import java.util.List;
+
 public class RulesetService {
 
 	private static final Logger logger = Logger.getLogger(RulesetService.class);
@@ -34,6 +36,10 @@ public class RulesetService {
 
 	public Ruleset find(Integer id) throws DAOException {
 		return rulesetDao.find(id);
+	}
+
+	public List<Ruleset> search(String query) throws DAOException {
+		return rulesetDao.search(query);
 	}
 
 	public void remove(Ruleset ruleset) throws DAOException {

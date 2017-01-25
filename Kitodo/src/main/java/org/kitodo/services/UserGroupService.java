@@ -53,11 +53,11 @@ public class UserGroupService {
 		userGroup.setPermission(Integer.parseInt(permission));
 	}
 
-	public int getStepsSize(UserGroup userGroup) {
-		if (userGroup.getSteps() == null) {
+	public int getTasksSize(UserGroup userGroup) {
+		if (userGroup.getTasks() == null) {
 			return 0;
 		} else {
-			return userGroup.getSteps().size();
+			return userGroup.getTasks().size();
 		}
 	}
 }

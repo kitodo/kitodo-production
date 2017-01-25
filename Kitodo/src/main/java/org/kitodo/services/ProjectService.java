@@ -49,6 +49,10 @@ public class ProjectService {
 		projectDao.remove(id);
 	}
 
+	public List<Project> search(String query) throws DAOException {
+		return projectDao.search(query);
+	}
+
 	/**
 	 * Get workflow.
 	 *

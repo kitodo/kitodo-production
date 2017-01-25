@@ -11,12 +11,14 @@
 
 package org.kitodo.services;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.Collection;
+import java.util.List;
 
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
 import org.kitodo.data.database.persistence.BatchDAO;
 
 public class BatchService {
@@ -31,12 +33,20 @@ public class BatchService {
 		return batchDao.find(id);
 	}
 
+	public List<Batch> findAll() throws DAOException {
+		return batchDao.findAll();
+	}
+
 	public void remove(Batch batch) throws DAOException {
 		batchDao.remove(batch);
 	}
 
 	public void remove(Integer id) throws DAOException {
 		batchDao.remove(id);
+	}
+
+	public void removeAll(Iterable<Integer> ids) throws DAOException {
+		batchDao.removeAll(ids);
 	}
 
 	/**

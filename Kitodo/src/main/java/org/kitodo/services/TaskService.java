@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import de.sub.goobi.helper.Helper;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +23,6 @@ import org.hibernate.Session;
 
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
@@ -51,6 +52,9 @@ public class TaskService {
 		return taskDao.search(query);
 	}
 
+	public Long count(String query) throws DAOException {
+		return taskDao.count(query);
+	}
 
 	/**
 	 * Convert Date start date to String.
@@ -153,10 +157,11 @@ public class TaskService {
 		return task;
 	}
 
-	public void setProcessingStatusDown(Task task) {
+	public Task setProcessingStatusDown(Task task) {
 		if (task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
 			task.setProcessingStatus(task.getProcessingStatus() - 1);
 		}
+		return task;
 	}
 
 	/**

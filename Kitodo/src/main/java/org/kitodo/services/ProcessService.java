@@ -12,7 +12,6 @@
 package org.kitodo.services;
 
 import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.SwapException;
@@ -91,12 +90,16 @@ public class ProcessService {
 
 	private ProcessDAO processDao = new ProcessDAO();
 
+	public Process find(Integer id) throws DAOException {
+		return processDao.find(id);
+	}
+
 	public void save(Process process) throws DAOException {
 		processDao.save(process, getProgress(process));
 	}
 
-	public Process find(Integer id) throws DAOException {
-		return processDao.find(id);
+	public void saveList(List<Process> list) throws DAOException {
+		processDao.saveList(list);
 	}
 
 	public void remove(Process process) throws DAOException {
@@ -109,6 +112,14 @@ public class ProcessService {
 
 	public List<Process> search(String query) throws DAOException {
 		return processDao.search(query);
+	}
+
+	public Long count(String query) throws DAOException {
+		return processDao.count(query);
+	}
+
+	public void refresh(Process process) {
+		processDao.refresh(process);
 	}
 
 	/**
