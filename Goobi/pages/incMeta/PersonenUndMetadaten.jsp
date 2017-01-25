@@ -89,17 +89,18 @@
 					<x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}" />
 				</h:commandLink>
 
+				<h:commandLink
+					onclick="getNormDataPersonenUndMetadaten(this); return false;"
+					title="#{msgs.getNormDataRecord}" id="clicker" style="margin-left: 5px">
+					<h:graphicImage value="/newpages/images/buttons/down_20px.gif" style="margin-left:3px" />
+				</h:commandLink>
+
 				<%-- Loeschen-Schaltknopf --%>
 				<h:commandLink id="l6" action="#{Metadaten.LoeschenPerson}" title="#{msgs.personendatenLoeschen}">
 					<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px" />
 					<f:param name="ID" value="#{Item.identifier}" />
 					<x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}" />
 				</h:commandLink>
-
-				<h:commandLink
-					onclick="getNormDataPersonenUndMetadaten(this); return false;"
-					value="#{msgs.getNormDataRecord}" id="clicker" style="margin-left: 5px" />
-
 			</h:column>
 		</h:dataTable>
 	</h:panelGroup>
@@ -157,6 +158,12 @@
 								title="#{msgs.metadatenKopieren}">
 								<h:graphicImage value="/newpages/images/buttons/copy.gif" />
 							</h:commandLink>
+							<h:commandLink action="#{aGroup.downloadMetadata}" rendered="#{aGroup.downloadable && not Metadaten.nurLesenModus}"
+								title="#{msgs.getNormDataRecord}">
+								<h:graphicImage
+									value="/newpages/images/buttons/down_20px.gif"
+									style="margin-left:3px" />
+							</h:commandLink>
 							<h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.nurLesenModus}"
 								title="#{msgs.metadatenLoeschen}">
 								<h:graphicImage
@@ -206,6 +213,12 @@
 								<h:commandLink action="#{aGroup.copy}" rendered="#{aGroup.copyable && not Metadaten.nurLesenModus}"
 									title="#{msgs.metadatenKopieren}">
 									<h:graphicImage value="/newpages/images/buttons/copy.gif" />
+								</h:commandLink>
+								<h:commandLink action="#{aGroup.downloadMetadata}" rendered="#{aGroup.downloadable && not Metadaten.nurLesenModus}"
+									title="#{msgs.getNormDataRecord}">
+									<h:graphicImage
+										value="/newpages/images/buttons/down_20px.gif"
+										style="margin-left:3px" />
 								</h:commandLink>
 								<h:commandLink action="#{aGroup.delete}" rendered="#{not Metadaten.nurLesenModus}"
 									title="#{msgs.metadatenLoeschen}">
@@ -278,10 +291,6 @@
 								rendered="#{(Item.outputType == 'readonly')}"
 								styleClass="metadatenInput" style="width: 350px; border: 0 none;" />
 			</h:column>
-
-
-
-
 
 			<%-- Link fuer Details --%>
 			<h:column rendered="#{not Metadaten.nurLesenModus}">
