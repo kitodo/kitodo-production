@@ -13,13 +13,15 @@ package org.kitodo.production.lugh.ld;
 
 /**
  * Summary interface for all variants of nodes.
- * 
+ *
  * This includes {@link NodeReference}s, anonymous {@link Node}s and
- * {@link IdentifiableNode}s. Conceptually, they form the complementary set to all
- * {@link Literal}s, that is “all {@link ObjectType}s that are not literals”.
- * Functionally, these classes do not have much in common. That is why this
- * interface is empty. However, it is used for filtering in {@link Result}.
- * 
+ * {@link IdentifiableNode}s. Conceptually, they form the complementary set to
+ * all {@link Literal}s, that is “all {@link ObjectType}s that are not
+ * literals”. Functionally, these classes do not have much in common. That is
+ * why this interface is empty. However, it is used for filtering in
+ * {@link Result}.
+ *
  * @author Matthias Ronge
  */
-interface NodeType extends ObjectType { }
+interface NodeType extends ObjectType {
+}

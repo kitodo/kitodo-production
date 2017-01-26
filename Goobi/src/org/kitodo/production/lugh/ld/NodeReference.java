@@ -63,7 +63,7 @@ public class NodeReference implements IdentifiableNode, NodeType {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (identifier == null ? 0 : identifier.hashCode());
+        result = (prime * result) + (identifier == null ? 0 : identifier.hashCode());
         return result;
     }
 

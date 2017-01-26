@@ -11,8 +11,7 @@
 
 package org.kitodo.production.lugh.ld;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.*;
 
 /**
  * A node, a reference to a node, or any kind of literal.

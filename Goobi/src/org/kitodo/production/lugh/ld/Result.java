@@ -78,8 +78,8 @@ public class Result extends HashSet<ObjectType> {
      *            whether there are “top nodes” or not
      */
     public static Result createFrom(Model model, boolean alwaysAll) {
-        HashMap<String, Node> result = new HashMap<String, Node>();
-        HashMap<String, Node> resolver = new HashMap<String, Node>();
+        HashMap<String, Node> result = new HashMap<>();
+        HashMap<String, Node> resolver = new HashMap<>();
 
         StmtIterator iter = model.listStatements();
         while (iter.hasNext()) {
@@ -149,7 +149,7 @@ public class Result extends HashSet<ObjectType> {
      *            result elements
      */
     Result(Collection<? extends ObjectType> arg0) {
-        super(arg0 != null ? arg0 : Collections.<ObjectType> emptyList());
+        super(arg0 != null ? arg0 : Collections.<ObjectType>emptyList());
     }
 
     /**
@@ -176,7 +176,7 @@ public class Result extends HashSet<ObjectType> {
      * Add an element to the result.
      */
     @Override
-	public boolean add(ObjectType e) {
+    public boolean add(ObjectType e) {
         boolean result = super.add(e);
         nodeTypes = null;
         return result;
@@ -204,17 +204,17 @@ public class Result extends HashSet<ObjectType> {
      */
     public IdentifiableNode identifiableNodeExpectable() {
         switch (super.size()) {
-            case 0:
+        case 0:
+            throw new NoSuchElementException();
+        case 1:
+            NodeType node = nodeTypes().iterator().next();
+            if (node instanceof IdentifiableNode) {
+                return (IdentifiableNode) node;
+            } else {
                 throw new NoSuchElementException();
-            case 1:
-                NodeType node = nodeTypes().iterator().next();
-                if (node instanceof IdentifiableNode) {
-                    return (IdentifiableNode) node;
-                } else {
-                    throw new NoSuchElementException();
-                }
-            default:
-                throw new BufferOverflowException();
+            }
+        default:
+            throw new BufferOverflowException();
         }
     }
 
@@ -236,23 +236,23 @@ public class Result extends HashSet<ObjectType> {
      * @throws AmbiguousDataException
      *             if there are several possible answers
      */
-	public Node node() throws LinkedDataException {
+    public Node node() throws LinkedDataException {
         Set<NodeType> nodes = nodeTypes();
         switch (nodes.size()) {
-            case 0:
-                throw new NoDataException();
-            case 1:
-                if (super.size() > 1) {
-                    throw new AmbiguousDataException();
-                }
-                NodeType node = nodes.iterator().next();
-                if (node instanceof Node) {
-                    return (Node) node;
-                } else {
-                    throw new NoDataException();
-                }
-            default:
+        case 0:
+            throw new NoDataException();
+        case 1:
+            if (super.size() > 1) {
                 throw new AmbiguousDataException();
+            }
+            NodeType node = nodes.iterator().next();
+            if (node instanceof Node) {
+                return (Node) node;
+            } else {
+                throw new NoDataException();
+            }
+        default:
+            throw new AmbiguousDataException();
         }
     }
 
@@ -261,7 +261,7 @@ public class Result extends HashSet<ObjectType> {
      *
      * @return
      */
-	public Set<Node> nodes() {
+    public Set<Node> nodes() {
         return subset(Node.class);
     }
 
@@ -287,30 +287,30 @@ public class Result extends HashSet<ObjectType> {
         return result;
     }
 
-	/**
-	 * Returns all the literals as strings. References to other nodes are not
-	 * returned.
-	 *
-	 * @return the literal
-	 */
+    /**
+     * Returns all the literals as strings. References to other nodes are not
+     * returned.
+     *
+     * @return the literal
+     */
     public Set<String> strings() {
         return strings(false);
     }
 
-	/**
-	 * Returns all the literals as strings.
-	 * 
-	 * @param identifiersToo
-	 *            if true, references to other nodes are returned as well
-	 *
-	 * @return the literal
-	 */
+    /**
+     * Returns all the literals as strings.
+     *
+     * @param identifiersToo
+     *            if true, references to other nodes are returned as well
+     *
+     * @return the literal
+     */
     public Set<String> strings(boolean identifiersToo) {
-        HashSet<String> result = new HashSet<String>((int) Math.ceil(super.size() / 0.75));
+        HashSet<String> result = new HashSet<>((int) Math.ceil(super.size() / 0.75));
         for (ObjectType literal : this) {
             if (literal instanceof Literal) {
                 result.add(((Literal) literal).getValue());
-            } else if (identifiersToo && literal instanceof IdentifiableNode) {
+            } else if (identifiersToo && (literal instanceof IdentifiableNode)) {
                 result.add(((IdentifiableNode) literal).getIdentifier());
             }
         }
@@ -338,7 +338,7 @@ public class Result extends HashSet<ObjectType> {
             }
             if (literal instanceof Literal) {
                 result.append(((Literal) literal).getValue());
-            } else if (identifersToo && literal instanceof IdentifiableNode) {
+            } else if (identifersToo && (literal instanceof IdentifiableNode)) {
                 result.append(((IdentifiableNode) literal).getIdentifier());
             }
         }
@@ -357,7 +357,7 @@ public class Result extends HashSet<ObjectType> {
     @SuppressWarnings("unchecked") // The compiler does not understand that
                                    // isAssignableFrom() does the type check
     private <T> Set<T> subset(Class<T> clazz) {
-        Set<T> result = new HashSet<T>();
+        Set<T> result = new HashSet<>();
         for (ObjectType entry : this) {
             if (clazz.isAssignableFrom(entry.getClass())) {
                 result.add((T) entry);

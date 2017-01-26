@@ -12,15 +12,13 @@
 package org.kitodo.production.lugh.ld;
 
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regex.*;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-
+import com.hp.hpl.jena.rdf.model.*;
 
 /**
- * An RDF lang string, that is a linked data literal with a language tag attached.
+ * An RDF lang string, that is a linked data literal with a language tag
+ * attached.
  *
  * @author Matthias Ronge
  */
@@ -64,7 +62,7 @@ public class LangString extends Literal {
     /**
      * Identifies the human language of the subject as a RFC 4646 code.
      */
-    private static final NodeReference XML_LANG = new NodeReference("http://www.w3.org/XML/1998/namespace#lang");    
+    private static final NodeReference XML_LANG = new NodeReference("http://www.w3.org/XML/1998/namespace#lang");
     /**
      * The locale of this literal.
      */
@@ -151,8 +149,8 @@ public class LangString extends Literal {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + (language == null ? 0 : language.hashCode());
-        result = prime * result + (script == null ? 0 : script.hashCode());
+        result = (prime * result) + (language == null ? 0 : language.hashCode());
+        result = (prime * result) + (script == null ? 0 : script.hashCode());
         return result;
     }
 
@@ -163,10 +161,10 @@ public class LangString extends Literal {
     public boolean matches(ObjectType condition) {
         if (condition instanceof LangString) {
             LangString other = (LangString) condition;
-            if (other.language != null && !other.language.equals(language)) {
+            if ((other.language != null) && !other.language.equals(language)) {
                 return false;
             }
-            if (other.script != null && other.script.length() != 0 && !other.language.equals(language)) {
+            if ((other.script != null) && (other.script.length() != 0) && !other.language.equals(language)) {
                 return false;
             }
             return super.matches(condition);
@@ -177,26 +175,26 @@ public class LangString extends Literal {
             }
             Result expectedLanguage = filter.get(XML_LANG);
             switch (expectedLanguage.size()) {
-                case 0:
+            case 0:
                 break;
-                case 1:
-                    ObjectType checkLanguage = expectedLanguage.iterator().next();
-                    if (!(checkLanguage instanceof Literal)) {
-                        return false;
-                    }
-                    LocaleParseResult p = parseLocale(((Literal) checkLanguage).getValue());
-                    if (!language.equals(p.language)) {
-                        return false;
-                    }
-                    if (script == null && p.script != null) {
-                        return false;
-                    }
-                    if (script != null && !script.equals(p.script)) {
-                        return false;
-                    }
-                break;
-                default:
+            case 1:
+                ObjectType checkLanguage = expectedLanguage.iterator().next();
+                if (!(checkLanguage instanceof Literal)) {
                     return false;
+                }
+                LocaleParseResult p = parseLocale(((Literal) checkLanguage).getValue());
+                if (!language.equals(p.language)) {
+                    return false;
+                }
+                if ((script == null) && (p.script != null)) {
+                    return false;
+                }
+                if ((script != null) && !script.equals(p.script)) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
             }
             return super.matches(condition);
         }

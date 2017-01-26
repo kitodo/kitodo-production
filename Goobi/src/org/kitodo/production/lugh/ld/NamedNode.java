@@ -74,7 +74,7 @@ public class NamedNode extends Node implements IdentifiableNode {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + (identifier == null ? 0 : identifier.hashCode());
+        result = (prime * result) + (identifier == null ? 0 : identifier.hashCode());
         return result;
     }
 }

@@ -31,7 +31,7 @@ public class Literal implements AccessibleObject {
      * NodeReference objects, thus a subclass of this class and hence cannot yet
      * be accessed at creation time of this class.
      */
-    protected static final Set<String> ALLOWED_RELATIONS = new HashSet<String>(
+    protected static final Set<String> ALLOWED_RELATIONS = new HashSet<>(
             Arrays.asList(new String[] { "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
                     "http://www.w3.org/XML/1998/namespace#lang", "http://www.w3.org/1999/02/22-rdf-syntax-ns#value" }));
 
@@ -87,7 +87,7 @@ public class Literal implements AccessibleObject {
      * @return the literal object
      */
     public static Literal createLiteral(String value, String lang) {
-        if (lang == null || lang.isEmpty()) {
+        if ((lang == null) || lang.isEmpty()) {
             return new Literal(value, RDF.PLAIN_LITERAL);
         } else {
             return new LangString(value, lang);
@@ -138,7 +138,7 @@ public class Literal implements AccessibleObject {
      * Compares this Literal against another object for equality.
      */
     @Override
-	public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -187,11 +187,11 @@ public class Literal implements AccessibleObject {
      * Returns a hash code of the Literal.
      */
     @Override
-	public int hashCode() {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (type == null ? 0 : type.hashCode());
-        result = prime * result + (value == null ? 0 : value.hashCode());
+        result = (prime * result) + (type == null ? 0 : type.hashCode());
+        result = (prime * result) + (value == null ? 0 : value.hashCode());
         return result;
     }
 
@@ -202,10 +202,10 @@ public class Literal implements AccessibleObject {
     public boolean matches(ObjectType condition) {
         if (condition instanceof Literal) {
             Literal other = (Literal) condition;
-            if (other.type != null && !other.type.equals(type)) {
+            if ((other.type != null) && !other.type.equals(type)) {
                 return false;
             }
-            if (other.value != null && !other.value.isEmpty() && !other.value.equals(value)) {
+            if ((other.value != null) && !other.value.isEmpty() && !other.value.equals(value)) {
                 return false;
             }
             return true;
@@ -217,36 +217,36 @@ public class Literal implements AccessibleObject {
 
             Result expectedType = filter.get(RDF.TYPE);
             switch (expectedType.size()) {
-                case 0:
+            case 0:
                 break;
-                case 1:
-                    ObjectType checkType = expectedType.iterator().next();
-                    if (!(checkType instanceof Literal)) {
-                        return false;
-                    }
-                    if (!((Literal) checkType).getValue().equals(type)) {
-                        return false;
-                    }
-                break;
-                default:
+            case 1:
+                ObjectType checkType = expectedType.iterator().next();
+                if (!(checkType instanceof Literal)) {
                     return false;
+                }
+                if (!((Literal) checkType).getValue().equals(type)) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
             }
 
             Result expectedValue = filter.get(RDF.VALUE);
             switch (expectedValue.size()) {
-                case 0:
+            case 0:
                 break;
-                case 1:
-                    ObjectType checkType = expectedValue.iterator().next();
-                    if (!(checkType instanceof Literal)) {
-                        return false;
-                    }
-                    if (!((Literal) checkType).getValue().equals(value)) {
-                        return false;
-                    }
-                break;
-                default:
+            case 1:
+                ObjectType checkType = expectedValue.iterator().next();
+                if (!(checkType instanceof Literal)) {
                     return false;
+                }
+                if (!((Literal) checkType).getValue().equals(value)) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
             }
         }
         return true;

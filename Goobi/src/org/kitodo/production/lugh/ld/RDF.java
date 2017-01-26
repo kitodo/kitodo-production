@@ -122,5 +122,6 @@ public class RDF {
      *
      * /** Private constructor: You cannot create instance of this class.
      */
-    private RDF() {}
+    private RDF() {
+    }
 }

@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 /**
  * An anonymous linked data Node. The most nodes are anonymous. In Java, they
@@ -66,7 +65,7 @@ public class Node implements AccessibleObject, NodeType {
          */
         private ObjectType findNextNode() {
             while (true) {
-                if (inner == null || !inner.hasNext()) {
+                if ((inner == null) || !inner.hasNext()) {
                     if (outer.hasNext()) {
                         inner = outer.next().getValue().iterator();
                     } else {
@@ -122,12 +121,13 @@ public class Node implements AccessibleObject, NodeType {
     /**
      * The edges leading from this node to other nodes and leaves.
      */
-    private final HashMap<String, Set<ObjectType>> edges = new HashMap<String, Set<ObjectType>>();
+    private final HashMap<String, Set<ObjectType>> edges = new HashMap<>();
 
     /**
      * Creates an empty node.
      */
-    public Node() {}
+    public Node() {
+    }
 
     /**
      * Create a node with a type attribute set.
@@ -136,7 +136,7 @@ public class Node implements AccessibleObject, NodeType {
      *            node type
      */
     public Node(NodeReference type) {
-        edges.put(RDF.TYPE.getIdentifier(), new HashSet<ObjectType>(Arrays.asList(new ObjectType[] { type })));
+        edges.put(RDF.TYPE.getIdentifier(), new HashSet<>(Arrays.asList(new ObjectType[] { type })));
     }
 
     /**
@@ -147,7 +147,7 @@ public class Node implements AccessibleObject, NodeType {
      */
     public Node(String type) {
         edges.put(RDF.TYPE.getIdentifier(),
-                new HashSet<ObjectType>(Arrays.asList(new ObjectType[] { Literal.create(type, null) })));
+                new HashSet<>(Arrays.asList(new ObjectType[] { Literal.create(type, null) })));
     }
 
     /**
@@ -168,7 +168,7 @@ public class Node implements AccessibleObject, NodeType {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-	public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -208,7 +208,7 @@ public class Node implements AccessibleObject, NodeType {
      *            relation to look up
      * @return the value of the literal.
      */
-    
+
     public Result get(NodeReference relation) {
         return get(relation.getIdentifier());
     }
@@ -227,36 +227,36 @@ public class Node implements AccessibleObject, NodeType {
      *         conditions
      */
     public Result get(Set<String> relations, Set<ObjectType> conditions) {
-		Result result = new Result();
-		if (relations.isEmpty()) {
-			relations = new HashSet<String>(Arrays.asList(new String[] { GraphPath.ANY_PREDICATE.getIdentifier() }));
-		}
-		for (String relation : relations) {
-			Iterator<ObjectType> nodes = GraphPath.ANY_PREDICATE.getIdentifier().equals(relation) ? iterator()
-					: edges.containsKey(relation) ? edges.get(relation).iterator()
-							: Collections.<ObjectType>emptyIterator();
-			while (nodes.hasNext()) {
-				ObjectType node = nodes.next();
-				if (conditions.isEmpty()) {
-					result.add(node);
-				} else {
-					if (node instanceof AccessibleObject) {
-						Set<ObjectType> remainingConditions = new HashSet<ObjectType>(conditions);
-						for (Iterator<ObjectType> i = remainingConditions.iterator(); i.hasNext();) {
-							ObjectType condition = i.next();
-							if (((AccessibleObject) node).matches(condition)) {
-								i.remove();
-							}
-						}
-						if (remainingConditions.isEmpty()) {
-							result.add(node);
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
+        Result result = new Result();
+        if (relations.isEmpty()) {
+            relations = new HashSet<>(Arrays.asList(new String[] { GraphPath.ANY_PREDICATE.getIdentifier() }));
+        }
+        for (String relation : relations) {
+            Iterator<ObjectType> nodes = GraphPath.ANY_PREDICATE.getIdentifier().equals(relation) ? iterator()
+                    : edges.containsKey(relation) ? edges.get(relation).iterator()
+                            : Collections.<ObjectType>emptyIterator();
+            while (nodes.hasNext()) {
+                ObjectType node = nodes.next();
+                if (conditions.isEmpty()) {
+                    result.add(node);
+                } else {
+                    if (node instanceof AccessibleObject) {
+                        Set<ObjectType> remainingConditions = new HashSet<>(conditions);
+                        for (Iterator<ObjectType> i = remainingConditions.iterator(); i.hasNext();) {
+                            ObjectType condition = i.next();
+                            if (((AccessibleObject) node).matches(condition)) {
+                                i.remove();
+                            }
+                        }
+                        if (remainingConditions.isEmpty()) {
+                            result.add(node);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
     /**
      * Gets a literal referenced by relation.
@@ -286,7 +286,7 @@ public class Node implements AccessibleObject, NodeType {
      * @throws BufferOverflowException
      *             if there are several possible answers
      */
-    
+
     @Override
     public String getType() {
         return get(RDF.TYPE).identifiableNodeExpectable().getIdentifier();
@@ -298,10 +298,10 @@ public class Node implements AccessibleObject, NodeType {
      * @see java.lang.Object#hashCode()
      */
     @Override
-	public int hashCode() {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (edges == null ? 0 : edges.hashCode());
+        result = (prime * result) + (edges == null ? 0 : edges.hashCode());
         return result;
     }
 
@@ -355,7 +355,7 @@ public class Node implements AccessibleObject, NodeType {
                 }
                 candidates = related.iterator();
             }
-            Set<ObjectType> conditions = new HashSet<ObjectType>(entry.getValue());
+            Set<ObjectType> conditions = new HashSet<>(entry.getValue());
             while (candidates.hasNext() && !conditions.isEmpty()) {
                 ObjectType candidate = candidates.next();
                 if (candidate instanceof AccessibleObject) {
@@ -421,7 +421,7 @@ public class Node implements AccessibleObject, NodeType {
         if (edges.containsKey(relation)) {
             edges.get(relation).add(object);
         } else {
-            edges.put(relation, new HashSet<ObjectType>(Arrays.asList(new ObjectType[] { object })));
+            edges.put(relation, new HashSet<>(Arrays.asList(new ObjectType[] { object })));
         }
         return this;
     }
@@ -450,14 +450,14 @@ public class Node implements AccessibleObject, NodeType {
     void replaceAllNamedNodesWithNoDataByNodeReferences(boolean recursive) {
         for (Entry<String, Set<ObjectType>> edge : edges.entrySet()) {
             Set<ObjectType> objects = edge.getValue();
-            LinkedList<NodeReference> replacedObjects = new LinkedList<NodeReference>();
+            LinkedList<NodeReference> replacedObjects = new LinkedList<>();
             Iterator<ObjectType> objectsIterator = objects.iterator();
             while (objectsIterator.hasNext()) {
                 ObjectType object = objectsIterator.next();
-                if (object instanceof NamedNode && ((NamedNode) object).isEmpty()) {
+                if ((object instanceof NamedNode) && ((NamedNode) object).isEmpty()) {
                     replacedObjects.add(new NodeReference(((NamedNode) object).getIdentifier()));
                     objectsIterator.remove();
-                } else if (recursive && object instanceof Node) {
+                } else if (recursive && (object instanceof Node)) {
                     ((Node) object).replaceAllNamedNodesWithNoDataByNodeReferences(recursive);
                 }
             }
@@ -517,7 +517,7 @@ public class Node implements AccessibleObject, NodeType {
      * @see java.lang.Object#toString()
      */
     @Override
-    
+
     public String toString() {
         StringBuilder result = new StringBuilder();
         toStringRecursive(result, 0);
@@ -536,8 +536,8 @@ public class Node implements AccessibleObject, NodeType {
     private void toStringRecursive(StringBuilder out, int indent) {
         String spc = new String(new char[indent]).replace("\0", " ");
 
-        TreeMap<Long, Set<ObjectType>> elements = new TreeMap<Long, Set<ObjectType>>();
-        TreeMap<String, Set<ObjectType>> attributes = new TreeMap<String, Set<ObjectType>>();
+        TreeMap<Long, Set<ObjectType>> elements = new TreeMap<>();
+        TreeMap<String, Set<ObjectType>> attributes = new TreeMap<>();
 
         if (this instanceof IdentifiableNode) {
             out.append(spc);

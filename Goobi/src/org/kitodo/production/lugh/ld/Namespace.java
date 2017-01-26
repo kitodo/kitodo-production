@@ -23,7 +23,7 @@ public class Namespace {
      * Maps the constant namespaces "xml:" and "xmlns:" to their reserved
      * prefixes. The map is populated in a static block below.
      */
-    private static final Map<String, String> CONSTANTS = new HashMap<String, String>(3);
+    private static final Map<String, String> CONSTANTS = new HashMap<>(3);
 
     /**
      * The "xml:" prefix which is reserved and must neither be used otherwise
@@ -39,13 +39,13 @@ public class Namespace {
      */
     private static final String PREFIX_XMLNS = "xmlns";
     /**
-     * The XMLNS namespace URL.
-     */
-    private static final String XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
-    /**
      * The XML namespace URL.
      */
     private static final String XML_NAMESPACE = "http://www.w3.org/XML/1998/namespace";
+    /**
+     * The XMLNS namespace URL.
+     */
+    private static final String XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
 
     /**
      * Populates the map with the constant namespaces "xml:" and "xmlns:".

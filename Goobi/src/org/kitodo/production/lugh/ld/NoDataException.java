@@ -18,5 +18,5 @@ package org.kitodo.production.lugh.ld;
  * @author Matthias Ronge
  */
 public class NoDataException extends LinkedDataException {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 }

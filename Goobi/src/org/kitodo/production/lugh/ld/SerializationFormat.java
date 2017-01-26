@@ -78,12 +78,14 @@ public enum SerializationFormat {
             if (bos != null) {
                 try {
                     bos.close();
-                } catch (IOException e) { /* close silently */ }
+                } catch (IOException e) {
+                    /* close silently */ }
             }
             if (fos != null) {
                 try {
                     fos.close();
-                } catch (IOException e) { /* close silently */ }
+                } catch (IOException e) {
+                    /* close silently */ }
             }
         }
     }

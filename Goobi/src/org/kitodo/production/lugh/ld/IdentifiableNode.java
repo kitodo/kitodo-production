@@ -13,14 +13,14 @@ package org.kitodo.production.lugh.ld;
 
 /**
  * A named node, which has an identifier, but may be reference-only.
- * 
+ *
  * @author Matthias Ronge
  */
 public interface IdentifiableNode extends NodeType {
-	/**
-	 * Returns the name URI of this node.
-	 * 
-	 * @return the name of this node
-	 */
-	String getIdentifier();
+    /**
+     * Returns the name URI of this node.
+     *
+     * @return the name of this node
+     */
+    String getIdentifier();
 }

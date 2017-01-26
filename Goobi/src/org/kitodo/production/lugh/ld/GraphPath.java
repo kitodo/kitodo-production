@@ -15,7 +15,7 @@ import java.util.*;
 
 /**
  * A path to select objects through a linked data graph.
- * 
+ *
  * The graph path is basically the list of relations to follow, separated by
  * blanks, where {@code *} means <i>any relation</i>. After each relation
  * specification, conditions on the node can be specified in square brackets
@@ -28,7 +28,7 @@ import java.util.*;
  * * [rdf:type mods:displayForm] rdf:_1}
  * <p>
  * Inspired by XPath.
- * 
+ *
  * @author Matthias Ronge
  */
 public class GraphPath extends Node {
@@ -67,10 +67,10 @@ public class GraphPath extends Node {
             int length = string.length();
             NodeReference currentPredicate = null;
             do {
-                while (index < length && string.codePointAt(index) <= ' ') {
+                while ((index < length) && (string.codePointAt(index) <= ' ')) {
                     index++;
                 }
-                if (index >= length || string.codePointAt(index) == ']') {
+                if ((index >= length) || (string.codePointAt(index) == ']')) {
                     return index;
                 } else if (string.codePointAt(index) == ',') {
                     index++;
@@ -85,7 +85,7 @@ public class GraphPath extends Node {
                     if (currentPredicate == null) {
                         int predicatesStart = index;
                         int codePoint;
-                        while (index < length && (codePoint = string.codePointAt(index)) > ' ') {
+                        while ((index < length) && ((codePoint = string.codePointAt(index)) > ' ')) {
                             index += Character.charCount(codePoint);
                         }
                         String predicate = string.substring(predicatesStart, index);
@@ -94,7 +94,8 @@ public class GraphPath extends Node {
                     } else {
                         int literalStart = index;
                         int cp;
-                        while (index < length && (cp = string.codePointAt(index)) > ' ' && cp != ',' && cp != ']') {
+                        while ((index < length) && ((cp = string.codePointAt(index)) > ' ') && (cp != ',')
+                                && (cp != ']')) {
                             index += Character.charCount(cp);
                         }
                         String value = applyPrefixes(prefixes, string.substring(literalStart, index));
@@ -110,8 +111,7 @@ public class GraphPath extends Node {
      * Indicates that the object must be referenced from the subject, but the
      * predicate of the reference is not specified.
      */
-    static final NodeReference ANY_PREDICATE = new NodeReference(
-            "http://names.zeutschel.de/GraphPath/v1#anyPredicate");
+    static final NodeReference ANY_PREDICATE = new NodeReference("http://names.zeutschel.de/GraphPath/v1#anyPredicate");
 
     /**
      * Character in the graph path string indicating that the object must be
@@ -163,7 +163,7 @@ public class GraphPath extends Node {
 
         for (Node toSegment : allTo) {
             Result thisResult = new Result();
-            Set<String> predicates = new HashSet<String>();
+            Set<String> predicates = new HashSet<>();
             for (IdentifiableNode predicate : toSegment.get(RDF.PREDICATE).identifiableNodes()) {
                 predicates.add(predicate.getIdentifier());
             }
@@ -202,7 +202,7 @@ public class GraphPath extends Node {
     }
 
     /**
-     * Parse a graph path string. 
+     * Parse a graph path string.
      *
      * @param string
      *            string to parse
@@ -217,11 +217,11 @@ public class GraphPath extends Node {
         Node graphPosition = this;
         int length = string.length();
         while (index < length) {
-            while (index < length && string.codePointAt(index) <= ' ') {
+            while ((index < length) && (string.codePointAt(index) <= ' ')) {
                 index++;
             }
 
-            if (index < length && string.codePointAt(index) == '[') {
+            if ((index < length) && (string.codePointAt(index) == '[')) {
                 index++;
 
                 ObjectParser parseObjectRecursive = new ObjectParser(prefixes);
@@ -234,36 +234,36 @@ public class GraphPath extends Node {
                 Node nextLocationStep = new Node(LOCATION_STEP);
                 NodeReference direction = RDF.NIL;
                 switch (index < length ? string.codePointAt(index) : -1) {
-                    case '<':
-                        throw new IllegalArgumentException("Directive '<' not supported.");
+                case '<':
+                    throw new IllegalArgumentException("Directive '<' not supported.");
+                case '>':
+                    index++;
+                    switch (index < length ? string.codePointAt(index) : -1) {
                     case '>':
                         index++;
-                        switch (index < length ? string.codePointAt(index) : -1) {
-                            case '>':
-                                index++;
-                                if (index < length && string.codePointAt(index) == '>') {
-                                    index++;
-                                    throw new IllegalArgumentException("Directive '>|' not supported.");
-                                } else {
-                                	throw new IllegalArgumentException("Directive '>>' not supported.");
-                                }
-                            case '|':
-                                throw new IllegalArgumentException("Directive '>|' not supported.");
-                            default:
-                                direction = TO;
-                            break;
+                        if ((index < length) && (string.codePointAt(index) == '>')) {
+                            index++;
+                            throw new IllegalArgumentException("Directive '>|' not supported.");
+                        } else {
+                            throw new IllegalArgumentException("Directive '>>' not supported.");
                         }
-                    break;
                     case '|':
-                        if (index + 1 < length && string.codePointAt(index + 1) == '<') {
-                            throw new IllegalArgumentException("Directive '|<' not supported.");
-                        }
-                    break;
+                        throw new IllegalArgumentException("Directive '>|' not supported.");
                     default:
                         direction = TO;
+                        break;
+                    }
+                    break;
+                case '|':
+                    if (((index + 1) < length) && (string.codePointAt(index + 1) == '<')) {
+                        throw new IllegalArgumentException("Directive '|<' not supported.");
+                    }
+                    break;
+                default:
+                    direction = TO;
                     break;
                 }
-                while (index < length && string.codePointAt(index) <= ' ') {
+                while ((index < length) && (string.codePointAt(index) <= ' ')) {
                     index++;
                 }
 
@@ -272,7 +272,7 @@ public class GraphPath extends Node {
 
                 int predicatesStart = index;
                 int codePoint;
-                while (index < length && (codePoint = string.codePointAt(index)) > ' ') {
+                while ((index < length) && ((codePoint = string.codePointAt(index)) > ' ')) {
                     index += Character.charCount(codePoint);
                 }
                 String predicates = string.substring(predicatesStart, index);
