@@ -24,6 +24,12 @@ public class NamedNode extends Node implements IdentifiableNode {
 
     private final String identifier;
 
+    /**
+     * Creates a new named node.
+     *
+     * @param identifier
+     *            the name URI of this node
+     */
     public NamedNode(String identifier) {
         if (identifier == null) {
             throw new NullPointerException(MISSING_IDENTIFIER);
@@ -43,6 +49,11 @@ public class NamedNode extends Node implements IdentifiableNode {
         return model.createResource(identifier);
     }
 
+    /**
+     * Compares two named nodes for equality.
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -65,11 +76,21 @@ public class NamedNode extends Node implements IdentifiableNode {
         return true;
     }
 
+    /**
+     * Returns the name URI of this node.
+     *
+     * @return the name of this node
+     */
     @Override
     public String getIdentifier() {
         return identifier;
     }
 
+    /**
+     * Returns a hash value of this object.
+     *
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
