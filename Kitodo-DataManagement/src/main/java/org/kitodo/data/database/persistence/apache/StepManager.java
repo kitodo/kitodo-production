@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.persistence.apache;
+package org.kitodo.data.database.persistence.apache;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.kitodo.data.database.persistence.apache.MySQLHelper;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 public class StepManager {
 

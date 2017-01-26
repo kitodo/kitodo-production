@@ -9,16 +9,15 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.persistence.apache;
-
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.metadaten.MetadatenHelper;
+package org.kitodo.data.database.persistence.apache;
 
 import java.io.IOException;
 import java.util.Date;
 
-import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.helper.MetadataHelper;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
@@ -34,40 +33,40 @@ public class ProcessObject {
 
 	private int id;
 	private String title;
-	private String ausgabename;
+	private String outputName;
 	private boolean isTemplate;
 	private boolean swappedOut;
-	private boolean inAuswahllisteAnzeigen;
+	private boolean isChoiceListShown;
 	private String sortHelperStatus;
 	private int sortHelperImages;
 	private int sortHelperArticles;
-	private Date erstellungsdatum;
-	private int projekteID;
+	private Date creationDate;
+	private int projectId;
 	private int rulesetId;
 	private int sortHelperDocstructs;
 	private int sortHelperMetadata;
-	private String wikifield;
+	private String wikiField;
 
-	public ProcessObject(int processId, String title, String ausgabename, boolean isTemplate, boolean swappedOut,
-			boolean inAuswahllisteAnzeigen, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
-			Date erstellungsdatum, int projekteID, int metadatenKonfigurationID, int sortHelperDocstructs,
-			int sortHelperMetadata, String wikifield) {
+	public ProcessObject(int processId, String title, String outputName, boolean isTemplate, boolean swappedOut,
+			boolean isChoiceListShown, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
+			Date creationDate, int projectId, int rulesetId, int sortHelperDocstructs,
+			int sortHelperMetadata, String wikiField) {
 		super();
 		this.id = processId;
 		this.title = title;
-		this.ausgabename = ausgabename;
+		this.outputName = outputName;
 		this.isTemplate = isTemplate;
 		this.swappedOut = swappedOut;
-		this.inAuswahllisteAnzeigen = inAuswahllisteAnzeigen;
+		this.isChoiceListShown = isChoiceListShown;
 		this.sortHelperStatus = sortHelperStatus;
 		this.sortHelperImages = sortHelperImages;
 		this.sortHelperArticles = sortHelperArticles;
-		this.erstellungsdatum = erstellungsdatum;
-		this.projekteID = projekteID;
-		this.rulesetId = metadatenKonfigurationID;
+		this.creationDate = creationDate;
+		this.projectId= projectId;
+		this.rulesetId = rulesetId;
 		this.sortHelperDocstructs = sortHelperDocstructs;
 		this.sortHelperMetadata = sortHelperMetadata;
-		this.wikifield = wikifield;
+		this.wikiField = wikiField;
 	}
 
 	public int getId() {
@@ -86,12 +85,12 @@ public class ProcessObject {
 		this.title = title;
 	}
 
-	public String getAusgabename() {
-		return this.ausgabename;
+	public String getOutputName() {
+		return this.outputName;
 	}
 
-	public void setAusgabename(String ausgabename) {
-		this.ausgabename = ausgabename;
+	public void setOutputName(String outputName) {
+		this.outputName = outputName;
 	}
 
 	public boolean isTemplate() {
@@ -110,12 +109,12 @@ public class ProcessObject {
 		this.swappedOut = swappedOut;
 	}
 
-	public boolean isInAuswahllisteAnzeigen() {
-		return this.inAuswahllisteAnzeigen;
+	public boolean isChoiceListShown() {
+		return this.isChoiceListShown;
 	}
 
-	public void setInAuswahllisteAnzeigen(boolean inAuswahllisteAnzeigen) {
-		this.inAuswahllisteAnzeigen = inAuswahllisteAnzeigen;
+	public void setIsChoiceListShown(boolean isChoiceListShown) {
+		this.isChoiceListShown = isChoiceListShown;
 	}
 
 	public String getSortHelperStatus() {
@@ -142,28 +141,28 @@ public class ProcessObject {
 		this.sortHelperArticles = sortHelperArticles;
 	}
 
-	public Date getErstellungsdatum() {
-		return this.erstellungsdatum;
+	public Date getCreationDate() {
+		return this.creationDate;
 	}
 
-	public void setErstellungsdatum(Date erstellungsdatum) {
-		this.erstellungsdatum = erstellungsdatum;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
-	public int getProjekteID() {
-		return this.projekteID;
+	public int getProjectId() {
+		return this.projectId;
 	}
 
-	public void setProjekteID(int projekteID) {
-		this.projekteID = projekteID;
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
 	}
 
 	public int getRulesetId() {
 		return this.rulesetId;
 	}
 
-	public void setRulesetId(int metadatenKonfigurationID) {
-		this.rulesetId = metadatenKonfigurationID;
+	public void setRulesetId(int rulesetId) {
+		this.rulesetId = rulesetId;
 	}
 
 	public int getSortHelperDocstructs() {
@@ -182,17 +181,17 @@ public class ProcessObject {
 		this.sortHelperMetadata = sortHelperMetadata;
 	}
 
-	public String getWikifield() {
-		return this.wikifield;
+	public String getWikiField() {
+		return this.wikiField;
 	}
 
-	public void setWikifield(String wikifield) {
-		this.wikifield = wikifield;
+	public void setWikiField(String wikiField) {
+		this.wikiField = wikiField;
 	}
 
 	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-		String type = MetadatenHelper.getMetaFileType(metadataFile);
+		String type = MetadataHelper.getMetaFileType(metadataFile);
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
 			ff = new MetsModsImportExport(prefs);
@@ -208,11 +207,12 @@ public class ProcessObject {
 		return ff;
 	}
 
-	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileformat) throws IOException, InterruptedException, SwapException, DAOException, WriteException,
+	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileFormat)
+			throws IOException, InterruptedException, SwapException, DAOException, WriteException,
 			PreferencesException {
 		Fileformat ff;
 		
-		switch (MetadataFormat.findFileFormatsHelperByName(fileformat)) {
+		switch (MetadataFormat.findFileFormatsHelperByName(fileFormat)) {
 		case METS:
 			ff = new MetsMods(prefs);
 			break;

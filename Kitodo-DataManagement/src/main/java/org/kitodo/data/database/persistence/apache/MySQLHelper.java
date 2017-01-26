@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.persistence.apache;
+package org.kitodo.data.database.persistence.apache;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -237,27 +237,27 @@ public class MySQLHelper {
 			sql.append("processingStatus = ? , ");
 			Timestamp time = null;
 			sql.append("processingTime = ? , ");
-			if (step.getBearbeitungszeitpunkt() != null) {
-				time = new Timestamp(step.getBearbeitungszeitpunkt().getTime());
+			if (step.getProcessingTime() != null) {
+				time = new Timestamp(step.getProcessingTime().getTime());
 
 			}
 			Timestamp start = null;
 			sql.append("processingBegin = ? , ");
-			if (step.getBearbeitungsbeginn() != null) {
-				start = new Timestamp(step.getBearbeitungsbeginn().getTime());
+			if (step.getProcessingBegin() != null) {
+				start = new Timestamp(step.getProcessingBegin().getTime());
 			}
 			Timestamp end = null;
 			sql.append("processingEnd = ? , ");
-			if (step.getBearbeitungsende() != null) {
-				end = new Timestamp(step.getBearbeitungsende().getTime());
+			if (step.getProcessingEnd() != null) {
+				end = new Timestamp(step.getProcessingEnd().getTime());
 			}
 
 			sql.append("processingUser_id = ? , ");
 			sql.append("editType = ?, ");
 			sql.append("typeAutomatic = ? ");
 			sql.append(" WHERE id = ? ");
-			Object[] param = { step.getTitle(), step.getReihenfolge(), step.getBearbeitungsstatus(), time, start, end,
-					step.getBearbeitungsbenutzer(), step.getEditType(), step.isTypAutomatisch(), step.getId() };
+			Object[] param = { step.getTitle(), step.getOrdering(), step.getProcessingStatus(), time, start, end,
+					step.getProcessingUser(), step.getEditType(), step.isTypeAutomatic(), step.getId() };
 			if(logger.isDebugEnabled()){
 				logger.debug("saving step: " + sql.toString() + ", " + Arrays.toString(param));
 			}

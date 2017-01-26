@@ -9,14 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.persistence.apache;
+package org.kitodo.data.database.persistence.apache;
 
 import java.util.Date;
 
 public class ProjectObject {
 
 	private int id;
-	private String Titel;
+	private String title;
 	private boolean useDmsImport;
 	private int dmsImportTimeOut;
 	private String dmsImportRootPath;
@@ -44,14 +44,14 @@ public class ProjectObject {
 	private int numberOfVolumes;
 	private boolean projectIsArchived;
 
-	public ProjectObject(int projekteID, String titel, boolean useDmsImport, int dmsImportTimeOut, String dmsImportRootPath,
+	public ProjectObject(int id, String title, boolean useDmsImport, int dmsImportTimeOut, String dmsImportRootPath,
 			String dmsImportImagesPath, String dmsImportSuccessPath, String dmsImportErrorPath, boolean dmsImportCreateProcessFolder,
 			String fileFormatInternal, String fileFormatDmsExport, String metsRightsOwner, String metsRightsOwnerLogo, String metsRightsOwnerSite,
 			String metsDigiprovReference, String metsDigiprovPresentation, String metsPointerPath, String metsPointerPathAnchor,
 			String metsDigiprovReferenceAnchor, String metsDigiprovPresentationAnchor, String metsPurl, String metsContentIDs,
 			String metsRightsOwnerMail, Date startDate, Date endDate, int numberOfPages, int numberOfVolumes, boolean projectIsArchived) {
-		this.id = projekteID;
-		this.Titel = titel;
+		this.id = id;
+		this.title = title;
 		this.useDmsImport = useDmsImport;
 		this.dmsImportTimeOut = dmsImportTimeOut;
 		this.dmsImportRootPath = dmsImportRootPath;
@@ -84,16 +84,16 @@ public class ProjectObject {
 		return this.id;
 	}
 
-	public void setId(int projekteID) {
-		this.id = projekteID;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public String getTitel() {
-		return this.Titel;
+	public String getTitle() {
+		return this.title;
 	}
 
-	public void setTitel(String titel) {
-		this.Titel = titel;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public boolean isUseDmsImport() {

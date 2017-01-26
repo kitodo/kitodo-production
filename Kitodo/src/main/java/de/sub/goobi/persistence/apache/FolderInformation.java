@@ -11,7 +11,9 @@
 
 package de.sub.goobi.persistence.apache;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -25,9 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import org.goobi.io.SafeFile;
 
 public class FolderInformation {
 

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.persistence.apache;
+package org.kitodo.data.database.persistence.apache;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
