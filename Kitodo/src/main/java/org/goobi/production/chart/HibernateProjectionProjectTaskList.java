@@ -52,23 +52,23 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Task.class);
 
-		crit.createCriteria("prozess", "proc");
+		crit.createCriteria("process", "proc");
 		
 		crit.addOrder(Order.asc("reihenfolge"));
 
-		crit.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		crit.add(Restrictions.eq("proc.projekt", inProject));
+		crit.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		crit.add(Restrictions.eq("proc.project", inProject));
 
 		ProjectionList proList = Projections.projectionList();
 
-		proList.add(Projections.property("titel"));
-		proList.add(Projections.property("bearbeitungsstatus"));
+		proList.add(Projections.property("title"));
+		proList.add(Projections.property("processingStatus"));
 		proList.add(Projections.sum("proc.sortHelperImages"));
 		proList.add(Projections.count("id"));
-//		proList.add(Projections.groupProperty(("reihenfolge")));
+		//proList.add(Projections.groupProperty(("reihenfolge")));
 		
-		proList.add(Projections.groupProperty(("titel")));
-		proList.add(Projections.groupProperty(("bearbeitungsstatus")));
+		proList.add(Projections.groupProperty(("title")));
+		proList.add(Projections.groupProperty(("processingStatus")));
 
 		crit.setProjection(proList);
 

@@ -24,8 +24,8 @@ import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
@@ -40,7 +40,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -155,10 +154,10 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			Criteria crit = this.myFilteredDataSource.getCriteria();
 			if (!this.showAutomaticTasks) {
-				crit.add(Restrictions.eq("typAutomatisch", false));
+				crit.add(Restrictions.eq("typeAutomatic", false));
 			}
 			if (hideCorrectionTasks) {
-				crit.add(Restrictions.not(Restrictions.eq("prioritaet", 10)));
+				crit.add(Restrictions.not(Restrictions.eq("priority", 10)));
 			}
 
 			sortList(crit);
@@ -171,20 +170,20 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	private void sortList(Criteria inCrit) {
-		inCrit.addOrder(Order.desc("prioritaet"));
+		inCrit.addOrder(Order.desc("priority"));
 
-		Order order = Order.asc("proc.titel");
+		Order order = Order.asc("proc.title");
 		if (this.sortierung.equals("schrittAsc")) {
-			order = Order.asc("titel");
+			order = Order.asc("title");
 		}
 		if (this.sortierung.equals("schrittDesc")) {
-			order = Order.desc("titel");
+			order = Order.desc("title");
 		}
 		if (this.sortierung.equals("prozessAsc")) {
-			order = Order.asc("proc.titel");
+			order = Order.asc("proc.title");
 		}
 		if (this.sortierung.equals("prozessDesc")) {
-			order = Order.desc("proc.titel");
+			order = Order.desc("proc.title");
 		}
 		if (this.sortierung.equals("batchAsc")) {
 			order = Order.asc("proc.batchID");
@@ -193,28 +192,28 @@ public class AktuelleSchritteForm extends BasisForm {
 			order = Order.desc("proc.batchID");
 		}
 		if (this.sortierung.equals("prozessdateAsc")) {
-			order = Order.asc("proc.erstellungsdatum");
+			order = Order.asc("proc.creationDate");
 		}
 		if (this.sortierung.equals("prozessdateDesc")) {
-			order = Order.desc("proc.erstellungsdatum");
+			order = Order.desc("proc.creationDate");
 		}
 		if (this.sortierung.equals("projektAsc")) {
-			order = Order.asc("proj.titel");
+			order = Order.asc("proj.title");
 		}
 		if (this.sortierung.equals("projektDesc")) {
-			order = Order.desc("proj.titel");
+			order = Order.desc("proj.title");
 		}
 		if (this.sortierung.equals("modulesAsc")) {
-			order = Order.asc("typModulName");
+			order = Order.asc("typeModuleName");
 		}
 		if (this.sortierung.equals("modulesDesc")) {
-			order = Order.desc("typModulName");
+			order = Order.desc("typeModuleName");
 		}
 		if (this.sortierung.equals("statusAsc")) {
-			order = Order.asc("bearbeitungsstatus");
+			order = Order.asc("processingStatus");
 		}
 		if (this.sortierung.equals("statusDesc")) {
-			order = Order.desc("bearbeitungsstatus");
+			order = Order.desc("processingStatus");
 		}
 
 		inCrit.addOrder(order);
@@ -310,9 +309,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			// only steps with same title
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Task.class);
-			crit.add(Restrictions.eq("titel", steptitle));
+			crit.add(Restrictions.eq("title", steptitle));
 			// only steps with same batchid
-			crit.createCriteria("prozess", "proc");
+			crit.createCriteria("process", "proc");
 			crit.createCriteria("proc.batches", "bat");
 			crit.add(Restrictions.eq("bat.id", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
@@ -394,9 +393,9 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			Session session = Helper.getHibernateSession();
 			Criteria crit = session.createCriteria(Task.class);
-			crit.add(Restrictions.eq("titel", steptitle));
+			crit.add(Restrictions.eq("title", steptitle));
 			// only steps with same batchid
-			crit.createCriteria("prozess", "proc");
+			crit.createCriteria("process", "proc");
 			crit.createCriteria("proc.batches", "bat");
 			crit.add(Restrictions.eq("bat.id", batchNumber));
 			crit.add(Restrictions.eq("batchStep", true));
@@ -537,7 +536,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public List<Task> getPreviousStepsForProblemReporting() {
 		List<Task> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
-				.add(Restrictions.lt("reihenfolge", this.mySchritt.getOrdering())).addOrder(Order.desc("reihenfolge")).createCriteria("prozess")
+				.add(Restrictions.lt("ordering", this.mySchritt.getOrdering())).addOrder(Order.desc("ordering")).createCriteria("process")
 				.add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
 		return alleVorherigenSchritte;
 	}
@@ -592,8 +591,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
 			List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-					.add(Restrictions.le("reihenfolge", this.mySchritt.getOrdering())).add(Restrictions.gt("reihenfolge", temp.getOrdering()))
-					.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+					.add(Restrictions.le("ordering", this.mySchritt.getOrdering())).add(Restrictions.gt("ordering", temp.getOrdering()))
+					.addOrder(Order.asc("ordering")).createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
 			for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 				Task step = iter.next();
 				step.setProcessingStatusEnum(TaskStatus.LOCKED);
@@ -621,8 +620,8 @@ public class AktuelleSchritteForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public List<Task> getNextStepsForProblemSolution() {
 		List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
-				.add(Restrictions.gt("reihenfolge", this.mySchritt.getOrdering())).add(Restrictions.eq("prioritaet", 10))
-				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+				.add(Restrictions.gt("ordering", this.mySchritt.getOrdering())).add(Restrictions.eq("priority", 10))
+				.addOrder(Order.asc("ordering")).createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
 		return alleNachfolgendenSchritte;
 	}
 
@@ -651,8 +650,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			 * alle Schritte zwischen dem aktuellen und dem Korrekturschritt wieder schliessen
 			 */
 			List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-					.add(Restrictions.ge("reihenfolge", this.mySchritt.getOrdering())).add(Restrictions.le("reihenfolge", temp.getOrdering()))
-					.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
+					.add(Restrictions.ge("ordering", this.mySchritt.getOrdering())).add(Restrictions.le("ordering", temp.getOrdering()))
+					.addOrder(Order.asc("ordering")).createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
 			for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 				Task step = iter.next();
 				step.setProcessingStatusEnum(TaskStatus.DONE);
@@ -997,7 +996,8 @@ public class AktuelleSchritteForm extends BasisForm {
 		String param = Helper.getRequestParameter("myid");
 		if (param != null && !param.equals("")) {
 			/*
-			 * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
+			 * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann dies jetzt nachholen,
+			 * damit die Liste vollstÃ¤ndig ist
 			 */
 			if (this.page == null && (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
 				FilterAlleStart();
@@ -1081,7 +1081,7 @@ public class AktuelleSchritteForm extends BasisForm {
 	}
 
 	/**
-	 * sets new value for wiki field
+	 * Sets new value for wiki field.
 	 *
 	 * @param inString
 	 */

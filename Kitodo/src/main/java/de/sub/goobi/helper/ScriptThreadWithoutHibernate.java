@@ -21,9 +21,9 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 
 import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.persistence.apache.MySQLHelper;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.MySQLHelper;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 public class ScriptThreadWithoutHibernate extends EmptyTask {
 	HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
@@ -37,8 +37,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	}
 
 	/**
-	 * The function getNameDetail() returns a human-readable name for this
-	 * thread.
+	 * The function getNameDetail() returns a human-readable name for this thread.
 	 * 
 	 * @param step
 	 *            StepObject that the name depends on.
@@ -48,7 +47,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		String function = null;
 		if (StepManager.loadScripts(step.getId()).size() > 0) {
 			function = "executeAllScriptsForStep";
-		} else if (step.isTypExport()) {
+		} else if (step.isTypeExport()) {
 			function = "executeDmsExport";
 		} else if ((step.getStepPlugin() != null) && (step.getStepPlugin().length() > 0)) {
 			function = "executeStepPlugin";
@@ -89,7 +88,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 	@Override
 	public void run() {
 
-		boolean automatic = this.step.isTypAutomatisch();
+		boolean automatic = this.step.isTypeAutomatic();
 		if(logger.isDebugEnabled()){
 			logger.debug("step is automatic: " + automatic);
 		}
@@ -99,7 +98,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
 		}
 		if (scriptPaths.size() > 0) {
 			this.hs.executeAllScriptsForStep(this.step, automatic);
-		} else if (this.step.isTypExport()) {
+		} else if (this.step.isTypeExport()) {
 			this.hs.executeDmsExport(this.step, automatic);
 		} else if ((this.step.getStepPlugin() != null) && (this.step.getStepPlugin().length() > 0)) {
 			IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, step.getStepPlugin());

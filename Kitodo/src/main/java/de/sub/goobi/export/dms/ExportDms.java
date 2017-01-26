@@ -16,7 +16,7 @@ import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
 import de.sub.goobi.helper.tasks.TaskManager;

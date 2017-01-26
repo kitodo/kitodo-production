@@ -17,17 +17,17 @@ import de.sub.goobi.export.download.ExportMetsWithoutHibernate;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.metadaten.MetadatenVerifizierungWithoutHibernate;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.ProjectManager;
+import org.kitodo.data.database.persistence.apache.ProjectObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,10 +104,10 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 		RulesetService rulesetService = new RulesetService();
 		this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));;
 	
-		this.project =ProjectManager.getProjectById(process.getProjekteID());
+		this.project =ProjectManager.getProjectById(process.getProjectId());
 		
 		
-		this.cp = new ConfigProjects(this.project.getTitel());
+		this.cp = new ConfigProjects(this.project.getTitle());
 		String atsPpnBand = process.getTitle();
 
 		/*

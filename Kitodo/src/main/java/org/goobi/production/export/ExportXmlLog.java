@@ -13,7 +13,7 @@ package org.goobi.production.export;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

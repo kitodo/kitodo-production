@@ -58,7 +58,7 @@ public class LdapGruppenForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 				session.clear();
 			Criteria crit = session.createCriteria(LdapGroup.class);
-			crit.addOrder(Order.asc("titel"));
+			crit.addOrder(Order.asc("title"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error on reading database", he.getMessage());

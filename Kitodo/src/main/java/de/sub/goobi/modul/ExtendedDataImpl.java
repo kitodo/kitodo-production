@@ -261,7 +261,7 @@ public int set(String sessionId, String type, int count, HashMap pp) throws Goob
       /*
        * Prozesseigenschaft
        */
-      String myquery = "from Prozesseigenschaft where prozess=" + p.getId().intValue();
+      String myquery = "from ProcessProperty where process=" + p.getId().intValue();
       /*
        * Werkstückeigenschaft
        */
@@ -269,7 +269,7 @@ public int set(String sessionId, String type, int count, HashMap pp) throws Goob
          if (processService.getWorkpiecesSize(p) - 1 < count)
             throw new GoobiException(1500, "Workpiece does not exist");
          Workpiece w = p.getWorkpieces().get(count);
-         myquery = "from Werkstueckeigenschaft where werkstueck=" + w.getId();
+         myquery = "from WorkpieceProperty where workpiece=" + w.getId();
       }
 
       /*
@@ -279,9 +279,9 @@ public int set(String sessionId, String type, int count, HashMap pp) throws Goob
          if (processService.getTemplatesSize(p) - 1 < count)
             throw new GoobiException(1500, "Template does not exist");
          Template v = p.getTemplates().get(count);
-         myquery = "from Vorlageeigenschaft where vorlage=" + v.getId();
+         myquery = "from TemplateProperty where template=" + v.getId();
       }
-      myquery += " and titel='" + gpp.getName() + "' and id=" + gpp.getId();
+      myquery += " and title='" + gpp.getName() + "' and id=" + gpp.getId();
 
       try {
     	 //TODO: Use generics

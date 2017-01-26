@@ -30,12 +30,12 @@ import org.hibernate.criterion.Restrictions;
 
 import org.kitodo.data.database.beans.Task;
 
-/*****************************************************************************
+/**
  * Implementation of {@link IStatisticalQuestion}. 
  * Statistical Request with predefined Values in data Table
  * 
  * @author Steffen Hankiewicz
- ****************************************************************************/
+ */
 public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
 	/*
@@ -54,10 +54,10 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 		}
 
 		Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
-		crit.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)), Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+		crit.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)), Restrictions.like("processingStatus", Integer.valueOf(2))));
 
 		if (originalFilter instanceof UserDefinedFilter) {
-			crit.createCriteria("prozess", "proz");
+			crit.createCriteria("process", "proz");
 			crit.add(Restrictions.in("proz.id", originalFilter.getIDList()));
 		}
 		StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());

@@ -14,10 +14,10 @@ package org.goobi.production.flow.helper;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +96,7 @@ public class JobCreation {
                     moveFiles(metsfile, basepath, p);
                     List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
                     for (StepObject s : steps) {
-                        if (s.getBearbeitungsstatus() == 1 && s.isTypAutomatisch()) {
+                        if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
                             ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
                             myThread.start();
                         }

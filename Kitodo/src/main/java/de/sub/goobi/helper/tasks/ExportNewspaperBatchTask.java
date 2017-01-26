@@ -17,7 +17,7 @@ import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.ArrayListMap;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 
 import java.io.IOException;
 import java.util.Collections;

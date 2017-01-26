@@ -75,7 +75,7 @@ public class BenutzergruppenForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			session.clear();
 			Criteria crit = session.createCriteria(UserGroup.class);
-			crit.addOrder(Order.asc("titel"));
+			crit.addOrder(Order.asc("title"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());

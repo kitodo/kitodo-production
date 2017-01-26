@@ -16,8 +16,8 @@ import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -509,8 +509,8 @@ public class BatchStepHelper {
 				 */
 				@SuppressWarnings("unchecked")
 				List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-						.add(Restrictions.le("reihenfolge", this.currentStep.getOrdering()))
-						.add(Restrictions.gt("reihenfolge", temp.getOrdering())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+						.add(Restrictions.le("ordering", this.currentStep.getOrdering()))
+						.add(Restrictions.gt("ordering", temp.getOrdering())).addOrder(Order.asc("ordering")).createCriteria("process")
 						.add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
 				for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 					Task step = iter.next();
@@ -530,7 +530,7 @@ public class BatchStepHelper {
 	public List<SelectItem> getPreviousStepsForProblemReporting() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		List<Task> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
-				.add(Restrictions.lt("reihenfolge", this.currentStep.getOrdering())).addOrder(Order.desc("reihenfolge")).createCriteria("prozess")
+				.add(Restrictions.lt("ordering", this.currentStep.getOrdering())).addOrder(Order.desc("ordering")).createCriteria("process")
 				.add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
 		for (Task s : alleVorherigenSchritte) {
 			answer.add(new SelectItem(s.getTitle(), taskService.getTitleWithUserName(s)));
@@ -542,8 +542,8 @@ public class BatchStepHelper {
 	public List<SelectItem> getNextStepsForProblemSolution() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
-				.add(Restrictions.gt("reihenfolge", this.currentStep.getOrdering())).add(Restrictions.eq("prioritaet", 10))
-				.addOrder(Order.asc("reihenfolge")).createCriteria("prozess").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
+				.add(Restrictions.gt("ordering", this.currentStep.getOrdering())).add(Restrictions.eq("priority", 10))
+				.addOrder(Order.asc("ordering")).createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
 		for (Task s : alleNachfolgendenSchritte) {
 			answer.add(new SelectItem(s.getTitle(), taskService.getTitleWithUserName(s)));
 		}
@@ -609,8 +609,8 @@ public class BatchStepHelper {
 				 */
 				@SuppressWarnings("unchecked")
 				List<Task> alleSchritteDazwischen = Helper.getHibernateSession().createCriteria(Task.class)
-						.add(Restrictions.ge("reihenfolge", this.currentStep.getOrdering()))
-						.add(Restrictions.le("reihenfolge", temp.getOrdering())).addOrder(Order.asc("reihenfolge")).createCriteria("prozess")
+						.add(Restrictions.ge("ordering", this.currentStep.getOrdering()))
+						.add(Restrictions.le("ordering", temp.getOrdering())).addOrder(Order.asc("ordering")).createCriteria("process")
 						.add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
 				for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
 					Task step = iter.next();

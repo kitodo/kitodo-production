@@ -14,7 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
 
 import java.io.File;
 
@@ -88,7 +88,7 @@ public class RegelsaetzeForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			session.clear();
 			Criteria crit = session.createCriteria(Ruleset.class);
-			crit.addOrder(Order.asc("titel"));
+			crit.addOrder(Order.asc("title"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());

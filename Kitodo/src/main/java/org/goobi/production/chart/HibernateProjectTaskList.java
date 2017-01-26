@@ -40,10 +40,10 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 	private synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Task.class);
-		crit.addOrder(Order.asc("reihenfolge"));
-		crit.createCriteria("prozess", "proz");
-		crit.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
-		crit.add(Restrictions.eq("proz.projekt", inProject));
+		crit.addOrder(Order.asc("ordering"));
+		crit.createCriteria("process", "proz");
+		crit.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
+		crit.add(Restrictions.eq("proz.project", inProject));
 
 		ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
 

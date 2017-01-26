@@ -14,10 +14,10 @@ package de.sub.goobi.helper;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.Property;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.Property;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.io.File;
 import java.util.ArrayList;

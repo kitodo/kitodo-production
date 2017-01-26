@@ -196,7 +196,7 @@ public class ProjekteForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			session.clear();
 			Criteria crit = session.createCriteria(Project.class);
-			crit.addOrder(Order.asc("titel"));
+			crit.addOrder(Order.asc("title"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("could not read", he.getMessage());
@@ -683,7 +683,6 @@ public class ProjekteForm extends BasisForm {
 			}
 		}
 	}
-
 
 	/**
 	 * Getter for showStatistics.

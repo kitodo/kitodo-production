@@ -33,7 +33,7 @@ import org.kitodo.services.UserService;
 
 public class LoginForm {
 	private String login;
-	private String passwort;
+	private String password;
 	private User myBenutzer;
 	private User tempBenutzer;
 	private boolean schonEingeloggt = false;
@@ -82,7 +82,7 @@ public class LoginForm {
 					return "";
 				}
 				/* wenn passwort auch richtig ist, den benutzer übernehmen */
-				if (userService.isPasswordCorrect(b, this.passwort)) {
+				if (userService.isPasswordCorrect(b, this.password)) {
 					/* jetzt prüfen, ob dieser Benutzer schon in einer anderen Session eingeloggt ist */
 					SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
 					HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
@@ -248,12 +248,12 @@ public class LoginForm {
 		this.login = login;
 	}
 
-	public String getPasswort() {
-		return this.passwort;
+	public String getPassword() {
+		return this.password;
 	}
 
-	public void setPasswort(String passwort) {
-		this.passwort = passwort;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public User getMyBenutzer() {

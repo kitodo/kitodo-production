@@ -11,8 +11,8 @@
 
 package de.sub.goobi.metadaten.copier;
 
-import de.sub.goobi.persistence.apache.MySQLHelper;
-import de.sub.goobi.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.MySQLHelper;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
 
 import java.sql.SQLException;
 

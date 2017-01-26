@@ -11,7 +11,7 @@
 
 package de.sub.goobi.importer;
 
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 import java.io.BufferedReader;

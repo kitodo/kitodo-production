@@ -18,10 +18,10 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.ProjectManager;
+import org.kitodo.data.database.persistence.apache.ProjectObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, int processId, String title) {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
-		ProjectObject project = ProjectManager.getProjectById(process.getProjekteID());
+		ProjectObject project = ProjectManager.getProjectById(process.getProjectId());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
 		this.title = title;
 		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
@@ -332,16 +332,16 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
+	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten
 	 */
 	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language,
 			ProjectObject project) {
 		/*
-		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
+		 * Konfiguration öffnen und die Validierungsdetails auslesen
 		 */
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(project.getTitel());
+			cp = new ConfigProjects(project.getTitle());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("[" + this.title + "] " + "IOException", e.getMessage());
 			return inFehlerList;

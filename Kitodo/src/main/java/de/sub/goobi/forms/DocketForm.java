@@ -14,7 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
-import de.sub.goobi.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
 
 import java.io.File;
 

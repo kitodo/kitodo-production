@@ -19,7 +19,7 @@ import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
@@ -31,10 +31,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
@@ -126,7 +124,7 @@ public class CopyProcess extends ProzesskopieForm {
 		this.prozessKopie = new Process();
 		this.prozessKopie.setTitle("");
 		this.prozessKopie.setIsTemplate(false);
-		this.prozessKopie.setIsChoiceListShown(false);
+		this.prozessKopie.setInChoiceListShown(false);
 		this.prozessKopie.setProject(this.prozessVorlage.getProject());
 		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
 		this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
@@ -168,7 +166,7 @@ public class CopyProcess extends ProzesskopieForm {
 		this.prozessKopie = new Process();
 		this.prozessKopie.setTitle("");
 		this.prozessKopie.setIsTemplate(false);
-		this.prozessKopie.setIsChoiceListShown(false);
+		this.prozessKopie.setInChoiceListShown(false);
 		this.prozessKopie.setProject(this.prozessVorlage.getProject());
 		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
 		this.digitalCollections = new ArrayList<String>();

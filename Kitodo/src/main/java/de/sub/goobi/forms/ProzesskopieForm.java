@@ -17,12 +17,12 @@ import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
@@ -35,12 +35,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
@@ -287,7 +285,7 @@ public class ProzesskopieForm {
 		this.prozessKopie = new Process();
 		this.prozessKopie.setTitle("");
 		this.prozessKopie.setIsTemplate(false);
-		this.prozessKopie.setIsChoiceListShown(false);
+		this.prozessKopie.setInChoiceListShown(false);
 		this.prozessKopie.setProject(this.prozessVorlage.getProject());
 		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
 		this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
@@ -389,9 +387,9 @@ public class ProzesskopieForm {
 		List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Process.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+		crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
 		crit.add(Restrictions.eq("inAuswahllisteAnzeigen", Boolean.TRUE));
-		crit.addOrder(Order.asc("titel"));
+		crit.addOrder(Order.asc("title"));
 
 		/* Einschränkung auf bestimmte Projekte, wenn kein Admin */
 		LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
@@ -409,7 +407,7 @@ public class ProzesskopieForm {
 				Hibernate.initialize(aktuellerNutzer);
 				Disjunction dis = Restrictions.disjunction();
 				for (Project proj : aktuellerNutzer.getProjects()) {
-					dis.add(Restrictions.eq("projekt", proj));
+					dis.add(Restrictions.eq("project", proj));
 				}
 				crit.add(dis);
 			}
@@ -1012,7 +1010,7 @@ public class ProzesskopieForm {
 				/*
 				 * soll der Prozess als Vorlage verwendet werden?
 				 */
-				if (this.useTemplates && this.prozessKopie.isChoiceListShown()) {
+				if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
 					processService.writeMetadataAsTemplateFile(this.myRdf, this.prozessKopie);
 				}
 
@@ -1055,7 +1053,7 @@ public class ProzesskopieForm {
 
 		List<StepObject> steps = StepManager.getStepsForProcess(prozessKopie.getId());
 		for (StepObject s : steps) {
-			if (s.getBearbeitungsstatus() == 1 && s.isTypAutomatisch() ) {
+			if (s.getProcessingStatus() == 1 && s.isTypeAutomatic() ) {
 				ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
 				myThread.start();
 			}
@@ -1377,8 +1375,9 @@ public class ProzesskopieForm {
 
 	}
 
-	/*
-	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use this choice
+	/**
+	 * This is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true
+	 * use this choice.
 	 *
 	 * @author Wulf
 	 */

@@ -11,7 +11,7 @@
 
 package org.goobi.production.plugin.interfaces;
 
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.util.HashMap;
 

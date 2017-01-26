@@ -46,7 +46,7 @@ public class BasisForm implements Serializable {
 	}
 	
 	public User getUser() {
-		if(this.user==null) {
+		if(this.user == null) {
 			LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 			this.user = login.getMyBenutzer();
 		}
@@ -70,22 +70,22 @@ public class BasisForm implements Serializable {
 	}
 
 	public void addFilterToUser(){
-		if (this.filter==null || this.filter.length()==0){
+		if (this.filter == null || this.filter.length() == 0){
 			return;
 		}
-		userService.addFilter(this.user, this.filter);
+		userService.addFilter(this.user.getId(), this.filter);
 //		try {
 //			new BenutzerDAO().save(this.user);
 //		} catch (DAOException e) {
 //			logger.error(e);
 //		}
 	}
-	
+
 	public void removeFilterFromUser(){
-		if (this.filter==null || this.filter.length()==0){
+		if (this.filter == null || this.filter.length() == 0){
 			return;
 		}
-		userService.removeFilter(this.user, this.filter);
+		userService.removeFilter(this.user.getId(), this.filter);
 //		try {
 //			new BenutzerDAO().save(this.user);
 //		} catch (DAOException e) {

@@ -55,8 +55,8 @@ public class ProjectHelper {
 		Session session = Helper.getHibernateSession();
 
 		Criteria critTotals = session.createCriteria(Process.class, "proc");
-		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critTotals.add(Restrictions.eq("proc.projekt", project));
+		critTotals.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		critTotals.add(Restrictions.eq("proc.project", project));
 
 		ProjectionList proList = Projections.projectionList();
 
@@ -80,17 +80,17 @@ public class ProjectHelper {
 
 		Criteria critSteps = session.createCriteria(Task.class);
 
-		critSteps.createCriteria("prozess", "proc");
-		critSteps.addOrder(Order.asc("reihenfolge"));
+		critSteps.createCriteria("process", "proc");
+		critSteps.addOrder(Order.asc("ordering"));
 
-		critSteps.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critSteps.add(Restrictions.eq("proc.projekt", project));
+		critSteps.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		critSteps.add(Restrictions.eq("proc.project", project));
 
 		proList = Projections.projectionList();
 
-		proList.add(Projections.groupProperty(("titel")));
+		proList.add(Projections.groupProperty(("title")));
 		proList.add(Projections.count("id"));
-		proList.add(Projections.avg("reihenfolge"));
+		proList.add(Projections.avg("ordering"));
 
 
 		critSteps.setProjection(proList);
@@ -126,15 +126,15 @@ public class ProjectHelper {
 
 		Criteria critStepDone = session.createCriteria(Task.class, "step");
 
-		critStepDone.createCriteria("prozess", "proc");
+		critStepDone.createCriteria("process", "proc");
 
-		critStepDone.add(Restrictions.eq("step.bearbeitungsstatus", TaskStatus.DONE.getValue()));
-		critStepDone.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critStepDone.add(Restrictions.eq("proc.projekt", project));
+		critStepDone.add(Restrictions.eq("step.processingStatus", TaskStatus.DONE.getValue()));
+		critStepDone.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		critStepDone.add(Restrictions.eq("proc.project", project));
 
 		ProjectionList proCount = Projections.projectionList();
 
-		proCount.add(Projections.groupProperty(("step.titel")));
+		proCount.add(Projections.groupProperty(("step.title")));
 		proCount.add(Projections.count("proc.id"));
 		proCount.add(Projections.sum("proc.sortHelperImages"));
 

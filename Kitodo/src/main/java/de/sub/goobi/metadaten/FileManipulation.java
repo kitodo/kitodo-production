@@ -13,7 +13,7 @@ package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

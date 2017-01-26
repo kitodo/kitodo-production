@@ -87,7 +87,7 @@ public class SearchForm {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(WorkpieceProperty.class);
 		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		crit.setProjection(Projections.distinct(Projections.property("title")));
 		this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
 		try {
 			@SuppressWarnings("unchecked")
@@ -131,8 +131,8 @@ public class SearchForm {
 	protected void initProcessPropertyTitles() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(ProcessProperty.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		crit.addOrder(Order.asc("title"));
+		crit.setProjection(Projections.distinct(Projections.property("title")));
 		this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
 		try {
 			@SuppressWarnings("unchecked")
@@ -162,8 +162,8 @@ public class SearchForm {
 	protected void initStepTitles() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Task.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		crit.addOrder(Order.asc("title"));
+		crit.setProjection(Projections.distinct(Projections.property("title")));
 		this.stepTitles.add(Helper.getTranslation("notSelected"));
 		try {
 			@SuppressWarnings("unchecked")
@@ -182,8 +182,8 @@ public class SearchForm {
 	protected void initTemplatePropertyTitles() {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(TemplateProperty.class);
-		crit.addOrder(Order.asc("titel"));
-		crit.setProjection(Projections.distinct(Projections.property("titel")));
+		crit.addOrder(Order.asc("title"));
+		crit.setProjection(Projections.distinct(Projections.property("title")));
 		this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
 		try {
 			@SuppressWarnings("unchecked")
@@ -203,9 +203,9 @@ public class SearchForm {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(User.class);
 		crit.add(Restrictions.isNull("isVisible"));
-		crit.add(Restrictions.eq("istAktiv", true));
-		crit.addOrder(Order.asc("nachname"));
-		crit.addOrder(Order.asc("vorname"));
+		crit.add(Restrictions.eq("istActive", true));
+		crit.addOrder(Order.asc("surname"));
+		crit.addOrder(Order.asc("name"));
 		try {
 			this.user.addAll(crit.list());
 		} catch (RuntimeException rte) {

@@ -119,8 +119,8 @@ public class BatchForm extends BasisForm {
 		}
 		this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
 		Criteria crit = this.myFilteredDataSource.getCriteria();
-		crit.addOrder(Order.desc("erstellungsdatum"));
-		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+		crit.addOrder(Order.desc("creationDate"));
+		crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
 		int batchMaxSize = ConfigMain.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
 		if (batchMaxSize > 0) {
 			crit.setMaxResults(batchMaxSize);

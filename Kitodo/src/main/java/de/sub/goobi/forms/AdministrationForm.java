@@ -19,7 +19,7 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.encryption.MD5;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.IOException;
@@ -233,7 +233,7 @@ public class AdministrationForm implements Serializable {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitle());
 			} else {
 				if(myLogger.isDebugEnabled()) {
-					myLogger.debug("Prozess: " + p.getTitle());
+					myLogger.debug("Process: " + p.getTitle());
 				}
 				Prefs myPrefs = rulesetService.getPreferences(p.getRuleset());
 				Fileformat gdzfile;
@@ -294,8 +294,8 @@ public class AdministrationForm implements Serializable {
 	public void PPNsKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Process.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
-		crit.createCriteria("projekt", "proj");
+		crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
+		crit.createCriteria("project", "proj");
 		crit.add(Restrictions.like("proj.titel", "DigiZeitschriften"));
 
 		List<Process> auftraege = crit.list();
@@ -421,8 +421,8 @@ public class AdministrationForm implements Serializable {
 		RulesetService rulesetService = new RulesetService();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Process.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
-		crit.add(Restrictions.like("titel", "statjafud%"));
+		crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
+		crit.add(Restrictions.like("title", "statjafud%"));
 		/* alle Prozesse durchlaufen */
 		List<Process> pl = crit.list();
 		for (Process p : pl) {
@@ -483,8 +483,8 @@ public class AdministrationForm implements Serializable {
 	public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Process.class);
-		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
-		crit.createCriteria("projekt", "proj");
+		crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
+		crit.createCriteria("project", "proj");
 		crit.add(Restrictions.like("proj.titel", "UB-MannheimDigizeit"));
 
 		/* alle Prozesse durchlaufen */

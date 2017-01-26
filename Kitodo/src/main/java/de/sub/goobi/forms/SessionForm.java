@@ -149,7 +149,7 @@ public class SessionForm {
 					insession.setAttribute("User", userService.getFullName(inBenutzer));
 					map.put("user", userService.getFullName(inBenutzer));
 					map.put("userid", inBenutzer.getId());
-					insession.setMaxInactiveInterval(inBenutzer.getSessionTimeout());
+					insession.setMaxInactiveInterval(userService.getSessionTimeout(inBenutzer));
 				} else {
 					map.put("user", "- ausgeloggt - ");
 					map.put("userid", Integer.valueOf(0));

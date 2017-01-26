@@ -12,8 +12,8 @@
 package org.goobi.production.flow.jobs;
 
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.apache.StepManager;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.persistence.apache.StepManager;
 
 import de.unigoettingen.sub.commons.util.file.FileUtils;
 

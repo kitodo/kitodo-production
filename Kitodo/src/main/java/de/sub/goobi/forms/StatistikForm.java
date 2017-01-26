@@ -167,22 +167,22 @@ public class StatistikForm {
 			 */
 			Criteria critGruppen = session.createCriteria(Task.class);
 			if (!inOffen && !inBearbeitet) {
-				critGruppen.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
-						Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+				critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+						Restrictions.like("processingStatus", Integer.valueOf(2))));
 			}
 			if (inOffen) {
-				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
+				critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
 			}
 			if (inBearbeitet) {
-				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
+				critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
 			}
 
 			/* nur Prozesse, die keine Vorlagen sind */
-			critGruppen.createCriteria("prozess", "proz");
-			critGruppen.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
+			critGruppen.createCriteria("process", "proz");
+			critGruppen.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
 
 			/* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
-			critGruppen.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
+			critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
 			critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */
@@ -196,22 +196,22 @@ public class StatistikForm {
 			 */
 			Criteria critBenutzer = session.createCriteria(Task.class);
 			if (!inOffen && !inBearbeitet) {
-				critBenutzer.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
-						Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+				critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+						Restrictions.like("processingStatus", Integer.valueOf(2))));
 			}
 			if (inOffen) {
-				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
+				critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
 			}
 			if (inBearbeitet) {
-				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
+				critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
 			}
 
 			/* nur Prozesse, die keine Vorlagen sind */
-			critBenutzer.createCriteria("prozess", "proz");
-			critBenutzer.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
+			critBenutzer.createCriteria("process", "proz");
+			critBenutzer.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
 
 			/* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
-			critBenutzer.createCriteria("benutzer", "nutzer");
+			critBenutzer.createCriteria("user", "nutzer");
 			critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */

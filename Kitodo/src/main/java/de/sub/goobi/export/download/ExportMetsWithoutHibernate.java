@@ -17,13 +17,13 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.ProjectManager;
+import org.kitodo.data.database.persistence.apache.ProjectObject;
 
 import java.io.IOException;
 import java.net.URL;
@@ -121,7 +121,7 @@ public class ExportMetsWithoutHibernate {
 		 */
 		this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
 
-		this.project = ProjectManager.getProjectById(process.getProjekteID());
+		this.project = ProjectManager.getProjectById(process.getProjectId());
 		String atsPpnBand = process.getTitle();
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
 		Fileformat gdzfile = process.readMetadataFile(this.fi.getMetadataFilePath(), this.myPrefs);
@@ -133,7 +133,7 @@ public class ExportMetsWithoutHibernate {
 	}
 
 	/**
-	 * prepare user directory
+	 * Prepare user directory.
 	 *
 	 * @param inTargetFolder
 	 *            the folder to prove and maybe create it
@@ -169,7 +169,7 @@ public class ExportMetsWithoutHibernate {
 			TypeNotAllowedForParentException {
 		this.fi = new FolderInformation(process.getId(), process.getTitle());
 		this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
-		this.project = ProjectManager.getProjectById(process.getProjekteID());
+		this.project = ProjectManager.getProjectById(process.getProjectId());
 		MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
 		mm.setWriteLocal(writeLocalFilegroup);
 		String imageFolderPath = this.fi.getImagesDirectory();

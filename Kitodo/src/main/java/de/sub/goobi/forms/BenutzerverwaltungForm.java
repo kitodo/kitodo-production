@@ -81,10 +81,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Criteria crit = session.createCriteria(User.class);
 			crit.add(Restrictions.isNull("isVisible"));
 			if (this.hideInactiveUsers) {
-				crit.add(Restrictions.eq("istAktiv", true));
+				crit.add(Restrictions.eq("isActive", true));
 			}
-			crit.addOrder(Order.asc("nachname"));
-			crit.addOrder(Order.asc("vorname"));
+			crit.addOrder(Order.asc("surname"));
+			crit.addOrder(Order.asc("name"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
@@ -99,7 +99,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	/**
-	 * Anzeige der gefilterten Nutzer
+	 * Anzeige der gefilterten Nutzer.
 	 */
 	public String FilterAlleStart() {
 		try {
@@ -108,22 +108,22 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Criteria crit = session.createCriteria(User.class);
 			crit.add(Restrictions.isNull("isVisible"));
 			if (this.hideInactiveUsers) {
-				crit.add(Restrictions.eq("istAktiv", true));
+				crit.add(Restrictions.eq("isActive", true));
 			}
 
 			if (this.filter != null && this.filter.length() != 0) {
 				Disjunction ex = Restrictions.disjunction();
-				ex.add(Restrictions.like("vorname", "%" + this.filter + "%"));
-				ex.add(Restrictions.like("nachname", "%" + this.filter + "%"));
-//				crit.createCriteria("projekte", "proj");
-//				ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
+				ex.add(Restrictions.like("name", "%" + this.filter + "%"));
+				ex.add(Restrictions.like("surname", "%" + this.filter + "%"));
+				//crit.createCriteria("projekte", "proj");
+				//ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
 
-//				crit.createCriteria("benutzergruppen", "group");
-//				ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
+				//crit.createCriteria("benutzergruppen", "group");
+				//ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
 				crit.add(ex);
 			}
-			crit.addOrder(Order.asc("nachname"));
-			crit.addOrder(Order.asc("vorname"));
+			crit.addOrder(Order.asc("surname"));
+			crit.addOrder(Order.asc("name"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
@@ -211,7 +211,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String AusGruppeLoeschen() {
-		int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
+		int gruppenID = Integer.parseInt(Helper.getRequestParameter("id"));
 
 		List<UserGroup> neu = new ArrayList<>();
 		for (Iterator<UserGroup> iter = this.myClass.getUserGroups().iterator(); iter.hasNext();) {
@@ -225,7 +225,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String ZuGruppeHinzufuegen() {
-		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
+		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("id"));
 		try {
 			UserGroup usergroup = userGroupService.find(gruppenID);
 			for (UserGroup b : this.myClass.getUserGroups()) {
@@ -242,7 +242,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String AusProjektLoeschen() {
-		int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
+		int projektID = Integer.parseInt(Helper.getRequestParameter("id"));
 		List<Project> neu = new ArrayList<>();
 		for (Iterator<Project> iter = this.myClass.getProjects().iterator(); iter.hasNext();) {
 			Project element = iter.next();
@@ -255,7 +255,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String ZuProjektHinzufuegen() {
-		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
+		Integer projektID = Integer.valueOf(Helper.getRequestParameter("id"));
 		try {
 			Project project = projectService.find(projektID);
 			for (Project p : this.myClass.getProjects()) {

@@ -30,9 +30,9 @@ import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -443,9 +443,9 @@ public class ProzessverwaltungForm extends BasisForm {
 
 			/* nur die Vorlagen oder alles */
 			if (this.modusAnzeige.equals("vorlagen")) {
-				crit.add(Restrictions.eq("istTemplate", Boolean.TRUE));
+				crit.add(Restrictions.eq("isTemplate", Boolean.TRUE));
 			} else {
-				crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+				crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
 			}
 			/* alle Suchparameter miteinander kombinieren */
 			if (!this.showClosedProcesses && !this.modusAnzeige.equals("vorlagen")) {
@@ -453,7 +453,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			}
 
 			if (!this.showArchivedProjects) {
-				crit.createCriteria("projekt", "proj");
+				crit.createCriteria("project", "proj");
 				crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
 				sortList(crit, false);
 			} else {
@@ -476,12 +476,12 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	private void sortList(Criteria inCrit, boolean addCriteria) {
-		Order order = Order.asc("titel");
+		Order order = Order.asc("title");
 		if (this.sortierung.equals("titelAsc")) {
-			order = Order.asc("titel");
+			order = Order.asc("title");
 		}
 		if (this.sortierung.equals("titelDesc")) {
-			order = Order.desc("titel");
+			order = Order.desc("title");
 		}
 		if (this.sortierung.equals("batchAsc")) {
 			order = Order.asc("batchID");
@@ -492,23 +492,23 @@ public class ProzessverwaltungForm extends BasisForm {
 
 		if (this.sortierung.equals("projektAsc")) {
 			if (addCriteria) {
-				inCrit.createCriteria("projekt", "proj");
+				inCrit.createCriteria("project", "proj");
 			}
-			order = Order.asc("proj.titel");
+			order = Order.asc("proj.title");
 		}
 
 		if (this.sortierung.equals("projektDesc")) {
 			if (addCriteria) {
-				inCrit.createCriteria("projekt", "proj");
+				inCrit.createCriteria("project", "proj");
 			}
-			order = Order.desc("proj.titel");
+			order = Order.desc("proj.title");
 		}
 
 		if (this.sortierung.equals("vorgangsdatumAsc")) {
-			order = Order.asc("erstellungsdatum");
+			order = Order.asc("creationDate");
 		}
 		if (this.sortierung.equals("vorgangsdatumDesc")) {
-			order = Order.desc("erstellungsdatum");
+			order = Order.desc("creationDate");
 		}
 
 		if (this.sortierung.equals("fortschrittAsc")) {
@@ -921,15 +921,15 @@ public class ProzessverwaltungForm extends BasisForm {
 		List<StepObject> stepList = StepManager.getStepsForProcess(processId);
 
 		for (StepObject so : stepList) {
-			if (so.getBearbeitungsstatus() != TaskStatus.DONE.getValue()) {
-				so.setBearbeitungsstatus(so.getBearbeitungsstatus() + 1);
+			if (so.getProcessingStatus() != TaskStatus.DONE.getValue()) {
+				so.setProcessingStatus(so.getProcessingStatus() + 1);
 				so.setEditType(TaskEditType.ADMIN.getValue());
-				if (so.getBearbeitungsstatus() == TaskStatus.DONE.getValue()) {
+				if (so.getProcessingStatus() == TaskStatus.DONE.getValue()) {
 					new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
 				} else {
 					User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 					if (ben != null) {
-						so.setBearbeitungsbenutzer(ben.getId());
+						so.setProcessingUser(ben.getId());
 						StepManager.updateStep(so);
 					}
 				}
@@ -1206,7 +1206,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
 	public List<SelectItem> getProjektAuswahlListe() throws DAOException {
 		List<SelectItem> myProjekte = new ArrayList<SelectItem>();
-		List<Project> temp = projectService.search("from Projekt ORDER BY titel");
+		List<Project> temp = projectService.search("from Project ORDER BY title");
 		for (Project proj : temp) {
 			myProjekte.add(new SelectItem(proj.getId(), proj.getTitle(), null));
 		}
