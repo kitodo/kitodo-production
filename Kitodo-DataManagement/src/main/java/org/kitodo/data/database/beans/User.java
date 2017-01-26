@@ -12,23 +12,14 @@
 package org.kitodo.data.database.beans;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import org.apache.log4j.Logger;
+import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
@@ -57,10 +48,10 @@ public class User implements Serializable {
 	private String password;
 
 	@Column(name = "isActive")
-	private boolean isActive = true;
+	private boolean active = true;
 
 	@Column(name = "isVisible")
-	private String isVisible;
+	private String visible;
 
 	@Column(name = "location")
 	private String location;
@@ -175,19 +166,19 @@ public class User implements Serializable {
 	}
 
 	public boolean isActive() {
-		return this.isActive;
+		return this.active;
 	}
 
-	public void setIsActive(boolean isActive) {
-		this.isActive = isActive;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public String isVisible() {
-		return this.isVisible;
+		return this.visible;
 	}
 
-	public void setIsVisible(String isVisible) {
-		this.isVisible = isVisible;
+	public void setVisible(String visible) {
+		this.visible = visible;
 	}
 
 	public String getLocation() {
@@ -286,16 +277,22 @@ public class User implements Serializable {
 		this.sessionTimeout = sessionTimeout;
 	}
 
-	public String getCss() {
-		return this.css;
-	}
+    public String getCss() {
+        if (this.css == null || this.css.length() == 0) {
+            this.css = "/css/default.css";
+        }
+        return this.css;
+    }
 
 	public void setCss(String css) {
 		this.css = css;
 	}
 
 	public List<UserProperty> getProperties() {
-		return this.properties;
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
+        }
+        return this.properties;
 	}
 
 	public void setProperties(List<UserProperty> properties) {
@@ -312,14 +309,110 @@ public class User implements Serializable {
 	 */
 
 	public User selfDestruct() {
-		this.isVisible = "deleted";
+		this.visible = "deleted";
 		this.login = null;
-		this.isActive = false;
+		this.active = false;
 		this.name = null;
 		this.surname = null;
 		this.location = null;
 		this.userGroups = new ArrayList<>();
 		this.projects = new ArrayList<>();
 		return this;
+	}
+
+	//Here will be methods which should be in UserService but are used by jsp files
+
+	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
+
+	/**
+	 * Adds a new filter to list.
+	 *
+	 * @param inputFilter the filter to add
+	 */
+	public void addFilter(String inputFilter) {
+		if (getFilters().contains(inputFilter)) {
+			return;
+		}
+		try {
+			MySQLHelper.addFilterToUser(this.getId(), inputFilter);
+		} catch (SQLException e) {
+			logger.error("Cannot not add filter to user with id " + this.getId(), e);
+		}
+
+	}
+
+	/**
+	 * Removes filter from list.
+	 *
+	 * @param inputFilter the filter to remove
+	 */
+	public void removeFilter(String inputFilter) {
+		if (!getFilters().contains(inputFilter)) {
+			return;
+		}
+		try {
+			MySQLHelper.removeFilterFromUser(this.getId(), inputFilter);
+		} catch (SQLException e) {
+			logger.error("Cannot not remove filter from user with id " + this.getId(), e);
+		}
+
+	}
+
+	/**
+	 * Get list of filters.
+	 *
+	 * @return List of filters as strings
+	 */
+	public List<String> getFilters() {
+		List<String> answer = new ArrayList<>();
+		try {
+			answer = MySQLHelper.getFilterForUser(this.getId());
+		} catch (SQLException e) {
+			logger.error("Cannot not load filter for user with id " + this.getId(), e);
+		}
+		return answer;
+	}
+
+	/**
+	 * Get size of projects result list.
+	 *
+	 * @return result size of projects
+	 *
+	 */
+	public int getProjectsSize() {
+		if (this.getProjects() == null) {
+			return 0;
+		} else {
+			return this.getProjects().size();
+		}
+	}
+
+	/**
+	 * Get size of user group result.
+	 *
+	 * @return size
+	 */
+	public int getUserGroupSize() {
+		if (this.getUserGroups() == null) {
+			return 0;
+		} else {
+			return this.getUserGroups().size();
+		}
+	}
+
+	public String getFullName() {
+		return this.getSurname() + ", " + this.getName();
+	}
+
+	public Integer getSessionTimeoutInMinutes() {
+		return this.getSessionTimeout() / 60;
+	}
+
+	public void setSessionTimeoutInMinutes(Integer sessionTimeout) {
+		if (sessionTimeout < 5) {
+			this.setSessionTimeout(5 * 60);
+		} else {
+			this.setSessionTimeout(sessionTimeout * 60);
+		}
 	}
 }

@@ -213,7 +213,10 @@ public class Batch {
 	 * @return the processes that are in the batch
 	 */
 	public List<Process> getProcesses() {
-		return processes;
+		if (this.processes == null) {
+			this.processes = new ArrayList<>();
+		}
+		return this.processes;
 	}
 
 	/**
@@ -266,5 +269,15 @@ public class Batch {
 			return false;
 		}
 		return true;
+	}
+
+	//Here will be methods which should be in BatchService but are used by jsp files
+
+	public String getLabel() {
+		return this.getTitle() != null ? this.getTitle() : getNumericLabel();
+	}
+
+	private String getNumericLabel() {
+		return "batch" + ' ' + this.getId();
 	}
 }

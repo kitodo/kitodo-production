@@ -141,4 +141,27 @@ public class UserGroup implements Serializable, Comparable<UserGroup> {
 	public int hashCode() {
 		return this.getTitle().hashCode();
 	}
+
+	//Here will be methods which should be in UserService but are used by jsp files
+
+	public String getPermissionAsString() {
+		if (this.getPermission() == null) {
+			this.setPermission(4);
+		} else if (this.getPermission() == 3) {
+			this.setPermission(4);
+		}
+		return String.valueOf(this.getPermission().intValue());
+	}
+
+	public void setPermissionAsString(String permission) {
+		this.setPermission(Integer.parseInt(permission));
+	}
+
+	public int getTasksSize(UserGroup userGroup) {
+		if (userGroup.getTasks() == null) {
+			return 0;
+		} else {
+			return userGroup.getTasks().size();
+		}
+	}
 }

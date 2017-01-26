@@ -77,6 +77,9 @@ public class Workpiece implements Serializable {
 	}
 
 	public List<WorkpieceProperty> getProperties() {
+		if (this.properties == null) {
+			this.properties = new ArrayList<>();
+		}
 		return this.properties;
 	}
 

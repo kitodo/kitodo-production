@@ -14,6 +14,7 @@ package org.kitodo.data.database.beans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -33,6 +34,11 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.Hibernate;
+
+import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML elements. Further XML elements can be
@@ -56,13 +62,13 @@ public class Process implements Serializable {
 	private String outputName;
 
 	@Column(name = "isTemplate")
-	private Boolean isTemplate;
+	private Boolean template;
 
 	@Column(name = "swappedOut")
 	private Boolean swappedOut = false;
 
 	@Column(name = "isChoiceListShown")
-	private Boolean isChoiceListShown;
+	private Boolean inChoiceListShown;
 
 	@Column(name = "creationDate")
 	private Date creationDate;
@@ -131,8 +137,8 @@ public class Process implements Serializable {
 	public Process() {
 		this.swappedOut = false;
 		this.title = "";
-		this.isTemplate = false;
-		this.isChoiceListShown = false;
+		this.template = false;
+		this.inChoiceListShown = false;
 		this.properties = new ArrayList<>();
 		this.tasks = new ArrayList<>();
 		this.creationDate = new Date();
@@ -165,14 +171,14 @@ public class Process implements Serializable {
 	}
 
 	public boolean isTemplate() {
-		if (this.isTemplate == null) {
-			this.isTemplate = Boolean.FALSE;
+		if (this.template == null) {
+			this.template = Boolean.FALSE;
 		}
-		return this.isTemplate;
+		return this.template;
 	}
 
-	public void setIsTemplate(boolean isTemplate) {
-		this.isTemplate = isTemplate;
+	public void setTemplate(boolean template) {
+		this.template = template;
 	}
 
 	/**
@@ -199,12 +205,12 @@ public class Process implements Serializable {
 		this.swappedOut = inSwappedOut;
 	}
 
-	public boolean isChoiceListShown() {
-		return this.isChoiceListShown;
+	public boolean isInChoiceListShown() {
+		return this.inChoiceListShown;
 	}
 
-	public void setIsChoiceListShown(boolean isChoiceListShown) {
-		this.isChoiceListShown = isChoiceListShown;
+	public void setInChoiceListShown(boolean inChoiceListShown) {
+		this.inChoiceListShown = inChoiceListShown;
 	}
 
 	public String getSortHelperStatus() {
@@ -317,7 +323,11 @@ public class Process implements Serializable {
 	}
 
 	public List<Template> getTemplates() {
-		return this.templates;
+		if (this.templates == null) {
+		    this.templates = new ArrayList<>();
+        }
+        return this.templates;
+
 	}
 
 	public void setTemplates(List<Template> templates) {
@@ -325,7 +335,10 @@ public class Process implements Serializable {
 	}
 
 	public List<Workpiece> getWorkpieces() {
-		return this.workpieces;
+        if (this.workpieces == null) {
+            this.workpieces = new ArrayList<>();
+        }
+        return this.workpieces;
 	}
 
 	public void setWorkpieces(List<Workpiece> workpieces) {
@@ -333,7 +346,10 @@ public class Process implements Serializable {
 	}
 
 	public List<Batch> getBatches() {
-		return this.batches;
+        if (this.batches == null) {
+            this.batches = new ArrayList<>();
+        }
+        return this.batches;
 	}
 
 	public void setBatches(List<Batch> batches) {
@@ -341,7 +357,10 @@ public class Process implements Serializable {
 	}
 
 	public List<ProcessProperty> getProperties() {
-		return this.properties;
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
+        }
+        return this.properties;
 	}
 
 	public void setProperties(List<ProcessProperty> properties) {
@@ -363,4 +382,212 @@ public class Process implements Serializable {
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
+
+	//Here will be methods which should be in ProcessService but are used by jsp files
+
+	public User getBlockedUsers() {
+		User result = null;
+		//too much dependencies on kitodo core
+		return result;
+	}
+
+	/**
+	 * Check whether the operation contains steps that are not assigned to a user or user group.
+	 */
+	public boolean getContainsUnreachableSteps() {
+		if (this.getTasks().size() == 0) {
+			return true;
+		}
+		for (Task task : this.getTasks()) {
+			if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int getTasksSize() {
+		if (this.getTasks() == null) {
+			return 0;
+		} else {
+			return this.getTasks().size();
+		}
+	}
+
+	public int getHistorySize() {
+		if (this.getHistory() == null) {
+			return 0;
+		} else {
+			return this.getHistory().size();
+		}
+	}
+
+	public int getPropertiesSize() {
+		if (this.getProperties() == null) {
+			return 0;
+		} else {
+			return this.getProperties().size();
+		}
+	}
+
+	public int getWorkpiecesSize() {
+		if (this.getWorkpieces() == null) {
+			return 0;
+		} else {
+			return this.getWorkpieces().size();
+		}
+	}
+
+	public int getTemplatesSize() {
+		if (this.getTemplates() == null) {
+			return 0;
+		} else {
+			return this.getTemplates().size();
+		}
+	}
+
+	/**
+	 * The function getBatchID returns the batches the process is associated with as readable text
+	 * as read-only property "batchID".
+	 *
+	 * @return the batches the process is in
+	 */
+	public String getBatchID() {
+		if (this.getBatches() == null || this.getBatches().size() == 0) {
+			return null;
+		}
+		StringBuilder result = new StringBuilder();
+		for (Batch batch : this.getBatches()) {
+			if (result.length() > 0) {
+				result.append(", ");
+			}
+			result.append(batch.getLabel());
+		}
+		return result.toString();
+	}
+
+	private HashMap<String, Integer> calculationForProgress(Process process) {
+		HashMap<String, Integer> results = new HashMap<>();
+		int open = 0;
+		int inProcessing = 0;
+		int closed = 0;
+		Hibernate.initialize(process.getTasks());
+		for (Task task : process.getTasks()) {
+			if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
+				closed++;
+			} else if (task.getProcessingStatusEnum() == TaskStatus.LOCKED) {
+				open++;
+			} else {
+				inProcessing++;
+			}
+		}
+
+		results.put("open", open);
+		results.put("inProcessing", inProcessing);
+		results.put("closed", closed);
+
+		if ((open + inProcessing + closed) == 0) {
+			results.put("open", 1);
+		}
+
+		return results;
+	}
+
+	/**
+	 * Old getFortschritt().
+	 *
+	 * @param process object
+	 * @return string
+	 */
+	public String getProgress(Process process) {
+		HashMap<String, Integer> steps = calculationForProgress(process);
+		double open = 0;
+		double inProcessing = 0;
+		double closed = 0;
+
+		open = (steps.get("open") * 100) /
+				(double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+		inProcessing = (steps.get("inProcessing") * 100) /
+				(double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+		closed = 100 - open - inProcessing;
+
+		java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
+
+		return df.format(closed) + df.format(inProcessing) + df.format(closed);
+	}
+
+	/**
+	 * Old getFortschritt1().
+	 *
+	 * @return return  progress for open steps
+	 */
+	public int getProgressOpen() {
+		HashMap<String, Integer> steps = calculationForProgress(this);
+		return (steps.get("open") * 100)
+				/ (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+	}
+
+	/**
+	 * Old getFortschritt2().
+	 *
+	 * @return progress for processed steps
+	 */
+	public int getProgressInProcessing() {
+		HashMap<String, Integer> steps = calculationForProgress(this);
+
+		return (steps.get("inProcessing") * 100)
+				/ (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+	}
+
+	/**
+	 * Old getFortschritt3().
+	 *
+	 * @return progress for closed steps
+	 */
+	public int getProgressClosed() {
+		HashMap<String, Integer> steps = calculationForProgress(this);
+
+		double open = 0;
+		double inProcessing = 0;
+		double closed = 0;
+
+		open = ((steps.get("open") * 100)
+				/ (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed")));
+		inProcessing = (steps.get("inProcessing") * 100)
+				/ (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+		closed = 100 - open - inProcessing;
+		return (int) closed;
+	}
+
+    /**
+     * Check if there is one task in edit mode, where the user has the rights to write to image folder.
+     */
+    public boolean isImageFolderInUse() {
+        for (Task task : this.getTasks()) {
+            if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get user of task in edit mode with rights to write to image folder.
+     */
+    public User getImageFolderInUseUser() {
+        for (Task task : this.getTasks()) {
+            if (task.getProcessingStatusEnum() == TaskStatus.INWORK && task.isTypeImagesWrite()) {
+                return task.getProcessingUser();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Check if Tif directory exists.
+     * @return true if the Tif-Image-Directory exists, false if not
+     */
+    public Boolean getTifDirectoryExists() {
+        return false;
+    }
 }

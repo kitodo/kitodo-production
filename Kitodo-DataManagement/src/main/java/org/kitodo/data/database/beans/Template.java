@@ -81,7 +81,10 @@ public class Template implements Serializable {
 	}
 
 	public List<TemplateProperty> getProperties() {
-		return this.properties;
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
+        }
+        return this.properties;
 	}
 
 	public void setProperties(List<TemplateProperty> properties) {
@@ -92,7 +95,7 @@ public class Template implements Serializable {
 		return this.panelShown;
 	}
 
-	public void setPanelAusgeklappt(boolean panelShown) {
+	public void setPanelShown(boolean panelShown) {
 		this.panelShown = panelShown;
 	}
 }

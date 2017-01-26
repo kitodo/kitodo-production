@@ -206,6 +206,9 @@ public class Project implements Serializable, Comparable<Project> {
 	}
 
 	public List<User> getUsers() {
+		if (this.users == null) {
+			this.users = new ArrayList<>();
+		}
 		return this.users;
 	}
 
@@ -214,6 +217,9 @@ public class Project implements Serializable, Comparable<Project> {
 	}
 
 	public List<Process> getProcesses() {
+		if (this.processes == null) {
+			this.processes = new ArrayList<>();
+		}
 		return this.processes;
 	}
 
@@ -521,5 +527,11 @@ public class Project implements Serializable, Comparable<Project> {
 	@Override
 	public int hashCode() {
 		return this.title == null ? 0 : this.title.hashCode();
+	}
+
+	//Here will be methods which should be in ProjectService but are used by jsp files
+
+	public boolean isDeleteAble() {
+		return this.processes.size() == 0;
 	}
 }

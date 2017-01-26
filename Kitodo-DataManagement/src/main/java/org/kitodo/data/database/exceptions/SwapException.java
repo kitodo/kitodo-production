@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.exceptions;
+package org.kitodo.data.database.exceptions;
 
 public class SwapException extends Exception {
    private static final long serialVersionUID = 3257853198839724340L;

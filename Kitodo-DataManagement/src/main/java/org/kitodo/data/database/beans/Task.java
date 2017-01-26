@@ -12,13 +12,9 @@
 package org.kitodo.data.database.beans;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -378,6 +374,9 @@ public class Task implements Serializable {
 	}
 
 	public List<User> getUsers() {
+		if (this.users == null) {
+			this.users = new ArrayList<>();
+		}
 		return this.users;
 	}
 
@@ -386,6 +385,9 @@ public class Task implements Serializable {
 	}
 
 	public List<UserGroup> getUserGroups() {
+		if (this.userGroups == null) {
+			this.userGroups = new ArrayList<>();
+		}
 		return this.userGroups;
 	}
 
@@ -626,5 +628,61 @@ public class Task implements Serializable {
 
 	public void setValidationPlugin(String validationPlugin) {
 		this.validationPlugin = validationPlugin;
+	}
+
+	//Here will be methods which should be in TaskService but are used by jsp files
+
+	public String getTitleWithUserName() {
+		String result = this.getTitle();
+		if (this.getProcessingUser() != null && this.getProcessingUser().getId() != null
+				&& this.getProcessingUser().getId() != 0) {
+			result += " (" + this.getProcessingUser().getFullName() + ")";
+		}
+		return result;
+	}
+
+	public String getLocalizedTitle() {
+		return this.title;
+		//return Helper.getTranslation(task.getTitle());
+	}
+
+	public int getUsersSize() {
+		if (this.getUsers() == null) {
+			return 0;
+
+		} else {
+			return this.getUsers().size();
+		}
+	}
+
+	public int getUserGroupsSize() {
+		if (this.getUserGroups() == null) {
+			return 0;
+		} else {
+			return this.getUserGroups().size();
+		}
+	}
+
+	public String getProcessingStatusAsString() {
+		return String.valueOf(this.processingStatus);
+	}
+
+    public void setProcessingStatusAsString(String inputProcessingStatus) {
+        this.processingStatus = Integer.parseInt(inputProcessingStatus);
+    }
+
+	public String getProcessingBeginAsFormattedString() {
+		return this.processingBegin.toString();
+		//return Helper.getDateAsFormattedString(task.getProcessingBegin());
+	}
+
+	public String getProcessingTimeAsFormattedString() {
+		return this.processingTime.toString();
+		//return Helper.getDateAsFormattedString(task.getProcessingTime());
+	}
+
+	public String getProcessingEndAsFormattedString(Task task) {
+		return task.processingEnd.toString();
+		//return Helper.getDateAsFormattedString(task.getProcessingEnd());
 	}
 }
