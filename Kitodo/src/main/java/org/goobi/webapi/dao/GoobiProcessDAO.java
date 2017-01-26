@@ -47,17 +47,17 @@ public class GoobiProcessDAO {
 
             Criteria criteria = session
                     .createCriteria(Process.class)
-                    .createAlias("vorlagen", "v")
-                    .createAlias("vorlagen.eigenschaften", "ve")
-                    .createAlias("werkstuecke", "w")
-                    .createAlias("werkstuecke.eigenschaften", "we")
-                    .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
-                    .add(Restrictions.eq("ve.titel", "Titel"))
-                    .add(Restrictions.eq("we.wert", PPN.toString()))
-                    .addOrder(Order.asc("we.wert"))
+                    .createAlias("templates", "v")
+                    .createAlias("templates.properties", "ve")
+                    .createAlias("workpieces", "w")
+                    .createAlias("workpieces.properties", "we")
+                    .add(Restrictions.or(Restrictions.eq("we.title", "PPN digital a-Satz"), Restrictions.eq("we.title", "PPN digital f-Satz")))
+                    .add(Restrictions.eq("ve.title", "Titel"))
+                    .add(Restrictions.eq("we.value", PPN.toString()))
+                    .addOrder(Order.asc("we.value"))
                     .setProjection(Projections.projectionList()
-                            .add(Projections.property("we.wert"), "identifier")
-                            .add(Projections.property("ve.wert"), "title")
+                            .add(Projections.property("we.value"), "identifier")
+                            .add(Projections.property("ve.value"), "title")
                     )
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
@@ -81,16 +81,16 @@ public class GoobiProcessDAO {
 
             Criteria criteria = session
                     .createCriteria(Process.class)
-                    .createAlias("vorlagen", "v")
-                    .createAlias("vorlagen.eigenschaften", "ve")
-                    .createAlias("werkstuecke", "w")
-                    .createAlias("werkstuecke.eigenschaften", "we")
-                    .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
-                    .add(Restrictions.eq("ve.titel", "Titel"))
-                    .addOrder(Order.asc("we.wert"))
+                    .createAlias("templates", "v")
+                    .createAlias("templates.properties", "ve")
+                    .createAlias("workpieces", "w")
+                    .createAlias("workpieces.properties", "we")
+                    .add(Restrictions.or(Restrictions.eq("we.title", "PPN digital a-Satz"), Restrictions.eq("we.title", "PPN digital f-Satz")))
+                    .add(Restrictions.eq("ve.title", "Titel"))
+                    .addOrder(Order.asc("we.value"))
                     .setProjection(Projections.projectionList()
-                            .add(Projections.property("we.wert"), "identifier")
-                            .add(Projections.property("ve.wert"), "title")
+                            .add(Projections.property("we.value"), "identifier")
+                            .add(Projections.property("ve.value"), "title")
                     )
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
 
@@ -118,16 +118,16 @@ public class GoobiProcessDAO {
 
             Criteria criteria = session
                     .createCriteria(Task.class)
-                    .createAlias("prozess", "p")
-                    .createAlias("prozess.werkstuecke", "w")
-                    .createAlias("prozess.werkstuecke.eigenschaften", "we")
-                    .add(Restrictions.or(Restrictions.eq("we.titel", "PPN digital a-Satz"), Restrictions.eq("we.titel", "PPN digital f-Satz")))
+                    .createAlias("process", "p")
+                    .createAlias("process.workpieces", "w")
+                    .createAlias("process.workpieces.properties", "we")
+                    .add(Restrictions.or(Restrictions.eq("we.title", "PPN digital a-Satz"), Restrictions.eq("we.title", "PPN digital f-Satz")))
                     .add(Restrictions.eq("we.wert", PPN.toString()))
                     .addOrder(Order.asc("reihenfolge"))
                     .setProjection(Projections.projectionList()
-                            .add(Projections.property("reihenfolge"), "sequence")
-                            .add(Projections.property("bearbeitungsstatus"), "state")
-                            .add(Projections.property("titel"), "title")
+                            .add(Projections.property("ordering"), "sequence")
+                            .add(Projections.property("processingStatus"), "state")
+                            .add(Projections.property("title"), "title")
                     )
                     .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class));
 

@@ -50,7 +50,7 @@ public class Projects {
 
 		Criteria query = Helper.getHibernateSession().createCriteria(Process.class);
 		@SuppressWarnings("unchecked")
-		List<Process> processTemplates = query.add(Restrictions.eq("istTemplate", Boolean.TRUE)).list();
+		List<Process> processTemplates = query.add(Restrictions.eq("isTemplate", Boolean.TRUE)).list();
 		for (Process processTemplate : processTemplates) {
 			Project project = processTemplate.getProject();
 			Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<Process>();
