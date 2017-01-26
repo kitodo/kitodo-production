@@ -84,23 +84,23 @@
 												<h:panelGrid id="id12" columns="2" rowClasses="top">
 
 													<%-- nachname --%>
-													<h:outputLabel id="id13" for="nachname" value="#{msgs.nachname}" />
+													<h:outputLabel id="id13" for="nachname" value="#{msgs.surname}" />
 													<h:panelGroup id="id14">
-														<h:inputText id="nachname" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.nachname}" required="true" />
+														<h:inputText id="nachname" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.surname}" required="true" />
 														<x:message id="id15" for="nachname" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
 													<%-- vorname --%>
 													<h:outputLabel id="id16" for="vorname" value="#{msgs.vorname}" />
 													<h:panelGroup id="id17">
-														<h:inputText id="vorname" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.vorname}" required="true" />
+														<h:inputText id="vorname" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.name}" required="true" />
 														<x:message id="id18" for="vorname" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
 													<%-- standort --%>
 													<h:outputLabel id="id19" for="standort" value="#{msgs.standort}" />
 													<h:panelGroup id="id20">
-														<h:inputText id="standort" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.standort}" required="true" />
+														<h:inputText id="standort" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.location}" required="true" />
 														<x:message id="id21" for="standort" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
@@ -115,15 +115,15 @@
 													<%-- login --%>
 													<h:outputLabel id="id22a" for="ldaplogin" value="#{msgs.ldaplogin}"  rendered="#{BenutzerverwaltungForm.ldapUsage}"/>
 													<h:panelGroup id="id23a" rendered="#{BenutzerverwaltungForm.ldapUsage}">
-														<h:inputText id="ldaplogin" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.ldaplogin}" />
+														<h:inputText id="ldaplogin" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.ldapLogin}" />
 														<x:message id="id24a" for="ldaplogin" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
 													<%-- passwort --%>
-													<h:outputLabel id="id25" for="passwort" value="#{msgs.passwort}" />
+													<h:outputLabel id="id25" for="passwort" value="#{msgs.password}" />
 													<h:panelGroup id="id26">
 														<h:inputSecret redisplay="true" id="passwort" style="width: 300px;margin-right:15px"
-															value="#{BenutzerverwaltungForm.myClass.passwortCrypt}" required="true" />
+															value="#{BenutzerverwaltungForm.myClass.passwordDecrypted}" required="true" />
 														<x:message id="id27" for="passwort" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
@@ -147,7 +147,7 @@
 													<%-- MetadatenSprache --%>
 													<h:outputLabel id="id34" for="metadatenSprache" value="#{msgs.spracheFuerMetadaten}" />
 													<h:panelGroup id="id35">
-														<h:inputText id="metadatenSprache" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.metadatenSprache}"
+														<h:inputText id="metadatenSprache" style="width: 300px;margin-right:15px" value="#{BenutzerverwaltungForm.myClass.metadataLanguage}"
 															required="true" />
 														<x:message id="id36" for="metadatenSprache" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
@@ -155,14 +155,14 @@
 													<%-- ist aktiv --%>
 													<h:outputLabel id="id37" for="istAktiv" value="#{msgs.istAktiv}" />
 													<h:panelGroup id="id38">
-														<h:selectBooleanCheckbox id="istAktiv" style="margin-right:15px" value="#{BenutzerverwaltungForm.myClass.istAktiv}" />
+														<h:selectBooleanCheckbox id="istAktiv" style="margin-right:15px" value="#{BenutzerverwaltungForm.myClass.active}" />
 														<x:message id="id39" for="istAktiv" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
 													<%-- mit Massendownload --%>
 													<h:outputLabel id="id40" for="mitMassendownload" value="#{msgs.massendownload}" />
 													<h:panelGroup id="id41">
-														<h:selectBooleanCheckbox id="mitMassendownload" style="margin-right:15px" value="#{BenutzerverwaltungForm.myClass.mitMassendownload}" />
+														<h:selectBooleanCheckbox id="mitMassendownload" style="margin-right:15px" value="#{BenutzerverwaltungForm.myClass.withMassDownload}" />
 														<x:message id="id42" for="mitMassendownload" style="color: red" replaceIdWithLabel="true" />
 													</h:panelGroup>
 
@@ -177,9 +177,9 @@
 													</h:panelGroup>
 
 													<x:dataTable id="id45" width="300" columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered" var="item"
-														value="#{BenutzerverwaltungForm.myClass.benutzergruppenList}">
+														value="#{BenutzerverwaltungForm.myClass.userGroups}">
 														<h:column id="id46">
-															<h:outputText id="id47" value="#{item.titel}" />
+															<h:outputText id="id47" value="#{item.title}" />
 														</h:column>
 														<h:column id="id48">
 															<%-- Löschen-Schaltknopf --%>
@@ -201,9 +201,9 @@
 													</h:panelGroup>
 
 													<x:dataTable id="id52" width="300" columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered" var="item"
-														value="#{BenutzerverwaltungForm.myClass.projekteList}">
+														value="#{BenutzerverwaltungForm.myClass.projects}">
 														<h:column id="id53">
-															<h:outputText id="id54" value="#{item.titel}" />
+															<h:outputText id="id54" value="#{item.title}" />
 														</h:column>
 														<h:column id="id55">
 															<%-- Löschen-Schaltknopf --%>

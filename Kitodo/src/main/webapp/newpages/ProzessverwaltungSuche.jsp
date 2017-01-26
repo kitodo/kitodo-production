@@ -154,7 +154,7 @@
 													<h:panelGroup rendered="#{HelperForm.userStepDoneSearchEnabled}">
 														<h:selectOneMenu value="#{SearchForm.stepdoneuser}">
 															<si:selectItems value="#{SearchForm.user}"
-																var="user" itemLabel="#{user.nachVorname}" itemValue="#{user.login}" />
+																var="user" itemLabel="#{user.fullName}" itemValue="#{user.login}" />
 														</h:selectOneMenu>
 														<h:selectOneMenu value="#{SearchForm.stepdonetitle}">
 														<si:selectItems value="#{SearchForm.stepTitles}"

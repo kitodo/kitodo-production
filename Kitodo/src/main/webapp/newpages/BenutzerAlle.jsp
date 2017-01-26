@@ -122,16 +122,16 @@
 												<h:outputText id="id16" value="#{msgs.benutzer}" />
 											</f:facet>
 											<h:outputText id="id17"
-												value="#{item.nachname}, #{item.vorname}"
-												styleClass="#{not item.istAktiv?'text_light':''}" />
+												value="#{item.surname}, #{item.name}"
+												styleClass="#{not item.active?'text_light':''}" />
 										</h:column>
 
 										<h:column id="id18">
 											<f:facet name="header">
 												<h:outputText id="id19" value="#{msgs.standort}" />
 											</f:facet>
-											<h:outputText id="id20" value="#{item.standort}"
-												styleClass="#{not item.istAktiv?'text_light':''}" />
+											<h:outputText id="id20" value="#{item.location}"
+												styleClass="#{not item.active?'text_light':''}" />
 										</h:column>
 
 										<h:column id="id21">
@@ -139,11 +139,11 @@
 												<h:outputText id="id22" value="#{msgs.benutzergruppen}" />
 											</f:facet>
 											<x:dataList id="id23" var="intern"
-												styleClass="#{not item.istAktiv?'text_light':''}"
-												rendered="#{item.benutzergruppenSize != 0}"
-												value="#{item.benutzergruppenList}" layout="ordered list"
+												styleClass="#{not item.active?'text_light':''}"
+												rendered="#{item.userGroupSize != 0}"
+												value="#{item.userGroups}" layout="ordered list"
 												rowCountVar="rowCount" rowIndexVar="rowIndex">
-												<h:outputText id="id24" value="#{intern.titel}" />
+												<h:outputText id="id24" value="#{intern.title}" />
 												<h:outputText id="id25" value=","
 													rendered="#{rowIndex + 1 < rowCount}" />
 											</x:dataList>
@@ -154,11 +154,11 @@
 												<h:outputText id="id27" value="#{msgs.projekte}" />
 											</f:facet>
 											<x:dataList id="id28" var="intern"
-												styleClass="#{not item.istAktiv?'text_light':''}"
-												rendered="#{item.projekteSize != 0}"
-												value="#{item.projekteList}" layout="ordered list"
+												styleClass="#{not item.active?'text_light':''}"
+												rendered="#{item.projectsSize != 0}"
+												value="#{item.projects}" layout="ordered list"
 												rowCountVar="rowCount" rowIndexVar="rowIndex">
-												<h:outputText id="id29" value="#{intern.titel}" />
+												<h:outputText id="id29" value="#{intern.title}" />
 												<h:outputText id="id30" value=","
 													rendered="#{rowIndex + 1 < rowCount}" />
 											</x:dataList>
@@ -200,7 +200,7 @@
 									</x:dataTable>
 									<h:commandLink id="id52" action="#{BenutzerverwaltungForm.Neu}"
 										immediate="true"
-										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (BenutzerverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" 
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (BenutzerverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
 										>
 										<h:outputText id="id62" value="#{msgs.neuenBenutzerAnlegen}" />
 									</h:commandLink>

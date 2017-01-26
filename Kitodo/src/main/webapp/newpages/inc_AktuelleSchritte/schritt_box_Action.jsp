@@ -20,12 +20,12 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 
 <h:panelGroup
-	rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+	rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
 
 	<%-- ++++++++++++++++     Import      ++++++++++++++++ --%>
 	<htm:table cellpadding="3" cellspacing="0" width="100%"
 		styleClass="eingabeBoxen" style="margin-top:20px"
-		rendered="#{AktuelleSchritteForm.modusBearbeiten=='' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null && AktuelleSchritteForm.mySchritt.typImportFileUpload}">
+		rendered="#{AktuelleSchritteForm.modusBearbeiten=='' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null && AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1">
 				<h:outputText value="#{msgs.metadatenImportieren}" />
@@ -86,26 +86,26 @@
 						<%-- Sperrung der Metadaten anzeigen --%>
 						<h:panelGroup
 							style="color: red;margin-top:5px;margin-bottom:15px;display:block"
-							rendered="#{AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt != null}">
+							rendered="#{AktuelleSchritteForm.mySchritt.process.benutzerGesperrt != null}">
 							<h:outputText value="#{msgs.gesperrt}" />
 							<htm:br />
 							<h:panelGrid columns="2" style="color: red;margin-left:30px"
 								cellpadding="3">
 								<h:outputText value="#{msgs.benutzer}: " />
 								<h:outputText
-									value="#{AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt.nachVorname}" />
+									value="#{AktuelleSchritteForm.mySchritt.process.blockedUsers.fullName}" />
 								<h:outputText value="#{msgs.standort}: " />
 								<h:outputText
-									value="#{AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt.standort}" />
+									value="#{AktuelleSchritteForm.mySchritt.process.blockedUsers.location}" />
 								<h:outputText value="#{msgs.lebenszeichen} " />
 								<h:outputText
-									value="#{AktuelleSchritteForm.mySchritt.prozess.minutenGesperrt} min #{AktuelleSchritteForm.mySchritt.prozess.sekundenGesperrt} sec" />
+									value="#{AktuelleSchritteForm.mySchritt.process.minutenGesperrt} min #{AktuelleSchritteForm.mySchritt.process.sekundenGesperrt} sec" />
 							</h:panelGrid>
 							<h:outputText value="#{msgs.spaeter}" />
 
 							<%-- Bei Sperrung durch eigenen Benutzer: Sperrung aufheben können --%>
 							<h:commandLink id="action1"
-								rendered="#{(AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt != null) && (AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt.id == LoginForm.myBenutzer.id)}"
+								rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUsers != null) && (AktuelleSchritteForm.mySchritt.process.blockedUsers.id == LoginForm.myBenutzer.id)}"
 								action="#{AktuelleSchritteForm.SperrungAufheben}"
 								title="#{msgs.oderSperrungAufheben}">
 								<h:graphicImage value="/newpages/images/buttons/key2a.gif"
@@ -142,77 +142,77 @@
 						<h:commandLink id="action2"
 							rendered="#{AktuelleSchritteForm.mySchritt.typModulName != null && AktuelleSchritteForm.mySchritt.typModulName != ''}"
 							action="#{AktuelleSchritteForm.executeModule}"
-							title="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typModulName})">
+							title="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typeModuleName})">
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
 							<h:outputText
-								value="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typModulName})" />
+								value="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typeModuleName})" />
 						</h:commandLink>
 
 						<%-- Script-Schaltknopf --%>
 						<h:commandLink id="action3"
-							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.executeScript}"
-							title="#{AktuelleSchritteForm.mySchritt.scriptname1}">
+							title="#{AktuelleSchritteForm.mySchritt.scriptName1}">
 						<x:updateActionListener
 								property="#{AktuelleSchritteForm.scriptPath}"
-								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad}"/>
+								value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname1}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName1}" />
 						</h:commandLink>
 
 						<h:commandLink id="action4"
-							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2 != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2 != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.executeScript}"
-							title="#{AktuelleSchritteForm.mySchritt.scriptname2}">
+							title="#{AktuelleSchritteForm.mySchritt.scriptName2}">
 						<x:updateActionListener
 								property="#{AktuelleSchritteForm.scriptPath}"
-								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad2}"/>
+								value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname2}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName2}" />
 						</h:commandLink>
 				
 						<h:commandLink id="action5"
-							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad3 != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad3 != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.executeScript}"
-							title="#{AktuelleSchritteForm.mySchritt.scriptname3}">
+							title="#{AktuelleSchritteForm.mySchritt.scriptName3}">
 							<x:updateActionListener
 								property="#{AktuelleSchritteForm.scriptPath}"
-								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad3}"/>
+								value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname3}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName3}" />
 						</h:commandLink>
 						
 						<h:commandLink id="action6"
-							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad4 != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad4 != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.executeScript}"
-							title="#{AktuelleSchritteForm.mySchritt.scriptname4}">
+							title="#{AktuelleSchritteForm.mySchritt.scriptName4}">
 							<x:updateActionListener
 								property="#{AktuelleSchritteForm.scriptPath}"
-								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad4}"/>
+								value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4}"/>
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname4}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName4}" />
 						</h:commandLink>
 						
 						<h:commandLink id="action7"
-							rendered="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad5 != null && AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad5 != '' && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.executeScript}"
-							title="#{AktuelleSchritteForm.mySchritt.scriptname5}">
+							title="#{AktuelleSchritteForm.mySchritt.scriptName5}">
 						<x:updateActionListener
 								property="#{AktuelleSchritteForm.scriptPath}"
-								value="#{AktuelleSchritteForm.mySchritt.typAutomatischScriptpfad5}"/>
+								value="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5}"/>
 								
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
 								style="margin-right:3px;vertical-align:middle" />
-							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptname5}" />
+							<h:outputText value="#{msgs.scriptAusfuehren}: #{AktuelleSchritteForm.mySchritt.scriptName5}" />
 						</h:commandLink>
 						<%-- tiffHeaderDownload-Schaltknopf --%>
 						<h:commandLink id="action8"
-							rendered="#{0==1 && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{0==1 && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.DownloadTiffHeader}"
 							title="#{msgs.dateiMitTiffHeaderSpeichern}">
 							<h:graphicImage value="/newpages/images/buttons/tif.gif"
@@ -224,12 +224,12 @@
 
 							<%-- TODO: delete this warning once the root cause of the timeout problem is solved  --%>
 							<h:outputText style="back-color:blue; color: red; font-weight: bold;" 
-							rendered="#{AktuelleSchritteForm.mySchritt.typExportDMS && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}" 
+							rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							value="#{msgs.timeoutWarningDMS}"/>
 							
 						<%-- Upload-Schaltknopf --%>
 						<h:commandLink id="action9"
-							rendered="#{AktuelleSchritteForm.mySchritt.typExportDMS && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.ExportDMS}"
 							title="#{msgs.importDms}">
 							<h:graphicImage value="/newpages/images/buttons/dms.png"
@@ -239,7 +239,7 @@
 
 						<%-- Metadaten-Schaltknopf --%>
 						<h:commandLink id="action10"
-							rendered="#{AktuelleSchritteForm.mySchritt.typMetadaten && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{Metadaten.XMLlesen}"
 							title="#{msgs.metadatenBearbeiten}">
 							<h:graphicImage value="/newpages/images/buttons/view1.gif"
@@ -249,7 +249,7 @@
 								value="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunktNow}"
 								property="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunktNow}"></x:updateActionListener>
 							<f:param name="ProzesseID"
-								value="#{AktuelleSchritteForm.mySchritt.prozess.id}" />
+								value="#{AktuelleSchritteForm.mySchritt.process.id}" />
 							<f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}" />
 							<f:param name="zurueck" value="AktuelleSchritteBearbeiten" />
 						</h:commandLink>
@@ -284,7 +284,7 @@
 										value="#{AktuelleSchritteForm.myProblemID}">
 										<si:selectItems
 											value="#{AktuelleSchritteForm.previousStepsForProblemReporting}"
-											var="step1" itemLabel="#{step1.titelMitBenutzername}"
+											var="step1" itemLabel="#{step1.titleWithUserName}"
 											itemValue="#{step1.id}" />
 									</h:selectOneMenu>
 									<h:outputText value="#{msgs.bemerkung}" />

@@ -40,14 +40,14 @@
 		<f:facet name="header">
 			<h:outputText value="#{msgs.titel}" />
 		</f:facet>
-		<h:outputText value="#{item.titel}" />
+		<h:outputText value="#{item.title}" />
 	</h:column>
 
 	<h:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.wert}" />
 		</f:facet>
-		<h:outputText value="#{item.wert}" />
+		<h:outputText value="#{item.value}" />
 	</h:column>
 
 	<h:column>
@@ -108,7 +108,7 @@
 					<h:panelGroup>
 						<h:inputText id="eigenschafttitel"
 							style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.titel}"
+							value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.title}"
 							required="true" />
 						<x:message for="eigenschafttitel" style="color: red"
 							detailFormat="#{msgs.keinTitelAngegeben}" />
@@ -118,7 +118,7 @@
 					<h:panelGroup>
 						<h:inputText id="eigenschaftwert"
 							style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.wert}" />
+							value="#{ProzessverwaltungForm.myWerkstueckEigenschaft.value}" />
 					</h:panelGroup>
 				</h:panelGrid>
 

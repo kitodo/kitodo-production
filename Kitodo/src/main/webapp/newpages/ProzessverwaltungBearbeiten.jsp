@@ -73,12 +73,12 @@
 										<%@include file="inc_Prozessverwaltung/prozess_box_Schritte.jsp"%>
 
 										<%-- Vorlagen --%>
-										<f:subview id="subVorlage" rendered="#{ProzessverwaltungForm.myProzess.vorlagenSize != 0}">
+										<f:subview id="subVorlage" rendered="#{ProzessverwaltungForm.myProzess.templatesSize != 0}">
 											<%@include file="inc_Prozessverwaltung/prozess_box_Vorlagen.jsp"%>
 										</f:subview>
 
 										<%-- Werkstuecke --%>
-										<f:subview id="subWerk" rendered="#{ProzessverwaltungForm.myProzess.werkstueckeSize != 0}">
+										<f:subview id="subWerk" rendered="#{ProzessverwaltungForm.myProzess.workpiecesSize != 0}">
 											<%@include file="inc_Prozessverwaltung/prozess_box_Werkstuecke.jsp"%>
 										</f:subview>
 

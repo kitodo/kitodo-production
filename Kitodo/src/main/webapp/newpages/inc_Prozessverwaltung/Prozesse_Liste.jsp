@@ -154,43 +154,43 @@
 		</f:facet>
 
 		<a4j:commandLink reRender="auflistungIntern,myself" id="myself" style="color:black">
-			<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelAusgeklappt}" />
-			<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelAusgeklappt}" />
-			<x:updateActionListener value="#{item.panelAusgeklappt?false:true}" property="#{item.panelAusgeklappt}" />
-			<h:outputText value="#{item.titel}" />
+			<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelShown}" />
+			<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelShown}" />
+			<x:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}" />
+			<h:outputText value="#{item.title}" />
 			<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender" />
 		</a4j:commandLink>
 
 		<h:panelGroup id="auflistungIntern">
 			<x:dataTable id="prozessdetails" styleClass="standardTable" width="90%" style="margin-left:12px;margin-top:5px" cellspacing="1px" cellpadding="1px"
-				headerClass="standardTable_Header" rowClasses="standardTable_Row1" rendered="#{item.panelAusgeklappt}"
-				columnClasses="standardTable_ColumnSchmal,standardTable_Column,standardTable_ColumnCentered" var="step" value="#{item.schritteList}">
+				headerClass="standardTable_Header" rowClasses="standardTable_Row1" rendered="#{item.panelShown}"
+				columnClasses="standardTable_ColumnSchmal,standardTable_Column,standardTable_ColumnCentered" var="step" value="#{item.tasks}">
 
 				<h:column>
 					<f:facet name="header">
 						<h:outputText value="#{msgs.nr}" />
 					</f:facet>
-					<h:outputText value="#{step.reihenfolge}" />
+					<h:outputText value="#{step.ordering}" />
 				</h:column>
 
 				<h:column>
 					<f:facet name="header">
-						<h:outputText value="#{msgs.titel}" />
+						<h:outputText value="#{msgs.title}" />
 					</f:facet>
-					<h:outputText value="#{step.titelLokalisiert}" />
+					<h:outputText value="#{step.localizedTitle}" />
 				</h:column>
 
 				<h:column>
 					<f:facet name="header">
 						<h:outputText value="#{msgs.status}" />
 					</f:facet>
-					<h:graphicImage value="#{step.bearbeitungsstatusEnum.smallImagePath}" title="#{step.bearbeitungsstatusEnum.title}"
-						rendered="#{step.bearbeitungsstatusEnum == 'OPEN' || step.bearbeitungsstatusEnum == 'LOCKED'}" />
-					<h:graphicImage value="#{step.bearbeitungsstatusEnum.smallImagePath}"
-						title="#{step.bearbeitungsstatusEnum.title}: #{step.bearbeitungsbenutzer!=null && step.bearbeitungsbenutzer.id!=0?step.bearbeitungsbenutzer.nachVorname:''} (#{step.bearbeitungszeitpunkt !=null?step.bearbeitungszeitpunktAsFormattedString:''})  - #{step.editTypeEnum.title}"
-						rendered="#{(step.bearbeitungsstatusEnum == 'DONE' || step.bearbeitungsstatusEnum == 'INWORK') && !HelperForm.anonymized}" />
-					<h:graphicImage value="#{step.bearbeitungsstatusEnum.smallImagePath}" title="#{step.bearbeitungsstatusEnum.title}: #{step.editTypeEnum.title}"
-						rendered="#{(step.bearbeitungsstatusEnum == 'DONE' || step.bearbeitungsstatusEnum == 'INWORK') && HelperForm.anonymized}" />
+					<h:graphicImage value="#{step.processingStatusEnum.smallImagePath}" title="#{step.processingStatusEnum.title}"
+						rendered="#{step.processingStatusEnum == 'OPEN' || step.processingStatusEnum == 'LOCKED'}" />
+					<h:graphicImage value="#{step.processingStatusEnum.smallImagePath}"
+						title="#{step.processingStatusEnum.title}: #{step.processingUser!=null && step.processingUser.id!=0?step.processingUser.fullName:''} (#{step.processingTime !=null?step.processingTimeAsFormattedString:''})  - #{step.editTypeEnum.title}"
+						rendered="#{(step.processingStatusEnum == 'DONE' || step.processingStatusEnum == 'INWORK') && !HelperForm.anonymized}" />
+					<h:graphicImage value="#{step.processingStatusEnum.smallImagePath}" title="#{step.processingStatusEnum.title}: #{step.editTypeEnum.title}"
+						rendered="#{(step.processingStatusEnum == 'DONE' || step.processingStatusEnum == 'INWORK') && HelperForm.anonymized}" />
 				</h:column>
 
 			</x:dataTable>
@@ -252,9 +252,9 @@
 			</x:div>
 		</f:facet>
 		<h:graphicImage value="/newpages/images/fortschritt/ende_links.gif" rendered="true" />
-		<h:graphicImage value="/newpages/images/fortschritt/gr.gif" style="width:#{item.fortschritt3 * 0.8}px;height:10px" />
-		<h:graphicImage value="/newpages/images/fortschritt/ge.gif" style="width:#{item.fortschritt2 * 0.8}px;height:10px" />
-		<h:graphicImage value="/newpages/images/fortschritt/rt.gif" style="width:#{item.fortschritt1 * 0.8}px;height:10px" />
+		<h:graphicImage value="/newpages/images/fortschritt/gr.gif" style="width:#{item.progressOpen * 0.8}px;height:10px" />
+		<h:graphicImage value="/newpages/images/fortschritt/ge.gif" style="width:#{item.progressInProcessing * 0.8}px;height:10px" />
+		<h:graphicImage value="/newpages/images/fortschritt/rt.gif" style="width:#{item.progressClosed * 0.8}px;height:10px" />
 		<h:graphicImage value="/newpages/images/fortschritt/ende_rechts.gif" rendered="true" />
 	</x:column>
 
@@ -281,7 +281,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.projekt.titel}" />
+		<h:outputText value="#{item.project.title}" />
 	</x:column>
 
 	<x:column style="text-align:center" rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen' && ProzessverwaltungForm.anzeigeAnpassen['lockings']}">
@@ -307,7 +307,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.benutzerGesperrt.nachVorname}" rendered="#{item.benutzerGesperrt != null}" />
+		<h:outputText value="#{item.blockedUsers.fullName}" rendered="#{item.blockedUsers != null}" />
 	</x:column>
 
 	<%-- +++++++++++++++++  Swapped out ++++++++++++++++++++++++ --%>
@@ -476,14 +476,14 @@
 
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}"
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
 	id="new3">
 	<h:outputText value="#{msgs.einenNeuenProzessAnlegen}" />
 </h:commandLink>
 
 <%-- Neu-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}"
+	rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
 	id="new4">
 	<h:outputText value="#{msgs.eineNeueProzessvorlageAnlegen}" />
 </h:commandLink>

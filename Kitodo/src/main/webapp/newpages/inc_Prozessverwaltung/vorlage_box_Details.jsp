@@ -41,7 +41,7 @@
 							<h:outputText value="#{msgs.herkunft}:" />
 						</htm:td>
 						<htm:td>
-							<h:outputText value="#{ProzessverwaltungForm.myVorlage.herkunft}" />
+							<h:outputText value="#{ProzessverwaltungForm.myVorlage.origin}" />
 						</htm:td>
 						<htm:td rowspan="2" align="right">
 							<h:commandLink title="#{msgs.bearbeiten}"
@@ -88,7 +88,7 @@
 					<h:outputLabel for="titel2" value="#{msgs.herkunft}" />
 					<h:panelGroup>
 						<h:inputText id="titel2" style="width: 300px;margin-right:15px"
-							value="#{ProzessverwaltungForm.myVorlage.herkunft}"
+							value="#{ProzessverwaltungForm.myVorlage.origin}"
 							required="true" />
 						<x:message for="titel2" style="color: red"
 							replaceIdWithLabel="true" />

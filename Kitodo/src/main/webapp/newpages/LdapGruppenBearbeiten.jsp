@@ -93,7 +93,7 @@
 													<h:panelGroup id="id12">
 														<h:inputText id="titel"
 															style="width: 500px;margin-right:15px"
-															value="#{LdapGruppenForm.myLdapGruppe.titel}"
+															value="#{LdapGruppenForm.myLdapGruppe.title}"
 															required="true" />
 														<x:message id="id13" for="titel" style="color: red"
 															replaceIdWithLabel="true" />

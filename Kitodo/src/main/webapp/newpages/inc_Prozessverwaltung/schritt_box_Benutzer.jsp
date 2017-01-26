@@ -30,13 +30,13 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.mySchritt.benutzerList}">
+	var="item" value="#{ProzessverwaltungForm.mySchritt.users}">
 
 	<h:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.benutzer}" />
 		</f:facet>
-		<h:outputText value="#{item.nachname}, #{item.vorname}" />
+		<h:outputText value="#{item.surname}, #{item.name}" />
 	</h:column>
 	<h:column>
 		<f:facet name="header">

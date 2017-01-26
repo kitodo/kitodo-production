@@ -59,7 +59,7 @@
 									<h:outputText value="#{msgs.titel}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.titelLokalisiert}" />
+									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.localizedTitle}" />
 								</htm:td>
 							</htm:tr>
 
@@ -79,7 +79,7 @@
 									<h:outputText value="#{msgs.reihenfolge}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.reihenfolge}" />
+									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.ordering}" />
 								</htm:td>
 							</htm:tr>
 							<htm:tr>
@@ -87,8 +87,8 @@
 									<h:outputText value="#{msgs.prioritaet}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet}"
-										rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet!=10}" />
+									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.priority}"
+										rendered="#{AktuelleSchritteForm.batchHelper.currentStep.priority!=10}" />
 									<h:outputText value="#{msgs.korrektur}" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet==10}" />
 								</htm:td>
 							</htm:tr>
@@ -97,11 +97,11 @@
 									<h:outputText value="#{msgs.status}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsstatusEnum.title}" />
+									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.processingStatusEnum.title}" />
 								</htm:td>
 							</htm:tr>
 
-							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbeginn !=null && !HelperForm.anonymized}">
+							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingBegin !=null && !HelperForm.anonymized}">
 								<htm:td width="150">
 									<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
 								</htm:td>
@@ -109,7 +109,7 @@
 									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbeginnAsFormattedString}" />
 								</htm:td>
 							</htm:tr>
-							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
 								<htm:td width="150">
 									<h:outputText value="#{msgs.zuletztBearbeitet}:" />
 								</htm:td>
@@ -118,7 +118,7 @@
 								</htm:td>
 							</htm:tr>
 
-							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
 								<htm:td width="150">
 									<h:outputText value="#{msgs.aktualisierungstyp}:" />
 								</htm:td>
@@ -141,7 +141,7 @@
 				<h:inputText id="myTextArea" value="#{AktuelleSchritteForm.batchHelper.wikiField}" style="width: 50%" />
 			</h:form>
 
-			<h:form id="addToWikiForm" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+			<h:form id="addToWikiForm" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
 				<h:panelGrid>
 					<h:panelGroup>
 						<h:inputText id="addToTextArea" value="#{AktuelleSchritteForm.batchHelper.addToWikiField}" style="width: 100%" />

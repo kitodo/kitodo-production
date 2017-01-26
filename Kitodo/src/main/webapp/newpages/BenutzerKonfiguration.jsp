@@ -85,7 +85,7 @@
 													<h:panelGroup id="id9">
 														<h:inputText id="sessiontimeout"
 															style="width: 300px;margin-right:15px"
-															value="#{LoginForm.myBenutzer.sessiontimeoutInMinutes}"
+															value="#{LoginForm.myBenutzer.sessionTimeoutInMinutes}"
 															required="true" />
 														<x:message id="id10" for="sessiontimeout"
 															style="color: red" replaceIdWithLabel="true" />
@@ -97,7 +97,7 @@
 													<h:panelGroup id="id12">
 														<h:inputText id="tabellengroesse"
 															style="width: 300px;margin-right:15px"
-															value="#{LoginForm.myBenutzer.tabellengroesse}"
+															value="#{LoginForm.myBenutzer.tableSize}"
 															required="true">
 															<f:validateLongRange minimum="1" maximum="100" />
 														</h:inputText>
@@ -111,7 +111,7 @@
 													<h:panelGroup id="id15">
 														<h:inputText id="metadatenSprache"
 															style="width: 300px;margin-right:15px"
-															value="#{LoginForm.myBenutzer.metadatenSprache}"
+															value="#{LoginForm.myBenutzer.metadataLanguage}"
 															required="true" />
 														<x:message id="id16" for="metadatenSprache"
 															style="color: red" replaceIdWithLabel="true" />
@@ -136,7 +136,7 @@
 													<h:outputLabel id="id21" for="confVorgangsdatumAnzeigen"
 														value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
 													<h:selectBooleanCheckbox id="confVorgangsdatumAnzeigen"
-														value="#{LoginForm.myBenutzer.confVorgangsdatumAnzeigen}" />
+														value="#{LoginForm.myBenutzer.configProductionDateShow}" />
 
 												</h:panelGrid>
 

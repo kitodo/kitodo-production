@@ -31,10 +31,10 @@
 			<htm:table border="0" width="90%" cellpadding="2">
 				<htm:tr>
 					<htm:td width="150">
-						<h:outputText value="#{msgs.titel}:" />
+						<h:outputText value="#{msgs.title}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.titelLokalisiert}" />
+						<h:outputText value="#{item.localizedTitle}" />
 					</htm:td>
 				</htm:tr>
 				<htm:tr>
@@ -42,39 +42,39 @@
 						<h:outputText value="#{msgs.prioritaet}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.prioritaet}" />
+						<h:outputText value="#{item.priority}" />
 					</htm:td>
 				</htm:tr>
-				<htm:tr rendered="#{item.bearbeitungsbeginn !=null && !HelperForm.anonymized}">
+				<htm:tr rendered="#{item.processingBegin !=null && !HelperForm.anonymized}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungsbeginnAsFormattedString}" />
+						<h:outputText value="#{item.processingBeginAsFormattedString}" />
 					</htm:td>
 				</htm:tr>
-				<htm:tr rendered="#{item.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+				<htm:tr rendered="#{item.processingTime !=null && !HelperForm.anonymized}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.zuletztBearbeitet}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungszeitpunktAsFormattedString}" />
+						<h:outputText value="#{item.processingTimeAsFormattedString}" />
 					</htm:td>
 				</htm:tr>
-				<htm:tr rendered="#{item.bearbeitungsende !=null && !HelperForm.anonymized}">
+				<htm:tr rendered="#{item.processingEnd !=null && !HelperForm.anonymized}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.bearbeitungsende}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungsendeAsFormattedString}" />
+						<h:outputText value="#{item.processingEndAsFormattedString}" />
 					</htm:td>
 				</htm:tr>
-				<htm:tr rendered="#{item.bearbeitungsbenutzer !=null && item.bearbeitungsbenutzer.id !=0 && !HelperForm.anonymized}">
+				<htm:tr rendered="#{item.processingUser !=null && item.processingUser.id !=0 && !HelperForm.anonymized}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.letzteAktualisierungDurch}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungsbenutzer.nachVorname}" />
+						<h:outputText value="#{item.processingUser.fullName}" />
 					</htm:td>
 				</htm:tr>
 				<htm:tr rendered="#{item.editTypeEnum !=null}">
@@ -86,21 +86,21 @@
 					</htm:td>
 				</htm:tr>
 
-				<htm:tr rendered="#{item.typAutomatischScriptpfad != null && item.typAutomatischScriptpfad != ''}">
+				<htm:tr rendered="#{item.typeAutomaticScriptPath != null && item.typeAutomaticScriptPath != ''}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.automatischerSchritt}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.typAutomatischScriptpfad}" />
+						<h:outputText value="#{item.typeAutomaticScriptPath}" />
 					</htm:td>
 				</htm:tr>
 
-				<htm:tr rendered="#{item.typModulName != null && item.typModulName != ''}">
+				<htm:tr rendered="#{item.typeModuleName != null && item.typeModuleName != ''}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.module}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.typModulName}" />
+						<h:outputText value="#{item.tyepModuleName}" />
 					</htm:td>
 				</htm:tr>
 

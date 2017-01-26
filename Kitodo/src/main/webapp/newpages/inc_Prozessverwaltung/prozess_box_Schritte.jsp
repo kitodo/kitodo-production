@@ -31,14 +31,14 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1,standardTable_Row2"
 	columnClasses="standardTable_ColumnCentered,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.myProzess.schritteList}">
+	var="item" value="#{ProzessverwaltungForm.myProzess.tasks}">
 
 	<%-- ===================== Reihenfolge ====================== --%>
 	<h:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.nr}" />
 		</f:facet>
-		<h:outputText value="#{item.reihenfolge}" />
+		<h:outputText value="#{item.ordering}" />
 		<%-- Schaltknopf: Reihenfolge nach oben --%>
 		<a4j:commandLink action="#{ProzessverwaltungForm.reihenfolgeUp}" reRender="vorgaenge"
 			rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
@@ -60,24 +60,24 @@
 
 	<h:column rendered="#{true}">
 		<f:facet name="header">
-			<h:outputText value="#{msgs.titel}" />
+			<h:outputText value="#{msgs.title}" />
 		</f:facet>
 
 		<a4j:commandLink reRender="auflistungIntern,myself" id="myself"
 			style="color:black">
 			<h:graphicImage value="/newpages/images/plus.gif"
-				style="margin-right:4px" rendered="#{!item.panelAusgeklappt}" />
+				style="margin-right:4px" rendered="#{!item.panelShown}" />
 			<h:graphicImage value="/newpages/images/minus.gif"
-				style="margin-right:4px" rendered="#{item.panelAusgeklappt}" />
-			<x:updateActionListener value="#{item.panelAusgeklappt?false:true}"
-				property="#{item.panelAusgeklappt}" />
-			<h:outputText value="#{item.titel}" />
+				style="margin-right:4px" rendered="#{item.panelShown}" />
+			<x:updateActionListener value="#{item.panelShown?false:true}"
+				property="#{item.panelShown}" />
+			<h:outputText value="#{item.title}" />
 			<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender" />
 		</a4j:commandLink>
 
 		<h:panelGroup id="auflistungIntern">
 			<x:div style="width:90%;margin-top;margin-left:12px;margin-top:5px"
-				rendered="#{item.panelAusgeklappt}">
+				rendered="#{item.panelShown}">
 				<%-- Schrittdetails --%>
 				<%@include file="prozess_box_Schritte_box_DetailsKlein.jsp"%>
 			</x:div>
@@ -94,7 +94,7 @@
 					<h:graphicImage value="/newpages/images/minus.gif"
 						style="margin-right:4px;" rendered="#{!isCollapsed}" />
 				</x:headerLink>
-				<h:outputText value="#{item.titelLokalisiert}"
+				<h:outputText value="#{item.localizedTitle}"
 					rendered="#{isCollapsed}" />
 			</x:div>
 		</f:facet>
@@ -105,14 +105,14 @@
 					<h:panelGroup>
 						<h:graphicImage value="/newpages/images/minus.gif"
 							style="margin-right:5px" />
-						<h:outputText value="#{item.titelLokalisiert}" />
+						<h:outputText value="#{item.localizedTitle}" />
 					</h:panelGroup>
 				</f:facet>
 				<f:facet name="hide">
 					<h:panelGroup>
 						<h:graphicImage value="/newpages/images/plus.gif"
 							style="margin-right:5px" />
-						<h:outputText value="#{item.titelLokalisiert}" />
+						<h:outputText value="#{item.localizedTitle}" />
 					</h:panelGroup>
 				</f:facet>
 			</jd:hideableController>
@@ -132,8 +132,8 @@
 		</f:facet>
 		<h:panelGrid columns="2" align="center" id="statuscolumn">
 			
-			<h:graphicImage value="#{item.bearbeitungsstatusEnum.bigImagePath}"
-                title="#{item.bearbeitungsstatusEnum.title}"/>
+			<h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
+                title="#{item.processingStatusEnum.title}"/>
 
 			<h:panelGrid columns="1" cellpadding="0" cellspacing="0"
 				rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
@@ -183,5 +183,5 @@
 <%-- Neu-Schaltknopf --%>
 <h:commandLink id="addStepLink" action="#{ProzessverwaltungForm.SchrittNeu}"
 	value="#{msgs.schrittHinzufuegen}" title="#{msgs.schrittHinzufuegen}"
-	rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2) && (ProzessverwaltungForm.myProzess.titel != '')}">
+	rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2) && (ProzessverwaltungForm.myProzess.title != '')}">
 </h:commandLink>

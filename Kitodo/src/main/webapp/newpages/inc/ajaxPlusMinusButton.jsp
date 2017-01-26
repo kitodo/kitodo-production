@@ -19,10 +19,10 @@
 
 <a4j:commandLink reRender="auflistung" style="color:black" id="plusminusbutton">
 	<h:graphicImage value="/newpages/images/plus.gif"
-		style="margin-right:4px" rendered="#{!item.panelAusgeklappt}" />
+		style="margin-right:4px" rendered="#{!item.panelShown}" />
 	<h:graphicImage value="/newpages/images/minus.gif"
-		style="margin-right:4px" rendered="#{item.panelAusgeklappt}" />
-	<x:updateActionListener value="#{item.panelAusgeklappt?false:true}"
-		property="#{item.panelAusgeklappt}" />
-	<h:outputText value="#{item.titel}" />
+		style="margin-right:4px" rendered="#{item.panelShown}" />
+	<x:updateActionListener value="#{item.panelShown?false:true}"
+		property="#{item.panelShown}" />
+	<h:outputText value="#{item.title}" />
 </a4j:commandLink>

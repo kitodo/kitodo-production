@@ -98,7 +98,7 @@
 													<h:panelGroup id="id14">
 														<h:inputText id="titel"
 															style="width: 300px;margin-right:15px"
-															value="#{RegelsaetzeForm.myRegelsatz.titel}"
+															value="#{RegelsaetzeForm.myRegelsatz.title}"
 															required="true" />
 														<x:message id="id15" for="titel" style="color: red"
 															replaceIdWithLabel="true" />
@@ -109,7 +109,7 @@
 													<h:panelGroup id="id17">
 														<h:inputText id="file"
 															style="width: 300px;margin-right:15px"
-															value="#{RegelsaetzeForm.myRegelsatz.datei}"
+															value="#{RegelsaetzeForm.myRegelsatz.file}"
 															required="true" />
 														<x:message id="id18" for="file" style="color: red"
 															replaceIdWithLabel="true" />

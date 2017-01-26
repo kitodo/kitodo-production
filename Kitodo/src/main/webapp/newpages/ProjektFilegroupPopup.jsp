@@ -84,7 +84,7 @@
 									<h:panelGroup id="id13">
 										<h:inputText id="mimetype"
 											style="width: 550px;margin-right:15px"
-											value="#{ProjekteForm.myFilegroup.mimetype}" required="true" />
+											value="#{ProjekteForm.myFilegroup.mimeType}" required="true" />
 									 	<x:message id="id14" for="mimetype" style="color: red"
 											replaceIdWithLabel="true" />
 									</h:panelGroup>

@@ -83,7 +83,7 @@
 											<f:facet name="header">
 												<h:outputText id="id10" value="#{msgs.ldapgruppe}" />
 											</f:facet>
-											<h:outputText id="id11" value="#{item.titel}" />
+											<h:outputText id="id11" value="#{item.title}" />
 										</h:column>
 
 										<h:column id="id12">
@@ -117,7 +117,7 @@
 									</x:dataTable>
 									<h:commandLink id="id52" action="#{LdapGruppenForm.Neu}"
 										immediate="true"
-										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (LdapGruppenForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" 
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (LdapGruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
 										>
 										<h:outputText id="id62" value="#{msgs.neueLdapgruppeAnlegen}" />
 									</h:commandLink>

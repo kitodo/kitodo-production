@@ -95,7 +95,7 @@
 													<h:panelGroup id="id12">
 														<h:inputText id="titel"
 															style="width: 300px;margin-right:15px"
-															value="#{BenutzergruppenForm.myBenutzergruppe.titel}"
+															value="#{BenutzergruppenForm.myBenutzergruppe.title}"
 															required="true" />
 														<x:message id="id13" for="titel" style="color: red"
 															replaceIdWithLabel="true" />
@@ -107,7 +107,7 @@
 
 														<x:selectOneMenu id="berechtigung"
 															style="width: 300px;margin-right:15px"
-															value="#{BenutzergruppenForm.myBenutzergruppe.berechtigungAsString}"
+															value="#{BenutzergruppenForm.myBenutzergruppe.permissionAsString}"
 															required="true">
 															<f:selectItem id="id16" itemValue="1"
 																itemLabel="#{msgs.administration}" />
