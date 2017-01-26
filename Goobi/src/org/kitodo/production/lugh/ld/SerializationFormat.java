@@ -67,7 +67,7 @@ public enum SerializationFormat {
      *            are {@code RDF/XML}, {@code RDF/XML-ABBREV}, {@code N-TRIPLE},
      *            {@code TURTLE} and {@code N3}.
      */
-    private static void write(Node node, Map<String, String> map, File file, String lang) throws FileNotFoundException {
+    static void write(Node node, Map<String, String> map, File file, String lang) throws FileNotFoundException {
         FileOutputStream fos = null;
         BufferedOutputStream bos = null;
         try {
