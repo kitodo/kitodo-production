@@ -14,7 +14,7 @@ package org.kitodo.services;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
@@ -60,8 +60,6 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.database.persistence.UserDAO;
-import org.kitodo.services.RulesetService;
-import org.kitodo.services.UserService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;

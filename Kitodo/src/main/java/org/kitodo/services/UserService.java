@@ -14,18 +14,24 @@ package org.kitodo.services;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.ldap.Ldap;
-import de.sub.goobi.persistence.apache.UserManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
+import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
 
 public class UserService  {
+
+	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
 	private UserDAO userDao = new UserDAO();
 
@@ -236,24 +242,20 @@ public class UserService  {
 	}
 
 	/**
-	 * Get list of filters.
-	 *
-	 * @param user object
-	 * @return List of filters as strings
-	 */
-	//TODO: check what is this UserManager
-	public List<String> getFilters(User user) {
-		return UserManager.getFilters(user.getId());
-	}
-
-	/**
 	 * Adds a new filter to list.
 	 *
 	 * @param inputFilter the filter to add
 	 */
+	public void addFilter(int userId, String inputFilter) {
+		if (getFilters(userId).contains(inputFilter)) {
+			return;
+		}
+		try {
+			MySQLHelper.addFilterToUser(userId, inputFilter);
+		} catch (SQLException e) {
+			logger.error("Cannot not add filter to user with id " + userId, e);
+		}
 
-	public void addFilter(User user, String inputFilter) {
-		UserManager.addFilter(user.getId(), inputFilter);
 	}
 
 	/**
@@ -261,7 +263,32 @@ public class UserService  {
 	 *
 	 * @param inputFilter the filter to remove
 	 */
-	public void removeFilter(User user, String inputFilter) {
-		UserManager.removeFilter(user.getId(), inputFilter);
+	public void removeFilter(int userId, String inputFilter) {
+		if (!getFilters(userId).contains(inputFilter)) {
+			return;
+		}
+		try {
+			MySQLHelper.removeFilterFromUser(userId, inputFilter);
+		} catch (SQLException e) {
+			logger.error("Cannot not remove filter from user with id " + userId, e);
+		}
+
+	}
+
+	/**
+	 * Get list of filters.
+	 *
+	 * @param userId object
+	 * @return List of filters as strings
+	 */
+	public List<String> getFilters(int userId) {
+		List<String> answer = new ArrayList<>();
+		try {
+			answer = MySQLHelper.getFilterForUser(userId);
+		} catch (SQLException e) {
+			logger.error("Cannot not load filter for user with id " + userId, e);
+		}
+
+		return answer;
 	}
 }

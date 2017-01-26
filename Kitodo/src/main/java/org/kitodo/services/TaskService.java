@@ -14,10 +14,7 @@ package org.kitodo.services;
 import de.sub.goobi.helper.Helper;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.hibernate.Session;
 
@@ -104,13 +101,13 @@ public class TaskService {
 
 	// a parameter is given here (even if not used) because jsf expects setter convention
 	//TODO: check what it means
-	/*public void setBearbeitungszeitpunktNow(int in) {
-		this.bearbeitungszeitpunkt = new Date();
+	public void setProcessingTimeNow(Task task) {
+		task.setProcessingTime(new Date());
 	}
 
-	public int getBearbeitungszeitpunktNow() {
+	public int getProcessingTimeNow() {
 		return 1;
-	}*/
+	}
 
 	/**
 	 * If you change anything in the logic of priorities make sure that you catch dependencies on this system
