@@ -208,7 +208,6 @@ public class Node implements AccessibleObject, NodeType {
      *            relation to look up
      * @return the value of the literal.
      */
-
     public Result get(NodeReference relation) {
         return get(relation.getIdentifier());
     }
@@ -286,7 +285,6 @@ public class Node implements AccessibleObject, NodeType {
      * @throws BufferOverflowException
      *             if there are several possible answers
      */
-
     @Override
     public String getType() {
         return get(RDF.TYPE).identifiableNodeExpectable().getIdentifier();
@@ -517,7 +515,6 @@ public class Node implements AccessibleObject, NodeType {
      * @see java.lang.Object#toString()
      */
     @Override
-
     public String toString() {
         StringBuilder result = new StringBuilder();
         toStringRecursive(result, 0);
