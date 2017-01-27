@@ -75,7 +75,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 		ProjectObject project = ProjectManager.getProjectById(process.getProjectId());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
 		this.title = title;
-		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
 		boolean ergebnis = true;
 
 		DigitalDocument dd = null;
@@ -521,7 +521,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * automatisch speichern lassen, wenn Änderungen nötig waren ================================================================
+	 * automatisch speichern lassen, wenn Änderungen nötig waren.
 	 */
 	public boolean isAutoSave() {
 		return this.autoSave;
@@ -535,7 +535,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	public boolean validateIdentifier(DocStruct uppermostStruct) {
 		
 		if (uppermostStruct.getType().getAnchorClass() != null) {
-			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
 
 			if (uppermostStruct.getAllIdentifierMetadata() != null && uppermostStruct.getAllIdentifierMetadata().size() > 0) {
 				Metadata identifierTopStruct = uppermostStruct.getAllIdentifierMetadata().get(0);

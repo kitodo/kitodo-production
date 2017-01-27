@@ -123,7 +123,7 @@ public class CopyProcess extends ProzesskopieForm {
 		;
 		this.prozessKopie = new Process();
 		this.prozessKopie.setTitle("");
-		this.prozessKopie.setIsTemplate(false);
+		this.prozessKopie.setTemplate(false);
 		this.prozessKopie.setInChoiceListShown(false);
 		this.prozessKopie.setProject(this.prozessVorlage.getProject());
 		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
@@ -165,7 +165,7 @@ public class CopyProcess extends ProzesskopieForm {
 		;
 		this.prozessKopie = new Process();
 		this.prozessKopie.setTitle("");
-		this.prozessKopie.setIsTemplate(false);
+		this.prozessKopie.setTemplate(false);
 		this.prozessKopie.setInChoiceListShown(false);
 		this.prozessKopie.setProject(this.prozessVorlage.getProject());
 		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());

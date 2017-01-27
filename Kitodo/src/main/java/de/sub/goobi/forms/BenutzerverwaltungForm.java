@@ -79,9 +79,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			session.clear();
 			Criteria crit = session.createCriteria(User.class);
-			crit.add(Restrictions.isNull("isVisible"));
+			crit.add(Restrictions.isNull("visible"));
 			if (this.hideInactiveUsers) {
-				crit.add(Restrictions.eq("isActive", true));
+				crit.add(Restrictions.eq("active", true));
 			}
 			crit.addOrder(Order.asc("surname"));
 			crit.addOrder(Order.asc("name"));
@@ -106,9 +106,9 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Session session = Helper.getHibernateSession();
 			session.clear();
 			Criteria crit = session.createCriteria(User.class);
-			crit.add(Restrictions.isNull("isVisible"));
+			crit.add(Restrictions.isNull("visible"));
 			if (this.hideInactiveUsers) {
-				crit.add(Restrictions.eq("isActive", true));
+				crit.add(Restrictions.eq("active", true));
 			}
 
 			if (this.filter != null && this.filter.length() != 0) {

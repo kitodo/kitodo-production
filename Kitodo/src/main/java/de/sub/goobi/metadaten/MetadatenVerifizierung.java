@@ -65,7 +65,7 @@ public class MetadatenVerifizierung {
 	}
 
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, Process process) {
-		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
 		this.myProcess = process;
 		boolean ergebnis = true;
 

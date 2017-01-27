@@ -120,7 +120,7 @@ public class ProductionDataImport {
 		Process template = new Process();
 		template.setProject(altdaten);
 		template.setTitle("Altdatenvorlage");
-		template.setIsTemplate(true);
+		template.setTemplate(true);
 
 		// gdz Regelsatz
 		Ruleset ruleset = rulesetService.find(Integer.valueOf(17));
@@ -210,7 +210,7 @@ public class ProductionDataImport {
 		String title = pd.getWERKATS() + "_" + pd.getWERKPPNDIGITAL();
 		title = title.replaceAll("\\W", "");
 		prozess.setTitle(title);
-		prozess.setIsTemplate(false);
+		prozess.setTemplate(false);
 		prozess.setRuleset(ruleset);
 		Workpiece werk = new Workpiece();
 		werk.setProcess(prozess);

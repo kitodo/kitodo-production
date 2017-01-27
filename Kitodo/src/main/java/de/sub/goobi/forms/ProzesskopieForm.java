@@ -284,7 +284,7 @@ public class ProzesskopieForm {
 		this.myRdf = null;
 		this.prozessKopie = new Process();
 		this.prozessKopie.setTitle("");
-		this.prozessKopie.setIsTemplate(false);
+		this.prozessKopie.setTemplate(false);
 		this.prozessKopie.setInChoiceListShown(false);
 		this.prozessKopie.setProject(this.prozessVorlage.getProject());
 		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
@@ -387,8 +387,8 @@ public class ProzesskopieForm {
 		List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
 		Session session = Helper.getHibernateSession();
 		Criteria crit = session.createCriteria(Process.class);
-		crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
-		crit.add(Restrictions.eq("inAuswahllisteAnzeigen", Boolean.TRUE));
+		crit.add(Restrictions.eq("template", Boolean.FALSE));
+		crit.add(Restrictions.eq("inChoiceListShown", Boolean.TRUE));
 		crit.addOrder(Order.asc("title"));
 
 		/* Einschränkung auf bestimmte Projekte, wenn kein Admin */

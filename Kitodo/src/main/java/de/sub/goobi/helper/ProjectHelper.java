@@ -55,7 +55,7 @@ public class ProjectHelper {
 		Session session = Helper.getHibernateSession();
 
 		Criteria critTotals = session.createCriteria(Process.class, "proc");
-		critTotals.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		critTotals.add(Restrictions.eq("proc.template", Boolean.FALSE));
 		critTotals.add(Restrictions.eq("proc.project", project));
 
 		ProjectionList proList = Projections.projectionList();
@@ -83,7 +83,7 @@ public class ProjectHelper {
 		critSteps.createCriteria("process", "proc");
 		critSteps.addOrder(Order.asc("ordering"));
 
-		critSteps.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		critSteps.add(Restrictions.eq("proc.template", Boolean.FALSE));
 		critSteps.add(Restrictions.eq("proc.project", project));
 
 		proList = Projections.projectionList();
@@ -129,7 +129,7 @@ public class ProjectHelper {
 		critStepDone.createCriteria("process", "proc");
 
 		critStepDone.add(Restrictions.eq("step.processingStatus", TaskStatus.DONE.getValue()));
-		critStepDone.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		critStepDone.add(Restrictions.eq("proc.template", Boolean.FALSE));
 		critStepDone.add(Restrictions.eq("proc.project", project));
 
 		ProjectionList proCount = Projections.projectionList();

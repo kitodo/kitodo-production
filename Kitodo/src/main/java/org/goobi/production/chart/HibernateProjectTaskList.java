@@ -42,7 +42,7 @@ public class HibernateProjectTaskList implements IProvideProjectTaskList {
 		Criteria crit = session.createCriteria(Task.class);
 		crit.addOrder(Order.asc("ordering"));
 		crit.createCriteria("process", "proz");
-		crit.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
+		crit.add(Restrictions.eq("proz.template", Boolean.FALSE));
 		crit.add(Restrictions.eq("proz.project", inProject));
 
 		ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);

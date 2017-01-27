@@ -187,7 +187,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	public String NeuVorlage() {
 		this.myProzess = new Process();
 		this.myNewProcessTitle = "";
-		this.myProzess.setIsTemplate(true);
+		this.myProzess.setTemplate(true);
 		this.modusBearbeiten = "prozess";
 		return "ProzessverwaltungBearbeiten";
 	}
@@ -443,9 +443,9 @@ public class ProzessverwaltungForm extends BasisForm {
 
 			/* nur die Vorlagen oder alles */
 			if (this.modusAnzeige.equals("vorlagen")) {
-				crit.add(Restrictions.eq("isTemplate", Boolean.TRUE));
+				crit.add(Restrictions.eq("template", Boolean.TRUE));
 			} else {
-				crit.add(Restrictions.eq("isTemplate", Boolean.FALSE));
+				crit.add(Restrictions.eq("template", Boolean.FALSE));
 			}
 			/* alle Suchparameter miteinander kombinieren */
 			if (!this.showClosedProcesses && !this.modusAnzeige.equals("vorlagen")) {

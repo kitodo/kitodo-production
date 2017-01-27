@@ -108,7 +108,7 @@ public class FilterHelper {
 
 		/* only processes which are not templates */
 		Criteria temp = critGroups.createCriteria("process", "process");
-		critGroups.add(Restrictions.eq("process.isTemplate", Boolean.FALSE));
+		critGroups.add(Restrictions.eq("process.template", Boolean.FALSE));
 
 		/* only assigned projects */
 		temp.createCriteria("project", "project").createCriteria("users", "projectUsers");
@@ -144,7 +144,7 @@ public class FilterHelper {
 
 		/* exclude templates */
 		Criteria temp2 = critUser.createCriteria("process", "process");
-		critUser.add(Restrictions.eq("process.isTemplate", Boolean.FALSE));
+		critUser.add(Restrictions.eq("process.template", Boolean.FALSE));
 
 		/* check project assignment */
 		temp2.createCriteria("project", "project").createCriteria("users", "projectUsers");
@@ -574,9 +574,9 @@ public class FilterHelper {
 		if (isTemplate != null) {
 			conjProcesses = Restrictions.conjunction();
 			if (!isTemplate) {
-				conjProcesses.add(Restrictions.eq("isTemplate", Boolean.FALSE));
+				conjProcesses.add(Restrictions.eq("template", Boolean.FALSE));
 			} else {
-				conjProcesses.add(Restrictions.eq("isTemplate", Boolean.TRUE));
+				conjProcesses.add(Restrictions.eq("template", Boolean.TRUE));
 			}
 		}
 

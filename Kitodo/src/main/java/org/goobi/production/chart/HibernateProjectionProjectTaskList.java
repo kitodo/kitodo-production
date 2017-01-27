@@ -54,9 +54,9 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 
 		crit.createCriteria("process", "proc");
 		
-		crit.addOrder(Order.asc("reihenfolge"));
+		crit.addOrder(Order.asc("ordering"));
 
-		crit.add(Restrictions.eq("proc.isTemplate", Boolean.FALSE));
+		crit.add(Restrictions.eq("proc.template", Boolean.FALSE));
 		crit.add(Restrictions.eq("proc.project", inProject));
 
 		ProjectionList proList = Projections.projectionList();

@@ -310,19 +310,19 @@ public class MetadatenHelper implements Comparator<Object> {
 		Collections.sort(newTypes, c);
 
 		/*
-		 * -------------------------------- nun ein Array mit der richtigen Größe anlegen --------------------------------
+		 * nun ein Array mit der richtigen Größe anlegen
 		 */
 		int zaehler = newTypes.size();
 		myTypes = new SelectItem[zaehler];
 
 		/*
-		 * -------------------------------- und anschliessend alle Elemente in das Array packen --------------------------------
+		 * und anschliessend alle Elemente in das Array packen
 		 */
 		zaehler = 0;
 		Iterator<DocStructType> it = newTypes.iterator();
 		while (it.hasNext()) {
 			DocStructType dst = it.next();
-			String label = dst.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+			String label = dst.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
 			if (label == null) {
 				label = dst.getName();
 			}
@@ -333,8 +333,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv aufrufen
-	 * ================================================================
+	 * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv aufrufen.
 	 */
 	public void deleteAllUnusedElements(DocStruct inStruct) {
 		inStruct.deleteUnusedPersonsAndMetadata();
@@ -514,10 +513,10 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	/**
 	 * @param inMdt
-	 * @return localized Title of metadata type ================================================================
+	 * @return localized Title of metadata type
 	 */
 	public String getMetadatatypeLanguage(MetadataType inMdt) {
-		String label = inMdt.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String label = inMdt.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
 		if (label == null) {
 			label = inMdt.getName();
 		}
@@ -525,7 +524,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * Comparator für die Metadaten ================================================================
+	 * Comparator für die Metadaten.
 	 */
 	// TODO: Uses generics, if possible
 	public static class MetadataComparator implements Comparator<Object> {

@@ -61,7 +61,7 @@ public class StatistikForm {
 
 	public Long getAnzahlBenutzer() {
 		try {
-			return userService.count("from User where isVisible is null");
+			return userService.count("from User where visible is null");
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
 			return null;
@@ -179,7 +179,7 @@ public class StatistikForm {
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critGruppen.createCriteria("process", "proz");
-			critGruppen.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
+			critGruppen.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
 			/* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
 			critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
@@ -208,7 +208,7 @@ public class StatistikForm {
 
 			/* nur Prozesse, die keine Vorlagen sind */
 			critBenutzer.createCriteria("process", "proz");
-			critBenutzer.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
+			critBenutzer.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
 			/* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
 			critBenutzer.createCriteria("user", "nutzer");

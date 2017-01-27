@@ -81,7 +81,7 @@ public class MetadatumImpl implements Metadatum {
 
 	@Override
 	public String getTyp() {
-		String label = this.md.getType().getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String label = this.md.getType().getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
 		if (label == null) {
 			label = this.md.getType().getName();
 		}
@@ -95,8 +95,7 @@ public class MetadatumImpl implements Metadatum {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * Getter und Setter
 	 */
 
 	@Override
