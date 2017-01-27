@@ -107,18 +107,18 @@ public class FilterHelper {
 		}
 
 		/* only processes which are not templates */
-		Criteria temp = critGroups.createCriteria("process", "proz");
-		critGroups.add(Restrictions.eq("proz.isTemplate", Boolean.FALSE));
+		Criteria temp = critGroups.createCriteria("process", "process");
+		critGroups.add(Restrictions.eq("process.isTemplate", Boolean.FALSE));
 
 		/* only assigned projects */
-		temp.createCriteria("project", "proj").createCriteria("user", "projektbenutzer");
-		critGroups.add(Restrictions.eq("projektbenutzer.id", login.getMyBenutzer().getId()));
+		temp.createCriteria("project", "project").createCriteria("users", "projectUsers");
+		critGroups.add(Restrictions.eq("projectUsers.id", login.getMyBenutzer().getId()));
 
 		/*
 		 * only steps assigned to the user groups the current user is member of
 		 */
-		critGroups.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
-		critGroups.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
+		critGroups.createCriteria("userGroups", "userGroups").createCriteria("users", "users");
+		critGroups.add(Restrictions.eq("users.id", login.getMyBenutzer().getId()));
 
 		/* collecting the hits */
 		critGroups.setProjection(Projections.id());
@@ -136,23 +136,23 @@ public class FilterHelper {
 			critUser.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
 		} else if (userAssignedStepsOnly) {
 			critUser.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
-			critUser.add(Restrictions.eq("bearbeitungsbenutzer.id", login.getMyBenutzer().getId()));
+			critUser.add(Restrictions.eq("processingUser.id", login.getMyBenutzer().getId()));
 		} else {
 			critUser.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
 					Restrictions.like("processingStatus", Integer.valueOf(2))));
 		}
 
 		/* exclude templates */
-		Criteria temp2 = critUser.createCriteria("process", "proz");
-		critUser.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
+		Criteria temp2 = critUser.createCriteria("process", "process");
+		critUser.add(Restrictions.eq("process.isTemplate", Boolean.FALSE));
 
 		/* check project assignment */
-		temp2.createCriteria("projekt", "proj").createCriteria("benutzer", "projektbenutzer");
-		critUser.add(Restrictions.eq("projektbenutzer.id", login.getMyBenutzer().getId()));
+		temp2.createCriteria("project", "project").createCriteria("users", "projectUsers");
+		critUser.add(Restrictions.eq("projectUsers.id", login.getMyBenutzer().getId()));
 
 		/* only steps where the user is assigned to */
-		critUser.createCriteria("benutzer", "nutzer");
-		critUser.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
+		critUser.createCriteria("processingUser", "processingUser");
+		critUser.add(Restrictions.eq("processingUser.id", login.getMyBenutzer().getId()));
 
 		/* collecting the hits */
 
@@ -163,7 +163,7 @@ public class FilterHelper {
 
 
 		/*
-		 * -------------------------------- only taking the hits by restricting to the ids --------------------------------
+		 *only taking the hits by restricting to the ids
 		 */
 		con.add(Restrictions.in("id", idList));
 	}
@@ -174,7 +174,7 @@ public class FilterHelper {
 	 * @param parameter
 	 *
 	 * @return Integer
-	 ****************************************************************************/
+	 */
 	protected static Integer getStepStart(String parameter) {
 		String[] strArray = parameter.split("-");
 		return Integer.parseInt(strArray[0]);
@@ -185,19 +185,19 @@ public class FilterHelper {
 	 *
 	 * @param parameter
 	 * @return Integer
-	 ****************************************************************************/
+	 */
 	protected static Integer getStepEnd(String parameter) {
 		String[] strArray = parameter.split("-");
 		return Integer.parseInt(strArray[1]);
 	}
 
 	/**
-	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further processing it reduces the necessity to
-	 * apply some filter keywords
+	 * This function analyzes the parameters on a step filter and returns a StepFilter enum to direct further
+	 * processing it reduces the necessity to apply some filter keywords.
 	 *
 	 * @param parameters
 	 * @return StepFilter
-	 ****************************************************************************/
+	 */
 	protected static StepFilter getStepFilter(String parameters) {
 
 		if (parameters.contains("-")) {
@@ -225,7 +225,7 @@ public class FilterHelper {
 
 	/**
 	 * This enum represents the result of parsing the step<modifier>: filter Restrictions
-	 ****************************************************************************/
+	 */
 	protected static enum StepFilter {
 		exact, range, min, max, name, unknown
 	}
@@ -285,15 +285,15 @@ public class FilterHelper {
 		}
 		if (!flagSteps) {
 			if (tok.substring(tok.indexOf(":") + 1).equalsIgnoreCase("true")) {
-				con.add(Restrictions.eq("steps.typAutomatisch", true));
+				con.add(Restrictions.eq("steps.typeAutomatic", true));
 			} else {
-				con.add(Restrictions.eq("steps.typAutomatisch", false));
+				con.add(Restrictions.eq("steps.typeAutomatic", false));
 			}
 		} else {
 			if (tok.substring(tok.indexOf(":") + 1).equalsIgnoreCase("true")) {
-				con.add(Restrictions.eq("typAutomatisch", true));
+				con.add(Restrictions.eq("typeAutomatic", true));
 			} else {
-				con.add(Restrictions.eq("typAutomatisch", false));
+				con.add(Restrictions.eq("typeAutomatic", false));
 			}
 		}
 	}
@@ -373,26 +373,26 @@ public class FilterHelper {
 	}
 
 	/**
-	 * Filter processes by project
+	 * Filter processes by project.
 	 *
 	 * @param tok
 	 *            part of filter string to use
-	 ****************************************************************************/
+	 */
 	protected static void filterProject(Conjunction con, String tok, boolean negate) {
 		/* filter according to linked project */
 		if (!negate) {
-			con.add(Restrictions.like("proj.title", "%" + tok.substring(tok.indexOf(":") + 1) + "%"));
+			con.add(Restrictions.like("project.title", "%" + tok.substring(tok.indexOf(":") + 1) + "%"));
 		} else {
-			con.add(Restrictions.not(Restrictions.like("proj.title", "%" + tok.substring(tok.indexOf(":") + 1) + "%")));
+			con.add(Restrictions.not(Restrictions.like("project.title", "%" + tok.substring(tok.indexOf(":") + 1) + "%")));
 		}
 	}
 
 	/**
-	 * Filter processes by scan template
+	 * Filter processes by scan template.
 	 *
 	 * @param tok
 	 *            part of filter string to use
-	 ****************************************************************************/
+	 */
 	protected static void filterScanTemplate(Conjunction con, String tok, boolean negate) {
 		/* Filtering by signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
@@ -413,7 +413,6 @@ public class FilterHelper {
 	}
 
 	protected static void filterProcessProperty(Conjunction con, String tok, boolean negate) {
-		/* Filtering by signature */
 		/* Filtering by signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
 		if (!negate) {
@@ -459,11 +458,11 @@ public class FilterHelper {
 	}
 
 	/**
-	 * Filter processes by workpiece
+	 * Filter processes by workpiece.
 	 *
 	 * @param tok
 	 *            part of filter string to use
-	 ****************************************************************************/
+	 */
 	protected static void filterWorkpiece(Conjunction con, String tok, boolean negate) {
 		/* filter according signature */
 		String[] ts = tok.substring(tok.indexOf(":") + 1).split(":");
@@ -575,9 +574,9 @@ public class FilterHelper {
 		if (isTemplate != null) {
 			conjProcesses = Restrictions.conjunction();
 			if (!isTemplate) {
-				conjProcesses.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+				conjProcesses.add(Restrictions.eq("isTemplate", Boolean.FALSE));
 			} else {
-				conjProcesses.add(Restrictions.eq("istTemplate", Boolean.TRUE));
+				conjProcesses.add(Restrictions.eq("isTemplate", Boolean.TRUE));
 			}
 		}
 
@@ -787,13 +786,13 @@ public class FilterHelper {
 
 		if (flagSteps) {
 
-			critProject = critProcess.createCriteria("projekt", "proj");
+			critProject = critProcess.createCriteria("project", "proj");
 
 			if (conjProjects != null) {
 				inCrit.add(conjProjects);
 			}
 		} else {
-			inCrit.createCriteria("projekt", "proj");
+			inCrit.createCriteria("project", "proj");
 			if (conjProjects != null) {
 				inCrit.add(conjProjects);
 			}
@@ -801,7 +800,7 @@ public class FilterHelper {
 
 		if (conjSteps != null) {
 			if (!flagSteps) {
-				crit.createCriteria("schritte", "steps");
+				crit.createCriteria("tasks", "steps");
 				crit.add(conjSteps);
 			} else {
 				inCrit.add(conjSteps);
@@ -810,11 +809,11 @@ public class FilterHelper {
 
 		if (conjTemplates != null) {
 			if (flagSteps) {
-				critProcess.createCriteria("vorlagen", "vorl");
+				critProcess.createCriteria("templates", "vorl");
 				critProcess.createAlias("vorl.eigenschaften", "vorleig");
 				critProcess.add(conjTemplates);
 			} else {
-				crit.createCriteria("vorlagen", "vorl");
+				crit.createCriteria("templates", "vorl");
 				crit.createAlias("vorl.eigenschaften", "vorleig");
 				inCrit.add(conjTemplates);
 			}
@@ -826,28 +825,28 @@ public class FilterHelper {
 				critProcess.add(conjProcessProperties);
 			} else {
 
-				inCrit.createAlias("eigenschaften", "prozesseig");
+				inCrit.createAlias("properties", "prozesseig");
 				inCrit.add(conjProcessProperties);
 			}
 		}
 
 		if (conjWorkPiece != null) {
 			if (flagSteps) {
-				critProcess.createCriteria("werkstuecke", "werk");
+				critProcess.createCriteria("workpiece", "werk");
 				critProcess.createAlias("werk.eigenschaften", "werkeig");
 				critProcess.add(conjWorkPiece);
 			} else {
-				inCrit.createCriteria("werkstuecke", "werk");
+				inCrit.createCriteria("workpiece", "werk");
 				inCrit.createAlias("werk.eigenschaften", "werkeig");
 				inCrit.add(conjWorkPiece);
 			}
 		}
 		if (conjUsers != null) {
 			if (flagSteps) {
-				critProcess.createCriteria("bearbeitungsbenutzer", "user");
+				critProcess.createCriteria("processingUser", "processingUser");
 				critProcess.add(conjUsers);
 			} else {
-				inCrit.createAlias("steps.bearbeitungsbenutzer", "user");
+				inCrit.createAlias("steps.processingUser", "processingUser");
 				inCrit.add(conjUsers);
 			}
 		}
