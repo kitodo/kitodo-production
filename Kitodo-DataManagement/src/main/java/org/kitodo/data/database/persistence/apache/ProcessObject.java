@@ -34,9 +34,9 @@ public class ProcessObject {
 	private int id;
 	private String title;
 	private String outputName;
-	private boolean isTemplate;
+	private boolean template;
 	private boolean swappedOut;
-	private boolean isChoiceListShown;
+	private boolean inChoiceListShown;
 	private String sortHelperStatus;
 	private int sortHelperImages;
 	private int sortHelperArticles;
@@ -47,22 +47,22 @@ public class ProcessObject {
 	private int sortHelperMetadata;
 	private String wikiField;
 
-	public ProcessObject(int processId, String title, String outputName, boolean isTemplate, boolean swappedOut,
-			boolean isChoiceListShown, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
+	public ProcessObject(int processId, String title, String outputName, boolean template, boolean swappedOut,
+			boolean inChoiceListShown, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
 			Date creationDate, int projectId, int rulesetId, int sortHelperDocstructs,
 			int sortHelperMetadata, String wikiField) {
 		super();
 		this.id = processId;
 		this.title = title;
 		this.outputName = outputName;
-		this.isTemplate = isTemplate;
+		this.template = template;
 		this.swappedOut = swappedOut;
-		this.isChoiceListShown = isChoiceListShown;
+		this.inChoiceListShown = inChoiceListShown;
 		this.sortHelperStatus = sortHelperStatus;
 		this.sortHelperImages = sortHelperImages;
 		this.sortHelperArticles = sortHelperArticles;
 		this.creationDate = creationDate;
-		this.projectId= projectId;
+		this.projectId = projectId;
 		this.rulesetId = rulesetId;
 		this.sortHelperDocstructs = sortHelperDocstructs;
 		this.sortHelperMetadata = sortHelperMetadata;
@@ -94,11 +94,11 @@ public class ProcessObject {
 	}
 
 	public boolean isTemplate() {
-		return this.isTemplate;
+		return this.template;
 	}
 
 	public void setTemplate(boolean isTemplate) {
-		this.isTemplate = isTemplate;
+		this.template = isTemplate;
 	}
 
 	public boolean isSwappedOut() {
@@ -109,12 +109,12 @@ public class ProcessObject {
 		this.swappedOut = swappedOut;
 	}
 
-	public boolean isChoiceListShown() {
-		return this.isChoiceListShown;
+	public boolean isiNChoiceListShown() {
+		return this.inChoiceListShown;
 	}
 
-	public void setIsChoiceListShown(boolean isChoiceListShown) {
-		this.isChoiceListShown = isChoiceListShown;
+	public void setInChoiceListShown(boolean inChoiceListShown) {
+		this.inChoiceListShown = inChoiceListShown;
 	}
 
 	public String getSortHelperStatus() {

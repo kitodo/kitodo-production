@@ -58,9 +58,9 @@ public class MySQLUtils {
 		@Override
 		public Ruleset handle(ResultSet rs) throws SQLException {
 			if (rs.next()) {
-				int id = rs.getInt("MetadatenKonfigurationID");
-				String title = rs.getString("Titel");
-				String file = rs.getString("Datei");
+				int id = rs.getInt("id");
+				String title = rs.getString("title");
+				String file = rs.getString("file");
 				boolean order = rs.getBoolean("orderMetadataByRuleset");
 				Ruleset r = new Ruleset();
 				r.setId(id);
@@ -78,15 +78,15 @@ public class MySQLUtils {
 		public List<Property> handle(ResultSet rs) throws SQLException {
 			List<Property> answer = new ArrayList<Property>();
 			while (rs.next()) {
-				int id = rs.getInt("prozesseeigenschaftenID");
-				String title = rs.getString("Titel");
-				String value = rs.getString("Wert");
-				boolean isObligatorisch = rs.getBoolean("IstObligatorisch");
-				int datentypenID = rs.getInt("DatentypenID");
-				String auswahl = rs.getString("Auswahl");
+				int id = rs.getInt("id");
+				String title = rs.getString("title");
+				String value = rs.getString("value");
+				boolean isObligatorisch = rs.getBoolean("isObligatory");
+				int dataType = rs.getInt("dataType");
+				String choice = rs.getString("choice");
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
-				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
+				Property prop = new Property(id, title, value, isObligatorisch, dataType, choice, creationDate, container);
 				answer.add(prop);
 			}
 			return answer;
@@ -98,15 +98,15 @@ public class MySQLUtils {
 		public List<Property> handle(ResultSet rs) throws SQLException {
 			List<Property> answer = new ArrayList<Property>();
 			while (rs.next()) {
-				int id = rs.getInt("vorlageneigenschaftenID");
-				String title = rs.getString("Titel");
-				String value = rs.getString("Wert");
-				boolean isObligatorisch = rs.getBoolean("IstObligatorisch");
-				int datentypenID = rs.getInt("DatentypenID");
-				String auswahl = rs.getString("Auswahl");
+				int id = rs.getInt("id");
+				String title = rs.getString("title");
+				String value = rs.getString("value");
+				boolean isObligatory = rs.getBoolean("isObligatory");
+				int dataType = rs.getInt("dataType");
+				String choice = rs.getString("choice");
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
-				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
+				Property prop = new Property(id, title, value, isObligatory, dataType, choice, creationDate, container);
 				answer.add(prop);
 			}
 			return answer;
@@ -118,15 +118,15 @@ public class MySQLUtils {
 		public List<Property> handle(ResultSet rs) throws SQLException {
 			List<Property> answer = new ArrayList<Property>();
 			while (rs.next()) {
-				int id = rs.getInt("werkstueckeeigenschaftenID");
-				String title = rs.getString("Titel");
-				String value = rs.getString("Wert");
-				boolean isObligatorisch = rs.getBoolean("IstObligatorisch");
-				int datentypenID = rs.getInt("DatentypenID");
-				String auswahl = rs.getString("Auswahl");
+				int id = rs.getInt("id");
+				String title = rs.getString("title");
+				String value = rs.getString("value");
+				boolean isObligatory = rs.getBoolean("isObligatory");
+				int dataType = rs.getInt("dataType");
+				String choice = rs.getString("choice");
 				Date creationDate = rs.getTimestamp("creationDate");
 				int container = rs.getInt("container");
-				Property prop = new Property(id, title, value, isObligatorisch, datentypenID, auswahl, creationDate, container);
+				Property prop = new Property(id, title, value, isObligatory, dataType, choice, creationDate, container);
 				answer.add(prop);
 			}
 			return answer;
@@ -137,24 +137,24 @@ public class MySQLUtils {
 		@Override
 		public ProcessObject handle(ResultSet rs) throws SQLException {
 			if (rs.next()) {
-				int processId = rs.getInt("ProzesseID");
-				String title = rs.getString("Titel");
-				String ausgabename = rs.getString("ausgabename");
-				boolean isTemplate = rs.getBoolean("IstTemplate");
+				int processId = rs.getInt("id");
+				String title = rs.getString("title");
+				String outputName = rs.getString("outputName");
+				boolean template = rs.getBoolean("template");
 				boolean swappedOut = rs.getBoolean("swappedOut");
-				boolean inAuswahllisteAnzeigen = rs.getBoolean("inAuswahllisteAnzeigen");
+				boolean isChoiceListShown = rs.getBoolean("isChoiceListShown");
 				String sortHelperStatus = rs.getString("sortHelperStatus");
 				int sortHelperImages = rs.getInt("sortHelperImages");
 				int sortHelperArticles = rs.getInt("sortHelperArticles");
-				Date erstellungsdatum = rs.getTimestamp("erstellungsdatum");
-				int projekteID = rs.getInt("ProjekteID");
-				int metadatenKonfigurationID = rs.getInt("MetadatenKonfigurationID");
+				Date creationDate = rs.getTimestamp("creationDate");
+				int projectId = rs.getInt("project_id");
+				int rulesetId = rs.getInt("ruleset_id");
 				int sortHelperDocstructs = rs.getInt("sortHelperDocstructs");
 				int sortHelperMetadata = rs.getInt("sortHelperMetadata");
-				String wikifield = rs.getString("wikifield");
-				return new ProcessObject(processId, title, ausgabename, isTemplate, swappedOut, inAuswahllisteAnzeigen,
-						sortHelperStatus, sortHelperImages, sortHelperArticles, erstellungsdatum, projekteID,
-						metadatenKonfigurationID, sortHelperDocstructs, sortHelperMetadata, wikifield);
+				String wikiField = rs.getString("wikiField");
+				return new ProcessObject(processId, title, outputName, template, swappedOut, isChoiceListShown,
+						sortHelperStatus, sortHelperImages, sortHelperArticles, creationDate, projectId,
+						rulesetId, sortHelperDocstructs, sortHelperMetadata, wikiField);
 			}
 			return null;
 		}
@@ -165,20 +165,20 @@ public class MySQLUtils {
 		public List<String> handle(ResultSet rs) throws SQLException {
 			List<String> answer = new ArrayList<String>();
 			if (rs.next()) {
-				if (rs.getString("typAutomatischScriptpfad") != null && rs.getString("typAutomatischScriptpfad").length() > 0) {
-					answer.add(rs.getString("typAutomatischScriptpfad"));
+				if (rs.getString("typeAutomaticScriptPath") != null && rs.getString("typeAutomaticScriptPath").length() > 0) {
+					answer.add(rs.getString("typeAutomaticScriptPath"));
 				}
-				if (rs.getString("typAutomatischScriptpfad2") != null && rs.getString("typAutomatischScriptpfad2").length() > 0) {
-					answer.add(rs.getString("typAutomatischScriptpfad2"));
+				if (rs.getString("typeAutomaticScriptPath2") != null && rs.getString("typeAutomaticScriptPath2").length() > 0) {
+					answer.add(rs.getString("typeAutomaticScriptPath2"));
 				}
-				if (rs.getString("typAutomatischScriptpfad3") != null && rs.getString("typAutomatischScriptpfad3").length() > 0) {
-					answer.add(rs.getString("typAutomatischScriptpfad3"));
+				if (rs.getString("typeAutomaticScriptPath3") != null && rs.getString("typeAutomaticScriptPath3").length() > 0) {
+					answer.add(rs.getString("typeAutomaticScriptPath3"));
 				}
-				if (rs.getString("typAutomatischScriptpfad4") != null && rs.getString("typAutomatischScriptpfad4").length() > 0) {
-					answer.add(rs.getString("typAutomatischScriptpfad4"));
+				if (rs.getString("typeAutomaticScriptPath4") != null && rs.getString("typeAutomaticScriptPath4").length() > 0) {
+					answer.add(rs.getString("typeAutomaticScriptPath4"));
 				}
-				if (rs.getString("typAutomatischScriptpfad5") != null && rs.getString("typAutomatischScriptpfad5").length() > 0) {
-					answer.add(rs.getString("typAutomatischScriptpfad5"));
+				if (rs.getString("typeAutomaticScriptPath5") != null && rs.getString("typeAutomaticScriptPath5").length() > 0) {
+					answer.add(rs.getString("typeAutomaticScriptPath5"));
 				}
 			}
 			return answer;
@@ -190,25 +190,25 @@ public class MySQLUtils {
 		public Map<String, String> handle(ResultSet rs) throws SQLException {
 			Map<String, String> answer = new HashMap<String, String>();
 			if (rs.next()) {
-				if (rs.getString("typAutomatischScriptpfad") != null && rs.getString("typAutomatischScriptpfad").length() > 0) {
+				if (rs.getString("typeAutomaticScriptPath") != null && rs.getString("typeAutomaticScriptPath").length() > 0) {
 					String name = rs.getString("scriptName1");
-					answer.put(name, rs.getString("typAutomatischScriptpfad"));
+					answer.put(name, rs.getString("typeAutomaticScriptPath"));
 				}
-				if (rs.getString("typAutomatischScriptpfad2") != null && rs.getString("typAutomatischScriptpfad2").length() > 0) {
+				if (rs.getString("typeAutomaticScriptPath2") != null && rs.getString("typeAutomaticScriptPath2").length() > 0) {
 					String name = rs.getString("scriptName2");
-					answer.put(name, rs.getString("typAutomatischScriptpfad2"));
+					answer.put(name, rs.getString("typeAutomaticScriptPath2"));
 				}
-				if (rs.getString("typAutomatischScriptpfad3") != null && rs.getString("typAutomatischScriptpfad3").length() > 0) {
+				if (rs.getString("typeAutomaticScriptPath3") != null && rs.getString("typeAutomaticScriptPath3").length() > 0) {
 					String name = rs.getString("scriptName3");
-					answer.put(name, rs.getString("typAutomatischScriptpfad3"));
+					answer.put(name, rs.getString("typeAutomaticScriptPath3"));
 				}
-				if (rs.getString("typAutomatischScriptpfad4") != null && rs.getString("typAutomatischScriptpfad4").length() > 0) {
+				if (rs.getString("typeAutomaticScriptPath4") != null && rs.getString("typeAutomaticScriptPath4").length() > 0) {
 					String name = rs.getString("scriptName4");
-					answer.put(name, rs.getString("typAutomatischScriptpfad4"));
+					answer.put(name, rs.getString("typeAutomaticScriptPath4"));
 				}
-				if (rs.getString("typAutomatischScriptpfad5") != null && rs.getString("typAutomatischScriptpfad5").length() > 0) {
+				if (rs.getString("typeAutomaticScriptPath5") != null && rs.getString("typeAutomaticScriptPath5").length() > 0) {
 					String name = rs.getString("scriptName5");
-					answer.put(name, rs.getString("typAutomatischScriptpfad5"));
+					answer.put(name, rs.getString("typeAutomaticScriptPath5"));
 				}
 			}
 			return answer;
@@ -219,29 +219,28 @@ public class MySQLUtils {
 		StepObject so = null;
 
 		if (rs != null) {
-			int id = rs.getInt("SchritteID");
-			String title = rs.getString("Titel");
-			int reihenfolge = rs.getInt("Reihenfolge");
-			int bearbeitungsstatus = rs.getInt("bearbeitungsstatus");
-
-			Date bearbeitungszeitpunkt = rs.getTimestamp("bearbeitungszeitpunkt");
-			Date bearbeitungsbeginn = rs.getTimestamp("bearbeitungsbeginn");
-			Date bearbeitungsende = rs.getTimestamp("bearbeitungsende");
-			int processId = rs.getInt("ProzesseID");
-			int bearbeitungsbenutzer = rs.getInt("BearbeitungsBenutzerID");
-			int editType = rs.getInt("edittype");
-			boolean typExport = rs.getBoolean("typExportDMS");
-			boolean typAutomatisch = rs.getBoolean("typAutomatisch");
-			boolean readAccess = rs.getBoolean("typImagesLesen");
-			boolean writeAccess = rs.getBoolean("typImagesSchreiben");
-			boolean metadataAccess = rs.getBoolean("typMetadaten");
-			boolean typeFinishImmediately = rs.getBoolean("typBeimAnnehmenAbschliessen");
+			int id = rs.getInt("id");
+			String title = rs.getString("title");
+			int ordering = rs.getInt("ordering");
+			int processingStatus = rs.getInt("processingStatus");
+			Date processingTime = rs.getTimestamp("processingTime");
+			Date processingBegin = rs.getTimestamp("processingBegin");
+			Date processingEnd = rs.getTimestamp("processingEnd");
+			int processId = rs.getInt("process_id");
+			int processingUser = rs.getInt("user_id");
+			int editType = rs.getInt("editType");
+			boolean typExport = rs.getBoolean("typeExportDMS");
+			boolean typeAutomatic = rs.getBoolean("typeAutomatic");
+			boolean readAccess = rs.getBoolean("typeImagesRead");
+			boolean writeAccess = rs.getBoolean("typeImagesWrite");
+			boolean metadataAccess = rs.getBoolean("typMetadata");
+			boolean typeFinishImmediately = rs.getBoolean("typeAcceptClose");
 			String stepPlugin = rs.getString("stepPlugin");
 			String validationPlugin = rs.getString("validationPlugin");
 
-			so = new StepObject(id, title, reihenfolge, bearbeitungsstatus, bearbeitungszeitpunkt, bearbeitungsbeginn, bearbeitungsende,
-					bearbeitungsbenutzer, editType, typExport, typAutomatisch, processId, readAccess, writeAccess, metadataAccess,
-					typeFinishImmediately, stepPlugin, validationPlugin);
+			so = new StepObject(id, title, ordering, processingStatus, processingTime, processingBegin, processingEnd,
+					processingUser, editType, typExport, typeAutomatic, processId, readAccess, writeAccess,
+					metadataAccess, typeFinishImmediately, stepPlugin, validationPlugin);
 		}
 
 		return so;
@@ -251,8 +250,8 @@ public class MySQLUtils {
 		@Override
 		public ProjectObject handle(ResultSet rs) throws SQLException {
 			if (rs.next()) {
-				int projekteID = rs.getInt("ProjekteID");
-				String titel = rs.getString("Titel");
+				int projekteID = rs.getInt("id");
+				String titel = rs.getString("title");
 				boolean useDmsImport = rs.getBoolean("useDmsImport");
 				int dmsImportTimeOut = rs.getInt("dmsImportTimeOut");
 				String dmsImportRootPath = rs.getString("dmsImportRootPath");
@@ -296,10 +295,10 @@ public class MySQLUtils {
 		public List<ProjectFileGroup> handle(ResultSet rs) throws SQLException {
 			List<ProjectFileGroup> answer = new ArrayList<ProjectFileGroup>();
 			while (rs.next()) {
-				int ProjectFileGroupID = rs.getInt("ProjectFileGroupID");
+				int ProjectFileGroupID = rs.getInt("id");
 				String name = rs.getString("name");
 				String path = rs.getString("path");
-				String mimetype = rs.getString("mimetype");
+				String mimeType = rs.getString("mimeType");
 				String suffix = rs.getString("suffix");
 				// int ProjekteID = rs.getInt("ProjekteID");
 				String folder = rs.getString("folder");
@@ -307,7 +306,7 @@ public class MySQLUtils {
 				pfg.setId(ProjectFileGroupID);
 				pfg.setName(name);
 				pfg.setPath(path);
-				pfg.setMimeType(mimetype);
+				pfg.setMimeType(mimeType);
 				pfg.setSuffix(suffix);
 				// ProjekteId?
 				pfg.setFolder(folder);
@@ -322,7 +321,7 @@ public class MySQLUtils {
 		public List<String> handle(ResultSet rs) throws SQLException {
 			List<String> answer = new ArrayList<String>();
 			while (rs.next()) {
-				String filter = rs.getString("Wert");
+				String filter = rs.getString("value");
 				answer.add(filter);
 			}
 			return answer;
