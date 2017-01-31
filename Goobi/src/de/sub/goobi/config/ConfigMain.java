@@ -12,6 +12,7 @@
 package de.sub.goobi.config;
 
 import java.io.File;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -186,5 +187,65 @@ public class ConfigMain {
 	public static String[] getStringArrayParameter(String inParameter) {
 		
 		return getConfig().getStringArray(inParameter);
+	}
+
+	/**
+	 * Request Map<String,String>-parameter from Configuration
+	 * 
+	 * @param inParameter
+	 *            the key prefix in the configuration, excluding the tailing dot
+	 * @return Parameter as {@code Map<String,String>}
+	 */
+	public static Map<String, String> getParameterMap(String inParameter) {
+		return getParameterMap(inParameter, false, true);
+	}
+
+	/**
+	 * Request Map<String,String>-parameter from Configuration
+	 * 
+	 * @param inParameter
+	 *            the key prefix in the configuration, excluding the tailing dot
+	 * @param fullKey
+	 *            If true, returns the full key, consisting of
+	 *            {@code inParameter}, a dot and the variable part of the key.
+	 *            If false, returns the variable part of the key only.
+	 * @return Parameter as {@code Map<String,String>}
+	 */
+	public static Map<String, String> getParameterMap(String inParameter, boolean fullKey) {
+		return getParameterMap(inParameter, fullKey, true);
+	}
+
+	/**
+	 * Request Map<String,String>-parameter from Configuration
+	 * 
+	 * @param inParameter
+	 *            the key prefix in the configuration, excluding the tailing dot
+	 * @param fullKey
+	 *            If true, returns the full key, consisting of
+	 *            {@code inParameter}, a dot and the variable part of the key.
+	 *            If false, returns the variable part of the key only.
+	 * @param ahead
+	 *            if true, return ahead mapping (key-to-value), else reverse
+	 *            (value-to-key) mapping
+	 * @return Parameter as {@code Map<String,String>}
+	 */
+	public static Map<String, String> getParameterMap(String inParameter, boolean fullKey, boolean ahead) {
+		Map<String, String> result = new HashMap<String, String>();
+		Iterator<?> keyIterator = getConfig().getKeys(inParameter);
+		int begin = inParameter.length() + 1;
+		while (keyIterator.hasNext()) {
+			Object nextKey = keyIterator.next();
+			if (nextKey instanceof String) {
+				String key = (String) nextKey;
+				String resultKey = fullKey ? key : key.substring(begin);
+				String value = config.getString(key);
+				if (ahead) {
+					result.put(resultKey, value);
+				} else {
+					result.put(value, resultKey);
+				}
+			}
+		}
+		return result;
 	}
 }
