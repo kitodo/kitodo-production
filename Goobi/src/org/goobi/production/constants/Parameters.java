@@ -11,22 +11,41 @@
 
 package org.goobi.production.constants;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * These constants define configuration parameters usable in the configuration
  * file.
  * 
  * TODO: Make all string literals throughout the code constants here.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Parameters {
+	/**
+	 * Configuration to use.
+	 */
+	private Map<String, String> config;
+
+	/**
+	 * Creates a new parameters accessor class.
+	 * 
+	 * @param config
+	 *            configuration to use
+	 */
+	public Parameters(Map<String, String> config) {
+		this.config = config;
+	}
+
 	/**
 	 * String to append to a record identifier for this authority in order to
 	 * form a URL usable to actually retrieve data.
 	 * <p>
-	 * Example: {@code authority.http\://d-nb.info/gnd/.dataUrlTail=/about/lds.rdf}
+	 * Example:
+	 * {@code authority.http\://d-nb.info/gnd/.dataUrlTail=/about/lds.rdf}
 	 */
-	public static final String AUTHORITY_DATA_URL_TAIL = "authority.{0}.dataUrlTail";
+	private static final String AUTHORITY_DATA_URL_TAIL = "authority.{0}.dataUrlTail";
 	
 	/**
 	 * Content to put in the URI field when adding a new metadata element of
@@ -43,7 +62,7 @@ public class Parameters {
 	 * {@link org.kitodo.production.lugh.ld.GraphPath} for a powerful graph path
 	 * example.
 	 */
-	public static final String AUTHORITY_MAPPING = "authorityMapping";
+	private static final String AUTHORITY_MAPPING = "authorityMapping.";
 
 	/**
 	 * List of meta-data types that, if included in a meta-data group, will
@@ -129,7 +148,7 @@ public class Parameters {
 	 * namespace.xsd=http://www.w3.org/2001/XMLSchema#
 	 * </pre>
 	 */
-	public static final String NAMESPACE_MAP = "namespace";
+	private static final String NAMESPACE_MAP = "namespace.";
 
 	/**
 	 * Comma-separated list of Strings which may be enclosed in double quotes.
@@ -183,5 +202,79 @@ public class Parameters {
 	 * are also located here.
 	 */
 	public static final String XSLT_DIR = "xsltFolder";
+
+	/**
+	 * Returns the tail to append to an authority data URL for retrieval, if
+	 * any, or {@code null}.
+	 * 
+	 * @param authority
+	 *            authority to look up a tail for
+	 * @return URL tail, {@code null} otherwise
+	 */
+	public String getAuthorityDataURLTail(String authority) {
+		String prefix = this.getNamespacePrefixes(false, false).get(authority);
+		String key = AUTHORITY_DATA_URL_TAIL.replace("{0}", prefix != null ? prefix : authority);
+		return config.get(key);
+	}
+
+	/**
+	 * Returns a mapping from meta-data fields to graph paths, used to import
+	 * authority records.
+	 * 
+	 * @return authority mapping
+	 */
+	public Map<String, String> getAuthorityMapping() {
+		Map<String, String> result = new HashMap<>();
+		int beginIndex = AUTHORITY_MAPPING.length();
+		for (Entry<String, String> entry : config.entrySet()) {
+			if (entry.getKey().startsWith(AUTHORITY_MAPPING)) {
+				result.put(entry.getKey().substring(beginIndex), entry.getValue());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the map of configured namespace prefixes. A map can either be
+	 * requested to resolve prefixes, or to look up prefixes. Hash namespaces
+	 * can be included either without hash (for XML) or with hash (for linked
+	 * data).
+	 * 
+	 * @param resolve
+	 *            if true, mapping is from prefix to namespace, if false,
+	 *            mapping is from namespace to prefix
+	 * @param hash
+	 *            if true, hash namespaces end with hash, if false, they end
+	 *            without hash
+	 * @return map of configured namespaces
+	 */
+	public Map<String, String> getNamespacePrefixes(boolean resolve, boolean hash) {
+		Map<String, String> result = new HashMap<>();
+		int beginIndex = NAMESPACE_MAP.length();
+		for(Entry<String, String> entry:config.entrySet()){
+			String key = entry.getKey();
+			if(key.startsWith(NAMESPACE_MAP)){
+				String prefix = key.substring(beginIndex);
+				String namespace = config.get(key);
+				if(!namespace.endsWith("/")){
+					if(hash){
+						if(! namespace.endsWith("#")) {
+							namespace = namespace.concat("#");
+						}
+					}else{
+						if(namespace.endsWith("#")){
+							namespace = namespace.substring(0, namespace.length() - 1);
+						}
+					}
+				}
+				if(resolve){
+					result.put(prefix, namespace);
+				}else{
+					result.put(namespace, prefix);
+				}
+			}
+		}
+		return result;
+	}
 
 }

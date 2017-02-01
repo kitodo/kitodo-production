@@ -190,61 +190,21 @@ public class ConfigMain {
 	}
 
 	/**
-	 * Request Map<String,String>-parameter from Configuration
+	 * Returns a map containing the application’s configuration.
 	 * 
-	 * @param inParameter
-	 *            the key prefix in the configuration, excluding the tailing dot
-	 * @return Parameter as {@code Map<String,String>}
+	 * @return a map containing the configuration
 	 */
-	public static Map<String, String> getParameterMap(String inParameter) {
-		return getParameterMap(inParameter, false, true);
-	}
-
-	/**
-	 * Request Map<String,String>-parameter from Configuration
-	 * 
-	 * @param inParameter
-	 *            the key prefix in the configuration, excluding the tailing dot
-	 * @param fullKey
-	 *            If true, returns the full key, consisting of
-	 *            {@code inParameter}, a dot and the variable part of the key.
-	 *            If false, returns the variable part of the key only.
-	 * @return Parameter as {@code Map<String,String>}
-	 */
-	public static Map<String, String> getParameterMap(String inParameter, boolean fullKey) {
-		return getParameterMap(inParameter, fullKey, true);
-	}
-
-	/**
-	 * Request Map<String,String>-parameter from Configuration
-	 * 
-	 * @param inParameter
-	 *            the key prefix in the configuration, excluding the tailing dot
-	 * @param fullKey
-	 *            If true, returns the full key, consisting of
-	 *            {@code inParameter}, a dot and the variable part of the key.
-	 *            If false, returns the variable part of the key only.
-	 * @param ahead
-	 *            if true, return ahead mapping (key-to-value), else reverse
-	 *            (value-to-key) mapping
-	 * @return Parameter as {@code Map<String,String>}
-	 */
-	public static Map<String, String> getParameterMap(String inParameter, boolean fullKey, boolean ahead) {
-		Map<String, String> result = new HashMap<String, String>();
-		Iterator<?> keyIterator = getConfig().getKeys(inParameter);
-		int begin = inParameter.length() + 1;
+	public static Map<String, String> toMap() {
+		Map<String, String> result = new HashMap<>();
+		PropertiesConfiguration config = getConfig();
+		Iterator<?> keyIterator = config.getKeys();
 		while (keyIterator.hasNext()) {
 			Object nextKey = keyIterator.next();
-			if (nextKey instanceof String) {
-				String key = (String) nextKey;
-				String resultKey = fullKey ? key : key.substring(begin);
-				String value = config.getString(key);
-				if (ahead) {
-					result.put(resultKey, value);
-				} else {
-					result.put(value, resultKey);
-				}
+			if (!(nextKey instanceof String)) {
+				continue;
 			}
+			String key = (String) nextKey;
+			result.put(key, config.getString(key));
 		}
 		return result;
 	}

@@ -33,6 +33,24 @@ import ugh.dl.*;
 public class AuthorityFileUtil {
 
     /**
+     * Returns the downloadable URL for an URI.
+     * 
+     * @param recordURI
+     *            A record URI
+     * @param config
+     *            the application’s configuration
+     * @return an URL for that record
+     * @throws MalformedURLException
+     *             if no protocol is specified, or an unknown protocol is found,
+     *             or spec is null.
+     */
+    static URL dataURLForRecordURI(String recordURI, Map<String, String> config) throws MalformedURLException {
+        String namespace = Namespace.namespaceOf(recordURI);
+        String urlTail = new Parameters(config).getAuthorityDataURLTail(namespace);
+        return new URL(urlTail == null ? recordURI : recordURI.concat(urlTail));
+    }
+
+    /**
      * Downloads an Authority record.
      * 
      * @param recordURI
@@ -49,17 +67,10 @@ public class AuthorityFileUtil {
      */
     public static Node downloadAuthorityRecord(String recordURI)
             throws IOException, URISyntaxException, LinkedDataException {
-        String namespace = Namespace.namespaceOf(recordURI);
-        String prefix = ConfigMain.getParameterMap(Parameters.NAMESPACE_MAP, false, false).get(namespace);
-        String parameter = Parameters.AUTHORITY_DATA_URL_TAIL.replaceFirst("\\{0\\}",
-                prefix != null ? prefix : namespace);
-        String urlTail = ConfigMain.getParameter(parameter, null);
-        URL dataURL = new URL(urlTail == null ? recordURI : recordURI.concat(urlTail));
-        Model apacheJenaModel = ModelFactory.createDefaultModel();
-        try (InputStream input = dataURL.openStream()) {
-            apacheJenaModel.read(input, dataURL.toURI().toASCIIString());
+        URL dataURL = dataURLForRecordURI(recordURI, ConfigMain.toMap());
+        try (InputStream HANDLE = dataURL.openStream()) {
+            return nodeFromInputStream(HANDLE, dataURL.toURI().toASCIIString());
         }
-        return Result.createFrom(apacheJenaModel, false).node();
     }
 
     /**
@@ -77,5 +88,23 @@ public class AuthorityFileUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Parses an authority record read from the Internet to the internal format.
+     * 
+     * @param HANDLE
+     *            to read from
+     * @param base
+     *            URL to resolve relative paths against
+     * @return a node holding the data
+     * @throws LinkedDataException
+     *             {@link NoDataException} if there is no head node in the
+     *             result, {@link AmbiguousDataException} if there are several
+     */
+    static Node nodeFromInputStream(InputStream HANDLE, String base) throws LinkedDataException {
+        Model apacheJenaModel = ModelFactory.createDefaultModel();
+        apacheJenaModel.read(HANDLE, base);
+        return Result.createFrom(apacheJenaModel, false).node();
     }
 }

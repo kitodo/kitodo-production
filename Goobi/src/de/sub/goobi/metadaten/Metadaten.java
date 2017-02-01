@@ -387,7 +387,7 @@ public class Metadaten {
 			} else {
 				authorityURI = valueURI.substring(0, boundary + 1);
 				if (!authorityURI.equals(valueURI)) {
-					authority = ConfigMain.getParameterMap(Parameters.NAMESPACE_MAP, false, false).get(authorityURI);
+					authority = new Parameters(ConfigMain.toMap()).getNamespacePrefixes(false, true).get(authorityURI);
 				}
 			}
 		}
@@ -3250,7 +3250,8 @@ public class Metadaten {
 	 */
 	public void updateMetadataGroupFromAuthorityFile(MetadataGroup metaDataGroup) {
 		try {
-			Map<String, String> namespaces = ConfigMain.getParameterMap(Parameters.NAMESPACE_MAP);
+			Parameters parameters = new Parameters(ConfigMain.toMap());
+			Map<String, String> namespaces = parameters.getNamespacePrefixes(true, true);
 			String recordURI = AuthorityFileUtil.getRecordURI(metaDataGroup);
 			Node record = AuthorityFileUtil.downloadAuthorityRecord(recordURI);
 
@@ -3262,7 +3263,7 @@ public class Metadaten {
 				}
 			}
 
-			Map<String, String> mapping = ConfigMain.getParameterMap(Parameters.AUTHORITY_MAPPING);
+			Map<String, String> mapping = parameters.getAuthorityMapping();
 			for (Metadata metaDatum : metaDataGroup.getMetadataList()) {
 				if (metaDatum.getType() != null) {
 					if (mapping.containsKey(metaDatum.getType().getName())) {
