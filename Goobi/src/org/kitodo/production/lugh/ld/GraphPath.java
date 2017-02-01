@@ -111,7 +111,7 @@ public class GraphPath extends Node {
      * Indicates that the object must be referenced from the subject, but the
      * predicate of the reference is not specified.
      */
-    static final NodeReference ANY_PREDICATE = new NodeReference("http://names.zeutschel.de/GraphPath/v1#anyPredicate");
+    static final NodeReference ANY_PREDICATE = new NodeReference("http://names.kitodo.org/GraphPath/v1#anyPredicate");
 
     /**
      * Character in the graph path string indicating that the object must be
@@ -124,17 +124,17 @@ public class GraphPath extends Node {
      * This is a graph path.
      */
     private static final NodeReference GRAPH_PATH = new NodeReference(
-            "http://names.zeutschel.de/GraphPath/v1#GraphPath");
+            "http://names.kitodo.org/GraphPath/v1#GraphPath");
 
     /**
      * This is a location step of a graph path.
      */
-    static final NodeReference LOCATION_STEP = new NodeReference("http://names.zeutschel.de/GraphPath/v1#LocationStep");
+    static final NodeReference LOCATION_STEP = new NodeReference("http://names.kitodo.org/GraphPath/v1#LocationStep");
 
     /**
      * Direction of reference is forwards one step.
      */
-    static final NodeReference TO = new NodeReference("http://names.zeutschel.de/GraphPath/v1#to");
+    static final NodeReference TO = new NodeReference("http://names.kitodo.org/GraphPath/v1#to");
 
     /**
      * Applies a graph path on a collection of nodes.
