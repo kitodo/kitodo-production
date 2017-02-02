@@ -38,10 +38,6 @@ import org.xml.sax.XMLReader;
  * TODO check if correct character encodings are returned
  * 
  * @author Ludwig
- * @version 0.1
- * @since 0.1.1
- * 
- *        CHANGELOG: 19.07.2005 Ludwig: first Version
  */
 
 class CatalogueClient {
