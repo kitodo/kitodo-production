@@ -101,7 +101,7 @@ class GetOpac {
 	// TODO: Check if this should really be query specific
 	private String charset = "iso-8859-1";
 
-	private final Catalogue cat;
+	private final ConfigOpacCatalogue cat;
 
 	private final String sorting = SORT_BY_YEAR_OF_PUBLISHING;
 
@@ -131,7 +131,7 @@ class GetOpac {
 	 *             configuration requested
 	 */
 
-	GetOpac(Catalogue opac) throws ParserConfigurationException {
+	GetOpac(ConfigOpacCatalogue opac) throws ParserConfigurationException {
 		super();
 		this.opacClient = new HttpClient();
 		this.cat = opac;

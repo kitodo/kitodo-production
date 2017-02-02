@@ -129,11 +129,6 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The field catalogue holds the catalogue.
-	 */
-	private Catalogue catalogue;
-
-	/**
 	 * The field client holds the catalogue client used to access the catalogue.
 	 */
 	private GetOpac client;
@@ -1036,8 +1031,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
 		this.configuration = ConfigOpac.getCatalogueByName(catalogueID);
-		this.catalogue = new Catalogue(configuration);
-		GetOpac catalogueClient = new GetOpac(catalogue);
+		GetOpac catalogueClient = new GetOpac(configuration);
 		catalogueClient.setCharset(configuration.getCharset());
 		this.client = catalogueClient;
 	}
