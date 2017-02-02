@@ -42,7 +42,7 @@ class ConfigOpacCatalogue {
 	private String cbs;
 	private String charset = "iso-8859-1";
 	private final ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
-	private ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
+	private ConfigOpacCatalogue(String title, String desciption, String address, String database,
 			int port,
 			ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		this.title = title;
@@ -54,11 +54,11 @@ class ConfigOpacCatalogue {
 	}
 
 	// Constructor that also takes a charset, a quick hack for DPD-81
-	ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
+	ConfigOpacCatalogue(String title, String desciption, String address, String database,
 			int port, String charset,
 			String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
 		// Call the contructor above
-		this(title, desciption, address, database, iktlist, port, inBeautifySetList, opacType);
+		this(title, desciption, address, database, port, inBeautifySetList, opacType);
 		this.charset = charset;
 		this.setCbs(cbs);
 	}
