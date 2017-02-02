@@ -67,7 +67,6 @@ class ConfigOpac {
 				String description = getConfig().getString("catalogue(" + i + ").config[@description]");
 				String address = getConfig().getString("catalogue(" + i + ").config[@address]");
 				String database = getConfig().getString("catalogue(" + i + ").config[@database]");
-				String iktlist = getConfig().getString("catalogue(" + i + ").config[@iktlist]");
 				String cbs = getConfig().getString("catalogue(" + i + ").config[@ucnf]", "");
 				if (!cbs.equals("")) {
 					cbs = "&" + cbs;
@@ -104,7 +103,7 @@ class ConfigOpac {
 					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
 				}
 
-				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, iktlist, port,
+				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, port,
 						charset, cbs, beautyList, opacType);
 				return coc;
 			}
