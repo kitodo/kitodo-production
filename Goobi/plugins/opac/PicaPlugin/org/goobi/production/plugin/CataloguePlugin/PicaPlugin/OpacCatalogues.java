@@ -22,7 +22,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
 
-class ConfigOpac {
+class OpacCatalogues {
 	private static XMLConfiguration config;
 
 	protected static XMLConfiguration getConfig() {

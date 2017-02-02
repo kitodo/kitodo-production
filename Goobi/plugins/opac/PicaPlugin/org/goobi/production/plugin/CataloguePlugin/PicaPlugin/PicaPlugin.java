@@ -125,7 +125,7 @@ public class PicaPlugin implements Plugin {
 	 *            the XMLConfiguration of the plugin
 	 */
 	public XMLConfiguration getXMLConfiguration() {
-		return ConfigOpac.getConfig();
+		return OpacCatalogues.getConfig();
 	}
 
 	/**
@@ -248,10 +248,10 @@ public class PicaPlugin implements Plugin {
 
 			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
-			type = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
+			type = OpacCatalogues.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
 					catalogue.getTitle());
 			if (type == null) {
-				type = ConfigOpac.getDoctypes().get(0);
+				type = OpacCatalogues.getDoctypes().get(0);
 				gattung = type.getMappings().get(0);
 			}
 
@@ -988,7 +988,7 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
 	 */
 	public static boolean supportsCatalogue(String catalogue) {
-		return ConfigOpac.getCatalogueByName(catalogue) != null;
+		return OpacCatalogues.getCatalogueByName(catalogue) != null;
 	}
 
 	/**
@@ -999,7 +999,7 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getSupportedCatalogues()
 	 */
 	public static List<String> getSupportedCatalogues() {
-		return ConfigOpac.getAllCatalogues();
+		return OpacCatalogues.getAllCatalogues();
 	}
 
 	/**
@@ -1011,7 +1011,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	public static List<String> getAllConfigDocTypes() {
 		List<String> result = new ArrayList<>();
-		for (Type type : ConfigOpac.getDoctypes()) {
+		for (Type type : OpacCatalogues.getDoctypes()) {
 			result.add(type.getTitle());
 		}
 		return result;
@@ -1028,7 +1028,7 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
-		catalogue = ConfigOpac.getCatalogueByName(catalogueID);
+		catalogue = OpacCatalogues.getCatalogueByName(catalogueID);
 		client = new CatalogueClient(catalogue);
 	}
 
@@ -1045,8 +1045,8 @@ public class PicaPlugin implements Plugin {
 	 */
 	public HashMap<String, String> getSearchFields(String catalogueName) throws InvalidActivityException {
 		LinkedHashMap<String, String> searchFields = new LinkedHashMap<>();
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+		if(!Objects.equals(OpacCatalogues.getConfig(), null)) {
+			for (Object catalogueObject : OpacCatalogues.getConfig().configurationsAt("catalogue")) {
 				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
 				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
 					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
@@ -1076,8 +1076,8 @@ public class PicaPlugin implements Plugin {
 	 */
 	public HashMap<String, String> getInstitutions(String catalogueName) {
 		LinkedHashMap<String, String> institutions = new LinkedHashMap<>();
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+		if(!Objects.equals(OpacCatalogues.getConfig(), null)) {
+			for (Object catalogueObject : OpacCatalogues.getConfig().configurationsAt("catalogue")) {
 				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
 				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
 					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
