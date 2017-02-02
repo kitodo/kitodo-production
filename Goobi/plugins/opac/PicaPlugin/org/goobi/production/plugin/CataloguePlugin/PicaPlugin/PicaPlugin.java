@@ -131,7 +131,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The field client holds the catalogue client used to access the catalogue.
 	 */
-	private GetOpac client;
+	private CatalogueClient client;
 
 	/**
 	 * The method configure() accepts a Map with configuration parameters. Two
@@ -1029,7 +1029,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
 		catalogue = ConfigOpac.getCatalogueByName(catalogueID);
-		client = new GetOpac(catalogue);
+		client = new CatalogueClient(catalogue);
 	}
 
 	/**

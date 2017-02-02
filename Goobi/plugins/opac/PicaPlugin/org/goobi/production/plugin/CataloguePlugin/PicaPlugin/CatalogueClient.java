@@ -44,8 +44,8 @@ import org.xml.sax.XMLReader;
  *        CHANGELOG: 19.07.2005 Ludwig: first Version
  */
 
-class GetOpac {
-	private static final Logger logger = Logger.getLogger(GetOpac.class);
+class CatalogueClient {
+	private static final Logger logger = Logger.getLogger(CatalogueClient.class);
 
 	// the output xml
 	private static final String PICA_COLLECTION_RECORDS = "collection";
@@ -128,7 +128,7 @@ class GetOpac {
 	 *             configuration requested
 	 */
 
-	GetOpac(Catalogue catalogue) throws ParserConfigurationException {
+	CatalogueClient(Catalogue catalogue) throws ParserConfigurationException {
 		super();
 		opacClient = new HttpClient();
 		this.catalogue = catalogue;
