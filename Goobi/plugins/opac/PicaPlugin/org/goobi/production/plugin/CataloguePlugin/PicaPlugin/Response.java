@@ -20,7 +20,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-class OpacResponseHandler extends DefaultHandler {
+class Response extends DefaultHandler {
 
 	private boolean readTitle = false;
 	private boolean readSessionVar = false;
@@ -34,7 +34,7 @@ class OpacResponseHandler extends DefaultHandler {
 	private final ArrayList<String> opacResponseItemPpns = new ArrayList<>();
 	private final ArrayList<String> opacResponseItemTitles = new ArrayList<>();
 
-	OpacResponseHandler() {
+	Response() {
 		super();
 	}
 

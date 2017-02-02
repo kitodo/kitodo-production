@@ -104,7 +104,7 @@ class CatalogueClient {
 	// searchopac. is it reasonable?
 	private String lastQuery = "";
 
-	private OpacResponseHandler lastOpacResult = null;
+	private Response lastOpacResult = null;
 
 	// CREATION (Constructors, factory methods, static/inst init)
 
@@ -285,7 +285,7 @@ class CatalogueClient {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	private OpacResponseHandler getResult(Query query, long timeout) throws IOException, SAXException,
+	private Response getResult(Query query, long timeout) throws IOException, SAXException,
 			ParserConfigurationException {
 		String result = null;
 
@@ -298,7 +298,7 @@ class CatalogueClient {
 		result = retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
 				+ catalogue.getCharset() + SEARCH_URL_BEFORE_QUERY + sorting + query.getQueryUrl(), timeout);
 
-		OpacResponseHandler opacResult = parseOpacResponse(result);
+		Response opacResult = parseOpacResponse(result);
 
 		// Caching query, result and sessionID
 		lastQuery = querySummary;
@@ -431,13 +431,13 @@ class CatalogueClient {
 		}
 	}
 
-	private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
+	private Response parseOpacResponse(String opacResponse) throws IOException, SAXException,
 			ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
 				.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
 
 		XMLReader parser = null;
-		OpacResponseHandler ids = new OpacResponseHandler();
+		Response ids = new Response();
 		/* Use Java 1.4 methods to create default parser. */
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
