@@ -76,7 +76,6 @@ class ConfigOpac {
 				if (getConfig().getString("catalogue(" + i + ").config[@charset]") != null) {
 					charset = getConfig().getString("catalogue(" + i + ").config[@charset]");
 				}
-				String opacType = getConfig().getString("catalogue(" + i + ").config[@opacType]", "PICA");
 
 				// Opac-Beautifier einlesen und in Liste zu jedem Catalogue packen
 
@@ -104,7 +103,7 @@ class ConfigOpac {
 				}
 
 				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, port,
-						charset, cbs, beautyList, opacType);
+						charset, cbs, beautyList);
 				return coc;
 			}
 		}
