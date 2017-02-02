@@ -67,9 +67,9 @@ class ConfigOpac {
 				String description = getConfig().getString("catalogue(" + i + ").config[@description]");
 				String address = getConfig().getString("catalogue(" + i + ").config[@address]");
 				String database = getConfig().getString("catalogue(" + i + ").config[@database]");
-				String cbs = getConfig().getString("catalogue(" + i + ").config[@ucnf]", "");
-				if (!cbs.equals("")) {
-					cbs = "&" + cbs;
+				String ucnf = getConfig().getString("catalogue(" + i + ").config[@ucnf]", "");
+				if (!ucnf.equals("")) {
+					ucnf = "&" + ucnf;
 				}
 				int port = getConfig().getInt("catalogue(" + i + ").config[@port]");
 				String charset = "iso-8859-1";
@@ -103,7 +103,7 @@ class ConfigOpac {
 				}
 
 				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, port,
-						charset, cbs, beautyList);
+						charset, ucnf, beautyList);
 				return coc;
 			}
 		}

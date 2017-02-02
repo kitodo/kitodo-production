@@ -39,12 +39,12 @@ class ConfigOpacCatalogue {
 	private final String address;
 	private final String database;
 	private final int port;
-	private String cbs;
+	private final String ucnf;
 	private final String charset;
 	private final List<ConfigOpacCatalogueBeautifier> beautifySetList;
 	
 	ConfigOpacCatalogue(String title, String desciption, String address, String database, int port, String charset,
-			String cbs, List<ConfigOpacCatalogueBeautifier> beautifySetList) {
+			String ucnf, List<ConfigOpacCatalogueBeautifier> beautifySetList) {
 
 		this.title = title;
 		this.description = desciption;
@@ -53,7 +53,7 @@ class ConfigOpacCatalogue {
 		this.port = port;
 		this.beautifySetList = beautifySetList;
 		this.charset = charset;
-		this.setCbs(cbs);
+		this.ucnf = ucnf;
 	}
 
 	String getTitle() {
@@ -273,19 +273,8 @@ class ConfigOpacCatalogue {
 
 	}
 
-	/**
-	 * @param cbs
-	 *            the cbs to set
-	 */
-	private void setCbs(String cbs) {
-		this.cbs = cbs;
-	}
-
-	/**
-	 * @return the cbs
-	 */
-	String getCbs() {
-		return this.cbs;
+	String getUncf() {
+		return this.ucnf;
 	}
 
 }

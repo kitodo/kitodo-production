@@ -234,7 +234,7 @@ class GetOpac {
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
 		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
-				+ this.cat.getPort() + this.cat.getCbs();
+				+ this.cat.getPort() + this.cat.getUncf();
 
 		// if we can not use the cached result
 		if (!this.lastQuery.equals(querySummary)) {
@@ -299,7 +299,7 @@ class GetOpac {
 		String result = null;
 
 		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
-				+ this.cat.getPort() + this.cat.getCbs();
+				+ this.cat.getPort() + this.cat.getUncf();
 
 		if (this.lastQuery.equals(querySummary)) {
 			return this.lastOpacResult;
@@ -415,7 +415,7 @@ class GetOpac {
 	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
 		String request = "http://" + cat.getServerAddress()
-				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getCbs();
+				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getUncf();
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);

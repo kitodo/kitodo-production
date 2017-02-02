@@ -13,7 +13,7 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 class Catalogue {
 
-	private String cbs = "";
+	private String uncf = "";
 
 	private final String dataBase;
 	private final String serverAddress;
@@ -23,7 +23,7 @@ class Catalogue {
 		this.serverAddress = coc.getAddress();
 		this.port = coc.getPort();
 		this.dataBase = coc.getDatabase();
-		this.cbs = coc.getCbs();
+		this.uncf = coc.getUncf();
 	}
 
 	String getDataBase() {
@@ -38,7 +38,7 @@ class Catalogue {
 		return serverAddress;
 	}
 
-	String getCbs() {
-		return cbs;
+	String getUncf() {
+		return uncf;
 	}
 }
