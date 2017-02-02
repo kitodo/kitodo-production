@@ -233,7 +233,7 @@ class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
+		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDatabase() + this.cat.getAddress()
 				+ this.cat.getPort() + this.cat.getUncf();
 
 		// if we can not use the cached result
@@ -277,7 +277,7 @@ class GetOpac {
 	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
-		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.charset
+		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDatabase() + PICAPLUS_XML_URL + this.charset
 				+ SET_ID_URL + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
@@ -298,13 +298,13 @@ class GetOpac {
 			ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
+		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDatabase() + this.cat.getAddress()
 				+ this.cat.getPort() + this.cat.getUncf();
 
 		if (this.lastQuery.equals(querySummary)) {
 			return this.lastOpacResult;
 		}
-		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
+		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
 				+ this.charset + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
@@ -414,7 +414,7 @@ class GetOpac {
 	 *             If the connection failed
 	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
-		String request = "http://" + cat.getServerAddress()
+		String request = "http://" + cat.getAddress()
 				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getUncf();
 
 		// set timeout if no connection can be established

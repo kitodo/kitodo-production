@@ -15,27 +15,27 @@ class Catalogue {
 
 	private String uncf = "";
 
-	private final String dataBase;
-	private final String serverAddress;
+	private final String database;
+	private final String address;
 	private final int port;
 
 	Catalogue(ConfigOpacCatalogue coc) {
-		this.serverAddress = coc.getAddress();
+		this.address = coc.getAddress();
 		this.port = coc.getPort();
-		this.dataBase = coc.getDatabase();
+		this.database = coc.getDatabase();
 		this.uncf = coc.getUncf();
 	}
 
-	String getDataBase() {
-		return dataBase;
+	String getDatabase() {
+		return database;
 	}
 
 	int getPort() {
 		return port;
 	}
 
-	String getServerAddress() {
-		return serverAddress;
+	String getAddress() {
+		return address;
 	}
 
 	String getUncf() {
