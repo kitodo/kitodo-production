@@ -230,7 +230,7 @@ public class PicaPlugin implements Plugin {
 		Query myQuery = ((FindResult) searchResult).getQuery();
 
 		Element myFirstHit;
-		String gattung;
+		String typeID;
 		Type type;
 		Fileformat ff;
 		try {
@@ -247,12 +247,12 @@ public class PicaPlugin implements Plugin {
 			myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
 			/* von dem Treffer den Dokumententyp ermitteln */
-			gattung = getGattung(myFirstHit);
-			type = OpacCatalogues.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
+			typeID = getTypeID(myFirstHit);
+			type = OpacCatalogues.getDoctypeByMapping(typeID.length() > 2 ? typeID.substring(0, 2) : typeID,
 					catalogue.getTitle());
 			if (type == null) {
 				type = OpacCatalogues.getDoctypes().get(0);
-				gattung = type.getMappings().get(0);
+				typeID = type.getMappings().get(0);
 			}
 
 			/*
@@ -262,7 +262,7 @@ public class PicaPlugin implements Plugin {
 			 */
 			if (type.isMultiVolume()) {
 				/* Sammelband-PPN ermitteln */
-				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
+				String multiVolumePpn = getPPNFromParent(myFirstHit, "036D", "9");
 				if (!multiVolumePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
@@ -301,7 +301,7 @@ public class PicaPlugin implements Plugin {
 			 */
 			if (type.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
-				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
+				String serialPublicationPpn = getPPNFromParent(myFirstHit, "036F", "9");
 				if (!serialPublicationPpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
@@ -340,7 +340,7 @@ public class PicaPlugin implements Plugin {
 			 */
 			if (type.isContainedWork()) {
 				/* PPN des übergeordneten Werkes ermitteln */
-				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
+				String ueberGeordnetePpn = getPPNFromParent(myFirstHit, "021A", "9");
 				if (!ueberGeordnetePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 					myQuery = new Query(ueberGeordnetePpn, "12");
@@ -387,7 +387,7 @@ public class PicaPlugin implements Plugin {
 			DocStruct dsBoundBook = dd.createDocStruct(dst);
 			dd.setPhysicalDocStruct(dsBoundBook);
 			/* Inhalt des RDF-Files überprüfen und ergänzen */
-			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, type, gattung);
+			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, type, typeID);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -403,7 +403,7 @@ public class PicaPlugin implements Plugin {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private static String getGattung(Element inHit) {
+	private static String getTypeID(Element inHit) {
 		if (inHit == null) {
 			return "";
 		}
@@ -438,7 +438,7 @@ public class PicaPlugin implements Plugin {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private static String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
+	private static String getPPNFromParent(Element inHit, String inFeldName, String inSubElement) {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
