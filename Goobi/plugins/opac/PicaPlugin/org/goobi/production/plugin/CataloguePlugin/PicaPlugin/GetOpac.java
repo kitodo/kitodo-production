@@ -97,9 +97,6 @@ class GetOpac {
 	private final DocumentBuilder docBuilder;
 
 	// STATE (Instance variables) *****************************************
-	// This is now configured inside the Catalogue class.
-	// TODO: Check if this should really be query specific
-	private String charset = "iso-8859-1";
 
 	private final Catalogue catalogue;
 
@@ -140,7 +137,7 @@ class GetOpac {
 
 	// MANIPULATION (Manipulation - what the object does) ******************
 
-	/***********************************************************************
+	/**
 	 * Gets the number of hits for the query in the specified field from the
 	 * OPAC.
 	 * 
@@ -152,9 +149,7 @@ class GetOpac {
 	 *             If something is wrong with the query
 	 * @throws IOException
 	 *             If connection to catalogue system failed
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 **********************************************************************/
+	 */
 	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException, ParserConfigurationException {
 		getResult(query, timeout);
 		return lastOpacResult.getNumberOfHits();
@@ -233,7 +228,7 @@ class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + charset + catalogue.getDatabase() + catalogue.getAddress()
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
 				+ catalogue.getPort() + catalogue.getUncf();
 
 		// if we can not use the cached result
@@ -277,7 +272,7 @@ class GetOpac {
 	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
-		return retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL + charset
+		return retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL + catalogue.getCharset()
 				+ SET_ID_URL + lastOpacResult.getSet() + SESSIONID_URL + lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
@@ -298,14 +293,14 @@ class GetOpac {
 			ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + charset + catalogue.getDatabase() + catalogue.getAddress()
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
 				+ catalogue.getPort() + catalogue.getUncf();
 
 		if (lastQuery.equals(querySummary)) {
 			return lastOpacResult;
 		}
 		result = retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
-				+ charset + SEARCH_URL_BEFORE_QUERY + sorting + query.getQueryUrl(), timeout);
+				+ catalogue.getCharset() + SEARCH_URL_BEFORE_QUERY + sorting + query.getQueryUrl(), timeout);
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
 
@@ -457,18 +452,4 @@ class GetOpac {
 
 		return ids;
 	}
-
-	/**
-	 * Set requested character encoding for the response of the catalogue
-	 * system. For goettingen iso-8859-1 and utf-8 work, the default is
-	 * iso-8859-1.
-	 * 
-	 * @param charset
-	 *            The character encoding to set.
-	 */
-
-	void setCharset(String charset) {
-		this.charset = charset;
-	}
-
 }

@@ -1029,9 +1029,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
 		catalogue = ConfigOpac.getCatalogueByName(catalogueID);
-		GetOpac catalogueClient = new GetOpac(catalogue);
-		catalogueClient.setCharset(catalogue.getCharset());
-		client = catalogueClient;
+		client = new GetOpac(catalogue);
 	}
 
 	/**
