@@ -34,32 +34,24 @@ import org.w3c.dom.Node;
 
 class ConfigOpacCatalogue {
 	private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);
-	private String title = "";
-	private String description = "";
-	private String address = "";
-	private String database = "";
-	private int port = 80;
+	private final String title;
+	private final String description;
+	private final String address;
+	private final String database;
+	private final int port;
 	private String cbs;
-	private String charset = "iso-8859-1";
-	private final ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
+	private final String charset;
+	private final List<ConfigOpacCatalogueBeautifier> beautifySetList;
 	
-	private ConfigOpacCatalogue(String title, String desciption, String address, String database,
-			int port,
-			ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList) {
+	ConfigOpacCatalogue(String title, String desciption, String address, String database, int port, String charset,
+			String cbs, List<ConfigOpacCatalogueBeautifier> beautifySetList) {
+
 		this.title = title;
 		this.description = desciption;
 		this.address = address;
 		this.database = database;
 		this.port = port;
-		this.beautifySetList = inBeautifySetList;
-	}
-
-	// Constructor that also takes a charset, a quick hack for DPD-81
-	ConfigOpacCatalogue(String title, String desciption, String address, String database,
-			int port, String charset,
-			String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList) {
-		// Call the contructor above
-		this(title, desciption, address, database, port, inBeautifySetList);
+		this.beautifySetList = beautifySetList;
 		this.charset = charset;
 		this.setCbs(cbs);
 	}
