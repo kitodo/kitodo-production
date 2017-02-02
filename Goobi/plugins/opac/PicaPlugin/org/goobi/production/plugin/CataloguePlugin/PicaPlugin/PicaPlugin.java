@@ -231,7 +231,7 @@ public class PicaPlugin implements Plugin {
 
 		Element myFirstHit;
 		String gattung;
-		ConfigOpacDoctype cod;
+		Type type;
 		Fileformat ff;
 		try {
 			/*
@@ -248,11 +248,11 @@ public class PicaPlugin implements Plugin {
 
 			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
-			cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
+			type = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
 					catalogue.getTitle());
-			if (cod == null) {
-				cod = ConfigOpac.getAllDoctypes().get(0);
-				gattung = cod.getMappings().get(0);
+			if (type == null) {
+				type = ConfigOpac.getDoctypes().get(0);
+				gattung = type.getMappings().get(0);
 			}
 
 			/*
@@ -260,7 +260,7 @@ public class PicaPlugin implements Plugin {
 			 * eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
 			 * --------------------------------
 			 */
-			if (cod.isMultiVolume()) {
+			if (type.isMultiVolume()) {
 				/* Sammelband-PPN ermitteln */
 				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
 				if (!multiVolumePpn.equals("")) {
@@ -299,7 +299,7 @@ public class PicaPlugin implements Plugin {
 			 * eines Periodical-Bandes ist, dann die Serie überordnen
 			 * --------------------------------
 			 */
-			if (cod.isPeriodical()) {
+			if (type.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
 				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
 				if (!serialPublicationPpn.equals("")) {
@@ -338,7 +338,7 @@ public class PicaPlugin implements Plugin {
 			 * Work ist, dann übergeordnetes Werk
 			 * --------------------------------
 			 */
-			if (cod.isContainedWork()) {
+			if (type.isContainedWork()) {
 				/* PPN des übergeordneten Werkes ermitteln */
 				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
 				if (!ueberGeordnetePpn.equals("")) {
@@ -387,13 +387,13 @@ public class PicaPlugin implements Plugin {
 			DocStruct dsBoundBook = dd.createDocStruct(dst);
 			dd.setPhysicalDocStruct(dsBoundBook);
 			/* Inhalt des RDF-Files überprüfen und ergänzen */
-			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, cod, gattung);
+			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, type, gattung);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-		return createResult(cod.getTitle(), myFirstHit, ff);
+		return createResult(type.getTitle(), myFirstHit, ff);
 	}
 
 	/**
@@ -502,7 +502,7 @@ public class PicaPlugin implements Plugin {
 	 */
 
 	private static void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit,
-			ConfigOpacDoctype cod, String gattung) {
+			Type type, String gattung) {
 		DocStruct topstruct = inDigDoc.getLogicalDocStruct();
 		DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
 		DocStruct topstructChild = null;
@@ -513,7 +513,7 @@ public class PicaPlugin implements Plugin {
 		 * xml und docstruct ermitteln --------------------------------
 		 */
 		// if (isMultivolume()) {
-		if (cod.isMultiVolume()) {
+		if (type.isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
 			} catch (RuntimeException e) {
@@ -668,7 +668,7 @@ public class PicaPlugin implements Plugin {
 		 * PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
-		if (cod.isPeriodical() && (topstruct.getAllChildren() == null)) {
+		if (type.isPeriodical() && (topstruct.getAllChildren() == null)) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
 				DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
@@ -1011,8 +1011,8 @@ public class PicaPlugin implements Plugin {
 	 */
 	public static List<String> getAllConfigDocTypes() {
 		List<String> result = new ArrayList<>();
-		for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
-			result.add(cod.getTitle());
+		for (Type type : ConfigOpac.getDoctypes()) {
+			result.add(type.getTitle());
 		}
 		return result;
 	}

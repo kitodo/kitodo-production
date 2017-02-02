@@ -13,14 +13,14 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.util.ArrayList;
 
-class ConfigOpacDoctype {
+class Type {
 	private final String title;
 	private final boolean periodical;
 	private final boolean multiVolume;
 	private final boolean containedWork;
 	private final ArrayList<String> mappings;
 
-	ConfigOpacDoctype(String inTitle, boolean periodical, boolean multiVolume, boolean containedWork,
+	Type(String inTitle, boolean periodical, boolean multiVolume, boolean containedWork,
 			ArrayList<String> mappings) {
 		this.title = inTitle;
 		this.periodical = periodical;

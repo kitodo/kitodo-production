@@ -126,8 +126,8 @@ class ConfigOpac {
 	 * return all configured Doctype-Titles from Configfile
 	 * ================================================================
 	 */
-	static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
-		ArrayList<ConfigOpacDoctype> myList = new ArrayList<>();
+	static ArrayList<Type> getDoctypes() {
+		ArrayList<Type> myList = new ArrayList<>();
 		for (String title : getAllDoctypeTitles()) {
 			myList.add(getDoctypeByName(title));
 		}
@@ -139,7 +139,7 @@ class ConfigOpac {
 	 * special mapping for this
 	 * ================================================================
 	 */
-	static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
+	static Type getDoctypeByMapping(String inMapping, String inCatalogue) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("catalogue(" + i + ")[@title]");
@@ -163,7 +163,7 @@ class ConfigOpac {
 		// falls der Katalog kein spezielles Mapping für den Doctype hat, jetzt in den Doctypes suchen
 
 		for (String title : getAllDoctypeTitles()) {
-			ConfigOpacDoctype tempType = getDoctypeByName(title);
+			Type tempType = getDoctypeByName(title);
 			if (tempType.getMappings().contains(inMapping)) {
 				return tempType;
 			}
@@ -176,7 +176,7 @@ class ConfigOpac {
 	 * ================================================================
 	 */
 	@SuppressWarnings("unchecked")
-	private static ConfigOpacDoctype getDoctypeByName(String inTitle) {
+	private static Type getDoctypeByName(String inTitle) {
 		int countCatalogues = getConfig().getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
@@ -187,8 +187,7 @@ class ConfigOpac {
 				ArrayList<String> mappings = (ArrayList<String>) getConfig()
 						.getList("doctypes.type(" + i + ").mapping");
 
-				ConfigOpacDoctype cod = new ConfigOpacDoctype(title, periodical, multiVolume, containedWork, mappings);
-				return cod;
+				return new Type(title, periodical, multiVolume, containedWork, mappings);
 			}
 		}
 		return null;
