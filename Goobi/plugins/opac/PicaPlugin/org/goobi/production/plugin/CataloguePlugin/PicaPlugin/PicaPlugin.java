@@ -260,7 +260,6 @@ public class PicaPlugin implements Plugin {
 			 * eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
 			 * --------------------------------
 			 */
-			// if (isMultivolume()) {
 			if (cod.isMultiVolume()) {
 				/* Sammelband-PPN ermitteln */
 				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
@@ -339,7 +338,6 @@ public class PicaPlugin implements Plugin {
 			 * Work ist, dann übergeordnetes Werk
 			 * --------------------------------
 			 */
-			// if (isContainedWork()) {
 			if (cod.isContainedWork()) {
 				/* PPN des übergeordneten Werkes ermitteln */
 				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
