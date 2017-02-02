@@ -115,7 +115,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The field configuration holds the catalogue configuration.
 	 */
-	private ConfigOpacCatalogue configuration;
+	private Catalogue catalogue;
 
 	/**
 	 * Returns the XMLConfiguration of the plugin containing docType
@@ -242,14 +242,14 @@ public class PicaPlugin implements Plugin {
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
 
 			/* Opac-Beautifier aufrufen */
-			myHitlist = configuration.executeBeautifier(myHitlist);
+			myHitlist = catalogue.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 			myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
 			/* von dem Treffer den Dokumententyp ermitteln */
 			gattung = getGattung(myFirstHit);
 			cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
-					configuration.getTitle());
+					catalogue.getTitle());
 			if (cod == null) {
 				cod = ConfigOpac.getAllDoctypes().get(0);
 				gattung = cod.getMappings().get(0);
@@ -272,7 +272,7 @@ public class PicaPlugin implements Plugin {
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
 						/* Opac-Beautifier aufrufen */
-						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
@@ -311,7 +311,7 @@ public class PicaPlugin implements Plugin {
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
 						/* Opac-Beautifier aufrufen */
-						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
@@ -350,7 +350,7 @@ public class PicaPlugin implements Plugin {
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
 						/* Opac-Beautifier aufrufen */
-						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
@@ -1030,9 +1030,9 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
-		this.configuration = ConfigOpac.getCatalogueByName(catalogueID);
-		GetOpac catalogueClient = new GetOpac(configuration);
-		catalogueClient.setCharset(configuration.getCharset());
+		this.catalogue = ConfigOpac.getCatalogueByName(catalogueID);
+		GetOpac catalogueClient = new GetOpac(catalogue);
+		catalogueClient.setCharset(catalogue.getCharset());
 		this.client = catalogueClient;
 	}
 

@@ -101,7 +101,7 @@ class GetOpac {
 	// TODO: Check if this should really be query specific
 	private String charset = "iso-8859-1";
 
-	private final ConfigOpacCatalogue cat;
+	private final Catalogue catalogue;
 
 	private final String sorting = SORT_BY_YEAR_OF_PUBLISHING;
 
@@ -131,10 +131,10 @@ class GetOpac {
 	 *             configuration requested
 	 */
 
-	GetOpac(ConfigOpacCatalogue opac) throws ParserConfigurationException {
+	GetOpac(Catalogue catalogue) throws ParserConfigurationException {
 		super();
 		this.opacClient = new HttpClient();
-		this.cat = opac;
+		this.catalogue = catalogue;
 		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	}
 
@@ -233,8 +233,8 @@ class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDatabase() + this.cat.getAddress()
-				+ this.cat.getPort() + this.cat.getUncf();
+		String querySummary = query.getQueryUrl() + this.charset + this.catalogue.getDatabase() + this.catalogue.getAddress()
+				+ this.catalogue.getPort() + this.catalogue.getUncf();
 
 		// if we can not use the cached result
 		if (!this.lastQuery.equals(querySummary)) {
@@ -277,7 +277,7 @@ class GetOpac {
 	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
-		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDatabase() + PICAPLUS_XML_URL + this.charset
+		return retrieveDataFromOPAC(DATABASE_URL + this.catalogue.getDatabase() + PICAPLUS_XML_URL + this.charset
 				+ SET_ID_URL + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
@@ -298,13 +298,13 @@ class GetOpac {
 			ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDatabase() + this.cat.getAddress()
-				+ this.cat.getPort() + this.cat.getUncf();
+		String querySummary = query.getQueryUrl() + this.charset + this.catalogue.getDatabase() + this.catalogue.getAddress()
+				+ this.catalogue.getPort() + this.catalogue.getUncf();
 
 		if (this.lastQuery.equals(querySummary)) {
 			return this.lastOpacResult;
 		}
-		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
+		result = retrieveDataFromOPAC(DATABASE_URL + this.catalogue.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
 				+ this.charset + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
@@ -414,8 +414,8 @@ class GetOpac {
 	 *             If the connection failed
 	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
-		String request = "http://" + cat.getAddress()
-				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getUncf();
+		String request = "http://" + catalogue.getAddress()
+				+ (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url + catalogue.getUncf();
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);

@@ -243,5 +243,4 @@ class UGHUtils {
 		String file = FilenameUtils.concat(path, fileName);
 		return new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 	}
-
 }

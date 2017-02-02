@@ -32,8 +32,8 @@ import org.jdom.output.DOMOutputter;
 import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
-class ConfigOpacCatalogue {
-	private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);
+class Catalogue {
+	private static final Logger myLogger = Logger.getLogger(Catalogue.class);
 	private final String title;
 	private final String description;
 	private final String address;
@@ -43,7 +43,7 @@ class ConfigOpacCatalogue {
 	private final String charset;
 	private final List<ConfigOpacCatalogueBeautifier> beautifySetList;
 	
-	ConfigOpacCatalogue(String title, String desciption, String address, String database, int port, String charset,
+	Catalogue(String title, String desciption, String address, String database, int port, String charset,
 			String ucnf, List<ConfigOpacCatalogueBeautifier> beautifySetList) {
 
 		this.title = title;

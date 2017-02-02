@@ -59,7 +59,7 @@ class ConfigOpac {
 	 * find Catalogue in Opac-Configurationlist
 	 * ================================================================
 	 */
-	static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
+	static Catalogue getCatalogueByName(String inTitle) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("catalogue(" + i + ")[@title]");
@@ -102,9 +102,7 @@ class ConfigOpac {
 					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
 				}
 
-				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, port,
-						charset, ucnf, beautyList);
-				return coc;
+				return new Catalogue(title, description, address, database, port, charset, ucnf, beautyList);
 			}
 		}
 		return null;

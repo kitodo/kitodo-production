@@ -38,9 +38,8 @@ class FindResult {
 	}
 
 	/**
-	 * The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not
-	 * implement hashCode()—implementing hashCode() here would not work
-	 * correctly.
+	 * The classes Catalogue, GetOpac and Query do not implement
+	 * hashCode()—implementing hashCode() here would not work correctly.
 	 * 
 	 * @throws UnsupportedOperationException
 	 *             if trying to invoke hashCode()
@@ -48,12 +47,12 @@ class FindResult {
 	@Override
 	public int hashCode() {
 		throw new UnsupportedOperationException(
-				"The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not implement hashCode()—implementing hashCode() here would not work correctly");
+				"The classes Catalogue, GetOpac and Query do not implement hashCode()—implementing hashCode() here would not work correctly");
 	}
 
 	/**
-	 * The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not
-	 * implement equals()—implementing equals() here would not work correctly.
+	 * The classes Catalogue, GetOpac and Query do not implement
+	 * equals()—implementing equals() here would not work correctly.
 	 * 
 	 * @throws UnsupportedOperationException
 	 *             if trying to invoke equals()
@@ -61,6 +60,6 @@ class FindResult {
 	@Override
 	public boolean equals(Object obj) {
 		throw new UnsupportedOperationException(
-				"The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not implement equals()—implementing equals() here would not work correctly");
+				"The classes Catalogue, GetOpac and Query do not implement equals()—implementing equals() here would not work correctly");
 	}
 }
