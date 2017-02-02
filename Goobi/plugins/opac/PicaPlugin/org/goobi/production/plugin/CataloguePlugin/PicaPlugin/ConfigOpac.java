@@ -79,27 +79,27 @@ class ConfigOpac {
 
 				// Opac-Beautifier einlesen und in Liste zu jedem Catalogue packen
 
-				ArrayList<ConfigOpacCatalogueBeautifier> beautyList = new ArrayList<>();
+				ArrayList<Setvalue> beautyList = new ArrayList<>();
 				for (int j = 0; j <= getConfig().getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
 					/* Element, dessen Wert geändert werden soll */
-					String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
-					ConfigOpacCatalogueBeautifierElement oteChange = new ConfigOpacCatalogueBeautifierElement(
-							getConfig().getString(tempJ + "[@tag]"), getConfig().getString(tempJ + "[@subtag]"),
-							getConfig().getString(tempJ + "[@value]").replaceAll("\u2423", " "), getConfig().getString(
-									tempJ + "[@mode]", "replace"));
+					String prefix = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
+					String tag = getConfig().getString(prefix + "[@tag]");
+					String subtag = getConfig().getString(prefix + "[@subtag]");
+					String value = getConfig().getString(prefix + "[@value]").replaceAll("\u2423", " ");
+					String mode = getConfig().getString(prefix + "[@mode]", "replace");
 
 					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert werden soll
 
-					ArrayList<ConfigOpacCatalogueBeautifierElement> proofElements = new ArrayList<>();
-					for (int k = 0; k <= getConfig().getMaxIndex(tempJ + ".condition"); k++) {
-						String tempK = tempJ + ".condition(" + k + ")";
-						ConfigOpacCatalogueBeautifierElement oteProof = new ConfigOpacCatalogueBeautifierElement(
+					ArrayList<Condition> proofElements = new ArrayList<>();
+					for (int k = 0; k <= getConfig().getMaxIndex(prefix + ".condition"); k++) {
+						String tempK = prefix + ".condition(" + k + ")";
+						Condition oteProof = new Condition(
 								getConfig().getString(tempK + "[@tag]"), getConfig().getString(tempK + "[@subtag]"),
 								getConfig().getString(tempK + "[@value]").replaceAll("\u2423", " "), getConfig()
 										.getString(tempK + "[@mode]", "matches"));
 						proofElements.add(oteProof);
 					}
-					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
+					beautyList.add(new Setvalue(tag, subtag, value, mode, proofElements));
 				}
 
 				return new Catalogue(title, description, address, database, port, charset, ucnf, beautyList);

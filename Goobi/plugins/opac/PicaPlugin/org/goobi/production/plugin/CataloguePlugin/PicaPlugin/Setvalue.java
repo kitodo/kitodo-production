@@ -11,17 +11,27 @@
 
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-class ConfigOpacCatalogueBeautifierElement {
+import java.util.*;
+
+/**
+ * die OpacBeautifier dienen zur Manipulation des Ergebnisses, was als Treffer
+ * einer Opacabfrage zurückgegeben wird. Dabei soll die Eigenschaft eines Wertes
+ * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
+ */
+class Setvalue {
 	private final String tag;
 	private final String subtag;
 	private final String value;
 	private final String mode;
+	private final List<Condition> conditions;
 
-	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value, String mode) {
+	Setvalue(String tag, String subtag, String value, String mode,
+			List<Condition> conditions) {
 		this.tag = tag;
 		this.subtag = subtag;
 		this.value = value;
-		this.mode = mode;
+		this.mode = mode;		
+		this.conditions = conditions;
 	}
 
 	String getTag() {
@@ -39,9 +49,8 @@ class ConfigOpacCatalogueBeautifierElement {
 	String getMode() {
 		return mode;
 	}
-
-	@Override
-	public String toString() {
-		return tag + " - " + subtag + " : " + value;
+	
+	List<Condition> getConditions() {
+		return conditions;
 	}
 }

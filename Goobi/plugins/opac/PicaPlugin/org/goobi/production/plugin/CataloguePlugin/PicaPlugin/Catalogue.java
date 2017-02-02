@@ -41,17 +41,17 @@ class Catalogue {
 	private final int port;
 	private final String ucnf;
 	private final String charset;
-	private final List<ConfigOpacCatalogueBeautifier> beautifySetList;
+	private final List<Setvalue> beautify;
 	
 	Catalogue(String title, String description, String address, String database, int port, String charset,
-			String ucnf, List<ConfigOpacCatalogueBeautifier> beautifySetList) {
+			String ucnf, List<Setvalue> beautifySetList) {
 
 		this.title = title;
 		this.description = description;
 		this.address = address;
 		this.database = database;
 		this.port = port;
-		this.beautifySetList = beautifySetList;
+		this.beautify = beautifySetList;
 		this.charset = charset;
 		this.ucnf = ucnf;
 	}
@@ -127,7 +127,7 @@ class Catalogue {
 	 */
 	@SuppressWarnings("unchecked")
 	private void executeBeautifierForElement(Element el) {
-		for (ConfigOpacCatalogueBeautifier beautifier : beautifySetList) {
+		for (Setvalue setvalue : beautify) {
 			int moreOccurrences;
 			HashSet<Element> processed = new HashSet<>();
 			do {
@@ -135,9 +135,9 @@ class Catalogue {
 			Element tagged = null;
 			moreOccurrences = 0;
 			boolean merelyCount = false;
-			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
-			ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<>(beautifier
-					.getTagElementsToProof());
+			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann) */
+			ArrayList<Condition> conditions = new ArrayList<>(setvalue
+					.getConditions());
 			/* von jedem Record jedes Field durchlaufen */
 			List<Element> elements = el.getChildren("field");
 			Matcher matcher = null;
@@ -149,11 +149,11 @@ class Catalogue {
 					String subtag = subfield.getAttributeValue("code");
 					String value = subfield.getText();
 
-					if (beautifier.getTagElementToChange().getTag().equals(tag)) {
+					if (setvalue.getTag().equals(tag)) {
 						if (!merelyCount) {
 							tagged = field;
 						}
-						if (beautifier.getTagElementToChange().getSubtag().equals(subtag) && !processed.contains(subfield)) {
+						if (setvalue.getSubtag().equals(subtag) && !processed.contains(subfield)) {
 							if(!merelyCount) {
 								elementToChange = subfield;
 							}
@@ -161,17 +161,17 @@ class Catalogue {
 						}
 					}
 					/*
-					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen, dieses aus der Liste der Beautifier
+					 * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beautifier-Felder stehen, dieses aus der Liste der Beautifier
 					 * entfernen
 					 */
 					if(!merelyCount){
-					for (ConfigOpacCatalogueBeautifierElement cocbe : beautifier.getTagElementsToProof()) {
-							if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)
+					for (Condition condition : setvalue.getConditions()) {
+							if (condition.getTag().equals(tag) && condition.getSubtag().equals(subtag)
 									&& !processed.contains(subfield)) {
-							matcher = Pattern.compile(cocbe.getValue()).matcher(value);
-							if ((cocbe.getMode().equals("matches") && matcher.matches()) || matcher.find()) {
-								prooflist.remove(cocbe);
-								if ((prooflist.size() == 0) && subfield.equals(elementToChange)){
+							matcher = Pattern.compile(condition.getValue()).matcher(value);
+							if ((condition.getMode().equals("matches") && matcher.matches()) || matcher.find()) {
+								conditions.remove(condition);
+								if ((conditions.size() == 0) && subfield.equals(elementToChange)){
 									merelyCount = true;
 								}
 							}
@@ -184,28 +184,28 @@ class Catalogue {
 			 * --------------------- wenn in der Kopie der zu prüfenden Elemente keine Elemente mehr enthalten sind, kann der zu ändernde Wert
 			 * wirklich geändert werden -------------------
 			 */
-			if (prooflist.size() == 0) {
+			if (conditions.size() == 0) {
 				if (elementToChange == null) {
 					if (tagged == null) {
 						tagged = new Element("field");
-						tagged.setAttribute("tag", beautifier.getTagElementToChange().getTag());
+						tagged.setAttribute("tag", setvalue.getTag());
 						el.addContent(tagged);
 					}
 					elementToChange = new Element("subfield");
-					elementToChange.setAttribute("code", beautifier.getTagElementToChange().getSubtag());
+					elementToChange.setAttribute("code", setvalue.getSubtag());
 					tagged.addContent(elementToChange);
 				}
-				if (beautifier.getTagElementToChange().getMode().equals("replace")) {
-					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher));
-				} else if (beautifier.getTagElementToChange().getMode().equals("prepend")) {
-					elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher).concat(
+				if (setvalue.getMode().equals("replace")) {
+					elementToChange.setText(fillIn(setvalue.getValue(), matcher));
+				} else if (setvalue.getMode().equals("prepend")) {
+					elementToChange.setText(fillIn(setvalue.getValue(), matcher).concat(
 							elementToChange.getText()));
-				} else if (beautifier.getTagElementToChange().getMode().equals("unescapeXml")) {
-					elementToChange.setText(StringEscapeUtils.unescapeXml(fillIn(beautifier.getTagElementToChange()
+				} else if (setvalue.getMode().equals("unescapeXml")) {
+					elementToChange.setText(StringEscapeUtils.unescapeXml(fillIn(setvalue
 							.getValue(), matcher)));
 				} else {
 					elementToChange.setText(elementToChange.getText().concat(
-							fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
+							fillIn(setvalue.getValue(), matcher)));
 				}
 			}
 			if(elementToChange != null) {
