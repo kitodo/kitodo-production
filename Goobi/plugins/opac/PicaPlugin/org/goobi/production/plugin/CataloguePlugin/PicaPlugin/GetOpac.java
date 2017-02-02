@@ -133,9 +133,9 @@ class GetOpac {
 
 	GetOpac(Catalogue catalogue) throws ParserConfigurationException {
 		super();
-		this.opacClient = new HttpClient();
+		opacClient = new HttpClient();
 		this.catalogue = catalogue;
-		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	}
 
 	// MANIPULATION (Manipulation - what the object does) ******************
@@ -157,7 +157,7 @@ class GetOpac {
 	 **********************************************************************/
 	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException, ParserConfigurationException {
 		getResult(query, timeout);
-		return this.lastOpacResult.getNumberOfHits();
+		return lastOpacResult.getNumberOfHits();
 	}
 
 	/**
@@ -233,17 +233,17 @@ class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + this.charset + this.catalogue.getDatabase() + this.catalogue.getAddress()
-				+ this.catalogue.getPort() + this.catalogue.getUncf();
+		String querySummary = query.getQueryUrl() + charset + catalogue.getDatabase() + catalogue.getAddress()
+				+ catalogue.getPort() + catalogue.getUncf();
 
 		// if we can not use the cached result
-		if (!this.lastQuery.equals(querySummary)) {
+		if (!lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
 			getResult(query, timeout);
 		}
 
 		// make sure that upper limit of requested hits is not to high
-		int maxNumberOfHits = this.lastOpacResult.getNumberOfHits();
+		int maxNumberOfHits = lastOpacResult.getNumberOfHits();
 		if (end > maxNumberOfHits) {
 			end = maxNumberOfHits;
 		}
@@ -277,8 +277,8 @@ class GetOpac {
 	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
-		return retrieveDataFromOPAC(DATABASE_URL + this.catalogue.getDatabase() + PICAPLUS_XML_URL + this.charset
-				+ SET_ID_URL + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
+		return retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL + charset
+				+ SET_ID_URL + lastOpacResult.getSet() + SESSIONID_URL + lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
 
@@ -298,20 +298,20 @@ class GetOpac {
 			ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + this.charset + this.catalogue.getDatabase() + this.catalogue.getAddress()
-				+ this.catalogue.getPort() + this.catalogue.getUncf();
+		String querySummary = query.getQueryUrl() + charset + catalogue.getDatabase() + catalogue.getAddress()
+				+ catalogue.getPort() + catalogue.getUncf();
 
-		if (this.lastQuery.equals(querySummary)) {
-			return this.lastOpacResult;
+		if (lastQuery.equals(querySummary)) {
+			return lastOpacResult;
 		}
-		result = retrieveDataFromOPAC(DATABASE_URL + this.catalogue.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
-				+ this.charset + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
+		result = retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
+				+ charset + SEARCH_URL_BEFORE_QUERY + sorting + query.getQueryUrl(), timeout);
 
 		OpacResponseHandler opacResult = parseOpacResponse(result);
 
 		// Caching query, result and sessionID
-		this.lastQuery = querySummary;
-		this.lastOpacResult = opacResult;
+		lastQuery = querySummary;
+		lastOpacResult = opacResult;
 
 		return opacResult;
 	}
@@ -388,7 +388,7 @@ class GetOpac {
 	 */
 	private Document getParsedDocument(InputSource source) {
 		try {
-			return this.docBuilder.parse(source);
+			return docBuilder.parse(source);
 		} catch (SAXException e) {
 			logger.info("Dokument?");
 
@@ -421,7 +421,7 @@ class GetOpac {
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
 		// set timeout if a connection is established but there is no response (= time the database needs to search)
-		if (timeout > 0 && timeout <= Integer.MAX_VALUE) {
+		if ((timeout > 0) && (timeout <= Integer.MAX_VALUE)) {
 			opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
 		}
 		else {

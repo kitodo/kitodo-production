@@ -539,7 +539,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- wenn es ein multivolume ist, dann
 		 * auch die PPN prüfen --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
 			if (gattung.toLowerCase().startsWith("o")) {
@@ -558,7 +558,7 @@ public class PicaPlugin implements Plugin {
 		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer
 		 * Stelle nachsehen (vor allem bei Contained-Work)
 		 */
-		if (myTitle == null || myTitle.length() == 0) {
+		if ((myTitle == null) || (myTitle.length() == 0)) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
 		}
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
@@ -576,7 +576,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- bei multivolumes den Main-Title
 		 * bereinigen --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
 		}
@@ -585,7 +585,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- bei multivolumes den Sorting-Titel
 		 * mit Umlaut-Konvertierung --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
 			if (sortingTitleMulti.indexOf("@") != -1) {
 				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
@@ -606,7 +606,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- bei multivolumes die Sprachen -
 		 * Konvertierung auf zwei Stellen --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			Iterable<String> sprachenMulti = getElementFieldValues(mySecondHit, "010@", "a");
 			sprachenMulti = UGHUtils.convertLanguages(sprachenMulti);
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", sprachenMulti);
@@ -670,7 +670,7 @@ public class PicaPlugin implements Plugin {
 		 * PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
-		if (cod.isPeriodical() && topstruct.getAllChildren() == null) {
+		if (cod.isPeriodical() && (topstruct.getAllChildren() == null)) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
 				DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
@@ -734,7 +734,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	@SuppressWarnings("unchecked")
 	private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName, String inAttributeName) {
-		LinkedList<String> result = new LinkedList<String>();
+		LinkedList<String> result = new LinkedList<>();
 		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
@@ -788,7 +788,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	@SuppressWarnings("unchecked")
 	private static Collection<String> getFieldValues(Element inElement, String attributeValue) {
-		List<String> rueckgabe = new LinkedList<String>();
+		List<String> rueckgabe = new LinkedList<>();
 
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
 			Element subElement = iter.next();
@@ -817,7 +817,7 @@ public class PicaPlugin implements Plugin {
 	private static Map<String, Object> createResult(String docType, Element hit, Fileformat fileformat) {
 		final LocalTime DAY_END = new LocalTime(23, 59, 59, 999);
 
-		Map<String, Object> result = new HashMap<String, Object>(20);
+		Map<String, Object> result = new HashMap<>(20);
 		LocalDate today = new LocalDate();
 
 		result.put("fileformat", fileformat);
@@ -875,23 +875,23 @@ public class PicaPlugin implements Plugin {
 		result.put("series", getElementFieldValue(hit, "036E", "a"));
 
 		String subseries = getElementFieldValue(hit, "021A", "d");
-		if (subseries == null || subseries.length() == 0) {
+		if ((subseries == null) || (subseries.length() == 0)) {
 			subseries = getElementFieldValue(hit, "021B", "d");
 		}
-		if (subseries == null || subseries.length() == 0) {
+		if ((subseries == null) || (subseries.length() == 0)) {
 			subseries = getElementFieldValue(hit, "027D", "d");
 		}
 		result.put("subseries", subseries);
 
 		String title = getElementFieldValue(hit, "021A", "a");
-		if (title == null || title.length() == 0) {
+		if ((title == null) || (title.length() == 0)) {
 			title = getElementFieldValue(hit, "021B", "a");
 		}
-		if (title == null || title.length() == 0) {
+		if ((title == null) || (title.length() == 0)) {
 			title = getElementFieldValue(hit, "027D", "a");
 		}
 		String titleLong = getElementFieldValue(hit, "021A", "d");
-		if (titleLong != null && titleLong.length() > 0) {
+		if ((titleLong != null) && (titleLong.length() > 0)) {
 			title = title + " : " + titleLong;
 		}
 		result.put("title", title.replaceAll("@", ""));
@@ -1012,7 +1012,7 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getAllConfigDocTypes()
 	 */
 	public static List<String> getAllConfigDocTypes() {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
 			result.add(cod.getTitle());
 		}
@@ -1030,10 +1030,10 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
-		this.catalogue = ConfigOpac.getCatalogueByName(catalogueID);
+		catalogue = ConfigOpac.getCatalogueByName(catalogueID);
 		GetOpac catalogueClient = new GetOpac(catalogue);
 		catalogueClient.setCharset(catalogue.getCharset());
-		this.client = catalogueClient;
+		client = catalogueClient;
 	}
 
 	/**
@@ -1048,7 +1048,7 @@ public class PicaPlugin implements Plugin {
 	 * @throws InvalidActivityException
 	 */
 	public HashMap<String, String> getSearchFields(String catalogueName) throws InvalidActivityException {
-		LinkedHashMap<String, String> searchFields = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> searchFields = new LinkedHashMap<>();
 		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
 			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
 				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
@@ -1079,7 +1079,7 @@ public class PicaPlugin implements Plugin {
 	 * @return Map containing the filter institutions of the selected OPAC
 	 */
 	public HashMap<String, String> getInstitutions(String catalogueName) {
-		LinkedHashMap<String, String> institutions = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> institutions = new LinkedHashMap<>();
 		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
 			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
 				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;

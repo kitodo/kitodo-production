@@ -29,10 +29,10 @@ class ConfigOpacCatalogueBeautifier {
 	}
 
 	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
-		return this.tagElementToChange;
+		return tagElementToChange;
 	}
 
 	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
-		return this.tagElementsToProof;
+		return tagElementsToProof;
 	}
 }

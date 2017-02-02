@@ -59,7 +59,7 @@ class UGHUtils {
 	 */
 	private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, String inValue) {
 		/* wenn kein Wert vorhanden oder das DocStruct null, dann gleich raus */
-		if (inValue.equals("") || inStruct == null || inStruct.getType() == null) {
+		if (inValue.equals("") || (inStruct == null) || (inStruct.getType() == null)) {
 			return;
 		}
 		/* andernfalls dem DocStruct das passende Metadatum zuweisen */
@@ -120,7 +120,7 @@ class UGHUtils {
 		if (mdt == null) {
 			return;
 		}
-		if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
+		if ((inStruct != null) && (inStruct.getAllMetadataByType(mdt).size() > 0)) {
 			// TODO: Use for loops
 			for (Iterator<? extends Metadata> iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
 				Metadata md = iter.next();
@@ -153,7 +153,7 @@ class UGHUtils {
 		if (mdt == null) {
 			return;
 		}
-		if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
+		if ((inStruct != null) && (inStruct.getAllMetadataByType(mdt).size() > 0)) {
 			// TODO: Use for loops
 			for (Iterator<? extends Metadata> iter = inStruct.getAllMetadataByType(mdt).iterator(); iter.hasNext();) {
 				Metadata md = iter.next();
@@ -185,7 +185,7 @@ class UGHUtils {
 		try (BufferedReader in = open(PicaPlugin.LANGUAGES_MAPPING_FILE)) {
 			String str;
 			while ((str = in.readLine()) != null) {
-				if (str.length() > 0 && str.split(" ")[1].equals(inLanguage)) {
+				if ((str.length() > 0) && str.split(" ")[1].equals(inLanguage)) {
 					in.close();
 					return str.split(" ")[0];
 				}
@@ -207,7 +207,7 @@ class UGHUtils {
 	 * @return replacements
 	 */
 	static Iterable<String> convertLanguages(Iterable<String> inLanguages) {
-		LinkedList<String> result = new LinkedList<String>();
+		LinkedList<String> result = new LinkedList<>();
 		for (String inLanguage : inLanguages) {
 			result.add(convertLanguage(inLanguage));
 		}
@@ -230,8 +230,6 @@ class UGHUtils {
 	 *             if the file does not exist, is a directory rather than a
 	 *             regular file, or for some other reason cannot be opened for
 	 *             reading
-	 * @throws UnsupportedEncodingException
-	 *             If the named charset is not supported
 	 */
 	private static BufferedReader open(String fileName) throws IOException {
 		String path = PicaPlugin.getConfigDir();

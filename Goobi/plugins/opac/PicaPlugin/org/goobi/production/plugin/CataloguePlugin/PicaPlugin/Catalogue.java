@@ -43,11 +43,11 @@ class Catalogue {
 	private final String charset;
 	private final List<ConfigOpacCatalogueBeautifier> beautifySetList;
 	
-	Catalogue(String title, String desciption, String address, String database, int port, String charset,
+	Catalogue(String title, String description, String address, String database, int port, String charset,
 			String ucnf, List<ConfigOpacCatalogueBeautifier> beautifySetList) {
 
 		this.title = title;
-		this.description = desciption;
+		this.description = description;
 		this.address = address;
 		this.database = database;
 		this.port = port;
@@ -57,27 +57,27 @@ class Catalogue {
 	}
 
 	String getTitle() {
-		return this.title;
+		return title;
 	}
 
 	String getDescription() {
-		return this.description;
+		return description;
 	}
 
 	String getAddress() {
-		return this.address;
+		return address;
 	}
 
 	String getDatabase() {
-		return this.database;
+		return database;
 	}
 
 	int getPort() {
-		return this.port;
+		return port;
 	}
 
 	String getCharset() {
-		return this.charset;
+		return charset;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -127,16 +127,16 @@ class Catalogue {
 	 */
 	@SuppressWarnings("unchecked")
 	private void executeBeautifierForElement(Element el) {
-		for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
+		for (ConfigOpacCatalogueBeautifier beautifier : beautifySetList) {
 			int moreOccurrences;
-			HashSet<Element> processed = new HashSet<Element>();
+			HashSet<Element> processed = new HashSet<>();
 			do {
 			Element elementToChange = null;
 			Element tagged = null;
 			moreOccurrences = 0;
 			boolean merelyCount = false;
 			/* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
-			ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<ConfigOpacCatalogueBeautifierElement>(beautifier
+			ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<>(beautifier
 					.getTagElementsToProof());
 			/* von jedem Record jedes Field durchlaufen */
 			List<Element> elements = el.getChildren("field");
@@ -150,9 +150,13 @@ class Catalogue {
 					String value = subfield.getText();
 
 					if (beautifier.getTagElementToChange().getTag().equals(tag)) {
-						if (!merelyCount) tagged = field;
+						if (!merelyCount) {
+							tagged = field;
+						}
 						if (beautifier.getTagElementToChange().getSubtag().equals(subtag) && !processed.contains(subfield)) {
-							if(!merelyCount) elementToChange = subfield;
+							if(!merelyCount) {
+								elementToChange = subfield;
+							}
 							moreOccurrences++;
 						}
 					}
@@ -165,9 +169,9 @@ class Catalogue {
 							if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)
 									&& !processed.contains(subfield)) {
 							matcher = Pattern.compile(cocbe.getValue()).matcher(value);
-							if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
+							if ((cocbe.getMode().equals("matches") && matcher.matches()) || matcher.find()) {
 								prooflist.remove(cocbe);
-								if (prooflist.size() == 0 && subfield.equals(elementToChange)){
+								if ((prooflist.size() == 0) && subfield.equals(elementToChange)){
 									merelyCount = true;
 								}
 							}
@@ -274,7 +278,7 @@ class Catalogue {
 	}
 
 	String getUncf() {
-		return this.ucnf;
+		return ucnf;
 	}
 
 }
