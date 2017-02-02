@@ -13,9 +13,8 @@ package de.sub.goobi.metadaten;
 
 import org.goobi.io.SafeFile;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -35,6 +34,9 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+import org.kitodo.production.lugh.AuthorityFileUtil;
+import org.kitodo.production.lugh.ld.*;
+import com.hp.hpl.jena.shared.JenaException;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -385,8 +387,7 @@ public class Metadaten {
 			} else {
 				authorityURI = valueURI.substring(0, boundary + 1);
 				if (!authorityURI.equals(valueURI)) {
-					authority = ConfigMain.getParameter(
-							Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+					authority = new Parameters(ConfigMain.toMap()).getNamespacePrefixes(false, true).get(authorityURI);
 				}
 			}
 		}
@@ -3238,5 +3239,44 @@ public class Metadaten {
 	 */
 	public Collection<Separator> getPaginierungSeparators() {
 		return paginierungSeparators.getItems();
+	}
+
+	/**
+	 * Updates a meta-data group with the data retrieved from an authority
+	 * database.
+	 * 
+	 * @param metaDataGroup
+	 *            meta-data group to update
+	 */
+	public void updateMetadataGroupFromAuthorityFile(MetadataGroup metaDataGroup) {
+		try {
+			Parameters parameters = new Parameters(ConfigMain.toMap());
+			Map<String, String> namespaces = parameters.getNamespacePrefixes(true, true);
+			String recordURI = AuthorityFileUtil.getRecordURI(metaDataGroup);
+			Node record = AuthorityFileUtil.downloadAuthorityRecord(recordURI);
+
+			String debugFolderPath = ConfigMain.getParameter("debugFolder", null);
+			if (debugFolderPath != null) {
+				File debugFolder = new File(debugFolderPath);
+				if (debugFolder.exists() && debugFolder.canWrite()) {
+					SerializationFormat.TURTLE.write(record, namespaces, new File(debugFolder, "authorityResult.ttl"));
+				}
+			}
+
+			Map<String, String> mapping = parameters.getAuthorityMapping();
+			for (Metadata metaDatum : metaDataGroup.getMetadataList()) {
+				if (metaDatum.getType() != null) {
+					if (mapping.containsKey(metaDatum.getType().getName())) {
+						String gpath = mapping.get(metaDatum.getType().getName());
+						Result result = record.find(new GraphPath(gpath, namespaces));
+						metaDatum.setValue(result.strings(" ; ", true));
+					}
+				}
+			}
+		} catch (IOException | JenaException | LinkedDataException | URISyntaxException e) {
+			Helper.setFehlerMeldung("getNormDataRecordFailed",
+				e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()
+			);
+		}
 	}
 }

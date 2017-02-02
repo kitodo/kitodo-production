@@ -12,6 +12,7 @@
 package de.sub.goobi.config;
 
 import java.io.File;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -186,5 +187,25 @@ public class ConfigMain {
 	public static String[] getStringArrayParameter(String inParameter) {
 		
 		return getConfig().getStringArray(inParameter);
+	}
+
+	/**
+	 * Returns a map containing the application’s configuration.
+	 * 
+	 * @return a map containing the configuration
+	 */
+	public static Map<String, String> toMap() {
+		Map<String, String> result = new HashMap<>();
+		PropertiesConfiguration config = getConfig();
+		Iterator<?> keyIterator = config.getKeys();
+		while (keyIterator.hasNext()) {
+			Object nextKey = keyIterator.next();
+			if (!(nextKey instanceof String)) {
+				continue;
+			}
+			String key = (String) nextKey;
+			result.put(key, config.getString(key));
+		}
+		return result;
 	}
 }

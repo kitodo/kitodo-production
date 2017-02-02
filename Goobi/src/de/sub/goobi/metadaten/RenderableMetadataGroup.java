@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.production.lugh.AuthorityFileUtil;
 
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
@@ -274,7 +275,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Invokes the metadata editor to delete the metadata group under edit in
+	 * Invokes the metadata editor to delete the meta-data group under edit in
 	 * this instance from the logical document structure node currently under
 	 * edit.
 	 * 
@@ -288,6 +289,13 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 		container.removeMetadataGroupFromCurrentDocStruct(metadataGroup);
 	}
 
+	/**
+	 * Updates this meta-data group with data retrieved from an authority file.
+	 */
+	public void downloadMetadata() {
+		container.updateMetadataGroupFromAuthorityFile(metadataGroup);
+	}
+	
 	/**
 	 * The function getMembers returns the input elements of this metadata
 	 * group.
@@ -356,17 +364,29 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 	}
 
 	/**
-	 * Returns whether another instance of the metadata group type under edit in
-	 * this instance can be created on the logical document structure node
+	 * Returns whether another instance of the meta-data group type under edit
+	 * in this instance can be created on the logical document structure node
 	 * currently under edit in the metadata editor to either render the action
 	 * link to copy this metadata group, or not.
 	 * 
-	 * @return the internal name of the metadata group type
+	 * @return whether another instance of this meta-data group type can be
+	 *         created in this hierarchical structure layer
 	 */
 	public boolean isCopyable() {
 		return container != null && container.canCreate(type);
 	}
 
+	/**
+	 * Returns whether this meta-data group has a known identifier field which
+	 * allows to download meta-data from an authority file into it.
+	 * 
+	 * @return whether this meta-data group can be updated from an authority
+	 *         file
+	 */
+	public boolean isDownloadable() {
+		return AuthorityFileUtil.getRecordURI(metadataGroup) != null;
+	}
+	
 	/**
 	 * The procedure setLanguage() extends the setter function from
 	 * RenderableMetadatum because if setLanguage() is called for a metadata

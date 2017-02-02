@@ -439,7 +439,9 @@
     <target name="junit" depends="compile-tests" description="Run JUnit tests">
         <junit printsummary="on" fork="yes" forkmode="once" haltonerror="true" haltonfailure="true">
             <classpath refid="test.classpath"/>
+            <assertions><enable/></assertions>
             <formatter type="xml" usefile="true"/>
+            <formatter type="plain" usefile="false" />
             <batchtest todir="${test.report.dir}">
                 <fileset dir="${build.classes.test}" includes="**/*Test.class"/>
             </batchtest>
