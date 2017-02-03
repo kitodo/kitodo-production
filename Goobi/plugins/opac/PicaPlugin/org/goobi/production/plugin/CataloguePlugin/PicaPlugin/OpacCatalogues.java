@@ -13,12 +13,9 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.*;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
 
@@ -59,50 +56,61 @@ class OpacCatalogues {
 	 * find Catalogue in Opac-Configurationlist
 	 * ================================================================
 	 */
+	@SuppressWarnings("unchecked")
 	static Catalogue getCatalogueByName(String inTitle) {
-		int countCatalogues = getConfig().getMaxIndex("catalogue");
+		XMLConfiguration config = getConfig();
+		int countCatalogues = config.getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
-			String title = getConfig().getString("catalogue(" + i + ")[@title]");
+			String title = config.getString("catalogue(" + i + ")[@title]");
 			if (title.equals(inTitle)) {
-				String description = getConfig().getString("catalogue(" + i + ").config[@description]");
-				String address = getConfig().getString("catalogue(" + i + ").config[@address]");
-				String database = getConfig().getString("catalogue(" + i + ").config[@database]");
-				String ucnf = getConfig().getString("catalogue(" + i + ").config[@ucnf]", "");
+				String description = config.getString("catalogue(" + i + ").config[@description]");
+				String address = config.getString("catalogue(" + i + ").config[@address]");
+				String database = config.getString("catalogue(" + i + ").config[@database]");
+				String ucnf = config.getString("catalogue(" + i + ").config[@ucnf]", "");
 				if (!ucnf.equals("")) {
 					ucnf = "&" + ucnf;
 				}
-				int port = getConfig().getInt("catalogue(" + i + ").config[@port]");
+				int port = config.getInt("catalogue(" + i + ").config[@port]");
 				String charset = "iso-8859-1";
-				if (getConfig().getString("catalogue(" + i + ").config[@charset]") != null) {
-					charset = getConfig().getString("catalogue(" + i + ").config[@charset]");
+				if (config.getString("catalogue(" + i + ").config[@charset]") != null) {
+					charset = config.getString("catalogue(" + i + ").config[@charset]");
 				}
 
 				// Opac-Beautifier einlesen und in Liste zu jedem Catalogue packen
 
 				ArrayList<Setvalue> beautyList = new ArrayList<>();
-				for (int j = 0; j <= getConfig().getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
+				for (int j = 0; j <= config.getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
 					/* Element, dessen Wert geändert werden soll */
 					String prefix = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
-					String tag = getConfig().getString(prefix + "[@tag]");
-					String subtag = getConfig().getString(prefix + "[@subtag]");
-					String value = getConfig().getString(prefix + "[@value]").replaceAll("\u2423", " ");
-					String mode = getConfig().getString(prefix + "[@mode]", "replace");
+					String tag = config.getString(prefix + "[@tag]");
+					String subtag = config.getString(prefix + "[@subtag]");
+					String value = config.getString(prefix + "[@value]").replaceAll("\u2423", " ");
+					String mode = config.getString(prefix + "[@mode]", "replace");
 
 					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert werden soll
 
 					ArrayList<Condition> proofElements = new ArrayList<>();
-					for (int k = 0; k <= getConfig().getMaxIndex(prefix + ".condition"); k++) {
+					for (int k = 0; k <= config.getMaxIndex(prefix + ".condition"); k++) {
 						String tempK = prefix + ".condition(" + k + ")";
 						Condition oteProof = new Condition(
-								getConfig().getString(tempK + "[@tag]"), getConfig().getString(tempK + "[@subtag]"),
-								getConfig().getString(tempK + "[@value]").replaceAll("\u2423", " "), getConfig()
+								config.getString(tempK + "[@tag]"), config.getString(tempK + "[@subtag]"),
+								config.getString(tempK + "[@value]").replaceAll("\u2423", " "), config
 										.getString(tempK + "[@mode]", "matches"));
 						proofElements.add(oteProof);
 					}
 					beautyList.add(new Setvalue(tag, subtag, value, mode, proofElements));
 				}
+				
+				// Read resolve rules
 
-				return new Catalogue(title, description, address, database, port, charset, ucnf, beautyList);
+				Collection<ResolveRule> resolveRules = new LinkedList<>();
+				for (HierarchicalConfiguration resolve : (List<HierarchicalConfiguration>) config
+						.configurationsAt("catalogue(" + i + ").resolve")) {
+					resolveRules.add(new ResolveRule(resolve));
+				}
+
+				return new Catalogue(title, description, address, database, port, charset, ucnf, beautyList,
+						resolveRules);
 			}
 		}
 		return null;

@@ -14,6 +14,7 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,8 +25,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -106,6 +106,8 @@ class CatalogueClient {
 
 	private Response lastOpacResult = null;
 
+	private long timeout;
+
 	// CREATION (Constructors, factory methods, static/inst init)
 
 	/**
@@ -139,15 +141,14 @@ class CatalogueClient {
 	 * 
 	 * @param query
 	 *            The query string you are looking for.
-	 * @param timeout
 	 * @return returns the number of hits.
 	 * @throws Exception
 	 *             If something is wrong with the query
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 */
-	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException, ParserConfigurationException {
-		getResult(query, timeout);
+	int getNumberOfHits(Query query) throws IOException, SAXException, ParserConfigurationException {
+		getResult(query);
 		return lastOpacResult.getNumberOfHits();
 	}
 
@@ -163,15 +164,14 @@ class CatalogueClient {
 	 * @param numberOfHits
 	 *            the number of hits to return. Set to a value lesser than 1 to
 	 *            return all hits.
-	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	Node retrievePicaNode(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	Node retrievePicaNode(Query query, int numberOfHits)
+			throws IOException, SAXException, ParserConfigurationException {
 		return retrievePicaNode(query, 0, numberOfHits < 1 ? -1 : numberOfHits, timeout);
 	}
 
@@ -192,10 +192,49 @@ class CatalogueClient {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	Node retrievePicaNode(Query query, int start, int end, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
-		return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
+	Node retrievePicaNode(Query query, int start, int end, long timeout)
+			throws IOException, SAXException, ParserConfigurationException {
+		Element doc = getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
 				.getDocumentElement();
+		applyResolveRules(catalogue.getResolveRules(), doc, this);
+		return doc;
+	}
+
+	/**
+	 * Apply resolve rules on a result note set.
+	 * 
+	 * @param rules
+	 *            Rules to apply
+	 * @param root
+	 *            rot node to examine
+	 * @param client
+	 *            catalogue client to use for queries
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private void applyResolveRules(Map<String, ResolveRule> rules, Element root, CatalogueClient client)
+			throws IOException, SAXException, ParserConfigurationException {
+		for (Node node : new GetChildren(root)) {
+			if (node instanceof Element) {
+				Element field = (Element) node;
+				if (field.getNodeName().equals("field")) {
+					String tag = field.getAttributeNode("tag").getTextContent();
+					for (Node subnoed : new GetChildren(field)) {
+						if (subnoed instanceof Element && subnoed.getNodeName().equals("subfield")) {
+							Element subfield = (Element) subnoed;
+							String subtag = field.getAttributeNode("code").getTextContent();
+							String ruleID = ResolveRule.getIdentifier(tag, subtag);
+							if (rules.containsKey(ruleID)) {
+								rules.get(ruleID).execute(subfield, client, field);
+							}
+						}
+					}
+				} else {
+					applyResolveRules(rules, field, client);
+				}
+			}
+		}
 	}
 
 	/**
@@ -218,19 +257,19 @@ class CatalogueClient {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	private String retrievePica(Query query, int start, int end, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	private String retrievePica(Query query, int start, int end, long timeout)
+			throws IOException, SAXException, ParserConfigurationException {
 		StringBuffer xmlResult = new StringBuffer();
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
-				+ catalogue.getPort() + catalogue.getUncf();
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase()
+				+ catalogue.getAddress() + catalogue.getPort() + catalogue.getUncf();
 
 		// if we can not use the cached result
 		if (!lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
-			getResult(query, timeout);
+			getResult(query);
 		}
 
 		// make sure that upper limit of requested hits is not to high
@@ -278,19 +317,17 @@ class CatalogueClient {
 	 * 
 	 * @param query
 	 *            The query you are looking for.
-	 * @param timeout
 	 * @return The search result as xml string.
 	 * @throws IOException
 	 *             If connection to catalogue system failed.
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	private Response getResult(Query query, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	private Response getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
-				+ catalogue.getPort() + catalogue.getUncf();
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase()
+				+ catalogue.getAddress() + catalogue.getPort() + catalogue.getUncf();
 
 		if (lastQuery.equals(querySummary)) {
 			return lastOpacResult;
@@ -406,16 +443,17 @@ class CatalogueClient {
 	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
 		String request = "http://" + catalogue.getAddress()
-				+ (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url + catalogue.getUncf();
+				+ (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url
+				+ catalogue.getUncf();
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
-		// set timeout if a connection is established but there is no response (= time the database needs to search)
+		// set timeout if a connection is established but there is no response
+		// (= time the database needs to search)
 		if ((timeout > 0) && (timeout <= Integer.MAX_VALUE)) {
 			opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
-		}
-		else {
+		} else {
 			opacClient.getParams().setParameter("http.socket.timeout", 0); // disable
 		}
 
@@ -431,8 +469,8 @@ class CatalogueClient {
 		}
 	}
 
-	private Response parseOpacResponse(String opacResponse) throws IOException, SAXException,
-			ParserConfigurationException {
+	private Response parseOpacResponse(String opacResponse)
+			throws IOException, SAXException, ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
 				.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
 
@@ -447,5 +485,9 @@ class CatalogueClient {
 		parser.parse(new InputSource(new StringReader(opacResponse)));
 
 		return ids;
+	}
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 }

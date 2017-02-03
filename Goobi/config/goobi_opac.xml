@@ -39,6 +39,9 @@
 			<searchField label="Barcode" value="8535" />
 			<searchField label="Barcode 8200" value="8200" />
 		</searchFields>
+		<resolve tag="028C" subtag="9">
+			<map tag="003U" subtag="a" asSubtag="g" />
+		</resolve>
 	</catalogue>
 	<catalogue title="ZDB">
 		<config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" port="80" />

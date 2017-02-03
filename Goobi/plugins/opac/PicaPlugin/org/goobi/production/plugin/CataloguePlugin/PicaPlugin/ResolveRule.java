@@ -1,9 +1,24 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
+import java.util.regex.*;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 /**
  * Resolve rules are used to import data from a related record into a PICA
@@ -49,6 +64,19 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
  */
 class ResolveRule {
 	/**
+	 * Returns an identifier for a resolve rule.
+	 * 
+	 * @param tag
+	 *            PICA field tag
+	 * @param subtag
+	 *            PICA subfield code
+	 * @return an identifier for a resolve rule
+	 */
+	static String getIdentifier(String tag, String subtag) {
+		return tag + '.' + subtag;
+	}
+
+	/**
 	 * Creates a new resolve rule from the XML configuration. The attributes
 	 * {@code tag} and {@code subtag} are required. The attributes
 	 * {@code searchField} is optional, defaults to 12. The attribute
@@ -65,9 +93,10 @@ class ResolveRule {
 		searchField = config.getInt("searchField", 12);
 		String substringRegex = config.getString("substring", null);
 		substring = substringRegex != null ? Pattern.compile(substringRegex) : null;
-		mapping = new LinkedList<>();
+		mapping = new HashMap<>();
 		for (HierarchicalConfiguration map : (List<HierarchicalConfiguration>) config.configurationsAt("map")) {
-			mapping.add(new MapRule(map));
+			MapRule e = new MapRule(map);
+			mapping.put(getIdentifier(e.tag, e.subtag), e);
 		}
 	}
 
@@ -102,5 +131,96 @@ class ResolveRule {
 	/**
 	 * Import mapping fields and sub-fields to import.
 	 */
-	Collection<MapRule> mapping;
+	Map<String, MapRule> mapping;
+
+	/**
+	 * Returns an identifier for the resolve rule.
+	 * 
+	 * @return an identifier for the resolve rule
+	 */
+	String getIdentifier() {
+		return getIdentifier(tag, subtag);
+	}
+
+	/**
+	 * Copy data from resolved record to corresponding element, as defined by
+	 * mapping.
+	 * 
+	 * @param in
+	 *            input data
+	 * @param resultField
+	 *            element to write to
+	 */
+	private void applyMapping(Element in, Element resultField) {
+		for (Node node : new GetChildren(in)) {
+			if (node instanceof Element) {
+				Element field = (Element) node;
+				if (field.getNodeName().equals("field")) {
+					String tag = field.getAttributeNode("tag").getTextContent();
+					for (Node subnode : new GetChildren(field)) {
+						if (subnode instanceof Element && subnode.getNodeName().equals("subfield")) {
+							Element subfield = (Element) subnode;
+							String subtag = field.getAttributeNode("code").getTextContent();
+							String mappingID = ResolveRule.getIdentifier(tag, subtag);
+							if (mapping.containsKey(mappingID)) {
+								Element newChild = resultField.getOwnerDocument().createElement("subfield");
+								newChild.setAttribute("code", mapping.get(mappingID).asSubtag);
+								newChild.setTextContent(subfield.getTextContent());
+								resultField.appendChild(newChild);
+							}
+						}
+					}
+				} else {
+					applyMapping(field, resultField);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Applies the substring on the input, if any.
+	 * 
+	 * @param input
+	 *            String to apply the substring on
+	 * @return substring if found, or input otherwise
+	 */
+	private String applySubstring(String input) {
+		if (substring == null)
+			return input;
+		Matcher matcher = substring.matcher(input);
+		if (!matcher.find()) {
+			return input;
+		} else {
+			String matchGroup1 = matcher.group(1);
+			if (matchGroup1 != null) {
+				return matchGroup1;
+			} else {
+				return matcher.group();
+			}
+		}
+	}
+
+	/**
+	 * Execute the resolve rule.
+	 * 
+	 * @param subfield
+	 *            subfield to take the ID to resolve from
+	 * @param client
+	 *            catalogue client to use for catalogue look-up
+	 * @param out
+	 *            field to write the result to
+	 */
+	void execute(Element subfield, CatalogueClient client, Element out) throws IOException, SAXException, ParserConfigurationException {
+		assert tag.equals(out.getAttributeNode("tag").getTextContent()) : "Attempt to call the rule on the wrong field.";
+		assert subtag.equals(subfield.getAttributeNode("code").getTextContent()) : "Attempt to call the rule on the wrong subfield.";
+
+		String queryString = applySubstring(subfield.getFirstChild().toString());
+		Query query = new Query(queryString, Integer.toString(searchField));
+		if (client.getNumberOfHits(query) == 1) {
+			Node result = client.retrievePicaNode(query, 1);
+			if (result instanceof Element) {
+				applyMapping((Element) result, out);
+			}
+		}
+	}
 }

@@ -166,9 +166,10 @@ public class PicaPlugin implements Plugin {
 	 *      long)
 	 */
 	public Object find(String query, long timeout) {
+		client.setTimeout(timeout);
 		try {
 			Query queryObject = new Query(query);
-			int hits = client.getNumberOfHits(queryObject, timeout);
+			int hits = client.getNumberOfHits(queryObject);
 			if (hits > 0) {
 				return new FindResult(queryObject, hits);
 			} else {
@@ -224,6 +225,7 @@ public class PicaPlugin implements Plugin {
 	 *      long, long)
 	 */
 	public Map<String, Object> getHit(Object searchResult, long index, long timeout) {
+		client.setTimeout(timeout);
 		if (!(searchResult instanceof FindResult)) {
 			throw new ClassCastException();
 		}
@@ -268,8 +270,8 @@ public class PicaPlugin implements Plugin {
 
 					myQuery = new Query(multiVolumePpn, "12");
 					/* wenn ein Treffer des Parents im Opac gefunden wurde */
-					if (client.getNumberOfHits(myQuery, timeout) == 1) {
-						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
+					if (client.getNumberOfHits(myQuery) == 1) {
+						Node myParentHitlist = client.retrievePicaNode(myQuery, 1);
 						/* Opac-Beautifier aufrufen */
 						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
@@ -307,8 +309,8 @@ public class PicaPlugin implements Plugin {
 
 					myQuery = new Query(serialPublicationPpn, "12");
 					/* wenn ein Treffer des Parents im Opac gefunden wurde */
-					if (client.getNumberOfHits(myQuery, timeout) == 1) {
-						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
+					if (client.getNumberOfHits(myQuery) == 1) {
+						Node myParentHitlist = client.retrievePicaNode(myQuery, 1);
 						/* Opac-Beautifier aufrufen */
 						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
@@ -345,8 +347,8 @@ public class PicaPlugin implements Plugin {
 					/* Sammelband aus dem Opac holen */
 					myQuery = new Query(ueberGeordnetePpn, "12");
 					/* wenn ein Treffer des Parents im Opac gefunden wurde */
-					if (client.getNumberOfHits(myQuery, timeout) == 1) {
-						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
+					if (client.getNumberOfHits(myQuery) == 1) {
+						Node myParentHitlist = client.retrievePicaNode(myQuery, 1);
 						/* Opac-Beautifier aufrufen */
 						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
