@@ -22,7 +22,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
 
-class ConfigOpac {
+class OpacCatalogues {
 	private static XMLConfiguration config;
 
 	protected static XMLConfiguration getConfig() {
@@ -46,7 +46,7 @@ class ConfigOpac {
 	}
 
 	static List<String> getAllCatalogues(){
-		List<String> catalogueTitles = new ArrayList<String>();
+		List<String> catalogueTitles = new ArrayList<>();
 		XMLConfiguration conf = getConfig();
 		for(int i = 0; i <= conf.getMaxIndex("catalogue"); i++){
 			catalogueTitles.add(conf.getString("catalogue(" + i + ")[@title]"));
@@ -59,7 +59,7 @@ class ConfigOpac {
 	 * find Catalogue in Opac-Configurationlist
 	 * ================================================================
 	 */
-	static ConfigOpacCatalogue getCatalogueByName(String inTitle) {
+	static Catalogue getCatalogueByName(String inTitle) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("catalogue(" + i + ")[@title]");
@@ -67,46 +67,42 @@ class ConfigOpac {
 				String description = getConfig().getString("catalogue(" + i + ").config[@description]");
 				String address = getConfig().getString("catalogue(" + i + ").config[@address]");
 				String database = getConfig().getString("catalogue(" + i + ").config[@database]");
-				String iktlist = getConfig().getString("catalogue(" + i + ").config[@iktlist]");
-				String cbs = getConfig().getString("catalogue(" + i + ").config[@ucnf]", "");
-				if (!cbs.equals("")) {
-					cbs = "&" + cbs;
+				String ucnf = getConfig().getString("catalogue(" + i + ").config[@ucnf]", "");
+				if (!ucnf.equals("")) {
+					ucnf = "&" + ucnf;
 				}
 				int port = getConfig().getInt("catalogue(" + i + ").config[@port]");
 				String charset = "iso-8859-1";
 				if (getConfig().getString("catalogue(" + i + ").config[@charset]") != null) {
 					charset = getConfig().getString("catalogue(" + i + ").config[@charset]");
 				}
-				String opacType = getConfig().getString("catalogue(" + i + ").config[@opacType]", "PICA");
 
 				// Opac-Beautifier einlesen und in Liste zu jedem Catalogue packen
 
-				ArrayList<ConfigOpacCatalogueBeautifier> beautyList = new ArrayList<ConfigOpacCatalogueBeautifier>();
+				ArrayList<Setvalue> beautyList = new ArrayList<>();
 				for (int j = 0; j <= getConfig().getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
 					/* Element, dessen Wert geändert werden soll */
-					String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
-					ConfigOpacCatalogueBeautifierElement oteChange = new ConfigOpacCatalogueBeautifierElement(
-							getConfig().getString(tempJ + "[@tag]"), getConfig().getString(tempJ + "[@subtag]"),
-							getConfig().getString(tempJ + "[@value]").replaceAll("\u2423", " "), getConfig().getString(
-									tempJ + "[@mode]", "replace"));
+					String prefix = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
+					String tag = getConfig().getString(prefix + "[@tag]");
+					String subtag = getConfig().getString(prefix + "[@subtag]");
+					String value = getConfig().getString(prefix + "[@value]").replaceAll("\u2423", " ");
+					String mode = getConfig().getString(prefix + "[@mode]", "replace");
 
 					// Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element geändert werden soll
 
-					ArrayList<ConfigOpacCatalogueBeautifierElement> proofElements = new ArrayList<ConfigOpacCatalogueBeautifierElement>();
-					for (int k = 0; k <= getConfig().getMaxIndex(tempJ + ".condition"); k++) {
-						String tempK = tempJ + ".condition(" + k + ")";
-						ConfigOpacCatalogueBeautifierElement oteProof = new ConfigOpacCatalogueBeautifierElement(
+					ArrayList<Condition> proofElements = new ArrayList<>();
+					for (int k = 0; k <= getConfig().getMaxIndex(prefix + ".condition"); k++) {
+						String tempK = prefix + ".condition(" + k + ")";
+						Condition oteProof = new Condition(
 								getConfig().getString(tempK + "[@tag]"), getConfig().getString(tempK + "[@subtag]"),
 								getConfig().getString(tempK + "[@value]").replaceAll("\u2423", " "), getConfig()
 										.getString(tempK + "[@mode]", "matches"));
 						proofElements.add(oteProof);
 					}
-					beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
+					beautyList.add(new Setvalue(tag, subtag, value, mode, proofElements));
 				}
 
-				ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, iktlist, port,
-						charset, cbs, beautyList, opacType);
-				return coc;
+				return new Catalogue(title, description, address, database, port, charset, ucnf, beautyList);
 			}
 		}
 		return null;
@@ -117,7 +113,7 @@ class ConfigOpac {
 	 * ================================================================
 	 */
 	private static ArrayList<String> getAllDoctypeTitles() {
-		ArrayList<String> myList = new ArrayList<String>();
+		ArrayList<String> myList = new ArrayList<>();
 		int countTypes = getConfig().getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countTypes; i++) {
 			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
@@ -130,8 +126,8 @@ class ConfigOpac {
 	 * return all configured Doctype-Titles from Configfile
 	 * ================================================================
 	 */
-	static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
-		ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
+	static ArrayList<Type> getDoctypes() {
+		ArrayList<Type> myList = new ArrayList<>();
 		for (String title : getAllDoctypeTitles()) {
 			myList.add(getDoctypeByName(title));
 		}
@@ -143,7 +139,7 @@ class ConfigOpac {
 	 * special mapping for this
 	 * ================================================================
 	 */
-	static ConfigOpacDoctype getDoctypeByMapping(String inMapping, String inCatalogue) {
+	static Type getDoctypeByMapping(String inMapping, String inCatalogue) {
 		int countCatalogues = getConfig().getMaxIndex("catalogue");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("catalogue(" + i + ")[@title]");
@@ -151,7 +147,7 @@ class ConfigOpac {
 
 				// alle speziell gemappten DocTypes eines Kataloges einlesen
 
-				HashMap<String, String> labels = new HashMap<String, String>();
+				HashMap<String, String> labels = new HashMap<>();
 				int countLabels = getConfig().getMaxIndex("catalogue(" + i + ").specialmapping");
 				for (int j = 0; j <= countLabels; j++) {
 					String type = getConfig().getString("catalogue(" + i + ").specialmapping[@type]");
@@ -167,7 +163,7 @@ class ConfigOpac {
 		// falls der Katalog kein spezielles Mapping für den Doctype hat, jetzt in den Doctypes suchen
 
 		for (String title : getAllDoctypeTitles()) {
-			ConfigOpacDoctype tempType = getDoctypeByName(title);
+			Type tempType = getDoctypeByName(title);
 			if (tempType.getMappings().contains(inMapping)) {
 				return tempType;
 			}
@@ -180,7 +176,7 @@ class ConfigOpac {
 	 * ================================================================
 	 */
 	@SuppressWarnings("unchecked")
-	private static ConfigOpacDoctype getDoctypeByName(String inTitle) {
+	private static Type getDoctypeByName(String inTitle) {
 		int countCatalogues = getConfig().getMaxIndex("doctypes.type");
 		for (int i = 0; i <= countCatalogues; i++) {
 			String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
@@ -191,8 +187,7 @@ class ConfigOpac {
 				ArrayList<String> mappings = (ArrayList<String>) getConfig()
 						.getList("doctypes.type(" + i + ").mapping");
 
-				ConfigOpacDoctype cod = new ConfigOpacDoctype(title, periodical, multiVolume, containedWork, mappings);
-				return cod;
+				return new Type(title, periodical, multiVolume, containedWork, mappings);
 			}
 		}
 		return null;

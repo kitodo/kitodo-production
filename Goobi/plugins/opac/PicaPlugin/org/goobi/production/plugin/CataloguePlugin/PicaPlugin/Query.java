@@ -101,15 +101,17 @@ class Query {
 				break;
 			case 3:
 				if (codePoint == ' ') {
-					if (term.length() == 0)
+					if (term.length() == 0) {
 						throw new IllegalArgumentException(INCOMPLETE);
+					}
 					addQuery(operator, term.toString(), field.toString());
 					operator = AND;
 					field = new StringBuilder();
 					term = new StringBuilder(32);
 					state = 5;
-				} else
+				} else {
 					term.appendCodePoint(codePoint);
+				}
 				break;
 			case 4:
 				if (codePoint == '"') {
@@ -118,8 +120,9 @@ class Query {
 					field = new StringBuilder();
 					term = new StringBuilder(32);
 					state = 5;
-				} else
+				} else {
 					term.appendCodePoint(codePoint);
+				}
 				break;
 			case 5:
 				switch (codePoint) {
@@ -143,35 +146,36 @@ class Query {
 		if (state == 3) {
 			addQuery(operator, term.toString(), field.toString());
 		}
-		if (state != 3 && state != 5)
+		if ((state != 3) && (state != 5)) {
 			throw new IllegalArgumentException(INCOMPLETE);
+		}
 	}
 
 	//operation must be Query.AND, .OR, .NOT 
 	private void addQuery(String operation, String query, String fieldNumber) {
 		 
 		 //ignore boolean operation for first term
-		 if (this.queryTermNumber == 0){
-			 this.queryUrl = OPERATOR + this.queryTermNumber + "=" + FIRST_OPERATOR;
+		 if (queryTermNumber == 0){
+			 queryUrl = OPERATOR + queryTermNumber + "=" + FIRST_OPERATOR;
 		 }else{
-			 this.queryUrl += OPERATOR + this.queryTermNumber + "=" + operation;
+			 queryUrl += OPERATOR + queryTermNumber + "=" + operation;
 		 }
 		 
 		 
-		 this.queryUrl += FIELD + this.queryTermNumber + "=" + fieldNumber;
+		 queryUrl += FIELD + queryTermNumber + "=" + fieldNumber;
 		 
 		 try{
-			 this.queryUrl += QUERY + this.queryTermNumber + "=" + 
+			 queryUrl += QUERY + queryTermNumber + "=" + 
  URLEncoder.encode(query, CharEncoding.ISO_8859_1);
 		 }catch (Exception e) {
 			 e.printStackTrace();
 		}
 		 
-		 this.queryTermNumber++;
+		 queryTermNumber++;
 	 }
 	 
 	String getQueryUrl() {
-		 return this.queryUrl;
+		 return queryUrl;
 	 }
 	 
 }

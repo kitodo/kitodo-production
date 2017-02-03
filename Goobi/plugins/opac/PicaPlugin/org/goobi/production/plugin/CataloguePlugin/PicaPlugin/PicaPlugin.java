@@ -115,7 +115,7 @@ public class PicaPlugin implements Plugin {
 	/**
 	 * The field configuration holds the catalogue configuration.
 	 */
-	private ConfigOpacCatalogue configuration;
+	private Catalogue catalogue;
 
 	/**
 	 * Returns the XMLConfiguration of the plugin containing docType
@@ -125,18 +125,13 @@ public class PicaPlugin implements Plugin {
 	 *            the XMLConfiguration of the plugin
 	 */
 	public XMLConfiguration getXMLConfiguration() {
-		return ConfigOpac.getConfig();
+		return OpacCatalogues.getConfig();
 	}
-
-	/**
-	 * The field catalogue holds the catalogue.
-	 */
-	private Catalogue catalogue;
 
 	/**
 	 * The field client holds the catalogue client used to access the catalogue.
 	 */
-	private GetOpac client;
+	private CatalogueClient client;
 
 	/**
 	 * The method configure() accepts a Map with configuration parameters. Two
@@ -235,8 +230,8 @@ public class PicaPlugin implements Plugin {
 		Query myQuery = ((FindResult) searchResult).getQuery();
 
 		Element myFirstHit;
-		String gattung;
-		ConfigOpacDoctype cod;
+		String typeID;
+		Type type;
 		Fileformat ff;
 		try {
 			/*
@@ -247,17 +242,17 @@ public class PicaPlugin implements Plugin {
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
 
 			/* Opac-Beautifier aufrufen */
-			myHitlist = configuration.executeBeautifier(myHitlist);
+			myHitlist = catalogue.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 			myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
 			/* von dem Treffer den Dokumententyp ermitteln */
-			gattung = getGattung(myFirstHit);
-			cod = ConfigOpac.getDoctypeByMapping(gattung.length() > 2 ? gattung.substring(0, 2) : gattung,
-					configuration.getTitle());
-			if (cod == null) {
-				cod = ConfigOpac.getAllDoctypes().get(0);
-				gattung = cod.getMappings().get(0);
+			typeID = getTypeID(myFirstHit);
+			type = OpacCatalogues.getDoctypeByMapping(typeID.length() > 2 ? typeID.substring(0, 2) : typeID,
+					catalogue.getTitle());
+			if (type == null) {
+				type = OpacCatalogues.getDoctypes().get(0);
+				typeID = type.getMappings().get(0);
 			}
 
 			/*
@@ -265,10 +260,9 @@ public class PicaPlugin implements Plugin {
 			 * eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
 			 * --------------------------------
 			 */
-			// if (isMultivolume()) {
-			if (cod.isMultiVolume()) {
+			if (type.isMultiVolume()) {
 				/* Sammelband-PPN ermitteln */
-				String multiVolumePpn = getPpnFromParent(myFirstHit, "036D", "9");
+				String multiVolumePpn = getPPNFromParent(myFirstHit, "036D", "9");
 				if (!multiVolumePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
@@ -277,7 +271,7 @@ public class PicaPlugin implements Plugin {
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
 						/* Opac-Beautifier aufrufen */
-						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
@@ -305,9 +299,9 @@ public class PicaPlugin implements Plugin {
 			 * eines Periodical-Bandes ist, dann die Serie überordnen
 			 * --------------------------------
 			 */
-			if (cod.isPeriodical()) {
+			if (type.isPeriodical()) {
 				/* Sammelband-PPN ermitteln */
-				String serialPublicationPpn = getPpnFromParent(myFirstHit, "036F", "9");
+				String serialPublicationPpn = getPPNFromParent(myFirstHit, "036F", "9");
 				if (!serialPublicationPpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 
@@ -316,7 +310,7 @@ public class PicaPlugin implements Plugin {
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
 						/* Opac-Beautifier aufrufen */
-						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
@@ -344,10 +338,9 @@ public class PicaPlugin implements Plugin {
 			 * Work ist, dann übergeordnetes Werk
 			 * --------------------------------
 			 */
-			// if (isContainedWork()) {
-			if (cod.isContainedWork()) {
+			if (type.isContainedWork()) {
 				/* PPN des übergeordneten Werkes ermitteln */
-				String ueberGeordnetePpn = getPpnFromParent(myFirstHit, "021A", "9");
+				String ueberGeordnetePpn = getPPNFromParent(myFirstHit, "021A", "9");
 				if (!ueberGeordnetePpn.equals("")) {
 					/* Sammelband aus dem Opac holen */
 					myQuery = new Query(ueberGeordnetePpn, "12");
@@ -355,7 +348,7 @@ public class PicaPlugin implements Plugin {
 					if (client.getNumberOfHits(myQuery, timeout) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1, timeout);
 						/* Opac-Beautifier aufrufen */
-						myParentHitlist = configuration.executeBeautifier(myParentHitlist);
+						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
 						/* Konvertierung in jdom-Elemente */
 						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
@@ -394,13 +387,13 @@ public class PicaPlugin implements Plugin {
 			DocStruct dsBoundBook = dd.createDocStruct(dst);
 			dd.setPhysicalDocStruct(dsBoundBook);
 			/* Inhalt des RDF-Files überprüfen und ergänzen */
-			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, cod, gattung);
+			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, type, typeID);
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
-		return createResult(cod.getTitle(), myFirstHit, ff);
+		return createResult(type.getTitle(), myFirstHit, ff);
 	}
 
 	/**
@@ -410,7 +403,7 @@ public class PicaPlugin implements Plugin {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private static String getGattung(Element inHit) {
+	private static String getTypeID(Element inHit) {
 		if (inHit == null) {
 			return "";
 		}
@@ -445,7 +438,7 @@ public class PicaPlugin implements Plugin {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private static String getPpnFromParent(Element inHit, String inFeldName, String inSubElement) {
+	private static String getPPNFromParent(Element inHit, String inFeldName, String inSubElement) {
 		for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
 			Element tempElement = iter.next();
 			String feldname = tempElement.getAttributeValue("tag");
@@ -509,7 +502,7 @@ public class PicaPlugin implements Plugin {
 	 */
 
 	private static void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit,
-			ConfigOpacDoctype cod, String gattung) {
+			Type type, String gattung) {
 		DocStruct topstruct = inDigDoc.getLogicalDocStruct();
 		DocStruct boundbook = inDigDoc.getPhysicalDocStruct();
 		DocStruct topstructChild = null;
@@ -520,7 +513,7 @@ public class PicaPlugin implements Plugin {
 		 * xml und docstruct ermitteln --------------------------------
 		 */
 		// if (isMultivolume()) {
-		if (cod.isMultiVolume()) {
+		if (type.isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
 			} catch (RuntimeException e) {
@@ -544,7 +537,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- wenn es ein multivolume ist, dann
 		 * auch die PPN prüfen --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
 			if (gattung.toLowerCase().startsWith("o")) {
@@ -563,7 +556,7 @@ public class PicaPlugin implements Plugin {
 		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer
 		 * Stelle nachsehen (vor allem bei Contained-Work)
 		 */
-		if (myTitle == null || myTitle.length() == 0) {
+		if ((myTitle == null) || (myTitle.length() == 0)) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
 		}
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
@@ -581,7 +574,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- bei multivolumes den Main-Title
 		 * bereinigen --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
 		}
@@ -590,7 +583,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- bei multivolumes den Sorting-Titel
 		 * mit Umlaut-Konvertierung --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
 			if (sortingTitleMulti.indexOf("@") != -1) {
 				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
@@ -611,7 +604,7 @@ public class PicaPlugin implements Plugin {
 		 * -------------------------------- bei multivolumes die Sprachen -
 		 * Konvertierung auf zwei Stellen --------------------------------
 		 */
-		if (topstructChild != null && mySecondHit != null) {
+		if ((topstructChild != null) && (mySecondHit != null)) {
 			Iterable<String> sprachenMulti = getElementFieldValues(mySecondHit, "010@", "a");
 			sprachenMulti = UGHUtils.convertLanguages(sprachenMulti);
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", sprachenMulti);
@@ -675,7 +668,7 @@ public class PicaPlugin implements Plugin {
 		 * PeriodicalVolume als Child einfügen --------------------------------
 		 */
 		// if (isPeriodical()) {
-		if (cod.isPeriodical() && topstruct.getAllChildren() == null) {
+		if (type.isPeriodical() && (topstruct.getAllChildren() == null)) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
 				DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
@@ -739,7 +732,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	@SuppressWarnings("unchecked")
 	private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName, String inAttributeName) {
-		LinkedList<String> result = new LinkedList<String>();
+		LinkedList<String> result = new LinkedList<>();
 		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
@@ -793,7 +786,7 @@ public class PicaPlugin implements Plugin {
 	 */
 	@SuppressWarnings("unchecked")
 	private static Collection<String> getFieldValues(Element inElement, String attributeValue) {
-		List<String> rueckgabe = new LinkedList<String>();
+		List<String> rueckgabe = new LinkedList<>();
 
 		for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
 			Element subElement = iter.next();
@@ -822,7 +815,7 @@ public class PicaPlugin implements Plugin {
 	private static Map<String, Object> createResult(String docType, Element hit, Fileformat fileformat) {
 		final LocalTime DAY_END = new LocalTime(23, 59, 59, 999);
 
-		Map<String, Object> result = new HashMap<String, Object>(20);
+		Map<String, Object> result = new HashMap<>(20);
 		LocalDate today = new LocalDate();
 
 		result.put("fileformat", fileformat);
@@ -880,23 +873,23 @@ public class PicaPlugin implements Plugin {
 		result.put("series", getElementFieldValue(hit, "036E", "a"));
 
 		String subseries = getElementFieldValue(hit, "021A", "d");
-		if (subseries == null || subseries.length() == 0) {
+		if ((subseries == null) || (subseries.length() == 0)) {
 			subseries = getElementFieldValue(hit, "021B", "d");
 		}
-		if (subseries == null || subseries.length() == 0) {
+		if ((subseries == null) || (subseries.length() == 0)) {
 			subseries = getElementFieldValue(hit, "027D", "d");
 		}
 		result.put("subseries", subseries);
 
 		String title = getElementFieldValue(hit, "021A", "a");
-		if (title == null || title.length() == 0) {
+		if ((title == null) || (title.length() == 0)) {
 			title = getElementFieldValue(hit, "021B", "a");
 		}
-		if (title == null || title.length() == 0) {
+		if ((title == null) || (title.length() == 0)) {
 			title = getElementFieldValue(hit, "027D", "a");
 		}
 		String titleLong = getElementFieldValue(hit, "021A", "d");
-		if (titleLong != null && titleLong.length() > 0) {
+		if ((titleLong != null) && (titleLong.length() > 0)) {
 			title = title + " : " + titleLong;
 		}
 		result.put("title", title.replaceAll("@", ""));
@@ -995,7 +988,7 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
 	 */
 	public static boolean supportsCatalogue(String catalogue) {
-		return ConfigOpac.getCatalogueByName(catalogue) != null;
+		return OpacCatalogues.getCatalogueByName(catalogue) != null;
 	}
 
 	/**
@@ -1006,7 +999,7 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getSupportedCatalogues()
 	 */
 	public static List<String> getSupportedCatalogues() {
-		return ConfigOpac.getAllCatalogues();
+		return OpacCatalogues.getAllCatalogues();
 	}
 
 	/**
@@ -1017,9 +1010,9 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getAllConfigDocTypes()
 	 */
 	public static List<String> getAllConfigDocTypes() {
-		List<String> result = new ArrayList<String>();
-		for (ConfigOpacDoctype cod : ConfigOpac.getAllDoctypes()) {
-			result.add(cod.getTitle());
+		List<String> result = new ArrayList<>();
+		for (Type type : OpacCatalogues.getDoctypes()) {
+			result.add(type.getTitle());
 		}
 		return result;
 	}
@@ -1035,11 +1028,8 @@ public class PicaPlugin implements Plugin {
 	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
-		this.configuration = ConfigOpac.getCatalogueByName(catalogueID);
-		this.catalogue = new Catalogue(configuration);
-		GetOpac catalogueClient = new GetOpac(catalogue);
-		catalogueClient.setCharset(configuration.getCharset());
-		this.client = catalogueClient;
+		catalogue = OpacCatalogues.getCatalogueByName(catalogueID);
+		client = new CatalogueClient(catalogue);
 	}
 
 	/**
@@ -1054,9 +1044,9 @@ public class PicaPlugin implements Plugin {
 	 * @throws InvalidActivityException
 	 */
 	public HashMap<String, String> getSearchFields(String catalogueName) throws InvalidActivityException {
-		LinkedHashMap<String, String> searchFields = new LinkedHashMap<String, String>();
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+		LinkedHashMap<String, String> searchFields = new LinkedHashMap<>();
+		if(!Objects.equals(OpacCatalogues.getConfig(), null)) {
+			for (Object catalogueObject : OpacCatalogues.getConfig().configurationsAt("catalogue")) {
 				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
 				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
 					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;
@@ -1085,9 +1075,9 @@ public class PicaPlugin implements Plugin {
 	 * @return Map containing the filter institutions of the selected OPAC
 	 */
 	public HashMap<String, String> getInstitutions(String catalogueName) {
-		LinkedHashMap<String, String> institutions = new LinkedHashMap<String, String>();
-		if(!Objects.equals(ConfigOpac.getConfig(), null)) {
-			for (Object catalogueObject : ConfigOpac.getConfig().configurationsAt("catalogue")) {
+		LinkedHashMap<String, String> institutions = new LinkedHashMap<>();
+		if(!Objects.equals(OpacCatalogues.getConfig(), null)) {
+			for (Object catalogueObject : OpacCatalogues.getConfig().configurationsAt("catalogue")) {
 				SubnodeConfiguration catalogue = (SubnodeConfiguration)catalogueObject;
 				for (Object titleAttrObject : catalogue.getRootNode().getAttributes("title")) {
 					ConfigurationNode titleAttr = (ConfigurationNode)titleAttrObject;

@@ -20,7 +20,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-class OpacResponseHandler extends DefaultHandler {
+class Response extends DefaultHandler {
 
 	private boolean readTitle = false;
 	private boolean readSessionVar = false;
@@ -31,10 +31,10 @@ class OpacResponseHandler extends DefaultHandler {
 	private String set = "";
 	private int numberOfHits = 0;
 
-	private final ArrayList<String> opacResponseItemPpns = new ArrayList<String>();
-	private final ArrayList<String> opacResponseItemTitles = new ArrayList<String>();
+	private final ArrayList<String> opacResponseItemPpns = new ArrayList<>();
+	private final ArrayList<String> opacResponseItemTitles = new ArrayList<>();
 
-	OpacResponseHandler() {
+	Response() {
 		super();
 	}
 
@@ -45,8 +45,7 @@ class OpacResponseHandler extends DefaultHandler {
 	 */
 	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-		//Eingefügt am 8.5.2007
-		if (localName.equals("RESULT") && atts.getValue("error") != null
+		if (localName.equals("RESULT") && (atts.getValue("error") != null)
 				&& atts.getValue("error").equalsIgnoreCase("ILLEGAL")) {
 			throw new SAXException(new IllegalArgumentException());
 		}
@@ -100,7 +99,7 @@ class OpacResponseHandler extends DefaultHandler {
 	public void endElement(String namespaceURI, String localName, String qName) {
 		if (localName.equals("SHORTTITLE")) {
 			readTitle = false;
-			opacResponseItemTitles.add(this.title);
+			opacResponseItemTitles.add(title);
 		}
 
 		if (localName.equals("SESSIONVAR")) {
@@ -119,7 +118,7 @@ class OpacResponseHandler extends DefaultHandler {
 	String getSessionId() throws UnsupportedEncodingException {
 		//TODO HACK
 		String sessionIdUrlencoded = URLEncoder.encode(sessionId, CharEncoding.ISO_8859_1);
-		if (!this.cookie.equals("")) {
+		if (!cookie.equals("")) {
 			sessionIdUrlencoded = sessionIdUrlencoded + "/COOKIE=" + URLEncoder.encode(cookie, CharEncoding.ISO_8859_1);
 		}
 		return sessionIdUrlencoded;

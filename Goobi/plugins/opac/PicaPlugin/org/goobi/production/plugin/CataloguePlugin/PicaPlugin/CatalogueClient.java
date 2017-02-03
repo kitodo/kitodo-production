@@ -38,14 +38,10 @@ import org.xml.sax.XMLReader;
  * TODO check if correct character encodings are returned
  * 
  * @author Ludwig
- * @version 0.1
- * @since 0.1.1
- * 
- *        CHANGELOG: 19.07.2005 Ludwig: first Version
  */
 
-class GetOpac {
-	private static final Logger logger = Logger.getLogger(GetOpac.class);
+class CatalogueClient {
+	private static final Logger logger = Logger.getLogger(CatalogueClient.class);
 
 	// the output xml
 	private static final String PICA_COLLECTION_RECORDS = "collection";
@@ -97,11 +93,8 @@ class GetOpac {
 	private final DocumentBuilder docBuilder;
 
 	// STATE (Instance variables) *****************************************
-	// This is now configured inside the Catalogue class.
-	// TODO: Check if this should really be query specific
-	private String charset = "iso-8859-1";
 
-	private final Catalogue cat;
+	private final Catalogue catalogue;
 
 	private final String sorting = SORT_BY_YEAR_OF_PUBLISHING;
 
@@ -111,7 +104,7 @@ class GetOpac {
 	// searchopac. is it reasonable?
 	private String lastQuery = "";
 
-	private OpacResponseHandler lastOpacResult = null;
+	private Response lastOpacResult = null;
 
 	// CREATION (Constructors, factory methods, static/inst init)
 
@@ -131,16 +124,16 @@ class GetOpac {
 	 *             configuration requested
 	 */
 
-	GetOpac(Catalogue opac) throws ParserConfigurationException {
+	CatalogueClient(Catalogue catalogue) throws ParserConfigurationException {
 		super();
-		this.opacClient = new HttpClient();
-		this.cat = opac;
-		this.docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		opacClient = new HttpClient();
+		this.catalogue = catalogue;
+		docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	}
 
 	// MANIPULATION (Manipulation - what the object does) ******************
 
-	/***********************************************************************
+	/**
 	 * Gets the number of hits for the query in the specified field from the
 	 * OPAC.
 	 * 
@@ -152,12 +145,10 @@ class GetOpac {
 	 *             If something is wrong with the query
 	 * @throws IOException
 	 *             If connection to catalogue system failed
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 **********************************************************************/
+	 */
 	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException, ParserConfigurationException {
 		getResult(query, timeout);
-		return this.lastOpacResult.getNumberOfHits();
+		return lastOpacResult.getNumberOfHits();
 	}
 
 	/**
@@ -233,17 +224,17 @@ class GetOpac {
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
-				+ this.cat.getPort() + this.cat.getCbs();
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
+				+ catalogue.getPort() + catalogue.getUncf();
 
 		// if we can not use the cached result
-		if (!this.lastQuery.equals(querySummary)) {
+		if (!lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
 			getResult(query, timeout);
 		}
 
 		// make sure that upper limit of requested hits is not to high
-		int maxNumberOfHits = this.lastOpacResult.getNumberOfHits();
+		int maxNumberOfHits = lastOpacResult.getNumberOfHits();
 		if (end > maxNumberOfHits) {
 			end = maxNumberOfHits;
 		}
@@ -277,8 +268,8 @@ class GetOpac {
 	private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
 		// get pica longtitle
 		int retrieveNumber = numberOfHits + 1;
-		return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.charset
-				+ SET_ID_URL + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
+		return retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL + catalogue.getCharset()
+				+ SET_ID_URL + lastOpacResult.getSet() + SESSIONID_URL + lastOpacResult.getSessionId()
 				+ SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
 	}
 
@@ -294,24 +285,24 @@ class GetOpac {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	private OpacResponseHandler getResult(Query query, long timeout) throws IOException, SAXException,
+	private Response getResult(Query query, long timeout) throws IOException, SAXException,
 			ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
-				+ this.cat.getPort() + this.cat.getCbs();
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
+				+ catalogue.getPort() + catalogue.getUncf();
 
-		if (this.lastQuery.equals(querySummary)) {
-			return this.lastOpacResult;
+		if (lastQuery.equals(querySummary)) {
+			return lastOpacResult;
 		}
-		result = retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
-				+ this.charset + SEARCH_URL_BEFORE_QUERY + this.sorting + query.getQueryUrl(), timeout);
+		result = retrieveDataFromOPAC(DATABASE_URL + catalogue.getDatabase() + PICAPLUS_XML_URL_WITHOUT_LOCAL_DATA
+				+ catalogue.getCharset() + SEARCH_URL_BEFORE_QUERY + sorting + query.getQueryUrl(), timeout);
 
-		OpacResponseHandler opacResult = parseOpacResponse(result);
+		Response opacResult = parseOpacResponse(result);
 
 		// Caching query, result and sessionID
-		this.lastQuery = querySummary;
-		this.lastOpacResult = opacResult;
+		lastQuery = querySummary;
+		lastOpacResult = opacResult;
 
 		return opacResult;
 	}
@@ -388,7 +379,7 @@ class GetOpac {
 	 */
 	private Document getParsedDocument(InputSource source) {
 		try {
-			return this.docBuilder.parse(source);
+			return docBuilder.parse(source);
 		} catch (SAXException e) {
 			logger.info("Dokument?");
 
@@ -414,14 +405,14 @@ class GetOpac {
 	 *             If the connection failed
 	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
-		String request = "http://" + cat.getServerAddress()
-				+ (cat.getPort() != 80 ? ":".concat(Integer.toString(cat.getPort())) : "") + url + cat.getCbs();
+		String request = "http://" + catalogue.getAddress()
+				+ (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url + catalogue.getUncf();
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
 		// set timeout if a connection is established but there is no response (= time the database needs to search)
-		if (timeout > 0 && timeout <= Integer.MAX_VALUE) {
+		if ((timeout > 0) && (timeout <= Integer.MAX_VALUE)) {
 			opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
 		}
 		else {
@@ -440,13 +431,13 @@ class GetOpac {
 		}
 	}
 
-	private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
+	private Response parseOpacResponse(String opacResponse) throws IOException, SAXException,
 			ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
 				.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
 
 		XMLReader parser = null;
-		OpacResponseHandler ids = new OpacResponseHandler();
+		Response ids = new Response();
 		/* Use Java 1.4 methods to create default parser. */
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
@@ -457,18 +448,4 @@ class GetOpac {
 
 		return ids;
 	}
-
-	/**
-	 * Set requested character encoding for the response of the catalogue
-	 * system. For goettingen iso-8859-1 and utf-8 work, the default is
-	 * iso-8859-1.
-	 * 
-	 * @param charset
-	 *            The character encoding to set.
-	 */
-
-	void setCharset(String charset) {
-		this.charset = charset;
-	}
-
 }
