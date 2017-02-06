@@ -61,13 +61,13 @@ public class Process implements Serializable {
     @Column(name = "outputName")
     private String outputName;
 
-    @Column(name = "isTemplate")
+    @Column(name = "template")
     private Boolean template;
 
     @Column(name = "swappedOut")
     private Boolean swappedOut = false;
 
-    @Column(name = "isChoiceListShown")
+    @Column(name = "inChoiceListShown")
     private Boolean inChoiceListShown;
 
     @Column(name = "creationDate")

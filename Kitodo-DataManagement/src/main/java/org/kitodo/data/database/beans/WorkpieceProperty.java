@@ -45,8 +45,8 @@ public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
     @Column(name = "value", columnDefinition = "longtext")
     private String value;
 
-    @Column(name = "isObligatory")
-    private Boolean isObligatory;
+    @Column(name = "obligatory")
+    private Boolean obligatory;
 
     @Column(name = "dataType")
     private Integer dataType;
@@ -71,7 +71,7 @@ public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
      * Constructor.
      */
     public WorkpieceProperty() {
-        this.isObligatory = false;
+        this.obligatory = false;
         this.dataType = PropertyType.String.getId();
         this.creationDate = new Date();
     }
@@ -118,15 +118,15 @@ public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
 
     @Override
     public Boolean isObligatory() {
-        if (this.isObligatory == null) {
-            this.isObligatory = false;
+        if (this.obligatory == null) {
+            this.obligatory = false;
         }
-        return this.isObligatory;
+        return this.obligatory;
     }
 
     @Override
-    public void setIsObligatory(Boolean isObligatory) {
-        this.isObligatory = isObligatory;
+    public void setObligatory(Boolean obligatory) {
+        this.obligatory = obligatory;
     }
 
     @Override

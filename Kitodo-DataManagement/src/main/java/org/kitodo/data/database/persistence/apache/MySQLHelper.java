@@ -381,7 +381,7 @@ public class MySQLHelper {
         Timestamp datetime = new Timestamp(new Date().getTime());
         try {
             QueryRunner run = new QueryRunner();
-            String propNames = "title, value, isObligatory, dataType, choice, creationDate, user_id";
+            String propNames = "title, value, obligatory, dataType, choice, creationDate, user_id";
             Object[] param = { "_filter", filterstring, false, 5, null, datetime, userId };
             String sql = "INSERT INTO " + "userProperty" + " (" + propNames + ") VALUES ( ?, ?,? ,? ,? ,?,? )";
             if (logger.isDebugEnabled()) {
@@ -464,7 +464,7 @@ public class MySQLHelper {
     }
 
     private static void generateProcesses(MySQLHelper helper, int start, int end) throws SQLException {
-        String propNames = "id, title, isTemplate, creationDate, project_id, ruleset_id, isChoiceListShown, "
+        String propNames = "id, title, template, creationDate, project_id, ruleset_id, inChoiceListShown, "
                 + "sortHelperStatus";
         StringBuilder propValues = new StringBuilder();
         Timestamp datetime = new Timestamp(new Date().getTime());
@@ -487,7 +487,7 @@ public class MySQLHelper {
     }
 
     private static void generateProcessProperties(MySQLHelper helper2, int start, int end) throws SQLException {
-        String propNames = "title, value, isObligatory, dataType, choice, process_id, creationDate, container";
+        String propNames = "title, value, obligatory, dataType, choice, process_id, creationDate, container";
         StringBuilder propValues = new StringBuilder();
         Timestamp datetime = new Timestamp(new Date().getTime());
         try (Connection connection = helper.getConnection()) {

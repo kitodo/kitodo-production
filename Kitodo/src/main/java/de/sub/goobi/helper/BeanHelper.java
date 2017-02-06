@@ -149,7 +149,7 @@ public class BeanHelper {
 			for (Iterator<WorkpieceProperty> iterator = workpiece.getProperties().iterator(); iterator.hasNext();) {
 				WorkpieceProperty property = iterator.next();
 				WorkpieceProperty propertyNew = new WorkpieceProperty();
-				propertyNew.setIsObligatory(property.isObligatory());
+				propertyNew.setObligatory(property.isObligatory());
 				propertyNew.setType(property.getType());
 				propertyNew.setTitle(property.getTitle());
 				propertyNew.setValue(property.getValue());
@@ -169,7 +169,7 @@ public class BeanHelper {
 		for (Iterator<ProcessProperty> iterator = processTemplate.getProperties().iterator(); iterator.hasNext();) {
 			ProcessProperty property = iterator.next();
 			ProcessProperty propertyNew = new ProcessProperty();
-			propertyNew.setIsObligatory(property.isObligatory());
+			propertyNew.setObligatory(property.isObligatory());
 			propertyNew.setType(property.getType());
 			propertyNew.setTitle(property.getTitle());
 			propertyNew.setValue(property.getValue());
@@ -197,7 +197,7 @@ public class BeanHelper {
 			for (Iterator<TemplateProperty> iterator = template.getProperties().iterator(); iterator.hasNext();) {
 				TemplateProperty property = iterator.next();
 				TemplateProperty propertyNew = new TemplateProperty();
-				propertyNew.setIsObligatory(property.isObligatory());
+				propertyNew.setObligatory(property.isObligatory());
 				propertyNew.setType(property.getType());
 				propertyNew.setTitle(property.getTitle());
 				propertyNew.setValue(property.getValue());

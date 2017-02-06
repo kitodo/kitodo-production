@@ -47,10 +47,10 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "isActive")
+    @Column(name = "active")
     private boolean active = true;
 
-    @Column(name = "isVisible")
+    @Column(name = "visible")
     private String visible;
 
     @Column(name = "location")

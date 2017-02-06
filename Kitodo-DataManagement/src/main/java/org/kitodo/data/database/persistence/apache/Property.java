@@ -18,18 +18,18 @@ public class Property {
     private int id;
     private String title;
     private String value;
-    private boolean isObligatory;
+    private boolean obligatory;
     private int dataTypeId;
     private String choice;
     private Date creationDate;
     private int container;
 
-    public Property(int id, String title, String value, boolean isObligatory, int dataTypeId, String choice,
+    public Property(int id, String title, String value, boolean obligatory, int dataTypeId, String choice,
             Date creationDate, int container) {
         this.id = id;
         this.title = title;
         this.value = value;
-        this.isObligatory = isObligatory;
+        this.obligatory = obligatory;
         this.dataTypeId = dataTypeId;
         this.choice = choice;
         this.creationDate = creationDate;
@@ -61,11 +61,11 @@ public class Property {
     }
 
     public boolean isObligatory() {
-        return this.isObligatory;
+        return this.obligatory;
     }
 
-    public void setIsObligatory(boolean isObligatory) {
-        this.isObligatory = isObligatory;
+    public void setObligatory(boolean obligatory) {
+        this.obligatory = obligatory;
     }
 
     public int getDataTypeId() {

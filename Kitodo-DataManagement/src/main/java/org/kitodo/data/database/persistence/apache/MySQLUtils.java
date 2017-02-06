@@ -81,12 +81,12 @@ public class MySQLUtils {
                 int id = rs.getInt("id");
                 String title = rs.getString("title");
                 String value = rs.getString("value");
-                boolean isObligatorisch = rs.getBoolean("isObligatory");
+                boolean obligatory = rs.getBoolean("obligatory");
                 int dataType = rs.getInt("dataType");
                 String choice = rs.getString("choice");
                 Date creationDate = rs.getTimestamp("creationDate");
                 int container = rs.getInt("container");
-                Property prop = new Property(id, title, value, isObligatorisch, dataType, choice, creationDate, container);
+                Property prop = new Property(id, title, value, obligatory, dataType, choice, creationDate, container);
                 answer.add(prop);
             }
             return answer;
@@ -101,12 +101,12 @@ public class MySQLUtils {
                 int id = rs.getInt("id");
                 String title = rs.getString("title");
                 String value = rs.getString("value");
-                boolean isObligatory = rs.getBoolean("isObligatory");
+                boolean obligatory = rs.getBoolean("obligatory");
                 int dataType = rs.getInt("dataType");
                 String choice = rs.getString("choice");
                 Date creationDate = rs.getTimestamp("creationDate");
                 int container = rs.getInt("container");
-                Property prop = new Property(id, title, value, isObligatory, dataType, choice, creationDate, container);
+                Property prop = new Property(id, title, value, obligatory, dataType, choice, creationDate, container);
                 answer.add(prop);
             }
             return answer;
@@ -121,12 +121,12 @@ public class MySQLUtils {
                 int id = rs.getInt("id");
                 String title = rs.getString("title");
                 String value = rs.getString("value");
-                boolean isObligatory = rs.getBoolean("isObligatory");
+                boolean obligatory = rs.getBoolean("obligatory");
                 int dataType = rs.getInt("dataType");
                 String choice = rs.getString("choice");
                 Date creationDate = rs.getTimestamp("creationDate");
                 int container = rs.getInt("container");
-                Property prop = new Property(id, title, value, isObligatory, dataType, choice, creationDate, container);
+                Property prop = new Property(id, title, value, obligatory, dataType, choice, creationDate, container);
                 answer.add(prop);
             }
             return answer;
@@ -142,7 +142,7 @@ public class MySQLUtils {
                 String outputName = rs.getString("outputName");
                 boolean template = rs.getBoolean("template");
                 boolean swappedOut = rs.getBoolean("swappedOut");
-                boolean isChoiceListShown = rs.getBoolean("isChoiceListShown");
+                boolean inChoiceListShown = rs.getBoolean("inChoiceListShown");
                 String sortHelperStatus = rs.getString("sortHelperStatus");
                 int sortHelperImages = rs.getInt("sortHelperImages");
                 int sortHelperArticles = rs.getInt("sortHelperArticles");
@@ -152,7 +152,7 @@ public class MySQLUtils {
                 int sortHelperDocstructs = rs.getInt("sortHelperDocstructs");
                 int sortHelperMetadata = rs.getInt("sortHelperMetadata");
                 String wikiField = rs.getString("wikiField");
-                return new ProcessObject(processId, title, outputName, template, swappedOut, isChoiceListShown,
+                return new ProcessObject(processId, title, outputName, template, swappedOut, inChoiceListShown,
                         sortHelperStatus, sortHelperImages, sortHelperArticles, creationDate, projectId,
                         rulesetId, sortHelperDocstructs, sortHelperMetadata, wikiField);
             }
@@ -165,19 +165,24 @@ public class MySQLUtils {
         public List<String> handle(ResultSet rs) throws SQLException {
             List<String> answer = new ArrayList<String>();
             if (rs.next()) {
-                if (rs.getString("typeAutomaticScriptPath") != null && rs.getString("typeAutomaticScriptPath").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath") != null
+                        && rs.getString("typeAutomaticScriptPath").length() > 0) {
                     answer.add(rs.getString("typeAutomaticScriptPath"));
                 }
-                if (rs.getString("typeAutomaticScriptPath2") != null && rs.getString("typeAutomaticScriptPath2").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath2") != null
+                        && rs.getString("typeAutomaticScriptPath2").length() > 0) {
                     answer.add(rs.getString("typeAutomaticScriptPath2"));
                 }
-                if (rs.getString("typeAutomaticScriptPath3") != null && rs.getString("typeAutomaticScriptPath3").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath3") != null
+                        && rs.getString("typeAutomaticScriptPath3").length() > 0) {
                     answer.add(rs.getString("typeAutomaticScriptPath3"));
                 }
-                if (rs.getString("typeAutomaticScriptPath4") != null && rs.getString("typeAutomaticScriptPath4").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath4") != null
+                        && rs.getString("typeAutomaticScriptPath4").length() > 0) {
                     answer.add(rs.getString("typeAutomaticScriptPath4"));
                 }
-                if (rs.getString("typeAutomaticScriptPath5") != null && rs.getString("typeAutomaticScriptPath5").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath5") != null
+                        && rs.getString("typeAutomaticScriptPath5").length() > 0) {
                     answer.add(rs.getString("typeAutomaticScriptPath5"));
                 }
             }
@@ -190,23 +195,28 @@ public class MySQLUtils {
         public Map<String, String> handle(ResultSet rs) throws SQLException {
             Map<String, String> answer = new HashMap<String, String>();
             if (rs.next()) {
-                if (rs.getString("typeAutomaticScriptPath") != null && rs.getString("typeAutomaticScriptPath").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath") != null
+                        && rs.getString("typeAutomaticScriptPath").length() > 0) {
                     String name = rs.getString("scriptName1");
                     answer.put(name, rs.getString("typeAutomaticScriptPath"));
                 }
-                if (rs.getString("typeAutomaticScriptPath2") != null && rs.getString("typeAutomaticScriptPath2").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath2") != null
+                        && rs.getString("typeAutomaticScriptPath2").length() > 0) {
                     String name = rs.getString("scriptName2");
                     answer.put(name, rs.getString("typeAutomaticScriptPath2"));
                 }
-                if (rs.getString("typeAutomaticScriptPath3") != null && rs.getString("typeAutomaticScriptPath3").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath3") != null
+                        && rs.getString("typeAutomaticScriptPath3").length() > 0) {
                     String name = rs.getString("scriptName3");
                     answer.put(name, rs.getString("typeAutomaticScriptPath3"));
                 }
-                if (rs.getString("typeAutomaticScriptPath4") != null && rs.getString("typeAutomaticScriptPath4").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath4") != null
+                        && rs.getString("typeAutomaticScriptPath4").length() > 0) {
                     String name = rs.getString("scriptName4");
                     answer.put(name, rs.getString("typeAutomaticScriptPath4"));
                 }
-                if (rs.getString("typeAutomaticScriptPath5") != null && rs.getString("typeAutomaticScriptPath5").length() > 0) {
+                if (rs.getString("typeAutomaticScriptPath5") != null
+                        && rs.getString("typeAutomaticScriptPath5").length() > 0) {
                     String name = rs.getString("scriptName5");
                     answer.put(name, rs.getString("typeAutomaticScriptPath5"));
                 }

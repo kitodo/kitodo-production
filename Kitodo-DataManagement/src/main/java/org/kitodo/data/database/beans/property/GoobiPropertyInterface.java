@@ -35,7 +35,7 @@ public interface GoobiPropertyInterface {
 
     Boolean isObligatory();
 
-    void setIsObligatory(Boolean isObligatory);
+    void setObligatory(Boolean obligatory);
 
     Date getCreationDate();
 
