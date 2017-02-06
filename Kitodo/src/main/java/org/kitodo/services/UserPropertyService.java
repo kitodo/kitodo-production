@@ -15,11 +15,11 @@ import org.kitodo.data.database.beans.UserProperty;
 
 public class UserPropertyService {
 
-	public String getNormalizedTitle(UserProperty userProperty) {
-		return userProperty.getTitle().replace(" ", "_").trim();
-	}
+    public String getNormalizedTitle(UserProperty userProperty) {
+        return userProperty.getTitle().replace(" ", "_").trim();
+    }
 
-	public String getNormalizedValue(UserProperty userProperty) {
-		return userProperty.getValue().replace(" ", "_").trim();
-	}
+    public String getNormalizedValue(UserProperty userProperty) {
+        return userProperty.getValue().replace(" ", "_").trim();
+    }
 }

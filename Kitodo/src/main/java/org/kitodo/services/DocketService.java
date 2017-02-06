@@ -18,29 +18,29 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
 
 public class DocketService {
-	private DocketDAO docketDao = new DocketDAO();
+    private DocketDAO docketDao = new DocketDAO();
 
-	public Docket find(Integer id) throws DAOException {
-		return docketDao.find(id);
-	}
+    public Docket find(Integer id) throws DAOException {
+        return docketDao.find(id);
+    }
 
-	public List<Docket> findAll() throws DAOException {
-		return docketDao.findAll();
-	}
+    public List<Docket> findAll() throws DAOException {
+        return docketDao.findAll();
+    }
 
-	public Docket save(Docket userGroup) throws DAOException {
-		return docketDao.save(userGroup);
-	}
+    public Docket save(Docket userGroup) throws DAOException {
+        return docketDao.save(userGroup);
+    }
 
-	public void remove(Docket userGroup) throws DAOException {
-		docketDao.remove(userGroup);
-	}
+    public void remove(Docket userGroup) throws DAOException {
+        docketDao.remove(userGroup);
+    }
 
-	public List<Docket> search(String query) throws DAOException {
-		return docketDao.search(query);
-	}
+    public List<Docket> search(String query) throws DAOException {
+        return docketDao.search(query);
+    }
 
-	public Long count(String query) throws DAOException {
-		return docketDao.count(query);
-	}
+    public Long count(String query) throws DAOException {
+        return docketDao.count(query);
+    }
 }

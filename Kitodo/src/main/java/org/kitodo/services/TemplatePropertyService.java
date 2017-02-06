@@ -15,11 +15,11 @@ import org.kitodo.data.database.beans.TemplateProperty;
 
 public class TemplatePropertyService {
 
-	public String getNormalizedTitle(TemplateProperty templateProperty) {
-		return templateProperty.getTitle().replace(" ", "_").trim();
-	}
+    public String getNormalizedTitle(TemplateProperty templateProperty) {
+        return templateProperty.getTitle().replace(" ", "_").trim();
+    }
 
-	public String getNormalizedValue(TemplateProperty templateProperty) {
-		return templateProperty.getValue().replace(" ", "_").trim();
-	}
+    public String getNormalizedValue(TemplateProperty templateProperty) {
+        return templateProperty.getValue().replace(" ", "_").trim();
+    }
 }

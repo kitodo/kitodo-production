@@ -17,35 +17,35 @@ import org.kitodo.data.database.persistence.WorkpieceDAO;
 
 public class WorkpieceService {
 
-	private WorkpieceDAO workpieceDao = new WorkpieceDAO();
+    private WorkpieceDAO workpieceDao = new WorkpieceDAO();
 
-	public void save(Workpiece workpiece) throws DAOException {
-		workpieceDao.save(workpiece);
-	}
+    public void save(Workpiece workpiece) throws DAOException {
+        workpieceDao.save(workpiece);
+    }
 
-	public Workpiece find(Integer id) throws DAOException {
-		return workpieceDao.find(id);
-	}
+    public Workpiece find(Integer id) throws DAOException {
+        return workpieceDao.find(id);
+    }
 
-	public void remove(Workpiece workpiece) throws DAOException {
-		workpieceDao.remove(workpiece);
-	}
+    public void remove(Workpiece workpiece) throws DAOException {
+        workpieceDao.remove(workpiece);
+    }
 
-	public void remove(Integer id) throws DAOException {
-		workpieceDao.remove(id);
-	}
+    public void remove(Integer id) throws DAOException {
+        workpieceDao.remove(id);
+    }
 
-	/**
-	 * Get size of properties list.
-	 *
-	 * @param workpiece object
-	 * @return properties list size
-	 */
-	public int getPropertiesSize(Workpiece workpiece) {
-		if (workpiece.getProperties() == null) {
-			return 0;
-		} else {
-			return workpiece.getProperties().size();
-		}
-	}
+    /**
+     * Get size of properties list.
+     *
+     * @param workpiece object
+     * @return properties list size
+     */
+    public int getPropertiesSize(Workpiece workpiece) {
+        if (workpiece.getProperties() == null) {
+            return 0;
+        } else {
+            return workpiece.getProperties().size();
+        }
+    }
 }

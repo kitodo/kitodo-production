@@ -11,7 +11,6 @@
 
 package org.kitodo.services;
 
-
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
@@ -21,21 +20,21 @@ import org.kitodo.data.database.persistence.HistoryDAO;
  */
 public class HistoryService {
 
-	private HistoryDAO historyDao = new HistoryDAO();
+    private HistoryDAO historyDao = new HistoryDAO();
 
-	public void save(History task) throws DAOException {
-		historyDao.save(task);
-	}
+    public void save(History task) throws DAOException {
+        historyDao.save(task);
+    }
 
-	public History find(Integer id) throws DAOException {
-		return historyDao.find(id);
-	}
+    public History find(Integer id) throws DAOException {
+        return historyDao.find(id);
+    }
 
-	public void remove(History history) throws DAOException {
-		historyDao.remove(history);
-	}
+    public void remove(History history) throws DAOException {
+        historyDao.remove(history);
+    }
 
-	public void remove(Integer id) throws DAOException {
-		historyDao.remove(id);
-	}
+    public void remove(Integer id) throws DAOException {
+        historyDao.remove(id);
+    }
 }

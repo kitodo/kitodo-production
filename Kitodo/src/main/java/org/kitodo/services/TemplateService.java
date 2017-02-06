@@ -38,35 +38,35 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 
 public class TemplateService {
 
-	private TemplateDAO templateDao = new TemplateDAO();
+    private TemplateDAO templateDao = new TemplateDAO();
 
-	public void save(Template template) throws DAOException {
-		templateDao.save(template);
-	}
+    public void save(Template template) throws DAOException {
+        templateDao.save(template);
+    }
 
-	public Template find(Integer id) throws DAOException {
-		return templateDao.find(id);
-	}
+    public Template find(Integer id) throws DAOException {
+        return templateDao.find(id);
+    }
 
-	public void remove(Template workpiece) throws DAOException {
-		templateDao.remove(workpiece);
-	}
+    public void remove(Template workpiece) throws DAOException {
+        templateDao.remove(workpiece);
+    }
 
-	public void remove(Integer id) throws DAOException {
-		templateDao.remove(id);
-	}
+    public void remove(Integer id) throws DAOException {
+        templateDao.remove(id);
+    }
 
-	/**
-	 * Get size of properties list.
-	 *
-	 * @param template object
-	 * @return size of properties list
-	 */
-	public int getPropertiesSize(Template template) {
-		if (template.getProperties() == null) {
-			return 0;
-		} else {
-			return template.getProperties().size();
-		}
-	}
+    /**
+     * Get size of properties list.
+     *
+     * @param template object
+     * @return size of properties list
+     */
+    public int getPropertiesSize(Template template) {
+        if (template.getProperties() == null) {
+            return 0;
+        } else {
+            return template.getProperties().size();
+        }
+    }
 }

@@ -31,264 +31,264 @@ import org.kitodo.data.encryption.DesEncrypter;
 
 public class UserService  {
 
-	private static final Logger logger = Logger.getLogger(MySQLHelper.class);
+    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
-	private UserDAO userDao = new UserDAO();
+    private UserDAO userDao = new UserDAO();
 
-	public User save(User user) throws DAOException {
-		return userDao.save(user);
-	}
+    public User save(User user) throws DAOException {
+        return userDao.save(user);
+    }
 
-	public User find(Integer id) throws DAOException {
-		return userDao.find(id);
-	}
+    public User find(Integer id) throws DAOException {
+        return userDao.find(id);
+    }
 
-	public List<User> findAll() throws DAOException {
-		return userDao.findAll();
-	}
+    public List<User> findAll() throws DAOException {
+        return userDao.findAll();
+    }
 
-	public void remove(User user) throws DAOException {
-		userDao.remove(user);
-	}
+    public void remove(User user) throws DAOException {
+        userDao.remove(user);
+    }
 
-	public List<User> search(String query) throws DAOException {
-		return userDao.search(query);
-	}
+    public List<User> search(String query) throws DAOException {
+        return userDao.search(query);
+    }
 
-	public List<User> search(String query, String parameter) throws DAOException {
-		return userDao.search(query, parameter);
-	}
+    public List<User> search(String query, String parameter) throws DAOException {
+        return userDao.search(query, parameter);
+    }
 
-	public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
-		return userDao.search(query, namedParameter, parameter);
-	}
+    public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
+        return userDao.search(query, namedParameter, parameter);
+    }
 
-	public Long count(String query) throws DAOException {
-		return userDao.count(query);
-	}
+    public Long count(String query) throws DAOException {
+        return userDao.count(query);
+    }
 
-	/**
-	 * Table size.
-	 *
-	 * @return table size
-	 */
-	public Integer getTableSize(User user) {
-		if (user.getTableSize() == null) {
-			return Integer.valueOf(10);
-		}
-		return user.getTableSize();
-	}
+    /**
+     * Table size.
+     *
+     * @return table size
+     */
+    public Integer getTableSize(User user) {
+        if (user.getTableSize() == null) {
+            return Integer.valueOf(10);
+        }
+        return user.getTableSize();
+    }
 
-	/**
-	 * Session timeout.
-	 *
-	 * @return session timeout
-	 */
-	public Integer getSessionTimeout(User user) {
-		if (user.getSessionTimeout() == null) {
-			user.setSessionTimeout(7200);
-		}
-		return user.getSessionTimeout();
-	}
+    /**
+     * Session timeout.
+     *
+     * @return session timeout
+     */
+    public Integer getSessionTimeout(User user) {
+        if (user.getSessionTimeout() == null) {
+            user.setSessionTimeout(7200);
+        }
+        return user.getSessionTimeout();
+    }
 
-	/**
-	 * CSS style.
-	 *
-	 * @return CSS style
-	 */
-	public String getCss(User user) {
-		if (user.getCss() == null || user.getCss().length() == 0) {
-			user.setCss("/css/default.css");
-		}
-		return user.getCss();
-	}
+    /**
+     * CSS style.
+     *
+     * @return CSS style
+     */
+    public String getCss(User user) {
+        if (user.getCss() == null || user.getCss().length() == 0) {
+            user.setCss("/css/default.css");
+        }
+        return user.getCss();
+    }
 
-	/**
-	 * Get size of user group result.
-	 *
-	 * @param user object
-	 * @return size
-	 */
-	public int getUserGroupSize(User user) {
-		if (user.getUserGroups() == null) {
-			return 0;
-		} else {
-			return user.getUserGroups().size();
-		}
-	}
+    /**
+     * Get size of user group result.
+     *
+     * @param user object
+     * @return size
+     */
+    public int getUserGroupSize(User user) {
+        if (user.getUserGroups() == null) {
+            return 0;
+        } else {
+            return user.getUserGroups().size();
+        }
+    }
 
-	/**
-	 * Get size of steps result list.
-	 *
-	 * @param user object
-	 * @return result size of steps
-	 */
-	public int getTasksSize(User user) {
-		if (user.getTasks() == null) {
-			return 0;
-		} else {
-			return user.getTasks().size();
-		}
-	}
+    /**
+     * Get size of steps result list.
+     *
+     * @param user object
+     * @return result size of steps
+     */
+    public int getTasksSize(User user) {
+        if (user.getTasks() == null) {
+            return 0;
+        } else {
+            return user.getTasks().size();
+        }
+    }
 
-	/**
-	 * Get size of processing steps result list.
-	 *
-	 * @param user object
-	 * @return result size of processing steps
-	 */
-	public int getProcessingTasksSize(User user) {
-		if (user.getProcessingTasks() == null) {
-			return 0;
-		} else {
-			return user.getProcessingTasks().size();
-		}
-	}
+    /**
+     * Get size of processing steps result list.
+     *
+     * @param user object
+     * @return result size of processing steps
+     */
+    public int getProcessingTasksSize(User user) {
+        if (user.getProcessingTasks() == null) {
+            return 0;
+        } else {
+            return user.getProcessingTasks().size();
+        }
+    }
 
-	/**
-	 * Get size of projects result list.
-	 *
-	 * @param user object
-	 * @return result size of projects
-	 *
-	 */
-	public int getProjectsSize(User user) {
-		if (user.getProjects() == null) {
-			return 0;
-		} else {
-			return user.getProjects().size();
-		}
-	}
+    /**
+     * Get size of projects result list.
+     *
+     * @param user object
+     * @return result size of projects
+     *
+     */
+    public int getProjectsSize(User user) {
+        if (user.getProjects() == null) {
+            return 0;
+        } else {
+            return user.getProjects().size();
+        }
+    }
 
-	//TODO: check if this class should be here or in some other place
-	public boolean isPasswordCorrect(User user, String inputPassword) {
-		if (inputPassword == null || inputPassword.length() == 0) {
-			return false;
-		} else {
-			if (ConfigMain.getBooleanParameter("ldap_use")) {
-				Ldap ldap = new Ldap();
-				return ldap.isUserPasswordCorrect(user, inputPassword);
-			} else {
-				DesEncrypter encrypter = new DesEncrypter();
-				String encoded = encrypter.encrypt(inputPassword);
-				return user.getPassword().equals(encoded);
-			}
-		}
-	}
+    //TODO: check if this class should be here or in some other place
+    public boolean isPasswordCorrect(User user, String inputPassword) {
+        if (inputPassword == null || inputPassword.length() == 0) {
+            return false;
+        } else {
+            if (ConfigMain.getBooleanParameter("ldap_use")) {
+                Ldap ldap = new Ldap();
+                return ldap.isUserPasswordCorrect(user, inputPassword);
+            } else {
+                DesEncrypter encrypter = new DesEncrypter();
+                String encoded = encrypter.encrypt(inputPassword);
+                return user.getPassword().equals(encoded);
+            }
+        }
+    }
 
-	public String getFullName(User user) {
-		return user.getSurname() + ", " + user.getName();
-	}
+    public String getFullName(User user) {
+        return user.getSurname() + ", " + user.getName();
+    }
 
-	/**
-	 * Get user home directory (either from the LDAP or directly from the configuration). If LDAP is used, find home
-	 * directory there, otherwise in configuration.
-	 *
-	 * @return path as String
-	 * @throws InterruptedException add description
-	 * @throws IOException add description
-	 */
-	public String getHomeDirectory(User user) throws IOException, InterruptedException {
-		String result;
-		if (ConfigMain.getBooleanParameter("ldap_use")) {
-			Ldap ldap = new Ldap();
-			result = ldap.getUserHomeDirectory(user);
-		} else {
-			result = ConfigMain.getParameter("dir_Users") + user.getLogin();
-		}
+    /**
+     * Get user home directory (either from the LDAP or directly from the configuration). If LDAP is used, find home
+     * directory there, otherwise in configuration.
+     *
+     * @return path as String
+     * @throws InterruptedException add description
+     * @throws IOException add description
+     */
+    public String getHomeDirectory(User user) throws IOException, InterruptedException {
+        String result;
+        if (ConfigMain.getBooleanParameter("ldap_use")) {
+            Ldap ldap = new Ldap();
+            result = ldap.getUserHomeDirectory(user);
+        } else {
+            result = ConfigMain.getParameter("dir_Users") + user.getLogin();
+        }
 
-		if (result.equals("")) {
-			return "";
-		}
+        if (result.equals("")) {
+            return "";
+        }
 
-		if (!result.endsWith(File.separator)) {
-			result += File.separator;
-		}
-		// if the directory is not "", but does not yet exist, then create it now
-		FilesystemHelper.createDirectoryForUser(result, user.getLogin());
-		return result;
-	}
+        if (!result.endsWith(File.separator)) {
+            result += File.separator;
+        }
+        // if the directory is not "", but does not yet exist, then create it now
+        FilesystemHelper.createDirectoryForUser(result, user.getLogin());
+        return result;
+    }
 
-	public Integer getSessionTimeoutInMinutes(User user) {
-		return user.getSessionTimeout() / 60;
-	}
+    public Integer getSessionTimeoutInMinutes(User user) {
+        return user.getSessionTimeout() / 60;
+    }
 
-	/**
-	 * Convert session timeout to minutes.
-	 *
-	 * @param user object
-	 * @param sessionTimeout in minutes
-	 */
-	public void setSessionTimeoutInMinutes(User user, Integer sessionTimeout) {
-		if (sessionTimeout < 5) {
-			user.setSessionTimeout(5 * 60);
-		} else {
-			user.setSessionTimeout(sessionTimeout * 60);
-		}
-	}
+    /**
+     * Convert session timeout to minutes.
+     *
+     * @param user object
+     * @param sessionTimeout in minutes
+     */
+    public void setSessionTimeoutInMinutes(User user, Integer sessionTimeout) {
+        if (sessionTimeout < 5) {
+            user.setSessionTimeout(5 * 60);
+        } else {
+            user.setSessionTimeout(sessionTimeout * 60);
+        }
+    }
 
-	/**
-	 * Get properties list size.
-	 *
-	 * @param user object
-	 * @return properties list size
-	 */
-	public int getPropertiesSize(User user) {
-		if (user.getProperties() == null) {
-			return 0;
-		} else {
-			return user.getProperties().size();
-		}
-	}
+    /**
+     * Get properties list size.
+     *
+     * @param user object
+     * @return properties list size
+     */
+    public int getPropertiesSize(User user) {
+        if (user.getProperties() == null) {
+            return 0;
+        } else {
+            return user.getProperties().size();
+        }
+    }
 
-	/**
-	 * Adds a new filter to list.
-	 *
-	 * @param inputFilter the filter to add
-	 */
-	public void addFilter(int userId, String inputFilter) {
-		if (getFilters(userId).contains(inputFilter)) {
-			return;
-		}
-		try {
-			MySQLHelper.addFilterToUser(userId, inputFilter);
-		} catch (SQLException e) {
-			logger.error("Cannot not add filter to user with id " + userId, e);
-		}
+    /**
+     * Adds a new filter to list.
+     *
+     * @param inputFilter the filter to add
+     */
+    public void addFilter(int userId, String inputFilter) {
+        if (getFilters(userId).contains(inputFilter)) {
+            return;
+        }
+        try {
+            MySQLHelper.addFilterToUser(userId, inputFilter);
+        } catch (SQLException e) {
+            logger.error("Cannot not add filter to user with id " + userId, e);
+        }
 
-	}
+    }
 
-	/**
-	 * Removes filter from list.
-	 *
-	 * @param inputFilter the filter to remove
-	 */
-	public void removeFilter(int userId, String inputFilter) {
-		if (!getFilters(userId).contains(inputFilter)) {
-			return;
-		}
-		try {
-			MySQLHelper.removeFilterFromUser(userId, inputFilter);
-		} catch (SQLException e) {
-			logger.error("Cannot not remove filter from user with id " + userId, e);
-		}
+    /**
+     * Removes filter from list.
+     *
+     * @param inputFilter the filter to remove
+     */
+    public void removeFilter(int userId, String inputFilter) {
+        if (!getFilters(userId).contains(inputFilter)) {
+            return;
+        }
+        try {
+            MySQLHelper.removeFilterFromUser(userId, inputFilter);
+        } catch (SQLException e) {
+            logger.error("Cannot not remove filter from user with id " + userId, e);
+        }
 
-	}
+    }
 
-	/**
-	 * Get list of filters.
-	 *
-	 * @param userId object
-	 * @return List of filters as strings
-	 */
-	public List<String> getFilters(int userId) {
-		List<String> answer = new ArrayList<>();
-		try {
-			answer = MySQLHelper.getFilterForUser(userId);
-		} catch (SQLException e) {
-			logger.error("Cannot not load filter for user with id " + userId, e);
-		}
+    /**
+     * Get list of filters.
+     *
+     * @param userId object
+     * @return List of filters as strings
+     */
+    public List<String> getFilters(int userId) {
+        List<String> answer = new ArrayList<>();
+        try {
+            answer = MySQLHelper.getFilterForUser(userId);
+        } catch (SQLException e) {
+            logger.error("Cannot not load filter for user with id " + userId, e);
+        }
 
-		return answer;
-	}
+        return answer;
+    }
 }

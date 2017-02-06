@@ -29,49 +29,49 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 
 public class ProjectService {
 
-	private List<StepInformation> commonWorkFlow = null;
+    private List<StepInformation> commonWorkFlow = null;
 
-	private ProjectDAO projectDao = new ProjectDAO();
+    private ProjectDAO projectDao = new ProjectDAO();
 
-	public void save(Project project) throws DAOException {
-		projectDao.save(project);
-	}
+    public void save(Project project) throws DAOException {
+        projectDao.save(project);
+    }
 
-	public Project find(Integer id) throws DAOException {
-		return projectDao.find(id);
-	}
+    public Project find(Integer id) throws DAOException {
+        return projectDao.find(id);
+    }
 
-	public void remove(Project project) throws DAOException {
-		projectDao.remove(project);
-	}
+    public void remove(Project project) throws DAOException {
+        projectDao.remove(project);
+    }
 
-	public void remove(Integer id) throws DAOException {
-		projectDao.remove(id);
-	}
+    public void remove(Integer id) throws DAOException {
+        projectDao.remove(id);
+    }
 
-	public List<Project> search(String query) throws DAOException {
-		return projectDao.search(query);
-	}
+    public List<Project> search(String query) throws DAOException {
+        return projectDao.search(query);
+    }
 
-	/**
-	 * Get workflow.
-	 *
-	 * @return a list with information for each step on workflow
-	 */
+    /**
+     * Get workflow.
+     *
+     * @return a list with information for each step on workflow
+     */
 
-	public List<StepInformation> getWorkFlow(Project project) {
-		if (this.commonWorkFlow == null) {
-			if (project.getId() != null) {
-				this.commonWorkFlow = ProjectHelper.getProjectWorkFlowOverview(project);
-			} else {
-				this.commonWorkFlow = new ArrayList<>();
-			}
-		}
-		return this.commonWorkFlow;
-	}
+    public List<StepInformation> getWorkFlow(Project project) {
+        if (this.commonWorkFlow == null) {
+            if (project.getId() != null) {
+                this.commonWorkFlow = ProjectHelper.getProjectWorkFlowOverview(project);
+            } else {
+                this.commonWorkFlow = new ArrayList<>();
+            }
+        }
+        return this.commonWorkFlow;
+    }
 
-	@XmlElement(name = "field")
-	public List<Field> getFieldConfig(Project project) throws IOException {
-		return Field.getFieldConfigForProject(project);
-	}
+    @XmlElement(name = "field")
+    public List<Field> getFieldConfig(Project project) throws IOException {
+        return Field.getFieldConfigForProject(project);
+    }
 }

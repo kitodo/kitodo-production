@@ -15,11 +15,11 @@ import org.kitodo.data.database.beans.WorkpieceProperty;
 
 public class WorkpiecePropertyService {
 
-	public String getNormalizedTitle(WorkpieceProperty workpieceProperty) {
-		return workpieceProperty.getTitle().replace(" ", "_").trim();
-	}
+    public String getNormalizedTitle(WorkpieceProperty workpieceProperty) {
+        return workpieceProperty.getTitle().replace(" ", "_").trim();
+    }
 
-	public String getNormalizedValue(WorkpieceProperty workpieceProperty) {
-		return workpieceProperty.getValue().replace(" ", "_").trim();
-	}
+    public String getNormalizedValue(WorkpieceProperty workpieceProperty) {
+        return workpieceProperty.getValue().replace(" ", "_").trim();
+    }
 }

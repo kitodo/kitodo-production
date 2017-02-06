@@ -15,11 +15,11 @@ import org.kitodo.data.database.beans.ProcessProperty;
 
 public class ProcessPropertyService {
 
-	public String getNormalizedTitle(ProcessProperty processProperty) {
-		return processProperty.getTitle().replace(" ", "_").trim();
-	}
+    public String getNormalizedTitle(ProcessProperty processProperty) {
+        return processProperty.getTitle().replace(" ", "_").trim();
+    }
 
-	public String getNormalizedValue(ProcessProperty processProperty) {
-		return processProperty.getValue().replace(" ", "_").trim();
-	}
+    public String getNormalizedValue(ProcessProperty processProperty) {
+        return processProperty.getValue().replace(" ", "_").trim();
+    }
 }

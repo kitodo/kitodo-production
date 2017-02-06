@@ -17,21 +17,21 @@ import org.kitodo.data.database.persistence.ProjectFileGroupDAO;
 
 public class ProjectFileGroupService {
 
-	private ProjectFileGroupDAO projectFileGroupDao = new ProjectFileGroupDAO();
+    private ProjectFileGroupDAO projectFileGroupDao = new ProjectFileGroupDAO();
 
-	public void save(ProjectFileGroup projectFileGroup) throws DAOException {
-		projectFileGroupDao.save(projectFileGroup);
-	}
+    public void save(ProjectFileGroup projectFileGroup) throws DAOException {
+        projectFileGroupDao.save(projectFileGroup);
+    }
 
-	public ProjectFileGroup find(Integer id) throws DAOException {
-		return projectFileGroupDao.find(id);
-	}
+    public ProjectFileGroup find(Integer id) throws DAOException {
+        return projectFileGroupDao.find(id);
+    }
 
-	public void remove(ProjectFileGroup projectFileGroup) throws DAOException {
-		projectFileGroupDao.remove(projectFileGroup);
-	}
+    public void remove(ProjectFileGroup projectFileGroup) throws DAOException {
+        projectFileGroupDao.remove(projectFileGroup);
+    }
 
-	public void remove(Integer id) throws DAOException {
-		projectFileGroupDao.remove(id);
-	}
+    public void remove(Integer id) throws DAOException {
+        projectFileGroupDao.remove(id);
+    }
 }

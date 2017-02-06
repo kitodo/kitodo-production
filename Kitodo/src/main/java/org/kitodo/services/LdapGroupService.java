@@ -19,25 +19,25 @@ import org.kitodo.data.database.persistence.LdapGroupDAO;
 
 public class LdapGroupService {
 
-	private LdapGroupDAO ldapGroupDao = new LdapGroupDAO();
+    private LdapGroupDAO ldapGroupDao = new LdapGroupDAO();
 
-	public void save(LdapGroup ldapGroup) throws DAOException {
-		ldapGroupDao.save(ldapGroup);
-	}
+    public void save(LdapGroup ldapGroup) throws DAOException {
+        ldapGroupDao.save(ldapGroup);
+    }
 
-	public LdapGroup find(Integer id) throws DAOException {
-		return ldapGroupDao.find(id);
-	}
+    public LdapGroup find(Integer id) throws DAOException {
+        return ldapGroupDao.find(id);
+    }
 
-	public List<LdapGroup> search(String query) throws DAOException {
-		return ldapGroupDao.search(query);
-	}
+    public List<LdapGroup> search(String query) throws DAOException {
+        return ldapGroupDao.search(query);
+    }
 
-	public void remove(LdapGroup ldapGroup) throws DAOException {
-		ldapGroupDao.remove(ldapGroup);
-	}
+    public void remove(LdapGroup ldapGroup) throws DAOException {
+        ldapGroupDao.remove(ldapGroup);
+    }
 
-	public void remove(Integer id) throws DAOException {
-		ldapGroupDao.remove(id);
-	}
+    public void remove(Integer id) throws DAOException {
+        ldapGroupDao.remove(id);
+    }
 }
