@@ -518,9 +518,10 @@ public class AktuelleSchritteForm extends BasisForm {
 		 */
 		this.myDav.UploadFromHome(this.mySchritt.getProcess());
 		this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+		//it returns null! - not possible to close task
 		StepObject so = StepManager.getStepById(this.mySchritt.getId());
 		new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
-		// new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
+		//new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
 		return FilterAlleStart();
 	}
 

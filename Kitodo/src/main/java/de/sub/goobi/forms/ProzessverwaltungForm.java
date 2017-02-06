@@ -1926,8 +1926,9 @@ public class ProzessverwaltungForm extends BasisForm {
 					processService.getPropertiesInitialized(this.myProzess).remove(pe);
 				}
 			}
-			if (!processService.getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess()).contains(this.processProperty.getProzesseigenschaft())) {
-				processService.getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess()).add(this.processProperty.getProzesseigenschaft());
+			//null exception
+			if (!this.processProperty.getProzesseigenschaft().getProcess().getProperties().contains(this.processProperty.getProzesseigenschaft())) {
+				this.processProperty.getProzesseigenschaft().getProcess().getProperties().add(this.processProperty.getProzesseigenschaft());
 			}
 			try {
 				processService.save(this.myProzess);
