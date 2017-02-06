@@ -224,7 +224,7 @@
 
 
 		</f:facet>
-		<h:outputText value="#{item.erstellungsdatum}" />
+		<h:outputText value="#{item.creationDate}" />
 	</x:column>
 
 	<%-- +++++++++++++++++  Status ++++++++++++++++++++++++ --%>
@@ -360,7 +360,7 @@
 
 		<%-- Metadaten-Schaltknopf --%>
 		<h:commandLink action="#{Metadaten.XMLlesen}" id="action14" title="#{msgs.metadatenBearbeiten}123"
-			rendered="#{(LoginForm.maximaleBerechtigung != 1) && (LoginForm.maximaleBerechtigung != 2) && item.benutzerGesperrt == null && ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
+			rendered="#{(LoginForm.maximaleBerechtigung != 1) && (LoginForm.maximaleBerechtigung != 2) && item.blockedUsers == null && ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
 			<h:graphicImage value="/newpages/images/buttons/view1.gif" style="margin-right:10px" />
 			<f:param name="nurLesen" value="true" />
 			<f:param name="ProzesseID" value="#{item.id}" />

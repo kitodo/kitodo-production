@@ -19,7 +19,7 @@
 <%@ taglib uri="http://www.jenia.org/jsf/dynamic" prefix="jd"%>
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 
-<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
 
 
 	<%-- ++++++++++++++++     // Import      ++++++++++++++++ --%>
@@ -45,20 +45,14 @@
 						</x:dataList>
 
 
-						<h:outputText style="back-color:blue; color: red; font-weight: bold;" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typExportDMS }"
+						<h:outputText style="back-color:blue; color: red; font-weight: bold;" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typeExportDMS }"
 							value="#{msgs.timeoutWarningDMS}" />
 
-						<h:commandLink id="action9" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typExportDMS}"
+						<h:commandLink id="action9" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typeExportDMS}"
 							action="#{AktuelleSchritteForm.batchHelper.ExportDMS}" title="#{msgs.importDms}">
 							<h:graphicImage value="/newpages/images/buttons/dms.png" style="margin-right:3px;vertical-align:middle" />
 							<h:outputText value="#{msgs.importDms}" />
 						</h:commandLink>
-
-
-
-
-
-
 
 						<%-- Schritt zurückgeben an vorherige Station für Korrekturzwecke --%>
 						<h:panelGroup>
@@ -94,7 +88,7 @@
 						</h:panelGroup>
 
 						<%-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke --%>
-						<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet>9}">
+						<h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.priority>9}">
 							<jd:hideableController for="solution" id="solutionswitcher" title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">
 								<h:graphicImage value="/newpages/images/buttons/step_for_20px.gif" style="margin-right:3px;vertical-align:middle" />
 								<h:outputText value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}" />

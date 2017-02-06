@@ -305,13 +305,13 @@
 
 		<h:graphicImage value="#{item.processingStatusEnum.bigImagePath}" title="#{item.processingStatusEnum.title}" />
 
-		<h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.prioritaet == 1}" />
-		<h:outputText value="!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.prioritaet == 2}" />
-		<h:outputText value="!!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.prioritaet == 3}" />
+		<h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.priority == 1}" />
+		<h:outputText value="!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.priority == 2}" />
+		<h:outputText value="!!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.priority == 3}" />
 
 		<%-- Popup --%>
 		<x:popup id="popup" closePopupOnExitingElement="true" closePopupOnExitingPopup="true" displayAtDistanceX="-400" displayAtDistanceY="5"
-			rendered="#{item.prioritaet == 10}">
+			rendered="#{item.priority == 10}">
 
 			<f:facet name="popup">
 				<htm:div>
@@ -343,7 +343,7 @@
 		</f:facet>
 
 		<%-- Bearbeitung übernehmen-Schaltknopf --%>
-		<h:commandLink id="take" action="#{AktuelleSchritteForm.SchrittDurchBenutzerUebernehmen}" rendered="#{(item.processingStatusEnum == 'OPEN' && !item.batchStep) || (item.bearbeitungsstatusEnum == 'OPEN' && item.batchStep && !item.batchSize)}"
+		<h:commandLink id="take" action="#{AktuelleSchritteForm.SchrittDurchBenutzerUebernehmen}" rendered="#{(item.processingStatusEnum == 'OPEN' && !item.batchStep) || (item.processingStatusEnum == 'OPEN' && item.batchStep && !item.batchSize)}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
@@ -351,8 +351,8 @@
 
 		<%-- Bearbeiten-Schaltknopf (eigener Schritt) --%>
 		<h:commandLink action="#{AktuelleSchritteForm.EditStep}" id="view1"
-			rendered="#{(item.processingStatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && !item.batchStep) || (item.processingStatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep && !item.batchSize)}"
-			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
+			rendered="#{(item.processingStatusEnum == 'INWORK' && item.processingUser.id == LoginForm.myBenutzer.id && !item.batchStep) || (item.processingStatusEnum == 'INWORK' && item.processingUser.id == LoginForm.myBenutzer.id && item.batchStep && !item.batchSize)}"
+			title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null && item.processingUser.id!=0 ? item.processingUser.fullName:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin1b.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
 		</h:commandLink>
@@ -372,7 +372,7 @@
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 		<%-- edit batch step --%>
-		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.BatchesEdit}" rendered="#{item.processingStatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep && item.batchSize}"
+		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.BatchesEdit}" rendered="#{item.processingStatusEnum == 'INWORK' && item.processingUser.id == LoginForm.myBenutzer.id && item.batchStep && item.batchSize}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin3.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />

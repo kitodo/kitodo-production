@@ -86,7 +86,7 @@
 						<%-- Sperrung der Metadaten anzeigen --%>
 						<h:panelGroup
 							style="color: red;margin-top:5px;margin-bottom:15px;display:block"
-							rendered="#{AktuelleSchritteForm.mySchritt.process.benutzerGesperrt != null}">
+							rendered="#{AktuelleSchritteForm.mySchritt.process.blockedUsers != null}">
 							<h:outputText value="#{msgs.gesperrt}" />
 							<htm:br />
 							<h:panelGrid columns="2" style="color: red;margin-left:30px"
@@ -140,7 +140,7 @@
 						
 						<%-- Modul-Schaltknopf --%>
 						<h:commandLink id="action2"
-							rendered="#{AktuelleSchritteForm.mySchritt.typModulName != null && AktuelleSchritteForm.mySchritt.typModulName != ''}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeModuleName != null && AktuelleSchritteForm.mySchritt.typeModuleName != ''}"
 							action="#{AktuelleSchritteForm.executeModule}"
 							title="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typeModuleName})">
 							<h:graphicImage value="/newpages/images/buttons/admin4b.gif"
@@ -229,7 +229,7 @@
 							
 						<%-- Upload-Schaltknopf --%>
 						<h:commandLink id="action9"
-							rendered="#{AktuelleSchritteForm.mySchritt.typExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+							rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
 							action="#{AktuelleSchritteForm.ExportDMS}"
 							title="#{msgs.importDms}">
 							<h:graphicImage value="/newpages/images/buttons/dms.png"
@@ -246,8 +246,8 @@
 								style="margin-left:7px;margin-right:10px;vertical-align:middle" />
 							<h:outputText value="#{msgs.metadatenBearbeiten}" />
 							<x:updateActionListener
-								value="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunktNow}"
-								property="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunktNow}"></x:updateActionListener>
+								value="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"
+								property="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"></x:updateActionListener>
 							<f:param name="ProzesseID"
 								value="#{AktuelleSchritteForm.mySchritt.process.id}" />
 							<f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}" />
@@ -303,7 +303,7 @@
 						</h:panelGroup>
 
 						<%-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke --%>
-						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.prioritaet>9 && AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
+						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.priority>9 && AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
 							<jd:hideableController for="solution" id="solutionswitcher"
 								title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">
 								<h:graphicImage

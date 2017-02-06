@@ -89,7 +89,7 @@
 								<htm:td>
 									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.priority}"
 										rendered="#{AktuelleSchritteForm.batchHelper.currentStep.priority!=10}" />
-									<h:outputText value="#{msgs.korrektur}" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.prioritaet==10}" />
+									<h:outputText value="#{msgs.korrektur}" rendered="#{AktuelleSchritteForm.batchHelper.currentStep.priority==10}" />
 								</htm:td>
 							</htm:tr>
 							<htm:tr>
@@ -106,7 +106,7 @@
 									<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbeginnAsFormattedString}" />
+									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.processingBeginAsFormattedString}" />
 								</htm:td>
 							</htm:tr>
 							<htm:tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
@@ -114,7 +114,7 @@
 									<h:outputText value="#{msgs.zuletztBearbeitet}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungszeitpunktAsFormattedString}" />
+									<h:outputText value="#{AktuelleSchritteForm.batchHelper.currentStep.processingTimeAsFormattedString}" />
 								</htm:td>
 							</htm:tr>
 

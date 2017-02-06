@@ -54,7 +54,7 @@
 						<h:outputText value="#{item.priority}" />
 					</htm:td>
 				</htm:tr>
-				<htm:tr rendered="#{item.bearbeitungsbeginn !=null && !HelperForm.anonymized}">
+				<htm:tr rendered="#{item.processingBegin !=null && !HelperForm.anonymized}">
 					<htm:td width="150">
 						<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
 					</htm:td>
@@ -67,7 +67,7 @@
 						<h:outputText value="#{msgs.zuletztBearbeitet}:" />
 					</htm:td>
 					<htm:td>
-						<h:outputText value="#{item.bearbeitungszeitpunktAsFormattedString}" />
+						<h:outputText value="#{item.processingTimeAsFormattedString}" />
 					</htm:td>
 				</htm:tr>
 				<htm:tr rendered="#{item.processingUser.id !=0 && item.processingUser !=null && !HelperForm.anonymized}">
