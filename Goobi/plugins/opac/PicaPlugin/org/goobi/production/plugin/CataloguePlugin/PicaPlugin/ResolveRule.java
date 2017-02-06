@@ -209,6 +209,14 @@ class ResolveRule {
 	 *            catalogue client to use for catalogue look-up
 	 * @param out
 	 *            field to write the result to
+	 * @throws IOException
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
+	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
+	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
 	void execute(Element subfield, CatalogueClient client, Element out) throws IOException, SAXException, ParserConfigurationException {
 		assert tag.equals(out.getAttributeNode("tag").getTextContent()) : "Attempt to call the rule on the wrong field.";

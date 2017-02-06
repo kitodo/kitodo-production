@@ -10,14 +10,24 @@
  */
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
 import org.apache.commons.configuration.HierarchicalConfiguration;
 
 /**
- * <resolve tag="028C" subtag="9" searchField="12" substring="@\s*([^@]+)$">
- * <map asSubtag="X" tag="028C" subtag="9" /> </resolve>
+ * Map rules are used to map data from norm data records to a media record. This
+ * is used inside a {@code ResolveRule}. Example usage:
+ * 
+ * <pre>
+ * &lt;catalogue title="…">
+ *     &lt;!-- ... -->
+ *     &lt;resolve tag="028C" subtag="9" searchField="12">
+ *         &lt;map tag="003U" subtag="a" asSubtag="g" />
+ *     &lt;/resolve>
+ * </pre>
+ * 
+ * In this case, the value from PICA field 028C subfield 9 is taken to execute a
+ * catalogue query on search field 12. From the result of this query, the value
+ * from field 003U subfield a is taken and stored in subfield g on the instance
+ * of field 028C of the main record.
  * 
  * @author Matthias Ronge
  */

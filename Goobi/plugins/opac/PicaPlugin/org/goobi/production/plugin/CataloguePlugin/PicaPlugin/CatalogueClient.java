@@ -166,9 +166,13 @@ class CatalogueClient {
 	 *            return all hits.
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
-	 *             If connection to catalogue system failed
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
 	Node retrievePicaNode(Query query, int numberOfHits)
 			throws IOException, SAXException, ParserConfigurationException {
@@ -188,9 +192,13 @@ class CatalogueClient {
 	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
-	 *             If connection to catalogue system failed
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
 	Node retrievePicaNode(Query query, int start, int end, long timeout)
 			throws IOException, SAXException, ParserConfigurationException {
@@ -209,9 +217,14 @@ class CatalogueClient {
 	 *            rot node to examine
 	 * @param client
 	 *            catalogue client to use for queries
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
 	 * @throws IOException
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
+	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
+	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
 	private void applyResolveRules(Map<String, ResolveRule> rules, Element root, CatalogueClient client)
 			throws IOException, SAXException, ParserConfigurationException {
@@ -253,9 +266,13 @@ class CatalogueClient {
 	 *         pretty messy! It is recommended that you use
 	 *         retrieveXMLPicaPlus()
 	 * @throws IOException
-	 *             If connection to catalogue system failed
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
 	private String retrievePica(Query query, int start, int end, long timeout)
 			throws IOException, SAXException, ParserConfigurationException {
@@ -319,9 +336,13 @@ class CatalogueClient {
 	 *            The query you are looking for.
 	 * @return The search result as xml string.
 	 * @throws IOException
-	 *             If connection to catalogue system failed.
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
 	private Response getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
@@ -469,6 +490,16 @@ class CatalogueClient {
 		}
 	}
 
+	/**
+	 * @throws IOException
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
+	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
+	 * @throws SAXException
+	 *             if any SAX errors occur during processing
+	 */
 	private Response parseOpacResponse(String opacResponse)
 			throws IOException, SAXException, ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")

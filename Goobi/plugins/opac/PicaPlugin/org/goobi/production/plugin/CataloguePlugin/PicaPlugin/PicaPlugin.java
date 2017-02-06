@@ -11,67 +11,50 @@
 
 package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-import javax.activity.InvalidActivityException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.configuration.SubnodeConfiguration;
+import org.apache.commons.configuration.*;
 import org.apache.commons.configuration.tree.ConfigurationNode;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom.*;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+import org.joda.time.*;
 import org.w3c.dom.Node;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.Plugin;
-import ugh.dl.DigitalDocument;
-import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
-import ugh.dl.Fileformat;
-import ugh.dl.Prefs;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+import ugh.dl.*;
+import ugh.exceptions.*;
 import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 /**
- * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
- * implementation. It provides the public methods
+ * The class PicaPlugin is the main class of the Kitodo PICA catalogue plug-in
+ * implementation. This plug-in can be used to access OCLC PICA library
+ * catalogue systems. It provides the public methods
+ * 
+ * <pre>
+ * void     configure(Map) [*]
+ * Object   find(String, long)
+ * String   getDescription() [*]
+ * Map      getHit(Object, long, long)
+ * long     getNumberOfHits(Object, long)
+ * String   getTitle() [*]
+ * void     setPreferences(Prefs)
+ * boolean  supportsCatalogue(String)
+ * void     useCatalogue(String)
+ * </pre>
+ * 
+ * as specified by {@code org.goobi.production.plugin.UnspecificPlugin}
+ * {@code [*]} and
+ * {@code org.goobi.production.plugin.CataloguePlugin.CataloguePlugin}.
  *
- *    void    configure(Map) [*]
- *    Object  find(String, long)
- *    String  getDescription() [*]
- *    Map     getHit(Object, long, long)
- *    long    getNumberOfHits(Object, long)
- *    String  getTitle() [*]
- *    void    setPreferences(Prefs)
- *    boolean supportsCatalogue(String)
- *    void    useCatalogue(String)
- *
- * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
- * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
- *
- * Parts of the code of this class have been ported from ancient class
- * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.
- *
- * @author Partly based on previous works of other authors who didn’t leave
- *         their names
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author unascribed
+ * @author Matthias Ronge
+ * 
+ * @see "https://en.wikipedia.org/wiki/OCLC_PICA"
  */
 @PluginImplementation
 public class PicaPlugin implements Plugin {
@@ -134,16 +117,27 @@ public class PicaPlugin implements Plugin {
 	private CatalogueClient client;
 
 	/**
-	 * The method configure() accepts a Map with configuration parameters. Two
-	 * entries, "configDir" and "tempDir", are expected.
+	 * Injects the plug-in’s configuration. The method takes a Map with
+	 * configuration parameters. Two entries, {@code configDir} and
+	 * {@code tempDir}, are expected:
 	 *
-	 * configDir must point to a directory on the local file system where the
-	 * plug-in can read individual configuration files from. The configuration
-	 * file, "goobi_opac.xml" is expected in that directory.
+	 * <ul>
+	 * <li>{@code configDir} must point to a directory on the local file system
+	 * where the plug-in can read individual configuration files from. The
+	 * configuration file {@code goobi_opac.xml} is expected in that
+	 * directory.</li>
+	 * <li>{@code tempDir} is a directory on the local file system where the
+	 * plug-in can write temporary files to. Currently, two files are written
+	 * there to help admins configure opac beautifiers correctly.</li>
+	 * </ul>
+	 * 
+	 * This method is called at runtime after the classloader has created the
+	 * instance, because the plug-in constructor cannot take arguments. Confer
+	 * to {@code UnspecificPlugin.configure(Map)} in package
+	 * {@code org.goobi.production.plugin} of the core application, too.
 	 *
 	 * @param configuration
 	 *            a Map with configuration parameters
-	 * @see org.goobi.production.plugin.UnspecificPlugin#configure(Map)
 	 */
 	public void configure(Map<String, String> configuration) {
 		configDir = configuration.get("configDir");
@@ -151,19 +145,19 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function find() initially queries the library catalogue with the
-	 * given query. If successful, it returns a FindResult with the number of
-	 * hits.
+	 * Initially queries the library catalogue with the given query. If
+	 * successful, it returns a FindResult with the number of hits.
+	 * <p>
+	 * For the semantics of the query, see class {@code QueryBuilder} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application. Confer to {@code UnspecificPlugin.find(String, long)} in
+	 * package {@code org.goobi.production.plugin} of the core application, too.
 	 *
 	 * @param query
-	 *            a query String. See
-	 *            {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}
-	 *            for the semantics of the query.
+	 *            the query to the catalogue
 	 * @param timeout
 	 *            timeout in milliseconds after which the operation shall return
 	 * @return a FindResult that may be used for future operations on the query
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#find(String,
-	 *      long)
 	 */
 	public Object find(String query, long timeout) {
 		client.setTimeout(timeout);
@@ -183,8 +177,8 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getConfigDir() provides a reference to the file system
-	 * directory where configuration files are read from.
+	 * Provides a reference to the file system directory where configuration
+	 * files are read from.
 	 *
 	 * @return the file system directory with the configuration files
 	 */
@@ -193,25 +187,33 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getDescription() returns a human-readable description of the
-	 * plug-in’s functionality in English. The parameter language is ignored.
+	 * Returns a human-readable description of the plug-in’s functionality in
+	 * English. The parameter language is ignored.
+	 * <p>
+	 * Confer to {@code UnspecificPlugin.getDescription(Locale)} in package
+	 * {@code org.goobi.production.plugin} of the core application, too.
 	 *
 	 * @param language
 	 *            desired language of the human-readable description (support is
 	 *            optional)
 	 * @return a human-readable description of the plug-in’s functionality
-	 * @see org.goobi.production.plugin.UnspecificPlugin#getDescription(Locale)
 	 */
 	public static String getDescription(Locale language) {
 		return "The PICA plugin can be used to access PICA library catalogue systems.";
 	}
 
 	/**
-	 * The function getHit() returns the hit with the given index from the given
-	 * search result as a Map&lt;String, Object&gt;. The map contains the full
-	 * hit as "fileformat", the docType as "type" and some bibliographic
-	 * metadata for Production to be able to show a short hit display as
-	 * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
+	 * Returns the hit with the given index from the given search result. The
+	 * object returned is a Map&lt;String, Object>. It contains the full hit as
+	 * {@code fileformat}, the docType as {@code type} and some bibliographic
+	 * meta-data to show a bibliographic hit summary as supposed in class
+	 * {@code Hit} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.getHit(Object, long, long)} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @param searchResult
 	 *            a FindResult created by {@link #find(String, long)}
@@ -221,8 +223,6 @@ public class PicaPlugin implements Plugin {
 	 *            a timeout in milliseconds after which the operation shall
 	 *            return
 	 * @return a Map with the hit
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getHit(Object,
-	 *      long, long)
 	 */
 	public Map<String, Object> getHit(Object searchResult, long index, long timeout) {
 		client.setTimeout(timeout);
@@ -236,19 +236,19 @@ public class PicaPlugin implements Plugin {
 		Type type;
 		Fileformat ff;
 		try {
-			/*
-			 * -------------------------------- Opac abfragen und erhaltenes
-			 * Dom-Dokument in JDom-Dokument umwandeln
+			/* 
+			 * --------------------------------
+			 * Query OPAC and convert the DOM document returned to JDOM
 			 * --------------------------------
 			 */
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
 
-			/* Opac-Beautifier aufrufen */
+			// call OPAC beautifier
 			myHitlist = catalogue.executeBeautifier(myHitlist);
 			Document myJdomDoc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 			myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
-			/* von dem Treffer den Dokumententyp ermitteln */
+			// detemine the document type from the first hit
 			typeID = getTypeID(myFirstHit);
 			type = OpacCatalogues.getDoctypeByMapping(typeID.length() > 2 ? typeID.substring(0, 2) : typeID,
 					catalogue.getTitle());
@@ -258,106 +258,108 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
-			 * -------------------------------- wenn der Treffer ein Volume
-			 * eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
+			 * --------------------------------
+			 * if the hit is a volume from a multivolume volume, then
+			 * superordinate the compilation
 			 * --------------------------------
 			 */
 			if (type.isMultiVolume()) {
-				/* Sammelband-PPN ermitteln */
+				// determine the PPN of the anthology
 				String multiVolumePpn = getPPNFromParent(myFirstHit, "036D", "9");
 				if (!multiVolumePpn.equals("")) {
-					/* Sammelband aus dem Opac holen */
+					// take the anthology out of the OPAC
 
 					myQuery = new Query(multiVolumePpn, "12");
-					/* wenn ein Treffer des Parents im Opac gefunden wurde */
+					// if a hit of the parent was found in the OPAC
 					if (client.getNumberOfHits(myQuery) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1);
-						/* Opac-Beautifier aufrufen */
+						// call OPAC beautifier
 						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
-						/* Konvertierung in jdom-Elemente */
+						// conversion to JDOM elements
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
-						/* dem Rootelement den Volume-Treffer hinzufügen */
+						// add the volume-hit to the root element
 						myFirstHit.getParent().removeContent(myFirstHit);
 						myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
 
 						myJdomDoc = myJdomDocMultivolumeband;
 						myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
-						/* die Jdom-Element wieder zurück zu Dom konvertieren */
+						// convert the JDOM elements back to DOM
 						DOMOutputter doutputter = new DOMOutputter();
 						myHitlist = doutputter.output(myJdomDocMultivolumeband);
-						/*
-						 * dabei aber nicht das Document, sondern das erste Kind
-						 * nehmen
-						 */
+
+						// nevertheless, do not take the document, but the first
+						// child
+
 						myHitlist = myHitlist.getFirstChild();
 					}
 				}
 			}
 
 			/*
-			 * -------------------------------- wenn der Treffer ein Volume
-			 * eines Periodical-Bandes ist, dann die Serie überordnen
+			 * --------------------------------
+			 * if the hit is a volume from a periodical volume, then
+			 * superordinate the series
 			 * --------------------------------
 			 */
 			if (type.isPeriodical()) {
-				/* Sammelband-PPN ermitteln */
+				// determine the PPN of the anthology
 				String serialPublicationPpn = getPPNFromParent(myFirstHit, "036F", "9");
 				if (!serialPublicationPpn.equals("")) {
-					/* Sammelband aus dem Opac holen */
+					// take the anthology out of the OPAC
 
 					myQuery = new Query(serialPublicationPpn, "12");
-					/* wenn ein Treffer des Parents im Opac gefunden wurde */
+					// if a hit of the parent was found in the OPAC
 					if (client.getNumberOfHits(myQuery) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1);
-						/* Opac-Beautifier aufrufen */
+						// call OPAC beautifier
 						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
-						/* Konvertierung in jdom-Elemente */
+						// conversion to JDOM elements
 						Document myJdomDocMultivolumeband = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 
-						/* dem Rootelement den Volume-Treffer hinzufügen */
+						// add the volume-hit to the root element
 						myFirstHit.getParent().removeContent(myFirstHit);
 						myJdomDocMultivolumeband.getRootElement().addContent(myFirstHit);
 
 						myJdomDoc = myJdomDocMultivolumeband;
 						myFirstHit = myJdomDoc.getRootElement().getChild("record");
 
-						/* die Jdom-Element wieder zurück zu Dom konvertieren */
+						// convert the JDOM elements back to DOM
 						DOMOutputter doutputter = new DOMOutputter();
 						myHitlist = doutputter.output(myJdomDocMultivolumeband);
-						/*
-						 * dabei aber nicht das Document, sondern das erste Kind
-						 * nehmen
-						 */
+
+						// nevertheless, do not take the document, but the first
+						// child
+
 						myHitlist = myHitlist.getFirstChild();
 					}
 				}
 			}
 
 			/*
-			 * -------------------------------- wenn der Treffer ein Contained
-			 * Work ist, dann übergeordnetes Werk
+			 * --------------------------------
+			 * if the hit is a contained work, then superordinated work
 			 * --------------------------------
 			 */
 			if (type.isContainedWork()) {
-				/* PPN des übergeordneten Werkes ermitteln */
+				// determine the PPN of the superordinated work
 				String ueberGeordnetePpn = getPPNFromParent(myFirstHit, "021A", "9");
 				if (!ueberGeordnetePpn.equals("")) {
-					/* Sammelband aus dem Opac holen */
+					// take anthology out of the OPAC
 					myQuery = new Query(ueberGeordnetePpn, "12");
-					/* wenn ein Treffer des Parents im Opac gefunden wurde */
+					// if a hit of the parent was found in the OPAC
 					if (client.getNumberOfHits(myQuery) == 1) {
 						Node myParentHitlist = client.retrievePicaNode(myQuery, 1);
-						/* Opac-Beautifier aufrufen */
+						// call OPAC beautifier
 						myParentHitlist = catalogue.executeBeautifier(myParentHitlist);
-						/* Konvertierung in jdom-Elemente */
+						// conversion to JDOM elements
 						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
-						/*
-						 * alle Elemente des Parents übernehmen, die noch nicht
-						 * selbst vorhanden sind
-						 */
+
+						// take over all elements of the parent that are not
+						// yet available by themselves
+
 						if (myFirstHitParent.getChildren() != null) {
 							for (@SuppressWarnings("unchecked")
 							Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
@@ -374,21 +376,22 @@ public class PicaPlugin implements Plugin {
 			}
 
 			/*
-			 * -------------------------------- aus Opac-Ergebnis RDF-Datei
-			 * erzeugen --------------------------------
+			 * --------------------------------
+			 * create RDF file from the OPAC result
+			 * --------------------------------
 			 */
 
-			/* zugriff auf ugh-Klassen */
+			// access to Ugh classes
 			PicaPlus pp = new PicaPlus(preferences);
 			pp.read(myHitlist);
 			DigitalDocument dd = pp.getDigitalDocument();
 			ff = new XStream(preferences);
 			ff.setDigitalDocument(dd);
-			/* BoundBook hinzufügen */
+			// add BoundBook
 			DocStructType dst = preferences.getDocStrctTypeByName("BoundBook");
 			DocStruct dsBoundBook = dd.createDocStruct(dst);
 			dd.setPhysicalDocStruct(dsBoundBook);
-			/* Inhalt des RDF-Files überprüfen und ergänzen */
+			// check and complement content of the RDF file
 			checkMyOpacResult(ff.getDigitalDocument(), preferences, myFirstHit, type, typeID);
 		} catch (RuntimeException e) {
 			throw e;
@@ -399,10 +402,7 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * DocType (Gattung) ermitteln
-	 *
-	 * @param inHit
-	 * @return
+	 * Determines the document type (genre).
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getTypeID(Element inHit) {
@@ -433,11 +433,8 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork:
-	 * 021A-9) ermitteln
-	 *
-	 * @param inElement
-	 * @return
+	 * Determines the PPN of the superodinated volume. (MultiVolume: 036D-9 and ContainedWork:
+	 * 021A-9)
 	 */
 	@SuppressWarnings("unchecked")
 	private static String getPPNFromParent(Element inHit, String inFeldName, String inSubElement) {
@@ -456,10 +453,10 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter2 = inHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
-			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
-			 */
+
+			// if it is the desired field, then return the value with the
+			// appropriate attribute
+
 			if (feldname.equals(inTagName)) {
 				return myElement;
 			}
@@ -468,23 +465,22 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * rekursives Kopieren von Elementen, weil das Einfügen eines Elements an
-	 * einen anderen Knoten mit dem Fehler abbricht, dass das einzufügende
-	 * Element bereits einen Parent hat
-	 * ================================================================
+	 * Recursively copies elements. This method exists because inserting an
+	 * element onto an other node fails with an error stating that the element
+	 * to add already has a parent.
 	 */
 	@SuppressWarnings("unchecked")
 	private static Element getCopyFromJdomElement(Element inHit) {
 		Element myElement = new Element(inHit.getName());
 		myElement.setText(inHit.getText());
-		/* jetzt auch alle Attribute übernehmen */
+		// now take over all attributes, too
 		if (inHit.getAttributes() != null) {
 			for (Iterator<Attribute> iter = inHit.getAttributes().iterator(); iter.hasNext();) {
 				Attribute att = iter.next();
 				myElement.getAttributes().add(new Attribute(att.getName(), att.getValue()));
 			}
 		}
-		/* jetzt auch alle Children übernehmen */
+		// now take over all children, too
 		if (inHit.getChildren() != null) {
 
 			for (Iterator<Element> iter = inHit.getChildren().iterator(); iter.hasNext();) {
@@ -496,11 +492,11 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/*
-	 * #####################################################
-	 * ##################################################### ## ## Ergänze das
-	 * Docstruct um zusätzliche Opac-Details ##
-	 * #####################################################
-	 * ####################################################
+	 * #########################################################
+	 * #########################################################
+	 * ## Complement the DocStruct by additional OPAC details ##
+	 * #########################################################
+	 * #########################################################
 	 */
 
 	private static void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit,
@@ -511,10 +507,10 @@ public class PicaPlugin implements Plugin {
 		Element mySecondHit = null;
 
 		/*
-		 * -------------------------------- bei Multivolumes noch das Child in
-		 * xml und docstruct ermitteln --------------------------------
+		 * --------------------------------
+		 * at multivolumes, still determine the child in XML and DocStruct
+		 * --------------------------------
 		 */
-		// if (isMultivolume()) {
 		if (type.isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
@@ -524,8 +520,9 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- vorhandene PPN als digitale oder
-		 * analoge einsetzen --------------------------------
+		 * --------------------------------
+		 * insert available PPN as digital or analogous
+		 * --------------------------------
 		 */
 		String ppn = getElementFieldValue(myFirstHit, "003@", "0");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
@@ -536,8 +533,9 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- wenn es ein multivolume ist, dann
-		 * auch die PPN prüfen --------------------------------
+		 * --------------------------------
+		 * if it is a multivolume, then check the PPN, too
+		 * --------------------------------
 		 */
 		if ((topstructChild != null) && (mySecondHit != null)) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
@@ -550,22 +548,24 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- den Main-Title bereinigen
+		 * --------------------------------
+		 * clean up the main title
 		 * --------------------------------
 		 */
 		String myTitle = getElementFieldValue(myFirstHit, "021A", "a");
-		/*
-		 * wenn der Fulltittle nicht in dem Element stand, dann an anderer
-		 * Stelle nachsehen (vor allem bei Contained-Work)
-		 */
+
+		// if the full title was not written in the element, then have a look
+		// elsewhere (especially at contained work)
+
 		if ((myTitle == null) || (myTitle.length() == 0)) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
 		}
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
 		/*
-		 * -------------------------------- Sorting-Titel mit
-		 * Umlaut-Konvertierung --------------------------------
+		 * --------------------------------
+		 * sort title with conversion of umlauts
+		 * --------------------------------
 		 */
 		if (myTitle.indexOf("@") != -1) {
 			myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
@@ -573,8 +573,9 @@ public class PicaPlugin implements Plugin {
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
 		/*
-		 * -------------------------------- bei multivolumes den Main-Title
-		 * bereinigen --------------------------------
+		 * --------------------------------
+		 * clean up the main title at multivolumes
+		 * --------------------------------
 		 */
 		if ((topstructChild != null) && (mySecondHit != null)) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
@@ -582,94 +583,101 @@ public class PicaPlugin implements Plugin {
 		}
 
 		/*
-		 * -------------------------------- bei multivolumes den Sorting-Titel
-		 * mit Umlaut-Konvertierung --------------------------------
+		 * --------------------------------
+		 * at multivolumes, the sort title with conversion of umlauts
+		 * --------------------------------
 		 */
 		if ((topstructChild != null) && (mySecondHit != null)) {
-			String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
-			if (sortingTitleMulti.indexOf("@") != -1) {
-				sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
+			String sortTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
+			if (sortTitleMulti.indexOf("@") != -1) {
+				sortTitleMulti = sortTitleMulti.substring(sortTitleMulti.indexOf("@") + 1);
 			}
-			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);
-			// sortingTitle = sortingTitleMulti;
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortTitleMulti);
 		}
 
 		/*
-		 * -------------------------------- Sprachen - Konvertierung auf zwei
-		 * Stellen --------------------------------
+		 * --------------------------------
+		 * languages - conversion to two places
+		 * --------------------------------
 		 */
-		Iterable<String> sprachen = getElementFieldValues(myFirstHit, "010@", "a");
-		sprachen = UGHUtils.convertLanguages(sprachen);
-		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", sprachen);
+		Iterable<String> languages = getElementFieldValues(myFirstHit, "010@", "a");
+		languages = UGHUtils.convertLanguages(languages);
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", languages);
 
 		/*
-		 * -------------------------------- bei multivolumes die Sprachen -
-		 * Konvertierung auf zwei Stellen --------------------------------
+		 * --------------------------------
+		 * at multivolumes, the languages - conversion to two places
+		 * --------------------------------
 		 */
 		if ((topstructChild != null) && (mySecondHit != null)) {
-			Iterable<String> sprachenMulti = getElementFieldValues(mySecondHit, "010@", "a");
-			sprachenMulti = UGHUtils.convertLanguages(sprachenMulti);
-			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", sprachenMulti);
+			Iterable<String> languagesMulti = getElementFieldValues(mySecondHit, "010@", "a");
+			languagesMulti = UGHUtils.convertLanguages(languagesMulti);
+			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", languagesMulti);
 		}
 
 		/*
-		 * -------------------------------- ISSN
+		 * --------------------------------
+		 * ISSN
 		 * --------------------------------
 		 */
 		String issn = getElementFieldValue(myFirstHit, "005A", "0");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
 
 		/*
-		 * -------------------------------- Copyright
+		 * --------------------------------
+		 * Copyright
 		 * --------------------------------
 		 */
 		String copyright = getElementFieldValue(myFirstHit, "037I", "a");
 		UGHUtils.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
 
 		/*
-		 * -------------------------------- Format
+		 * --------------------------------
+		 * Format
 		 * --------------------------------
 		 */
 		String format = getElementFieldValue(myFirstHit, "034I", "a");
 		UGHUtils.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
 
 		/*
-		 * -------------------------------- Umfang
+		 * --------------------------------
+		 * Extent
 		 * --------------------------------
 		 */
-		String umfang = getElementFieldValue(myFirstHit, "034D", "a");
-		UGHUtils.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", umfang);
+		String extent = getElementFieldValue(myFirstHit, "034D", "a");
+		UGHUtils.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", extent);
 
 		/*
-		 * -------------------------------- Signatur
+		 * --------------------------------
+		 * Shelf mark
 		 * --------------------------------
 		 */
-		String sig = getElementFieldValue(myFirstHit, "209A", "c");
-		if (sig.length() > 0) {
-			sig = "<" + sig + ">";
+		String shm = getElementFieldValue(myFirstHit, "209A", "c");
+		if (shm.length() > 0) {
+			shm = "<" + shm + ">";
 		}
-		sig += getElementFieldValue(myFirstHit, "209A", "f") + " ";
-		sig += getElementFieldValue(myFirstHit, "209A", "a");
-		UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
-		if (sig.trim().length() == 0) {
-			sig = getElementFieldValue(myFirstHit, "209A/01", "c");
-			if (sig.length() > 0) {
-				sig = "<" + sig + ">";
+		shm += getElementFieldValue(myFirstHit, "209A", "f") + " ";
+		shm += getElementFieldValue(myFirstHit, "209A", "a");
+		UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", shm.trim());
+		if (shm.trim().length() == 0) {
+			shm = getElementFieldValue(myFirstHit, "209A/01", "c");
+			if (shm.length() > 0) {
+				shm = "<" + shm + ">";
 			}
-			sig += getElementFieldValue(myFirstHit, "209A/01", "f") + " ";
-			sig += getElementFieldValue(myFirstHit, "209A/01", "a");
+			shm += getElementFieldValue(myFirstHit, "209A/01", "f") + " ";
+			shm += getElementFieldValue(myFirstHit, "209A/01", "a");
 			if (mySecondHit != null) {
-				sig += getElementFieldValue(mySecondHit, "209A", "f") + " ";
-				sig += getElementFieldValue(mySecondHit, "209A", "a");
+				shm += getElementFieldValue(mySecondHit, "209A", "f") + " ";
+				shm += getElementFieldValue(mySecondHit, "209A", "a");
 			}
-			UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", sig.trim());
+			UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", shm.trim());
 		}
 
 		/*
-		 * -------------------------------- bei Zeitschriften noch ein
-		 * PeriodicalVolume als Child einfügen --------------------------------
+		 * --------------------------------
+		 * In case of magazines, insert another PeriodicalVolume as child
+		 * --------------------------------
 		 */
-		// if (isPeriodical()) {
 		if (type.isPeriodical() && (topstruct.getAllChildren() == null)) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
@@ -706,10 +714,10 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
-			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
-			 */
+
+			// if it is the desired field, then return the value with the
+			// appropriate attribute
+
 			if (feldname.equals(inFieldName)) {
 				return getFieldValue(myElement, inAttributeName);
 			}
@@ -738,10 +746,10 @@ public class PicaPlugin implements Plugin {
 		for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
-			/*
-			 * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
-			 * Attribut zurückgeben
-			 */
+
+			// if it is the desired field, then return the value with the
+			// appropriate attribute
+
 			if (feldname.equals(inFieldName)) {
 				result.addAll(getFieldValues(myElement, inAttributeName));
 			}
@@ -923,23 +931,24 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getNumberOfHits() returns the number of hits from a given
-	 * search result.
-	 *
+	 * Returns the number of hits from a given search result.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.getNumberOfHits(Object, long)} in
+	 * package {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
+	 * 
 	 * @param searchResult
 	 *            the reference to the search whose number of hits shall be
 	 *            looked up
 	 * @param timeout
 	 *            ignored because there is no network acceess in this step
 	 * @return the number of hits
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getNumberOfHits(Object,
-	 *      long)
 	 */
 	public static long getNumberOfHits(Object searchResult, long timeout) {
 		if (searchResult instanceof FindResult) {
 			return ((FindResult) searchResult).getHits();
 		} else {
-			throw new ClassCastException();
+			throw new ClassCastException("Search result of class "+searchResult.getClass().getName()+" not supported.");
 		}
 	}
 
@@ -954,62 +963,74 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getDescription() returns a human-readable name for the
-	 * plug-in in English. The parameter language is ignored.
+	 * Returns a human-readable name for the plug-in in English. The parameter
+	 * language is ignored.
+	 * <p>
+	 * Confer to {@code UnspecificPlugin.getTitle(Locale)} in package
+	 * {@code org.goobi.production.plugin} of the core application, too.
 	 *
 	 * @param language
 	 *            desired language of the human-readable name (support is
 	 *            optional)
 	 * @return a human-readable name for the plug-in
-	 * @see org.goobi.production.plugin.UnspecificPlugin#getTitle(Locale)
 	 */
 	public static String getTitle(Locale language) {
 		return "PICA Catalogue Plugin";
 	}
 
 	/**
-	 * The function setPreferences is called by Production to set the UGH
-	 * preferences to be used.
-	 *
+	 * Sets the Ugh preferences to be used to create the main result.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.setPreferences(Prefs)} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
+	 * 
 	 * @param preferences
-	 *            the UGH preferences
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
+	 *            Ugh preferences to use
 	 */
 	public void setPreferences(Prefs preferences) {
 		this.preferences = preferences;
 	}
 
 	/**
-	 * The function supportsCatalogue() investigates whether the plug-in is able
-	 * to acceess a catalogue identified by the given String. (This depends on
-	 * the configuration.)
+	 * Returns whether this plug-in is able to access the catalogue identified
+	 * by the given String. This depends on the configuration.
+	 * <p>
+	 * Confer to {@code CataloguePlugin#supportsCatalogue(String)} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @param catalogue
-	 *            a String indentifying the catalogue
-	 * @return whether the plug-in is able to acceess that catalogue
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
+	 *            a String identifying the catalogue
+	 * @return whether the plug-in is able to access that catalogue
 	 */
 	public static boolean supportsCatalogue(String catalogue) {
 		return OpacCatalogues.getCatalogueByName(catalogue) != null;
 	}
 
 	/**
-	 * The function getSupportedCatalogues() returns the names of all catalogues supported
-	 * by this plugin. (This depends on the plugin configuration.)
+	 * Returns the names of all catalogues supported by this plug-in. This
+	 * depends on the plug-in’s configuration.
+	 * <p>
+	 * Confer to {@code CataloguePlugin#getSupportedCatalogues()} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @return list of catalogue names
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getSupportedCatalogues()
 	 */
 	public static List<String> getSupportedCatalogues() {
 		return OpacCatalogues.getAllCatalogues();
 	}
 
 	/**
-	 * The function getAllConfigDocTypes() returns the names of all docTypes configured
-	 * for this plugin. (This depends on the plugin configuration.)
+	 * Returns the names of all docTypes configured for this plug-in. This
+	 * depends on the plug-in’s configuration.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.getAllConfigDocTypes()} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @return list of ConfigOapcDocTypes
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getAllConfigDocTypes()
 	 */
 	public static List<String> getAllConfigDocTypes() {
 		List<String> result = new ArrayList<>();
@@ -1020,14 +1041,17 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function useCatalogue() sets a catalogue to be used
+	 * Sets a catalogue to be used.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.useCatalogue(String)} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @param catalogueID
-	 *            a String indentifying the catalogue
+	 *            a String identifying the catalogue
 	 * @throws ParserConfigurationException
 	 *             if a DocumentBuilder cannot be created which satisfies the
 	 *             configuration requested
-	 * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
 	 */
 	public void useCatalogue(String catalogueID) throws ParserConfigurationException {
 		catalogue = OpacCatalogues.getCatalogueByName(catalogueID);
@@ -1035,17 +1059,22 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getSearchFields(String catalogueName) loads the search fields, configured
-	 * in the configuration file of this plugin, for the catalogue with the given String 'catalogueName',
-	 * and returns them in a HashMap. The map contains the labels of the search fields as keys
-	 * and the corresponding URL parameters as values.
+	 * Returns the search fields for the given catalogue. The search fields are
+	 * read from the configuration file of this plug-in, for the catalogue with
+	 * the given String {@code catalogueName}. They are returned in a HashMap.
+	 * The map contains the labels of the search fields as keys and the
+	 * corresponding URL parameters as values.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.getSearchFields(String)} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @param catalogueName
-	 *            the name of the catalogue for which the list of search fields will be returned
+	 *            the name of the catalogue for which the list of search fields
+	 *            will be returned
 	 * @return Map containing the search fields of the selected OPAC
-	 * @throws InvalidActivityException
 	 */
-	public HashMap<String, String> getSearchFields(String catalogueName) throws InvalidActivityException {
+	public HashMap<String, String> getSearchFields(String catalogueName) {
 		LinkedHashMap<String, String> searchFields = new LinkedHashMap<>();
 		if(!Objects.equals(OpacCatalogues.getConfig(), null)) {
 			for (Object catalogueObject : OpacCatalogues.getConfig().configurationsAt("catalogue")) {
@@ -1066,15 +1095,21 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getInstitutions(String catalogueName) loads the institutions usable
-	 * for result filtering, configured in the configuration file of this plugin, for
-	 * the catalogue with the given String 'cagalogueName', and returns them in a
-	 * HashMap. The map contains the labels of the institutions as keys and the
-	 * corresponding ISIL IDs as values.
+	 * Returns the institutions the result can be filtered by for the given
+	 * catalogue. The institutions can be configured in the configuration file
+	 * of this plug-in. Returns a map that contains the labels of the
+	 * institutions as keys and the IDs used to for filtering as values. In PICA
+	 * catalogues, ISIL IDs are used for that purpose.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.getInstitutions(String)} in package
+	 * {@code org.goobi.production.plugin.CataloguePlugin} of the core
+	 * application, too.
 	 *
 	 * @param catalogueName
-	 *            the name of the catalogue for which the list of search fields will be returned
-	 * @return Map containing the filter institutions of the selected OPAC
+	 *            the name of the catalogue for which the list of search fields
+	 *            will be returned
+	 * @return Map containing the institutions for which the selected catalogue
+	 *         supports filtering
 	 */
 	public HashMap<String, String> getInstitutions(String catalogueName) {
 		LinkedHashMap<String, String> institutions = new LinkedHashMap<>();
@@ -1097,13 +1132,17 @@ public class PicaPlugin implements Plugin {
 	}
 
 	/**
-	 * The function getInstitutionFilterParameter(String catalogueName) returns the URL parameter
-	 * used for institution filtering in this plugin.
-	 *
+	 * Returns the URL parameter used for institution filtering in this plug-in.
+	 * <p>
 	 * This function is not yet used in the PicaPlugin.
+	 * <p>
+	 * Confer to {@code CataloguePlugin.getInstitutionFilterParameter(String)}
+	 * in package {@code org.goobi.production.plugin.CataloguePlugin} of the
+	 * core application, too.
 	 *
 	 * @param catalogueName
-	 *            the name of the catalogue for which the institution filter parameter is returned
+	 *            the name of the catalogue for which the institution filter
+	 *            parameter is returned
 	 * @return String the URL parameter used for institution filtering
 	 */
 	public String getInstitutionFilterParameter(String catalogueName) {
