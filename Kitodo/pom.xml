@@ -646,7 +646,7 @@
                         <configuration>
                             <!-- local configuration file -->
                             <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
+                            <configFile>src/main/resources/db/config/flyway.properties</configFile>-->
                         </configuration>
                         <dependencies>
                             <dependency>
@@ -658,7 +658,7 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>clean</goal>
+                                    <goal>baseline</goal>
                                     <goal>migrate</goal>
                                 </goals>
                             </execution>

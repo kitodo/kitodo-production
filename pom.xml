@@ -134,5 +134,37 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>flyway</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>4.0.3</version>
+                        <configuration>
+                            <!-- local configuration file -->
+                            <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
+                            <configFile>Kitodo/src/main/resources/db/config/flyway.properties</configFile>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>mysql</groupId>
+                                <artifactId>mysql-connector-java</artifactId>
+                                <version>5.1.38</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>baseline</goal>
+                                    <goal>migrate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
