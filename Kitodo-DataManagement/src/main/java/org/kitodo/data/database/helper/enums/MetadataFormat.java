@@ -18,49 +18,49 @@ import ugh.fileformats.mets.XStream;
 
 public enum MetadataFormat {
 
-	RDF("Rdf", true, RDFFile.class),
-	METS("Mets", true, MetsMods.class),
-	XSTREAM("XStream", true, XStream.class),
-	METS_AND_RDF("Mets & Rdf", false, null);
+    RDF("Rdf", true, RDFFile.class),
+    METS("Mets", true, MetsMods.class),
+    XSTREAM("XStream", true, XStream.class),
+    METS_AND_RDF("Mets & Rdf", false, null);
 
-	private final String name;
-	private final boolean usableForInternal;
-	private final Class<? extends Fileformat> clazz;
+    private final String name;
+    private final boolean usableForInternal;
+    private final Class<? extends Fileformat> clazz;
 
-	MetadataFormat(String inName, boolean inUsableForInternal, Class<? extends Fileformat> implClass) {
-		this.name = inName;
-		this.usableForInternal = inUsableForInternal;
-		this.clazz = implClass;
-	}
+    MetadataFormat(String inName, boolean inUsableForInternal, Class<? extends Fileformat> implClass) {
+        this.name = inName;
+        this.usableForInternal = inUsableForInternal;
+        this.clazz = implClass;
+    }
 
-	public String getName() {
-		return this.name;
-	}
-	
-	public boolean isUsableForInternal() {
-		return this.usableForInternal;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * Find file formats helper by name.
-	 *
-	 * @param inputName name
-	 * @return file format
-	 */
-	public static MetadataFormat findFileFormatsHelperByName(String inputName) {
-		for (MetadataFormat metadataFormat : MetadataFormat.values()) {
-			if (metadataFormat.getName().equals(inputName)) {
-				return metadataFormat;
-			}
-		}
-		return XSTREAM;
-	}
+    public boolean isUsableForInternal() {
+        return this.usableForInternal;
+    }
 
-	public static MetadataFormat getDefaultFileFormat() {
-		return XSTREAM;
-	}
-	
-	public Class<? extends Fileformat> getImplClass() {
-		return this.clazz;
-	}
+    /**
+     * Find file formats helper by name.
+     *
+     * @param inputName name
+     * @return file format
+     */
+    public static MetadataFormat findFileFormatsHelperByName(String inputName) {
+        for (MetadataFormat metadataFormat : MetadataFormat.values()) {
+            if (metadataFormat.getName().equals(inputName)) {
+                return metadataFormat;
+            }
+        }
+        return XSTREAM;
+    }
+
+    public static MetadataFormat getDefaultFileFormat() {
+        return XSTREAM;
+    }
+
+    public Class<? extends Fileformat> getImplClass() {
+        return this.clazz;
+    }
 }

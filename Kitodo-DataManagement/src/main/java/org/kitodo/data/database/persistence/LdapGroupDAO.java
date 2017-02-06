@@ -19,45 +19,45 @@ import org.kitodo.data.database.exceptions.DAOException;
 @SuppressWarnings("serial")
 public class LdapGroupDAO extends BaseDAO {
 
-	public LdapGroup save(LdapGroup ldapGroup) throws DAOException {
-		storeObject(ldapGroup);
-		return (LdapGroup) retrieveObject(LdapGroup.class, ldapGroup.getId());
-	}
+    public LdapGroup save(LdapGroup ldapGroup) throws DAOException {
+        storeObject(ldapGroup);
+        return (LdapGroup) retrieveObject(LdapGroup.class, ldapGroup.getId());
+    }
 
-	/**
-	 * Find LDAP group object by id.
-	 *
-	 * @param id of LDAP group
-	 * @return LDAP group
-	 * @throws DAOException hibernate
-	 */
-	public LdapGroup find(Integer id) throws DAOException {
-		LdapGroup result = (LdapGroup) retrieveObject(LdapGroup.class, id);
-		if (result == null) {
-			throw new DAOException("Object can not be found in database");
-		}
-		return result;
-	}
+    /**
+     * Find LDAP group object by id.
+     *
+     * @param id of LDAP group
+     * @return LDAP group
+     * @throws DAOException hibernate
+     */
+    public LdapGroup find(Integer id) throws DAOException {
+        LdapGroup result = (LdapGroup) retrieveObject(LdapGroup.class, id);
+        if (result == null) {
+            throw new DAOException("Object can not be found in database");
+        }
+        return result;
+    }
 
-	/**
-	 * Remove LDAP group.
-	 *
-	 * @param ldapGroup object
-	 * @throws DAOException hibernate
-	 */
-	public void remove(LdapGroup ldapGroup) throws DAOException {
-		if (ldapGroup.getId() != null) {
-			removeObject(ldapGroup);
-		}
-	}
+    /**
+     * Remove LDAP group.
+     *
+     * @param ldapGroup object
+     * @throws DAOException hibernate
+     */
+    public void remove(LdapGroup ldapGroup) throws DAOException {
+        if (ldapGroup.getId() != null) {
+            removeObject(ldapGroup);
+        }
+    }
 
-	public void remove(Integer id) throws DAOException {
-		removeObject(LdapGroup.class, id);
-	}
+    public void remove(Integer id) throws DAOException {
+        removeObject(LdapGroup.class, id);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<LdapGroup> search(String query) throws DAOException {
-		return retrieveObjects(query);
-	}
+    @SuppressWarnings("unchecked")
+    public List<LdapGroup> search(String query) throws DAOException {
+        return retrieveObjects(query);
+    }
 
 }

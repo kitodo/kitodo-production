@@ -24,65 +24,65 @@ import org.apache.log4j.Logger;
 @Entity
 @Table(name = "ruleset")
 public class Ruleset implements Serializable {
-	private static final long serialVersionUID = -6663371963274685060L;
+    private static final long serialVersionUID = -6663371963274685060L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
 
-	@Column(name = "title")
-	private String title;
+    @Column(name = "title")
+    private String title;
 
-	@Column(name = "file")
-	private String file;
+    @Column(name = "file")
+    private String file;
 
-	@Column(name = "orderMetadataByRuleset")
-	private Boolean orderMetadataByRuleset = false;
+    @Column(name = "orderMetadataByRuleset")
+    private Boolean orderMetadataByRuleset = false;
 
-	private static final Logger logger = Logger.getLogger(Ruleset.class);
+    private static final Logger logger = Logger.getLogger(Ruleset.class);
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getTitle() {
-		return this.title;
-	}
+    public String getTitle() {
+        return this.title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getFile() {
-		return this.file;
-	}
+    public String getFile() {
+        return this.file;
+    }
 
-	public void setFile(String file) {
-		this.file = file;
-	}
+    public void setFile(String file) {
+        this.file = file;
+    }
 
-	public boolean isOrderMetadataByRuleset() {
-		return isOrderMetadataByRulesetHibernate();
-	}
+    public boolean isOrderMetadataByRuleset() {
+        return isOrderMetadataByRulesetHibernate();
+    }
 
-	public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
-		this.orderMetadataByRuleset = orderMetadataByRuleset;
-	}
+    public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
+        this.orderMetadataByRuleset = orderMetadataByRuleset;
+    }
 
-	public Boolean isOrderMetadataByRulesetHibernate() {
-		if (this.orderMetadataByRuleset == null) {
-			this.orderMetadataByRuleset = false;
-		}
-		return this.orderMetadataByRuleset;
-	}
+    public Boolean isOrderMetadataByRulesetHibernate() {
+        if (this.orderMetadataByRuleset == null) {
+            this.orderMetadataByRuleset = false;
+        }
+        return this.orderMetadataByRuleset;
+    }
 
-	public void setOrderMetadataByRulesetHibernate(
-			Boolean orderMetadataByRuleset) {
-		this.orderMetadataByRuleset = orderMetadataByRuleset;
-	}
+    public void setOrderMetadataByRulesetHibernate(
+            Boolean orderMetadataByRuleset) {
+        this.orderMetadataByRuleset = orderMetadataByRuleset;
+    }
 }

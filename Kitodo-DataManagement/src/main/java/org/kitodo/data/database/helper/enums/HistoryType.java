@@ -18,157 +18,157 @@ package org.kitodo.data.database.helper.enums;
  * @version 24.05.2009
  */
 public enum HistoryType {
-	/**
-	 * Default type is unknown for all properties, which still don't have a specific type.
-	 */
-	unknown(0, "unknown",false, false, null),
+    /**
+     * Default type is unknown for all properties, which still don't have a specific type.
+     */
+    unknown(0, "unknown",false, false, null),
 
-	/**
-	 * storageDifference.
-	 */
-	storageDifference(1, "storageDifference", true, false, null),
+    /**
+     * storageDifference.
+     */
+    storageDifference(1, "storageDifference", true, false, null),
 
-	/**
-	 * imagesWorkDiff.
-	 */
-	imagesWorkDiff(2, "imagesWorkDiff", true, false, null),
+    /**
+     * imagesWorkDiff.
+     */
+    imagesWorkDiff(2, "imagesWorkDiff", true, false, null),
 
-	/**
-	 imagesMasterDiff.
-	 */
-	imagesMasterDiff(3, "imagesMasterDiff", true, false, null),
+    /**
+     imagesMasterDiff.
+     */
+    imagesMasterDiff(3, "imagesMasterDiff", true, false, null),
 
-	/**
-	 * metadataDiff.
-	 */
-	metadataDiff(4, "metadataDiff", true, false, null),
-	
-	/**
-	 * docstructDiff.
-	 */
-	docstructDiff(5, "docstructDiff", true, false, null),
+    /**
+     * metadataDiff.
+     */
+    metadataDiff(4, "metadataDiff", true, false, null),
 
-	/**
-	 * taskDone, order number and title.
-	 */
-	taskDone(6, "stepDone", true, true, "min"),
+    /**
+     * docstructDiff.
+     */
+    docstructDiff(5, "docstructDiff", true, false, null),
 
-	/**
-	 * taskOpen, order number and title.
-	 */
-	taskOpen(7, "stepOpen", true, true, "min"),
+    /**
+     * taskDone, order number and title.
+     */
+    taskDone(6, "stepDone", true, true, "min"),
 
-	/**
-	 * taskInWork, order number and title.
-	 */
-	taskInWork(8, "stepInWork", true, true, null ),
+    /**
+     * taskOpen, order number and title.
+     */
+    taskOpen(7, "stepOpen", true, true, "min"),
 
-	/**
-	 * taskError, step order number, step title.
-	 */
-	taskError(9, "stepError", true, true, null),
+    /**
+     * taskInWork, order number and title.
+     */
+    taskInWork(8, "stepInWork", true, true, null ),
 
-	/**
-	 * taskError, step order number, step title.
-	 */
-	taskLocked(10, "stepLocked", true, true, "max"),
+    /**
+     * taskError, step order number, step title.
+     */
+    taskError(9, "stepError", true, true, null),
 
-	/**
-	 * bitonal Difference - without function yet.
-	 * */
-	bitonal(11, "imagesBitonalDiff", true, false, null),
+    /**
+     * taskError, step order number, step title.
+     */
+    taskLocked(10, "stepLocked", true, true, "max"),
 
-	/**
-	 * greyscale Difference - without function yet.
-	 */
-	grayScale(12, "imagesGrayScaleDiff", true, false, null),
+    /**
+     * bitonal Difference - without function yet.
+     * */
+    bitonal(11, "imagesBitonalDiff", true, false, null),
 
-	/**
-	 * color Difference - without function yet.
-	 */
-	color(13, "imagesColorDiff", true, false, null);
+    /**
+     * greyscale Difference - without function yet.
+     */
+    grayScale(12, "imagesGrayScaleDiff", true, false, null),
 
-	private int value;
-	private String title;
-	private Boolean isNumeric;
-	private Boolean isString;
-	private String groupingExpression;
+    /**
+     * color Difference - without function yet.
+     */
+    color(13, "imagesColorDiff", true, false, null);
 
-	/**
-	 * Private constructor, initializes integer value, title and sets boolean, if EventType contains string
-	 * and/or numeric content.
-	 */
-	private HistoryType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString, String groupingExpression) {
-		this.value = inValue;
-		this.title = inTitle;
-		this.isNumeric = inIsNumeric;
-		this.isString = inIsString;
-		this.groupingExpression = groupingExpression;
-	}
+    private int value;
+    private String title;
+    private Boolean isNumeric;
+    private Boolean isString;
+    private String groupingExpression;
 
-	/**
-	 * Return integer value for database savings.
-	 *
-	 * @return value as integer
-	 */
-	public Integer getValue() {
-		return this.value;
-	}
+    /**
+     * Private constructor, initializes integer value, title and sets boolean, if EventType contains string
+     * and/or numeric content.
+     */
+    private HistoryType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString, String groupingExpression) {
+        this.value = inValue;
+        this.title = inTitle;
+        this.isNumeric = inIsNumeric;
+        this.isString = inIsString;
+        this.groupingExpression = groupingExpression;
+    }
 
-	/**
-	 * Get title from type.
-	 *
-	 * @return title
-	 */
-	public String getTitle() {
-		return this.title;
-		//return Helper.getTranslation(this.title);
-	}
+    /**
+     * Return integer value for database savings.
+     *
+     * @return value as integer
+     */
+    public Integer getValue() {
+        return this.value;
+    }
 
-	/**
-	 * Return if type contains numeric content.
-	 *
-	 * @return isNumeric as {@link Boolean}
-	 */
+    /**
+     * Get title from type.
+     *
+     * @return title
+     */
+    public String getTitle() {
+        return this.title;
+        //return Helper.getTranslation(this.title);
+    }
 
-	public Boolean isNumeric() {
-		return this.isNumeric;
-	}
+    /**
+     * Return if type contains numeric content.
+     *
+     * @return isNumeric as {@link Boolean}
+     */
 
-	/**
-	 * Return if type contains string content.
-	 *
-	 * @return isNumeric as {@link String}
-	 */
-	public Boolean isString() {
-		return this.isString;
-	}
+    public Boolean isNumeric() {
+        return this.isNumeric;
+    }
 
-	/**
-	 * Return grouping function if needed.
-	 *
-	 * @return groupingExpression as{@link String}
-	 */
-	public String getGroupingFunction() {
-		return this.groupingExpression;
-	}
+    /**
+     * Return if type contains string content.
+     *
+     * @return isNumeric as {@link String}
+     */
+    public Boolean isString() {
+        return this.isString;
+    }
 
-	/**
-	 * Retrieve history event type by integer value, necessary for database handlings, where only integer is saved
-	 * but not type safe.
-	 *
-	 * @param inType
-	 *            as integer value
-	 * @return {@link HistoryType} for given integer
-	 */
-	public static HistoryType getTypeFromValue(Integer inType) {
-		if (inType != null) {
-			for (HistoryType ss : values()) {
-				if (ss.getValue() == inType.intValue()) {
-					return ss;
-				}
-			}
-		}
-		return unknown;
-	}
+    /**
+     * Return grouping function if needed.
+     *
+     * @return groupingExpression as{@link String}
+     */
+    public String getGroupingFunction() {
+        return this.groupingExpression;
+    }
+
+    /**
+     * Retrieve history event type by integer value, necessary for database handlings, where only integer is saved
+     * but not type safe.
+     *
+     * @param inType
+     *            as integer value
+     * @return {@link HistoryType} for given integer
+     */
+    public static HistoryType getTypeFromValue(Integer inType) {
+        if (inType != null) {
+            for (HistoryType ss : values()) {
+                if (ss.getValue() == inType.intValue()) {
+                    return ss;
+                }
+            }
+        }
+        return unknown;
+    }
 }

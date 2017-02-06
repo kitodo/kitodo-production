@@ -38,130 +38,130 @@ import org.hibernate.Hibernate;
 @Entity
 @Table(name = "userGroup")
 public class UserGroup implements Serializable, Comparable<UserGroup> {
-	private static final long serialVersionUID = -5924845694417474352L;
+    private static final long serialVersionUID = -5924845694417474352L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
 
-	@Column(name = "title")
-	private String title;
+    @Column(name = "title")
+    private String title;
 
-	@Column(name = "permission")
-	private Integer permission;
+    @Column(name = "permission")
+    private Integer permission;
 
-	@ManyToMany(mappedBy = "userGroups")
-	private List<User> users;
+    @ManyToMany(mappedBy = "userGroups")
+    private List<User> users;
 
-	@ManyToMany(mappedBy = "userGroups")
-	private List<Task> tasks;
+    @ManyToMany(mappedBy = "userGroups")
+    private List<Task> tasks;
 
-	@Transient
-	private boolean panelShown = false;
+    @Transient
+    private boolean panelShown = false;
 
-	public UserGroup() {
-		this.tasks = new ArrayList<>();
-		this.users = new ArrayList<>();
-	}
+    public UserGroup() {
+        this.tasks = new ArrayList<>();
+        this.users = new ArrayList<>();
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getTitle() {
-		if (this.title == null) {
-			return "";
-		} else {
-			return this.title;
-		}
-	}
+    public String getTitle() {
+        if (this.title == null) {
+            return "";
+        } else {
+            return this.title;
+        }
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public Integer getPermission() {
-		if (this.permission == null) {
-			this.permission = 4;
-		} else if (this.permission == 3) {
-			this.permission = 4;
-		}
-		return this.permission;
-	}
+    public Integer getPermission() {
+        if (this.permission == null) {
+            this.permission = 4;
+        } else if (this.permission == 3) {
+            this.permission = 4;
+        }
+        return this.permission;
+    }
 
-	public void setPermission(int permission) {
-		this.permission = permission;
-	}
+    public void setPermission(int permission) {
+        this.permission = permission;
+    }
 
-	public List<User> getUsers() {
-		return this.users;
-	}
+    public List<User> getUsers() {
+        return this.users;
+    }
 
-	public void setUsers(List<User> users) {
-		this.users = users;
-	}
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
-	public List<Task> getTasks() {
-		return this.tasks;
-	}
+    public List<Task> getTasks() {
+        return this.tasks;
+    }
 
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
 
-	public boolean isPanelShown() {
-		return this.panelShown;
-	}
+    public boolean isPanelShown() {
+        return this.panelShown;
+    }
 
-	public void setPanelShown(boolean panelShown) {
-		this.panelShown = panelShown;
-	}
+    public void setPanelShown(boolean panelShown) {
+        this.panelShown = panelShown;
+    }
 
-	@Override
-	public int compareTo(UserGroup o) {
-		return this.getTitle().compareTo(o.getTitle());
-	}
+    @Override
+    public int compareTo(UserGroup o) {
+        return this.getTitle().compareTo(o.getTitle());
+    }
 
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof UserGroup)) {
-			return false;
-		}
-		UserGroup other = (UserGroup) obj;
-		return this.getTitle().equals(other.getTitle());
-	}
 
-	@Override
-	public int hashCode() {
-		return this.getTitle().hashCode();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UserGroup)) {
+            return false;
+        }
+        UserGroup other = (UserGroup) obj;
+        return this.getTitle().equals(other.getTitle());
+    }
 
-	//Here will be methods which should be in UserService but are used by jsp files
+    @Override
+    public int hashCode() {
+        return this.getTitle().hashCode();
+    }
 
-	public String getPermissionAsString() {
-		if (this.getPermission() == null) {
-			this.setPermission(4);
-		} else if (this.getPermission() == 3) {
-			this.setPermission(4);
-		}
-		return String.valueOf(this.getPermission().intValue());
-	}
+    //Here will be methods which should be in UserService but are used by jsp files
 
-	public void setPermissionAsString(String permission) {
-		this.setPermission(Integer.parseInt(permission));
-	}
+    public String getPermissionAsString() {
+        if (this.getPermission() == null) {
+            this.setPermission(4);
+        } else if (this.getPermission() == 3) {
+            this.setPermission(4);
+        }
+        return String.valueOf(this.getPermission().intValue());
+    }
 
-	public int getTasksSize(UserGroup userGroup) {
-		if (userGroup.getTasks() == null) {
-			return 0;
-		} else {
-			return userGroup.getTasks().size();
-		}
-	}
+    public void setPermissionAsString(String permission) {
+        this.setPermission(Integer.parseInt(permission));
+    }
+
+    public int getTasksSize(UserGroup userGroup) {
+        if (userGroup.getTasks() == null) {
+            return 0;
+        } else {
+            return userGroup.getTasks().size();
+        }
+    }
 }

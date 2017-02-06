@@ -31,71 +31,71 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "template")
 public class Template implements Serializable {
-	private static final long serialVersionUID = 1736135433162833277L;
+    private static final long serialVersionUID = 1736135433162833277L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
 
-	@Column(name = "origin")
-	private String origin;
+    @Column(name = "origin")
+    private String origin;
 
-	@ManyToOne
-	@JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
-	private Process process;
+    @ManyToOne
+    @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
+    private Process process;
 
-	@OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("title ASC")
-	private List<TemplateProperty> properties;
+    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("title ASC")
+    private List<TemplateProperty> properties;
 
-	@Transient
-	private boolean panelShown = true;
+    @Transient
+    private boolean panelShown = true;
 
-	public Template() {
-		this.properties = new ArrayList<>();
-	}
+    public Template() {
+        this.properties = new ArrayList<>();
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getOrigin() {
-		return this.origin;
-	}
+    public String getOrigin() {
+        return this.origin;
+    }
 
-	public void setOrigin(String origin) {
-		this.origin = origin;
-	}
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
 
-	public Process getProcess() {
-		return this.process;
-	}
+    public Process getProcess() {
+        return this.process;
+    }
 
-	public void setProcess(Process process) {
-		this.process = process;
-	}
+    public void setProcess(Process process) {
+        this.process = process;
+    }
 
-	public List<TemplateProperty> getProperties() {
+    public List<TemplateProperty> getProperties() {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
         return this.properties;
-	}
+    }
 
-	public void setProperties(List<TemplateProperty> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(List<TemplateProperty> properties) {
+        this.properties = properties;
+    }
 
-	public boolean isPanelShown() {
-		return this.panelShown;
-	}
+    public boolean isPanelShown() {
+        return this.panelShown;
+    }
 
-	public void setPanelShown(boolean panelShown) {
-		this.panelShown = panelShown;
-	}
+    public void setPanelShown(boolean panelShown) {
+        this.panelShown = panelShown;
+    }
 }

@@ -15,18 +15,18 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class SimpleDAO extends BaseDAO {
 
-	private static final long serialVersionUID = 599953115583442026L;
+    private static final long serialVersionUID = 599953115583442026L;
 
-	public void save(Object t) throws DAOException {
-		storeObject(t);
-	}
+    public void save(Object t) throws DAOException {
+        storeObject(t);
+    }
 
-	public void remove(Object t) throws DAOException {
-		removeObject(t);
-	}
-	
-	public void refreshObject(Object t) {
-		Object o = t;
-		refresh(o);
-	}
+    public void remove(Object t) throws DAOException {
+        removeObject(t);
+    }
+
+    public void refreshObject(Object t) {
+        Object o = t;
+        refresh(o);
+    }
 }

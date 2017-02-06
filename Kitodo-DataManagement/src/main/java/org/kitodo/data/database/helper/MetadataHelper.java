@@ -25,39 +25,39 @@ import java.util.Map;
  */
 public class MetadataHelper {
 
-	/**
-	 * This method is copied from de.sub.goobi.metadaten.MetadatenHelper.
-	 * It check whether this is a rdf or mets file.
-	 *
-	 * @return meta file type
-	 */
-	public static String getMetaFileType(String file) throws IOException {
-		/*
-		 * Typen und Suchbegriffe festlegen
-		 */
-		HashMap<String, String> types = new HashMap<String, String>();
-		types.put("metsmods", "ugh.fileformats.mets.MetsModsImportExport".toLowerCase());
-		types.put("mets", "www.loc.gov/METS/".toLowerCase());
-		types.put("rdf", "<RDF:RDF ".toLowerCase());
-		types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
+    /**
+     * This method is copied from de.sub.goobi.metadaten.MetadatenHelper.
+     * It check whether this is a rdf or mets file.
+     *
+     * @return meta file type
+     */
+    public static String getMetaFileType(String file) throws IOException {
+        /*
+         * Typen und Suchbegriffe festlegen
+         */
+        HashMap<String, String> types = new HashMap<String, String>();
+        types.put("metsmods", "ugh.fileformats.mets.MetsModsImportExport".toLowerCase());
+        types.put("mets", "www.loc.gov/METS/".toLowerCase());
+        types.put("rdf", "<RDF:RDF ".toLowerCase());
+        types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-		try (
-				InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-				BufferedReader bufRead = new BufferedReader(input);
-		) {
-			char[] buffer = new char[200];
-			while ((bufRead.read(buffer)) >= 0) {
-				String temp = new String(buffer).toLowerCase();
-				Iterator<Map.Entry<String, String>> i = types.entrySet().iterator();
-				while (i.hasNext()) {
-					Map.Entry<String, String> entry = i.next();
-					if (temp.contains(entry.getValue())) {
-						return entry.getKey();
-					}
-				}
-			}
-		}
+        try (
+                InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                BufferedReader bufRead = new BufferedReader(input);
+        ) {
+            char[] buffer = new char[200];
+            while ((bufRead.read(buffer)) >= 0) {
+                String temp = new String(buffer).toLowerCase();
+                Iterator<Map.Entry<String, String>> i = types.entrySet().iterator();
+                while (i.hasNext()) {
+                    Map.Entry<String, String> entry = i.next();
+                    if (temp.contains(entry.getValue())) {
+                        return entry.getKey();
+                    }
+                }
+            }
+        }
 
-		return "-";
-	}
+        return "-";
+    }
 }

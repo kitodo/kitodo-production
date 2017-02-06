@@ -30,60 +30,60 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "workpiece")
 public class Workpiece implements Serializable {
-	private static final long serialVersionUID = 123266825187246791L;
+    private static final long serialVersionUID = 123266825187246791L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "process_id")
-	private Process process;
+    @ManyToOne
+    @JoinColumn(name = "process_id")
+    private Process process;
 
-	@OneToMany(mappedBy = "workpiece", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("title ASC")
-	private List<WorkpieceProperty> properties;
+    @OneToMany(mappedBy = "workpiece", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("title ASC")
+    private List<WorkpieceProperty> properties;
 
-	@Transient
-	private boolean panelShown = true;
+    @Transient
+    private boolean panelShown = true;
 
-	public Workpiece() {
-		this.properties = new ArrayList<>();
-	}
+    public Workpiece() {
+        this.properties = new ArrayList<>();
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Process getProcess() {
-		return this.process;
-	}
+    public Process getProcess() {
+        return this.process;
+    }
 
-	public void setProcess(Process process) {
-		this.process = process;
-	}
+    public void setProcess(Process process) {
+        this.process = process;
+    }
 
-	public boolean isPanelShown() {
-		return this.panelShown;
-	}
+    public boolean isPanelShown() {
+        return this.panelShown;
+    }
 
-	public void setPanelShown(boolean panelShown) {
-		this.panelShown = panelShown;
-	}
+    public void setPanelShown(boolean panelShown) {
+        this.panelShown = panelShown;
+    }
 
-	public List<WorkpieceProperty> getProperties() {
-		if (this.properties == null) {
-			this.properties = new ArrayList<>();
-		}
-		return this.properties;
-	}
+    public List<WorkpieceProperty> getProperties() {
+        if (this.properties == null) {
+            this.properties = new ArrayList<>();
+        }
+        return this.properties;
+    }
 
-	public void setProperties(List<WorkpieceProperty> properties) {
-		this.properties = properties;
-	}
+    public void setProperties(List<WorkpieceProperty> properties) {
+        this.properties = properties;
+    }
 }

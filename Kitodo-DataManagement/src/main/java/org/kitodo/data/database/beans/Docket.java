@@ -23,40 +23,40 @@ import javax.persistence.Table;
 @Table(name = "docket")
 public class Docket implements Serializable {
 
-	private static final long serialVersionUID = -5187947220333984868L;
+    private static final long serialVersionUID = -5187947220333984868L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
 
-	@Column(name = "name")
-	private String name;
+    @Column(name = "name")
+    private String name;
 
-	@Column(name = "file")
-	private String file;
-	
-	public Integer getId() {
-		return id;
-	}
+    @Column(name = "file")
+    private String file;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getFile() {
-		return file;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setFile(String file) {
-		this.file = file;
-	}
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+    }
 }

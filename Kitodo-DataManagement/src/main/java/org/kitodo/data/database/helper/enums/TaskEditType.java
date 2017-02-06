@@ -18,76 +18,76 @@ package org.kitodo.data.database.helper.enums;
  * @version 17.05.2009
  */
 public enum TaskEditType {
-	/**
-	 * Default type is unknown for all steps, which still don't have a specific type.
-	 */
-	UNNOWKN(0, "unbekannt"),
+    /**
+     * Default type is unknown for all steps, which still don't have a specific type.
+     */
+    UNNOWKN(0, "unbekannt"),
 
-	/**
-	 * Manual single workflow for regular workflow handling.
-	 * */
-	MANUAL_SINGLE(1, "manuellSingleWorkflow"),
+    /**
+     * Manual single workflow for regular workflow handling.
+     * */
+    MANUAL_SINGLE(1, "manuellSingleWorkflow"),
 
-	/**
-	 * Manual multi workflow for lots of data like image processing with pages of steps.
-	 */
-	MANUAL_MULTI(2, "manuellMultiWorkflow"),
+    /**
+     * Manual multi workflow for lots of data like image processing with pages of steps.
+     */
+    MANUAL_MULTI(2, "manuellMultiWorkflow"),
 
-	/**
-	 * Administrativ = all kinds of steps changed through administrative gui.
-	 */
-	ADMIN(3, "administrativ"),
+    /**
+     * Administrativ = all kinds of steps changed through administrative gui.
+     */
+    ADMIN(3, "administrativ"),
 
-	/**
-	 * Automatic = all kinds of automatic steps.
-	 */
-	AUTOMATIC(4, "automatic");
+    /**
+     * Automatic = all kinds of automatic steps.
+     */
+    AUTOMATIC(4, "automatic");
 
-	private int value;
-	private String title;
+    private int value;
+    private String title;
 
-	/**
-	 * Private constructor, initializes integer value and title.
-	 */
-	private TaskEditType(int inValue, String inTitle) {
-		this.value = inValue;
-		this.title = inTitle;
-	}
+    /**
+     * Private constructor, initializes integer value and title.
+     */
+    private TaskEditType(int inValue, String inTitle) {
+        this.value = inValue;
+        this.title = inTitle;
+    }
 
-	/**
-	 * Return integer value for database savings.
-	 * 
-	 * @return value as integer
-	 */
-	public Integer getValue() {
-		return this.value;
-	}
+    /**
+     * Return integer value for database savings.
+     *
+     * @return value as integer
+     */
+    public Integer getValue() {
+        return this.value;
+    }
 
-	/**
-	 * Get title from editType.
-	 *
-	 * @return title
-	 */
-	public String getTitle() {
-		return this.title;
-		//return Helper.getTranslation(this.title);
-	}
+    /**
+     * Get title from editType.
+     *
+     * @return title
+     */
+    public String getTitle() {
+        return this.title;
+        //return Helper.getTranslation(this.title);
+    }
 
-	/**
-	 * Retrieve editType by integer value, necessary for database handlings, where only integer is saved
-	 * but not type safe.
-	 *
-	 * @param editType as integer value
-	 * @return {@link TaskEditType} for given integer
-	 */
-	public static TaskEditType getTypeFromValue(Integer editType) {
-		if (editType != null) {
-			for (TaskEditType taskEditType : values()) {
-				if (taskEditType.getValue() == editType.intValue()) {
-					return taskEditType;
-				}
-			}
-		}
-		return UNNOWKN;
-	}
+    /**
+     * Retrieve editType by integer value, necessary for database handlings, where only integer is saved
+     * but not type safe.
+     *
+     * @param editType as integer value
+     * @return {@link TaskEditType} for given integer
+     */
+    public static TaskEditType getTypeFromValue(Integer editType) {
+        if (editType != null) {
+            for (TaskEditType taskEditType : values()) {
+                if (taskEditType.getValue() == editType.intValue()) {
+                    return taskEditType;
+                }
+            }
+        }
+        return UNNOWKN;
+    }
 }

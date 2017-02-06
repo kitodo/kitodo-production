@@ -18,95 +18,95 @@ package org.kitodo.data.database.helper.enums;
  * @version 17.05.2009
  */
 public enum TaskStatus {
-	
-	/**
-	 * Locked = step not startable.
-	 */
-	LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif","steplocked"),
-	/**
-	 * Open = someone can begin with this step.
-	 */
-	OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif","stepopen"),
-	/**
-	 * Inwork = someone is currently working on that step.
-	 */
-	INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif","stepinwork"),
-	/**
-	 * Done = step is executed.
-	 */
-	DONE(3, "statusAbgeschlossen", "green_10.gif", "green_15a.gif", "stepdone");
 
-	private int value;
-	private String title;
-	private String imageSmall;
-	private String imageBig;
-	private String searchString;
+    /**
+     * Locked = step not startable.
+     */
+    LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif","steplocked"),
+    /**
+     * Open = someone can begin with this step.
+     */
+    OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif","stepopen"),
+    /**
+     * Inwork = someone is currently working on that step.
+     */
+    INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif","stepinwork"),
+    /**
+     * Done = step is executed.
+     */
+    DONE(3, "statusAbgeschlossen", "green_10.gif", "green_15a.gif", "stepdone");
 
-	/**
-	 * Private constructor, initializes integer value, title, small and big image.
-	 */
-	private TaskStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
-		this.value = inValue;
-		this.title = inTitle;
-		this.imageSmall = smallImage;
-		this.imageBig = bigImage;
-		this.searchString = searchString;
-	}
+    private int value;
+    private String title;
+    private String imageSmall;
+    private String imageBig;
+    private String searchString;
 
-	/**
-	 * Return integer value for database savings.
-	 *
-	 * @return value as integer
-	 */
-	public Integer getValue() {
-		return this.value;
-	}
+    /**
+     * Private constructor, initializes integer value, title, small and big image.
+     */
+    private TaskStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
+        this.value = inValue;
+        this.title = inTitle;
+        this.imageSmall = smallImage;
+        this.imageBig = bigImage;
+        this.searchString = searchString;
+    }
 
-	/**
-	 * Get title from status type.
-	 *
-	 * @return title
-	 */
-	public String getTitle() {
-		return this.title;
-		//return Helper.getTranslation(this.title);
-	}
+    /**
+     * Return integer value for database savings.
+     *
+     * @return value as integer
+     */
+    public Integer getValue() {
+        return this.value;
+    }
 
-	/**
-	 * Get file name for small image.
-	 *
-	 * @return file name for small image
-	 */
-	public String getSmallImagePath() {
-		return "/newpages/images/status/" + this.imageSmall;
-	}
+    /**
+     * Get title from status type.
+     *
+     * @return title
+     */
+    public String getTitle() {
+        return this.title;
+        //return Helper.getTranslation(this.title);
+    }
 
-	/**
-	 * Get file name for big image.
-	 *
-	 * @return file name for big image
-	 */
-	public String getBigImagePath() {
-		return "/newpages/images/status/" + this.imageBig;
-	}
+    /**
+     * Get file name for small image.
+     *
+     * @return file name for small image
+     */
+    public String getSmallImagePath() {
+        return "/newpages/images/status/" + this.imageSmall;
+    }
 
-	/**
-	 * Retrieve StepStatus by integer value, necessary for database handlings, where only integer is saved
-	 * but not type safe.
-	 *
-	 * @param inValue as integer value
-	 * @return {@link TaskStatus} for given integer
-	 */
-	public static TaskStatus getStatusFromValue(Integer inValue) {
-		for (TaskStatus taskStatus : values()) {
-			if (taskStatus.getValue() == inValue.intValue()) {
-				return taskStatus;
-			}
-		}
-		return LOCKED;
-	}
+    /**
+     * Get file name for big image.
+     *
+     * @return file name for big image
+     */
+    public String getBigImagePath() {
+        return "/newpages/images/status/" + this.imageBig;
+    }
 
-	public String getSearchString() {
-		return this.searchString;
-	}
+    /**
+     * Retrieve StepStatus by integer value, necessary for database handlings, where only integer is saved
+     * but not type safe.
+     *
+     * @param inValue as integer value
+     * @return {@link TaskStatus} for given integer
+     */
+    public static TaskStatus getStatusFromValue(Integer inValue) {
+        for (TaskStatus taskStatus : values()) {
+            if (taskStatus.getValue() == inValue.intValue()) {
+                return taskStatus;
+            }
+        }
+        return LOCKED;
+    }
+
+    public String getSearchString() {
+        return this.searchString;
+    }
 }

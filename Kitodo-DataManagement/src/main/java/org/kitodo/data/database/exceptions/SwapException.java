@@ -12,13 +12,13 @@
 package org.kitodo.data.database.exceptions;
 
 public class SwapException extends Exception {
-   private static final long serialVersionUID = 3257853198839724340L;
+    private static final long serialVersionUID = 3257853198839724340L;
 
-   public SwapException() {
-      super();
-   }
+    public SwapException() {
+        super();
+    }
 
-   public SwapException(String s) {
-      super(s);
-   }
+    public SwapException(String s) {
+        super(s);
+    }
 }

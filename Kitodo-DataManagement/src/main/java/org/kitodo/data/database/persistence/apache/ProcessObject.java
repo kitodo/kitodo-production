@@ -31,203 +31,201 @@ import ugh.fileformats.mets.XStream;
 
 public class ProcessObject {
 
-	private int id;
-	private String title;
-	private String outputName;
-	private boolean template;
-	private boolean swappedOut;
-	private boolean inChoiceListShown;
-	private String sortHelperStatus;
-	private int sortHelperImages;
-	private int sortHelperArticles;
-	private Date creationDate;
-	private int projectId;
-	private int rulesetId;
-	private int sortHelperDocstructs;
-	private int sortHelperMetadata;
-	private String wikiField;
+    private int id;
+    private String title;
+    private String outputName;
+    private boolean template;
+    private boolean swappedOut;
+    private boolean inChoiceListShown;
+    private String sortHelperStatus;
+    private int sortHelperImages;
+    private int sortHelperArticles;
+    private Date creationDate;
+    private int projectId;
+    private int rulesetId;
+    private int sortHelperDocstructs;
+    private int sortHelperMetadata;
+    private String wikiField;
 
-	public ProcessObject(int processId, String title, String outputName, boolean template, boolean swappedOut,
-			boolean inChoiceListShown, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
-			Date creationDate, int projectId, int rulesetId, int sortHelperDocstructs,
-			int sortHelperMetadata, String wikiField) {
-		super();
-		this.id = processId;
-		this.title = title;
-		this.outputName = outputName;
-		this.template = template;
-		this.swappedOut = swappedOut;
-		this.inChoiceListShown = inChoiceListShown;
-		this.sortHelperStatus = sortHelperStatus;
-		this.sortHelperImages = sortHelperImages;
-		this.sortHelperArticles = sortHelperArticles;
-		this.creationDate = creationDate;
-		this.projectId = projectId;
-		this.rulesetId = rulesetId;
-		this.sortHelperDocstructs = sortHelperDocstructs;
-		this.sortHelperMetadata = sortHelperMetadata;
-		this.wikiField = wikiField;
-	}
+    public ProcessObject(int processId, String title, String outputName, boolean template, boolean swappedOut,
+            boolean inChoiceListShown, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
+            Date creationDate, int projectId, int rulesetId, int sortHelperDocstructs,
+            int sortHelperMetadata, String wikiField) {
+        super();
+        this.id = processId;
+        this.title = title;
+        this.outputName = outputName;
+        this.template = template;
+        this.swappedOut = swappedOut;
+        this.inChoiceListShown = inChoiceListShown;
+        this.sortHelperStatus = sortHelperStatus;
+        this.sortHelperImages = sortHelperImages;
+        this.sortHelperArticles = sortHelperArticles;
+        this.creationDate = creationDate;
+        this.projectId = projectId;
+        this.rulesetId = rulesetId;
+        this.sortHelperDocstructs = sortHelperDocstructs;
+        this.sortHelperMetadata = sortHelperMetadata;
+        this.wikiField = wikiField;
+    }
 
-	public int getId() {
-		return this.id;
-	}
+    public int getId() {
+        return this.id;
+    }
 
-	public void setId(int processId) {
-		this.id = processId;
-	}
+    public void setId(int processId) {
+        this.id = processId;
+    }
 
-	public String getTitle() {
-		return this.title;
-	}
+    public String getTitle() {
+        return this.title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getOutputName() {
-		return this.outputName;
-	}
+    public String getOutputName() {
+        return this.outputName;
+    }
 
-	public void setOutputName(String outputName) {
-		this.outputName = outputName;
-	}
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
 
-	public boolean isTemplate() {
-		return this.template;
-	}
+    public boolean isTemplate() {
+        return this.template;
+    }
 
-	public void setTemplate(boolean isTemplate) {
-		this.template = isTemplate;
-	}
+    public void setTemplate(boolean isTemplate) {
+        this.template = isTemplate;
+    }
 
-	public boolean isSwappedOut() {
-		return this.swappedOut;
-	}
+    public boolean isSwappedOut() {
+        return this.swappedOut;
+    }
 
-	public void setSwappedOut(boolean swappedOut) {
-		this.swappedOut = swappedOut;
-	}
+    public void setSwappedOut(boolean swappedOut) {
+        this.swappedOut = swappedOut;
+    }
 
-	public boolean isiNChoiceListShown() {
-		return this.inChoiceListShown;
-	}
+    public boolean isiNChoiceListShown() {
+        return this.inChoiceListShown;
+    }
 
-	public void setInChoiceListShown(boolean inChoiceListShown) {
-		this.inChoiceListShown = inChoiceListShown;
-	}
+    public void setInChoiceListShown(boolean inChoiceListShown) {
+        this.inChoiceListShown = inChoiceListShown;
+    }
 
-	public String getSortHelperStatus() {
-		return this.sortHelperStatus;
-	}
+    public String getSortHelperStatus() {
+        return this.sortHelperStatus;
+    }
 
-	public void setSortHelperStatus(String sortHelperStatus) {
-		this.sortHelperStatus = sortHelperStatus;
-	}
+    public void setSortHelperStatus(String sortHelperStatus) {
+        this.sortHelperStatus = sortHelperStatus;
+    }
 
-	public int getSortHelperImages() {
-		return this.sortHelperImages;
-	}
+    public int getSortHelperImages() {
+        return this.sortHelperImages;
+    }
 
-	public void setSortHelperImages(int sortHelperImages) {
-		this.sortHelperImages = sortHelperImages;
-	}
+    public void setSortHelperImages(int sortHelperImages) {
+        this.sortHelperImages = sortHelperImages;
+    }
 
-	public int getSortHelperArticles() {
-		return this.sortHelperArticles;
-	}
+    public int getSortHelperArticles() {
+        return this.sortHelperArticles;
+    }
 
-	public void setSortHelperArticles(int sortHelperArticles) {
-		this.sortHelperArticles = sortHelperArticles;
-	}
+    public void setSortHelperArticles(int sortHelperArticles) {
+        this.sortHelperArticles = sortHelperArticles;
+    }
 
-	public Date getCreationDate() {
-		return this.creationDate;
-	}
+    public Date getCreationDate() {
+        return this.creationDate;
+    }
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 
-	public int getProjectId() {
-		return this.projectId;
-	}
+    public int getProjectId() {
+        return this.projectId;
+    }
 
-	public void setProjectId(int projectId) {
-		this.projectId = projectId;
-	}
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
 
-	public int getRulesetId() {
-		return this.rulesetId;
-	}
+    public int getRulesetId() {
+        return this.rulesetId;
+    }
 
-	public void setRulesetId(int rulesetId) {
-		this.rulesetId = rulesetId;
-	}
+    public void setRulesetId(int rulesetId) {
+        this.rulesetId = rulesetId;
+    }
 
-	public int getSortHelperDocstructs() {
-		return this.sortHelperDocstructs;
-	}
+    public int getSortHelperDocstructs() {
+        return this.sortHelperDocstructs;
+    }
 
-	public void setSortHelperDocstructs(int sortHelperDocstructs) {
-		this.sortHelperDocstructs = sortHelperDocstructs;
-	}
+    public void setSortHelperDocstructs(int sortHelperDocstructs) {
+        this.sortHelperDocstructs = sortHelperDocstructs;
+    }
 
-	public int getSortHelperMetadata() {
-		return this.sortHelperMetadata;
-	}
+    public int getSortHelperMetadata() {
+        return this.sortHelperMetadata;
+    }
 
-	public void setSortHelperMetadata(int sortHelperMetadata) {
-		this.sortHelperMetadata = sortHelperMetadata;
-	}
+    public void setSortHelperMetadata(int sortHelperMetadata) {
+        this.sortHelperMetadata = sortHelperMetadata;
+    }
 
-	public String getWikiField() {
-		return this.wikiField;
-	}
+    public String getWikiField() {
+        return this.wikiField;
+    }
 
-	public void setWikiField(String wikiField) {
-		this.wikiField = wikiField;
-	}
+    public void setWikiField(String wikiField) {
+        this.wikiField = wikiField;
+    }
 
-	public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {
-		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-		String type = MetadataHelper.getMetaFileType(metadataFile);
-		Fileformat ff = null;
-		if (type.equals("metsmods")) {
-			ff = new MetsModsImportExport(prefs);
-		} else if (type.equals("mets")) {
-			ff = new MetsMods(prefs);
-		} else if (type.equals("xstream")) {
-			ff = new XStream(prefs);
-		} else {
-			ff = new RDFFile(prefs);
-		}
-		ff.read(metadataFile);
+    public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {
+        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
+        String type = MetadataHelper.getMetaFileType(metadataFile);
+        Fileformat ff = null;
+        if (type.equals("metsmods")) {
+            ff = new MetsModsImportExport(prefs);
+        } else if (type.equals("mets")) {
+            ff = new MetsMods(prefs);
+        } else if (type.equals("xstream")) {
+            ff = new XStream(prefs);
+        } else {
+            ff = new RDFFile(prefs);
+        }
+        ff.read(metadataFile);
 
-		return ff;
-	}
+        return ff;
+    }
 
-	public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileFormat)
-			throws IOException, InterruptedException, SwapException, DAOException, WriteException,
-			PreferencesException {
-		Fileformat ff;
-		
-		switch (MetadataFormat.findFileFormatsHelperByName(fileFormat)) {
-		case METS:
-			ff = new MetsMods(prefs);
-			break;
+    public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileFormat)
+            throws IOException, InterruptedException, SwapException, DAOException, WriteException,
+            PreferencesException {
+        Fileformat ff;
 
-		case RDF:
-			ff = new RDFFile(prefs);
-			break;
+        switch (MetadataFormat.findFileFormatsHelperByName(fileFormat)) {
+            case METS:
+                ff = new MetsMods(prefs);
+                break;
+            case RDF:
+                ff = new RDFFile(prefs);
+                break;
+            default:
+                ff = new XStream(prefs);
+                break;
+        }
 
-		default:
-			ff = new XStream(prefs);
-			break;
-		}
-		
-		ff.setDigitalDocument(gdzfile.getDigitalDocument());
-		ff.write(metadataFile);
-	}
+        ff.setDigitalDocument(gdzfile.getDigitalDocument());
+        ff.write(metadataFile);
+    }
 
 }

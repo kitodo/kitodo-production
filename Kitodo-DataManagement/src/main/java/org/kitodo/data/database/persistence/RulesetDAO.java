@@ -18,50 +18,50 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class RulesetDAO extends BaseDAO {
 
-	private static final long serialVersionUID = 1913256950316879121L;
+    private static final long serialVersionUID = 1913256950316879121L;
 
-	public Ruleset save(Ruleset ruleset) throws DAOException {
-		storeObject(ruleset);
-		return (Ruleset) retrieveObject(Ruleset.class, ruleset.getId());
-	}
+    public Ruleset save(Ruleset ruleset) throws DAOException {
+        storeObject(ruleset);
+        return (Ruleset) retrieveObject(Ruleset.class, ruleset.getId());
+    }
 
-	/**
-	 * Find ruleset object by id.
-	 *
-	 * @param id of ruleset
-	 * @return ruleset object
-	 * @throws DAOException hibernate
-	 */
-	public Ruleset find(Integer id) throws DAOException {
-		Ruleset result = (Ruleset) retrieveObject(Ruleset.class, id);
-		if (result == null) {
-			throw new DAOException("Object can not be found in database");
-		}
-		return result;
-	}
+    /**
+     * Find ruleset object by id.
+     *
+     * @param id of ruleset
+     * @return ruleset object
+     * @throws DAOException hibernate
+     */
+    public Ruleset find(Integer id) throws DAOException {
+        Ruleset result = (Ruleset) retrieveObject(Ruleset.class, id);
+        if (result == null) {
+            throw new DAOException("Object can not be found in database");
+        }
+        return result;
+    }
 
-	/**
-	 * Remove ruleset object.
-	 *
-	 * @param ruleset object
-	 * @throws DAOException hibernate
-	 */
-	public void remove(Ruleset ruleset) throws DAOException {
-		if (ruleset.getId() != null) {
-			removeObject(ruleset);
-		}
-	}
+    /**
+     * Remove ruleset object.
+     *
+     * @param ruleset object
+     * @throws DAOException hibernate
+     */
+    public void remove(Ruleset ruleset) throws DAOException {
+        if (ruleset.getId() != null) {
+            removeObject(ruleset);
+        }
+    }
 
-	public void remove(Integer id) throws DAOException {
-		removeObject(Ruleset.class, id);
-	}
+    public void remove(Integer id) throws DAOException {
+        removeObject(Ruleset.class, id);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Ruleset> search(String query) throws DAOException {
-		return retrieveObjects(query);
-	}
+    @SuppressWarnings("unchecked")
+    public List<Ruleset> search(String query) throws DAOException {
+        return retrieveObjects(query);
+    }
 
-	public Long count(String query) throws DAOException {
-		return retrieveAmount(query);
-	}
+    public Long count(String query) throws DAOException {
+        return retrieveAmount(query);
+    }
 }

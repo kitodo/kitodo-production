@@ -54,10 +54,8 @@ public final class Util {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
             return sdf.parse(dateString);
-        }
-        catch (ParseException pe) {
-            throw new RuntimeException("Not a valid date: "+dateString+
-                                       ". Must be of YYYY-MMM-DD format.");
+        } catch (ParseException pe) {
+            throw new RuntimeException("Not a valid date: " + dateString + ". Must be of YYYY-MMM-DD format.");
         }
     }
 
@@ -67,7 +65,7 @@ public final class Util {
        @return ResourceBundle
     */
     private static ResourceBundle getResourceBundle() {
-        if(bundle == null) {
+        if (bundle == null) {
             bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH,
                                               Thread.currentThread()
                                               .getContextClassLoader());
@@ -78,17 +76,17 @@ public final class Util {
     private static ResourceBundle bundle;
     public static final String RESOURCE_BUNDLE = "example_app";
 
-	/**
-	 * Calculates the optimal initial capacity for a HashMap or HashSet instance
-	 * that is to be populated with the given collection and isn’t intended to
-	 * grow any further.
-	 * 
-	 * @param collection
-	 *            collection whose size shall be used to determine the initial
-	 *            capacity for a HashMap
-	 * @return the appropriate capacity
-	 */
-	public static int hashCapacityFor(Collection<?> collection) {
-		return (int) Math.ceil(collection.size() / 0.75);
-	}
+    /**
+     * Calculates the optimal initial capacity for a HashMap or HashSet instance
+     * that is to be populated with the given collection and isn’t intended to
+     * grow any further.
+     *
+     * @param collection
+     *            collection whose size shall be used to determine the initial
+     *            capacity for a HashMap
+     * @return the appropriate capacity
+     */
+    public static int hashCapacityFor(Collection<?> collection) {
+        return (int) Math.ceil(collection.size() / 0.75);
+    }
 }

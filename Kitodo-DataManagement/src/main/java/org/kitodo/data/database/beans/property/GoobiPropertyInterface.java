@@ -17,45 +17,45 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 
 public interface GoobiPropertyInterface {
 
-	Integer getId();
+    Integer getId();
 
-	void setId(Integer id);
+    void setId(Integer id);
 
-	String getTitle();
+    String getTitle();
 
-	void setTitle(String title);
+    void setTitle(String title);
 
-	String getValue();
+    String getValue();
 
-	void setValue(String value);
+    void setValue(String value);
 
-	String getChoice();
+    String getChoice();
 
-	void setChoice(String choice);
+    void setChoice(String choice);
 
-	Boolean isObligatory();
+    Boolean isObligatory();
 
-	void setIsObligatory(Boolean isObligatory);
+    void setIsObligatory(Boolean isObligatory);
 
-	Date getCreationDate();
+    Date getCreationDate();
 
-	void setCreationDate(Date creation);
+    void setCreationDate(Date creation);
 
-	/**
-	 * Get data type as {@link PropertyType}.
-	 *
-	 * @return current data type
-	 */
-	PropertyType getType();
+    /**
+     * Get data type as {@link PropertyType}.
+     *
+     * @return current data type
+     */
+    PropertyType getType();
 
-	/**
-	 * Set data type to specific value from {@link PropertyType}.
-	 * 
-	 * @param dataType as {@link PropertyType}
-	 */
-	void setType(PropertyType dataType);
+    /**
+     * Set data type to specific value from {@link PropertyType}.
+     *
+     * @param dataType as {@link PropertyType}
+     */
+    void setType(PropertyType dataType);
 
-	Integer getContainer();
+    Integer getContainer();
 
-	void setContainer(Integer container);
+    void setContainer(Integer container);
 }

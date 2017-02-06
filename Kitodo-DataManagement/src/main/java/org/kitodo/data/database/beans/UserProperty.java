@@ -31,185 +31,185 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 @Entity
 @Table(name = "userProperty")
 public class UserProperty implements Serializable, GoobiPropertyInterface {
-	private static final long serialVersionUID = -2356566712752716107L;
+    private static final long serialVersionUID = -2356566712752716107L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
 
-	@Column(name = "title")
-	private String title;
+    @Column(name = "title")
+    private String title;
 
-	@Column(name = "value")
-	private String value;
+    @Column(name = "value")
+    private String value;
 
-	@Column(name = "isObligatory")
-	private Boolean isObligatory;
+    @Column(name = "isObligatory")
+    private Boolean isObligatory;
 
-	@Column(name = "dataType")
-	private Integer dataType;
+    @Column(name = "dataType")
+    private Integer dataType;
 
-	@Column(name = "choice")
-	private String choice;
+    @Column(name = "choice")
+    private String choice;
 
-	@Column(name = "creationDate")
-	private Date creationDate;
+    @Column(name = "creationDate")
+    private Date creationDate;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-	@Transient
-	private List<String> valueList;
+    @Transient
+    private List<String> valueList;
 
-	/**
-	 * Constructor.
-	 */
-	public UserProperty() {
-		this.isObligatory = false;
-		this.dataType = PropertyType.String.getId();
-		this.creationDate = new Date();
-	}
+    /**
+     * Constructor.
+     */
+    public UserProperty() {
+        this.isObligatory = false;
+        this.dataType = PropertyType.String.getId();
+        this.creationDate = new Date();
+    }
 
-	@Override
-	public Integer getId() {
-		return this.id;
-	}
+    @Override
+    public Integer getId() {
+        return this.id;
+    }
 
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Override
-	public String getTitle() {
-		return this.title;
-	}
+    @Override
+    public String getTitle() {
+        return this.title;
+    }
 
-	@Override
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	@Override
-	public String getValue() {
-		return this.value;
-	}
+    @Override
+    public String getValue() {
+        return this.value;
+    }
 
-	@Override
-	public void setValue(String value) {
-		this.value = value;
-	}
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	@Override
-	public String getChoice() {
-		return this.choice;
-	}
+    @Override
+    public String getChoice() {
+        return this.choice;
+    }
 
-	@Override
-	public void setChoice(String choice) {
-		this.choice = choice;
-	}
+    @Override
+    public void setChoice(String choice) {
+        this.choice = choice;
+    }
 
-	@Override
-	public Boolean isObligatory() {
-		if (this.isObligatory == null) {
-			this.isObligatory = false;
-		}
-		return this.isObligatory;
-	}
+    @Override
+    public Boolean isObligatory() {
+        if (this.isObligatory == null) {
+            this.isObligatory = false;
+        }
+        return this.isObligatory;
+    }
 
-	@Override
-	public void setIsObligatory(Boolean isObligatory) {
-		this.isObligatory = isObligatory;
-	}
+    @Override
+    public void setIsObligatory(Boolean isObligatory) {
+        this.isObligatory = isObligatory;
+    }
 
-	@Override
-	public Date getCreationDate() {
-		return this.creationDate;
-	}
+    @Override
+    public Date getCreationDate() {
+        return this.creationDate;
+    }
 
-	@Override
-	public void setCreationDate(Date creation) {
-		this.creationDate = creation;
-	}
+    @Override
+    public void setCreationDate(Date creation) {
+        this.creationDate = creation;
+    }
 
-	/**
-	 * Getter for dataType set to private for hibernate, for use in program use getType instead - why?!.
-	 * 
-	 * @return dataType as integer
-	 */
-	@SuppressWarnings("unused")
-	private Integer getDataType() {
-		return this.dataType;
-	}
+    /**
+     * Getter for dataType set to private for hibernate, for use in program use getType instead - why?!.
+     *
+     * @return dataType as integer
+     */
+    @SuppressWarnings("unused")
+    private Integer getDataType() {
+        return this.dataType;
+    }
 
-	/**
-	 * Set dataType to defined integer only for internal use through hibernate, for changing dataType
-	 * use setType instead.
-	 * 
-	 * @param dataType as Integer
-	 */
-	@SuppressWarnings("unused")
-	private void setDataType(Integer dataType) {
-		this.dataType = dataType;
-	}
+    /**
+     * Set dataType to defined integer only for internal use through hibernate, for changing dataType
+     * use setType instead.
+     *
+     * @param dataType as Integer
+     */
+    @SuppressWarnings("unused")
+    private void setDataType(Integer dataType) {
+        this.dataType = dataType;
+    }
 
-	/**
-	 * Get dataType as {@link PropertyType}.
-	 *
-	 * @return current dataType
-	 */
-	@Override
-	public PropertyType getType() {
-		if (this.dataType == null) {
-			this.dataType = PropertyType.String.getId();
-		}
-		return PropertyType.getById(this.dataType);
-	}
+    /**
+     * Get dataType as {@link PropertyType}.
+     *
+     * @return current dataType
+     */
+    @Override
+    public PropertyType getType() {
+        if (this.dataType == null) {
+            this.dataType = PropertyType.String.getId();
+        }
+        return PropertyType.getById(this.dataType);
+    }
 
-	/**
-	 * Set dataType to specific value from {@link PropertyType}.
-	 *
-	 * @param inputType as {@link PropertyType}
-	 */
-	@Override
-	public void setType(PropertyType inputType) {
-		this.dataType = inputType.getId();
-	}
+    /**
+     * Set dataType to specific value from {@link PropertyType}.
+     *
+     * @param inputType as {@link PropertyType}
+     */
+    @Override
+    public void setType(PropertyType inputType) {
+        this.dataType = inputType.getId();
+    }
 
-	@Override
-	public Integer getContainer() {
-		return 0;
-	}
+    @Override
+    public Integer getContainer() {
+        return 0;
+    }
 
-	@Override
-	public void setContainer(Integer container) {
+    @Override
+    public void setContainer(Integer container) {
 
-	}
+    }
 
-	/**
-	 * How it is possible that here appears list if object can have only one value?!.
-	 *
-	 * @return list of values
-	 */
-	public List<String> getValueList() {
-		if (this.valueList == null) {
-			this.valueList = new ArrayList<>();
-		}
-		return this.valueList;
-	}
+    /**
+     * How it is possible that here appears list if object can have only one value?!.
+     *
+     * @return list of values
+     */
+    public List<String> getValueList() {
+        if (this.valueList == null) {
+            this.valueList = new ArrayList<>();
+        }
+        return this.valueList;
+    }
 
-	public void setValueList(List<String> valueList) {
-		this.valueList = valueList;
-	}
+    public void setValueList(List<String> valueList) {
+        this.valueList = valueList;
+    }
 
-	public User getUser() {
-		return this.user;
-	}
+    public User getUser() {
+        return this.user;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
