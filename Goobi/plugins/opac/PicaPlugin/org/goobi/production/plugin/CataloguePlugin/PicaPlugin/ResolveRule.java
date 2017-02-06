@@ -88,16 +88,25 @@ class ResolveRule {
 	 */
 	@SuppressWarnings("unchecked")
 	public ResolveRule(HierarchicalConfiguration config) {
-		tag = config.getString("tag");
-		subtag = config.getString("subtag");
-		searchField = config.getInt("searchField", 12);
-		String substringRegex = config.getString("substring", null);
+		tag = config.getString("[@tag]");
+		assert tag != null : "Missing mandatory attribute tag in element <resolve> of catalogue configuration";
+		assert tag.length() == 4 : "Attribute tag in element <resolve> is not 4 characters long";
+		
+		subtag = config.getString("[@subtag]");
+		assert subtag != null : "Missing mandatory attribute subtag in element <resolve> of catalogue configuration";
+		assert subtag.length() == 1 : "Attribute subtag in element <resolve> is not 1 character long";
+		
+		searchField = config.getInt("[@searchField]", 12);
+		
+		String substringRegex = config.getString("[@substring]", null);
 		substring = substringRegex != null ? Pattern.compile(substringRegex) : null;
+		
 		mapping = new HashMap<>();
 		for (HierarchicalConfiguration map : (List<HierarchicalConfiguration>) config.configurationsAt("map")) {
 			MapRule e = new MapRule(map);
 			mapping.put(getIdentifier(e.tag, e.subtag), e);
 		}
+		assert !mapping.isEmpty() : "Element <resolve> does not contain any <map> element";
 	}
 
 	/**
@@ -152,27 +161,23 @@ class ResolveRule {
 	 *            element to write to
 	 */
 	private void applyMapping(Element in, Element resultField) {
-		for (Node node : new GetChildren(in)) {
-			if (node instanceof Element) {
-				Element field = (Element) node;
-				if (field.getNodeName().equals("field")) {
-					String tag = field.getAttributeNode("tag").getTextContent();
-					for (Node subnode : new GetChildren(field)) {
-						if (subnode instanceof Element && subnode.getNodeName().equals("subfield")) {
-							Element subfield = (Element) subnode;
-							String subtag = field.getAttributeNode("code").getTextContent();
-							String mappingID = ResolveRule.getIdentifier(tag, subtag);
-							if (mapping.containsKey(mappingID)) {
-								Element newChild = resultField.getOwnerDocument().createElement("subfield");
-								newChild.setAttribute("code", mapping.get(mappingID).asSubtag);
-								newChild.setTextContent(subfield.getTextContent());
-								resultField.appendChild(newChild);
-							}
+		for (Element field : new GetChildElements(in)) {
+			if (field.getNodeName().equals("field")) {
+				String tag = field.getAttributeNode("tag").getTextContent();
+				for (Element subfield : new GetChildElements(field)) {
+					if (subfield.getNodeName().equals("subfield")) {
+						String subtag = subfield.getAttributeNode("code").getTextContent();
+						String mappingID = ResolveRule.getIdentifier(tag, subtag);
+						if (mapping.containsKey(mappingID)) {
+							Element newChild = resultField.getOwnerDocument().createElement("subfield");
+							newChild.setAttribute("code", mapping.get(mappingID).asSubtag);
+							newChild.setTextContent(subfield.getTextContent());
+							resultField.appendChild(newChild);
 						}
 					}
-				} else {
-					applyMapping(field, resultField);
 				}
+			} else {
+				applyMapping(field, resultField);
 			}
 		}
 	}
@@ -222,9 +227,10 @@ class ResolveRule {
 		assert tag.equals(out.getAttributeNode("tag").getTextContent()) : "Attempt to call the rule on the wrong field.";
 		assert subtag.equals(subfield.getAttributeNode("code").getTextContent()) : "Attempt to call the rule on the wrong subfield.";
 
-		String queryString = applySubstring(subfield.getFirstChild().toString());
+		String queryString = applySubstring(subfield.getFirstChild().getTextContent());
 		Query query = new Query(queryString, Integer.toString(searchField));
-		if (client.getNumberOfHits(query) == 1) {
+		int numberOfHits = client.getNumberOfHits(query);
+		if (numberOfHits == 1) {
 			Node result = client.retrievePicaNode(query, 1);
 			if (result instanceof Element) {
 				applyMapping((Element) result, out);

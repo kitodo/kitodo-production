@@ -40,9 +40,17 @@ class MapRule {
 	 *            configuration for the resolve rule from
 	 */
 	public MapRule(HierarchicalConfiguration config) {
-		tag = config.getString("tag");
-		subtag = config.getString("subtag");
-		asSubtag = config.getString("asSubtag");
+		tag = config.getString("[@tag]");
+		assert tag != null : "Missing mandatory attribute tag in element <map> of catalogue configuration";
+		assert tag.length() == 4 : "Attribute tag in element <map> is not 4 characters long";
+		
+		subtag = config.getString("[@subtag]");
+		assert subtag != null : "Missing mandatory attribute subtag in element <map> of catalogue configuration";
+		assert subtag.length() == 1 : "Attribute subtag in element <map> is not 1 character long";		
+		
+		asSubtag = config.getString("[@asSubtag]");
+		assert asSubtag != null : "Missing mandatory attribute asSubtag in element <map> of catalogue configuration";
+		assert asSubtag.length() == 1 : "Attribute asSubtag in element <map> is not 1 character long";
 	}
 
 	/**

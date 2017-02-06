@@ -228,15 +228,12 @@ class CatalogueClient {
 	 */
 	private void applyResolveRules(Map<String, ResolveRule> rules, Element root, CatalogueClient client)
 			throws IOException, SAXException, ParserConfigurationException {
-		for (Node node : new GetChildren(root)) {
-			if (node instanceof Element) {
-				Element field = (Element) node;
+		for (Element field : new GetChildElements(root)) {
 				if (field.getNodeName().equals("field")) {
 					String tag = field.getAttributeNode("tag").getTextContent();
-					for (Node subnoed : new GetChildren(field)) {
-						if (subnoed instanceof Element && subnoed.getNodeName().equals("subfield")) {
-							Element subfield = (Element) subnoed;
-							String subtag = field.getAttributeNode("code").getTextContent();
+					for (Element subfield : new GetChildElements(field)) {
+						if (subfield.getNodeName().equals("subfield")) {
+							String subtag = subfield.getAttributeNode("code").getTextContent();
 							String ruleID = ResolveRule.getIdentifier(tag, subtag);
 							if (rules.containsKey(ruleID)) {
 								rules.get(ruleID).execute(subfield, client, field);
@@ -246,7 +243,6 @@ class CatalogueClient {
 				} else {
 					applyResolveRules(rules, field, client);
 				}
-			}
 		}
 	}
 
