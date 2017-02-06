@@ -280,4 +280,47 @@ public class Batch {
     private String getNumericLabel() {
         return "batch" + ' ' + this.getId();
     }
+
+    /**
+     * The function toString() returns a concise but informative representation that is easy for a person to read
+     * and that "textually represents" this batch.
+     *
+     */
+    public String toString() {
+        try {
+            StringBuilder result = new StringBuilder(
+                    this.getTitle() != null ? this.getTitle().length() + 20 : 30
+            );
+            try {
+                if (this.getTitle() != null) {
+                    result.append(this.getTitle());
+                } else if (this.getId() != null) {
+                    result.append("Batch");
+                    result.append(' ');
+                    result.append(this.getId());
+                } else {
+                    result.append('−');
+                }
+                result.append(" (");
+                String extent = "{0} processes";
+                String size = this.getProcesses() != null ? Integer.toString(this.getProcesses().size()) : "−";
+                result.append(extent.replaceFirst("\\{0\\}", size));
+            } catch (RuntimeException unexpected) {
+                result.setLength(0);
+                result.append(this.getTitle() != null ? this.getTitle() : this.getId());
+                result.append(" (");
+                result.append(this.getProcesses() != null ? this.getProcesses().size() : null);
+            }
+            result.append(')');
+            if (this.getType() != null) {
+                result.append(" [");
+                //TODO: check out method
+                result.append(this.getType().toString());
+                result.append(']');
+            }
+            return result.toString();
+        } catch (RuntimeException fallback) {
+            return super.toString();
+        }
+    }
 }
