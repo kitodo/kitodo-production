@@ -227,7 +227,7 @@ class CatalogueClient {
 		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
 				+ catalogue.getPort() + catalogue.getUncf();
 
-		// if we can not use the cached result
+		// if we cannot use the cached result
 		if (!lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
 			getResult(query, timeout);

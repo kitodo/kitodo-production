@@ -1266,7 +1266,7 @@ public class Metadaten {
 		try {
 			mydocument = this.gdzfile.getDigitalDocument();
 		} catch (PreferencesException e) {
-			Helper.setMeldung(null, "Can not get DigitalDocument: ", e.getMessage());
+			Helper.setMeldung(null, "Cannot get DigitalDocument: ", e.getMessage());
 			return;
 		}
 

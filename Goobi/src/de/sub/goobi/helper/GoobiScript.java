@@ -202,7 +202,7 @@ public class GoobiScript {
                     }
                     Helper.setMeldung("Content deleted for " + title);
                 } catch (Exception e) {
-                    Helper.setFehlerMeldung("Can not delete content for " + p.getTitel(), e);
+                    Helper.setFehlerMeldung("Cannot delete content for " + p.getTitel(), e);
                 }
             }
             if (!contentOnly) {
@@ -225,7 +225,7 @@ public class GoobiScript {
                 ocr.deleteDir();
             }
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Can not delete metadata directory", e);
+            Helper.setFehlerMeldung("Cannot delete metadata directory", e);
         }
     }
 

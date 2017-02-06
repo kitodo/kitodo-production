@@ -145,7 +145,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 		try {
 			seitenOhneDocstructs = checkSeitenOhneDocstructs(gdzfile);
 		} catch (PreferencesException e1) {
-			Helper.setFehlerMeldung("[" + title + "] Can not check pages without docstructs: ");
+			Helper.setFehlerMeldung("[" + title + "] Cannot check pages without docstructs: ");
 			ergebnis = false;
 		}
 		if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
@@ -234,11 +234,11 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 				return true;
 			} else {
-				Helper.setFehlerMeldung(this.title + ": " + "Can not verify, image path is not set", "");
+				Helper.setFehlerMeldung(this.title + ": Cannot verify, image path is not set", "");
 				return false;
 			}
 		} catch (UghHelperException e) {
-			Helper.setFehlerMeldung(this.title + ": " + "Verify aborted, error: ", e.getMessage());
+			Helper.setFehlerMeldung(this.title + ": Verify aborted, error: ", e.getMessage());
 			return false;
 		}
 	}

@@ -137,7 +137,7 @@ public class WebDav implements Serializable {
 				List<String> param = new ArrayList<String>();
 				param.add(String.valueOf(nach.replaceAll(" ", "__")));
 				Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
-				myLogger.error("Can not create project directory " + nach.replaceAll(" ", "__"));
+				myLogger.error("Cannot create project directory " + nach.replaceAll(" ", "__"));
 				return;
 			}
 		}

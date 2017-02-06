@@ -37,7 +37,7 @@ public class ProzessDAO extends BaseDAO {
 	public Prozess get(Integer id) throws DAOException {
 		Prozess rueckgabe = (Prozess) retrieveObj(Prozess.class, id);
 		if (rueckgabe == null) {
-			throw new DAOException("Object can not be found in database");
+			throw new DAOException("Object cannot be found in database");
 		}
 		return rueckgabe;
 	}
