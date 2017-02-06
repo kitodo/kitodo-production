@@ -166,20 +166,13 @@
                      value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
         </module>
 
-        <!-- Remove white spaces indentation (check style doesn't let to use tabs as an indentation!!!)
         <module name="Indentation">
-            <property name="basicOffset" value="2"/>
+            <property name="basicOffset" value="4"/>
             <property name="braceAdjustment" value="0"/>
-            <property name="caseIndent" value="2"/>
+            <property name="caseIndent" value="4"/>
             <property name="throwsIndent" value="4"/>
             <property name="lineWrappingIndentation" value="4"/>
-            <property name="arrayInitIndent" value="2"/>
-        </module>-->
-        <!-- Add indentation with tabs - a bit of dirt hack, which will be fixed tomorrow ;) -->
-        <module name="RegexpSinglelineJava">
-            <property name="format" value="^\t* "/>
-            <property name="message" value="Indent must use tab characters"/>
-            <property name="ignoreComments" value="true"/>
+            <property name="arrayInitIndent" value="4"/>
         </module>
 
         <!--Check if there are whitespaces at the end of the line -->
