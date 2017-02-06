@@ -105,7 +105,6 @@ public class TaskService {
     }
 
     // a parameter is given here (even if not used) because jsf expects setter convention
-    //TODO: check what it means
     public void setProcessingTimeNow(Task task) {
         task.setProcessingTime(new Date());
     }
