@@ -685,4 +685,8 @@ public class Task implements Serializable {
         return task.processingEnd.toString();
         //return Helper.getDateAsFormattedString(task.getProcessingEnd());
     }
+
+    public int getProcessingTimeNow() {
+        return 1;
+    }
 }

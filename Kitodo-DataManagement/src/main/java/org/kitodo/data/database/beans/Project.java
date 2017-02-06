@@ -299,6 +299,9 @@ public class Project implements Serializable, Comparable<Project> {
     }
 
     public List<ProjectFileGroup> getProjectFileGroups() {
+        if (this.projectFileGroups == null) {
+            this.projectFileGroups = new ArrayList<>();
+        }
         return this.projectFileGroups;
     }
 
