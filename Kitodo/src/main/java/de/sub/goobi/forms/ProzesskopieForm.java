@@ -338,7 +338,7 @@ public class ProzesskopieForm {
 		for (int i = 0; i < count; i++) {
 			AdditionalField fa = new AdditionalField(this);
 			fa.setFrom(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@from]"));
-			fa.setTitel(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
+			fa.setTitle(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
 			fa.setRequired(cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@required]"));
 			fa.setIsdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isdoctype]"));
 			fa.setIsnotdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i
@@ -584,23 +584,23 @@ public class ProzesskopieForm {
 									myautoren = myautoren.substring(0, myautoren.length() - 2);
 								}
 							}
-							field.setWert(myautoren);
+							field.setValue(myautoren);
 						} else {
 							/* bei normalen Feldern die Inhalte auswerten */
 							MetadataType mdt = UghHelper.getMetadataType(rulesetService
 									.getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
 							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
-								field.setWert(md.getValue());
-								md.setValue(field.getWert().replace("&amp;", "&"));
+								field.setValue(md.getValue());
+								md.setValue(field.getValue().replace("&amp;", "&"));
 							}
 						}
 					} catch (UghHelperException e) {
 						myLogger.error(e);
 						Helper.setFehlerMeldung(e.getMessage(), "");
 					}
-					if (field.getWert() != null && !field.getWert().equals("")) {
-						field.setWert(field.getWert().replace("&amp;", "&"));
+					if (field.getValue() != null && !field.getValue().equals("")) {
+						field.setValue(field.getValue().replace("&amp;", "&"));
 					}
 				} // end if ughbinding
 			}// end for
@@ -622,8 +622,8 @@ public class ProzesskopieForm {
 			Workpiece werk = tempProzess.getWorkpieces().get(0);
 			for (WorkpieceProperty eig : werk.getProperties()) {
 				for (AdditionalField field : this.additionalFields) {
-					if (field.getTitel().equals(eig.getTitle())) {
-						field.setWert(eig.getValue());
+					if (field.getTitle().equals(eig.getTitle())) {
+						field.setValue(eig.getValue());
 					}
 				if (eig.getTitle().equals("DocType")) {
 					docType = eig.getValue();
@@ -637,8 +637,8 @@ public class ProzesskopieForm {
 			Template vor = tempProzess.getTemplates().get(0);
 			for (TemplateProperty eig : vor.getProperties()) {
 				for (AdditionalField field : this.additionalFields) {
-					if (field.getTitel().equals(eig.getTitle())) {
-						field.setWert(eig.getValue());
+					if (field.getTitle().equals(eig.getTitle())) {
+						field.setValue(eig.getValue());
 					}
 				}
 			}
@@ -737,11 +737,11 @@ public class ProzesskopieForm {
 		 * Prüfung der additional-Eingaben, die angegeben werden müssen
 		 */
 		for (AdditionalField field : this.additionalFields) {
-			if ((field.getWert() == null || field.getWert().equals("")) && field.isRequired()
+			if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
 					&& field.getShowDependingOnDoctype()
-					&& (StringUtils.isBlank(field.getWert()))) {
+					&& (StringUtils.isBlank(field.getValue()))) {
 				valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel()
+                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle()
 						+ " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
 
 			}
@@ -884,7 +884,7 @@ public class ProzesskopieForm {
 									.getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
 							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
-								md.setValue(field.getWert());
+								md.setValue(field.getValue());
 							}
 							/*
 							 * wenn dem Topstruct und dem Firstchild der Wert gegeben werden soll
@@ -892,7 +892,7 @@ public class ProzesskopieForm {
 							if (myTempChild != null) {
 								md = UghHelper.getMetadata(myTempChild, mdt);
 								if (md != null) {
-									md.setValue(field.getWert());
+									md.setValue(field.getValue());
 								}
 							}
 						}
@@ -1204,13 +1204,13 @@ public class ProzesskopieForm {
 		for (AdditionalField field : this.additionalFields) {
 			if (field.getShowDependingOnDoctype()) {
 				if (field.getFrom().equals("werk")) {
-					BeanHelper.addProperty(werk, field.getTitel(), field.getWert());
+					BeanHelper.addProperty(werk, field.getTitle(), field.getValue());
 				}
 				if (field.getFrom().equals("vorlage")) {
-					BeanHelper.addProperty(vor, field.getTitel(), field.getWert());
+					BeanHelper.addProperty(vor, field.getTitle(), field.getValue());
 				}
 				if (field.getFrom().equals("prozess")) {
-					BeanHelper.addProperty(this.prozessKopie, field.getTitel(), field.getWert());
+					BeanHelper.addProperty(this.prozessKopie, field.getTitle(), field.getValue());
 				}
 			}
 		}
@@ -1351,8 +1351,8 @@ public class ProzesskopieForm {
 	public void setAdditionalField(String key, String value, boolean strict) throws RuntimeException {
 		boolean unknownField = true;
 		for (AdditionalField field : additionalFields) {
-			if (key.equals(field.getTitel())) {
-				field.setWert(value);
+			if (key.equals(field.getTitle())) {
+				field.setValue(value);
 				unknownField = false;
 			}
 		}
@@ -1579,16 +1579,16 @@ public class ProzesskopieForm {
 		String currentTitle = "";
 		int counter = 0;
 		for (AdditionalField field : this.additionalFields) {
-			if (field.getAutogenerated() && field.getWert().isEmpty()) {
-				field.setWert(String.valueOf(System.currentTimeMillis() + counter));
+			if (field.getAutogenerated() && field.getValue().isEmpty()) {
+				field.setValue(String.valueOf(System.currentTimeMillis() + counter));
 				counter++;
 			}
 			if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain")
 					&& currentTitle.length() == 0) {
-				currentTitle = field.getWert();
+				currentTitle = field.getValue();
 			} else if (field.getMetadata() != null && field.getMetadata().equals("ListOfCreators")
 					&& currentAuthors.length() == 0) {
-				currentAuthors = field.getWert();
+				currentAuthors = field.getValue();
 			}
 
 		}
@@ -1664,17 +1664,17 @@ public class ProzesskopieForm {
 					/*
 					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
 					 */
-					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
-							&& (myField.getWert() == null || myField.getWert().equals(""))) {
+					if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL")) && myField.getShowDependingOnDoctype()
+							&& (myField.getValue() == null || myField.getValue().equals(""))) {
 						if (atstsl == null || atstsl.length() == 0) {
 							atstsl = createAtstsl(currentTitle, currentAuthors);
 						}
-						myField.setWert(this.atstsl);
+						myField.setValue(this.atstsl);
 					}
 
 					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
-						newTitle += CalcProzesstitelCheck(myField.getTitel(), myField.getWert());
+					if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype() && myField.getValue() != null) {
+						newTitle += CalcProzesstitelCheck(myField.getTitle(), myField.getValue());
 					}
 				}
 			}
@@ -1765,22 +1765,22 @@ public class ProzesskopieForm {
 				/* andernfalls den string als Feldnamen auswerten */
 				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
 					AdditionalField myField = it2.next();
-					if ((myField.getTitel().equals("Titel") || myField.getTitel().equals("Title")) && myField.getWert() != null
-							&& !myField.getWert().equals("")) {
-						title = myField.getWert();
+					if ((myField.getTitle().equals("Titel") || myField.getTitle().equals("Title")) && myField.getValue() != null
+							&& !myField.getValue().equals("")) {
+						title = myField.getValue();
 					}
 					/*
 					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
 					 * nicht vorhanden
 					 */
-					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
-							&& (myField.getWert() == null || myField.getWert().equals(""))) {
-						myField.setWert(this.atstsl);
+					if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL")) && myField.getShowDependingOnDoctype()
+							&& (myField.getValue() == null || myField.getValue().equals(""))) {
+						myField.setValue(this.atstsl);
 					}
 
 					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
-						this.tifHeader_imagedescription += CalcProzesstitelCheck(myField.getTitel(), myField.getWert());
+					if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype() && myField.getValue() != null) {
+						this.tifHeader_imagedescription += CalcProzesstitelCheck(myField.getTitle(), myField.getValue());
 					}
 
 				}

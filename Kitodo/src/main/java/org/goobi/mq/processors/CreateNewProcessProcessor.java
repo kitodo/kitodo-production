@@ -311,7 +311,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 		int result = 0;
 
 		for (AdditionalField field : form.getAdditionalFields()) {
-			String value = field.getWert();
+			String value = field.getValue();
 			if (value != null && value.length() > 0)
 				result++;
 		}
