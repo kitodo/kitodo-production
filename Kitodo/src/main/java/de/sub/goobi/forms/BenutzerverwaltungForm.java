@@ -211,7 +211,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String AusGruppeLoeschen() {
-		int gruppenID = Integer.parseInt(Helper.getRequestParameter("id"));
+		int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
 		List<UserGroup> neu = new ArrayList<>();
 		for (Iterator<UserGroup> iter = this.myClass.getUserGroups().iterator(); iter.hasNext();) {
@@ -225,7 +225,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String ZuGruppeHinzufuegen() {
-		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("id"));
+		Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
 			UserGroup usergroup = userGroupService.find(gruppenID);
 			for (UserGroup b : this.myClass.getUserGroups()) {
@@ -242,7 +242,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String AusProjektLoeschen() {
-		int projektID = Integer.parseInt(Helper.getRequestParameter("id"));
+		int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
 		List<Project> neu = new ArrayList<>();
 		for (Iterator<Project> iter = this.myClass.getProjects().iterator(); iter.hasNext();) {
 			Project element = iter.next();
@@ -255,7 +255,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 	}
 
 	public String ZuProjektHinzufuegen() {
-		Integer projektID = Integer.valueOf(Helper.getRequestParameter("id"));
+		Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
 		try {
 			Project project = projectService.find(projektID);
 			for (Project p : this.myClass.getProjects()) {
