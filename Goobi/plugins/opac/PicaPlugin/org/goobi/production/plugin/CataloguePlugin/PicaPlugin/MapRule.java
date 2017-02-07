@@ -15,7 +15,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 /**
  * Map rules are used to map data from norm data records to a media record. This
  * is used inside a {@code ResolveRule}. Example usage:
- * 
+ *
  * <pre>
  * &lt;catalogue title="…">
  *     &lt;!-- ... -->
@@ -23,19 +23,19 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
  *         &lt;map tag="003U" subtag="a" asSubtag="g" />
  *     &lt;/resolve>
  * </pre>
- * 
+ *
  * In this case, the value from PICA field 028C subfield 9 is taken to execute a
  * catalogue query on search field 12. From the result of this query, the value
  * from field 003U subfield a is taken and stored in subfield g on the instance
  * of field 028C of the main record.
- * 
+ *
  * @author Matthias Ronge
  */
 class MapRule {
 	/**
 	 * Creates a new resolve rule from the XML configuration. The attributes
 	 * {@code tag}, {@code subtag} and {@code asSubtag} are required.
-	 * 
+	 *
 	 * @param config
 	 *            configuration for the resolve rule from
 	 */
@@ -43,11 +43,11 @@ class MapRule {
 		tag = config.getString("[@tag]");
 		assert tag != null : "Missing mandatory attribute tag in element <map> of catalogue configuration";
 		assert tag.length() == 4 : "Attribute tag in element <map> is not 4 characters long";
-		
+
 		subtag = config.getString("[@subtag]");
 		assert subtag != null : "Missing mandatory attribute subtag in element <map> of catalogue configuration";
-		assert subtag.length() == 1 : "Attribute subtag in element <map> is not 1 character long";		
-		
+		assert subtag.length() == 1 : "Attribute subtag in element <map> is not 1 character long";
+
 		asSubtag = config.getString("[@asSubtag]");
 		assert asSubtag != null : "Missing mandatory attribute asSubtag in element <map> of catalogue configuration";
 		assert asSubtag.length() == 1 : "Attribute asSubtag in element <map> is not 1 character long";
@@ -75,4 +75,9 @@ class MapRule {
 	 * example value is "g".
 	 */
 	String asSubtag;
+
+	@Override
+	public String toString() {
+		return tag + '.' + subtag + " as " + asSubtag;
+	}
 }

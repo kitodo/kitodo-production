@@ -12,11 +12,13 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.regex.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -28,7 +30,7 @@ import org.xml.sax.SAXException;
  * field and look it up in the catalogue by a request on search field 12. In the
  * result, select field 003U subfield a and store its value as subfield g in the
  * same field of the main record. Configuration:
- * 
+ *
  * <pre>
  * &lt;catalogue title="…">
  *     &lt;!-- ... -->
@@ -36,9 +38,9 @@ import org.xml.sax.SAXException;
  *         &lt;map tag="003U" subtag="a" asSubtag="g" />
  *     &lt;/resolve>
  * </pre>
- * 
+ *
  * Example field on a record:
- * 
+ *
  * <pre>
  * &lt;field tag="028C">
  *     &lt;subfield code="d">Dirk&lt;/subfield>
@@ -47,9 +49,9 @@ import org.xml.sax.SAXException;
  *     &lt;subfield code="8">Fahlenkamp, Dirk *1952-*&lt;/subfield>
  * &lt;/field>
  * </pre>
- * 
+ *
  * Example result after successful resolving:
- * 
+ *
  * <pre>
  * &lt;field tag="028C">
  *     &lt;subfield code="d">Dirk&lt;/subfield>
@@ -59,13 +61,15 @@ import org.xml.sax.SAXException;
  *     &lt;subfield code="g">http://d-nb.info/gnd/172559227&lt;/subfield>
  * &lt;/field>
  * </pre>
- * 
+ *
  * @author Matthias Ronge
  */
 class ResolveRule {
+	private static final Logger logger = Logger.getLogger(ResolveRule.class);
+
 	/**
 	 * Returns an identifier for a resolve rule.
-	 * 
+	 *
 	 * @param tag
 	 *            PICA field tag
 	 * @param subtag
@@ -82,7 +86,7 @@ class ResolveRule {
 	 * {@code searchField} is optional, defaults to 12. The attribute
 	 * {@code substring} is optional as well; if it is missing, no substring
 	 * will be created.
-	 * 
+	 *
 	 * @param config
 	 *            configuration for the resolve rule from
 	 */
@@ -91,16 +95,16 @@ class ResolveRule {
 		tag = config.getString("[@tag]");
 		assert tag != null : "Missing mandatory attribute tag in element <resolve> of catalogue configuration";
 		assert tag.length() == 4 : "Attribute tag in element <resolve> is not 4 characters long";
-		
+
 		subtag = config.getString("[@subtag]");
 		assert subtag != null : "Missing mandatory attribute subtag in element <resolve> of catalogue configuration";
 		assert subtag.length() == 1 : "Attribute subtag in element <resolve> is not 1 character long";
-		
+
 		searchField = config.getInt("[@searchField]", 12);
-		
+
 		String substringRegex = config.getString("[@substring]", null);
 		substring = substringRegex != null ? Pattern.compile(substringRegex) : null;
-		
+
 		mapping = new HashMap<>();
 		for (HierarchicalConfiguration map : (List<HierarchicalConfiguration>) config.configurationsAt("map")) {
 			MapRule e = new MapRule(map);
@@ -144,7 +148,7 @@ class ResolveRule {
 
 	/**
 	 * Returns an identifier for the resolve rule.
-	 * 
+	 *
 	 * @return an identifier for the resolve rule
 	 */
 	String getIdentifier() {
@@ -154,13 +158,15 @@ class ResolveRule {
 	/**
 	 * Copy data from resolved record to corresponding element, as defined by
 	 * mapping.
-	 * 
+	 *
 	 * @param in
 	 *            input data
 	 * @param resultField
 	 *            element to write to
 	 */
 	private void applyMapping(Element in, Element resultField) {
+		boolean debugEnabledAndNoMappingRuleMatches = logger.isDebugEnabled();
+		Set<String> fieldsInResult = logger.isDebugEnabled() ? new TreeSet<String>() : null;
 		for (Element field : new GetChildElements(in)) {
 			if (field.getNodeName().equals("field")) {
 				String tag = field.getAttributeNode("tag").getTextContent();
@@ -169,10 +175,13 @@ class ResolveRule {
 						String subtag = subfield.getAttributeNode("code").getTextContent();
 						String mappingID = ResolveRule.getIdentifier(tag, subtag);
 						if (mapping.containsKey(mappingID)) {
+							debugEnabledAndNoMappingRuleMatches = false;
 							Element newChild = resultField.getOwnerDocument().createElement("subfield");
 							newChild.setAttribute("code", mapping.get(mappingID).asSubtag);
 							newChild.setTextContent(subfield.getTextContent());
 							resultField.appendChild(newChild);
+						} else if (debugEnabledAndNoMappingRuleMatches) {
+							fieldsInResult.add(mappingID);
 						}
 					}
 				}
@@ -180,11 +189,36 @@ class ResolveRule {
 				applyMapping(field, resultField);
 			}
 		}
+		if (debugEnabledAndNoMappingRuleMatches) {
+			StringBuilder debugLogMessage = new StringBuilder(13 * mapping.size() + 8 * fieldsInResult.size() + 71);
+			debugLogMessage.append("No import mapping for any of the result fields ");
+			boolean addAComma = false;
+			for (String fieldInResult : fieldsInResult) {
+				debugLogMessage.append(fieldInResult);
+				if (addAComma) {
+					debugLogMessage.append(", ");
+				} else {
+					addAComma = true;
+				}
+			}
+			debugLogMessage.append(". Configured mappings: ");
+			addAComma = false;
+			for (Entry<String, MapRule> mappingEntry : mapping.entrySet()) {
+				debugLogMessage.append(mappingEntry.getValue());
+				if (addAComma) {
+					debugLogMessage.append(", ");
+				} else {
+					addAComma = true;
+				}
+			}
+			debugLogMessage.append('.');
+			logger.debug(debugLogMessage);
+		}
 	}
 
 	/**
 	 * Applies the substring on the input, if any.
-	 * 
+	 *
 	 * @param input
 	 *            String to apply the substring on
 	 * @return substring if found, or input otherwise
@@ -194,20 +228,28 @@ class ResolveRule {
 			return input;
 		Matcher matcher = substring.matcher(input);
 		if (!matcher.find()) {
+			logger.warn("Pattern /" + substring.pattern() + "/ was not found on input string \"" + input + '"');
 			return input;
 		} else {
 			String matchGroup1 = matcher.group(1);
 			if (matchGroup1 != null) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("Using substring from match group 1: " + matchGroup1);
+				}
 				return matchGroup1;
 			} else {
-				return matcher.group();
+				String found = matcher.group();
+				if(logger.isDebugEnabled()) {
+					logger.debug("Using found substring: " + found);
+				}
+				return found;
 			}
 		}
 	}
 
 	/**
 	 * Execute the resolve rule.
-	 * 
+	 *
 	 * @param subfield
 	 *            subfield to take the ID to resolve from
 	 * @param client
@@ -235,6 +277,26 @@ class ResolveRule {
 			if (result instanceof Element) {
 				applyMapping((Element) result, out);
 			}
+		} else {
+			logger.warn("Could not apply resolve rule " + this.toString() + " for query string \"" + queryString
+					+ "\": Number of hits is " + numberOfHits);
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder result = new StringBuilder(80);
+		result.append("<resolve tag=\"");
+		result.append(tag);
+		result.append("\" subtag=\"");
+		result.append(subtag);
+		if (substring != null) {
+			result.append("\" substring=\"");
+			result.append(substring.pattern());
+		}
+		result.append("\" searchField=\"");
+		result.append(searchField);
+		result.append("\">");
+		return result.toString();
 	}
 }
