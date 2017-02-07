@@ -31,7 +31,7 @@ public class DocketDAO extends BaseDAO {
 	public Docket get(Integer id) throws DAOException {
 		Docket rueckgabe = (Docket) retrieveObj(Docket.class, id);
 		if (rueckgabe == null) {
-			throw new DAOException("Object can not be found in database");
+			throw new DAOException("Object cannot be found in database");
 		}
 		return rueckgabe;
 	}

@@ -143,7 +143,7 @@ public class MetadatenVerifizierung {
 		try {
 			seitenOhneDocstructs = checkSeitenOhneDocstructs(gdzfile);
 		} catch (PreferencesException e1) {
-			Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] Can not check pages without docstructs: ");
+			Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] Cannot check pages without docstructs: ");
 			ergebnis = false;
 		}
 		if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
@@ -231,7 +231,7 @@ public class MetadatenVerifizierung {
 
 				return true;
 			} else {
-				Helper.setFehlerMeldung(this.myProzess.getTitel() + ": " + "Can not verify, image path is not set", "");
+				Helper.setFehlerMeldung(this.myProzess.getTitel() + ": " + "Cannot verify, image path is not set", "");
 				return false;
 			}
 		} catch (UghHelperException e) {

@@ -68,7 +68,7 @@ public class JobCreation {
             try {
             	metsfile.forceDelete();
             } catch (Exception e) {
-                logger.error("Can not delete file " + processTitle, e);
+                logger.error("Cannot delete file " + processTitle, e);
                 return null;
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
@@ -188,7 +188,7 @@ public class JobCreation {
             try {
             	metsfile.forceDelete();
             } catch (Exception e) {
-                logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
+                logger.error("Cannot delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
 
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");

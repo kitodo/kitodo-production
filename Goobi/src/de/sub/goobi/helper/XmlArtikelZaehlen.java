@@ -58,7 +58,7 @@ public class XmlArtikelZaehlen {
 			DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
 			rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
 		} catch (PreferencesException e1) {
-			Helper.setFehlerMeldung("[" + myProzess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
+			Helper.setFehlerMeldung("[" + myProzess.getId() + "] Cannot get DigitalDocument: ", e1.getMessage());
 			logger.error(e1);
 			rueckgabe = 0;
 		}

@@ -27,7 +27,7 @@ public class LdapGruppenDAO extends BaseDAO {
 	public LdapGruppe get(Integer id) throws DAOException {
 		LdapGruppe rueckgabe = (LdapGruppe) retrieveObj(LdapGruppe.class, id);
 		if (rueckgabe == null) {
-			throw new DAOException("Object can not be found in database");
+			throw new DAOException("Object cannot be found in database");
 		}
 		return rueckgabe;
 	}

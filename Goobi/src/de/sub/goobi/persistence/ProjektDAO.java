@@ -31,7 +31,7 @@ public class ProjektDAO extends BaseDAO {
 	public Projekt get(Integer id) throws DAOException {
 		Projekt rueckgabe = (Projekt) retrieveObj(Projekt.class, id);
 		if (rueckgabe == null) {
-			throw new DAOException("Object can not be found in database");
+			throw new DAOException("Object cannot be found in database");
 		}
 		return rueckgabe;
 	}

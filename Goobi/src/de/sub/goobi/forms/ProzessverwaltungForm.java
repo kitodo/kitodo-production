@@ -326,7 +326,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			    images.deleteDir();
 			}
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("Can not delete metadata directory", e);
+			Helper.setFehlerMeldung("Cannot delete metadata directory", e);
 		}
 
 		Helper.setMeldung("Content deleted");
@@ -345,7 +345,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			    ocr.deleteDir();
 			}
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("Can not delete metadata directory", e);
+			Helper.setFehlerMeldung("Cannot delete metadata directory", e);
 		}
 	}
 

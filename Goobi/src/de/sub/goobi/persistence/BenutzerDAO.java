@@ -31,7 +31,7 @@ public class BenutzerDAO extends BaseDAO {
 	public Benutzer get(Integer id) throws DAOException {
 		Benutzer rueckgabe = (Benutzer) retrieveObj(Benutzer.class, id);
 		if (rueckgabe == null) {
-			throw new DAOException("Object can not be found in database");
+			throw new DAOException("Object cannot be found in database");
 		}
 		return rueckgabe;
 	}

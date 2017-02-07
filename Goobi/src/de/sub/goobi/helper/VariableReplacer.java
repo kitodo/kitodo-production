@@ -287,7 +287,7 @@ public class VariableReplacer {
 				/* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
 				if (resultFirst == null) {
 					if(logger.isInfoEnabled()){
-						logger.info("Can not replace firstChild-variable for METS: " + metadata);
+						logger.info("Cannot replace firstChild-variable for METS: " + metadata);
 					}
 					result = "";
 				} else {
@@ -299,7 +299,7 @@ public class VariableReplacer {
 				if (resultTop == null) {
 					result = "";
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn("Can not replace topStruct-variable for METS: " + metadata);
+						logger.warn("Cannot replace topStruct-variable for METS: " + metadata);
 					}
 				} else {
 					result = resultTop;
@@ -314,7 +314,7 @@ public class VariableReplacer {
 				} else {
 					result = "";
 					if (logger.isEnabledFor(Level.WARN)) {
-						logger.warn("Can not replace variable for METS: " + metadata);
+						logger.warn("Cannot replace variable for METS: " + metadata);
 					}
 				}
 				break;

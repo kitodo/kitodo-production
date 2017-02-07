@@ -184,7 +184,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 					try {
 						new SafeFile(dir.getAbsolutePath() + File.separator + processTitle).forceDelete();
 					} catch (Exception e) {
-						logger.error("Can not delete file " + processTitle, e);
+						logger.error("Cannot delete file " + processTitle, e);
 						return 30;
 					}
 					SafeFile anchor = new SafeFile(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
@@ -208,7 +208,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 					try {
 						new SafeFile(dir.getAbsolutePath() + File.separator + processTitle).forceDelete();
 					} catch (Exception e) {
-						logger.error("Can not delete file " + processTitle, e);
+						logger.error("Cannot delete file " + processTitle, e);
 						return 30;
 					}
 					SafeFile anchor = new SafeFile(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
@@ -276,7 +276,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 						try {
 							new SafeFile(dir.getAbsolutePath() + File.separator + processTitle).forceDelete();
 						} catch (Exception e) {
-							logger.error("Can not delete file " + processTitle + " after importing " + p.getTitel() + " into goobi", e);
+							logger.error("Cannot delete file " + processTitle + " after importing " + p.getTitel() + " into goobi", e);
 							return 30;
 						}
 						SafeFile anchor = new SafeFile(dir.getAbsolutePath() + File.separator + processTitle.substring(0, processTitle.length() - 4)
@@ -372,7 +372,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 			try {
 				metsfile.forceDelete();
 			} catch (Exception e) {
-				logger.error("Can not delete file " + processTitle, e);
+				logger.error("Cannot delete file " + processTitle, e);
 				return null;
 			}
 			SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
