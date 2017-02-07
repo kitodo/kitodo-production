@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -160,7 +161,7 @@ public class Task implements Serializable {
     /**
      * This field contains information about users, which are allowed to work on this task.
      */
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "task_x_user",
             joinColumns = {
                     @JoinColumn(

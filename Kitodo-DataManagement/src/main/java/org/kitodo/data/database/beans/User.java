@@ -16,7 +16,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
@@ -78,7 +90,7 @@ public class User implements Serializable {
     @JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
     private LdapGroup ldapGroup;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_x_userGroup",
             joinColumns = {
                     @JoinColumn(
@@ -92,7 +104,7 @@ public class User implements Serializable {
                     ) })
     private List<UserGroup> userGroups;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "processingUser", cascade = CascadeType.ALL, orphanRemoval = true)

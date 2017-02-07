@@ -13,10 +13,9 @@ package org.kitodo.data.database.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,8 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.Hibernate;
 
 /**
  * User groups owning different access rights, represented by integer values.
@@ -51,7 +48,7 @@ public class UserGroup implements Serializable, Comparable<UserGroup> {
     @Column(name = "permission")
     private Integer permission;
 
-    @ManyToMany(mappedBy = "userGroups")
+    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.ALL)
     private List<User> users;
 
     @ManyToMany(mappedBy = "userGroups")
