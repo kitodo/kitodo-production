@@ -38,7 +38,7 @@ public class DocketDAO extends BaseDAO {
     /**
      * The function findAll() retrieves all docket from the database.
      *
-     * @return all persisted users
+     * @return all persisted dockets
      */
     @SuppressWarnings("unchecked")
     public List<Docket> findAll() {

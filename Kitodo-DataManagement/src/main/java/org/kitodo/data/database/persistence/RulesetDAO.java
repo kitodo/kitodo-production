@@ -41,6 +41,16 @@ public class RulesetDAO extends BaseDAO {
     }
 
     /**
+     * The function findAll() retrieves all docket from the database.
+     *
+     * @return all persisted rulesets
+     */
+    @SuppressWarnings("unchecked")
+    public List<Ruleset> findAll() {
+        return retrieveAllObjects(Ruleset.class);
+    }
+
+    /**
      * Remove ruleset object.
      *
      * @param ruleset object
