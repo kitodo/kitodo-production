@@ -211,14 +211,13 @@ public class GraphPath extends Node {
     }
 
     /**
-     * Parse a graph path string.
+     * Creates a node representing the graph path string.
      *
      * @param string
      *            string to parse
      * @param prefixes
      *            a mapping of prefixes to namespaces which was used to shorten
      *            the string
-     * @return a node representing the graph path
      */
     public GraphPath(String string, Map<String, String> prefixes) {
         super(GRAPH_PATH);
