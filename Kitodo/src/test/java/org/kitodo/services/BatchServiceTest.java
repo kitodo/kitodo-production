@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,9 +31,30 @@ public class BatchServiceTest {
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertBatches();
         MockDatabase.insertDockets();
-        MockDatabase.insertProjects();
         MockDatabase.insertRulesets();
+        MockDatabase.insertLdapGroups();
+        MockDatabase.insertUsers();
+        MockDatabase.insertUserGroups();
+        MockDatabase.insertProjects();
         MockDatabase.insertProcesses();
+        MockDatabase.insertTasks();
+    }
+
+    @Test
+    public void shouldFindBatch() throws Exception {
+        BatchService batchService = new BatchService();
+
+        Batch batch = batchService.find(1);
+        boolean condition = batch.getTitle().equals("First batch") && batch.getType().equals(Batch.Type.LOGISTIC);
+        assertTrue("Batch was not found in database!", condition);
+    }
+
+    @Test
+    public void shouldFindAllBatches() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<Batch> batches = batchService.findAll();
+        assertEquals("Not all batches were found in database!", 4, batches.size());
     }
 
     @Test
@@ -71,7 +94,7 @@ public class BatchServiceTest {
 
         Batch batch = batchService.find(1);
         int size = batchService.size(batch);
-        assertTrue("Size of processes is not equal 1!", size == 1);
+        assertEquals("Size of processes is not equal 1!", 1, size);
     }
 
     @Test
@@ -80,7 +103,6 @@ public class BatchServiceTest {
 
         Batch batch = batchService.find(1);
         String toString = batchService.toString(batch);
-        System.out.println(toString);
         assertTrue("Override toString method is incorrect!", toString.equals("First batch (1 processes) [logistics]"));
     }
 }
