@@ -43,6 +43,10 @@ public class TaskService {
         return taskDao.find(id);
     }
 
+    public List<Task> findAll() throws DAOException {
+        return taskDao.findAll();
+    }
+
     public void remove(Task task) throws DAOException {
         taskDao.remove(task);
     }
@@ -303,7 +307,7 @@ public class TaskService {
 
     /**
      * Get list of paths.
-     *
+     * TODO: inappropriate name of method - change during next phase of refactoring
      * @param task object
      * @return string containing paths.
      */
@@ -331,12 +335,11 @@ public class TaskService {
     /**
      * Get the current object for this row.
      *
-     * @return Employee The current object representing a row.
+     * @return the current object representing a row.
      */
-    public Task getCurrent() {
+    public Task getCurrent(Task task) {
         boolean hasOpen = HibernateUtilOld.hasOpenSession();
         Session session = Helper.getHibernateSession();
-        Task task = new Task();
 
         Task current = (Task) session.get(Task.class, task.getId());
         if (current == null) {

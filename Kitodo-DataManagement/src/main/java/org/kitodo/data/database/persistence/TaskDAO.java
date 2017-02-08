@@ -35,6 +35,16 @@ public class TaskDAO extends BaseDAO {
         return result;
     }
 
+    /**
+     * The function findAll() retrieves all tasks from the database.
+     *
+     * @return all persisted users
+     */
+    @SuppressWarnings("unchecked")
+    public List<Task> findAll() {
+        return retrieveAllObjects(Task.class);
+    }
+
     public Task save(Task task) throws DAOException {
         storeObject(task);
         return (Task) retrieveObject(Task.class, task.getId());
