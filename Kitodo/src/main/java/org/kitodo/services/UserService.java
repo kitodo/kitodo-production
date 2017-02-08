@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
@@ -23,8 +24,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import org.hibernate.Session;
+
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
@@ -68,6 +72,29 @@ public class UserService  {
     }
 
     /**
+     * Get the current object for this row.
+     *
+     * @return the current object representing a row.
+     */
+    public User getCurrent(User user) {
+        boolean hasOpen = HibernateUtilOld.hasOpenSession();
+        Session session = Helper.getHibernateSession();
+
+        User current = (User) session.get(User.class, user.getId());
+        if (current == null) {
+            current = (User) session.load(User.class, user.getId());
+        }
+        if (!hasOpen) {
+            current.getProjects().size();
+            current.getProcessingTasks().size();
+            current.getTasks().size();
+            current.getUserGroups().size();
+            session.close();
+        }
+        return current;
+    }
+
+    /**
      * Table size.
      *
      * @return table size
@@ -89,6 +116,24 @@ public class UserService  {
             user.setSessionTimeout(7200);
         }
         return user.getSessionTimeout();
+    }
+
+    public Integer getSessionTimeoutInMinutes(User user) {
+        return user.getSessionTimeout() / 60;
+    }
+
+    /**
+     * Convert session timeout to minutes.
+     *
+     * @param user object
+     * @param sessionTimeout in minutes
+     */
+    public void setSessionTimeoutInMinutes(User user, Integer sessionTimeout) {
+        if (sessionTimeout < 5) {
+            user.setSessionTimeout(5 * 60);
+        } else {
+            user.setSessionTimeout(sessionTimeout * 60);
+        }
     }
 
     /**
@@ -160,6 +205,20 @@ public class UserService  {
         }
     }
 
+    /**
+     * Get properties list size.
+     *
+     * @param user object
+     * @return properties list size
+     */
+    public int getPropertiesSize(User user) {
+        if (user.getProperties() == null) {
+            return 0;
+        } else {
+            return user.getProperties().size();
+        }
+    }
+
     //TODO: check if this class should be here or in some other place
     public boolean isPasswordCorrect(User user, String inputPassword) {
         if (inputPassword == null || inputPassword.length() == 0) {
@@ -207,38 +266,6 @@ public class UserService  {
         // if the directory is not "", but does not yet exist, then create it now
         FilesystemHelper.createDirectoryForUser(result, user.getLogin());
         return result;
-    }
-
-    public Integer getSessionTimeoutInMinutes(User user) {
-        return user.getSessionTimeout() / 60;
-    }
-
-    /**
-     * Convert session timeout to minutes.
-     *
-     * @param user object
-     * @param sessionTimeout in minutes
-     */
-    public void setSessionTimeoutInMinutes(User user, Integer sessionTimeout) {
-        if (sessionTimeout < 5) {
-            user.setSessionTimeout(5 * 60);
-        } else {
-            user.setSessionTimeout(sessionTimeout * 60);
-        }
-    }
-
-    /**
-     * Get properties list size.
-     *
-     * @param user object
-     * @return properties list size
-     */
-    public int getPropertiesSize(User user) {
-        if (user.getProperties() == null) {
-            return 0;
-        } else {
-            return user.getProperties().size();
-        }
     }
 
     /**

@@ -59,7 +59,6 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.database.persistence.UserDAO;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
@@ -87,9 +86,14 @@ public class ProcessService {
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
     private ProcessDAO processDao = new ProcessDAO();
+    private UserService userService = new UserService();
 
     public Process find(Integer id) throws DAOException {
         return processDao.find(id);
+    }
+
+    public List<Process> findAll() throws DAOException {
+        return processDao.findAll();
     }
 
     public void save(Process process) throws DAOException {
@@ -203,7 +207,7 @@ public class ProcessService {
         if (MetadatenSperrung.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
-                result = new UserDAO().find(Integer.valueOf(userID));
+                result = userService.find(Integer.valueOf(userID));
             } catch (Exception e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }
