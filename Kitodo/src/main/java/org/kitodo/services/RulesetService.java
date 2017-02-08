@@ -38,6 +38,10 @@ public class RulesetService {
         return rulesetDao.find(id);
     }
 
+    public List<Ruleset> findAll() throws DAOException {
+        return rulesetDao.findAll();
+    }
+
     public List<Ruleset> search(String query) throws DAOException {
         return rulesetDao.search(query);
     }
