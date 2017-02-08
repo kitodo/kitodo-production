@@ -65,6 +65,17 @@ public class MockDatabase {
         docketService.save(secondDocket);
     }
 
+    public static void insertLdapGroups() throws DAOException {
+        LdapGroupService ldapGroupService = new LdapGroupService();
+
+        LdapGroup firstLdapGroup = new LdapGroup();
+        firstLdapGroup.setTitle("LG");
+        firstLdapGroup.setHomeDirectory("..//test_directory/");
+        firstLdapGroup.setDescription("Test LDAP group");
+        firstLdapGroup.setDisplayName("Name");
+        ldapGroupService.save(firstLdapGroup);
+    }
+
     public static void insertProcesses() throws DAOException {
         BatchService batchService = new BatchService();
         DocketService docketService = new DocketService();
@@ -146,6 +157,7 @@ public class MockDatabase {
         firstTask.setProcessingStatus(1);
         firstTask.setEditTypeEnum(TaskEditType.ADMIN);
         firstTask.setProcessingBegin(new Date(2016,10,20));
+        firstTask.setProcessingEnd(new Date(2016,12,24));
         firstTask.setProcessingUser(userService.find(1));
         firstTask.setProcess(processService.find(1));
         firstTask.setUsers(userService.findAll());
@@ -156,7 +168,7 @@ public class MockDatabase {
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
-        secondTask.setPriority(1);
+        secondTask = taskService.setCorrectionStep(secondTask);
         secondTask.setOrdering(2);
         secondTask.setProcessingStatus(3);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -165,6 +177,17 @@ public class MockDatabase {
         secondTask.setProcess(processService.find(2));
         secondTask.setUsers(userService.findAll());
         taskService.save(secondTask);
+
+        Task thirdTask = new Task();
+        thirdTask.setTitle("Testing and Blocking");
+        thirdTask.setOrdering(3);
+        thirdTask.setProcessingStatus(3);
+        thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        thirdTask.setProcessingBegin(new Date(2017,1,25));
+        thirdTask.setProcessingUser(userService.find(2));
+        thirdTask.setProcess(processService.find(2));
+        thirdTask.setUsers(userService.findAll());
+        taskService.save(thirdTask);
     }
 
     public static void insertTemplates() throws DAOException {
@@ -172,12 +195,14 @@ public class MockDatabase {
     }
 
     public static void insertUsers() throws DAOException {
+        LdapGroupService ldapGroupService = new LdapGroupService();
         UserService userService = new UserService();
 
         User firstUser = new User();
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
         firstUser.setLogin("kowal");
+        firstUser.setPassword("test");
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setTableSize(20);
         firstUser.setCss("/css/fancy.css");
@@ -189,6 +214,7 @@ public class MockDatabase {
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setSessionTimeout(9000);
+        secondUser.setLdapGroup(ldapGroupService.find(1));
         userService.save(secondUser);
 
         User thirdUser = new User();
