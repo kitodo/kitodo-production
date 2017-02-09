@@ -298,8 +298,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		String headerFromSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, null, this.myIDlist).getSQL(requestedType, null,
 				true, true);
 
-		this.logger.trace(natSQL);
-		this.logger.trace(headerFromSQL);
+		logger.trace(natSQL);
+		logger.trace(headerFromSQL);
 
 		return buildDataTableFromSQL(natSQL, headerFromSQL);
 	}
@@ -317,7 +317,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		// adding time restrictions
 		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, step, true, this.flagIncludeLoops);
 
-		this.logger.trace(natSQL);
+		logger.trace(natSQL);
 
 		return buildDataTableFromSQL(natSQL, null);
 	}
