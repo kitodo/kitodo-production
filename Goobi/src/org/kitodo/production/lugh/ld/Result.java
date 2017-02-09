@@ -46,7 +46,6 @@ public class Result extends HashSet<ObjectType> {
         }
     };
 
-    @SuppressWarnings("javadoc")
     private static final long serialVersionUID = 1L;
 
     /**
@@ -74,8 +73,9 @@ public class Result extends HashSet<ObjectType> {
      * @param model
      *            model to read out
      * @param alwaysAll
-     *            always returns all nodes from the model, independent of
+     *            if true, returns all nodes from the model, independent of
      *            whether there are “top nodes” or not
+     * @return all nodes not referenced from anywhere, or really all nodes
      */
     public static Result createFrom(Model model, boolean alwaysAll) {
         HashMap<String, Node> result = new HashMap<>();
@@ -219,9 +219,9 @@ public class Result extends HashSet<ObjectType> {
     }
 
     /**
-     * Returns all accessible nodes.
+     * Returns all identifiable nodes.
      *
-     * @return
+     * @return all identifiable nodes
      */
     public Set<IdentifiableNode> identifiableNodes() {
         return subset(IdentifiableNode.class);
@@ -242,10 +242,10 @@ public class Result extends HashSet<ObjectType> {
      * Returns the accessible node.
      *
      * @return the accessible node
-     * @throws NoDataException
-     *             if there is no accessible node
-     * @throws AmbiguousDataException
-     *             if there are several possible answers
+     * @throws LinkedDataException
+     *             {@link NoDataException} if there is no accessible node,
+     *             {@link AmbiguousDataException} if there are several possible
+     *             answers
      */
     public Node node() throws LinkedDataException {
         Set<NodeType> nodes = nodeTypes();
@@ -270,7 +270,7 @@ public class Result extends HashSet<ObjectType> {
     /**
      * Returns all accessible nodes.
      *
-     * @return
+     * @return all accessible nodes
      */
     public Set<Node> nodes() {
         return subset(Node.class);

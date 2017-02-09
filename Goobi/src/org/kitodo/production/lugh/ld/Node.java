@@ -274,9 +274,9 @@ public class Node implements AccessibleObject, NodeType {
      * <em>any relation</em>. {@code condition} may be empty meaning <em>any
      * non-empty result</em>.
      *
-     * @param relation
+     * @param relations
      *            referencing relation
-     * @param condition
+     * @param conditions
      *            a subset of data to be present on found nodes
      * @return all nodes referenced by the given relations which fulfil the
      *         conditions
