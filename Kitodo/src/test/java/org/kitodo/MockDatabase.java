@@ -186,9 +186,9 @@ public class MockDatabase {
         secondTask.setScriptName1("scriptName");
         secondTask.setTypeAutomaticScriptPath("../type/automatic/script/path");
         secondTask.setScriptName2("secondScriptName");
-        secondTask.setTypeAutomaticScriptPath2("/type/automatic/script/path2");
-        secondTask.setScriptName3("scriptName");
-        secondTask.setTypeAutomaticScriptPath3("/type/automatic/script/path3");
+        secondTask.setTypeAutomaticScriptPath2("../type/automatic/script/path2");
+        secondTask.setScriptName3("thirdScriptName");
+        secondTask.setTypeAutomaticScriptPath3("../type/automatic/script/path3");
         taskService.save(secondTask);
 
         Task thirdTask = new Task();
