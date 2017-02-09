@@ -245,7 +245,7 @@ public class User implements Serializable {
         return this.processingTasks;
     }
 
-    public void setProcessingTasks(List<Task> processingTask) {
+    public void setProcessingTasks(List<Task> processingTasks) {
         this.processingTasks = processingTasks;
     }
 

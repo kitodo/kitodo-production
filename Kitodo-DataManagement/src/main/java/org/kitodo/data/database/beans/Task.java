@@ -188,7 +188,7 @@ public class Task implements Serializable {
             inverseJoinColumns = {
                     @JoinColumn(
                             name = "userGroup_id",
-                            foreignKey = @ForeignKey(name = "FK_step_x_user_userGroup_id")
+                            foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")
                     ) })
     private List<UserGroup> userGroups;
 
@@ -205,8 +205,8 @@ public class Task implements Serializable {
         this.title = "";
         this.users = new ArrayList<>();
         this.userGroups = new ArrayList<>();
-        this.priority = Integer.valueOf(0);
-        this.ordering = Integer.valueOf(0);
+        this.priority = 0;
+        this.ordering = 0;
     }
 
     public Integer getId() {
@@ -221,8 +221,8 @@ public class Task implements Serializable {
         return this.title;
     }
 
-    public void setTitle(String titel) {
-        this.title = titel;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public Integer getPriority() {
