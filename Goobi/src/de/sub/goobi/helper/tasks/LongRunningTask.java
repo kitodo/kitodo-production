@@ -47,7 +47,7 @@ public abstract class LongRunningTask extends EmptyTask {
 		initialize(master.prozess);
 	}
 
-	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
+	private static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
 	private Prozess prozess;
 	private boolean isSingleThread = true;

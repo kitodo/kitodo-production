@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
 import org.goobi.io.FileListFilter;
 
 import ugh.dl.Fileformat;
@@ -45,6 +46,8 @@ import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 public class ExportPdf extends ExportMets {
+
+	private static final Logger logger = Logger.getLogger(ExportPdf.class);
 
 	private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
 	private static final String PDF_EXTENSION = ".pdf";

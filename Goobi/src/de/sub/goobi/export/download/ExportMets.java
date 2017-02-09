@@ -59,7 +59,7 @@ public class ExportMets {
 	protected Helper help = new Helper();
 	protected Prefs myPrefs;
 
-	protected static final Logger logger = Logger.getLogger(ExportMets.class);
+	private static final Logger logger = Logger.getLogger(ExportMets.class);
 
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis

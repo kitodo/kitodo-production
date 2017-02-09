@@ -56,7 +56,7 @@ public class ExportMetsWithoutHibernate {
 	private FolderInformation fi;
 	private ProjectObject project;
 
-	protected static final Logger logger = Logger.getLogger(ExportMetsWithoutHibernate.class);
+	private static final Logger logger = Logger.getLogger(ExportMetsWithoutHibernate.class);
 
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis

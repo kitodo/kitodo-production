@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
 import org.goobi.io.SafeFile;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -24,6 +25,7 @@ import org.jdom.output.XMLOutputter;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -31,6 +33,7 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
+	private static final Logger logger = Logger.getLogger(ProcessSwapOutTask.class);
 
 	/**
 	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
