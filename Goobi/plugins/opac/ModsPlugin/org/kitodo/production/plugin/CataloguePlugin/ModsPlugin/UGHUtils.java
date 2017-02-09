@@ -40,7 +40,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * @author Arved Solth, Christopher Timm
  */
 class UGHUtils {
-    private static final Logger myLogger = Logger.getLogger(UGHUtils.class);
+    private static final Logger logger = Logger.getLogger(UGHUtils.class);
 
     /**
      * The function addMetadatum() adds the meta data element given in terms of
@@ -69,11 +69,11 @@ class UGHUtils {
             md.setValue(inValue);
             inStruct.addMetadata(md);
         } catch (DocStructHasNoTypeException e) {
-            myLogger.error(e);
+            logger.error(e);
         } catch (MetadataTypeNotAllowedException e) {
-            myLogger.error(e);
+            logger.error(e);
         } catch (Exception e) {
-            myLogger.error(e);
+            logger.error(e);
         }
     }
 

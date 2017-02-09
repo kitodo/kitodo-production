@@ -56,7 +56,7 @@ public class ExportMetsWithoutHibernate {
 	private FolderInformation fi;
 	private ProjectObject project;
 
-	protected static final Logger myLogger = Logger.getLogger(ExportMetsWithoutHibernate.class);
+	protected static final Logger logger = Logger.getLogger(ExportMetsWithoutHibernate.class);
 
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis
@@ -304,9 +304,9 @@ public class ExportMetsWithoutHibernate {
 			}
 		} catch (IndexOutOfBoundsException e) {
 
-			myLogger.error(e);
+			logger.error(e);
 		} catch (InvalidImagesException e) {
-			myLogger.error(e);
+			logger.error(e);
 		}
 		mm.write(targetFileName);
 		Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");

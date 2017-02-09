@@ -33,7 +33,7 @@ import de.sub.goobi.persistence.ProzessDAO;
 import de.sub.goobi.persistence.SchrittDAO;
 
 public class StatistikForm {
-	private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
+	private static final Logger logger = Logger.getLogger(StatistikForm.class);
 	Calendar cal = new GregorianCalendar();
 	int n = 200;
 
@@ -98,7 +98,7 @@ public class StatistikForm {
 		try {
 			return new SchrittDAO().count("from Schritt");
 		} catch (DAOException e) {
-			myLogger.error("Hibernate error", e);
+			logger.error("Hibernate error", e);
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
 			return Long.valueOf(-1);
 		}

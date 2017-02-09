@@ -37,7 +37,7 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
  * @version 1.00 - 25.06.2005
  */
 public class Import {
-	private static final Logger myLogger = Logger.getLogger(Import.class);
+	private static final Logger logger = Logger.getLogger(Import.class);
 	private String importFehler = "";
 	private String importMeldung = "";
 	private Schritt mySchritt;
@@ -50,7 +50,7 @@ public class Import {
 	}
 
 	public String Start() {
-		myLogger.info("Import Start - start");
+		logger.info("Import Start - start");
 		this.importFehler = "";
 		this.importMeldung = "";
 		try {
@@ -58,15 +58,15 @@ public class Import {
 			Einlesen();
 		} catch (Exception e) {
 			this.importFehler = "An error occurred: " + e.getMessage();
-			myLogger.error(e);
+			logger.error(e);
 		}
-		myLogger.info("Import Start - ende");
+		logger.info("Import Start - ende");
 		return "";
 	}
 
 	private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
 			MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
-		myLogger.debug("Einlesen() - Start");
+		logger.debug("Einlesen() - Start");
 		BufferedReader reader = null;
 		try {
 
@@ -98,12 +98,12 @@ public class Import {
 				try {
 					reader.close();
 				} catch (IOException e) {
-					myLogger.error("Die Datei kann nicht geschlossen werden", e);
+					logger.error("Die Datei kann nicht geschlossen werden", e);
 				}
 			}
 		}
 		/* wenn alles ok ist, 0 zurückgeben */
-		myLogger.debug("Einlesen() - Ende");
+		logger.debug("Einlesen() - Ende");
 	}
 
 	/*

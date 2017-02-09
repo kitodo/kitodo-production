@@ -30,7 +30,7 @@ import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
 public class ConfigMain {
-	private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
+	private static final Logger logger = Logger.getLogger(ConfigMain.class);
 	private static volatile PropertiesConfiguration config;
 	private static String imagesPath = null;
 
@@ -43,8 +43,8 @@ public class ConfigMain {
 					try {
 						initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
 					} catch (ConfigurationException e) {
-						if (myLogger.isEnabledFor(Level.WARN)) {
-							myLogger.warn("Loading of " + FileNames.CONFIG_FILE
+						if (logger.isEnabledFor(Level.WARN)) {
+							logger.warn("Loading of " + FileNames.CONFIG_FILE
 									+ " failed. Trying to start with empty configuration.", e);
 						}
 						initialized = new PropertiesConfiguration();
@@ -81,7 +81,7 @@ public class ConfigMain {
 			try {
 				FilesystemHelper.createDirectory(filename);
 			} catch (Exception ioe) {
-				myLogger.error("IO error: " + ioe);
+				logger.error("IO error: " + ioe);
 				Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
 			}
 		}
@@ -101,7 +101,7 @@ public class ConfigMain {
 		try {
 			return getConfig().getString(inParameter);
 		} catch (RuntimeException e) {
-			myLogger.error(e);
+			logger.error(e);
 			return "- keine Konfiguration gefunden -";
 		}
 	}

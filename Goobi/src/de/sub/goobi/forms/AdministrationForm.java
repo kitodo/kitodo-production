@@ -64,7 +64,7 @@ import de.sub.goobi.persistence.SchrittDAO;
 
 public class AdministrationForm implements Serializable {
 	private static final long serialVersionUID = 5648439270064158243L;
-	private static final Logger myLogger = Logger.getLogger(AdministrationForm.class);
+	private static final Logger logger = Logger.getLogger(AdministrationForm.class);
 	private String passwort;
 	private boolean istPasswortRichtig = false;
 	private boolean rusFullExport = false;
@@ -152,7 +152,7 @@ public class AdministrationForm implements Serializable {
 				auf.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(auf.getImagesOrigDirectory(true))));
 				dao.save(auf);
 			} catch (RuntimeException e) {
-				myLogger.error("Fehler bei Band: " + auf.getTitel(), e);
+				logger.error("Fehler bei Band: " + auf.getTitel(), e);
 			}
 
 			dao.save(auf);
@@ -186,7 +186,7 @@ public class AdministrationForm implements Serializable {
 			
 			auf.setRegelsatz(mk);
 			dao.save(auf);
-			myLogger.debug(auf.getId() + " - " + i++ + "von" + auftraege.size());
+			logger.debug(auf.getId() + " - " + i++ + "von" + auftraege.size());
 		}
 		Helper.setMeldung(null, "", "Standard-ruleset successful set");
 	}
@@ -244,8 +244,8 @@ public class AdministrationForm implements Serializable {
 			if (p.getBenutzerGesperrt() != null) {
 				Helper.setFehlerMeldung("metadata locked: ", p.getTitel());
 			} else {
-				if(myLogger.isDebugEnabled()){
-					myLogger.debug("Prozess: " + p.getTitel());
+				if(logger.isDebugEnabled()){
+					logger.debug("Prozess: " + p.getTitel());
 				}
 				Prefs myPrefs = p.getRegelsatz().getPreferences();
 				Fileformat gdzfile;
@@ -256,7 +256,7 @@ public class AdministrationForm implements Serializable {
 					List<? extends Metadata> alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
 					if (alleMetadaten != null && alleMetadaten.size() > 0) {
 						Metadata md = alleMetadaten.get(0);
-						myLogger.debug(md.getValue());
+						logger.debug(md.getValue());
 
 					
 						if (SystemUtils.IS_OS_WINDOWS) {
@@ -271,22 +271,22 @@ public class AdministrationForm implements Serializable {
 					}
 				} catch (ReadException e) {
 					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("ReadException: " + p.getTitel(), e);
+					logger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
 					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("IOException: " + p.getTitel(), e);
+					logger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
 					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("InterruptedException: " + p.getTitel(), e);
+					logger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
 					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("PreferencesException: " + p.getTitel(), e);
+					logger.error("PreferencesException: " + p.getTitel(), e);
 				} catch (UghHelperException e) {
 					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("UghHelperException: " + p.getTitel(), e);
+					logger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("Exception: " + p.getTitel(), e);
+					logger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
@@ -334,7 +334,7 @@ public class AdministrationForm implements Serializable {
 						alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnDigital);
 						if (alleMetadaten != null && alleMetadaten.size() > 0) {
 							Metadata md = alleMetadaten.get(0);
-							myLogger.debug(md.getValue());
+							logger.debug(md.getValue());
 							if (!md.getValue().endsWith(myBandnr)) {
 								md.setValue(md.getValue() + myBandnr);
 								Helper.setMeldung(null, "PPN digital adjusted: ", p.getTitel());
@@ -345,7 +345,7 @@ public class AdministrationForm implements Serializable {
 						alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnAnalog);
 						if (alleMetadaten != null && alleMetadaten.size() > 0) {
 							Metadata md1 = alleMetadaten.get(0);
-							myLogger.debug(md1.getValue());
+							logger.debug(md1.getValue());
 							if (!md1.getValue().endsWith(myBandnr)) {
 								md1.setValue(md1.getValue() + myBandnr);
 								Helper.setMeldung(null, "PPN analog adjusted: ", p.getTitel());
@@ -389,22 +389,22 @@ public class AdministrationForm implements Serializable {
 
 				} catch (ReadException e) {
 					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("ReadException: " + p.getTitel(), e);
+					logger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
 					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("IOException: " + p.getTitel(), e);
+					logger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
 					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("InterruptedException: " + p.getTitel(), e);
+					logger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
 					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("PreferencesException: " + p.getTitel(), e);
+					logger.error("PreferencesException: " + p.getTitel(), e);
 				} catch (UghHelperException e) {
 					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("UghHelperException: " + p.getTitel(), e);
+					logger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("Exception: " + p.getTitel(), e);
+					logger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
@@ -449,22 +449,22 @@ public class AdministrationForm implements Serializable {
 					}
 				} catch (ReadException e) {
 					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("ReadException: " + p.getTitel(), e);
+					logger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
 					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("IOException: " + p.getTitel(), e);
+					logger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
 					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("InterruptedException: " + p.getTitel(), e);
+					logger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
 					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("PreferencesException: " + p.getTitel(), e);
+					logger.error("PreferencesException: " + p.getTitel(), e);
 				} catch (UghHelperException e) {
 					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("UghHelperException: " + p.getTitel(), e);
+					logger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("Exception: " + p.getTitel(), e);
+					logger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}
@@ -548,22 +548,22 @@ public class AdministrationForm implements Serializable {
 
 				} catch (ReadException e) {
 					Helper.setFehlerMeldung("", "ReadException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("ReadException: " + p.getTitel(), e);
+					logger.error("ReadException: " + p.getTitel(), e);
 				} catch (IOException e) {
 					Helper.setFehlerMeldung("", "IOException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("IOException: " + p.getTitel(), e);
+					logger.error("IOException: " + p.getTitel(), e);
 				} catch (InterruptedException e) {
 					Helper.setFehlerMeldung("", "InterruptedException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("InterruptedException: " + p.getTitel(), e);
+					logger.error("InterruptedException: " + p.getTitel(), e);
 				} catch (PreferencesException e) {
 					Helper.setFehlerMeldung("", "PreferencesException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("PreferencesException: " + p.getTitel() + " - " + e.getMessage());
+					logger.error("PreferencesException: " + p.getTitel() + " - " + e.getMessage());
 				} catch (UghHelperException e) {
 					Helper.setFehlerMeldung("", "UghHelperException: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("UghHelperException: " + p.getTitel(), e);
+					logger.error("UghHelperException: " + p.getTitel(), e);
 				} catch (Exception e) {
 					Helper.setFehlerMeldung("", "Exception: " + p.getTitel() + " - " + e.getMessage());
-					myLogger.error("Exception: " + p.getTitel(), e);
+					logger.error("Exception: " + p.getTitel(), e);
 				}
 			}
 		}

@@ -28,7 +28,7 @@ import org.goobi.production.constants.Parameters;
 import de.sub.goobi.config.ConfigMain;
 
 public class UghUtils {
-	private static final Logger myLogger = Logger.getLogger(UghUtils.class);
+	private static final Logger logger = Logger.getLogger(UghUtils.class);
 
 	/**
 	 * In einem String die Umlaute auf den Grundbuchstaben reduzieren ================================================================
@@ -43,7 +43,7 @@ public class UghUtils {
 				}
 			}
 		} catch (IOException e) {
-			myLogger.error("IOException bei Umlautkonvertierung", e);
+			logger.error("IOException bei Umlautkonvertierung", e);
 		}
 		return line;
 	}

@@ -31,7 +31,7 @@ import java.util.List;
 
 public class GoobiProcessDAO {
 
-    private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
+    private static final Logger logger = Logger.getLogger(GoobiProcessDAO.class);
 
     public static GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
         Session session;
@@ -60,7 +60,7 @@ public class GoobiProcessDAO {
             result = (GoobiProcess) criteria.uniqueResult();
 
         } catch (HibernateException he) {
-            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+            logger.error("Catched Hibernate exception: " + he.getMessage());
         }
 
         return result;
@@ -97,7 +97,7 @@ public class GoobiProcessDAO {
                 result.addAll(list);
             }
         } catch (HibernateException he) {
-            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+            logger.error("Catched Hibernate exception: " + he.getMessage());
         }
 
         return result;
@@ -134,7 +134,7 @@ public class GoobiProcessDAO {
                 result.addAll(list);
             }
         } catch (HibernateException he) {
-            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+            logger.error("Catched Hibernate exception: " + he.getMessage());
         }
 
         return result;
