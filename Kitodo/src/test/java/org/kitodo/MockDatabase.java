@@ -12,9 +12,9 @@
 package org.kitodo;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -87,7 +87,8 @@ public class MockDatabase {
         firstProcess.setTitle("First process");
         firstProcess.setOutputName("Test");
         firstProcess.setWikiField("wiki");
-        firstProcess.setCreationDate(new Date(2016,10,20));
+        LocalDate localDate = new LocalDate(2016,10,20);
+        firstProcess.setCreationDate(localDate.toDate());
 
         List<Batch> batches = new ArrayList<>();
         Batch firstBatch = batchService.find(1);
@@ -109,7 +110,8 @@ public class MockDatabase {
         secondProcess.setTitle("Second process");
         secondProcess.setOutputName("Testowy");
         secondProcess.setWikiField("field");
-        secondProcess.setCreationDate(new Date(2017,01,20));
+        localDate = new LocalDate(2017,1,20);
+        secondProcess.setCreationDate(localDate.toDate());
         secondProcess.setDocket(docketService.find(1));
         secondProcess.setProject(projectService.find(1));
         secondProcess.setRuleset(rulesetService.find(1));
@@ -121,8 +123,10 @@ public class MockDatabase {
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
-        firstProject.setStartDate(new Date(2016,10,20));
-        firstProject.setEndDate(new Date(2017,10,20));
+        LocalDate localDate = new LocalDate(2016,10,20);
+        firstProject.setStartDate(localDate.toDate());
+        localDate = new LocalDate(2017,10,20);
+        firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
         projectService.save(firstProject);
@@ -156,8 +160,10 @@ public class MockDatabase {
         firstTask.setOrdering(1);
         firstTask.setProcessingStatus(1);
         firstTask.setEditTypeEnum(TaskEditType.ADMIN);
-        firstTask.setProcessingBegin(new Date(2016,10,20));
-        firstTask.setProcessingEnd(new Date(2016,12,24));
+        LocalDate localDate = new LocalDate(2016,10,20);
+        firstTask.setProcessingBegin(localDate.toDate());
+        localDate = new LocalDate(2016,12,24);
+        firstTask.setProcessingEnd(localDate.toDate());
         firstTask.setProcessingUser(userService.find(1));
         firstTask.setProcess(processService.find(1));
         firstTask.setUsers(userService.findAll());
@@ -172,10 +178,17 @@ public class MockDatabase {
         secondTask.setOrdering(2);
         secondTask.setProcessingStatus(3);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        secondTask.setProcessingBegin(new Date(2016,9,25));
+        localDate = new LocalDate(2016,9,25);
+        secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(userService.find(3));
         secondTask.setProcess(processService.find(2));
         secondTask.setUsers(userService.findAll());
+        secondTask.setScriptName1("scriptName");
+        secondTask.setTypeAutomaticScriptPath("../type/automatic/script/path");
+        secondTask.setScriptName2("secondScriptName");
+        secondTask.setTypeAutomaticScriptPath2("/type/automatic/script/path2");
+        secondTask.setScriptName3("scriptName");
+        secondTask.setTypeAutomaticScriptPath3("/type/automatic/script/path3");
         taskService.save(secondTask);
 
         Task thirdTask = new Task();
@@ -183,8 +196,8 @@ public class MockDatabase {
         thirdTask.setOrdering(3);
         thirdTask.setProcessingStatus(3);
         thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        thirdTask.setProcessingBegin(new Date(2017,1,25));
-        thirdTask.setProcessingUser(userService.find(2));
+        localDate = new LocalDate(2017,1,25);
+        thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcess(processService.find(2));
         thirdTask.setUsers(userService.findAll());
         taskService.save(thirdTask);
