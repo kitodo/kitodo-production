@@ -77,7 +77,7 @@ import de.sub.goobi.persistence.ProzessDAO;
 // @XmlElement, but their respective names should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
 public class Prozess implements Serializable {
-	private static final Logger myLogger = Logger.getLogger(Prozess.class);
+	private static final Logger logger = Logger.getLogger(Prozess.class);
 	private static final long serialVersionUID = -6503348094655786275L;
 	private Integer id;
 	private String titel;
@@ -969,8 +969,8 @@ public class Prozess implements Serializable {
 		Hibernate.initialize(getRegelsatz());
 		/* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
 		String type = MetadatenHelper.getMetaFileType(getMetadataFilePath());
-		if (myLogger.isDebugEnabled()) {
-			myLogger.debug("current meta.xml file type for id " + getId() + ": " + type);
+		if (logger.isDebugEnabled()) {
+			logger.debug("current meta.xml file type for id " + getId() + ": " + type);
 		}
 		Fileformat ff = null;
 		if (type.equals("metsmods")) {
@@ -1010,7 +1010,7 @@ public class Prozess implements Serializable {
 			bfr.setProcessDataDirectory(getProcessDataDirectory());
 			bfr.performBackup();
 		} else {
-			myLogger.warn("No backup configured for meta data files.");
+			logger.warn("No backup configured for meta data files.");
 		}
 	}
 
@@ -1102,8 +1102,8 @@ public class Prozess implements Serializable {
 		if (new SafeFile(getTemplateFilePath()).exists()) {
 			Fileformat ff = null;
 			String type = MetadatenHelper.getMetaFileType(getTemplateFilePath());
-			if(myLogger.isDebugEnabled()){
-				myLogger.debug("current template.xml file type: " + type);
+			if(logger.isDebugEnabled()){
+				logger.debug("current template.xml file type: " + type);
 			}
 			if (type.equals("mets")) {
 				ff = new MetsMods(this.regelsatz.getPreferences());
@@ -1193,8 +1193,8 @@ public class Prozess implements Serializable {
 
 	public String downloadDocket() {
 
-		if(myLogger.isDebugEnabled()){
-			myLogger.debug("generate docket for process " + this.id);
+		if(logger.isDebugEnabled()){
+			logger.debug("generate docket for process " + this.id);
 		}
 		String rootpath = ConfigMain.getParameter("xsltFolder");
 		SafeFile xsltfile = new SafeFile(rootpath, "docket.xsl");

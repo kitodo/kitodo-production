@@ -22,7 +22,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 
 public class DmsImportThread extends Thread {
-	private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
+	private static final Logger logger = Logger.getLogger(DmsImportThread.class);
 	private SafeFile fileError;
 	private SafeFile fileXml;
 	private SafeFile fileSuccess;
@@ -86,7 +86,7 @@ public class DmsImportThread extends Thread {
 					}
 				}
 			} catch (Throwable t) {
-				myLogger.error("Unexception exception", t);
+				logger.error("Unexception exception", t);
 			}
 		}
 		if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {

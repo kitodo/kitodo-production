@@ -33,7 +33,7 @@ import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 class Catalogue {
-	private static final Logger myLogger = Logger.getLogger(Catalogue.class);
+	private static final Logger logger = Logger.getLogger(Catalogue.class);
 	private final String title;
 	private final String description;
 	private final String address;
@@ -112,7 +112,7 @@ class Catalogue {
 			myHitlist = doutputter.output(doc);
 			myHitlist = myHitlist.getFirstChild();
 		} catch (JDOMException e) {
-			myLogger.error("JDOMException in executeBeautifier(Node)", e);
+			logger.error("JDOMException in executeBeautifier(Node)", e);
 		}
 
 		/* Ausgabe des überarbeiteten Opac-Ergebnisses */
@@ -270,9 +270,9 @@ class Catalogue {
 			Document tempDoc = new DOMBuilder().build(inNode.getOwnerDocument());
 			outputter.output(tempDoc.getRootElement(), output);
 		} catch (FileNotFoundException e) {
-			myLogger.error("debugMyNode(Node, String)", e);
+			logger.error("debugMyNode(Node, String)", e);
 		} catch (IOException e) {
-			myLogger.error("debugMyNode(Node, String)", e);
+			logger.error("debugMyNode(Node, String)", e);
 		}
 
 	}

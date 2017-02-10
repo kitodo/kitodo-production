@@ -53,7 +53,7 @@ import de.sub.goobi.config.ConfigMain;
  * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like the LDAP system providers.
  */
 public class LdapUser implements DirContext {
-	private static final Logger myLogger = Logger.getLogger(LdapUser.class);
+	private static final Logger logger = Logger.getLogger(LdapUser.class);
 	String type;
 	Attributes myAttrs;
 
@@ -122,14 +122,14 @@ public class LdapUser implements DirContext {
 			try {
 				this.myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
 			} catch (Exception e) {
-				myLogger.error(e);
+				logger.error(e);
 			}
 			/* NTLM */
 			try {
 				byte hmm[] = MD4.mdfour(inPassword.getBytes("UnicodeLittleUnmarked"));
 				this.myAttrs.put("sambaNTPassword", toHexString(hmm));
 			} catch (UnsupportedEncodingException e) {
-				myLogger.error(e);
+				logger.error(e);
 			}
 
 			/*
@@ -161,9 +161,9 @@ public class LdapUser implements DirContext {
 		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
 		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-		if(myLogger.isDebugEnabled()){
-			myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
-			myLogger.debug("Replace outstring: " + rueckgabe);
+		if(logger.isDebugEnabled()){
+			logger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
+			logger.debug("Replace outstring: " + rueckgabe);
 		}
 		return rueckgabe;
 	}

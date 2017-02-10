@@ -51,7 +51,7 @@ import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
 public class ExportDms extends ExportMets {
-	private static final Logger myLogger = Logger.getLogger(ExportDms.class);
+	private static final Logger logger = Logger.getLogger(ExportDms.class);
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
 	private boolean exportFulltext = true;
@@ -159,7 +159,7 @@ public class ExportDms extends ExportMets {
 				Helper.setFehlerMeldung(Helper.getTranslation("exportError")
 						+ myProzess.getTitel(), e);
 			}
-			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
+			logger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
 		}
 	}
@@ -200,7 +200,7 @@ public class ExportDms extends ExportMets {
 				Helper.setFehlerMeldung(Helper.getTranslation("exportError")
 						+ myProzess.getTitel(), e);
 			}
-			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
+			logger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
 		}
 
@@ -380,7 +380,7 @@ public class ExportDms extends ExportMets {
 						Helper.setFehlerMeldung(myProzess.getTitel()
 								+ ": error on export - ", e.getMessage());
 					}
-					myLogger.error(myProzess.getTitel() + ": error on export",
+					logger.error(myProzess.getTitel() + ": error on export",
 							e);
 				}
 				if (agoraThread.rueckgabe.length() > 0) {
@@ -551,7 +551,7 @@ public class ExportDms extends ExportMets {
 					} else {
 						Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
 					}
-					myLogger.error("could not create destination directory", e);
+					logger.error("could not create destination directory", e);
 					if (e instanceof IOException) {
 						throw (IOException) e;
 					} else if (e instanceof InterruptedException) {

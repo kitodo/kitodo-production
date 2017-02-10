@@ -82,7 +82,7 @@ import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 public class AktuelleSchritteForm extends BasisForm {
 	private static final long serialVersionUID = 5841566727939692509L;
-	private static final Logger myLogger = Logger.getLogger(AktuelleSchritteForm.class);
+	private static final Logger logger = Logger.getLogger(AktuelleSchritteForm.class);
 	private Prozess myProzess = new Prozess();
 	private Schritt mySchritt = new Schritt();
 	private Integer myProblemID;
@@ -259,7 +259,7 @@ public class AktuelleSchritteForm extends BasisForm {
 						this.pdao.save(this.mySchritt.getProzess());
 					} catch (DAOException e) {
 						Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-						myLogger.error("step couldn't get saved", e);
+						logger.error("step couldn't get saved", e);
 					} finally {
 						this.flagWait = false;
 					}
@@ -366,7 +366,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-				myLogger.error("step couldn't get saved", e);
+				logger.error("step couldn't get saved", e);
 			}
 		}
 
@@ -548,9 +548,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			Helper.setFehlerMeldung("userNotFound");
 			return "";
 		}
-		if(myLogger.isDebugEnabled()){
-			myLogger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
-			myLogger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
+		if(logger.isDebugEnabled()){
+			logger.debug("mySchritt.ID: " + this.mySchritt.getId().intValue());
+			logger.debug("Korrekturschritt.ID: " + this.myProblemID.intValue());
 		}
 		this.myDav.UploadFromHome(this.mySchritt.getProzess());
 		Date myDate = new Date();
@@ -891,7 +891,7 @@ public class AktuelleSchritteForm extends BasisForm {
 						this.gesamtAnzahlImages += FileUtils.getNumberOfFiles(step.getProzess().getImagesOrigDirectory(false));
 					}
 				} catch (Exception e) {
-					myLogger.error(e);
+					logger.error(e);
 				}
 			}
 		}
@@ -913,9 +913,9 @@ public class AktuelleSchritteForm extends BasisForm {
 		try {
 			schrittPerParameterLaden();
 		} catch (NumberFormatException e) {
-			myLogger.error(e);
+			logger.error(e);
 		} catch (DAOException e) {
-			myLogger.error(e);
+			logger.error(e);
 		}
 		return this.mySchritt;
 	}
@@ -1037,7 +1037,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			export.startExport(this.mySchritt.getProzess());
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Error on export", e.getMessage());
-			myLogger.error(e);
+			logger.error(e);
 		}
 	}
 
@@ -1098,7 +1098,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			try {
 				this.pdao.save(this.mySchritt.getProzess());
 			} catch (DAOException e) {
-				myLogger.error(e);
+				logger.error(e);
 			}
 		}
 	}
@@ -1178,7 +1178,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				this.pdao.save(p);
 				Helper.setMeldung("propertiesSaved");
 			} catch (DAOException e) {
-				myLogger.error(e);
+				logger.error(e);
 				Helper.setFehlerMeldung("propertiesNotSaved");
 			}
 		}
@@ -1218,7 +1218,7 @@ public class AktuelleSchritteForm extends BasisForm {
 				this.pdao.save(this.mySchritt.getProzess());
 				Helper.setMeldung("propertySaved");
 			} catch (DAOException e) {
-				myLogger.error(e);
+				logger.error(e);
 				Helper.setFehlerMeldung("propertyNotSaved");
 			}
 		}
@@ -1262,7 +1262,7 @@ public class AktuelleSchritteForm extends BasisForm {
 		try {
 			this.pdao.save(this.mySchritt.getProzess());
 		} catch (DAOException e) {
-			myLogger.error(e);
+			logger.error(e);
 			Helper.setFehlerMeldung("propertiesNotDeleted");
 		}
 		// saveWithoutValidation();
@@ -1363,7 +1363,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.pdao.save(this.mySchritt.getProzess());
 			Helper.setMeldung("propertySaved");
 		} catch (DAOException e) {
-			myLogger.error(e);
+			logger.error(e);
 			Helper.setFehlerMeldung("propertiesNotSaved");
 		}
 		loadProcessProperties();

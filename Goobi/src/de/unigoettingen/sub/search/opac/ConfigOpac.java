@@ -36,7 +36,7 @@ import de.sub.goobi.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
-	private static final Logger myLogger = Logger.getLogger(ConfigOpac.class);
+	private static final Logger logger = Logger.getLogger(ConfigOpac.class);
 
 	private static XMLConfiguration config;
 
@@ -93,7 +93,7 @@ public class ConfigOpac {
 			myList.add(title);
 		}
 		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
+			logger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 		}
 		return myList;
@@ -112,7 +112,7 @@ public class ConfigOpac {
 			myList.add(title);
 		}
 		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
+			logger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 		}
 		return myList;
@@ -130,7 +130,7 @@ public class ConfigOpac {
 			myList.add(getDoctypeByName(title));
 		}
 		} catch (Throwable t) {
-			myLogger.error("Error while reading von opac-config", t);
+			logger.error("Error while reading von opac-config", t);
 			Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
 		}
 		return myList;

@@ -46,7 +46,7 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
  * @version 1.00 - 10.01.2005
  */
 public class ImportRussland {
-   private static final Logger myLogger = Logger.getLogger(ImportRussland.class);
+   private static final Logger logger = Logger.getLogger(ImportRussland.class);
    private DocStruct logicalTopstruct;
    private Prozess prozess;
 
@@ -87,7 +87,7 @@ public class ImportRussland {
       String line = reader.readLine();
       line = reader.readLine();
       line = reader.readLine();
-      //      myLogger.info(line + " : " + myProzesseID);
+      //      logger.info(line + " : " + myProzesseID);
       if (line == null) {
 		throw new WrongImportFileException("Importfehler: ungültige Importdatei oder falsche Kodierung");
 	}
@@ -115,7 +115,7 @@ public class ImportRussland {
        * --------------------------------*/
       List<String> listeDaten = new ArrayList<String>();
       while ((line = reader.readLine()) != null) {
-         //         myLogger.info(line);
+         //         logger.info(line);
          if (line.length() == 0) {
 
             /* immer wenn die Zeile leer ist, können die gesammelten
@@ -136,7 +136,7 @@ public class ImportRussland {
        * Datei abschliessend wieder speichern
        * --------------------------------*/
       inProzess.writeMetadataFile(gdzfile);
-      myLogger.debug("ParsenRussland() - Ende");
+      logger.debug("ParsenRussland() - Ende");
    }
 
 
@@ -169,7 +169,7 @@ public class ImportRussland {
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = iter.next();
          String meineDetailNr = meinDetail.substring(0, 3);
-         //			myLogger.debug("---- " + meinDetail);
+         //			logger.debug("---- " + meinDetail);
 
          /* Zeitschrift Titel russisch */
          if (meineDetailNr.equals("020")) {
@@ -198,7 +198,7 @@ public class ImportRussland {
 
    private void BandDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       DocStruct ds = this.logicalTopstruct.getAllChildren().get(0);
-      //      myLogger.info(ds.getType().getName());
+      //      logger.info(ds.getType().getName());
       /* zunächst alle Details durchlaufen und dem Band hinzufügenl  */
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = iter.next();
@@ -230,7 +230,7 @@ public class ImportRussland {
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = iter.next();
          if (meinDetail.substring(0, 3).equals("090")) {
-//            myLogger.info("ZBL-Identifier ist " + meinDetail.substring(4).trim());
+//            logger.info("ZBL-Identifier ist " + meinDetail.substring(4).trim());
             zblID = meinDetail.substring(4).trim();
             break;
          }
@@ -238,7 +238,7 @@ public class ImportRussland {
 
       /* für das Debugging bei Problemen */
 //      if (zblID.equals("0843.11050"))
-//         myLogger.warn("gesuchte ID");
+//         logger.warn("gesuchte ID");
 
       /* --------------------------------
        * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben ZBL-ID finden
@@ -246,7 +246,7 @@ public class ImportRussland {
       MetadataType mdt_id = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLIdentifier");
       MetadataType mdt_tempId = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLTempID");
            DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
-      //		myLogger.info(band.getType().getName());
+      //		logger.info(band.getType().getName());
       List<DocStruct> listHefte = band.getAllChildren();
       if (listHefte != null) {
          for (Iterator<DocStruct> iter = listHefte.iterator(); iter.hasNext();) {
@@ -257,7 +257,7 @@ public class ImportRussland {
                /* jetzt alle Artikel durchlaufen, bis der richtige Artikel gefunden wurde */
                for (Iterator<DocStruct> iter1 = listArtikel.iterator(); iter1.hasNext();) {
                   DocStruct artikel = iter1.next();
-//                  myLogger.info(artikel.getType().getName());
+//                  logger.info(artikel.getType().getName());
                   if (artikel.getAllMetadataByType(mdt_id).size() > 0 || artikel.getAllMetadataByType(mdt_tempId).size() > 0) {
                      Metadata md;
                      if (artikel.getAllMetadataByType(mdt_id).size() > 0) {
@@ -265,9 +265,9 @@ public class ImportRussland {
 					} else {
 						md = artikel.getAllMetadataByType(mdt_tempId).get(0);
 					}
-                     //                  myLogger.debug(md.getValue());
+                     //                  logger.debug(md.getValue());
                      if (md.getValue().equals(zblID)) {
-                        //                     myLogger.info("------------ Artikel gefunden -------------");
+                        //                     logger.info("------------ Artikel gefunden -------------");
                         artikelGefunden = true;
                         /* jetzt alle Details durchlaufen und dem Artikel hinzufügenl  */
                         for (Iterator<String> iter2 = inListe.iterator(); iter2.hasNext();) {
@@ -394,13 +394,13 @@ public class ImportRussland {
          //            for (Iterator iter1 = listArtikel.iterator(); iter1.hasNext();) {
          //               DocStruct artikel = (DocStruct) iter1.next();
          //               Metadata md = (Metadata) artikel.getAllMetadataByType(mdt).getFirst();
-         //               myLogger.debug(md.getValue());
+         //               logger.debug(md.getValue());
          //               if (md.getValue().equals(zblID)) {
-         //                  myLogger.info("------------ Artikel gefunden -------------");
+         //                  logger.info("------------ Artikel gefunden -------------");
          //
          inStruct.addMetadata(md);
       } catch (Exception e) {
-         myLogger.error("Import fehlgeschlagen: " + inDetail, e);
+         logger.error("Import fehlgeschlagen: " + inDetail, e);
       }
    }
 

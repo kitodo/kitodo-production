@@ -89,7 +89,7 @@ import ugh.fileformats.mets.XStream;
  */
 @PluginImplementation
 public class ModsPlugin implements Plugin {
-    private static final Logger modsLogger = Logger.getLogger(ModsPlugin.class);
+    private static final Logger logger = Logger.getLogger(ModsPlugin.class);
 
     /**
      * The field configDir holds a reference to the file system directory where
@@ -281,10 +281,10 @@ public class ModsPlugin implements Plugin {
                 return null;
             }
         } catch (RuntimeException e) {
-            modsLogger.error("Error while querying library catalogue: " + e.getMessage());
+            logger.error("Error while querying library catalogue: " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            modsLogger.error("Error while querying library catalogue: " + e.getMessage());
+            logger.error("Error while querying library catalogue: " + e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
     }
@@ -300,7 +300,7 @@ public class ModsPlugin implements Plugin {
             parentIDXPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
             identifierXPath = XPath.newInstance(getIdentifierXPath(configuration.getTitle()));
         } catch (JDOMException e) {
-            modsLogger.error("Error while initializing XPath variables: " + e.getMessage());
+            logger.error("Error while initializing XPath variables: " + e.getMessage());
         }
     }
 
@@ -374,19 +374,19 @@ public class ModsPlugin implements Plugin {
 
         if (resultXML == null) {
             String message = "Error: result empty!";
-            modsLogger.error(message);
+            logger.error(message);
             throw new IllegalStateException(message);
         }
 
         else if (!xpathsDefined()) {
             String message = "Error: XPath variables not defined!";
-            modsLogger.error(message);
+            logger.error(message);
             throw new IllegalStateException(message);
         }
 
         else if (!Files.isDirectory(xsltDirPath)) {
             String message = "Error: XSLT directory not found!";
-            modsLogger.error(message);
+            logger.error(message);
             throw new IOException(message);
         }
 
@@ -498,7 +498,7 @@ public class ModsPlugin implements Plugin {
 
             } catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException
                     | IOException e) {
-                modsLogger.error("Error while retrieving document: " + e.getMessage());
+                logger.error("Error while retrieving document: " + e.getMessage());
             }
         }
         return result;
@@ -557,7 +557,7 @@ public class ModsPlugin implements Plugin {
                 ConfigurationNode titleAttr = (ConfigurationNode) titleAttrObject;
                 if (Objects.equals(opacName, titleAttr.getValue())) {
                     SubnodeConfiguration catalogueConf = (SubnodeConfiguration) catalogueObject;
-                    modsLogger.debug("Setting mapping file for OPAC '" + opacName + "' to '"
+                    logger.debug("Setting mapping file for OPAC '" + opacName + "' to '"
                             + catalogueConf.getString("mappingFile") + "'");
                     MODS2GOOBI_TRANSFORMATION_RULES_FILENAME = catalogueConf.getString("mappingFile");
                     break;
@@ -704,7 +704,7 @@ public class ModsPlugin implements Plugin {
             return resultDoc;
 
         } catch (TransformerException | IOException | JDOMException e) {
-            modsLogger.error("Error while transforming XML document: " + e.getMessage());
+            logger.error("Error while transforming XML document: " + e.getMessage());
         }
         return null;
     }
@@ -729,7 +729,7 @@ public class ModsPlugin implements Plugin {
                     getIdentifierParameter(configuration.getTitle()) + ":" + parentIDElement.getText());
             return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
         } catch (NullPointerException e) {
-            modsLogger.info("Top level element reached. No further parent elements can be retrieved.");
+            logger.info("Top level element reached. No further parent elements can be retrieved.");
             return null;
         }
     }
@@ -874,7 +874,7 @@ public class ModsPlugin implements Plugin {
         try {
             Files.delete(fs.getPath(path));
         } catch (IOException x) {
-            modsLogger.error("Error while deleting file '" + path + "': " + x.getMessage());
+            logger.error("Error while deleting file '" + path + "': " + x.getMessage());
         }
     }
 

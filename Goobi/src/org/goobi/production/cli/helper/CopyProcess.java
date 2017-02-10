@@ -72,7 +72,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 public class CopyProcess extends ProzesskopieForm {
 
-	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
+	private static final Logger logger = Logger.getLogger(ProzesskopieForm.class);
 	private Fileformat myRdf;
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
@@ -112,9 +112,9 @@ public class CopyProcess extends ProzesskopieForm {
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
 		} catch (PreferencesException e) {
-			myLogger.error(e);
+			logger.error(e);
 		} catch (ReadException e) {
-			myLogger.error(e);
+			logger.error(e);
 		}
 		;
 		this.prozessKopie = new Prozess();
@@ -155,9 +155,9 @@ public class CopyProcess extends ProzesskopieForm {
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
 		} catch (PreferencesException e) {
-			myLogger.error(e);
+			logger.error(e);
 		} catch (ReadException e) {
-			myLogger.error(e);
+			logger.error(e);
 		}
 		;
 		this.prozessKopie = new Prozess();
@@ -441,7 +441,7 @@ public class CopyProcess extends ProzesskopieForm {
 			removeCollections(colStruct);
 		} catch (PreferencesException e) {
 			Helper.setFehlerMeldung("Fehler beim Anlegen des Vorgangs", e);
-			myLogger.error("Fehler beim Anlegen des Vorgangs", e);
+			logger.error("Fehler beim Anlegen des Vorgangs", e);
 		} catch (RuntimeException e) {
 			/*
 			 * das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden
@@ -617,7 +617,7 @@ public class CopyProcess extends ProzesskopieForm {
 			dao.refresh(this.prozessKopie);
 		} catch (DAOException e) {
 			e.printStackTrace();
-			myLogger.error("error on save: ", e);
+			logger.error("error on save: ", e);
 			return this.prozessKopie;
 		}
 
@@ -638,7 +638,7 @@ public class CopyProcess extends ProzesskopieForm {
 				new ProzessDAO().save(this.prozessKopie);
 			} catch (DAOException e) {
 				e.printStackTrace();
-				myLogger.error("error on save: ", e);
+				logger.error("error on save: ", e);
 				return this.prozessKopie;
 			}
 		}
@@ -694,7 +694,7 @@ public class CopyProcess extends ProzesskopieForm {
 			dao.refresh(this.prozessKopie);
 		} catch (DAOException e) {
 			e.printStackTrace();
-			myLogger.error("error on save: ", e);
+			logger.error("error on save: ", e);
 			return this.prozessKopie;
 		}
 
@@ -708,7 +708,7 @@ public class CopyProcess extends ProzesskopieForm {
 		File f = new File(this.prozessKopie.getProcessDataDirectoryIgnoreSwapping());
 		if (!f.exists() && !f.mkdir()) {
 			Helper.setFehlerMeldung("Could not create process directory");
-			myLogger.error("Could not create process directory");
+			logger.error("Could not create process directory");
 			return this.prozessKopie;
 		}
 		
@@ -724,7 +724,7 @@ public class CopyProcess extends ProzesskopieForm {
 				new ProzessDAO().save(this.prozessKopie);
 			} catch (DAOException e) {
 				e.printStackTrace();
-				myLogger.error("error on save: ", e);
+				logger.error("error on save: ", e);
 				return this.prozessKopie;
 			}
 		}
@@ -771,9 +771,9 @@ public class CopyProcess extends ProzesskopieForm {
 			ff = new MetsMods(myPrefs);
 			ff.read(this.metadataFile);
 		} catch (PreferencesException e) {
-			myLogger.error(e);
+			logger.error(e);
 		} catch (ReadException e) {
-			myLogger.error(e);
+			logger.error(e);
 		}
 
 	}
@@ -972,10 +972,10 @@ public class CopyProcess extends ProzesskopieForm {
 				}
 			}
 		} catch (JDOMException e1) {
-			myLogger.error("error while parsing digital collections", e1);
+			logger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		} catch (IOException e1) {
-			myLogger.error("error while parsing digital collections", e1);
+			logger.error("error while parsing digital collections", e1);
 			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
 		}
 

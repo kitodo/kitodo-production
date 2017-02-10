@@ -52,7 +52,7 @@ import de.sub.goobi.persistence.apache.ProjectManager;
 import de.sub.goobi.persistence.apache.ProjectObject;
 
 public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHibernate {
-	private static final Logger myLogger = Logger.getLogger(AutomaticDmsExportWithoutHibernate.class);
+	private static final Logger logger = Logger.getLogger(AutomaticDmsExportWithoutHibernate.class);
 	ConfigProjects cp;
 	private boolean exportWithImages = true;
 	private boolean exportFulltext = true;
@@ -135,7 +135,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 				task.setException(e);
 			}
 			Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
-			myLogger.error("Export abgebrochen, xml-LeseFehler", e);
+			logger.error("Export abgebrochen, xml-LeseFehler", e);
 			return false;
 		}
 
@@ -374,7 +374,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 						task.setException(e);
 					}
 					Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
-					myLogger.error("could not create destination directory", e);
+					logger.error("could not create destination directory", e);
 				}
 			}
 

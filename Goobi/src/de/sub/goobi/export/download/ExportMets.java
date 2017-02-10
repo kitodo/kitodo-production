@@ -59,7 +59,7 @@ public class ExportMets {
 	protected Helper help = new Helper();
 	protected Prefs myPrefs;
 
-	protected static final Logger myLogger = Logger.getLogger(ExportMets.class);
+	private static final Logger logger = Logger.getLogger(ExportMets.class);
 
 	/**
 	 * DMS-Export in das Benutzer-Homeverzeichnis
@@ -331,10 +331,10 @@ public class ExportMets {
 					}
 				}
 			} catch (IndexOutOfBoundsException e) {
-				myLogger.error(e);
+				logger.error(e);
 				return false;
 			} catch (InvalidImagesException e) {
-				myLogger.error(e);
+				logger.error(e);
 				return false;
 			}
 		} else {
