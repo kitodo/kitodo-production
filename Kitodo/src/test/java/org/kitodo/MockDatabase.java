@@ -124,6 +124,7 @@ public class MockDatabase {
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
+        firstProject.setUseDmsImport(true);
         LocalDate localDate = new LocalDate(2016,10,20);
         firstProject.setStartDate(localDate.toDate());
         localDate = new LocalDate(2017,10,20);
@@ -131,6 +132,28 @@ public class MockDatabase {
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
         projectService.save(firstProject);
+
+        Project secondProject = new Project();
+        secondProject.setTitle("Second project");
+        secondProject.setUseDmsImport(false);
+        localDate = new LocalDate(2016,11,10);
+        secondProject.setStartDate(localDate.toDate());
+        localDate = new LocalDate(2017,9,15);
+        secondProject.setEndDate(localDate.toDate());
+        secondProject.setNumberOfPages(80);
+        secondProject.setNumberOfVolumes(4);
+        projectService.save(secondProject);
+
+        Project thirdProject = new Project();
+        thirdProject.setTitle("Archived project");
+        localDate = new LocalDate(2014,11,10);
+        thirdProject.setStartDate(localDate.toDate());
+        localDate = new LocalDate(2016,9,15);
+        thirdProject.setEndDate(localDate.toDate());
+        thirdProject.setNumberOfPages(160);
+        thirdProject.setNumberOfVolumes(5);
+        thirdProject.setProjectIsArchived(true);
+        projectService.save(thirdProject);
     }
 
     public static void insertRulesets() throws DAOException {
@@ -159,13 +182,13 @@ public class MockDatabase {
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
-        firstTask.setProcessingStatus(1);
         firstTask.setEditTypeEnum(TaskEditType.ADMIN);
         LocalDate localDate = new LocalDate(2016,10,20);
         firstTask.setProcessingBegin(localDate.toDate());
         localDate = new LocalDate(2016,12,24);
         firstTask.setProcessingEnd(localDate.toDate());
         firstTask.setProcessingUser(userService.find(1));
+        firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
         firstTask.setProcess(processService.find(1));
         firstTask.setUsers(userService.findAll());
         List<UserGroup> userGroups = new ArrayList<>();
@@ -177,7 +200,6 @@ public class MockDatabase {
         secondTask.setTitle("Blocking");
         secondTask = taskService.setCorrectionStep(secondTask);
         secondTask.setOrdering(2);
-        secondTask.setProcessingStatus(3);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016,9,25);
         secondTask.setProcessingBegin(localDate.toDate());
@@ -196,14 +218,25 @@ public class MockDatabase {
         Task thirdTask = new Task();
         thirdTask.setTitle("Testing and Blocking");
         thirdTask.setOrdering(3);
-        thirdTask.setProcessingStatus(3);
         thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2017,1,25);
         thirdTask.setProcessingBegin(localDate.toDate());
-        secondTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         thirdTask.setProcess(processService.find(2));
         thirdTask.setUsers(userService.findAll());
         taskService.save(thirdTask);
+
+        Task fourthTask = new Task();
+        fourthTask.setTitle("Progress");
+        fourthTask.setOrdering(4);
+        fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2017,1,29);
+        fourthTask.setProcessingBegin(localDate.toDate());
+        fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        fourthTask.setProcessingUser(userService.find(2));
+        fourthTask.setProcess(processService.find(2));
+        fourthTask.setUsers(userService.findAll());
+        taskService.save(fourthTask);
     }
 
     public static void insertTemplates() throws DAOException {
