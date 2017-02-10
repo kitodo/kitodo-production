@@ -38,7 +38,6 @@ public class DocketServiceTest {
         DocketService docketService = new DocketService();
 
         List<Docket> dockets = docketService.findAll();
-        System.out.println("All dockets: " + dockets.toString());
         assertEquals("Not all dockets were found in database!", 2, dockets.size());
     }
 }
