@@ -39,7 +39,7 @@ public class TaskServiceTest {
         TaskService taskService = new TaskService();
 
         List<Task> tasks = taskService.findAll();
-        assertEquals("Not all tasks were found in database!", 3, tasks.size());
+        assertEquals("Not all tasks were found in database!", 4, tasks.size());
     }
 
     @Test
