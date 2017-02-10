@@ -66,7 +66,7 @@ public class PicaPlugin implements Plugin {
 	 * “DocLanguage”) The file is optional. To use this functionality, the file
 	 * must be located in {@link #configDir}.
 	 */
-	static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
+	static final String LANGUAGES_MAPPING_FILE = "kitodo_pica_opacLanguages.txt";
 
 	/**
 	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
