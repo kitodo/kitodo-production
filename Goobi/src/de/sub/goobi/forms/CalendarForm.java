@@ -658,7 +658,7 @@ public class CalendarForm {
 	 * <p>
 	 * The issue colour presets are samples which have been chosen to provide
 	 * distinguishability also for users with red-green color vision deficiency.
-	 * Arbitrary colours can be defined in goobi_config.properties by setting
+	 * Arbitrary colours can be defined in kitodo_config.properties by setting
 	 * the property “issue.colours”.
 	 * </p>
 	 */

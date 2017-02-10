@@ -403,7 +403,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 	}
 
 	/**
-	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder 
+	 * starts copying all directories configured in kitodo_config.properties parameter "processDirs" to export folder 
 	 * 
 	 * @param myProzess the process object
 	 * @param zielVerzeichnis the destination directory
