@@ -168,7 +168,7 @@ public class BenutzerverwaltungForm extends BasisForm {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
 		String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes" + File.separator
-				+ "goobi_loginBlacklist.txt";
+				+ "kitodo_loginBlacklist.txt";
 		/* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
 		try (
 			FileInputStream fis = new FileInputStream(filename);
