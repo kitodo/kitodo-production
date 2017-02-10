@@ -13,12 +13,17 @@ package org.kitodo.services;
 
 import de.sub.goobi.helper.FilesystemHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
+import ugh.dl.DigitalDocument;
 
 import static org.junit.Assert.*;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
@@ -218,15 +223,150 @@ public class ProcessServiceTest {
         assertTrue("BatchId doesn't match to given plain text!", condition);
     }
 
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetTasksSize() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        int actual = processService.getTasksSize(process);
+        assertEquals("Tasks' size is incorrect!", 1, actual);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetHistorySize() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        int actual = processService.getHistorySize(process);
+        assertEquals("History's size is incorrect!", 1, actual);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetPropertiesSize() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        int actual = processService.getPropertiesSize(process);
+        assertEquals("Properties' size is incorrect!", 1, actual);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetWorkpiecesSize() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        int actual = processService.getWorkpiecesSize(process);
+        assertEquals("Workpieces' size is incorrect!", 1, actual);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetTemplatesSize() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        int actual = processService.getTemplatesSize(process);
+        assertEquals("Templates' size is incorrect!", 1, actual);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetCurrentTask() throws Exception {
+        ProcessService processService = new ProcessService();
+        TaskService taskService = new TaskService();
+
+        Process process = processService.find(2);
+        Task actual = processService.getCurrentTask(process);
+        Task expected = taskService.find(2);
+        assertEquals("Task doesn't match to given task!", expected, actual);
+    }
+
+    @Test
+    public void shouldGetCreationDateAsString() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        String actual = processService.getCreationDateAsString(process);
+        assertEquals("Creation date doesn't match to given plain text!", "20.01.2017 00:00:00", actual);
+    }
+
     @Ignore("progress contains only 000000")
     @Test
     public void shouldGetProgress() throws Exception {
         ProcessService processService = new ProcessService();
 
-        Process process = processService.find(1);
-        System.out.println("Progress: " + processService.getProgress(process));
+        Process process = processService.find(2);
+        //System.out.println("Progress: " + processService.getProgress(process));
         boolean condition = processService.getProgress(process).equals("");
         assertTrue("Progress doesn't match given plain text!", condition);
+    }
+
+    @Ignore("progress is not calculated correctly - method needs to be fix")
+    @Test
+    public void shouldGetProgressOpen() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        //System.out.println("Progress: " + processService.getProgressOpen(process));
+        int condition = processService.getProgressOpen(process);
+        assertEquals("Progress doesn't match given plain text!", 1, condition);
+    }
+
+    @Ignore("progress is not calculated correctly - method needs to be fix")
+    @Test
+    public void shouldGetProgressInProcessing() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        //System.out.println("Progress: " + processService.getProgressInProcessing(process));
+        int condition = processService.getProgressInProcessing(process);
+        assertEquals("Progress doesn't match given plain text!", 1, condition);
+    }
+
+    @Ignore("progress is not calculated correctly - method needs to be fix")
+    @Test
+    public void shouldGetProgressClosed() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        //System.out.println("Progress: " + processService.getProgressClosed(process));
+        int condition = processService.getProgressClosed(process);
+        assertEquals("Progress doesn't match given plain text!", 1, condition);
+    }
+
+    @Test
+    public void shouldGetMetadataFilePath() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        //TODO: solve problem of paths - it will be done with Path class!
+        Process process = processService.find(1);
+        String directory = processService.getMetadataFilePath(process);
+        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\meta.xml");
+        assertTrue("Metadata file path doesn't match to given file path!", condition);
+    }
+
+    @Test
+    public void shouldGetTemplateFilePath() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        String directory = processService.getTemplateFilePath(process);
+        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\template.xml");
+        assertTrue("Template file path doesn't match to given file path!", condition);
+    }
+
+    @Test
+    public void shouldGetFulltextFilePath() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        String directory = processService.getFulltextFilePath(process);
+        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\fulltext.xml");
+        assertTrue("Fulltext file path doesn't match to given file path!", condition);
     }
 
     @Ignore("no idea how check if it is correct - Fileformat class")
@@ -237,6 +377,149 @@ public class ProcessServiceTest {
         Process process = processService.find(1);
         System.out.println(processService.readMetadataFile(process));
         boolean condition = processService.readMetadataFile(process).equals("");
-        assertTrue("Images tif directory doesn't match to given directory!", condition);
+        assertTrue("It was not possible to read metadata file!", condition);
     }
+
+    @Ignore("no idea how check if it is correct - Fileformat class")
+    @Test
+    public void shouldWriteMetadataFile() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        //boolean condition = processService.writeMetadataFile(process).equals("");
+        //assertTrue("It was not possible to write metadata file!", condition);
+    }
+
+    @Ignore("no idea how check if it is correct - Fileformat class")
+    @Test
+    public void shouldReadMetadataAsTemplateFile() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        System.out.println(processService.readMetadataAsTemplateFile(process));
+        boolean condition = processService.readMetadataAsTemplateFile(process).equals("");
+        assertTrue("It was not possible to read metadata as template file!", condition);
+    }
+
+    @Ignore("no idea how check if it is correct - Fileformat class")
+    @Test
+    public void shouldWriteMetadataAsTemplateFile() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        //should return true or false
+        processService.writeMetadataAsTemplateFile(null, process);
+        boolean condition = false;
+        assertTrue("It was not possible to write metadata as template file!", condition);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetContainsUnreachableSteps() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        boolean condition = processService.getContainsUnreachableSteps(process);
+        assertTrue("Process doesn't contain unreachable tasks!", condition);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldCheckIfIsImageFolderInUse() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        boolean condition = !processService.isImageFolderInUse(process);
+        assertTrue("Image folder is in use but it shouldn't be!", condition);
+
+        process = processService.find(2);
+        condition = processService.isImageFolderInUse(process);
+        assertTrue("Image folder is not in use but it should be!", condition);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetImageFolderInUseUser() throws Exception {
+        ProcessService processService = new ProcessService();
+        UserService userService = new UserService();
+
+        Process process = processService.find(2);
+        User expected = userService.find(2);
+        User actual = processService.getImageFolderInUseUser(process);
+        assertEquals("Processing user doesn't match to the given user!", expected, actual);
+    }
+
+    @Ignore(" java.lang.NullPointerException at org.kitodo.services.ProcessService.downloadDocket(ProcessService.java:984)")
+    @Test
+    public void shouldDownloadDocket() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        //TODO: method downloadDocket should return boolean not empty string
+        boolean condition = processService.downloadDocket(process).equals("");
+        assertTrue("Processing user doesn't match to the given user!", condition);
+    }
+
+    @Ignore("problem with lazy fetching")
+    @Test
+    public void shouldGetFirstOpenStep() throws Exception {
+        ProcessService processService = new ProcessService();
+        TaskService taskService = new TaskService();
+
+        Process process = processService.find(2);
+        Task expected = taskService.find(2);
+        Task actual = processService.getFirstOpenStep(process);
+        assertEquals("First open task doesn't match to the given task!", expected, actual);
+    }
+
+    @Test
+    public void shouldAddToWikiField() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        process.setWikiField(process.getWikiField() + "<p>test</p>");
+        Process actual = processService.addToWikiField("test", process);
+        assertEquals("Processes have different wikiField values!", process, actual);
+    }
+
+    @Ignore("find out what exactly was created")
+    @Test
+    public void shouldCreateProcessDirs() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(2);
+        //assertEquals("Process directories are not created!", expected, actual);
+    }
+
+    @Ignore("not sure how it should look")
+    @Test
+    public void shouldGetDigitalDocument() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        DigitalDocument expected = new DigitalDocument();
+        DigitalDocument actual = processService.getDigitalDocument(processService.find(2));
+        //assertEquals("Digital documents are not equal!", expected, actual);
+    }
+
+    @Ignore("not sure how it should look")
+    @Test
+    public void shouldFilterForCorrectionSolutionMessages() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<ProcessProperty> expected = new ArrayList<>();
+        List<ProcessProperty> actual = processService.filterForCorrectionSolutionMessages(new ArrayList<ProcessProperty>());
+        assertEquals("Process properties are not equal to given process properties!", expected, actual);
+    }
+
+    @Ignore("not sure how it should look")
+    @Test
+    public void shouldGetSortedCorrectionSolutionMessages() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = processService.find(1);
+        List<ProcessProperty> expected = new ArrayList<>();
+        List<ProcessProperty> actual = processService.getSortedCorrectionSolutionMessages(process);
+        assertEquals("Process properties are not equal to given process properties!", expected, actual);
+    }
+
 }
