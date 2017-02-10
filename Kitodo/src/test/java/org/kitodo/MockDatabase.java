@@ -19,6 +19,7 @@ import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.*;
 
 import static org.kitodo.data.database.beans.Batch.Type.*;
@@ -181,6 +182,7 @@ public class MockDatabase {
         localDate = new LocalDate(2016,9,25);
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(userService.find(3));
+        secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
         secondTask.setProcess(processService.find(2));
         secondTask.setUsers(userService.findAll());
         secondTask.setScriptName1("scriptName");
@@ -198,6 +200,7 @@ public class MockDatabase {
         thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2017,1,25);
         thirdTask.setProcessingBegin(localDate.toDate());
+        secondTask.setProcessingStatusEnum(TaskStatus.INWORK);
         thirdTask.setProcess(processService.find(2));
         thirdTask.setUsers(userService.findAll());
         taskService.save(thirdTask);
