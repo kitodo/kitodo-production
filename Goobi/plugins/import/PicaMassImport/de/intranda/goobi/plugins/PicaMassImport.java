@@ -832,7 +832,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
 		String address = "";
 
-		try (FileInputStream istream = new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml"))) {
+		try (FileInputStream istream = new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(), "kitodo_pica_opac.xml"))) {
 
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

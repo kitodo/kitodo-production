@@ -206,7 +206,7 @@ public class ConfigOpac {
 	 * The function getRestrictionsForCatalogue() returns the content of all
 	 * <kbd>&lt;restriction&gt;</kbd> elements from the
 	 * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
-	 * <kbd>goobi_opac.xml</kbd>.
+	 * <kbd>kitodo_pica_opac.xml</kbd>.
 	 *
 	 * The function will return an empty list if there are no such entries for
 	 * the given catalogue.
