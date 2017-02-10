@@ -37,6 +37,16 @@ public class ProcessDAO extends BaseDAO {
     }
 
     /**
+     * The function findAll() retrieves all processes from the database.
+     *
+     * @return all persisted processes
+     */
+    @SuppressWarnings("unchecked")
+    public List<Process> findAll() {
+        return retrieveAllObjects(Process.class);
+    }
+
+    /**
      *
      * @param process object
      * @param progress service
