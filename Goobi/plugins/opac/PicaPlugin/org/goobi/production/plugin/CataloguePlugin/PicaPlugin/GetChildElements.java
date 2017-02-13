@@ -40,7 +40,7 @@ class GetChildElements implements Iterable<Element>, Iterator<Element> {
 
     /**
      * Returns the next element, if any, or {@code null}.
-     * 
+     *
      * @param node
      *            node that might be the next candidate
      * @return the next element, or {@code null}
