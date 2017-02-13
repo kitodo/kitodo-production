@@ -17,11 +17,13 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
  * is used inside a {@code ResolveRule}. Example usage:
  *
  * <pre>
- * &lt;catalogue title="…">
- *     &lt;!-- ... -->
- *     &lt;resolve tag="028C" subtag="9" searchField="12">
- *         &lt;map tag="003U" subtag="a" asSubtag="g" />
- *     &lt;/resolve>
+ * {@code
+ * <catalogue title="…">
+ *     <!-- ... -->
+ *     <resolve tag="028C" subtag="9" searchField="12">
+ *         <map tag="003U" subtag="a" asSubtag="g" />
+ *     </resolve>
+ * }
  * </pre>
  *
  * In this case, the value from PICA field 028C subfield 9 is taken to execute a

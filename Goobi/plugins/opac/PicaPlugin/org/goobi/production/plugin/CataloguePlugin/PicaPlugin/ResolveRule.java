@@ -32,34 +32,40 @@ import org.xml.sax.SAXException;
  * same field of the main record. Configuration:
  *
  * <pre>
- * &lt;catalogue title="…">
- *     &lt;!-- ... -->
- *     &lt;resolve tag="028C" subtag="9" searchField="12">
- *         &lt;map tag="003U" subtag="a" asSubtag="g" />
- *     &lt;/resolve>
+ * {@code
+ * <catalogue title="…">
+ *     <!-- ... -->
+ *     <resolve tag="028C" subtag="9" searchField="12">
+ *         <map tag="003U" subtag="a" asSubtag="g" />
+ *     </resolve>
+ * }
  * </pre>
  *
  * Example field on a record:
  *
  * <pre>
- * &lt;field tag="028C">
- *     &lt;subfield code="d">Dirk&lt;/subfield>
- *     &lt;subfield code="a">Fahlenkamp&lt;/subfield>
- *     &lt;subfield code="9">69749487X&lt;/subfield>
- *     &lt;subfield code="8">Fahlenkamp, Dirk *1952-*&lt;/subfield>
- * &lt;/field>
+ * {@code
+ * <field tag="028C">
+ *     <subfield code="d">Dirk</subfield>
+ *     <subfield code="a">Fahlenkamp</subfield>
+ *     <subfield code="9">69749487X</subfield>
+ *     <subfield code="8">Fahlenkamp, Dirk *1952-*</subfield>
+ * </field>
+ * }
  * </pre>
  *
  * Example result after successful resolving:
  *
  * <pre>
- * &lt;field tag="028C">
- *     &lt;subfield code="d">Dirk&lt;/subfield>
- *     &lt;subfield code="a">Fahlenkamp&lt;/subfield>
- *     &lt;subfield code="9">69749487X&lt;/subfield>
- *     &lt;subfield code="8">Fahlenkamp, Dirk *1952-*&lt;/subfield>
- *     &lt;subfield code="g">http://d-nb.info/gnd/172559227&lt;/subfield>
- * &lt;/field>
+ * {@code
+ * <field tag="028C">
+ *     <subfield code="d">Dirk</subfield>
+ *     <subfield code="a">Fahlenkamp</subfield>
+ *     <subfield code="9">69749487X</subfield>
+ *     <subfield code="8">Fahlenkamp, Dirk *1952-*</subfield>
+ *     <subfield code="g">http://d-nb.info/gnd/172559227</subfield>
+ * </field>
+ * }
  * </pre>
  *
  * @author Matthias Ronge
