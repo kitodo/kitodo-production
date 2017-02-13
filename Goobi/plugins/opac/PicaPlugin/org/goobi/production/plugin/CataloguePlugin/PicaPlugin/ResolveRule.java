@@ -128,8 +128,8 @@ class ResolveRule {
 
 	/**
 	 * PICA subfield code of the subfield that has the ID to resolve. Typical
-	 * values match the pattern <code>[0-9a-z]</code>. An example value is "9"
-	 * for the PPN of the person record for the person.
+	 * values match the pattern {@code [0-9a-z]}. An example value is "9" for
+	 * the PPN of the person record for the person.
 	 */
 	String subtag;
 
