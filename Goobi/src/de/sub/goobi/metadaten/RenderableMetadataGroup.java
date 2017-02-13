@@ -39,7 +39,7 @@ import de.sub.goobi.helper.Util;
  * types to choose from and the members of the chosen type in order to browse
  * and alter their values.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class RenderableMetadataGroup extends RenderableMetadatum {
 

@@ -47,7 +47,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * The class CreateNewspaperProcessesTask is a LongRunningTask to create
  * processes from a course of appearance.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class CreateNewspaperProcessesTask extends EmptyTask {
 

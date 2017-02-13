@@ -23,7 +23,7 @@ import org.joda.time.format.DateTimeFormatter;
  * calendar dates. All functionality is realized using the org.joda.time.*
  * library.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class DateUtils {
 	/**

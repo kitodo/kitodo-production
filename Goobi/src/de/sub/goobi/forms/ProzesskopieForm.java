@@ -115,7 +115,7 @@ public class ProzesskopieForm {
 	 * in question this way if they are concerning elements that are rendered by
 	 * iterating along a list.
 	 *
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	public class SelectableHit {
 		/**

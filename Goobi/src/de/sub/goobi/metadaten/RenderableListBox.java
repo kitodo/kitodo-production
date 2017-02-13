@@ -28,7 +28,7 @@ import ugh.dl.MetadataType;
  * Backing bean for a select list style input element to edit a metadatum with
  * the option to select one or more predefined values renderable by JSF.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class RenderableListBox extends RenderableMetadatum implements RenderableGroupableMetadatum {
 

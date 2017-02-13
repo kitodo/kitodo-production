@@ -30,7 +30,7 @@ import com.sharkysoft.util.UnreachableCodeException;
  * The class IndividualIssue is final.
  * </p>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class IndividualIssue {
 	/**

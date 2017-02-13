@@ -23,7 +23,7 @@ import ugh.dl.DocStruct;
  * structure nodes relative to the respective document structure that the result
  * of the operation shall be written to for reading from them.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class DestinationReferenceSelector extends DataSelector {
 

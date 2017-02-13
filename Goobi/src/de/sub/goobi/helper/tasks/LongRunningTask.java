@@ -18,7 +18,7 @@ import de.sub.goobi.helper.Helper;
 
 /**
  * @author unascribed
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  * @deprecated New task implementations should directly implement EmptyTask.
  */
 @Deprecated

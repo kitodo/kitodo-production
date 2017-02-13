@@ -17,7 +17,7 @@ import org.apache.commons.configuration.ConfigurationException;
  * A string selector will always return the string used to create it. It can be
  * used for static arguments.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class StringSelector extends DataSelector {
 

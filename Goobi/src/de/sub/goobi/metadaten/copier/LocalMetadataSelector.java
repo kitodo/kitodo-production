@@ -26,7 +26,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * A LocalMetadataSelector provides methods to retrieve or modify metadata on a
  * document structure node.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class LocalMetadataSelector extends MetadataSelector {
 	private static final Logger LOG = Logger.getLogger(LocalMetadataSelector.class);

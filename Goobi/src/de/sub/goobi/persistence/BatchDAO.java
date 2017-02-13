@@ -24,7 +24,7 @@ import de.sub.goobi.helper.exceptions.DAOException;
  * The class BatchDAO provides for to create, restore, update and delete
  * {@link de.sub.goobi.beans.Batch} objects by Hibernate.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class BatchDAO extends BaseDAO {
 	private static final long serialVersionUID = 1L;

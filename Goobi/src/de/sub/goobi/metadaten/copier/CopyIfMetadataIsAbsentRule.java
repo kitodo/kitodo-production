@@ -27,7 +27,7 @@ import org.apache.commons.configuration.ConfigurationException;
  * <code>/*[0]@TitleDocMain ""= /@TitleDocMain</code> − copy the main title from
  * the top struct to its first child element if it doesn’t have a main tile yet
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
 

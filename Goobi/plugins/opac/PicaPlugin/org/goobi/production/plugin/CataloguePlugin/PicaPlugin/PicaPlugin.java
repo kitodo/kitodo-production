@@ -71,7 +71,7 @@ import ugh.fileformats.opac.PicaPlus;
  *
  * @author Partly based on previous works of other authors who didn’t leave
  *         their names
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 @PluginImplementation
 public class PicaPlugin implements Plugin {

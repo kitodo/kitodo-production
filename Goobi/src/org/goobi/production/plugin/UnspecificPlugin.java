@@ -60,7 +60,7 @@ import com.sharkysoft.util.UnreachableCodeException;
  * in English.
  * </p>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public abstract class UnspecificPlugin {
 	/**

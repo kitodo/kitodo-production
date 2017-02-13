@@ -25,7 +25,7 @@ import ugh.dl.MetadataType;
  * Backing bean for a (multi-line) text input element to edit metadatum
  * renderable by JSF.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class RenderableLineEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
 		SingleValueRenderableMetadatum {

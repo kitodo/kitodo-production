@@ -37,7 +37,7 @@ import org.joda.time.LocalDate;
  * object which provides the dates of first and last appearance.
  * </p>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Issue {
 

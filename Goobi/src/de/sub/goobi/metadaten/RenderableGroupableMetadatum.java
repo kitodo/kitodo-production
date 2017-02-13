@@ -26,7 +26,7 @@ import ugh.dl.Metadata;
  * restricted visibility cannot be defined here. They will be defined in the
  * abstract class {@link RenderableGroupableMetadatum}.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 interface RenderableGroupableMetadatum {
 

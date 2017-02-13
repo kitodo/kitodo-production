@@ -16,7 +16,7 @@ import java.lang.reflect.Field;
 /**
  * A VariableSelector provides methods to retrieve variables used in Goobi.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class VariableSelector extends DataSelector {
 

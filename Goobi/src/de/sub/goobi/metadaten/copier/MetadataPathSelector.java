@@ -30,7 +30,7 @@ import com.sharkysoft.util.UnreachableCodeException;
  * A MetadataPathSelector provides methods to retrieve or modify document
  * structure nodes on a document structure node.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class MetadataPathSelector extends MetadataSelector {
 	/**

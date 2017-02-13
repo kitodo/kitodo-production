@@ -25,7 +25,7 @@ import de.sub.goobi.persistence.BatchDAO;
  * The class Batch represents a user-definable, unordered collection of
  * processes that methods can be applied on in batch processing.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Batch {
 	/**
@@ -41,7 +41,7 @@ public class Batch {
 	 * <dd>forms the complete edition of a serial publication</dd>
 	 * </dl>
 	 *
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	public enum Type {
 		LOGISTIC, NEWSPAPER, SERIAL;

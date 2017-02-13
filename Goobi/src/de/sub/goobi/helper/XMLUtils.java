@@ -33,7 +33,7 @@ import org.xml.sax.SAXException;
 /**
  * The class XMLUtils contains an omnium-gatherum of functions that work on XML.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class XMLUtils {
 

@@ -20,7 +20,7 @@ import java.util.Collection;
  * implemented in a way that they modify both columns in the same way, thus
  * granting that they will always have the same length.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class ArrayListMap<K, V> {
 

@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  * Collection of simple utility methods.
  * 
  * @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 
 public final class Util {

@@ -26,7 +26,7 @@ import javax.ws.rs.core.MediaType;
  * TODO: Most of the static functions currently located in “Helper.java” do
  * belong here.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class FacesUtils {
 

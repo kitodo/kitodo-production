@@ -16,7 +16,7 @@ package de.sub.goobi.metadaten;
  * which does only hold one single value. It provides a setValue() and
  * getValue() method.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 interface SingleValueRenderableMetadatum {
 	/**

@@ -37,7 +37,7 @@ import com.sharkysoft.util.NotImplementedException;
  * <dd>All issues of a year are scanned in one process.</dd>
  * </dl>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public enum Granularity {
 	ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS;

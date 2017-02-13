@@ -38,7 +38,7 @@ import com.sharkysoft.util.UnreachableCodeException;
  * itself, whereas a RenderablePersonMetadataGroup, which is a special case of a
  * RenderableMetadataGroup, can.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public abstract class RenderableMetadatum {
 

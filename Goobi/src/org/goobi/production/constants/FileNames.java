@@ -16,7 +16,7 @@ package org.goobi.production.constants;
  * 
  * TODO: Make all file name String literals constants here.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class FileNames {
 	/**

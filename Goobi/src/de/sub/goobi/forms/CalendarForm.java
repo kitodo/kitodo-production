@@ -47,13 +47,13 @@ import de.sub.goobi.helper.XMLUtils;
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
  * enter the course of appearance of a newspaper.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class CalendarForm {
 	/**
 	 * The class Cell represents a single table cell on the calendar sheet.
 	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	public static class Cell {
 		/**
@@ -171,7 +171,7 @@ public class CalendarForm {
 	 * to manage the properties of an issue using Faces, including the option of
 	 * its deletion.
 	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	public class IssueController {
 		/**
@@ -458,7 +458,7 @@ public class CalendarForm {
 	 * The class IssuesOption represents the option that an Issue may have been
 	 * issued on a certain day in history.
 	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	public static class IssueOption {
 		/**
