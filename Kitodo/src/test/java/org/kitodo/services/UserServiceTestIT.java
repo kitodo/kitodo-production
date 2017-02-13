@@ -16,17 +16,33 @@ import de.sub.goobi.config.ConfigMain;
 import java.io.File;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
  * Tests for UserService class.
  */
-public class UserServiceTest {
+public class UserServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertBatches();
+        MockDatabase.insertDockets();
+        MockDatabase.insertRulesets();
+        MockDatabase.insertLdapGroups();
+        MockDatabase.insertUsers();
+        MockDatabase.insertUserGroups();
+        MockDatabase.insertProjects();
+        MockDatabase.insertProcesses();
+        MockDatabase.insertTasks();
+    }
 
     @Test
     public void shouldFindUser() throws Exception {

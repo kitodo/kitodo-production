@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for ProjectService class.
  */
-public class ProjectServiceTest {
+public class ProjectServiceTestIT {
 
     @Test
     public void shouldFindProject() throws Exception {

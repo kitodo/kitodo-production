@@ -13,17 +13,33 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
  * Tests for TaskService class.
  */
-public class TaskServiceTest {
+public class TaskServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertBatches();
+        MockDatabase.insertDockets();
+        MockDatabase.insertRulesets();
+        MockDatabase.insertLdapGroups();
+        MockDatabase.insertUsers();
+        MockDatabase.insertUserGroups();
+        MockDatabase.insertProjects();
+        MockDatabase.insertProcesses();
+        MockDatabase.insertTasks();
+    }
 
     @Test
     public void shouldFindTask() throws Exception {

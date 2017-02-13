@@ -16,13 +16,17 @@ import de.sub.goobi.helper.FilesystemHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+
 import ugh.dl.DigitalDocument;
 
 import static org.junit.Assert.*;
@@ -31,7 +35,19 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 /**
  * Tests for ProcessService class.
  */
-public class ProcessServiceTest {
+public class ProcessServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertBatches();
+        MockDatabase.insertDockets();
+        MockDatabase.insertRulesets();
+        MockDatabase.insertLdapGroups();
+        MockDatabase.insertUsers();
+        MockDatabase.insertUserGroups();
+        MockDatabase.insertProjects();
+        MockDatabase.insertProcesses();
+    }
 
     @Test
     public void shouldFindProcess() throws Exception {
@@ -47,7 +63,7 @@ public class ProcessServiceTest {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
-        assertEquals("Not all processes were found in database!", 2, processes.size());
+        assertEquals("Not all processes were found in database!", 4, processes.size());
     }
 
     @Test
