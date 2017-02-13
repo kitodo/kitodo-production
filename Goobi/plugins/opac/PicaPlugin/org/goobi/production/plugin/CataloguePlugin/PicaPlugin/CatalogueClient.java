@@ -32,11 +32,11 @@ import org.xml.sax.XMLReader;
 
 /**
  * Connects to OPAC system.
- * 
+ *
  * TODO Talk with the GBV if the URLs are ok this way
- * 
+ *
  * TODO check if correct character encodings are returned
- * 
+ *
  * @author Ludwig
  */
 
@@ -112,10 +112,10 @@ class CatalogueClient {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * Note that up to now the search item list is always retrieved and parsed.
 	 * TODO check for local availability.
-	 * 
+	 *
 	 * @param serverAddress
 	 *            the serveraddress of the opac
 	 * @param port
@@ -138,7 +138,7 @@ class CatalogueClient {
 	/**
 	 * Gets the number of hits for the query in the specified field from the
 	 * OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query string you are looking for.
 	 * @return returns the number of hits.
@@ -155,7 +155,7 @@ class CatalogueClient {
 	/**
 	 * Gets the formatted picaplus data of the specified hits for the query from
 	 * the OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query string you are looking for.
 	 * @param fieldKey
@@ -182,7 +182,7 @@ class CatalogueClient {
 	/**
 	 * Gets the formatted picaplus data of the specified hits for the query from
 	 * the OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query you are looking for.
 	 * @param start
@@ -210,7 +210,7 @@ class CatalogueClient {
 
 	/**
 	 * Apply resolve rules on a result note set.
-	 * 
+	 *
 	 * @param rules
 	 *            Rules to apply
 	 * @param root
@@ -249,7 +249,7 @@ class CatalogueClient {
 	/**
 	 * Gets the raw picaplus data for the specified hits for the query in the
 	 * specified field from the OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query you are looking for.
 	 * @param start
@@ -310,7 +310,7 @@ class CatalogueClient {
 
 	/**
 	 * Retrieves a single hit from the catalogue system.
-	 * 
+	 *
 	 * @param numberOfHits
 	 *            The index of the hit to return
 	 * @param timeout
@@ -327,7 +327,7 @@ class CatalogueClient {
 
 	/**
 	 * Queries the catalogue system.
-	 * 
+	 *
 	 * @param query
 	 *            The query you are looking for.
 	 * @return The search result as xml string.
@@ -426,7 +426,7 @@ class CatalogueClient {
 
 	/**
 	 * Helper method that parses an InputSource and returns a DOM Document.
-	 * 
+	 *
 	 * @param source
 	 *            The InputSource to parse
 	 * @return The resulting document
@@ -450,7 +450,7 @@ class CatalogueClient {
 
 	/**
 	 * Retrieves the content of the specified url from the serverAddress.
-	 * 
+	 *
 	 * @param url
 	 *            The requested url as string. Note that the string needs to be
 	 *            already url encoded.
@@ -514,7 +514,7 @@ class CatalogueClient {
 		return ids;
 	}
 
-	public void setTimeout(long timeout) {
+	void setTimeout(long timeout) {
 		this.timeout = timeout;
 	}
 }
