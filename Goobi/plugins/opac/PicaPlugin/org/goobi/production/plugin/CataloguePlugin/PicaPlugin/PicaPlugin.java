@@ -236,11 +236,9 @@ public class PicaPlugin implements Plugin {
 		Type type;
 		Fileformat ff;
 		try {
-			/* 
-			 * --------------------------------
-			 * Query OPAC and convert the DOM document returned to JDOM
-			 * --------------------------------
-			 */
+
+			// Query OPAC and convert the DOM document returned to JDOM
+
 			Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
 
 			// call OPAC beautifier
@@ -257,12 +255,9 @@ public class PicaPlugin implements Plugin {
 				typeID = type.getMappings().get(0);
 			}
 
-			/*
-			 * --------------------------------
-			 * if the hit is a volume from a multivolume volume, then
-			 * superordinate the compilation
-			 * --------------------------------
-			 */
+			/* if the hit is a volume from a multivolume volume, then
+			 * superordinate the compilation */
+
 			if (type.isMultiVolume()) {
 				// determine the PPN of the anthology
 				String multiVolumePpn = getPPNFromParent(myFirstHit, "036D", "9");
@@ -289,20 +284,17 @@ public class PicaPlugin implements Plugin {
 						DOMOutputter doutputter = new DOMOutputter();
 						myHitlist = doutputter.output(myJdomDocMultivolumeband);
 
-						// nevertheless, do not take the document, but the first
-						// child
+						/* nevertheless, do not take the document, but the first
+						 * child */
 
 						myHitlist = myHitlist.getFirstChild();
 					}
 				}
 			}
 
-			/*
-			 * --------------------------------
-			 * if the hit is a volume from a periodical volume, then
-			 * superordinate the series
-			 * --------------------------------
-			 */
+			/* if the hit is a volume from a periodical volume, then
+			 * superordinate the series */
+
 			if (type.isPeriodical()) {
 				// determine the PPN of the anthology
 				String serialPublicationPpn = getPPNFromParent(myFirstHit, "036F", "9");
@@ -329,19 +321,16 @@ public class PicaPlugin implements Plugin {
 						DOMOutputter doutputter = new DOMOutputter();
 						myHitlist = doutputter.output(myJdomDocMultivolumeband);
 
-						// nevertheless, do not take the document, but the first
-						// child
+						/* nevertheless, do not take the document, but the first
+						 * child */
 
 						myHitlist = myHitlist.getFirstChild();
 					}
 				}
 			}
 
-			/*
-			 * --------------------------------
-			 * if the hit is a contained work, then superordinated work
-			 * --------------------------------
-			 */
+			// if the hit is a contained work, then superordinated work
+
 			if (type.isContainedWork()) {
 				// determine the PPN of the superordinated work
 				String ueberGeordnetePpn = getPPNFromParent(myFirstHit, "021A", "9");
@@ -357,8 +346,8 @@ public class PicaPlugin implements Plugin {
 						Document myJdomDocParent = new DOMBuilder().build(myParentHitlist.getOwnerDocument());
 						Element myFirstHitParent = myJdomDocParent.getRootElement().getChild("record");
 
-						// take over all elements of the parent that are not
-						// yet available by themselves
+						/* take over all elements of the parent that are not
+						 * yet available by themselves */
 
 						if (myFirstHitParent.getChildren() != null) {
 							for (@SuppressWarnings("unchecked")
@@ -375,11 +364,7 @@ public class PicaPlugin implements Plugin {
 				}
 			}
 
-			/*
-			 * --------------------------------
-			 * create RDF file from the OPAC result
-			 * --------------------------------
-			 */
+			// create RDF file from the OPAC result
 
 			// access to Ugh classes
 			PicaPlus pp = new PicaPlus(preferences);
@@ -454,8 +439,8 @@ public class PicaPlugin implements Plugin {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 
-			// if it is the desired field, then return the value with the
-			// appropriate attribute
+			/* if it is the desired field, then return the value with the
+			 * appropriate attribute */
 
 			if (feldname.equals(inTagName)) {
 				return myElement;
@@ -491,14 +476,9 @@ public class PicaPlugin implements Plugin {
 		return myElement;
 	}
 
-	/*
-	 * #########################################################
-	 * #########################################################
-	 * ## Complement the DocStruct by additional OPAC details ##
-	 * #########################################################
-	 * #########################################################
+	/**
+	 * Complements the DigitalDocument by additional OPAC details.
 	 */
-
 	private static void checkMyOpacResult(DigitalDocument inDigDoc, Prefs inPrefs, Element myFirstHit,
 			Type type, String gattung) {
 		DocStruct topstruct = inDigDoc.getLogicalDocStruct();
@@ -506,11 +486,8 @@ public class PicaPlugin implements Plugin {
 		DocStruct topstructChild = null;
 		Element mySecondHit = null;
 
-		/*
-		 * --------------------------------
-		 * at multivolumes, still determine the child in XML and DocStruct
-		 * --------------------------------
-		 */
+		// at multivolumes, still determine the child in XML and DocStruct
+
 		if (type.isMultiVolume()) {
 			try {
 				topstructChild = topstruct.getAllChildren().get(0);
@@ -519,11 +496,8 @@ public class PicaPlugin implements Plugin {
 			mySecondHit = (Element) myFirstHit.getParentElement().getChildren().get(1);
 		}
 
-		/*
-		 * --------------------------------
-		 * insert available PPN as digital or analogous
-		 * --------------------------------
-		 */
+		// insert available PPN as digital or analogous
+
 		String ppn = getElementFieldValue(myFirstHit, "003@", "0");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDDigital", "");
 		if (gattung.toLowerCase().startsWith("o")) {
@@ -532,11 +506,8 @@ public class PicaPlugin implements Plugin {
 			UGHUtils.replaceMetadatum(topstruct, inPrefs, "CatalogIDSource", ppn);
 		}
 
-		/*
-		 * --------------------------------
-		 * if it is a multivolume, then check the PPN, too
-		 * --------------------------------
-		 */
+		// if it is a multivolume, then check the PPN, too
+
 		if ((topstructChild != null) && (mySecondHit != null)) {
 			String secondHitppn = getElementFieldValue(mySecondHit, "003@", "0");
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "CatalogIDDigital", "");
@@ -547,46 +518,34 @@ public class PicaPlugin implements Plugin {
 			}
 		}
 
-		/*
-		 * --------------------------------
-		 * clean up the main title
-		 * --------------------------------
-		 */
+		// clean up the main title
+
 		String myTitle = getElementFieldValue(myFirstHit, "021A", "a");
 
-		// if the full title was not written in the element, then have a look
-		// elsewhere (especially at contained work)
+		/* if the full title was not written in the element, then have a look
+		 * elsewhere (especially at contained work) */
 
 		if ((myTitle == null) || (myTitle.length() == 0)) {
 			myTitle = getElementFieldValue(myFirstHit, "021B", "a");
 		}
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMain", myTitle.replaceAll("@", ""));
 
-		/*
-		 * --------------------------------
-		 * sort title with conversion of umlauts
-		 * --------------------------------
-		 */
+		// sort title with conversion of diacritics
+
 		if (myTitle.indexOf("@") != -1) {
 			myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
 		}
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
 
-		/*
-		 * --------------------------------
-		 * clean up the main title at multivolumes
-		 * --------------------------------
-		 */
+		// clean up the main title at multivolumes
+
 		if ((topstructChild != null) && (mySecondHit != null)) {
 			String fulltitleMulti = getElementFieldValue(mySecondHit, "021A", "a").replaceAll("@", "");
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMain", fulltitleMulti);
 		}
 
-		/*
-		 * --------------------------------
-		 * at multivolumes, the sort title with conversion of umlauts
-		 * --------------------------------
-		 */
+		// at multivolumes, the sort title with conversion of diacritics
+
 		if ((topstructChild != null) && (mySecondHit != null)) {
 			String sortTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
 			if (sortTitleMulti.indexOf("@") != -1) {
@@ -595,63 +554,42 @@ public class PicaPlugin implements Plugin {
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortTitleMulti);
 		}
 
-		/*
-		 * --------------------------------
-		 * languages - conversion to two places
-		 * --------------------------------
-		 */
+		// languages - conversion to two places
+
 		Iterable<String> languages = getElementFieldValues(myFirstHit, "010@", "a");
 		languages = UGHUtils.convertLanguages(languages);
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "DocLanguage", languages);
 
-		/*
-		 * --------------------------------
-		 * at multivolumes, the languages - conversion to two places
-		 * --------------------------------
-		 */
+		// at multivolumes, the languages - conversion to two places
+
 		if ((topstructChild != null) && (mySecondHit != null)) {
 			Iterable<String> languagesMulti = getElementFieldValues(mySecondHit, "010@", "a");
 			languagesMulti = UGHUtils.convertLanguages(languagesMulti);
 			UGHUtils.replaceMetadatum(topstructChild, inPrefs, "DocLanguage", languagesMulti);
 		}
 
-		/*
-		 * --------------------------------
-		 * ISSN
-		 * --------------------------------
-		 */
+		// ISSN
+
 		String issn = getElementFieldValue(myFirstHit, "005A", "0");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "ISSN", issn);
 
-		/*
-		 * --------------------------------
-		 * Copyright
-		 * --------------------------------
-		 */
+		// Copyright
+
 		String copyright = getElementFieldValue(myFirstHit, "037I", "a");
 		UGHUtils.replaceMetadatum(boundbook, inPrefs, "copyrightimageset", copyright);
 
-		/*
-		 * --------------------------------
-		 * Format
-		 * --------------------------------
-		 */
+		// Format
+
 		String format = getElementFieldValue(myFirstHit, "034I", "a");
 		UGHUtils.replaceMetadatum(boundbook, inPrefs, "FormatSourcePrint", format);
 
-		/*
-		 * --------------------------------
-		 * Extent
-		 * --------------------------------
-		 */
+		// Extent
+
 		String extent = getElementFieldValue(myFirstHit, "034D", "a");
 		UGHUtils.replaceMetadatum(topstruct, inPrefs, "SizeSourcePrint", extent);
 
-		/*
-		 * --------------------------------
-		 * Shelf mark
-		 * --------------------------------
-		 */
+		// Shelf mark
+
 		String shm = getElementFieldValue(myFirstHit, "209A", "c");
 		if (shm.length() > 0) {
 			shm = "<" + shm + ">";
@@ -673,11 +611,8 @@ public class PicaPlugin implements Plugin {
 			UGHUtils.replaceMetadatum(boundbook, inPrefs, "shelfmarksource", shm.trim());
 		}
 
-		/*
-		 * --------------------------------
-		 * In case of magazines, insert another PeriodicalVolume as child
-		 * --------------------------------
-		 */
+		// In case of magazines, insert another PeriodicalVolume as child
+
 		if (type.isPeriodical() && (topstruct.getAllChildren() == null)) {
 			try {
 				DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
@@ -715,8 +650,8 @@ public class PicaPlugin implements Plugin {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 
-			// if it is the desired field, then return the value with the
-			// appropriate attribute
+			/* if it is the desired field, then return the value with the
+			 * appropriate attribute */
 
 			if (feldname.equals(inFieldName)) {
 				return getFieldValue(myElement, inAttributeName);
@@ -747,8 +682,8 @@ public class PicaPlugin implements Plugin {
 			Element myElement = iter2.next();
 			String feldname = myElement.getAttributeValue("tag");
 
-			// if it is the desired field, then return the value with the
-			// appropriate attribute
+			/* if it is the desired field, then return the value with the
+			 * appropriate attribute */
 
 			if (feldname.equals(inFieldName)) {
 				result.addAll(getFieldValues(myElement, inAttributeName));
