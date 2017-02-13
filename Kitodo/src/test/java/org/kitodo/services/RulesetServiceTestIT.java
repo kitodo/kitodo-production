@@ -13,10 +13,13 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
 
+import org.kitodo.data.database.exceptions.DAOException;
 import ugh.dl.Prefs;
 
 import static org.junit.Assert.*;
@@ -24,7 +27,12 @@ import static org.junit.Assert.*;
 /**
  * Tests for RulesetService class.
  */
-public class RulesetServiceTest {
+public class RulesetServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertRulesets();
+    }
 
     @Test
     public void shouldFindRuleset() throws Exception {

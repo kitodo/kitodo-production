@@ -13,16 +13,24 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
  * Tests for DocketService class.
  */
-public class DocketServiceTest {
+public class DocketServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertDockets();
+    }
 
     @Test
     public void shouldFindDocket() throws Exception {

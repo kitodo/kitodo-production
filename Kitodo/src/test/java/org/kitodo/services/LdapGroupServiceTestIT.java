@@ -11,16 +11,24 @@
 
 package org.kitodo.services;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
  * Tests for LdapGroupService class.
  */
-public class LdapGroupServiceTest {
+public class LdapGroupServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertLdapGroups();
+    }
 
     @Test
     public void shouldFindLdapGroup() throws Exception {
