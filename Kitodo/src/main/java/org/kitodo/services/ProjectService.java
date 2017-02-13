@@ -41,6 +41,10 @@ public class ProjectService {
         return projectDao.find(id);
     }
 
+    public List<Project> findAll() throws DAOException {
+        return projectDao.findAll();
+    }
+
     public void remove(Project project) throws DAOException {
         projectDao.remove(project);
     }

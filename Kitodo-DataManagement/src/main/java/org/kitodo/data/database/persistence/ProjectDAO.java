@@ -40,6 +40,16 @@ public class ProjectDAO extends BaseDAO {
     }
 
     /**
+     * The function findAll() retrieves all projects from the database.
+     *
+     * @return all persisted projects
+     */
+    @SuppressWarnings("unchecked")
+    public List<Project> findAll() {
+        return retrieveAllObjects(Project.class);
+    }
+
+    /**
      * Remove project object.
      *
      * @param project object
