@@ -11,9 +11,31 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.WorkpiecePropertyDAO;
 
 public class WorkpiecePropertyService {
+
+    private WorkpiecePropertyDAO workpiecePropertyDao = new WorkpiecePropertyDAO();
+
+    public void save(WorkpieceProperty workpieceProperty) throws DAOException {
+        workpiecePropertyDao.save(workpieceProperty);
+    }
+
+    public WorkpieceProperty find(Integer id) throws DAOException {
+        return workpiecePropertyDao.find(id);
+    }
+
+    public List<WorkpieceProperty> findAll() throws DAOException {
+        return workpiecePropertyDao.findAll();
+    }
+
+    public void remove(WorkpieceProperty workpieceProperty) throws DAOException {
+        workpiecePropertyDao.remove(workpieceProperty);
+    }
 
     public String getNormalizedTitle(WorkpieceProperty workpieceProperty) {
         return workpieceProperty.getTitle().replace(" ", "_").trim();
