@@ -18,6 +18,7 @@ import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.*;
@@ -298,6 +299,44 @@ public class MockDatabase {
     }
 
     public static void insertWorkpieces() throws DAOException {
+        ProcessService processService = new ProcessService();
+        WorkpieceService workpieceService = new WorkpieceService();
 
+        Workpiece firstWorkpiece = new Workpiece();
+        firstWorkpiece.setProcess(processService.find(1));
+        workpieceService.save(firstWorkpiece);
+
+        Workpiece secondWorkpiece = new Workpiece();
+        secondWorkpiece.setProcess(processService.find(1));
+        workpieceService.save(secondWorkpiece);
+    }
+
+    public static void insertWorkpieceProperties() throws DAOException {
+        WorkpieceService workpieceService = new WorkpieceService();
+        WorkpiecePropertyService workpiecePropertyService = new WorkpiecePropertyService();
+
+        WorkpieceProperty firstWorkpiece = new WorkpieceProperty();
+        firstWorkpiece.setTitle("title");
+        firstWorkpiece.setValue("value");
+        firstWorkpiece.setObligatory(true);
+        firstWorkpiece.setType(PropertyType.general);
+        firstWorkpiece.setChoice("choice");
+        LocalDate localDate = new LocalDate(2017,1,13);
+        firstWorkpiece.setCreationDate(localDate.toDate());
+        firstWorkpiece.setContainer(1);
+        firstWorkpiece.setWorkpiece(workpieceService.find(1));
+        workpiecePropertyService.save(firstWorkpiece);
+
+        WorkpieceProperty secondWorkpiece = new WorkpieceProperty();
+        secondWorkpiece.setTitle("workpiece");
+        secondWorkpiece.setValue("second");
+        secondWorkpiece.setObligatory(false);
+        secondWorkpiece.setType(PropertyType.CommandLink);
+        firstWorkpiece.setChoice("chosen");
+        localDate = new LocalDate(2017,1,14);
+        secondWorkpiece.setCreationDate(localDate.toDate());
+        secondWorkpiece.setContainer(2);
+        secondWorkpiece.setWorkpiece(workpieceService.find(1));
+        workpiecePropertyService.save(secondWorkpiece);
     }
 }
