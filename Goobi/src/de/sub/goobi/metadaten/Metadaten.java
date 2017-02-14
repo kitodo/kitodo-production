@@ -36,8 +36,7 @@ import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.production.lugh.AuthorityFileUtil;
 import org.kitodo.production.lugh.ld.*;
-import org.kitodo.production.metadata.model.pagination.*;
-import org.kitodo.production.metadata.model.pagination.Paginator;
+import org.kitodo.production.lugh.pagination.*;
 
 import com.hp.hpl.jena.shared.JenaException;
 

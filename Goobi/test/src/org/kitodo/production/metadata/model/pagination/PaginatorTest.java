@@ -13,6 +13,7 @@ package org.kitodo.production.metadata.model.pagination;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.kitodo.production.lugh.pagination.Paginator;
 
 public class PaginatorTest {
 

@@ -8,7 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-package org.kitodo.production.metadata.model.pagination;
+package org.kitodo.production.lugh.pagination;
 
 /**
  * A half integer is an integer that supports counting halfs (½, 1, 1½, 2, …).
