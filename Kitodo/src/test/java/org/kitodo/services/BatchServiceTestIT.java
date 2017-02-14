@@ -29,14 +29,7 @@ public class BatchServiceTestIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
-        MockDatabase.insertBatches();
-        MockDatabase.insertDockets();
-        MockDatabase.insertRulesets();
-        MockDatabase.insertLdapGroups();
-        MockDatabase.insertUsers();
-        MockDatabase.insertUserGroups();
-        MockDatabase.insertProjects();
-        MockDatabase.insertProcesses();
+        MockDatabase.insertProcessesFull();
     }
 
     @Test

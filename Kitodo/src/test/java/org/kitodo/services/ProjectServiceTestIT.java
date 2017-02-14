@@ -16,9 +16,12 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
@@ -26,6 +29,11 @@ import static org.junit.Assert.*;
  * Tests for ProjectService class.
  */
 public class ProjectServiceTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException {
+        MockDatabase.insertProcessesFull();
+    }
 
     @Test
     public void shouldFindProject() throws Exception {
