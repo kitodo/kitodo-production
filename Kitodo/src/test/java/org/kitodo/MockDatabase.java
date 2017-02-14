@@ -120,6 +120,46 @@ public class MockDatabase {
         processService.save(secondProcess);
     }
 
+    public static void insertProcessProperties() throws DAOException {
+        ProcessService processService = new ProcessService();
+        ProcessPropertyService processPropertyService = new ProcessPropertyService();
+
+        ProcessProperty firstProcessProperty = new ProcessProperty();
+        firstProcessProperty.setTitle("First Property");
+        firstProcessProperty.setValue("first value");
+        firstProcessProperty.setObligatory(true);
+        firstProcessProperty.setType(PropertyType.general);
+        firstProcessProperty.setChoice("choice");
+        LocalDate localDate = new LocalDate(2017,1,14);
+        firstProcessProperty.setCreationDate(localDate.toDate());
+        firstProcessProperty.setContainer(1);
+        firstProcessProperty.setProcess(processService.find(1));
+        processPropertyService.save(firstProcessProperty);
+
+        ProcessProperty secondProcessProperty = new ProcessProperty();
+        secondProcessProperty.setTitle("secondProperty");
+        secondProcessProperty.setValue("second");
+        secondProcessProperty.setObligatory(false);
+        secondProcessProperty.setType(PropertyType.CommandLink);
+        secondProcessProperty.setChoice("chosen");
+        localDate = new LocalDate(2017,1,15);
+        secondProcessProperty.setCreationDate(localDate.toDate());
+        secondProcessProperty.setContainer(2);
+        secondProcessProperty.setProcess(processService.find(1));
+        processPropertyService.save(secondProcessProperty);
+    }
+
+    public static void insertProcessesFull() throws DAOException {
+        MockDatabase.insertBatches();
+        MockDatabase.insertDockets();
+        MockDatabase.insertRulesets();
+        MockDatabase.insertLdapGroups();
+        MockDatabase.insertUsers();
+        MockDatabase.insertUserGroups();
+        MockDatabase.insertProjects();
+        MockDatabase.insertProcesses();
+    }
+
     public static void insertProjects() throws DAOException {
         ProjectService projectService = new ProjectService();
 
@@ -244,6 +284,35 @@ public class MockDatabase {
 
     }
 
+    public static void insertTemplateProperties() throws DAOException {
+        TemplateService templateService = new TemplateService();
+        TemplatePropertyService templatePropertyService = new TemplatePropertyService();
+
+        TemplateProperty firstTemplateProperty = new TemplateProperty();
+        firstTemplateProperty.setTitle("title");
+        firstTemplateProperty.setValue("value");
+        firstTemplateProperty.setObligatory(true);
+        firstTemplateProperty.setType(PropertyType.general);
+        firstTemplateProperty.setChoice("choice");
+        LocalDate localDate = new LocalDate(2017,1,14);
+        firstTemplateProperty.setCreationDate(localDate.toDate());
+        firstTemplateProperty.setContainer(1);
+        firstTemplateProperty.setTemplate(templateService.find(1));
+        templatePropertyService.save(firstTemplateProperty);
+
+        TemplateProperty secondTemplateProperty = new TemplateProperty();
+        secondTemplateProperty.setTitle("template");
+        secondTemplateProperty.setValue("second");
+        secondTemplateProperty.setObligatory(false);
+        secondTemplateProperty.setType(PropertyType.CommandLink);
+        secondTemplateProperty.setChoice("chosen");
+        localDate = new LocalDate(2017,1,15);
+        secondTemplateProperty.setCreationDate(localDate.toDate());
+        secondTemplateProperty.setContainer(2);
+        secondTemplateProperty.setTemplate(templateService.find(1));
+        templatePropertyService.save(secondTemplateProperty);
+    }
+
     public static void insertUsers() throws DAOException {
         LdapGroupService ldapGroupService = new LdapGroupService();
         UserService userService = new UserService();
@@ -298,6 +367,35 @@ public class MockDatabase {
         userGroupService.save(secondUserGroup);
     }
 
+    public static void insertUserProperties() throws DAOException {
+        UserService userService = new UserService();
+        UserPropertyService userPropertyService = new UserPropertyService();
+
+        UserProperty firstUserProperty = new UserProperty();
+        firstUserProperty.setTitle("First Property");
+        firstUserProperty.setValue("first value");
+        firstUserProperty.setObligatory(true);
+        firstUserProperty.setType(PropertyType.general);
+        firstUserProperty.setChoice("choice");
+        LocalDate localDate = new LocalDate(2017,1,14);
+        firstUserProperty.setCreationDate(localDate.toDate());
+        firstUserProperty.setContainer(1);
+        firstUserProperty.setUser(userService.find(1));
+        userPropertyService.save(firstUserProperty);
+
+        UserProperty secondUserProperty = new UserProperty();
+        secondUserProperty.setTitle("secondProperty");
+        secondUserProperty.setValue("second");
+        secondUserProperty.setObligatory(false);
+        secondUserProperty.setType(PropertyType.CommandLink);
+        secondUserProperty.setChoice("chosen");
+        localDate = new LocalDate(2017,1,15);
+        secondUserProperty.setCreationDate(localDate.toDate());
+        secondUserProperty.setContainer(2);
+        secondUserProperty.setUser(userService.find(1));
+        userPropertyService.save(secondUserProperty);
+    }
+
     public static void insertWorkpieces() throws DAOException {
         ProcessService processService = new ProcessService();
         WorkpieceService workpieceService = new WorkpieceService();
@@ -315,28 +413,28 @@ public class MockDatabase {
         WorkpieceService workpieceService = new WorkpieceService();
         WorkpiecePropertyService workpiecePropertyService = new WorkpiecePropertyService();
 
-        WorkpieceProperty firstWorkpiece = new WorkpieceProperty();
-        firstWorkpiece.setTitle("title");
-        firstWorkpiece.setValue("value");
-        firstWorkpiece.setObligatory(true);
-        firstWorkpiece.setType(PropertyType.general);
-        firstWorkpiece.setChoice("choice");
+        WorkpieceProperty firstWorkpieceProperty = new WorkpieceProperty();
+        firstWorkpieceProperty.setTitle("title");
+        firstWorkpieceProperty.setValue("value");
+        firstWorkpieceProperty.setObligatory(true);
+        firstWorkpieceProperty.setType(PropertyType.general);
+        firstWorkpieceProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017,1,13);
-        firstWorkpiece.setCreationDate(localDate.toDate());
-        firstWorkpiece.setContainer(1);
-        firstWorkpiece.setWorkpiece(workpieceService.find(1));
-        workpiecePropertyService.save(firstWorkpiece);
+        firstWorkpieceProperty.setCreationDate(localDate.toDate());
+        firstWorkpieceProperty.setContainer(1);
+        firstWorkpieceProperty.setWorkpiece(workpieceService.find(1));
+        workpiecePropertyService.save(firstWorkpieceProperty);
 
-        WorkpieceProperty secondWorkpiece = new WorkpieceProperty();
-        secondWorkpiece.setTitle("workpiece");
-        secondWorkpiece.setValue("second");
-        secondWorkpiece.setObligatory(false);
-        secondWorkpiece.setType(PropertyType.CommandLink);
-        firstWorkpiece.setChoice("chosen");
+        WorkpieceProperty secondWorkpieceProperty = new WorkpieceProperty();
+        secondWorkpieceProperty.setTitle("workpiece");
+        secondWorkpieceProperty.setValue("second");
+        secondWorkpieceProperty.setObligatory(false);
+        secondWorkpieceProperty.setType(PropertyType.CommandLink);
+        secondWorkpieceProperty.setChoice("chosen");
         localDate = new LocalDate(2017,1,14);
-        secondWorkpiece.setCreationDate(localDate.toDate());
-        secondWorkpiece.setContainer(2);
-        secondWorkpiece.setWorkpiece(workpieceService.find(1));
-        workpiecePropertyService.save(secondWorkpiece);
+        secondWorkpieceProperty.setCreationDate(localDate.toDate());
+        secondWorkpieceProperty.setContainer(2);
+        secondWorkpieceProperty.setWorkpiece(workpieceService.find(1));
+        workpiecePropertyService.save(secondWorkpieceProperty);
     }
 }
