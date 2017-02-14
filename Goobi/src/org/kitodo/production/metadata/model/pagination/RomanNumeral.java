@@ -37,7 +37,16 @@ public class RomanNumeral implements Fragment {
      */
     private static final String[] TENS = { "", "x", "xx", "xxx", "xl", "l", "lx", "lxx", "lxxx", "xc" };
 
-    private static String format(int value, boolean uppercase) {
+	/**
+	 * Returns the Roman numeral for the value as string.
+	 * 
+	 * @param value
+	 *            value to format
+	 * @param uppercase
+	 *            if true, the Roman numeral is upper case, otherwise lower case
+	 * @return Roman numeral for the value
+	 */
+    public static String format(int value, boolean uppercase) {
         StringBuilder result = new StringBuilder();
         while (value >= 1000) {
             result.append(uppercase ? 'M' : 'm');
@@ -50,7 +59,7 @@ public class RomanNumeral implements Fragment {
         return uppercase ? result.toString().toUpperCase() : result.toString();
     }
 
-    private static final int parseInt(String value) {
+    public static final int parseInt(String value) {
         int result = 0;
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {
@@ -94,7 +103,7 @@ public class RomanNumeral implements Fragment {
                         result += X;
                 break;
                 default:
-                    throw new IllegalArgumentException("For string: " + value);
+                    throw new NumberFormatException("For string: " + value);
             }
         }
         return result;

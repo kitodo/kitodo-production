@@ -162,7 +162,7 @@ public class Paginator implements Iterator<String> {
                     //$FALL-THROUGH$
 
                     /* Parse different types of fragments from the
-                     * initializer string */
+                     * initialiser string */
 
                 case EMPTY:
                     if (!codePointClass.equals(State.FULL_INTEGER) && !codePointClass.equals(State.HALF_INTEGER)) {
@@ -242,7 +242,7 @@ public class Paginator implements Iterator<String> {
             offset += Character.charCount(codePoint);
         }
 
-        /* Initialize missing increments, find initial value and optional
+        /* Initialise missing increments, find initial value and optional
          * reverse operation mode */
 
         Fragment first = null;
