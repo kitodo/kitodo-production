@@ -803,7 +803,7 @@ public class ModsPlugin implements Plugin {
                 childDocuments.add((Element) child);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Unable to import child elements of document with given ID.");
         }
         return childDocuments;
     }
@@ -834,8 +834,8 @@ public class ModsPlugin implements Plugin {
             }
             return remainingChild.getDocument();
         } catch (JDOMException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            logger.error("Unable to remove children from given document.");
             return null;
         }
     }
