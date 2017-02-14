@@ -1416,8 +1416,8 @@ public class Metadaten {
 			try {
 				if (paginierungAbSeiteOderMarkierung == FROMFIRST) {
 					// apply from first selected
-					for (int pageNum = Integer
-							.parseInt(alleSeitenAuswahl[0]); pageNum < alleSeitenNeu.length; pageNum++) {
+					for (int pageNum = Integer.parseInt(alleSeitenAuswahl[0]);
+							pageNum < alleSeitenNeu.length; pageNum++) {
 						alleSeitenNeu[pageNum].setWert(paginator.next());
 					}
 				} else {

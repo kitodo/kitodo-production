@@ -95,8 +95,8 @@ public enum PaginatorType {
             (int) Math.ceil(values().length / .75)) {
         private static final long serialVersionUID = 1L;
         {
-            for (PaginatorType member : values()) {
-                codeMap.put(member.code, member);
+            for (PaginatorType member : PaginatorType.values()) {
+                put(member.code, member);
             }
         }
     };
@@ -133,14 +133,20 @@ public enum PaginatorType {
         this.code = code;
     }
 
-    /**
-     * @param mode
-     * @param value
-     * @param fictitious
-     * @param separator
-     * @return
-     * @throws NumberFormatException
-     *             if the number contains invalid digits
-     */
+	/**
+	 * Returns the paginator syntax for the given parameters
+	 * 
+	 * @param mode
+	 *            paginator mode
+	 * @param value
+	 *            first value
+	 * @param fictitious
+	 *            if true, create fictitious pagination
+	 * @param separator
+	 *            separator character
+	 * @return paginator syntax
+	 * @throws NumberFormatException
+	 *             if the number contains invalid digits
+	 */
     public abstract String format(PaginatorMode mode, String value, boolean fictitious, String separator);
 }

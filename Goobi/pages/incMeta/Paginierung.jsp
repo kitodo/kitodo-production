@@ -80,7 +80,7 @@
 					<x:inputText id="paginierungWert" forceId="true"
 						value="#{Metadaten.paginierungWert}"
 						style="width: 270px;margin-top:10px;margin-bottom:5px;margin-left:5px" />
-					<htm:br />
+					<htm:div id="traditionalPagination" style="display:#{(Metadaten.paginierungArt eq '99')?'none':'block'}">
 
 					<htm:div style="margin-top: 5px;margin-bottom:10px">
 						<h:selectBooleanCheckbox id="checkbox-fictitious" value="#{Metadaten.fictitious}" />
@@ -177,7 +177,6 @@
 						style="margin-left:4px;margin-right:6px;vertical-align:middle"
 						title="#{msgs.seitenzaehlungdoppelseiten}" />
 						
-					<htm:br />
 					<htm:div rendered="#{Metadaten.paginierungSeitenProImage>=5}"
 							style=" margin-left: 6px; margin-top: 8px;">
 						<h:outputText value="#{msgs.pageSeparator}: "/>
@@ -186,6 +185,34 @@
 						    		itemLabel="#{ps.label}" itemValue="#{ps.id}" />
 						</h:selectOneMenu>
 					</htm:div>
+				</htm:div>
+				<htm:div id="advancedPagination"
+					style="display:#{(Metadaten.paginierungArt eq '99')?'block':'none'}">
+					<h:commandButton value="#{msgs.paginationAdvancedText}"
+						title="#{msgs.paginationAdvancedTextDesc}"
+						onclick="return writeToPaginierungWert('`','`')" />
+					<h:commandButton value="#{msgs.paginationAdvancedNoIncrement}"
+						title="#{msgs.paginationAdvancedNoIncrementDesc}"
+						onclick="return writeToPaginierungWert('','°')" />
+					<h:commandButton value="#{msgs.paginationAdvancedPlusOneHalf}"
+						title="#{msgs.paginationAdvancedPlusOneHalfDesc}"
+						onclick="return writeToPaginierungWert('','½')" />
+					<h:commandButton value="#{msgs.paginationAdvancedPlusOne}"
+						title="#{msgs.paginationAdvancedPlusOneDesc}"
+						onclick="return writeToPaginierungWert('','¹')" />
+					<h:commandButton value="#{msgs.paginationAdvancedPlusTwo}"
+						title="#{msgs.paginationAdvancedPlusTwoDesc}"
+						onclick="return writeToPaginierungWert('','²')" />
+					<h:commandButton value="#{msgs.paginationAdvancedPlusThree}"
+						title="#{msgs.paginationAdvancedPlusThreeDesc}"
+						onclick="return writeToPaginierungWert('','³')" />
+					<h:commandButton value="#{msgs.paginationAdvancedFullPage}"
+						title="#{msgs.paginationAdvancedFullPageDesc}"
+						onclick="return writeToPaginierungWert('¡','')" />
+					<h:commandButton value="#{msgs.paginationAdvancedHalfPage}"
+						title="#{msgs.paginationAdvancedHalfPageDesc}"
+						onclick="return writeToPaginierungWert('¿','')" />
+				</htm:div>
 					<htm:br />
 
 						<a4j:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px" reRender="PaginierungAlleImages,myMessages,mygrid10">

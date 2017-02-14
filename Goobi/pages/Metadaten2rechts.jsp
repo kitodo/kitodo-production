@@ -375,7 +375,25 @@
 		if (element.value == 6) {
 			inputBoxElement.value = '';
 		}
+		document.getElementById("formular2:traditionalPagination").style.display = (element.value == 99 ? 'none' : 'block');
+		document.getElementById("formular2:advancedPagination").style.display = (element.value != 99 ? 'none' : 'block');
 	}
+	
+	function writeToPaginierungWert(before, after) {
+		var textbox = document.getElementById("paginierungWert");
+		var beforeSelection = textbox.value.substr(0, textbox.selectionStart);
+		var selectionLength = textbox.selectionEnd - textbox.selectionStart;
+		var selection = textbox.value.substr(textbox.selectionStart, selectionLength);
+		var afterSelection = textbox.value.substr(textbox.selectionEnd);
+		var written = beforeSelection + before + selection;
+		textbox.value = written + after + afterSelection;
+		if(before.length != after.length) written += after;
+		textbox.selectionStart = written.length;
+		textbox.selectionEnd = written.length;
+		textbox.focus();
+		return false;
+	}
+	
 
 	function focusForPicture() {
 		//alert(document.getElementById("hiddenBildNummer").value);

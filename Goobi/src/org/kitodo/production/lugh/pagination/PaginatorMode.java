@@ -115,8 +115,8 @@ public enum PaginatorMode {
             (int) Math.ceil(values().length / .75)) {
         private static final long serialVersionUID = 1L;
         {
-            for (PaginatorMode member : values()) {
-                codeMap.put(member.code, member);
+            for (PaginatorMode member : PaginatorMode.values()) {
+                put(member.code, member);
             }
         }
     };
