@@ -11,9 +11,31 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.UserProperty;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.UserPropertyDAO;
 
 public class UserPropertyService {
+
+    private UserPropertyDAO userPropertyDao = new UserPropertyDAO();
+
+    public void save(UserProperty userProperty) throws DAOException {
+        userPropertyDao.save(userProperty);
+    }
+
+    public UserProperty find(Integer id) throws DAOException {
+        return userPropertyDao.find(id);
+    }
+
+    public List<UserProperty> findAll() throws DAOException {
+        return userPropertyDao.findAll();
+    }
+
+    public void remove(UserProperty userProperty) throws DAOException {
+        userPropertyDao.remove(userProperty);
+    }
 
     public String getNormalizedTitle(UserProperty userProperty) {
         return userProperty.getTitle().replace(" ", "_").trim();
