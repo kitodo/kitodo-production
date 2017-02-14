@@ -59,6 +59,11 @@ public class RomanNumeral implements Fragment {
         return uppercase ? result.toString().toUpperCase() : result.toString();
     }
 
+    /**
+     * Returns an int value for a roman number.
+     * @param value
+     * @return
+     */
     public static final int parseInt(String value) {
         int result = 0;
         for (int i = value.length() - 1; i >= 0; i--) {
@@ -124,7 +129,7 @@ public class RomanNumeral implements Fragment {
      */
     private final int value;
 
-    RomanNumeral(String value, boolean uppercase) {
+    public RomanNumeral(String value, boolean uppercase) {
         this.value = parseInt(value);
         this.uppercase = uppercase;
     }

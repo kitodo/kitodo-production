@@ -78,7 +78,12 @@ public class HalfInteger extends Number {
 
     private final int value;
 
-    HalfInteger(int value, boolean aHalf) {
+    /**
+     * Creates a new half integer.
+     * @param value integer value
+     * @param aHalf if true, is one half above the value
+     */
+    public HalfInteger(int value, boolean aHalf) {
         this.value = value;
         this.aHalf = aHalf;
     }
