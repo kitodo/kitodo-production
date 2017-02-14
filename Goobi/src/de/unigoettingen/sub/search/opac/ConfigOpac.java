@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -212,11 +213,17 @@ public class ConfigOpac {
             boolean periodical = this.config.getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
             boolean multiVolume = this.config.getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
             boolean containedWork = this.config.getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+            boolean newspaper;
+            try{
+            	newspaper = this.config.getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
+            }catch(NoSuchElementException noParameterIsNewspaper){
+            	newspaper = false;
+            }
             ArrayList<String> mappings = (ArrayList<String>) this.config.getList("doctypes.type(" + i
                   + ").mapping");
 
             ConfigOpacDoctype cod = new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType,
-                  periodical, multiVolume, containedWork, labels, mappings);
+                  periodical, multiVolume, containedWork, newspaper, labels, mappings);
             return cod;
          }
       }
