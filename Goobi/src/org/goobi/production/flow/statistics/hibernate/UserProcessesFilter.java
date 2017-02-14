@@ -62,7 +62,7 @@ public class UserProcessesFilter implements IEvaluableFilter, Cloneable {
 		Session session = Helper.getHibernateSession();
 		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
 
-		FilterHelper.criteriaBuilder(session, null, crit, false, null, false, null, clearSession);
+		FilterHelper.criteriaBuilder(session, null, crit, false, null, null, null, clearSession);
 		return crit;
 	}
 
