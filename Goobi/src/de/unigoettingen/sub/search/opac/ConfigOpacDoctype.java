@@ -47,19 +47,22 @@ public class ConfigOpacDoctype {
 	private boolean containedWork = false;
 	private HashMap<String, String> labels;
 	private ArrayList<String> mappings;
+	private boolean newspaper;
 
 	public ConfigOpacDoctype() { // stupid Jersey API requires no-arg default constructor which is never used
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
-	public ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical, boolean inMultiVolume,
-			boolean inContainedWork, HashMap<String, String> inLabels, ArrayList<String> inMappings) {
+	public ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
+			boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
+			ArrayList<String> inMappings) {
 		this.title = inTitle;
 		this.rulesetType = inRulesetType;
 		this.tifHeaderType = inTifHeaderType;
 		this.periodical = inPeriodical;
 		this.multiVolume = inMultiVolume;
 		this.containedWork = inContainedWork;
+		this.newspaper = newspaper;
 		this.labels = inLabels;
 		this.mappings = inMappings;
 	}
@@ -88,6 +91,10 @@ public class ConfigOpacDoctype {
 
 	public boolean isContainedWork() {
 		return this.containedWork;
+	}
+
+	public boolean isNewspaper() {
+		return this.newspaper;
 	}
 
 	public HashMap<String, String> getLabels() {

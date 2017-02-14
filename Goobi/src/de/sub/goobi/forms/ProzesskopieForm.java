@@ -1547,4 +1547,14 @@ public class ProzesskopieForm {
 		}
 		return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
 	}
+
+	/**
+	 * Tells the ProzesskopieForm whether it shall show the calendar button or
+	 * not
+	 * 
+	 * @return true or false
+	 */
+	public boolean isCalendarButtonShowing() {
+		return this.co.getDoctypeByName(this.docType).isNewspaper();
+	}
 }
