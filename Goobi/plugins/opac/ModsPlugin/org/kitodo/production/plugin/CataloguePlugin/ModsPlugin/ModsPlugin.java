@@ -169,8 +169,7 @@ public class ModsPlugin implements Plugin {
      */
     private static final Namespace METS_NAMESPACE = Namespace.getNamespace("mets", "http://www.loc.gov/METS/");
     private static final Namespace MODS_NAMESPACE = Namespace.getNamespace("mods", "http://www.loc.gov/mods/v3");
-    private static final Namespace XSI_NAMESPACE = Namespace.getNamespace("xsi",
-            "http://www.w3.org/2001/XMLSchema-instance");
+    private static final Namespace XSI_NAMESPACE = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
     private static final Namespace GOOBI_NAMESPACE = Namespace.getNamespace("goobi", "http://meta.goobi.org/v1.5.1/");
 
     private static final String METS_DMD_ID = "DMDID";
@@ -406,24 +405,27 @@ public class ModsPlugin implements Plugin {
                     }
                 }
 
-                LinkedList<Element> dmdSections = new LinkedList<Element>();
-                LinkedList<String> structureTypes = new LinkedList<String>();
+                // Build the metsDocument directly
+                Document metsDocument = createMetsDocument();
+                Element rootElement = metsDocument.getRootElement();
+
+                // initialize Mets structMap
+                Element structureMap = createMETSStructureMap(METS_LOGICAL);
+                String lastStructureType = getStructureType((Element) modsXPath.selectSingleNode(doc));
+
+                // retrieve parent record before transforming requested document
+                // (since "localParentID" is lost during XSL transformation)
                 String parentXML = retrieveParentRecord(doc, timeout);
-                structureTypes.add(getStructureType((Element) modsXPath.selectSingleNode(doc)));
 
                 File transformationScript = new File(xsltFilepath);
 
                 doc = transformXML(doc, transformationScript, sb);
 
-                // TODO: extract all elements with "localparentID" equal to this
-                // ID, once this functionality is available in the Kalliope SRU
-                // interface
                 String documentID = ((Element) identifierXPath.selectSingleNode(doc)).getText();
 
                 // read "additionalDetails" from document via XPaths elements
                 // specified in plugin configuration file
-                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle())
-                        .entrySet()) {
+                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
                     XPath detailPath = XPath.newInstance(detailField.getValue());
                     Element detailElement = (Element) detailPath.selectSingleNode(doc);
                     if (!Objects.equals(detailElement, null)) {
@@ -434,8 +436,40 @@ public class ModsPlugin implements Plugin {
                 // XML MODS data of document itself
                 Element modsElement = (Element) modsXPath.selectSingleNode(doc);
 
-                dmdSections.add(createMETSDescriptiveMetadata((Element) modsElement.clone()));
+                Element metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
+                rootElement.addContent(metadataSection);
 
+                Element structureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
+                Element structureMapDivTemp = null;
+
+                List<Element> childDocuments = retrieveChildDocuments(documentID, timeout);
+                Element childElement;
+                Document transformedChild;
+
+                // *** child elements
+                for (int i = 0; i < childDocuments.size(); i++) {
+                    childElement = childDocuments.get(i);
+
+                    // determine structType from original child doc
+                    String childStructureType = getStructureType(childElement);
+
+                    // transform child document with XSL
+                    transformedChild = transformXML(removeAllChildrenButOne(childElement.getDocument(), i), transformationScript, sb);
+                    Element childMods = (Element) modsXPath.selectSingleNode(transformedChild);
+
+                    // create metadata section from transformed child doc
+                    metadataSection = createMETSDescriptiveMetadata((Element) childMods.clone());
+                    rootElement.addContent(metadataSection);
+
+                    // create structure map div for current child
+                    structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), childStructureType);
+                    structureMapDiv.addContent(structureMapDivTemp);
+                }
+
+                // reset variable to use it for ancestor elements as well
+                structureMapDivTemp = null;
+
+                // *** ancestor elements
                 while (!Objects.equals(parentXML, null)) {
                     resultXML = parentXML;
                     doc = sb.build(new StringReader(resultXML));
@@ -449,7 +483,9 @@ public class ModsPlugin implements Plugin {
                         throw new RuntimeException("Requested document with ID '" + documentID
                                 + "' is not associated with a valid inventory.");
                     }
-                    structureTypes.add(getStructureType(modsElement));
+
+                    // determine structType from untransformed xml document
+                    lastStructureType = getStructureType(modsElement);
 
                     doc = transformXML(doc, transformationScript, sb);
                     // 'doc' can become "null", when the last doc had a
@@ -461,15 +497,32 @@ public class ModsPlugin implements Plugin {
                     // on it anymore! Therefore the loop has to be terminated
                     // before reaching this point!
                     modsElement = (Element) modsXPath.selectSingleNode(doc);
-                    dmdSections.add(createMETSDescriptiveMetadata((Element) modsElement.clone()));
+                    metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
+                    rootElement.addContent(metadataSection);
+
+                    // create structure map div for current ancestor
+                    structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
+                    structureMapDivTemp.addContent(structureMapDiv);
+                    structureMapDiv = structureMapDivTemp;
                 }
 
-                doc = createMetsContainer(dmdSections, structureTypes);
+                // only add ancestors topmost structureMapDiv to structMap if
+                // the div is not null (otherwise add documents own div as
+                // topmost div to structmap)
+                if (!Objects.equals(structureMapDivTemp, null)) {
+                    structureMap.addContent(structureMapDivTemp);
+                } else {
+                    structureMap.addContent(structureMapDiv);
+                }
+
+                rootElement.addContent(structureMap);
+                metsDocument.setRootElement(rootElement);
                 // reviewing the constructed XML mets document can be done via
-                // "xmlOutputter.output(doc.getRootElement(), System.out);"
+                // "xmlOutputter.output(rootElement, System.out);"
 
                 MetsMods mm = new MetsMods(preferences);
-                xmlOutputter.output(doc, new FileWriter(TEMP_FILENAME));
+
+                xmlOutputter.output(metsDocument, new FileWriter(TEMP_FILENAME));
 
                 mm.read(TEMP_FILENAME);
                 // reviewing the constructed DigitalDocument can be done via
@@ -485,16 +538,11 @@ public class ModsPlugin implements Plugin {
                 dd.setPhysicalDocStruct(dsBoundBook);
 
                 if (!Objects.equals(result.get("shelfmarksource"), null)) {
-                    UGHUtils.replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource",
-                            (String) result.get("shelfmarksource"));
+                    UGHUtils.replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
                 }
 
-                // TODO: add all children - using query with parameter
-                // 'relatedItemID', once it becomes available - of retrieved
-                // document to docStruct!
-
                 result.put("fileformat", ff);
-                result.put("type", structureTypeToDocTypeMapping.get(structureTypes.getLast()));
+                result.put("type", structureTypeToDocTypeMapping.get(lastStructureType));
 
             } catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException
                     | IOException e) {
@@ -672,6 +720,7 @@ public class ModsPlugin implements Plugin {
         String inputXMLFilename = dmdSecCounter + "_original_SRW_MODS.xml";
         String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU.xml";
         dmdSecCounter++;
+
         File outputFile = new File(outputXMLFilename);
 
         StreamSource transformSource = new StreamSource(stylesheetfile);
@@ -685,8 +734,7 @@ public class ModsPlugin implements Plugin {
 
             Transformer xslfoTransformer = impl.newTransformer(transformSource);
 
-            TransformerHandler transformHandler = ((SAXTransformerFactory) SAXTransformerFactory.newInstance())
-                    .newTransformerHandler();
+            TransformerHandler transformHandler = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
 
             transformHandler.setResult(new StreamResult(outputStream));
 
@@ -725,8 +773,8 @@ public class ModsPlugin implements Plugin {
     private String retrieveParentRecord(Document doc, long timeout) throws JDOMException {
         Element parentIDElement = (Element) parentIDXPath.selectSingleNode(doc);
         try {
-            Query parentQuery = new Query(
-                    getIdentifierParameter(configuration.getTitle()) + ":" + parentIDElement.getText());
+            Query parentQuery = new Query(getIdentifierParameter(configuration.getTitle()) + ":"
+                    + parentIDElement.getText());
             return client.retrieveModsRecord(parentQuery.getQueryUrl(), timeout);
         } catch (NullPointerException e) {
             logger.info("Top level element reached. No further parent elements can be retrieved.");
@@ -735,32 +783,61 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
-     * Creates and returns a METS document containing METS descriptive metadata
-     * sections and a METS structural map constructed from the given List
-     * <Element> 'dmdElements' and List<String> 'documentTypes'.
+     * Retrieves and returns the child elements of the document with the given ID 'documentId'
+     * from the Kalliope SRU interface.
      *
-     * @param dmdElements
-     * @param documentTypes
-     * @return
+     * @param documentId
+     * @param timeout
+     * @return the list of child elements
+     * @throws JDOMException
      */
-    private static Document createMetsContainer(List<Element> dmdElements, List<String> documentTypes) {
-        assert (dmdElements.size() == documentTypes.size());
+    private List<Element> retrieveChildDocuments(String documentId, long timeout) throws JDOMException {
+        List<Element> childDocuments = new LinkedList<Element>();
+        Query childrenQuery = new Query("context.ead.id:" + documentId);
+        String allChildren = client.retrieveModsRecord(childrenQuery.getQueryUrl(), timeout);
 
-        Document metsDocument = createMetsDocument();
-
-        for (Element dmdSection : dmdElements) {
-            metsDocument = addSectionToMETSDocument(metsDocument, dmdSection);
+        SAXBuilder sb = new SAXBuilder();
+        try {
+            Document childrenDoc = sb.build(new StringReader(allChildren));
+            for (Object child : modsXPath.selectNodes(childrenDoc)) {
+                childDocuments.add((Element) child);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return childDocuments;
+    }
 
-        Element structMap = createMETSStructureMap(METS_LOGICAL);
+    /**
+     * Clones the given document 'doc' and removes all children from the cloned documen
+     * except the child at position 'index'. Returns the cloned document with one remaining
+     * child.
+     *
+     * @param doc
+     * @param index
+     * @return document with one remaining child
+     */
+    @SuppressWarnings("unchecked")
+    private Document removeAllChildrenButOne(Document doc, int index) {
+        try {
+            Document clone = (Document) doc.clone();
+            Element remainingChild = null;
+            ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(clone);
 
-        Element currentParent = structMap;
-        for (int i = dmdElements.size() - 1; i >= 0; i--) {
-            currentParent = addDivToMETSStructureMap(currentParent, dmdElements.get(i), documentTypes.get(i));
+            for (int i = 0; i < recordNodes.size(); i++) {
+                Element currentRecord = recordNodes.get(i);
+                if (i != index) {
+                    currentRecord.detach();
+                } else {
+                    remainingChild = currentRecord;
+                }
+            }
+            return remainingChild.getDocument();
+        } catch (JDOMException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
         }
-
-        metsDocument = addSectionToMETSDocument(metsDocument, structMap);
-        return metsDocument;
     }
 
     /**
@@ -781,27 +858,6 @@ public class ModsPlugin implements Plugin {
         metsDoc.setRootElement(metsRoot);
 
         return metsDoc;
-    }
-
-    /**
-     * Adds the given Element 'section' containing a METS metadata section to
-     * the given Document 'metsDocument' and returns the Document.
-     *
-     * @param metsDocument
-     *            the METS Document to which the given metadata section is added
-     * @param section
-     *            the metadata section that is added to the given METS document
-     * @return the METS document
-     * @see org.jdom.Element
-     * @see org.jdom.Document
-     */
-    private static Document addSectionToMETSDocument(Document metsDocument, Element section) {
-
-        Element rootElement = metsDocument.getRootElement();
-        rootElement.addContent(section);
-        metsDocument.setRootElement(rootElement);
-
-        return metsDocument;
     }
 
     /**
@@ -841,26 +897,15 @@ public class ModsPlugin implements Plugin {
         return structureMap;
     }
 
-    /**
-     * Creates a div for the given Element 'childElement', adds it to the given
-     * Element 'parentDiv' in the structure map and returns it.
-     *
-     * @param parentDiv
-     * @param childElement
-     * @param childType
-     * @return
-     */
-    private static Element addDivToMETSStructureMap(Element parentDiv, Element childElement, String childType) {
+    private static Element createMETSStructureMapDiv(String metadataSectionId, String structType) {
 
-        Element childDiv = new Element("div", METS_NAMESPACE);
-        childDiv.setAttribute(METS_DMD_ID, childElement.getAttributeValue(METS_ID));
-        childDiv.setAttribute(METS_ID, METS_DIV_ID_VALUE + "_" + String.format("%04d", divIdCounter));
-        childDiv.setAttribute(METS_TYPE, childType);
+        Element structMapDiv = new Element("div", METS_NAMESPACE);
+        structMapDiv.setAttribute(METS_DMD_ID, metadataSectionId);
+        structMapDiv.setAttribute(METS_ID, METS_DIV_ID_VALUE + "_" + String.format("%04d", divIdCounter));
+        structMapDiv.setAttribute(METS_TYPE, structType);
         divIdCounter++;
 
-        parentDiv.addContent(childDiv);
-
-        return childDiv;
+        return structMapDiv;
     }
 
     /**
@@ -1036,8 +1081,8 @@ public class ModsPlugin implements Plugin {
         if (!Objects.equals(catalogueConfiguration, null)) {
             for (Object fieldObject : catalogueConfiguration.configurationsAt(subConfigurationPath)) {
                 SubnodeConfiguration conf = (SubnodeConfiguration) fieldObject;
-                configurationMapping.put(conf.getString("[@" + keyAttribute + "]"),
-                        conf.getString("[@" + valueAttribute + "]"));
+                configurationMapping.put(conf.getString("[@" + keyAttribute + "]"), conf.getString("[@" + valueAttribute
+                        + "]"));
             }
         }
         return configurationMapping;
