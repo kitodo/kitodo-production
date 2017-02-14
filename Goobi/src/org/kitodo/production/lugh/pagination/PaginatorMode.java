@@ -21,11 +21,6 @@ public enum PaginatorMode {
     /**
      * Only even, or only odd numbers, always skipping one (1, 3, 5, 7, … / [1],
      * [3], [5], [7], …).
-     * 
-     * <p>
-     * With {@link PaginatorType#UNCOUNTED}, produces uncounted, uncounted,
-     * uncounted, uncounted, … / [uncounted], [uncounted], [uncounted],
-     * [uncounted], …
      */
     COLUMNS(2) {
         @Override
@@ -41,14 +36,7 @@ public enum PaginatorMode {
     /**
      * Two subsequent numbers on one image (1␣2, 3␣4, 5␣6, 7␣8, … / [1]␣[2],
      * [3]␣[4], [5]␣[6], [7]␣[8], …).
-     * 
-     * <p>
-     * With {@link PaginatorType#UNCOUNTED}, produces uncounted␣uncounted,
-     * uncounted␣uncounted, uncounted␣uncounted, uncounted␣uncounted, … /
-     * [uncounted]␣[uncounted], [uncounted]␣[uncounted],
-     * [uncounted]␣[uncounted], [uncounted]␣[uncounted], …
      */
-
     DOUBLE_PAGES(6) {
         @Override
         String format(String value, String next, boolean fictitious, String separator) {
@@ -62,11 +50,6 @@ public enum PaginatorMode {
 
     /**
      * Each digit appears two times (1, 1, 2, 2, … / [1], [1], [2], [2], …).
-     * 
-     * <p>
-     * With {@link PaginatorType#UNCOUNTED}, produces uncounted, uncounted,
-     * uncounted, uncounted, … / [uncounted], [uncounted], [uncounted],
-     * [uncounted], …
      */
     FOLIATION(3) {
         @Override
@@ -81,11 +64,6 @@ public enum PaginatorMode {
 
     /**
      * Normal pagination (1, 2, 3, 4, … / [1], [2], [3], [4], …).
-     * 
-     * <p>
-     * With {@link PaginatorType#UNCOUNTED}, produces uncounted, uncounted,
-     * uncounted, uncounted, … / [uncounted], [uncounted], [uncounted],
-     * [uncounted], …
      */
     PAGES(1) {
         @Override
@@ -97,14 +75,10 @@ public enum PaginatorMode {
             }
         }
     },
+
     /**
      * Alternating a front side (“r”), then a back side (“v”) (1r, 1v, 2r, 2v, …
      * / [1]r, [1]v, [2]r, [2]v, …).
-     * 
-     * <p>
-     * With {@link PaginatorType#UNCOUNTED}, produces uncounted, uncounted,
-     * uncounted, uncounted, … / [uncounted], [uncounted], [uncounted],
-     * [uncounted], …
      */
     RECTOVERSO(4) {
         @Override
@@ -121,11 +95,6 @@ public enum PaginatorMode {
      * One back side (“v”) with the subsequent front side (“r”) on one image
      * (1v␣2r, 2v␣3r, 3v␣4r, 4v␣5r, … / [1]v␣[2]r, [2]v␣[3]r, [3]v␣[4]r,
      * [4]v␣[5]r, …).
-     * 
-     * <p>
-     * With {@link PaginatorType#UNCOUNTED}, produces uncounted, uncounted,
-     * uncounted, uncounted, … / [uncounted], [uncounted], [uncounted],
-     * [uncounted], …
      */
 
     RECTOVERSO_FOLIATION(5) {

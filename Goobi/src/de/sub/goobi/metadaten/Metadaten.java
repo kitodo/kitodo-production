@@ -117,11 +117,16 @@ public class Metadaten {
 	
 	private String paginierungWert;
 	private int paginierungAbSeiteOderMarkierung;
+	
+	/**
+	 * Code value for {@link PaginatorType}.
+	 */
 	private String paginierungArt;
-	private int paginierungSeitenProImage = 1; // 1=normale Paginierung, 2=zwei
-	// Spalten auf einem Image,
-	// 3=nur jede zweite Seite hat
-	// Seitennummer
+	
+	/**
+	 * Code value for {@link PaginatorMode}.
+	 */
+	private int paginierungSeitenProImage = 1;
     private boolean fictitious = false;
 
 	private SelectItem structSeiten[];
