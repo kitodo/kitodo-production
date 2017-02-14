@@ -11,9 +11,31 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TemplatePropertyDAO;
 
 public class TemplatePropertyService {
+
+    private TemplatePropertyDAO templatePropertyDao = new TemplatePropertyDAO();
+
+    public void save(TemplateProperty templateProperty) throws DAOException {
+        templatePropertyDao.save(templateProperty);
+    }
+
+    public TemplateProperty find(Integer id) throws DAOException {
+        return templatePropertyDao.find(id);
+    }
+
+    public List<TemplateProperty> findAll() throws DAOException {
+        return templatePropertyDao.findAll();
+    }
+
+    public void remove(TemplateProperty workpieceProperty) throws DAOException {
+        templatePropertyDao.remove(workpieceProperty);
+    }
 
     public String getNormalizedTitle(TemplateProperty templateProperty) {
         return templateProperty.getTitle().replace(" ", "_").trim();
