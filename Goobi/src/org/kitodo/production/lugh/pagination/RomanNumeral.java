@@ -129,12 +129,12 @@ public class RomanNumeral implements Fragment {
      */
     private final int value;
 
-    public RomanNumeral(String value, boolean uppercase) {
+    RomanNumeral(String value, boolean uppercase) {
         this.value = parseInt(value);
         this.uppercase = uppercase;
     }
 
-    /**
+	/**
      * Returns the value formatted as a roman numeral.
      */
     @Override
