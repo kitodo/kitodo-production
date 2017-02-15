@@ -18,6 +18,7 @@ import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.HistoryType;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -65,6 +66,20 @@ public class MockDatabase {
         secondDocket.setName("second");
         secondDocket.setFile("docket.xsl");
         docketService.save(secondDocket);
+    }
+
+    public static void insertHistory() throws DAOException {
+        HistoryService historyService = new HistoryService();
+        ProcessService processService = new ProcessService();
+
+        History firstHistory = new History();
+        firstHistory.setNumericValue(2.0);
+        firstHistory.setStringValue("History");
+        firstHistory.setHistoryType(HistoryType.color);
+        LocalDate localDate = new LocalDate(2017,1,14);
+        firstHistory.setDate(localDate.toDate());
+        firstHistory.setProcess(processService.find(1));
+        historyService.save(firstHistory);
     }
 
     public static void insertLdapGroups() throws DAOException {
@@ -195,6 +210,56 @@ public class MockDatabase {
         thirdProject.setNumberOfVolumes(5);
         thirdProject.setProjectIsArchived(true);
         projectService.save(thirdProject);
+    }
+
+    public static void insertProjectFileGroups() throws DAOException {
+        ProjectService projectService = new ProjectService();
+        ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
+
+        ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
+        firstProjectFileGroup.setName("MAX");
+        firstProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
+        firstProjectFileGroup.setMimeType("image/jpeg");
+        firstProjectFileGroup.setSuffix("jpg");
+        firstProjectFileGroup.setPreviewImage(false);
+        firstProjectFileGroup.setProject(projectService.find(1));
+        projectFileGroupService.save(firstProjectFileGroup);
+
+        ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
+        secondProjectFileGroup.setName("DEFAULT");
+        secondProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
+        secondProjectFileGroup.setMimeType("image/jpeg");
+        secondProjectFileGroup.setSuffix("jpg");
+        secondProjectFileGroup.setPreviewImage(false);
+        secondProjectFileGroup.setProject(projectService.find(1));
+        projectFileGroupService.save(secondProjectFileGroup);
+
+        ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
+        thirdProjectFileGroup.setName("THUMBS");
+        thirdProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
+        thirdProjectFileGroup.setMimeType("image/jpeg");
+        thirdProjectFileGroup.setSuffix("jpg");
+        thirdProjectFileGroup.setPreviewImage(false);
+        thirdProjectFileGroup.setProject(projectService.find(1));
+        projectFileGroupService.save(thirdProjectFileGroup);
+
+        ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
+        fourthProjectFileGroup.setName("FULLTEXT");
+        fourthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
+        fourthProjectFileGroup.setMimeType("text/xml");
+        fourthProjectFileGroup.setSuffix("xml");
+        fourthProjectFileGroup.setPreviewImage(false);
+        fourthProjectFileGroup.setProject(projectService.find(1));
+        projectFileGroupService.save(fourthProjectFileGroup);
+
+        ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
+        fifthProjectFileGroup.setName("DOWNLOAD");
+        fifthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
+        fifthProjectFileGroup.setMimeType("application/pdf");
+        fifthProjectFileGroup.setSuffix("pdf");
+        fifthProjectFileGroup.setPreviewImage(false);
+        fifthProjectFileGroup.setProject(projectService.find(1));
+        projectFileGroupService.save(fifthProjectFileGroup);
     }
 
     public static void insertRulesets() throws DAOException {
@@ -365,6 +430,10 @@ public class MockDatabase {
         secondUserGroup.setTitle("Random");
         secondUserGroup.setPermission(2);
         userGroupService.save(secondUserGroup);
+
+        UserGroup thirdUserGroup = new UserGroup();
+        thirdUserGroup.setTitle("Without permission");
+        userGroupService.save(thirdUserGroup);
     }
 
     public static void insertUserProperties() throws DAOException {
