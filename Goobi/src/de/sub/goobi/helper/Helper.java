@@ -71,7 +71,7 @@ public class Helper implements Serializable, Observer {
 
 	}
 
-	private static final Logger myLogger = Logger.getLogger(Helper.class);
+	private static final Logger logger = Logger.getLogger(Helper.class);
 	private static final long serialVersionUID = -7449236652821237059L;
 
 	private String myMetadatenVerzeichnis;
@@ -205,7 +205,7 @@ public class Helper implements Serializable, Observer {
 			context.addMessage(control, new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, beschr));
 		} else {
 			// wenn kein Kontext da ist, dann die Meldungen in Log
-			myLogger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
+			logger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
 
 		}
 	}
@@ -273,9 +273,9 @@ public class Helper implements Serializable, Observer {
 					try {
 					value = vb.getValue(context);
 					} catch (PropertyNotFoundException e) {
-						myLogger.error(e);
+						logger.error(e);
 					} catch (EvaluationException e) {
-						myLogger.error(e);
+						logger.error(e);
 					}
 				}
 			}

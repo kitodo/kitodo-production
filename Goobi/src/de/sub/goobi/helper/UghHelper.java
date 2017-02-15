@@ -24,7 +24,7 @@ import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class UghHelper {
-	private static final Logger myLogger = Logger.getLogger(UghHelper.class);
+	private static final Logger logger = Logger.getLogger(UghHelper.class);
 
 	/**
 	 * MetadataType aus Preferences eines Prozesses ermitteln
@@ -73,7 +73,7 @@ public class UghHelper {
 
 					return md;
 				} catch (MetadataTypeNotAllowedException e) {
-					myLogger.debug(e.getMessage());
+					logger.debug(e.getMessage());
 					return null;
 				}
 			}

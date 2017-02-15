@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.log4j.Logger;
 import org.goobi.io.FileListFilter;
 
 import ugh.dl.Fileformat;
@@ -45,6 +46,8 @@ import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 public class ExportPdf extends ExportMets {
+
+	private static final Logger logger = Logger.getLogger(ExportPdf.class);
 
 	private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
 	private static final String PDF_EXTENSION = ".pdf";
@@ -69,8 +72,8 @@ public class ExportPdf extends ExportMets {
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "mets file created");
 		Helper.setMeldung(null, myProzess.getTitel() + ": ", "start pdf generation now");
 
-		if(myLogger.isDebugEnabled()){
-			myLogger.debug("METS file created: " + metsTempFile);
+		if(logger.isDebugEnabled()){
+			logger.debug("METS file created: " + metsTempFile);
 		}
 
 		FacesContext context = FacesContext.getCurrentInstance();
@@ -87,9 +90,9 @@ public class ExportPdf extends ExportMets {
 			pdf.setMetsURL(metsTempFile.toURI().toURL());
 			pdf.setTargetFolder(new SafeFile(zielVerzeichnis));
 			pdf.setInternalServletPath(myBasisUrl);
-			if(myLogger.isDebugEnabled()){
-				myLogger.debug("Taget directory: " + zielVerzeichnis);
-				myLogger.debug("Using ContentServer2 base URL: " + myBasisUrl);
+			if(logger.isDebugEnabled()){
+				logger.debug("Taget directory: " + zielVerzeichnis);
+				logger.debug("Using ContentServer2 base URL: " + myBasisUrl);
 			}
 			pdf.initialize(myProzess);
 			pdf.start();

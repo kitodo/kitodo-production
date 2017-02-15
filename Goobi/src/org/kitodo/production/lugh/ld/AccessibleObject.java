@@ -11,6 +11,7 @@
 
 package org.kitodo.production.lugh.ld;
 
+import java.nio.BufferOverflowException;
 import java.util.NoSuchElementException;
 
 /**

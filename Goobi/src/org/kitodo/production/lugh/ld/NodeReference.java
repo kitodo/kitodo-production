@@ -32,6 +32,11 @@ public class NodeReference implements IdentifiableNode, NodeType {
         identifier = url;
     }
 
+    /**
+     * Compares two node references for equality.
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -54,11 +59,19 @@ public class NodeReference implements IdentifiableNode, NodeType {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getIdentifier() {
         return identifier;
     }
 
+    /**
+     * Returns a hash code value for this node reference.
+     * 
+     * @return a has code for this instance
+     */
     @Override
     public int hashCode() {
         final int prime = 31;

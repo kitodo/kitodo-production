@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class SafeFile implements Comparable<SafeFile> {
 
-	private static final Logger LOGGER = Logger.getLogger(SafeFile.class);
+	private static final Logger logger = Logger.getLogger(SafeFile.class);
 
 	private static final SafeFile[] NO_FILE = new SafeFile[0];
 
@@ -116,8 +116,8 @@ public class SafeFile implements Comparable<SafeFile> {
 	 * created.
 	 */
 	public void copyFile(SafeFile destFile, boolean preserveFileDate) throws IOException {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("copy " + delegate.getCanonicalPath() + " to " + destFile.delegate.getCanonicalPath());
+		if (logger.isDebugEnabled()) {
+			logger.debug("copy " + delegate.getCanonicalPath() + " to " + destFile.delegate.getCanonicalPath());
 		}
 		FileUtils.copyFile(delegate, destFile.delegate, preserveFileDate);
 	}

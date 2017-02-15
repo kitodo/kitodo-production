@@ -39,7 +39,7 @@ import de.intranda.commons.chart.results.DataTable;
  * *************************************************************************************/
 
 public class ProjectStatusDraw {
-	private static final Logger myLogger = Logger.getLogger(ProjectStatusDraw.class);
+	private static final Logger logger = Logger.getLogger(ProjectStatusDraw.class);
 	private static final long MILLICSECS_PER_DAY = 1000 * 60 * 60 * 24;
 	private static final int BORDERTOP = 50;
 	private static int BORDERRIGHT = 50;
@@ -175,8 +175,8 @@ public class ProjectStatusDraw {
 		if (duration==0) {
 			duration=1;
 		}
-		if(myLogger.isDebugEnabled()){
-			myLogger.debug(datePosition + " / " + duration);
+		if(logger.isDebugEnabled()){
+			logger.debug(datePosition + " / " + duration);
 		}
 		float dash1[] = { 2.0f };
 		BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash1, 0.0f);

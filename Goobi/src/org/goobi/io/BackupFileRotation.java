@@ -36,7 +36,7 @@ import de.sub.goobi.helper.FilesystemHelper;
  */
 public class BackupFileRotation {
 
-	private static final Logger myLogger = Logger.getLogger(BackupFileRotation.class);
+	private static final Logger logger = Logger.getLogger(BackupFileRotation.class);
 
 	private int numberOfBackups;
 	private String format;
@@ -60,8 +60,8 @@ public class BackupFileRotation {
 		metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
 
 		if (metaFiles.length < 1) {
-			if(myLogger.isInfoEnabled()){
-				myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+			if(logger.isInfoEnabled()){
+				logger.info("No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
 			}
 			return;
 		}
@@ -112,7 +112,7 @@ public class BackupFileRotation {
 		File oldest = new File(fileName + "." + numberOfBackups);
 		if (oldest.exists() && !oldest.delete()) {
 			String message = "Could not delete " + oldest.getAbsolutePath();
-			myLogger.error(message);
+			logger.error(message);
 			throw new IOException(message);
 		}
 
@@ -122,8 +122,8 @@ public class BackupFileRotation {
 			try {
 				FilesystemHelper.renameFile(oldName, newName);
 			} catch (FileNotFoundException oldNameNotYetPresent) {
-				if(myLogger.isDebugEnabled()){
-					myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+				if(logger.isDebugEnabled()){
+					logger.debug(oldName + " does not yet exist >>> nothing to do");
 				}
 				continue;
 			}

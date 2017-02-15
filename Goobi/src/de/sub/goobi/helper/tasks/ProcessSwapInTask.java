@@ -11,6 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
+import org.apache.log4j.Logger;
 import org.goobi.io.SafeFile;
 
 import java.io.File;
@@ -24,11 +25,14 @@ import org.jdom.input.SAXBuilder;
 
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.DAOException;
 import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapInTask extends LongRunningTask {
+
+	private static final Logger logger = Logger.getLogger(ProcessSwapInTask.class);
 
 	/**
 	 * No-argument constructor. Creates an empty ProcessSwapInTask. Must be made

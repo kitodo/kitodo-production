@@ -64,7 +64,7 @@ import de.sub.goobi.persistence.ProjektDAO;
 
 public class ProjekteForm extends BasisForm {
 	private static final long serialVersionUID = 6735912903249358786L;
-	private static final Logger myLogger = Logger.getLogger(ProjekteForm.class);
+	private static final Logger logger = Logger.getLogger(ProjekteForm.class);
 
 	private Projekt myProjekt = new Projekt();
 	private ProjectFileGroup myFilegroup;
@@ -154,21 +154,21 @@ public class ProjekteForm extends BasisForm {
 			return "ProjekteAlle";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
-			myLogger.error(e);
+			logger.error(e);
 			return "";
 		}
 	}
 
 	public String Apply() {
 		// call this to make saving and deleting permanent
-		myLogger.trace("Apply wird aufgerufen...");
+		logger.trace("Apply wird aufgerufen...");
 		this.commitFileGroups();
 		try {
 			this.dao.save(this.myProjekt);
 			return "";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
-			myLogger.error(e.getMessage());
+			logger.error(e.getMessage());
 			return "";
 		}
 	}
@@ -182,7 +182,7 @@ public class ProjekteForm extends BasisForm {
 			this.dao.remove(this.myProjekt);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not delete", e.getMessage());
-			myLogger.error(e.getMessage());
+			logger.error(e.getMessage());
 			return "";
 		}
 		}
@@ -198,7 +198,7 @@ public class ProjekteForm extends BasisForm {
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("could not read", he.getMessage());
-			myLogger.error(he.getMessage());
+			logger.error(he.getMessage());
 			return "";
 		}
 		return "ProjekteAlle";
@@ -462,7 +462,7 @@ public class ProjekteForm extends BasisForm {
 		DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
 		DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
 		Weeks weeks = Weeks.weeksBetween(start, end);
-		myLogger.trace(weeks.getWeeks());
+		logger.trace(weeks.getWeeks());
 		int days = (weeks.getWeeks() * 5);
 
 		if (days < 1) {
@@ -575,7 +575,7 @@ public class ProjekteForm extends BasisForm {
 			try {
 				ImageIO.write(bi, "png", outputfile);
 			} catch (IOException e) {
-				myLogger.debug("couldn't write project progress chart to file", e);
+				logger.debug("couldn't write project progress chart to file", e);
 			}
 		}
 	}
