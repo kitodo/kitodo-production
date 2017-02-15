@@ -132,7 +132,7 @@ public class PaginatorTest {
     }
 
     @Test
-    public void twoColumnPaginationArabic() {
+    public void twoColumnPaginationRightToLeft() {
         Paginator p = new Paginator("2 1");
         assertEquals("2 1", p.next());
         assertEquals("4 3", p.next());
