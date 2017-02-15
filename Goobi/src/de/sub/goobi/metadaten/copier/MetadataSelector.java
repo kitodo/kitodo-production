@@ -21,7 +21,7 @@ import ugh.dl.DocStruct;
  * String path, and defines methods that shall be implemented by the
  * implementing metadata selectors.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public abstract class MetadataSelector extends DataSelector {
 

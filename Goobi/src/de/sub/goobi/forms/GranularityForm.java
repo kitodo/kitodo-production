@@ -39,7 +39,7 @@ import de.sub.goobi.helper.tasks.TaskManager;
  * the granularity to split up the course of appearance of a newspaper into
  * Goobi processes.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class GranularityForm {
 	private static final Logger logger = Logger.getLogger(GranularityForm.class);

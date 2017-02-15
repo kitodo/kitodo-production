@@ -24,7 +24,7 @@ import org.apache.commons.configuration.ConfigurationException;
  * and provides a factory method to create the matching metadata copy rule
  * implementation from a given command string.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public abstract class DataCopyrule {
 

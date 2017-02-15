@@ -39,8 +39,8 @@ import de.sub.goobi.config.ConfigMain;
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.
  *
- * @author Based on preceding works from authors not named
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author unascribed
+ * @author Matthias Ronge
  */
 public class PluginLoader {
 	private static final Logger logger = Logger.getLogger(PluginLoader.class);

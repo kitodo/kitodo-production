@@ -70,7 +70,7 @@ import ugh.dl.Fileformat;
  * <kbd>year</kbd> − 4-digit year of publication
  * </p>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Hit {
 

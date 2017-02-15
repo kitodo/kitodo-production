@@ -38,7 +38,7 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
  * constructor is private) a caring class is needed which will be available for
  * instantiation to the servlet container.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class TaskSitter implements Runnable, ServletContextListener {
 	private static final int KEEP_FAILED = 10;

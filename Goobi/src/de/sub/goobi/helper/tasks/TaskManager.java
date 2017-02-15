@@ -29,7 +29,7 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
  * user controlled by the “Long running task manager”, backed by
  * {@link de.sub.goobi.forms.LongRunningTasksForm}.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class TaskManager {
 

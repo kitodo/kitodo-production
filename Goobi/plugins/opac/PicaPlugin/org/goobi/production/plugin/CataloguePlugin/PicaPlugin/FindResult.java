@@ -18,7 +18,7 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
  * (i.e. getting a certain hit) are required. This class is used to store
  * anything we need for later actions on the hit list.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 class FindResult {
 	private final Query query;

@@ -30,7 +30,7 @@ import de.sub.goobi.helper.Helper;
  * The class Citation represents a citation as they are used in academic
  * writings.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Citation {
 	/**
@@ -46,7 +46,7 @@ public class Citation {
 	 * PERIODICAL for online journals as well)
 	 * </p>
 	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	private enum Type {
 		MONOGRAPH, ANTHOLOGY, PERIODICAL, THESIS, STANDARD, INTERNET

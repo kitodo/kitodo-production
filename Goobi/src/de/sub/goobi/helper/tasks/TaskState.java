@@ -37,7 +37,7 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
  * <dd>The thread is in operation.</dd>
  * </dl>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 enum TaskState {
 	CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING

@@ -45,7 +45,7 @@ import de.sub.goobi.helper.exceptions.SwapException;
  * type ("MetsPointerURL") to be available for adding to the first level child
  * of the logical document structure hierarchy (typically "Volume").
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class ExportSerialBatchTask extends EmptyTask {
 

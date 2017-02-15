@@ -62,7 +62,7 @@ import java.util.List;
  * see the corresponding plugin configuration file.)
  * </p>
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class QueryBuilder {
 

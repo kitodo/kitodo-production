@@ -25,7 +25,7 @@ import de.sub.goobi.helper.Helper;
  * out that the task doesn’t do anything sensible yet. It is here to be
  * extendet.
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class EmptyTask extends Thread implements INameableTask {
 	/**
@@ -45,7 +45,7 @@ public class EmptyTask extends Thread implements INameableTask {
 	 * passing in the state of the old one to be able to continue work.</dd>
 	 * </dl>
 	 *
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	public enum Behaviour {
 		DELETE_IMMEDIATELY, KEEP_FOR_A_WHILE, PREPARE_FOR_RESTART

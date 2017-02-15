@@ -21,7 +21,7 @@ import de.sub.goobi.helper.Helper;
  * this way. This is especially valuable if the export has a big load of images
  * to copy.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class ExportDmsTask extends EmptyTask {
 

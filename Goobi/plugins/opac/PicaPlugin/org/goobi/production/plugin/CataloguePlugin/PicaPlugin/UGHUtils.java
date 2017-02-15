@@ -37,7 +37,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * The class UGHUtils provides utility methods used in the plug-in.
  * 
  * @author unascribed
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 class UGHUtils {
 	private static final Logger logger = Logger.getLogger(UGHUtils.class);

@@ -29,7 +29,7 @@ import de.sub.goobi.config.ConfigMain;
  * Backing bean for a single line input box element to edit a metadatum
  * renderable by JSF.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class RenderableEdit extends RenderableMetadatum implements RenderableGroupableMetadatum,
 		SingleValueRenderableMetadatum {

@@ -108,7 +108,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
  * (supportsCatalogue() would return false) the behaviour may be unspecified.
  * </p>
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class CataloguePlugin extends UnspecificPlugin {
 

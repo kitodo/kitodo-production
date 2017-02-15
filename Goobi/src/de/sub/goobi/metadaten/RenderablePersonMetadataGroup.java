@@ -34,14 +34,14 @@ import de.sub.goobi.helper.Helper;
  * metadata group type &ldquo;person&rdquo;. A person is a fixed data structure
  * in Goobi with the fields normdata record, first name and last name.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class RenderablePersonMetadataGroup extends RenderableMetadataGroup implements RenderableGroupableMetadatum {
 
 	/**
 	 * Holds the fields to show in a RenderablePersonMetadataGroup.
 	 * 
-	 * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+	 * @author Matthias Ronge
 	 */
 	enum Field {
 		NORMDATA_RECORD("normDataRecord", true), FIRSTNAME("vorname", false), LASTNAME("nachname", false);

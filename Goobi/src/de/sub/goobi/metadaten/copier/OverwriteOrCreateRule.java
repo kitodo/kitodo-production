@@ -19,7 +19,7 @@ import org.apache.commons.configuration.ConfigurationException;
  * Data copy rule that either overwrites the metadatum described by the selector
  * on the left hand side or creates it anew, if it isn’t yet present.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class OverwriteOrCreateRule extends DataCopyrule {
 

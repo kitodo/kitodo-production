@@ -28,7 +28,7 @@ import ugh.dl.MetadataType;
  * Backing bean for a drop-down style select element to edit a single-select
  * metadatum renderable by JSF.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class RenderableDropDownList extends RenderableMetadatum implements RenderableGroupableMetadatum,
 		SingleValueRenderableMetadatum {

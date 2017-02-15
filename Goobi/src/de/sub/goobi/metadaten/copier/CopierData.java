@@ -27,7 +27,7 @@ import de.sub.goobi.persistence.apache.ProcessObject;
  * has been implemented as an own bean class to allow to easily add variables
  * later without needing to extend many interfaces.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class CopierData {
 

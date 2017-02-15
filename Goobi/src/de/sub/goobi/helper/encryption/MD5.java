@@ -27,7 +27,7 @@ import java.security.*;
  * <b>&copy; Copyright:</b> Karsten Bettray - 2010<br><br>
  * <b>License:</b> GPL2.0<br>
   * @author Karsten Bettray (Universit&auml;t Duisburg-Essen)<br><br>
-  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+  * @author Matthias Ronge
  * @version 0.1.1<br>
  *
  */

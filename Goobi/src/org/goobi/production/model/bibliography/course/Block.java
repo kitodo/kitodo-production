@@ -23,7 +23,7 @@ import org.joda.time.format.DateTimeFormatter;
  * course of appearance of a newspaper within which it wasn’t suspended. A Block
  * instance handles one or more Issue objects.
  * 
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Block {
 	/**

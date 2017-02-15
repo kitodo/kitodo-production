@@ -37,7 +37,7 @@ import de.sub.goobi.helper.XMLUtils;
  * in the course of appearance can be modeled by subsequent blocks.
  * </p>
  *
- * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
+ * @author Matthias Ronge
  */
 public class Course extends ArrayList<Block> {
 	private static final long serialVersionUID = 1L;
