@@ -15,9 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,9 +40,10 @@ class Catalogue {
 	private final String ucnf;
 	private final String charset;
 	private final List<Setvalue> beautify;
+	private final Map<String,ResolveRule> resolveRules = new HashMap<>();
 	
 	Catalogue(String title, String description, String address, String database, int port, String charset,
-			String ucnf, List<Setvalue> beautifySetList) {
+			String ucnf, List<Setvalue> beautifySetList, Collection<ResolveRule> resolveRules) {
 
 		this.title = title;
 		this.description = description;
@@ -54,6 +53,9 @@ class Catalogue {
 		this.beautify = beautifySetList;
 		this.charset = charset;
 		this.ucnf = ucnf;
+		for(ResolveRule rule:resolveRules){
+			this.resolveRules.put(rule.getIdentifier(), rule);
+		}
 	}
 
 	String getTitle() {
@@ -221,10 +223,10 @@ class Catalogue {
 	 * from match results. There are two different mechanisms available for
 	 * replacement.
 	 * 
-	 * If the marked string contains the replacement mark <code>{@}</code>, the
-	 * matcher’s find() operation will be invoked over and over again and all
-	 * match results are concatenated and inserted in place of the replacement
-	 * marks.
+	 * If the marked string contains the replacement mark <code>&#123;@}</code>,
+	 * the matcher’s find() operation will be invoked over and over again and
+	 * all match results are concatenated and inserted in place of the
+	 * replacement marks.
 	 * 
 	 * Otherwise, all replacement marks <code>{1}</code>, <code>{2}</code>,
 	 * <code>{3}</code>, … will be replaced by the capturing groups matched by
@@ -279,6 +281,10 @@ class Catalogue {
 
 	String getUncf() {
 		return ucnf;
+	}
+
+	Map<String,ResolveRule> getResolveRules() {
+		return resolveRules;
 	}
 
 }

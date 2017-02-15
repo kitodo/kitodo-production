@@ -14,6 +14,7 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,19 +25,18 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 /**
  * Connects to OPAC system.
- * 
+ *
  * TODO Talk with the GBV if the URLs are ok this way
- * 
+ *
  * TODO check if correct character encodings are returned
- * 
+ *
  * @author Ludwig
  */
 
@@ -106,14 +106,16 @@ class CatalogueClient {
 
 	private Response lastOpacResult = null;
 
+	private long timeout;
+
 	// CREATION (Constructors, factory methods, static/inst init)
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * Note that up to now the search item list is always retrieved and parsed.
 	 * TODO check for local availability.
-	 * 
+	 *
 	 * @param serverAddress
 	 *            the serveraddress of the opac
 	 * @param port
@@ -136,25 +138,24 @@ class CatalogueClient {
 	/**
 	 * Gets the number of hits for the query in the specified field from the
 	 * OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query string you are looking for.
-	 * @param timeout
 	 * @return returns the number of hits.
 	 * @throws Exception
 	 *             If something is wrong with the query
 	 * @throws IOException
 	 *             If connection to catalogue system failed
 	 */
-	int getNumberOfHits(Query query, long timeout) throws IOException, SAXException, ParserConfigurationException {
-		getResult(query, timeout);
+	int getNumberOfHits(Query query) throws IOException, SAXException, ParserConfigurationException {
+		getResult(query);
 		return lastOpacResult.getNumberOfHits();
 	}
 
 	/**
 	 * Gets the formatted picaplus data of the specified hits for the query from
 	 * the OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query string you are looking for.
 	 * @param fieldKey
@@ -163,22 +164,25 @@ class CatalogueClient {
 	 * @param numberOfHits
 	 *            the number of hits to return. Set to a value lesser than 1 to
 	 *            return all hits.
-	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
-	 *             If connection to catalogue system failed
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
-	Node retrievePicaNode(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	Node retrievePicaNode(Query query, int numberOfHits)
+			throws IOException, SAXException, ParserConfigurationException {
 		return retrievePicaNode(query, 0, numberOfHits < 1 ? -1 : numberOfHits, timeout);
 	}
 
 	/**
 	 * Gets the formatted picaplus data of the specified hits for the query from
 	 * the OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query you are looking for.
 	 * @param start
@@ -188,20 +192,64 @@ class CatalogueClient {
 	 * @param timeout
 	 * @return returns the root node of the retrieved and formatted xml.
 	 * @throws IOException
-	 *             If connection to catalogue system failed
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
-	Node retrievePicaNode(Query query, int start, int end, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
-		return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
+	Node retrievePicaNode(Query query, int start, int end, long timeout)
+			throws IOException, SAXException, ParserConfigurationException {
+		Element doc = getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
 				.getDocumentElement();
+		applyResolveRules(catalogue.getResolveRules(), doc, this);
+		return doc;
+	}
+
+	/**
+	 * Apply resolve rules on a result note set.
+	 *
+	 * @param rules
+	 *            Rules to apply
+	 * @param root
+	 *            rot node to examine
+	 * @param client
+	 *            catalogue client to use for queries
+	 * @throws IOException
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
+	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
+	 * @throws SAXException
+	 *             if any SAX errors occur during processing
+	 */
+	private void applyResolveRules(Map<String, ResolveRule> rules, Element root, CatalogueClient client)
+			throws IOException, SAXException, ParserConfigurationException {
+		for (Element field : new GetChildElements(root)) {
+				if (field.getNodeName().equals("field")) {
+					String tag = field.getAttributeNode("tag").getTextContent();
+					for (Element subfield : new GetChildElements(field)) {
+						if (subfield.getNodeName().equals("subfield")) {
+							String subtag = subfield.getAttributeNode("code").getTextContent();
+							String ruleID = ResolveRule.getIdentifier(tag, subtag);
+							if (rules.containsKey(ruleID)) {
+								rules.get(ruleID).execute(subfield, client, field);
+							}
+						}
+					}
+				} else {
+					applyResolveRules(rules, field, client);
+				}
+		}
 	}
 
 	/**
 	 * Gets the raw picaplus data for the specified hits for the query in the
 	 * specified field from the OPAC.
-	 * 
+	 *
 	 * @param query
 	 *            The query you are looking for.
 	 * @param start
@@ -214,23 +262,27 @@ class CatalogueClient {
 	 *         pretty messy! It is recommended that you use
 	 *         retrieveXMLPicaPlus()
 	 * @throws IOException
-	 *             If connection to catalogue system failed
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
-	private String retrievePica(Query query, int start, int end, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	private String retrievePica(Query query, int start, int end, long timeout)
+			throws IOException, SAXException, ParserConfigurationException {
 		StringBuffer xmlResult = new StringBuffer();
 
 		// querySummary is used to check if cached result and sessionid
 		// can be used again
-		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
-				+ catalogue.getPort() + catalogue.getUncf();
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase()
+				+ catalogue.getAddress() + catalogue.getPort() + catalogue.getUncf();
 
 		// if we cannot use the cached result
 		if (!lastQuery.equals(querySummary)) {
 			// then we need a new sessionid and resultstring
-			getResult(query, timeout);
+			getResult(query);
 		}
 
 		// make sure that upper limit of requested hits is not to high
@@ -258,7 +310,7 @@ class CatalogueClient {
 
 	/**
 	 * Retrieves a single hit from the catalogue system.
-	 * 
+	 *
 	 * @param numberOfHits
 	 *            The index of the hit to return
 	 * @param timeout
@@ -275,22 +327,24 @@ class CatalogueClient {
 
 	/**
 	 * Queries the catalogue system.
-	 * 
+	 *
 	 * @param query
 	 *            The query you are looking for.
-	 * @param timeout
 	 * @return The search result as xml string.
 	 * @throws IOException
-	 *             If connection to catalogue system failed.
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
 	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
 	 * @throws SAXException
+	 *             if any SAX errors occur during processing
 	 */
-	private Response getResult(Query query, long timeout) throws IOException, SAXException,
-			ParserConfigurationException {
+	private Response getResult(Query query) throws IOException, SAXException, ParserConfigurationException {
 		String result = null;
 
-		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase() + catalogue.getAddress()
-				+ catalogue.getPort() + catalogue.getUncf();
+		String querySummary = query.getQueryUrl() + catalogue.getCharset() + catalogue.getDatabase()
+				+ catalogue.getAddress() + catalogue.getPort() + catalogue.getUncf();
 
 		if (lastQuery.equals(querySummary)) {
 			return lastOpacResult;
@@ -372,7 +426,7 @@ class CatalogueClient {
 
 	/**
 	 * Helper method that parses an InputSource and returns a DOM Document.
-	 * 
+	 *
 	 * @param source
 	 *            The InputSource to parse
 	 * @return The resulting document
@@ -396,7 +450,7 @@ class CatalogueClient {
 
 	/**
 	 * Retrieves the content of the specified url from the serverAddress.
-	 * 
+	 *
 	 * @param url
 	 *            The requested url as string. Note that the string needs to be
 	 *            already url encoded.
@@ -406,16 +460,17 @@ class CatalogueClient {
 	 */
 	private String retrieveDataFromOPAC(String url, long timeout) throws IOException {
 		String request = "http://" + catalogue.getAddress()
-				+ (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url + catalogue.getUncf();
+				+ (catalogue.getPort() != 80 ? ":".concat(Integer.toString(catalogue.getPort())) : "") + url
+				+ catalogue.getUncf();
 
 		// set timeout if no connection can be established
 		opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
-		// set timeout if a connection is established but there is no response (= time the database needs to search)
+		// set timeout if a connection is established but there is no response
+		// (= time the database needs to search)
 		if ((timeout > 0) && (timeout <= Integer.MAX_VALUE)) {
 			opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
-		}
-		else {
+		} else {
 			opacClient.getParams().setParameter("http.socket.timeout", 0); // disable
 		}
 
@@ -431,8 +486,18 @@ class CatalogueClient {
 		}
 	}
 
-	private Response parseOpacResponse(String opacResponse) throws IOException, SAXException,
-			ParserConfigurationException {
+	/**
+	 * @throws IOException
+	 *             an IO exception from the parser, possibly from a byte stream
+	 *             or character stream supplied by the application.
+	 * @throws ParserConfigurationException
+	 *             if a parser cannot be created which satisfies the requested
+	 *             configuration.
+	 * @throws SAXException
+	 *             if any SAX errors occur during processing
+	 */
+	private Response parseOpacResponse(String opacResponse)
+			throws IOException, SAXException, ParserConfigurationException {
 		opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
 				.replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
 
@@ -447,5 +512,9 @@ class CatalogueClient {
 		parser.parse(new InputSource(new StringReader(opacResponse)));
 
 		return ids;
+	}
+
+	void setTimeout(long timeout) {
+		this.timeout = timeout;
 	}
 }

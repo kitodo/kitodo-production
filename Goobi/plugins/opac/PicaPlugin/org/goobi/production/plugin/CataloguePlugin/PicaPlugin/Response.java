@@ -42,6 +42,7 @@ class Response extends DefaultHandler {
 	 * SAX parser callback method.
 	 * 
 	 * @throws SAXException
+	 *             if an illegal error was found
 	 */
 	@Override
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
