@@ -3257,4 +3257,14 @@ public class Metadaten {
 			);
 		}
 	}
+
+	/**
+	 * Returns the configuration parameter {@code advancedPaginationEnabled}.
+	 * This is used for conditional JSP rendering.
+	 * 
+	 * @return configuration parameter {@code advancedPaginationEnabled}
+	 */
+	public boolean isAdvancedPaginationEnabled() {
+		return ConfigMain.getBooleanParameter("advancedPaginationEnabled", true);
+	}
 }

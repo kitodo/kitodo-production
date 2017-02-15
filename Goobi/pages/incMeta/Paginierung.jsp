@@ -68,7 +68,14 @@
 			</htm:tr>
 			<htm:tr>
 				<htm:td styleClass="eingabeBoxen_row2">
-					<h:selectOneMenu value="#{Metadaten.paginierungArt}"
+					<h:selectOneMenu value="#{Metadaten.paginierungArt}" rendered="#{not Metadaten.advancedPaginationEnabled}"
+						style="width: 270px;margin-top:10px;margin-left:5px" onchange="paginierungWertAnzeigen(this);">
+						<f:selectItem itemValue="1" itemLabel="#{msgs.arabisch}" />
+						<f:selectItem itemValue="2" itemLabel="#{msgs.roemisch}" />
+						<f:selectItem itemValue="3" itemLabel="#{msgs.unnummeriert}" />
+						<f:selectItem itemValue="6" itemLabel="#{msgs.paginationFreetext}" />
+					</h:selectOneMenu>
+					<h:selectOneMenu value="#{Metadaten.paginierungArt}" rendered="#{Metadaten.advancedPaginationEnabled}"
 						style="width: 270px;margin-top:10px;margin-left:5px" onchange="paginierungWertAnzeigen(this);">
 						<f:selectItem itemValue="1" itemLabel="#{msgs.arabisch}" />
 						<f:selectItem itemValue="2" itemLabel="#{msgs.roemisch}" />
