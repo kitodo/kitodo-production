@@ -35,7 +35,7 @@ public class UghUtils {
 	 */
 	// TODO: Try to replace this with an external library
 	public static String convertUmlaut(String line) {
-		try (BufferedReader in = open("goobi_opacUmlaut.txt")) {
+		try (BufferedReader in = open("kitodo_pica_opacUmlaut.txt")) {
 			String str;
 			while ((str = in.readLine()) != null) {
 				if (str.length() > 0) {

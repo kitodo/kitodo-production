@@ -66,14 +66,14 @@ public class PicaPlugin implements Plugin {
 	 * “DocLanguage”) The file is optional. To use this functionality, the file
 	 * must be located in {@link #configDir}.
 	 */
-	static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
+	static final String LANGUAGES_MAPPING_FILE = "kitodo_pica_opacLanguages.txt";
 
 	/**
 	 * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
 	 * main configuration file. Required. The file must be located in
 	 * {@link #configDir}.
 	 */
-	static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
+	static final String OPAC_CONFIGURATION_FILE = "kitodo_pica_opac.xml";
 
 	/**
 	 * The field configDir holds a reference to the file system directory where
@@ -124,13 +124,13 @@ public class PicaPlugin implements Plugin {
 	 * <ul>
 	 * <li>{@code configDir} must point to a directory on the local file system
 	 * where the plug-in can read individual configuration files from. The
-	 * configuration file {@code goobi_opac.xml} is expected in that
+	 * configuration file {@code kitodo_pica_opac.xml} is expected in that
 	 * directory.</li>
 	 * <li>{@code tempDir} is a directory on the local file system where the
 	 * plug-in can write temporary files to. Currently, two files are written
 	 * there to help admins configure opac beautifiers correctly.</li>
 	 * </ul>
-	 * 
+	 *
 	 * This method is called at runtime after the classloader has created the
 	 * instance, because the plug-in constructor cannot take arguments. Confer
 	 * to {@code UnspecificPlugin.configure(Map)} in package

@@ -122,7 +122,7 @@ public class ExportDms extends ExportMets {
 	 *            ExportDmsTask object to submit progress updates and errors
 	 * @return false if an error condition was caught, true otherwise
 	 * @throws IOException
-	 *             if “goobi_projects.xml” could not be read
+	 *             if “kitodo_projects.xml” could not be read
 	 * @throws InterruptedException
 	 *             if the thread running the script to create a directory is
 	 *             interrupted by another thread while it is waiting
@@ -588,7 +588,7 @@ public class ExportDms extends ExportMets {
 	}
 
 	/**
-	 * starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder
+	 * starts copying all directories configured in kitodo_config.properties parameter "processDirs" to export folder
 	 *
 	 * @param myProzess the process object
 	 * @param zielVerzeichnis the destination directory

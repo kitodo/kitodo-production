@@ -34,7 +34,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 
 	/**
 	 * The default constructor looks up the queue name to use in
-	 * goobi_config.properties. If that is not configured and “null” is passed to
+	 * kitodo_config.properties. If that is not configured and “null” is passed to
 	 * the super constructor, this will prevent
 	 * ActiveMQDirector.registerListeners() from starting this service.
 	 */

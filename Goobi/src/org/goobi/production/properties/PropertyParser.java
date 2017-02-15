@@ -47,7 +47,7 @@ public class PropertyParser {
 			return properties;
 		}
 
-		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
+		String path = new Helper().getGoobiConfigDirectory() + "kitodo_processProperties.xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(path);
@@ -169,7 +169,7 @@ public class PropertyParser {
 			}
 			return properties;
 		}
-		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
+		String path = new Helper().getGoobiConfigDirectory() + "kitodo_processProperties.xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(path);
@@ -290,7 +290,7 @@ public class PropertyParser {
 	private void readConfigAsSample() {
 		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 
-		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
+		String path = new Helper().getGoobiConfigDirectory() + "kitodo_processProperties.xml";
 		XMLConfiguration config;
 		try {
 			config = new XMLConfiguration(path);

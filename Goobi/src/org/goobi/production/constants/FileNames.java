@@ -22,17 +22,17 @@ public class FileNames {
 	/**
 	 * Production main configuration file name.
 	 */
-	public static final String CONFIG_FILE = "goobi_config.properties";
+	public static final String CONFIG_FILE = "kitodo_config.properties";
 
 	/**
 	 * Configuration file that lists the digital collections available for the
 	 * different projects.
 	 */
-	public static final String DIGITAL_COLLECTIONS_FILE = "goobi_digitalCollections.xml";
+	public static final String DIGITAL_COLLECTIONS_FILE = "kitodo_digitalCollections.xml";
 
 	/**
 	 * Configuration file that lists the available library catalogues along with
 	 * their respective DocType mappings.
 	 */
-	public static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
+	public static final String OPAC_CONFIGURATION_FILE = "kitodo_pica_opac.xml";
 }

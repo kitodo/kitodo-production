@@ -1354,7 +1354,7 @@ public class Prozess implements Serializable {
 	}
 
 	/**
-	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within goobi_config.properties
+	 * The method createProcessDirs() starts creation of directories configured by parameter processDirs within kitodo_config.properties
 	 * @throws InterruptedException
 	 * @throws IOException
 	 * @throws DAOException
