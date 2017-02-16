@@ -18,7 +18,8 @@ package org.kitodo.production.lugh.pagination;
 public class RomanNumeral implements Fragment {
 
     /**
-     * These are the string constants that represent the hundreds of the roman numeral.
+     * These are the string constants that represent the hundreds of the roman
+     * numeral.
      */
     private static final String[] HUNDREDS = { "", "c", "cc", "ccc", "cd", "d", "dc", "dcc", "dccc", "cm" };
 
@@ -28,24 +29,26 @@ public class RomanNumeral implements Fragment {
     private static final int I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000;
 
     /**
-     * These are the string constants that represent the ones of the roman numeral.
+     * These are the string constants that represent the ones of the roman
+     * numeral.
      */
     private static final String[] ONES = { "", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix" };
 
     /**
-     * These are the string constants that represent the tens of the roman numeral.
+     * These are the string constants that represent the tens of the roman
+     * numeral.
      */
     private static final String[] TENS = { "", "x", "xx", "xxx", "xl", "l", "lx", "lxx", "lxxx", "xc" };
 
-	/**
-	 * Returns the Roman numeral for the value as string.
-	 * 
-	 * @param value
-	 *            value to format
-	 * @param uppercase
-	 *            if true, the Roman numeral is upper case, otherwise lower case
-	 * @return Roman numeral for the value
-	 */
+    /**
+     * Returns the Roman numeral for the value as string.
+     * 
+     * @param value
+     *            value to format
+     * @param uppercase
+     *            if true, the Roman numeral is upper case, otherwise lower case
+     * @return Roman numeral for the value
+     */
     public static String format(int value, boolean uppercase) {
         StringBuilder result = new StringBuilder();
         while (value >= 1000) {
@@ -61,54 +64,59 @@ public class RomanNumeral implements Fragment {
 
     /**
      * Returns an int value for a roman number.
+     * 
      * @param value
-     * @return
+     *            the string to be parsed
+     * @return an Integer object holding the value represented by the string
+     *         argument
+     * @throws NumberFormatException
+     *             if the string cannot be parsed as an integer
      */
     public static final int parseInt(String value) {
         int result = 0;
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {
-                case 'c':
-                    if (result >= D)
-                        result -= C;
-                    else
-                        result += C;
+            case 'c':
+                if (result >= D)
+                    result -= C;
+                else
+                    result += C;
                 break;
-                case 'd':
-                    if (result >= M)
-                        result -= D;
-                    else
-                        result += D;
+            case 'd':
+                if (result >= M)
+                    result -= D;
+                else
+                    result += D;
                 break;
-                case 'i':
-                    if (result >= V)
-                        result -= I;
-                    else
-                        result += I;
+            case 'i':
+                if (result >= V)
+                    result -= I;
+                else
+                    result += I;
                 break;
-                case 'l':
-                    if (result >= C)
-                        result -= L;
-                    else
-                        result += L;
+            case 'l':
+                if (result >= C)
+                    result -= L;
+                else
+                    result += L;
                 break;
-                case 'm':
-                    result += M;
+            case 'm':
+                result += M;
                 break;
-                case 'v':
-                    if (result >= X)
-                        result -= V;
-                    else
-                        result += V;
+            case 'v':
+                if (result >= X)
+                    result -= V;
+                else
+                    result += V;
                 break;
-                case 'x':
-                    if (result >= L)
-                        result -= X;
-                    else
-                        result += X;
+            case 'x':
+                if (result >= L)
+                    result -= X;
+                else
+                    result += X;
                 break;
-                default:
-                    throw new NumberFormatException("For string: " + value);
+            default:
+                throw new NumberFormatException("For string: " + value);
             }
         }
         return result;
@@ -134,7 +142,7 @@ public class RomanNumeral implements Fragment {
         this.uppercase = uppercase;
     }
 
-	/**
+    /**
      * Returns the value formatted as a roman numeral.
      */
     @Override
