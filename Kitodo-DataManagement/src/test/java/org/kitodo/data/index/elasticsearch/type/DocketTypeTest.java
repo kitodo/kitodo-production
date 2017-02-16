@@ -11,16 +11,16 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Docket;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -55,7 +55,7 @@ public class DocketTypeTest {
 
         HttpEntity document = docketType.createDocument(docket);
         String actual = EntityUtils.toString(document);
-        String excepted = "{\"file\":\"docket.xsl\",\"name\":\"default\"}";
+        String excepted = "{\"name\":\"default\",\"file\":\"docket.xsl\"}";
         assertEquals("Docket JSON string doesn't match to given plain text!", excepted, actual);
     }
 

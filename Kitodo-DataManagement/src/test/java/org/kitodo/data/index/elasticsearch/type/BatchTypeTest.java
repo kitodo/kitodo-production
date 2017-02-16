@@ -11,6 +11,10 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
@@ -18,10 +22,6 @@ import org.junit.Test;
 
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -72,7 +72,7 @@ public class BatchTypeTest {
 
         HttpEntity document = batchType.createDocument(batch);
         String actual = EntityUtils.toString(document);
-        String excepted = "{\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"title\":\"Batch1\",\"type\":\"LOGISTIC\"}";
+        String excepted = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
         assertEquals("Batch JSON string doesn't match to given plain text!", excepted, actual);
     }
 

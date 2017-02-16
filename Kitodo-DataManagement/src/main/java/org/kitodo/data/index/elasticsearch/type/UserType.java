@@ -12,6 +12,7 @@
 package org.kitodo.data.index.elasticsearch.type;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -33,17 +34,19 @@ public class UserType /*extends BaseType*/ {
     @SuppressWarnings("unchecked")
     public HttpEntity createDocument(User user) {
 
-        JSONObject userObject = new JSONObject();
-        userObject.put("name", user.getName());
-        userObject.put("surname", user.getSurname());
-        userObject.put("login", user.getLogin());
-        userObject.put("ldapLogin", user.getLdapLogin());
-        userObject.put("active", String.valueOf(user.isActive()));
-        userObject.put("location", user.getLocation());
-        userObject.put("metadataLanguage", user.getMetadataLanguage());
+        LinkedHashMap<String, String> orderedUserMap = new LinkedHashMap<>();
+        orderedUserMap.put("name", user.getName());
+        orderedUserMap.put("surname", user.getSurname());
+        orderedUserMap.put("login", user.getLogin());
+        orderedUserMap.put("ldapLogin", user.getLdapLogin());
+        orderedUserMap.put("active", String.valueOf(user.isActive()));
+        orderedUserMap.put("location", user.getLocation());
+        orderedUserMap.put("metadataLanguage", user.getMetadataLanguage());
         if (user.getLdapGroup() != null) {
-            userObject.put("ldapGroup", user.getLdapGroup().getId().toString());
+            orderedUserMap.put("ldapGroup", user.getLdapGroup().getId().toString());
         }
+
+        JSONObject userObject = new JSONObject(orderedUserMap);
 
         JSONArray userGroups = new JSONArray();
         List<UserGroup> userUserGroups = user.getUserGroups();

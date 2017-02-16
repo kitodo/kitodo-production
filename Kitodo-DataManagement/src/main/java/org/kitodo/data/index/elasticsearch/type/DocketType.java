@@ -12,6 +12,7 @@
 package org.kitodo.data.index.elasticsearch.type;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -21,7 +22,6 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONObject;
 
 import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.exceptions.DAOException;
 
 /**
  * Implementation of Docket Type.
@@ -31,9 +31,10 @@ public class DocketType /*extends BaseType*/ {
     @SuppressWarnings("unchecked")
     public HttpEntity createDocument(Docket docket) {
 
-        JSONObject docketObject = new JSONObject();
-        docketObject.put("name", docket.getName());
-        docketObject.put("file", docket.getFile());
+        LinkedHashMap<String, String> orderedDocketMap = new LinkedHashMap<>();
+        orderedDocketMap.put("name", docket.getName());
+        orderedDocketMap.put("file", docket.getFile());
+        JSONObject docketObject = new JSONObject(orderedDocketMap);
 
         return new NStringEntity(docketObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

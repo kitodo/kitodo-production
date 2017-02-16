@@ -12,6 +12,7 @@
 package org.kitodo.data.index.elasticsearch.type;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -32,9 +33,9 @@ public class BatchType /*extends BaseType*/ {
     @SuppressWarnings("unchecked")
     public HttpEntity createDocument(Batch batch) {
 
-        JSONObject batchObject = new JSONObject();
-        batchObject.put("title", batch.getTitle());
-        batchObject.put("type", batch.getType().toString());
+        LinkedHashMap<String, String> orderedBatchMap = new LinkedHashMap<>();
+        orderedBatchMap.put("title", batch.getTitle());
+        orderedBatchMap.put("type", batch.getType().toString());
 
         JSONArray processes = new JSONArray();
         List<Process> batchProcesses = batch.getProcesses();
@@ -43,6 +44,8 @@ public class BatchType /*extends BaseType*/ {
             processObject.put("id", process.getId().toString());
             processes.add(processObject);
         }
+
+        JSONObject batchObject = new JSONObject(orderedBatchMap);
         batchObject.put("processes", processes);
 
         return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);
