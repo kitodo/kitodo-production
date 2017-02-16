@@ -18,11 +18,10 @@ package org.kitodo.production.lugh.pagination;
 public class HalfInteger extends Number {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * A constant value of one.
+     */
     static final HalfInteger ONE = new HalfInteger(1, false);
-    
-    static final HalfInteger ZERO = new HalfInteger(0, false);
-    
-    static final HalfInteger A_HALF = new HalfInteger(0, true);
 
     static HalfInteger valueOf(String string) {
         int x = 0, y = 0;
