@@ -35,7 +35,8 @@ public class BatchType /*extends BaseType*/ {
 
         LinkedHashMap<String, String> orderedBatchMap = new LinkedHashMap<>();
         orderedBatchMap.put("title", batch.getTitle());
-        orderedBatchMap.put("type", batch.getType().toString());
+        String type = batch.getType() != null ? batch.getType().toString() : "null";
+        orderedBatchMap.put("type", type);
 
         JSONArray processes = new JSONArray();
         List<Process> batchProcesses = batch.getProcesses();

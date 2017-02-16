@@ -42,9 +42,8 @@ public class UserType /*extends BaseType*/ {
         orderedUserMap.put("active", String.valueOf(user.isActive()));
         orderedUserMap.put("location", user.getLocation());
         orderedUserMap.put("metadataLanguage", user.getMetadataLanguage());
-        if (user.getLdapGroup() != null) {
-            orderedUserMap.put("ldapGroup", user.getLdapGroup().getId().toString());
-        }
+        String ldapGroup = user.getLdapGroup() != null ? user.getLdapGroup().getId().toString() : "null";
+        orderedUserMap.put("ldapGroup", ldapGroup);
 
         JSONObject userObject = new JSONObject(orderedUserMap);
 

@@ -53,7 +53,6 @@ public class BatchTypeTest {
         Batch secondBatch = new Batch();
         secondBatch.setId(2);
         secondBatch.setTitle("Batch2");
-        secondBatch.setType(Batch.Type.LOGISTIC);
         batches.add(secondBatch);
 
         Batch thirdBatch = new Batch();
@@ -68,11 +67,17 @@ public class BatchTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         BatchType batchType = new BatchType();
-        Batch batch = prepareData().get(0);
 
+        Batch batch = prepareData().get(0);
         HttpEntity document = batchType.createDocument(batch);
         String actual = EntityUtils.toString(document);
         String excepted = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
+        assertEquals("Batch JSON string doesn't match to given plain text!", excepted, actual);
+
+        batch = prepareData().get(1);
+        document = batchType.createDocument(batch);
+        actual = EntityUtils.toString(document);
+        excepted = "{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}";
         assertEquals("Batch JSON string doesn't match to given plain text!", excepted, actual);
     }
 
