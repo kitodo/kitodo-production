@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Ruleset;
@@ -54,9 +56,20 @@ public class RulesetTypeTest {
         Ruleset ruleset = prepareData().get(0);
 
         HttpEntity document = rulesetType.createDocument(ruleset);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\"}";
-        assertEquals("Ruleset JSON string doesn't match to given plain text!", excepted, actual);
+        JSONParser parser = new JSONParser();
+        JSONObject rulesetObject = (JSONObject) parser.parse(EntityUtils.toString(document));
+
+        String actual = String.valueOf(rulesetObject.get("title"));
+        String excepted = "SLUBDD";
+        assertEquals("Ruleset value for title key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(rulesetObject.get("file"));
+        excepted = "ruleset_slubdd.xml";
+        assertEquals("Ruleset value for file key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(rulesetObject.get("fileContent"));
+        excepted = "";
+        assertEquals("Ruleset value for fileContent key doesn't match to given plain text!", excepted, actual);
     }
 
     @Test

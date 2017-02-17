@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Docket;
@@ -54,9 +56,16 @@ public class DocketTypeTest {
         Docket docket = prepareData().get(0);
 
         HttpEntity document = docketType.createDocument(docket);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"name\":\"default\",\"file\":\"docket.xsl\"}";
-        assertEquals("Docket JSON string doesn't match to given plain text!", excepted, actual);
+        JSONParser parser = new JSONParser();
+        JSONObject docketObject = (JSONObject) parser.parse(EntityUtils.toString(document));
+
+        String actual = String.valueOf(docketObject.get("name"));
+        String excepted = "default";
+        assertEquals("Docket value for name key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(docketObject.get("file"));
+        excepted = "docket.xsl";
+        assertEquals("Docket value for file key doesn't match to given plain text!", excepted, actual);
     }
 
     @Test

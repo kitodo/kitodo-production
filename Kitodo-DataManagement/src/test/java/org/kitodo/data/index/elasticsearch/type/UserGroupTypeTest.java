@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.User;
@@ -61,18 +63,39 @@ public class UserGroupTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         UserGroupType userGroupType = new UserGroupType();
+        JSONParser parser = new JSONParser();
 
         UserGroup userGroup = prepareData().get(0);
         HttpEntity document = userGroupType.createDocument(userGroup);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"title\":\"Administrator\",\"permission\":\"1\",\"users\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
-        assertEquals("UserGroup JSON string doesn't match to given plain text!", excepted, actual);
+        JSONObject userGroupObject = (JSONObject) parser.parse(EntityUtils.toString(document));
+
+        String actual = userGroupObject.get("title").toString();
+        String excepted = "Administrator";
+        assertEquals("UserGroup value for title key doesn't match to given plain text!", excepted, actual);
+
+        actual = userGroupObject.get("permission").toString();
+        excepted = "1";
+        assertEquals("UserGroup value for permission key doesn't match to given plain text!", excepted, actual);
+
+        actual = userGroupObject.get("users").toString();
+        excepted = "[{\"id\":\"1\"},{\"id\":\"2\"}]";
+        assertEquals("UserGroup value for users key doesn't match to given plain text!", excepted, actual);
 
         userGroup = prepareData().get(1);
         document = userGroupType.createDocument(userGroup);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"title\":\"Random\",\"permission\":\"4\",\"users\":[]}";
-        assertEquals("Batch JSON string doesn't match to given plain text!", excepted, actual);
+        userGroupObject = (JSONObject) parser.parse(EntityUtils.toString(document));
+
+        actual = String.valueOf(userGroupObject.get("title"));
+        excepted = "Random";
+        assertEquals("UserGroup value for title key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userGroupObject.get("permission"));
+        excepted = "4";
+        assertEquals("UserGroup value for permission key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userGroupObject.get("users"));
+        excepted = "[]";
+        assertEquals("UserGroup value for users key doesn't match to given plain text!", excepted, actual);
     }
 
     @Test

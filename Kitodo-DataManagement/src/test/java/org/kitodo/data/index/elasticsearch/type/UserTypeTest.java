@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.LdapGroup;
@@ -94,28 +96,48 @@ public class UserTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         UserType userType = new UserType();
+        JSONParser parser = new JSONParser();
 
         User user = prepareData().get(0);
         HttpEntity document = userType.createDocument(user);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"ldapLogin\":null,\"userGroups\":[],\"ldapGroup\":\"1\",\"surname\":\"Kowalski\","
-                + "\"name\":\"Jan\",\"metadataLanguage\":null,\"active\":\"true\",\"location\":\"Dresden\","
-                + "\"login\":\"jkowalski\",\"properties\":[]}";
+        JSONObject userObject = (JSONObject) parser.parse(EntityUtils.toString(document));
+        String actual = String.valueOf(userObject.get("name"));
+        String excepted = "Jan";
+        assertEquals("User value for name key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userObject.get("surname"));
+        excepted = "Kowalski";
+        assertEquals("User value for surname key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userObject.get("login"));
+        excepted = "jkowalski";
+        assertEquals("User value for login key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userObject.get("ldapLogin"));
+        excepted = "null";
+        assertEquals("User value for ldapLogin key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userObject.get("location"));
+        excepted = "Dresden";
+        assertEquals("User value for location key doesn't match to given plain text!", excepted, actual);
+
+        actual = String.valueOf(userObject.get("active"));
+        excepted = "true";
         assertEquals("User JSON string doesn't match to given plain text!", excepted, actual);
 
         user = prepareData().get(1);
         document = userType.createDocument(user);
         actual = EntityUtils.toString(document);
-        excepted = "{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"surname\":\"Nowak\","
-                + "\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\",\"location\":\"Berlin\","
-                + "\"login\":\"anowak\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\","
-                + "\"value\":\"2\"}]}";
+        excepted = "{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"ldapGroup\":\"null\","
+                + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
+                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
+                + "{\"title\":\"second\",\"value\":\"2\"}]}";
         assertEquals("User JSON string doesn't match to given plain text!", excepted, actual);
 
         user = prepareData().get(2);
         document = userType.createDocument(user);
         actual = EntityUtils.toString(document);
-        excepted = "{\"ldapLogin\":null,\"userGroups\":[],\"surname\":\"Müller\",\"name\":\"Peter\","
+        excepted = "{\"ldapLogin\":null,\"userGroups\":[],\"ldapGroup\":\"null\",\"surname\":\"Müller\",\"name\":\"Peter\","
                 + "\"metadataLanguage\":null,\"active\":\"true\",\"location\":null,\"login\":\"pmueller\","
                 + "\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}";
         assertEquals("User JSON string doesn't match to given plain text!", excepted, actual);
