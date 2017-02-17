@@ -11,6 +11,8 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,7 +38,8 @@ public class ProcessType /*extends BaseType*/ {
         LinkedHashMap<String, String> orderedProcessMap = new LinkedHashMap<>();
         orderedProcessMap.put("name", process.getTitle());
         orderedProcessMap.put("outputName", process.getOutputName());
-        String creationDate = process.getCreationDate() != null ? process.getCreationDate().toString() : "null";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String creationDate = process.getCreationDate() != null ? dateFormat.format(process.getCreationDate()) : "null";
         orderedProcessMap.put("creationDate", creationDate);
         orderedProcessMap.put("wikiField", process.getWikiField());
         String project = process.getProject() != null ? process.getProject().getId().toString() : "null";

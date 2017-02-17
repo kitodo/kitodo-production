@@ -11,6 +11,8 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +37,8 @@ public class HistoryType /*extends BaseType*/ {
         orderedHistoryMap.put("numericValue", history.getNumericValue().toString());
         orderedHistoryMap.put("stringValue", history.getStringValue());
         orderedHistoryMap.put("type", history.getHistoryType().toString());
-        String date = history.getDate() != null ? history.getDate().toString() : "null";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String date = history.getDate() != null ? dateFormat.format(history.getDate()) : "null";
         orderedHistoryMap.put("date", date);
         orderedHistoryMap.put("process", history.getProcess().getId().toString());
 

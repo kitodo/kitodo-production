@@ -70,7 +70,7 @@ public class HistoryTypeTest {
         HttpEntity document = historyType.createDocument(history);
         String actual = EntityUtils.toString(document);
         //again ordering is not kept but it can be caused by EntityUtils
-        String excepted = "{\"date\":\"Sat Jan 14 00:00:00 CET 2017\",\"numericValue\":\"1.0\",\"stringValue\":\"1\","
+        String excepted = "{\"date\":\"2017-01-14\",\"numericValue\":\"1.0\",\"stringValue\":\"1\","
                 + "\"process\":\"1\",\"type\":\"unknown\"}";
         assertEquals("History JSON string doesn't match to given plain text!", excepted, actual);
 

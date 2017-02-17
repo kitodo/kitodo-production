@@ -11,6 +11,8 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,20 +93,21 @@ public class ProcessTypeTest {
     //problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         ProcessType processType = new ProcessType();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
         String actual = EntityUtils.toString(document);
         String excepted = "{\"outputName\":\"Test\",\"wikiField\":\"Wiki\",\"ldapGroup\":\"null\","
-                + "\"name\":\"Testing\",\"ruleset\":\"1\",\"project\":\"1\","
-                + "\"creationDate\":\"Sun Jan 01 00:00:00 CET 2017\",\"properties\":[]}";
+                + "\"name\":\"Testing\",\"ruleset\":\"1\",\"project\":\"1\",\"creationDate\":\"2017-01-01\","
+                + "\"properties\":[]}";
         assertEquals("Process JSON string doesn't match to given plain text!", excepted, actual);
 
         process = prepareData().get(1);
         document = processType.createDocument(process);
         actual = EntityUtils.toString(document);
         excepted = "{\"outputName\":\"Render\",\"wikiField\":\"Field\",\"ldapGroup\":\"1\",\"name\":\"Rendering\","
-                + "\"ruleset\":\"null\",\"project\":\"1\",\"creationDate\":\"" + process.getCreationDate().toString()
+                + "\"ruleset\":\"null\",\"project\":\"1\",\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
                 + "\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}";
         assertEquals("Process JSON string doesn't match to given plain text!", excepted, actual);
 
@@ -112,7 +115,7 @@ public class ProcessTypeTest {
         document = processType.createDocument(process);
         actual = EntityUtils.toString(document);
         excepted = "{\"outputName\":null,\"wikiField\":\"\",\"ldapGroup\":\"null\",\"name\":\"Incomplete\","
-                + "\"ruleset\":\"null\",\"project\":\"null\",\"creationDate\":\"" + process.getCreationDate().toString()
+                + "\"ruleset\":\"null\",\"project\":\"null\",\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
                 + "\",\"properties\":[]}";
         assertEquals("Process JSON string doesn't match to given plain text!", excepted, actual);
     }
