@@ -36,7 +36,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "batch")
-public class Batch {
+public class Batch extends BaseBean {
     /**
      * Type of batch:
      *

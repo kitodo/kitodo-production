@@ -49,7 +49,7 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 // "field" as one might expect.
 @Entity
 @Table(name = "project")
-public class Project implements Serializable, Comparable<Project> {
+public class Project extends BaseBean implements Serializable, Comparable<Project> {
     private static final long serialVersionUID = -8543713331407761617L;
 
     /**

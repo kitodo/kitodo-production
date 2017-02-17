@@ -34,7 +34,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @Entity
 @Table(name = "task")
-public class Task implements Serializable {
+public class Task extends BaseBean implements Serializable {
     private static final long serialVersionUID = 6831844584239811846L;
 
     @Id

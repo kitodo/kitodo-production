@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 @Entity
 @Table(name = "ruleset")
-public class Ruleset implements Serializable {
+public class Ruleset extends BaseBean implements Serializable {
     private static final long serialVersionUID = -6663371963274685060L;
 
     @Id
