@@ -34,6 +34,7 @@ public class RulesetType /*extends BaseType*/ {
         LinkedHashMap<String, String> orderedRulesetMap = new LinkedHashMap<>();
         orderedRulesetMap.put("title", ruleset.getTitle());
         orderedRulesetMap.put("file", ruleset.getFile());
+        orderedRulesetMap.put("fileContent", "");
         JSONObject rulesetObject = new JSONObject(orderedRulesetMap);
 
         return new NStringEntity(rulesetObject.toJSONString(), ContentType.APPLICATION_JSON);
