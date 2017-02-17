@@ -16,8 +16,6 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 
-import org.kitodo.data.database.beans.BaseBean;
-
 /**
  * Interface for serving types which are added to the index.
  *
@@ -25,9 +23,9 @@ import org.kitodo.data.database.beans.BaseBean;
  * MySQL         -> Databases -> Tables -> Columns/Rows
  * ElasticSearch -> Indices   -> Types  -> Documents with Properties</p>
  */
-public interface TypeInterface {
+public interface TypeInterface<T> {
 
-    HttpEntity createDocument(BaseBean baseBean);
+    HttpEntity createDocument(T baseBean);
 
-    HashMap<Integer, HttpEntity> createDocuments(List<BaseBean> baseBeans);
+    HashMap<Integer, HttpEntity> createDocuments(List<T> baseBeans);
 }

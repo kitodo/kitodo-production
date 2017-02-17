@@ -16,14 +16,16 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 
-import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.index.api.TypeInterface;
 
 /**
  * Abstract class for Type class.
  */
-public abstract class BaseType implements TypeInterface {
-    public abstract HttpEntity createDocument(BaseBean baseBean);
+public abstract class BaseType<T> implements TypeInterface<T> {
 
-    public abstract HashMap<Integer, HttpEntity> createDocuments(List<BaseBean> baseBeans);
+    @Override
+    public abstract HttpEntity createDocument(T baseBean);
+
+    @Override
+    public abstract HashMap<Integer, HttpEntity> createDocuments(List<T> baseBeans);
 }
