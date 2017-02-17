@@ -36,6 +36,8 @@ import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.production.lugh.AuthorityFileUtil;
 import org.kitodo.production.lugh.ld.*;
+import org.kitodo.production.lugh.pagination.*;
+
 import com.hp.hpl.jena.shared.JenaException;
 
 import ugh.dl.DigitalDocument;
@@ -115,11 +117,16 @@ public class Metadaten {
 	
 	private String paginierungWert;
 	private int paginierungAbSeiteOderMarkierung;
+	
+	/**
+	 * Code value for {@link PaginatorType}.
+	 */
 	private String paginierungArt;
-	private int paginierungSeitenProImage = 1; // 1=normale Paginierung, 2=zwei
-	// Spalten auf einem Image,
-	// 3=nur jede zweite Seite hat
-	// Seitennummer
+	
+	/**
+	 * Code value for {@link PaginatorMode}.
+	 */
+	private int paginierungSeitenProImage = 1;
     private boolean fictitious = false;
 
 	private SelectItem structSeiten[];
@@ -1385,72 +1392,43 @@ public class Metadaten {
 	}
 
 	/**
-	 * die Paginierung ändern
+	 * Changes the pagination.
+	 * 
+	 * @return always {@code null}, indicating to JSF to stay on the same page
 	 */
-
 	public String Paginierung() {
+		final int FROMFIRST = 1;
 
-		int[] pageSelection = new int[alleSeitenAuswahl.length];
-		for (int i = 0; i < alleSeitenAuswahl.length; i++) {
-			pageSelection[i] = Integer.parseInt(alleSeitenAuswahl[i]);
-		}
+		PaginatorMode mode = PaginatorMode.valueOf(paginierungSeitenProImage);
+		PaginatorType type = PaginatorType.valueOf(Integer.parseInt(paginierungArt));
+		String initializer = type.format(mode, paginierungWert, fictitious,
+				paginierungSeparators.getObject().getSeparatorString());
+		Paginator paginator = new Paginator(initializer);
 
-		Paginator.Mode mode;
-		switch (paginierungSeitenProImage) {
-		case 2:
-			mode = Paginator.Mode.COLUMNS;
-			break;
-		case 3:
-			mode = Paginator.Mode.FOLIATION;
-			break;
-		case 4:
-			mode = Paginator.Mode.RECTOVERSO;
-			break;
-		case 5:
-			mode = Paginator.Mode.RECTOVERSO_FOLIATION;
-			break;
-		case 6:
-			mode = Paginator.Mode.DOUBLE_PAGES;
-			break;
-		default:
-			mode = Paginator.Mode.PAGES;
-		}
+		// assert selection is not null
 
-		Paginator.Type type;
-		switch (Integer.parseInt(paginierungArt)) {
-		case 1:
-			type = Paginator.Type.ARABIC;
-			break;
-		case 2:
-			type = Paginator.Type.ROMAN;
-			break;
-		case 6:
-			type = Paginator.Type.FREETEXT;
-			break;
-		default:
-			type = Paginator.Type.UNCOUNTED;
-			break;
-		}
+		if (alleSeitenAuswahl == null || alleSeitenAuswahl.length == 0) {
+			Helper.setFehlerMeldung("fehlerBeimEinlesen", "No pages selected for pagination.");
+		} else {
 
-		Paginator.Scope scope;
-		switch (paginierungAbSeiteOderMarkierung) {
-		case 1:
-			scope = Paginator.Scope.FROMFIRST;
-			break;
-		default:
-			scope = Paginator.Scope.SELECTED;
-			break;
+			// apply pagination sequence
 
-		}
-
-		try {
-			Paginator p = new Paginator().setPageSelection(pageSelection).setPagesToPaginate(alleSeitenNeu)
-					.setPaginationScope(scope).setPaginationType(type).setPaginationMode(mode).setFictitious(fictitious)
-					.setPaginationSeparator(paginierungSeparators.getObject().getSeparatorString())
-					.setPaginationStartValue(paginierungWert);
-			p.run();
-		} catch (IllegalArgumentException iae) {
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
+			try {
+				if (paginierungAbSeiteOderMarkierung == FROMFIRST) {
+					// apply from first selected
+					for (int pageNum = Integer.parseInt(alleSeitenAuswahl[0]);
+							pageNum < alleSeitenNeu.length; pageNum++) {
+						alleSeitenNeu[pageNum].setWert(paginator.next());
+					}
+				} else {
+					// apply to selected
+					for (String selected : alleSeitenAuswahl) {
+						alleSeitenNeu[Integer.parseInt(selected)].setWert(paginator.next());
+					}
+				}
+			} catch (IllegalArgumentException iae) {
+				Helper.setFehlerMeldung("fehlerBeimEinlesen", iae.getMessage());
+			}
 		}
 
 		/*
@@ -3278,5 +3256,15 @@ public class Metadaten {
 				e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()
 			);
 		}
+	}
+
+	/**
+	 * Returns the configuration parameter {@code advancedPaginationEnabled}.
+	 * This is used for conditional JSP rendering.
+	 * 
+	 * @return configuration parameter {@code advancedPaginationEnabled}
+	 */
+	public boolean isAdvancedPaginationEnabled() {
+		return ConfigMain.getBooleanParameter("advancedPaginationEnabled", true);
 	}
 }
