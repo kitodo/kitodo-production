@@ -654,21 +654,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 		return records;
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, SQLException, IOException {
-		PicaMassImport pmi = new PicaMassImport();
-		String filename = "ppn_Beispiele.xls";
-		if (args.length == 1) {
-			// A filename was given as argument, for example
-			// /home/robert/workspace-git/PicaMassImportPlugins/example/ppn_Beispiele.xls
-			filename = args[0];
-		}
-		pmi.setFile(new File(filename));
-		List<Record> answer = pmi.generateRecordsFromFile();
-		for (Record r : answer) {
-			System.out.println(r.getData());
-		}
-	}
-
 	@Override
 	public List<Record> generateRecordsFromFilenames(List<String> filenames) {
 		return new ArrayList<Record>();
