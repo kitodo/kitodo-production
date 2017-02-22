@@ -200,25 +200,25 @@
 						onclick="return writeToPaginierungWert('`','`')" />
 					<h:commandButton value="#{msgs.paginationAdvancedNoIncrement}"
 						title="#{msgs.paginationAdvancedNoIncrementDesc}"
-						onclick="return writeToPaginierungWert('','°')" />
+						onclick="return writeToPaginierungWert('','\260')" />
 					<h:commandButton value="#{msgs.paginationAdvancedPlusOneHalf}"
 						title="#{msgs.paginationAdvancedPlusOneHalfDesc}"
-						onclick="return writeToPaginierungWert('','½')" />
+						onclick="return writeToPaginierungWert('','\275')" />
 					<h:commandButton value="#{msgs.paginationAdvancedPlusOne}"
 						title="#{msgs.paginationAdvancedPlusOneDesc}"
-						onclick="return writeToPaginierungWert('','¹')" />
+						onclick="return writeToPaginierungWert('','\271')" />
 					<h:commandButton value="#{msgs.paginationAdvancedPlusTwo}"
 						title="#{msgs.paginationAdvancedPlusTwoDesc}"
-						onclick="return writeToPaginierungWert('','²')" />
+						onclick="return writeToPaginierungWert('','\262')" />
 					<h:commandButton value="#{msgs.paginationAdvancedPlusThree}"
 						title="#{msgs.paginationAdvancedPlusThreeDesc}"
-						onclick="return writeToPaginierungWert('','³')" />
+						onclick="return writeToPaginierungWert('','\263')" />
 					<h:commandButton value="#{msgs.paginationAdvancedFullPage}"
 						title="#{msgs.paginationAdvancedFullPageDesc}"
-						onclick="return writeToPaginierungWert('¡','')" />
+						onclick="return writeToPaginierungWert('\241','')" />
 					<h:commandButton value="#{msgs.paginationAdvancedHalfPage}"
 						title="#{msgs.paginationAdvancedHalfPageDesc}"
-						onclick="return writeToPaginierungWert('¿','')" />
+						onclick="return writeToPaginierungWert('\277','')" />
 				</htm:div>
 					<htm:br />
 
