@@ -26,7 +26,7 @@
 
 <%-- <h:form> --%>
 <a4j:commandLink action="#{Metadaten.createPagination}"
-	reRender="mygrid10,myMessages" value="#{msgs.paginierungEinlesen}" />
+	reRender="mygrid10,myMessages,myBild" value="#{msgs.paginierungEinlesen}" />
 <%-- </h:form> --%>
 <h:panelGrid id="mygrid10" columns="2" style="margin:0px;">
 
