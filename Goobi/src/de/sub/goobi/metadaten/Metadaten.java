@@ -1234,7 +1234,7 @@ public class Metadaten {
 		return "";
 	}
 
-	private void createPagination(boolean bildErmitteln) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+	private void createPagination(boolean determineImage) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
 		this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
 		retrieveAllImages();
 
@@ -1268,10 +1268,9 @@ public class Metadaten {
 			}
 		}
 		
-		if (bildErmitteln) {
+		if (determineImage) {
 			BildErmitteln(0);
 		}
-		return;
 	}
 
 	/**
