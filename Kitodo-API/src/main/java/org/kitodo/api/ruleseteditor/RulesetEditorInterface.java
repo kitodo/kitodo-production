@@ -16,7 +16,7 @@ import java.io.File;
 public interface RulesetEditorInterface {
 
     /** Creates a new rulesetFile */
-    public File createRulesetFile();
+    File createRulesetFile();
 
     /**
      * Edits a given ruleset file.

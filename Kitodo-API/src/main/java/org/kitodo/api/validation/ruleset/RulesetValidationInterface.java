@@ -19,6 +19,12 @@ import java.nio.file.Path;
 
 public interface RulesetValidationInterface extends ValidationInterface {
 
+    /**
+     * Validates if a rulesetfile is valid.
+     *
+     * @param rulesetFilePath The path to the rulesetfile, which should be validated.
+     * @return A validation result.
+     */
     ValidationResult validate(Path rulesetFilePath);
 
 }

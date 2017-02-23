@@ -15,8 +15,14 @@ import java.util.ArrayList;
 
 public class ValidationResult {
 
+    /**
+     * If the validation is valid.
+     */
     private boolean valid;
 
+    /**
+     * A list of result messages.
+     */
     private ArrayList<String> resultMessages;
 
 }

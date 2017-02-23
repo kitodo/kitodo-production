@@ -13,10 +13,19 @@ package org.kitodo.api.search;
 
 public class SearchCondition<S,V> {
 
+    /**
+     * The field to search in.
+     */
     private String fieldName;
 
+    /**
+     * If the field should contain the value or not.
+     */
     private boolean include;
 
+    /**
+     * The value to search for.
+     */
     private V value;
 
 }

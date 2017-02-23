@@ -18,6 +18,13 @@ import java.nio.file.Path;
 
 public interface LongTimePreservationValidationInterface extends ValidationInterface {
 
+    /**
+     * Validates an image for longTimePreservation.
+     *
+     * @param imageFilePath The path to the image, which should be validated.
+     * @param fileType The fileType of the image at the given path.
+     * @return A validation result.
+     */
     ValidationResult validate(Path imageFilePath, FileType fileType);
 
 }
