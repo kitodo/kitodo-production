@@ -11,14 +11,13 @@
 
 package org.kitodo.api.ocr;
 
-public interface OpticalCharacterRecognitionInterface {
+import java.nio.file.Path;
 
-    /**
-     * Processes files with OCR.
-     *
-     * @param input the OCRInput, which contains necessary information.
-     * @return an OCRResult.
-     */
-	public OCRResult process(OCRInput input);
+public class FileProperty {
 
+	/** The input file path. */
+	private Path inputFilePath;
+
+	/** The name of the generated file. */
+	private String outputFileName;
 }
