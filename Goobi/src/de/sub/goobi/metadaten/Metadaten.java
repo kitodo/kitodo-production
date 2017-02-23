@@ -673,7 +673,7 @@ public class Metadaten {
 		if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true) && (this.mydocument.getPhysicalDocStruct() == null || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
 				|| this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
 			try {
-				createPagination();
+				createPagination(false);
 			} catch (TypeNotAllowedForParentException e) {
 
 			}
@@ -1230,6 +1230,11 @@ public class Metadaten {
 	 * @throws SwapException
 	 */
 	public String createPagination() throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+		createPagination(true);
+		return "";
+	}
+
+	private void createPagination(boolean determineImage) throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
 		this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
 		retrieveAllImages();
 
@@ -1240,7 +1245,7 @@ public class Metadaten {
 			log = log.getAllChildren().get(0);
 		}
 		if (log.getType().getAnchorClass() != null) {
-			return "";
+			return;
 		}
 
 		if (log.getAllChildren() != null) {
@@ -1262,7 +1267,10 @@ public class Metadaten {
 				}
 			}
 		}
-		return "";
+		
+		if (determineImage) {
+			BildErmitteln(0);
+		}
 	}
 
 	/**
@@ -1578,7 +1586,7 @@ public class Metadaten {
 	        logger.trace("dataList 2");
 	        if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true) && (dataList == null || dataList.isEmpty())) {
 	            try {
-	                createPagination();
+	                createPagination(false);
 	                dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
 	            } catch (TypeNotAllowedForParentException e) {
 	                logger.error(e);
