@@ -1,20 +1,17 @@
 package org.kitodo.impl.docket;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class ExportDocketTest {
     DocketDataGenerator docketDataGenerator;
 
     @Before
-    public void initialize(){
+    public void initialize() {
         this.docketDataGenerator = new DocketDataGenerator();
     }
 
@@ -23,10 +20,10 @@ public class ExportDocketTest {
         ExportDocket exportDocket = new ExportDocket();
         File file = new File("docket.pdf");
         FileOutputStream fileOutputStream = new FileOutputStream(file);
-        Path pathToXslFile = Paths.get("src/test/resources/docket.xsl");
+        File xslFile = new File("src/test/resources/docket.xsl");
 
-        exportDocket.startExport(docketDataGenerator.createDocketData("processId","signature","doctype"), fileOutputStream, pathToXslFile.toString());
+        exportDocket.startExport(docketDataGenerator.createDocketData("processId", "signature", "doctype"),
+                fileOutputStream, xslFile);
     }
-
 
 }

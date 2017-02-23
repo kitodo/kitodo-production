@@ -1,10 +1,9 @@
 package org.kitodo.impl.docket;
 
-import org.kitodo.api.docket.DocketData;
-import org.kitodo.api.docket.TemplateProperty;
-import org.kitodo.api.docket.WorkpieceProperty;
-
 import java.util.ArrayList;
+
+import org.kitodo.api.docket.DocketData;
+import org.kitodo.api.docket.Property;
 
 public class DocketDataGenerator {
 
@@ -17,9 +16,9 @@ public class DocketDataGenerator {
         docketdata.setRulesetName("RulesetTitle");
         docketdata.setComment("A comment");
 
-        ArrayList<TemplateProperty> templateProperties = new ArrayList<>();
-        TemplateProperty propertyForDocket = new TemplateProperty();
-        propertyForDocket.setTemplateId(12345);
+        ArrayList<Property> templateProperties = new ArrayList<>();
+        Property propertyForDocket = new Property();
+        propertyForDocket.setId(12345);
         propertyForDocket.setTitle("Signatur");
         propertyForDocket.setValue(signatur);
 
@@ -27,9 +26,9 @@ public class DocketDataGenerator {
 
         docketdata.setTemplateProperties(templateProperties);
 
-        ArrayList<WorkpieceProperty> workpieceProperties = new ArrayList<>();
-        WorkpieceProperty workpiecePropertyForDocket = new WorkpieceProperty();
-        workpiecePropertyForDocket.setWorkpieceId(12345);
+        ArrayList<Property> workpieceProperties = new ArrayList<>();
+        Property workpiecePropertyForDocket = new Property();
+        workpiecePropertyForDocket.setId(12345);
         workpiecePropertyForDocket.setTitle("docType");
         workpiecePropertyForDocket.setValue(docType);
 
@@ -37,9 +36,9 @@ public class DocketDataGenerator {
 
         docketdata.setWorkpieceProperties(workpieceProperties);
 
-        ArrayList<org.kitodo.api.docket.ProcessProperty> processProperties = new ArrayList<>();
-        org.kitodo.api.docket.ProcessProperty processPropertyForDocket = new org.kitodo.api.docket.ProcessProperty();
-        processPropertyForDocket.setProcessId(12345);
+        ArrayList<org.kitodo.api.docket.Property> processProperties = new ArrayList<>();
+        org.kitodo.api.docket.Property processPropertyForDocket = new org.kitodo.api.docket.Property();
+        processPropertyForDocket.setId(12345);
         processPropertyForDocket.setTitle("digitalCollection");
         processPropertyForDocket.setValue("Musik");
 

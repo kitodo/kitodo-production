@@ -21,6 +21,7 @@ import de.sub.goobi.helper.tasks.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,10 +36,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
-import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
@@ -46,12 +47,14 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")
@@ -240,10 +243,10 @@ public class BatchForm extends BasisForm {
      *
      * @return String
      */
-    public String downloadDocket() {
+    public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
-        String rootpath = ConfigCore.getParameter("xsltFolder");
-        File xsltfile = new File(rootpath, "docket_multipage.xsl");
+        URI rootpath = new File(ConfigCore.getParameter("xsltFolder")).toURI();
+        URI xsltfile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         List<Process> docket = Collections.emptyList();
         if (this.selectedBatches.size() == 0) {
@@ -262,16 +265,21 @@ public class BatchForm extends BasisForm {
         if (docket.size() > 0) {
             if (!facesContext.getResponseComplete()) {
                 HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-                String fileName = "batch_docket" + ".pdf";
+                String fileName = "batch_docket.pdf";
                 ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
                 String contentType = servletContext.getMimeType(fileName);
                 response.setContentType(contentType);
                 response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
                 try {
+                    KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
+                    DocketInterface module = loader.loadModule();
                     ServletOutputStream out = response.getOutputStream();
-                    ExportDocket ern = new ExportDocket();
-                    ern.startExport(docket, out, xsltfile.getAbsolutePath());
+                    ArrayList<Process> processes = new ArrayList<>(docket);
+                    File file = module.generateMultipleDockets(
+                            serviceManager.getProcessService().getDocketData(processes), xsltfile);
+                    byte[] bytes = IOUtils.toByteArray(IOUtils.toInputStream(file.toString()));
+                    out.write(bytes);
                     out.flush();
                 } catch (IOException e) {
                     logger.error("IOException while exporting run note", e);

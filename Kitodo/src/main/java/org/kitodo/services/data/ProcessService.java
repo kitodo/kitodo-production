@@ -44,6 +44,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,10 +52,11 @@ import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.kitodo.api.docket.DocketData;
+import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -84,6 +86,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.filters.FileNameEndsAndDoesNotBeginWithFilter;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
@@ -174,7 +177,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Check if IndexAction flag is delete. If true remove process from list of
      * processes and re-save batch, if false only re-save batch object.
-     * 
+     *
      * @param process
      *            object
      */
@@ -193,7 +196,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Add process to project, if project is assigned to process.
-     * 
+     *
      * @param process
      *            object
      */
@@ -206,7 +209,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Check IndexAction flag in for process object. If DELETE remove all tasks
      * from index, if other call saveOrRemoveTaskInIndex() method.
-     * 
+     *
      * @param process
      *            object
      */
@@ -224,7 +227,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Compare index and database, according to comparisons results save or
      * remove tasks.
-     * 
+     *
      * @param process
      *            object
      */
@@ -263,7 +266,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Remove template if process is removed, add template if process is marked
      * as template.
-     * 
+     *
      * @param process
      *            object
      */
@@ -281,8 +284,8 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * Remove workpiece if process is removed, add workpiece if process is marked
-     * as workpiece.
+     * Remove workpiece if process is removed, add workpiece if process is
+     * marked as workpiece.
      *
      * @param process
      *            object
@@ -302,7 +305,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Compare two list and return difference between them.
-     * 
+     *
      * @param firstList
      *            list from which records can be remove
      * @param secondList
@@ -660,7 +663,8 @@ public class ProcessService extends TitleSearchService<Process> {
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
-        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
+        FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
+                "_" + DIRECTORY_SUFFIX);
         URI tifOrdner = null;
         ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
 
@@ -673,8 +677,8 @@ public class ProcessService extends TitleSearchService<Process> {
         if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, dir, process,
-                        ProcessSubType.IMAGE, "");
+                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, dir, process, ProcessSubType.IMAGE,
+                        "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
@@ -744,7 +748,8 @@ public class ProcessService extends TitleSearchService<Process> {
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
-            FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_", "_" + DIRECTORY_SUFFIX);
+            FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
+                    "_" + DIRECTORY_SUFFIX);
             URI origOrdner = null;
             ArrayList<URI> verzeichnisse = fileService.getSubUris(filterDirectory, dir);
             for (URI aVerzeichnisse : verzeichnisse) {
@@ -1202,10 +1207,16 @@ public class ProcessService extends TitleSearchService<Process> {
 
             // write run note to servlet output stream
             try {
+                KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
+                DocketInterface module = loader.loadModule();
+
                 ServletOutputStream out = response.getOutputStream();
-                ExportDocket ern = new ExportDocket();
-                ern.startExport(process, out, xsltFile.getAbsolutePath());
+
+                File file = module.generateDocket(getDocketData(process), xsltFile.toURI());
+                byte[] bytes = IOUtils.toByteArray(IOUtils.toInputStream(file.toString()));
+                out.write(bytes);
                 out.flush();
+
                 facesContext.responseComplete();
             } catch (Exception e) {
                 Helper.setFehlerMeldung("Exception while exporting run note.", e.getMessage());
@@ -1962,5 +1973,63 @@ public class ProcessService extends TitleSearchService<Process> {
                 fileService.copyFile(srcDir, dstDir);
             }
         }
+    }
+
+    public ArrayList<DocketData> getDocketData(ArrayList<Process> processes) {
+        ArrayList<DocketData> docketdata = new ArrayList<>();
+        for (Process process : processes) {
+            docketdata.add(getDocketData(process));
+        }
+        return docketdata;
+    }
+
+    public DocketData getDocketData(Process process) {
+        DocketData docketdata = new DocketData();
+
+        docketdata.setCreationDate(process.getCreationDate().toString());
+        docketdata.setProcessId(process.getId().toString());
+        docketdata.setProcessName(process.getTitle());
+        docketdata.setProjectName(process.getProject().getTitle());
+        docketdata.setRulesetName(process.getRuleset().getTitle());
+        docketdata.setComment(process.getWikiField());
+
+        ArrayList<org.kitodo.api.docket.Property> templateProperties = new ArrayList<>();
+        for (Property property : process.getTemplates().get(0).getProperties()) {
+            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
+            propertyForDocket.setId(property.getId());
+            propertyForDocket.setTitle(property.getTitle());
+            propertyForDocket.setValue(property.getValue());
+
+            templateProperties.add(propertyForDocket);
+
+        }
+        docketdata.setTemplateProperties(templateProperties);
+
+        ArrayList<org.kitodo.api.docket.Property> workpieceProperties = new ArrayList<>();
+        for (org.kitodo.data.database.beans.Property property : process.getWorkpieces().get(0).getProperties()) {
+            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
+            propertyForDocket.setId(property.getId());
+            propertyForDocket.setTitle(property.getTitle());
+            propertyForDocket.setValue(property.getValue());
+
+            workpieceProperties.add(propertyForDocket);
+
+        }
+        docketdata.setWorkpieceProperties(workpieceProperties);
+
+        ArrayList<org.kitodo.api.docket.Property> processProperties = new ArrayList<>();
+        for (Property property : process.getProperties()) {
+            org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
+            propertyForDocket.setId(property.getId());
+            propertyForDocket.setTitle(property.getTitle());
+            propertyForDocket.setValue(property.getValue());
+
+            processProperties.add(propertyForDocket);
+
+        }
+        docketdata.setProcessProperties(processProperties);
+
+        return docketdata;
+
     }
 }

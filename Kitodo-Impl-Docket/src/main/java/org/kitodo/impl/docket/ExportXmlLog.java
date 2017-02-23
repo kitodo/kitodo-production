@@ -11,7 +11,6 @@
 
 package org.kitodo.impl.docket;
 
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -22,255 +21,250 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.jdom.transform.XSLTransformException;
-import org.jdom.transform.XSLTransformer;
-
 import org.kitodo.api.docket.DocketData;
-import org.kitodo.api.docket.ProcessProperty;
-import org.kitodo.api.docket.TemplateProperty;
-import org.kitodo.api.docket.WorkpieceProperty;
+import org.kitodo.api.docket.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides xml logfile generation. After the generation the file will be written to user home directory
+ * This class provides xml logfile generation. After the generation the file
+ * will be written to user home directory
  * 
  * @author Robert Sehr
  * @author Steffen Hankiewicz
  * 
  */
 public class ExportXmlLog {
-	private static final Logger logger = LoggerFactory.getLogger(ExportXmlLog.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExportXmlLog.class);
 
-	/**
-	 * This method exports the production metadata as xml to a given stream.
-	 *
-	 * @param docketData
-	 *            the docketdata to export
-	 * @param os
-	 *            the OutputStream to write the contents to
-	 * @throws IOException
-	 * @throws ExportFileException
-	 */
-	public void startExport(DocketData docketData, OutputStream os) throws IOException {
-		try {
-			Document doc = createDocument(docketData, true);
+    /**
+     * This method exports the production metadata as xml to a given stream.
+     *
+     * @param docketData
+     *            the docketdata to export
+     * @param os
+     *            the OutputStream to write the contents to
+     * @throws IOException
+     * @throws ExportFileException
+     */
+    public void startExport(DocketData docketData, OutputStream os) throws IOException {
+        try {
+            Document doc = createDocument(docketData, true);
 
-			XMLOutputter outp = new XMLOutputter();
-			outp.setFormat(Format.getPrettyFormat());
+            XMLOutputter outp = new XMLOutputter();
+            outp.setFormat(Format.getPrettyFormat());
 
-			outp.output(doc, os);
-			os.close();
+            outp.output(doc, os);
+            os.close();
 
-		} catch (Exception e) {
-			throw new IOException(e);
-		}
-	}
-	/**
-	 * This method exports the production metadata for al list of processes as a single file to a given stream.
-	 *
-	 * @param docketDataList a list of Docketdata
-	 * @param outputStream
-	 * @param xslt
-	 */
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
 
-	public void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream, String xslt) {
-		Document answer = new Document();
-		Element root = new Element("processes");
-		answer.setRootElement(root);
-		Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
+    /**
+     * This method exports the production metadata for al list of processes as a
+     * single file to a given stream.
+     *
+     * @param docketDataList
+     *            a list of Docketdata
+     * @param outputStream
+     * @param xslt
+     */
 
-		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-		root.addNamespaceDeclaration(xsi);
-		root.setNamespace(xmlns);
-		Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile"
-				+ " XML-logfile.xsd", xsi);
-		root.setAttribute(attSchema);
-		for (DocketData docketData : docketDataList) {
-			Document doc = createDocument(docketData, false);
-			Element processRoot = doc.getRootElement();
-			processRoot.detach();
-			root.addContent(processRoot);
-		}
+    public void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream, String xslt) {
+        Document answer = new Document();
+        Element root = new Element("processes");
+        answer.setRootElement(root);
+        Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
 
-		XMLOutputter outp = new XMLOutputter();
-		outp.setFormat(Format.getPrettyFormat());
+        Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        root.addNamespaceDeclaration(xsi);
+        root.setNamespace(xmlns);
+        Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+                xsi);
+        root.setAttribute(attSchema);
+        for (DocketData docketData : docketDataList) {
+            Document doc = createDocument(docketData, false);
+            Element processRoot = doc.getRootElement();
+            processRoot.detach();
+            root.addContent(processRoot);
+        }
 
-		try {
+        XMLOutputter outp = new XMLOutputter();
+        outp.setFormat(Format.getPrettyFormat());
 
-			outp.output(answer, outputStream);
-		} catch (IOException e) {
+        try {
 
-		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					outputStream = null;
-				}
-			}
-		}
+            outp.output(answer, outputStream);
+        } catch (IOException e) {
 
-	}
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    outputStream = null;
+                }
+            }
+        }
 
-	/**
-	 * This method creates a new xml document with process metadata.
-	 *
-	 * @param docketData
-	 *            the docketData to export
-	 * @return a new xml document
-	 */
-	private Document createDocument(DocketData docketData, boolean addNamespace) {
+    }
 
-		Element processElm = new Element("process");
-		Document doc = new Document(processElm);
+    /**
+     * This method creates a new xml document with process metadata.
+     *
+     * @param docketData
+     *            the docketData to export
+     * @return a new xml document
+     */
+    private Document createDocument(DocketData docketData, boolean addNamespace) {
 
-		processElm.setAttribute("processID", String.valueOf(docketData.getProcessId()));
+        Element processElm = new Element("process");
+        Document doc = new Document(processElm);
 
-		Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
-		processElm.setNamespace(xmlns);
-		// namespace declaration
-		if (addNamespace) {
+        processElm.setAttribute("processID", String.valueOf(docketData.getProcessId()));
 
-			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-			processElm.addNamespaceDeclaration(xsi);
-			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile"
-					+ " XML-logfile.xsd", xsi);
-			processElm.setAttribute(attSchema);
-		}
-		// process information
+        Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
+        processElm.setNamespace(xmlns);
+        // namespace declaration
+        if (addNamespace) {
 
-		ArrayList<Element> processElements = new ArrayList<Element>();
-		Element processTitle = new Element("title", xmlns);
-		processTitle.setText(docketData.getProcessName());
-		processElements.add(processTitle);
+            Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            processElm.addNamespaceDeclaration(xsi);
+            Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+                    xsi);
+            processElm.setAttribute(attSchema);
+        }
+        // process information
 
-		Element project = new Element("project", xmlns);
-		project.setText(docketData.getProjectName());
-		processElements.add(project);
+        ArrayList<Element> processElements = new ArrayList<Element>();
+        Element processTitle = new Element("title", xmlns);
+        processTitle.setText(docketData.getProcessName());
+        processElements.add(processTitle);
 
-		Element date = new Element("time", xmlns);
-		date.setAttribute("type", "creation date");
-		date.setText(String.valueOf(docketData.getCreationDate()));
-		processElements.add(date);
+        Element project = new Element("project", xmlns);
+        project.setText(docketData.getProjectName());
+        processElements.add(project);
 
-		Element ruleset = new Element("ruleset", xmlns);
-		ruleset.setText(docketData.getRulesetName());
-		processElements.add(ruleset);
+        Element date = new Element("time", xmlns);
+        date.setAttribute("type", "creation date");
+        date.setText(String.valueOf(docketData.getCreationDate()));
+        processElements.add(date);
 
-		Element comment = new Element("comment", xmlns);
-		comment.setText(docketData.getComment());
-		processElements.add(comment);
+        Element ruleset = new Element("ruleset", xmlns);
+        ruleset.setText(docketData.getRulesetName());
+        processElements.add(ruleset);
 
-		ArrayList<Element> processProperties = new ArrayList<Element>();
-		for (ProcessProperty prop : docketData.getProcessProperties()) {
-			Element property = new Element("property", xmlns);
-			property.setAttribute("propertyIdentifier", prop.getTitle());
-			if (prop.getValue() != null) {
-				property.setAttribute("value", replacer(prop.getValue()));
-			} else {
-				property.setAttribute("value", "");
-			}
-		
-			Element label = new Element("label", xmlns);
-			
-			label.setText(prop.getTitle());
-			property.addContent(label);
-			processProperties.add(property);
-		}
-		if (processProperties.size() != 0) {
-			Element properties = new Element("properties", xmlns);
-			properties.addContent(processProperties);
-			processElements.add(properties);
-		}
+        Element comment = new Element("comment", xmlns);
+        comment.setText(docketData.getComment());
+        processElements.add(comment);
 
-		// template information
-		Element templates = new Element("originals", xmlns);
-		ArrayList<Element> templateElements = new ArrayList<Element>();
-			Element template = new Element("original", xmlns);
+        ArrayList<Element> processProperties = new ArrayList<Element>();
+        for (Property prop : docketData.getProcessProperties()) {
+            Element property = new Element("property", xmlns);
+            property.setAttribute("propertyIdentifier", prop.getTitle());
+            if (prop.getValue() != null) {
+                property.setAttribute("value", replacer(prop.getValue()));
+            } else {
+                property.setAttribute("value", "");
+            }
 
-			ArrayList<Element> templateProperties = new ArrayList<Element>();
-			for (TemplateProperty prop : docketData.getTemplateProperties()) {
-				Element property = new Element("property", xmlns);
-				property.setAttribute("propertyIdentifier", prop.getTitle());
-				if (prop.getValue() != null) {
-					property.setAttribute("value", replacer(prop.getValue()));
-				} else {
-					property.setAttribute("value", "");
-				}
-				
-				Element label = new Element("label", xmlns);
-		
-				label.setText(prop.getTitle());
-				property.addContent(label);
+            Element label = new Element("label", xmlns);
 
-				templateProperties.add(property);
-				if (prop.getTitle().equals("Signatur")) {
-					Element secondProperty = new Element("property", xmlns);
-					secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
-					if (prop.getValue() != null) {
-						secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
-						Element secondLabel = new Element("label", xmlns);
-						secondLabel.setText(prop.getTitle());
-						secondProperty.addContent(secondLabel);
-						templateProperties.add(secondProperty);
-					}
-				}
-			}
-			if (templateProperties.size() != 0) {
-				Element properties = new Element("properties", xmlns);
-				properties.addContent(templateProperties);
-				template.addContent(properties);
-			}
-			templateElements.add(template);
-		templates.addContent(templateElements);
-		processElements.add(templates);
+            label.setText(prop.getTitle());
+            property.addContent(label);
+            processProperties.add(property);
+        }
+        if (processProperties.size() != 0) {
+            Element properties = new Element("properties", xmlns);
+            properties.addContent(processProperties);
+            processElements.add(properties);
+        }
 
-		// digital document information
-		Element digdoc = new Element("digitalDocuments", xmlns);
-		ArrayList<Element> docElements = new ArrayList<Element>();
-			Element dd = new Element("digitalDocument", xmlns);
+        // template information
+        Element templates = new Element("originals", xmlns);
+        ArrayList<Element> templateElements = new ArrayList<Element>();
+        Element template = new Element("original", xmlns);
 
-			ArrayList<Element> docProperties = new ArrayList<Element>();
-			for (WorkpieceProperty prop : docketData.getWorkpieceProperties()) {
-				Element property = new Element("property", xmlns);
-				property.setAttribute("propertyIdentifier", prop.getTitle());
-				if (prop.getValue() != null) {
-					property.setAttribute("value", replacer(prop.getValue()));
-				} else {
-					property.setAttribute("value", "");
-				}
-	
-				Element label = new Element("label", xmlns);
-		
-				label.setText(prop.getTitle());
-				property.addContent(label);
-				docProperties.add(property);
-			}
-			if (docProperties.size() != 0) {
-				Element properties = new Element("properties", xmlns);
-				properties.addContent(docProperties);
-				dd.addContent(properties);
-			}
-			docElements.add(dd);
-		digdoc.addContent(docElements);
-		processElements.add(digdoc);
+        ArrayList<Element> templateProperties = new ArrayList<Element>();
+        for (Property prop : docketData.getTemplateProperties()) {
+            Element property = new Element("property", xmlns);
+            property.setAttribute("propertyIdentifier", prop.getTitle());
+            if (prop.getValue() != null) {
+                property.setAttribute("value", replacer(prop.getValue()));
+            } else {
+                property.setAttribute("value", "");
+            }
 
+            Element label = new Element("label", xmlns);
 
-		processElm.setContent(processElements);
-		return doc;
-	}
+            label.setText(prop.getTitle());
+            property.addContent(label);
 
+            templateProperties.add(property);
+            if (prop.getTitle().equals("Signatur")) {
+                Element secondProperty = new Element("property", xmlns);
+                secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+                if (prop.getValue() != null) {
+                    secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
+                    Element secondLabel = new Element("label", xmlns);
+                    secondLabel.setText(prop.getTitle());
+                    secondProperty.addContent(secondLabel);
+                    templateProperties.add(secondProperty);
+                }
+            }
+        }
+        if (templateProperties.size() != 0) {
+            Element properties = new Element("properties", xmlns);
+            properties.addContent(templateProperties);
+            template.addContent(properties);
+        }
+        templateElements.add(template);
+        templates.addContent(templateElements);
+        processElements.add(templates);
 
-	private String replacer(String in) {
-		in = in.replace("°", "?");
-		in = in.replace("^", "?");
-		in = in.replace("|", "?");
-		in = in.replace(">", "?");
-		in = in.replace("<", "?");
-		return in;
-	}
+        // digital document information
+        Element digdoc = new Element("digitalDocuments", xmlns);
+        ArrayList<Element> docElements = new ArrayList<Element>();
+        Element dd = new Element("digitalDocument", xmlns);
 
+        ArrayList<Element> docProperties = new ArrayList<Element>();
+        for (Property prop : docketData.getWorkpieceProperties()) {
+            Element property = new Element("property", xmlns);
+            property.setAttribute("propertyIdentifier", prop.getTitle());
+            if (prop.getValue() != null) {
+                property.setAttribute("value", replacer(prop.getValue()));
+            } else {
+                property.setAttribute("value", "");
+            }
 
+            Element label = new Element("label", xmlns);
+
+            label.setText(prop.getTitle());
+            property.addContent(label);
+            docProperties.add(property);
+        }
+        if (docProperties.size() != 0) {
+            Element properties = new Element("properties", xmlns);
+            properties.addContent(docProperties);
+            dd.addContent(properties);
+        }
+        docElements.add(dd);
+        digdoc.addContent(docElements);
+        processElements.add(digdoc);
+
+        processElm.setContent(processElements);
+        return doc;
+    }
+
+    private String replacer(String in) {
+        in = in.replace("°", "?");
+        in = in.replace("^", "?");
+        in = in.replace("|", "?");
+        in = in.replace(">", "?");
+        in = in.replace("<", "?");
+        return in;
+    }
 
 }

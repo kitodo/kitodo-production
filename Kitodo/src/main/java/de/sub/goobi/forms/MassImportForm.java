@@ -32,6 +32,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +41,6 @@ import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
-import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.DocstructElement;
 import org.goobi.production.importer.GoobiHotfolder;
@@ -55,11 +55,13 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
@@ -89,7 +91,7 @@ public class MassImportForm implements Serializable {
     private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
 
-    private List<Process> processList;
+    private ArrayList<Process> processList;
 
     /**
      * Constructor.
@@ -757,7 +759,7 @@ public class MassImportForm implements Serializable {
 
     /**
      * Get next page.
-     * 
+     *
      * @return next page
      */
     public String nextPage() {
@@ -793,11 +795,11 @@ public class MassImportForm implements Serializable {
         return new ArrayList<>();
     }
 
-    public List<Process> getProcessList() {
+    public ArrayList<Process> getProcessList() {
         return this.processList;
     }
 
-    public void setProcessList(List<Process> processList) {
+    public void setProcessList(ArrayList<Process> processList) {
         this.processList = processList;
     }
 
@@ -814,10 +816,10 @@ public class MassImportForm implements Serializable {
      *
      * @return String
      */
-    public String downloadDocket() {
+    public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
-        String rootpath = ConfigCore.getParameter("xsltFolder");
-        File xsltfile = new File(rootpath, "docket_multipage.xsl");
+        URI rootpath = new File(ConfigCore.getParameter("xsltFolder")).toURI();
+        URI xsltfile = serviceManager.getFileService().createResource(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
@@ -829,9 +831,14 @@ public class MassImportForm implements Serializable {
 
             // write docket to servlet output stream
             try {
+                KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
+                DocketInterface module = loader.loadModule();
                 ServletOutputStream out = response.getOutputStream();
-                ExportDocket ern = new ExportDocket();
-                ern.startExport(this.processList, out, xsltfile.getAbsolutePath());
+
+                File file = module.generateMultipleDockets(
+                        serviceManager.getProcessService().getDocketData(this.processList), xsltfile);
+                byte[] bytes = IOUtils.toByteArray(IOUtils.toInputStream(file.toString()));
+                out.write(bytes);
                 out.flush();
             } catch (IOException e) {
                 logger.error("IOException while exporting run note", e);

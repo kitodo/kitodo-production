@@ -26,7 +26,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.IProcessDataExport;
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
 import org.jdom.Attribute;
@@ -56,7 +55,7 @@ import org.kitodo.services.ServiceManager;
  * @author Steffen Hankiewicz
  *
  */
-public class ExportXmlLog implements IProcessDataExport {
+public class ExportXmlLog {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ExportXmlLog.class);
 
@@ -96,8 +95,8 @@ public class ExportXmlLog implements IProcessDataExport {
      *            the process to export
      * @param os
      *            the OutputStream to write the contents to
+     * @throws IOException
      */
-    @Override
     public void startExport(Process process, OutputStream os, String xslt) throws IOException {
         try {
             Document doc = createDocument(process, true);
@@ -114,8 +113,7 @@ public class ExportXmlLog implements IProcessDataExport {
     }
 
     /**
-     * This method exports the production metadata for al list of processes as a
-     * single file to a given stream.
+     * This method exports the production metadata as xml to a given stream.
      *
      * @param processList
      *            list of Process' objects
