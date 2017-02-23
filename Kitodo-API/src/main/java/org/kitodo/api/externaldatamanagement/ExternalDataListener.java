@@ -11,7 +11,9 @@
 
 package org.kitodo.api.externaldatamanagement;
 
-public interface ExternalDataListener {
+import java.util.EventListener;
+
+public interface ExternalDataListener extends EventListener {
 
     /**
      * Is called, if external data has changed.
