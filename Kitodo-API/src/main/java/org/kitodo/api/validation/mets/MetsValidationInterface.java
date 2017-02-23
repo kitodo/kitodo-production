@@ -12,8 +12,13 @@
 package org.kitodo.api.validation.mets;
 
 import org.kitodo.api.validation.ValidationInterface;
+import org.kitodo.api.validation.ValidationResult;
+
+import java.nio.file.Path;
 
 public interface MetsValidationInterface extends ValidationInterface {
+
+    public ValidationResult validate(Path metsFilePath, Path rulesetFilePath);
 
 
 }

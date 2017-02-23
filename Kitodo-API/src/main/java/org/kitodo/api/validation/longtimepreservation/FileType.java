@@ -11,13 +11,12 @@
 
 package org.kitodo.api.validation.longtimepreservation;
 
-import org.kitodo.api.validation.ValidationInterface;
-import org.kitodo.api.validation.ValidationResult;
+/**
+ * Determines the File Types supported by the module. Must be implemented by an Enum.
+ */
+public interface FileType {
 
-import java.nio.file.Path;
-
-public interface LongTimePreservationValidationInterface extends ValidationInterface {
-
-    public ValidationResult validate(Path imageFilePath, FileType fileType);
+    /** returns the enum values, is overwritten by enums default 'values()' method */
+    public FileType[] values();
 
 }

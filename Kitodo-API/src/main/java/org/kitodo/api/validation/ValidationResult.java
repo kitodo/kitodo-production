@@ -9,16 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.validation.ruleset;
+package org.kitodo.api.validation;
 
-import org.kitodo.api.validation.ValidationInterface;
-import org.kitodo.api.validation.ValidationResult;
+import java.util.ArrayList;
 
-import java.io.File;
-import java.nio.file.Path;
+public class ValidationResult {
 
-public interface RulesetValidationInterface extends ValidationInterface {
+    private boolean valid;
 
-    public ValidationResult validate(Path rulesetFilePath);
+    private ArrayList<String> resultMessages;
 
 }
