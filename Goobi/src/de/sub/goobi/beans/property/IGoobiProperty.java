@@ -18,52 +18,52 @@ import de.sub.goobi.helper.enums.PropertyType;
 
 public interface IGoobiProperty {
 
-	public String getAuswahl();
+    public String getAuswahl();
 
-	public void setAuswahl(String auswahl);
+    public void setAuswahl(String auswahl);
 
-	public Integer getId();
+    public Integer getId();
 
-	public void setId(Integer id);
+    public void setId(Integer id);
 
-	public Boolean isIstObligatorisch();
+    public Boolean isIstObligatorisch();
 
-	public void setIstObligatorisch(Boolean istObligatorisch);
+    public void setIstObligatorisch(Boolean istObligatorisch);
 
-	public String getTitel();
+    public String getTitel();
 
-	public void setTitel(String titel);
+    public void setTitel(String titel);
 
-	public String getWert();
+    public String getWert();
 
-	public void setWert(String wert);
+    public void setWert(String wert);
 
-	public void setCreationDate(Date creation);
+    public void setCreationDate(Date creation);
 
-	public Date getCreationDate();
+    public Date getCreationDate();
 
-	/**
-	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
-	 */
-	public void setType(PropertyType inType);
+    /**
+     * set datentyp to specific value from {@link PropertyType}
+     *
+     * @param inType
+     *            as {@link PropertyType}
+     */
+    public void setType(PropertyType inType);
 
-	/**
-	 * get datentyp as {@link PropertyType}
-	 * 
-	 * @return current datentyp
-	 */
-	public PropertyType getType();
+    /**
+     * get datentyp as {@link PropertyType}
+     *
+     * @return current datentyp
+     */
+    public PropertyType getType();
 
 
-	public void setContainer(Integer order);
-	
-	public Integer getContainer();
-	
-	public String getNormalizedTitle();
-	
-	public String getNormalizedValue();
-	
+    public void setContainer(Integer order);
+
+    public Integer getContainer();
+
+    public String getNormalizedTitle();
+
+    public String getNormalizedValue();
+
 }

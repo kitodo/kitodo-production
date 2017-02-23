@@ -24,10 +24,10 @@ import ugh.dl.Prefs;
 import de.sub.goobi.config.ConfigMain;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
- * mit dessen Eigenschaften und erlaubt die Bearbeitung 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt
+ * mit dessen Eigenschaften und erlaubt die Bearbeitung
  * der Schrittdetails
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
@@ -38,7 +38,7 @@ public class MetaPerson {
    private final DocStruct myDocStruct;
    private final MetadatenHelper mdh;
 
-   
+
 
    /**
     * Allgemeiner Konstruktor ()
@@ -53,9 +53,9 @@ public class MetaPerson {
 
    /*#####################################################
     #####################################################
-    ##																															 
-    ##																Getter und Setter									
-    ##                                                   															    
+    ##
+    ##                                                              Getter und Setter
+    ##
     #####################################################
     ####################################################*/
 
@@ -76,46 +76,46 @@ public class MetaPerson {
    }
 
    public String getVorname() {
-	   if (this.p.getFirstname()==null) {
-		   return "";
-	   }
+       if (this.p.getFirstname()==null) {
+           return "";
+       }
       return this.p.getFirstname();
    }
 
    public void setVorname(String inVorname) {
-	   if (inVorname == null) {
-		   inVorname = "";
-	   }
+       if (inVorname == null) {
+           inVorname = "";
+       }
       this.p.setFirstname(inVorname);
       this.p.setDisplayname(getNachname() + ", " + getVorname());
    }
 
    public String getNachname() {
-	   if (this.p.getLastname()==null) {
-		   return "";
-	   }
+       if (this.p.getLastname()==null) {
+           return "";
+       }
       return this.p.getLastname();
    }
 
    public void setNachname(String inNachname) {
-	   if (inNachname == null) {
-		   inNachname = "";
-	   }
+       if (inNachname == null) {
+           inNachname = "";
+       }
       this.p.setLastname(inNachname);
       this.p.setDisplayname(getNachname() + ", " + getVorname());
    }
 
-	public String getRecord() {
-		String authorityValue = this.p.getAuthorityValue();
-		if (authorityValue == null || authorityValue.isEmpty())
-			authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
-		return authorityValue;
-	}
+    public String getRecord() {
+        String authorityValue = this.p.getAuthorityValue();
+        if (authorityValue == null || authorityValue.isEmpty())
+            authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+        return authorityValue;
+    }
 
-	public void setRecord(String record) {
-		String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
-		this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-	}
+    public void setRecord(String record) {
+        String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
+        this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+    }
 
    public String getRolle() {
       return this.p.getRole();

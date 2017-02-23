@@ -14,13 +14,13 @@ package de.sub.goobi.helper.tasks;
 /**
  * A task implementing this interface provides its readable name by a method
  * caal.
- * 
+ *
  * @author Matthias Ronge
  */
 public interface INameableTask {
 
-	/**
-	 * Returns the display name of the task to show to the user.
-	 */
-	String getDisplayName();
+    /**
+     * Returns the display name of the task to show to the user.
+     */
+    String getDisplayName();
 }

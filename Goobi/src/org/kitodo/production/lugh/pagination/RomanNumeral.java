@@ -12,7 +12,7 @@ package org.kitodo.production.lugh.pagination;
 
 /**
  * A roman numeral as part of a pagination sequence.
- * 
+ *
  * @author Matthias Ronge
  */
 public class RomanNumeral implements Fragment {
@@ -42,7 +42,7 @@ public class RomanNumeral implements Fragment {
 
     /**
      * Returns the Roman numeral for the value as string.
-     * 
+     *
      * @param value
      *            value to format
      * @param uppercase
@@ -64,7 +64,7 @@ public class RomanNumeral implements Fragment {
 
     /**
      * Returns an int value for a roman number.
-     * 
+     *
      * @param value
      *            the string to be parsed
      * @return an Integer object holding the value represented by the string
@@ -176,7 +176,7 @@ public class RomanNumeral implements Fragment {
 
     /**
      * Returns a concise string representation of this instance.
-     * 
+     *
      * @return a string representing this instance
      */
     @Override

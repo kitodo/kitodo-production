@@ -17,15 +17,15 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.beans.Docket" table="dockets">
-		<id name="id" column="docketID" type="integer">
-			<generator class="native"/>
-		</id>
-		
-		<property name="name" column="name" type="string"/>
-		<property name="file" column="file" type="string"/>
-		
-		
-	</class>
+    <class name="de.sub.goobi.beans.Docket" table="dockets">
+        <id name="id" column="docketID" type="integer">
+            <generator class="native"/>
+        </id>
+
+        <property name="name" column="name" type="string"/>
+        <property name="file" column="file" type="string"/>
+
+
+    </class>
 
 </hibernate-mapping>

@@ -17,18 +17,18 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.beans.HistoryEvent" table="history">
-		<id name="id" column="historyid" type="integer">
-			<generator class="native" />
-		</id>
+    <class name="de.sub.goobi.beans.HistoryEvent" table="history">
+        <id name="id" column="historyid" type="integer">
+            <generator class="native" />
+        </id>
 
-		<property name="numericValue" column="numericvalue" type="double" />
-		<property name="stringValue" column="stringvalue" type="string" />
-		<property name="type" column="type" type="integer" />
-		<property name="date" column="date" type="timestamp" />
-				
-		<many-to-one name="process" class="de.sub.goobi.beans.Prozess" column="processID" foreign-key="FK_ProzesseID"/>
-		
-	</class>
+        <property name="numericValue" column="numericvalue" type="double" />
+        <property name="stringValue" column="stringvalue" type="string" />
+        <property name="type" column="type" type="integer" />
+        <property name="date" column="date" type="timestamp" />
+
+        <many-to-one name="process" class="de.sub.goobi.beans.Prozess" column="processID" foreign-key="FK_ProzesseID"/>
+
+    </class>
 
 </hibernate-mapping>

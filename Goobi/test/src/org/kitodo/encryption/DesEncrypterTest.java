@@ -21,31 +21,31 @@ import org.junit.Test;
 import org.kitodo.encryption.DesEncrypter;
 
 public class DesEncrypterTest {
-	static Map<String, String> testData;  
-	
-	static {
-		testData = new HashMap<String, String>();
-		testData.put("Password", "6lPEb6Gic+/7BNRdMmL1qQ==");
-		testData.put("12345678", "wkQy7f152Zl422PTPOPAMQ==");
-		testData.put("GoobiPassword1234*./", "nDI2cSug5Nj/kkEvKQPBOsHjdTofLmaJ");
-		testData.put("AreallyreallyreallylongPassword", "89DIASbZ9PNGN132djaFlfVXNo7V3DgBeFCEZG2WmSM=");
-		testData.put("$%!--_-_/*-äöüä", "/wFe+pyc/QQTmhxAZcjSt9mkwrv03udL");
-	}
-	
-	@Test
-	public void encryptTest () {
-		for (String clearText: testData.keySet()) {
-			String encrypted = new DesEncrypter().encrypt(clearText);
-			assertTrue("Encrypted Password doesn't match the precomputed one!", encrypted.equals(testData.get(clearText)));
-		}
-	}
+    static Map<String, String> testData;
 
-	@Test
-	public void decryptTest () {
-		for (String clearText: testData.keySet()) {
-			String decrypted = new DesEncrypter().decrypt(testData.get(clearText));
-			assertTrue("Decrypted Password doesn't match the given plain text", decrypted.equals(clearText));
-		}
-	}
-	
+    static {
+        testData = new HashMap<String, String>();
+        testData.put("Password", "6lPEb6Gic+/7BNRdMmL1qQ==");
+        testData.put("12345678", "wkQy7f152Zl422PTPOPAMQ==");
+        testData.put("GoobiPassword1234*./", "nDI2cSug5Nj/kkEvKQPBOsHjdTofLmaJ");
+        testData.put("AreallyreallyreallylongPassword", "89DIASbZ9PNGN132djaFlfVXNo7V3DgBeFCEZG2WmSM=");
+        testData.put("$%!--_-_/*-äöüä", "/wFe+pyc/QQTmhxAZcjSt9mkwrv03udL");
+    }
+
+    @Test
+    public void encryptTest () {
+        for (String clearText: testData.keySet()) {
+            String encrypted = new DesEncrypter().encrypt(clearText);
+            assertTrue("Encrypted Password doesn't match the precomputed one!", encrypted.equals(testData.get(clearText)));
+        }
+    }
+
+    @Test
+    public void decryptTest () {
+        for (String clearText: testData.keySet()) {
+            String decrypted = new DesEncrypter().decrypt(testData.get(clearText));
+            assertTrue("Decrypted Password doesn't match the given plain text", decrypted.equals(clearText));
+        }
+    }
+
 }

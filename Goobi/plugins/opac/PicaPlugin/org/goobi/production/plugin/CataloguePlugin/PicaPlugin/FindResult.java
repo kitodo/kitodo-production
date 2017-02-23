@@ -17,49 +17,49 @@ package org.goobi.production.plugin.CataloguePlugin.PicaPlugin;
  * find() which is passed back to it if further operations on that search result
  * (i.e. getting a certain hit) are required. This class is used to store
  * anything we need for later actions on the hit list.
- * 
+ *
  * @author Matthias Ronge
  */
 class FindResult {
-	private final Query query;
-	private final long hits;
+    private final Query query;
+    private final long hits;
 
-	FindResult(Query query, long hits) {
-		this.query = query;
-		this.hits = hits;
-	}
+    FindResult(Query query, long hits) {
+        this.query = query;
+        this.hits = hits;
+    }
 
-	long getHits() {
-		return hits;
-	}
+    long getHits() {
+        return hits;
+    }
 
-	Query getQuery() {
-		return query;
-	}
+    Query getQuery() {
+        return query;
+    }
 
-	/**
-	 * The classes Catalogue, GetOpac and Query do not implement
-	 * hashCode()—implementing hashCode() here would not work correctly.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if trying to invoke hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		throw new UnsupportedOperationException(
-				"The classes Catalogue, GetOpac and Query do not implement hashCode()—implementing hashCode() here would not work correctly");
-	}
+    /**
+     * The classes Catalogue, GetOpac and Query do not implement
+     * hashCode()—implementing hashCode() here would not work correctly.
+     *
+     * @throws UnsupportedOperationException
+     *             if trying to invoke hashCode()
+     */
+    @Override
+    public int hashCode() {
+        throw new UnsupportedOperationException(
+                "The classes Catalogue, GetOpac and Query do not implement hashCode()—implementing hashCode() here would not work correctly");
+    }
 
-	/**
-	 * The classes Catalogue, GetOpac and Query do not implement
-	 * equals()—implementing equals() here would not work correctly.
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             if trying to invoke equals()
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		throw new UnsupportedOperationException(
-				"The classes Catalogue, GetOpac and Query do not implement equals()—implementing equals() here would not work correctly");
-	}
+    /**
+     * The classes Catalogue, GetOpac and Query do not implement
+     * equals()—implementing equals() here would not work correctly.
+     *
+     * @throws UnsupportedOperationException
+     *             if trying to invoke equals()
+     */
+    @Override
+    public boolean equals(Object obj) {
+        throw new UnsupportedOperationException(
+                "The classes Catalogue, GetOpac and Query do not implement equals()—implementing equals() here would not work correctly");
+    }
 }

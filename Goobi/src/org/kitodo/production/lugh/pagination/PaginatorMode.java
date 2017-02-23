@@ -123,7 +123,7 @@ public enum PaginatorMode {
 
     /**
      * Returns the enum constant of this type with the specified code.
-     * 
+     *
      * @param code
      *            code of the enum constant to be returned
      * @return the enum constant with the specified code
@@ -145,7 +145,7 @@ public enum PaginatorMode {
 
     /**
      * Enum constant constructor that takes a code.
-     * 
+     *
      * @param code
      *            code of the enum constant.
      */

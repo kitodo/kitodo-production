@@ -15,22 +15,22 @@ package de.sub.goobi.metadaten;
  * A single value renderable metadatum may reference any renderable metadataum
  * which does only hold one single value. It provides a setValue() and
  * getValue() method.
- * 
+ *
  * @author Matthias Ronge
  */
 interface SingleValueRenderableMetadatum {
-	/**
-	 * Sets the value of this editing component.
-	 * 
-	 * @param value
-	 *            value to set
-	 */
-	void setValue(String value);
+    /**
+     * Sets the value of this editing component.
+     *
+     * @param value
+     *            value to set
+     */
+    void setValue(String value);
 
-	/**
-	 * May be used to retrieve the value from this editing component.
-	 * 
-	 * @return the value inside the component
-	 */
-	String getValue();
+    /**
+     * May be used to retrieve the value from this editing component.
+     *
+     * @return the value inside the component
+     */
+    String getValue();
 }

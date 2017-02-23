@@ -14,7 +14,7 @@ package org.kitodo.production.lugh.pagination;
  * A fragment of a pagination sequence. Paginations can be freely combined out
  * of fragments that can be a {@link DecimalNumber}, a {@link RomanNumeral} or
  * {@link StaticText}.
- * 
+ *
  * @author Matthias Ronge
  */
 interface Fragment {
@@ -25,7 +25,7 @@ interface Fragment {
      * sheet). {@code DecimalNumber} and {@code RomanNumeral} will ignore the
      * half part of the integer, where {@code StaticText} may return text or an
      * empty string for full and half values.
-     * 
+     *
      * @param value
      *            value to format
      * @return the formatted value
@@ -36,7 +36,7 @@ interface Fragment {
      * Returns the increment associated with the fragment. For example, to get a
      * pagination with an interval of two (like 1, 3, 5, 7, 9, …), the
      * {@code DecimalNumber} has to be configured with an interval value of 2.0.
-     * 
+     *
      * @return the increment of fragment
      */
     HalfInteger getIncrement();
@@ -44,14 +44,14 @@ interface Fragment {
     /**
      * Returns the initial value of the fragment. This is where pagination will
      * be started.
-     * 
+     *
      * @return the pagination start value
      */
     Integer intValue();
 
     /**
      * Sets the increment of the fragment.
-     * 
+     *
      * @param increment
      *            increment value the fragment will cause
      */

@@ -133,20 +133,20 @@ public enum PaginatorType {
         this.code = code;
     }
 
-	/**
-	 * Returns the paginator syntax for the given parameters
-	 * 
-	 * @param mode
-	 *            paginator mode
-	 * @param value
-	 *            first value
-	 * @param fictitious
-	 *            if true, create fictitious pagination
-	 * @param separator
-	 *            separator character
-	 * @return paginator syntax
-	 * @throws NumberFormatException
-	 *             if the number contains invalid digits
-	 */
+    /**
+     * Returns the paginator syntax for the given parameters
+     *
+     * @param mode
+     *            paginator mode
+     * @param value
+     *            first value
+     * @param fictitious
+     *            if true, create fictitious pagination
+     * @param separator
+     *            separator character
+     * @return paginator syntax
+     * @throws NumberFormatException
+     *             if the number contains invalid digits
+     */
     public abstract String format(PaginatorMode mode, String value, boolean fictitious, String separator);
 }

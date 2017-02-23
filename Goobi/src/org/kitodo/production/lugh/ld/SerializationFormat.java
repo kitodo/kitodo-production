@@ -24,7 +24,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 public enum SerializationFormat {
     /**
      * The N-Triples serialisation format ({@code application/n-triples}).
-     * 
+     *
      * @see "https://en.wikipedia.org/wiki/N-Triples"
      */
     N_TRIPLES {
@@ -35,7 +35,7 @@ public enum SerializationFormat {
     },
     /**
      * The N3 serialisation format ({@code text/n3;charset=utf-8}).
-     * 
+     *
      * @see "https://en.wikipedia.org/wiki/Notation3"
      */
     N3 {
@@ -50,7 +50,7 @@ public enum SerializationFormat {
      * them in a linear way. It produces an output which reminds you of
      * N-Triples and is hardly readable. However, it is comparably faster for
      * larger models than the {@link #RDF_XML_ABBREV} serializer.
-     * 
+     *
      * @see "https://en.wikipedia.org/wiki/RDF/XML"
      * @see "https://jena.apache.org/documentation/io/rdfxml_howto.html#rdfxml-rdfxml-abbrev"
      */
@@ -65,7 +65,7 @@ public enum SerializationFormat {
      * printed. This serialiser creates serialises the nodes in a way which
      * reminds you of Turtle and improves readability. However, its runtime may
      * become unacceptable for large models.
-     * 
+     *
      * @see "https://en.wikipedia.org/wiki/RDF/XML"
      * @see "https://jena.apache.org/documentation/io/rdfxml_howto.html#rdfxml-rdfxml-abbrev"
      */
@@ -77,7 +77,7 @@ public enum SerializationFormat {
     },
     /**
      * The Turtle serialisation format ({@code text/turtle}).
-     * 
+     *
      * @see "https://en.wikipedia.org/wiki/Turtle_(syntax)"
      */
     TURTLE {

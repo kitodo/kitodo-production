@@ -19,38 +19,38 @@ import java.util.*;
  * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
  */
 class Setvalue {
-	private final String tag;
-	private final String subtag;
-	private final String value;
-	private final String mode;
-	private final List<Condition> conditions;
+    private final String tag;
+    private final String subtag;
+    private final String value;
+    private final String mode;
+    private final List<Condition> conditions;
 
-	Setvalue(String tag, String subtag, String value, String mode,
-			List<Condition> conditions) {
-		this.tag = tag;
-		this.subtag = subtag;
-		this.value = value;
-		this.mode = mode;		
-		this.conditions = conditions;
-	}
+    Setvalue(String tag, String subtag, String value, String mode,
+            List<Condition> conditions) {
+        this.tag = tag;
+        this.subtag = subtag;
+        this.value = value;
+        this.mode = mode;
+        this.conditions = conditions;
+    }
 
-	String getTag() {
-		return tag;
-	}
+    String getTag() {
+        return tag;
+    }
 
-	String getSubtag() {
-		return subtag;
-	}
+    String getSubtag() {
+        return subtag;
+    }
 
-	String getValue() {
-		return value;
-	}
+    String getValue() {
+        return value;
+    }
 
-	String getMode() {
-		return mode;
-	}
-	
-	List<Condition> getConditions() {
-		return conditions;
-	}
+    String getMode() {
+        return mode;
+    }
+
+    List<Condition> getConditions() {
+        return conditions;
+    }
 }

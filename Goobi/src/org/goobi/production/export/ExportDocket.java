@@ -36,90 +36,90 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 /**
  * This class provides generating a run note based on the generated xml log
- * 
+ *
  * @author Steffen Hankiewicz
  */
 public class ExportDocket implements IProcessDataExport {
 
-	/**
-	 * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in the config-folder
-	 * 
-	 * @param process
-	 *            the process to export
-	 * @param os
-	 *            the OutputStream to write the contents to
-	 * @throws IOException
-	 * @throws ExportFileException
-	 */
-	@Override
-	public void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException {
+    /**
+     * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in the config-folder
+     *
+     * @param process
+     *            the process to export
+     * @param os
+     *            the OutputStream to write the contents to
+     * @throws IOException
+     * @throws ExportFileException
+     */
+    @Override
+    public void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException {
 
-		ExportXmlLog exl = new ExportXmlLog();
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		exl.startExport(process, out, null);
+        ExportXmlLog exl = new ExportXmlLog();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        exl.startExport(process, out, null);
 
-		// generate pdf file
-		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
-		StreamSource transformSource = new StreamSource(xsltfile);
-		FopFactory fopFactory = FopFactory.newInstance();
-		FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		// transform xml
-		Transformer xslfoTransformer = getTransformer(transformSource);
-		try {
-			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, outStream);
-			Result res = new SAXResult(fop.getDefaultHandler());
-			xslfoTransformer.transform(source, res);
-		} catch (FOPException e) {
-			throw new IOException("FOPException occurred", e);
-		} catch (TransformerException e) {
-			throw new IOException("TransformerException occurred", e);
-		}
+        // generate pdf file
+        StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
+        StreamSource transformSource = new StreamSource(xsltfile);
+        FopFactory fopFactory = FopFactory.newInstance();
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        // transform xml
+        Transformer xslfoTransformer = getTransformer(transformSource);
+        try {
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, outStream);
+            Result res = new SAXResult(fop.getDefaultHandler());
+            xslfoTransformer.transform(source, res);
+        } catch (FOPException e) {
+            throw new IOException("FOPException occurred", e);
+        } catch (TransformerException e) {
+            throw new IOException("TransformerException occurred", e);
+        }
 
-		// write the content to output stream
-		byte[] pdfBytes = outStream.toByteArray();
-		os.write(pdfBytes);
-	}
+        // write the content to output stream
+        byte[] pdfBytes = outStream.toByteArray();
+        os.write(pdfBytes);
+    }
 
-	public void startExport(Iterable<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
+    public void startExport(Iterable<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
 
-		ExportXmlLog exl = new ExportXmlLog();
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		exl.startExport(processList, out, null);
+        ExportXmlLog exl = new ExportXmlLog();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        exl.startExport(processList, out, null);
 
-		
-		
-		// generate pdf file
-		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
-		StreamSource transformSource = new StreamSource(xsltfile);
-		FopFactory fopFactory = FopFactory.newInstance();
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		// transform xml
-		try {
-			Transformer xslfoTransformer = TransformerFactory.newInstance().newTransformer(transformSource);
-			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, outStream);
-			Result res = new SAXResult(fop.getDefaultHandler());
-			xslfoTransformer.transform(source, res);
-		} catch (FOPException e) {
-			throw new IOException("FOPException occurred", e);
-		} catch (TransformerException e) {
-			throw new IOException("TransformerException occurred", e);
-		}
 
-		// write the content to output stream
-		byte[] pdfBytes = outStream.toByteArray();
-		os.write(pdfBytes);
-	}
 
-	private static Transformer getTransformer(StreamSource streamSource) {
-		// setup the xslt transformer
-		net.sf.saxon.TransformerFactoryImpl impl = new net.sf.saxon.TransformerFactoryImpl();
-		try {
-			return impl.newTransformer(streamSource);
-		} catch (TransformerConfigurationException e) {
-		}
-		return null;
-	}
+        // generate pdf file
+        StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
+        StreamSource transformSource = new StreamSource(xsltfile);
+        FopFactory fopFactory = FopFactory.newInstance();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        // transform xml
+        try {
+            Transformer xslfoTransformer = TransformerFactory.newInstance().newTransformer(transformSource);
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, outStream);
+            Result res = new SAXResult(fop.getDefaultHandler());
+            xslfoTransformer.transform(source, res);
+        } catch (FOPException e) {
+            throw new IOException("FOPException occurred", e);
+        } catch (TransformerException e) {
+            throw new IOException("TransformerException occurred", e);
+        }
+
+        // write the content to output stream
+        byte[] pdfBytes = outStream.toByteArray();
+        os.write(pdfBytes);
+    }
+
+    private static Transformer getTransformer(StreamSource streamSource) {
+        // setup the xslt transformer
+        net.sf.saxon.TransformerFactoryImpl impl = new net.sf.saxon.TransformerFactoryImpl();
+        try {
+            return impl.newTransformer(streamSource);
+        } catch (TransformerConfigurationException e) {
+        }
+        return null;
+    }
 
 
 }

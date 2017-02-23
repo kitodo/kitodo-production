@@ -14,26 +14,26 @@
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
- 
+
 <hibernate-mapping>
-	<class name="de.sub.goobi.beans.Batch" table="batches">
+    <class name="de.sub.goobi.beans.Batch" table="batches">
 
-		<id name="id" column="BatchID" type="integer">
-			<generator class="native" />
-		</id>
+        <id name="id" column="BatchID" type="integer">
+            <generator class="native" />
+        </id>
 
-		<property name="title" column="title" type="string" />
-		
-		<property name="type" length="9">
-			<type name="org.hibernate.type.EnumType">
-				<param name="enumClass">de.sub.goobi.beans.Batch$Type</param>
-				<param name="type"><!-- int java.sql.Types.VARCHAR = -->12</param>
-			</type>
-		</property>
+        <property name="title" column="title" type="string" />
 
-		<set name="processes" table="batchesprozesse" lazy="true">
-			<key column="BatchID" foreign-key="FK_BatchID"/>
-			<many-to-many column="ProzesseID" class="de.sub.goobi.beans.Prozess" foreign-key="FK_ProzesseID"/>
-		</set>
-	</class>
+        <property name="type" length="9">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">de.sub.goobi.beans.Batch$Type</param>
+                <param name="type"><!-- int java.sql.Types.VARCHAR = -->12</param>
+            </type>
+        </property>
+
+        <set name="processes" table="batchesprozesse" lazy="true">
+            <key column="BatchID" foreign-key="FK_BatchID"/>
+            <many-to-many column="ProzesseID" class="de.sub.goobi.beans.Prozess" foreign-key="FK_ProzesseID"/>
+        </set>
+    </class>
 </hibernate-mapping>

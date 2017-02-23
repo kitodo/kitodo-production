@@ -27,18 +27,18 @@ import javax.servlet.ServletContextListener;
  */
 public class ImageIOInitializer implements ServletContextListener {
 
-	static {
-		// makes sure, plugins get loaded via web application class loader
-		// and are available for later calls from the application
-		ImageIO.scanForPlugins();
-	}
+    static {
+        // makes sure, plugins get loaded via web application class loader
+        // and are available for later calls from the application
+        ImageIO.scanForPlugins();
+    }
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-	}
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+    }
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-	}
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+    }
 
 }

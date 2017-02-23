@@ -18,28 +18,28 @@
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 
 <htm:tr>
-	<htm:td colspan="2">
-		<h:form id="foot1">
-			<htm:table width="100%" cellpadding="0" cellspacing="0px"
-				align="center" style="margin-top:0px">
-				<htm:tr>
-					<htm:td align="center" styleClass="layoutFuss">
+    <htm:td colspan="2">
+        <h:form id="foot1">
+            <htm:table width="100%" cellpadding="0" cellspacing="0px"
+                align="center" style="margin-top:0px">
+                <htm:tr>
+                    <htm:td align="center" styleClass="layoutFuss">
 
-						<h:outputLink value="#{HelperForm.applicationWebsiteMsg}">
-							<h:outputText value="#{HelperForm.applicationWebsiteMsg}" />
-						</h:outputLink>
+                        <h:outputLink value="#{HelperForm.applicationWebsiteMsg}">
+                            <h:outputText value="#{HelperForm.applicationWebsiteMsg}" />
+                        </h:outputLink>
 
-						<h:outputText value=" | #{msgs.toolentwicklung} | " />
+                        <h:outputText value=" | #{msgs.toolentwicklung} | " />
 
-						<h:commandLink action="Impressum" value="#{msgs.impressum}" id="impr" />
-						<script language="javascript">
+                        <h:commandLink action="Impressum" value="#{msgs.impressum}" id="impr" />
+                        <script language="javascript">
     function submitEnter(commandId,e)
 {
         var keycode;
         if (window.event) keycode = window.event.keyCode;
         else if (e) keycode = e.which;
         else return true;
-        
+
         if (keycode == 13)
         {
                 document.getElementById(commandId).click();
@@ -48,8 +48,8 @@
         else
         return true;
 }
-    
-    
+
+
     /**
      * Handler for onkeypress that clicks {@code targetElement} if the
      * enter key is pressed.
@@ -96,9 +96,9 @@
 
 </script>
 
-					</htm:td>
-				</htm:tr>
-			</htm:table>
-		</h:form>
-	</htm:td>
+                    </htm:td>
+                </htm:tr>
+            </htm:table>
+        </h:form>
+    </htm:td>
 </htm:tr>

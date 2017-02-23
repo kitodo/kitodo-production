@@ -12,7 +12,7 @@ package org.kitodo.production.lugh.pagination;
 
 /**
  * A half integer is an integer that supports counting halfs (½, 1, 1½, 2, …).
- *  
+ *
  * @author Matthias Ronge
  */
 public class HalfInteger extends Number {
@@ -114,7 +114,7 @@ public class HalfInteger extends Number {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * <p>
      * This instance returns the value <b>rounded down</b>, which is critical
      * for the package to work as expected.
@@ -138,7 +138,7 @@ public class HalfInteger extends Number {
 
     /**
      * Returns a concise string representation of this instance.
-     * 
+     *
      * @return a string representing this instance
      */
     @Override

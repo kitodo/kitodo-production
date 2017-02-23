@@ -12,28 +12,28 @@
 package org.goobi.production.importer;
 
 public class DocstructElement {
-	private String docStruct;
-	private int order;
+    private String docStruct;
+    private int order;
 
-	public DocstructElement(String docStruct, int order) {
-		this.docStruct = docStruct;
-		this.order = order;
-	}
+    public DocstructElement(String docStruct, int order) {
+        this.docStruct = docStruct;
+        this.order = order;
+    }
 
-	public String getDocStruct() {
-		return docStruct;
-	}
+    public String getDocStruct() {
+        return docStruct;
+    }
 
-	public void setDocStruct(String docStruct) {
-		this.docStruct = docStruct;
-	}
+    public void setDocStruct(String docStruct) {
+        this.docStruct = docStruct;
+    }
 
-	public int getOrder() {
-		return order;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public void setOrder(int order) {
-		this.order = order;
-	}
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
 }

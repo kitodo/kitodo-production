@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 
 /**
  * Collection of simple utility methods.
- * 
+ *
  * @author <a href="mailto:nick@systemmobile.com">Nick Heudecker</a>
  * @author Matthias Ronge
  */
@@ -77,17 +77,17 @@ public final class Util {
     private static ResourceBundle bundle;
     public static final String RESOURCE_BUNDLE = "example_app";
 
-	/**
-	 * Calculates the optimal initial capacity for a HashMap or HashSet instance
-	 * that is to be populated with the given collection and isn’t intended to
-	 * grow any further.
-	 * 
-	 * @param collection
-	 *            collection whose size shall be used to determine the initial
-	 *            capacity for a HashMap
-	 * @return the appropriate capacity
-	 */
-	public static int hashCapacityFor(Collection<?> collection) {
-		return (int) Math.ceil(collection.size() / 0.75);
-	}
+    /**
+     * Calculates the optimal initial capacity for a HashMap or HashSet instance
+     * that is to be populated with the given collection and isn’t intended to
+     * grow any further.
+     *
+     * @param collection
+     *            collection whose size shall be used to determine the initial
+     *            capacity for a HashMap
+     * @return the appropriate capacity
+     */
+    public static int hashCapacityFor(Collection<?> collection) {
+        return (int) Math.ceil(collection.size() / 0.75);
+    }
 }

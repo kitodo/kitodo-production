@@ -41,7 +41,7 @@ public class SessionCounterFilter implements Filter {
       servletContext = filterConfig.getServletContext();
    }
 
-   
+
 
    /**
     */
@@ -59,7 +59,7 @@ public class SessionCounterFilter implements Filter {
       chain.doFilter(request, response);
    }
 
-   
+
 
    // You need an inner class to be able to call FacesContext.setCurrentInstance
    // since it's a protected method
@@ -69,7 +69,7 @@ public class SessionCounterFilter implements Filter {
       }
    }
 
-   
+
 
    private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
       // Try to get it first
@@ -101,7 +101,7 @@ public class SessionCounterFilter implements Filter {
       return facesContext;
    }
 
-   
+
 
    /**
     */

@@ -1,114 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opacCatalogues>
-	<doctypes>
-	<!--
-	 ! <doctypes> section
-	 !
-	 ! Repeatable: No
-	 !
-	 ! In this section, define the different media types that you want to edit
-	 ! with Kitodo.Production.
-	 !
-	 ! Every media type must be declared as a <type> element.
-	 ! -->
-		<type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Monograph" tifHeaderType="Monographie" title="monograph">
-			<label language="de">Monographie</label>
-			<label language="en">Monograph</label>
-			<mapping>Aa</mapping>
-			<mapping>Oa</mapping>
-		</type>
-		<type isContainedWork="false" isMultiVolume="false" isPeriodical="true" isNewspaper="true" rulesetType="Periodical" tifHeaderType="Band_Zeitschrift" title="periodical">
-			<label language="de">Zeitschrift / Zeitung</label>
-			<label language="en">Periodical</label>
-			<mapping>Ab</mapping>
-			<mapping>Ob</mapping>
-		</type>
-		<type isContainedWork="false" isMultiVolume="true" isPeriodical="false" isNewspaper="false" rulesetType="MultivolumeWork" tifHeaderType="Band_MultivolumeWork"
-			title="multivolume">
-			<label language="de">Mehrbändiges Werk</label>
-			<label language="en">Multivolume work</label>
-			<mapping>Of</mapping>
-			<mapping>Af</mapping>
-			<mapping>OF</mapping>
-			<mapping>AF</mapping>
-		</type>
-		<type isContainedWork="true" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="ContainedWork" tifHeaderType="ContainedWork" title="containedWork">
-			<label language="de">Beigefügtes Werk</label>
-			<label language="en">Contained work</label>
-			<mapping>Aj</mapping>
-			<mapping>Oj</mapping>
-		</type>
-	</doctypes>
-	<catalogue title="GBV">
-		<config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" port="80" ucnf="UCNF=NFC" />
-		<searchFields>
-			<searchField label="Title" value="4" />
-			<searchField label="Identifier" value="12" />
-			<searchField label="ISBN" value="7" />
-			<searchField label="ISSN" value="8" />
-			<searchField label="Barcode" value="8535" />
-			<searchField label="Barcode 8200" value="8200" />
-		</searchFields>
+    <doctypes>
+    <!--
+     ! <doctypes> section
+     !
+     ! Repeatable: No
+     !
+     ! In this section, define the different media types that you want to edit
+     ! with Kitodo.Production.
+     !
+     ! Every media type must be declared as a <type> element.
+     ! -->
+        <type isContainedWork="false" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="Monograph" tifHeaderType="Monographie" title="monograph">
+            <label language="de">Monographie</label>
+            <label language="en">Monograph</label>
+            <mapping>Aa</mapping>
+            <mapping>Oa</mapping>
+        </type>
+        <type isContainedWork="false" isMultiVolume="false" isPeriodical="true" isNewspaper="true" rulesetType="Periodical" tifHeaderType="Band_Zeitschrift" title="periodical">
+            <label language="de">Zeitschrift / Zeitung</label>
+            <label language="en">Periodical</label>
+            <mapping>Ab</mapping>
+            <mapping>Ob</mapping>
+        </type>
+        <type isContainedWork="false" isMultiVolume="true" isPeriodical="false" isNewspaper="false" rulesetType="MultivolumeWork" tifHeaderType="Band_MultivolumeWork"
+            title="multivolume">
+            <label language="de">Mehrbändiges Werk</label>
+            <label language="en">Multivolume work</label>
+            <mapping>Of</mapping>
+            <mapping>Af</mapping>
+            <mapping>OF</mapping>
+            <mapping>AF</mapping>
+        </type>
+        <type isContainedWork="true" isMultiVolume="false" isPeriodical="false" isNewspaper="false" rulesetType="ContainedWork" tifHeaderType="ContainedWork" title="containedWork">
+            <label language="de">Beigefügtes Werk</label>
+            <label language="en">Contained work</label>
+            <mapping>Aj</mapping>
+            <mapping>Oj</mapping>
+        </type>
+    </doctypes>
+    <catalogue title="GBV">
+        <config address="gso.gbv.de" database="2.1" description="Gemeinsamer Bibliotheksverbund" port="80" ucnf="UCNF=NFC" />
+        <searchFields>
+            <searchField label="Title" value="4" />
+            <searchField label="Identifier" value="12" />
+            <searchField label="ISBN" value="7" />
+            <searchField label="ISSN" value="8" />
+            <searchField label="Barcode" value="8535" />
+            <searchField label="Barcode 8200" value="8200" />
+        </searchFields>
 
-		<!--
-		 ! <resovle> rules
-		 !
-		 ! Repeatable: Yes
-		 ! Allowed children: <map> rules
-		 !
-		 ! Resolve rules allow to retrieve and insert additional data from norm
-		 ! data records referenced by PPN into the title record.
-		 !
-		 ! Attributes "tag" and "subtag" specify the subtag which contains the
-		 ! identifier of the norm data record to fetch. If this field contains
-		 ! additional information, the optional attribute "substring" can be
-		 ! used to define a regular expression which should find only the
-		 ! identifier. Example: The subtag contains "*1952-* @@ 69749487X". To
-		 ! get the identifier, the attribute substring="(?<=@@ )\d{8}[0-9X]"
-		 ! (using lookbehind) or substring="@@\s*(\d{8}[0-9X])" (using a match
-		 ! group) can be used to extract the PPN. A search is then conducted
-		 ! on the field defined as "searchField" (defaults to 12) to get the
-		 ! norm data records.
-		 !
-		 !
-		 ! <map> rules
-		 !
-		 ! Repeatable: Yes
-		 ! Allowed children: No
-		 !
-		 ! Map rules define which entries from the norm data record shall be
-		 ! imported into the tag on that the subtag with the identifier was
-		 ! found. Attributes "tag" and "subtag" specify the subtag in the norm
-		 ! data record to import, attribute "asSubtag" defines the subtag
-		 ! code under which the found value will be stored in the tag of the
-		 ! title record (should be fictious).
-		 !
-		 ! Example:
-		 !
-		 ! <resolve tag="028C" subtag="9">
-		 !     <map tag="003U" subtag="a" asSubtag="g" />
-		 ! </resolve>
-		 !
-		 ! Get the norm data record whose PPN is in field 028C subfield 9 by a
-		 ! catalogue query on search field 12. Get the value from field 003U
-		 ! subfield a of the norm data record, and add it as subfield g to the
-		 ! field 028C of the title record that contained the PPN.
-		 ! -->
-		<resolve tag="028C" subtag="9">
-			<map tag="003U" subtag="a" asSubtag="g" />
-		</resolve>
+        <!--
+         ! <resovle> rules
+         !
+         ! Repeatable: Yes
+         ! Allowed children: <map> rules
+         !
+         ! Resolve rules allow to retrieve and insert additional data from norm
+         ! data records referenced by PPN into the title record.
+         !
+         ! Attributes "tag" and "subtag" specify the subtag which contains the
+         ! identifier of the norm data record to fetch. If this field contains
+         ! additional information, the optional attribute "substring" can be
+         ! used to define a regular expression which should find only the
+         ! identifier. Example: The subtag contains "*1952-* @@ 69749487X". To
+         ! get the identifier, the attribute substring="(?<=@@ )\d{8}[0-9X]"
+         ! (using lookbehind) or substring="@@\s*(\d{8}[0-9X])" (using a match
+         ! group) can be used to extract the PPN. A search is then conducted
+         ! on the field defined as "searchField" (defaults to 12) to get the
+         ! norm data records.
+         !
+         !
+         ! <map> rules
+         !
+         ! Repeatable: Yes
+         ! Allowed children: No
+         !
+         ! Map rules define which entries from the norm data record shall be
+         ! imported into the tag on that the subtag with the identifier was
+         ! found. Attributes "tag" and "subtag" specify the subtag in the norm
+         ! data record to import, attribute "asSubtag" defines the subtag
+         ! code under which the found value will be stored in the tag of the
+         ! title record (should be fictious).
+         !
+         ! Example:
+         !
+         ! <resolve tag="028C" subtag="9">
+         !     <map tag="003U" subtag="a" asSubtag="g" />
+         ! </resolve>
+         !
+         ! Get the norm data record whose PPN is in field 028C subfield 9 by a
+         ! catalogue query on search field 12. Get the value from field 003U
+         ! subfield a of the norm data record, and add it as subfield g to the
+         ! field 028C of the title record that contained the PPN.
+         ! -->
+        <resolve tag="028C" subtag="9">
+            <map tag="003U" subtag="a" asSubtag="g" />
+        </resolve>
 
-	</catalogue>
-	<catalogue title="ZDB">
-		<config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" port="80" />
-		<searchFields>
-			<searchField label="Title" value="4" />
-			<searchField label="Identifier" value="12" />
-			<searchField label="ISBN" value="7" />
-			<searchField label="ISSN" value="8" />
-			<searchField label="Barcode" value="8535" />
-			<searchField label="Barcode 8200" value="8200" />
-			<searchField label="ZDB-ID" value="8506" />
-		</searchFields>
-	</catalogue>
+    </catalogue>
+    <catalogue title="ZDB">
+        <config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)" port="80" />
+        <searchFields>
+            <searchField label="Title" value="4" />
+            <searchField label="Identifier" value="12" />
+            <searchField label="ISBN" value="7" />
+            <searchField label="ISSN" value="8" />
+            <searchField label="Barcode" value="8535" />
+            <searchField label="Barcode 8200" value="8200" />
+            <searchField label="ZDB-ID" value="8506" />
+        </searchFields>
+    </catalogue>
 </opacCatalogues>

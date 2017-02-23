@@ -20,72 +20,72 @@ import ugh.exceptions.PreferencesException;
 import de.sub.goobi.config.ConfigMain;
 
 public class Regelsatz implements Serializable {
-	private static final long serialVersionUID = -6663371963274685060L;
-	private Integer id;
-	private String titel;
-	private String datei;
-	private Boolean orderMetadataByRuleset = false;
-	private static final Logger logger = Logger.getLogger(Regelsatz.class);
+    private static final long serialVersionUID = -6663371963274685060L;
+    private Integer id;
+    private String titel;
+    private String datei;
+    private Boolean orderMetadataByRuleset = false;
+    private static final Logger logger = Logger.getLogger(Regelsatz.class);
 
-	/*#####################################################
-	 #####################################################
-	 ##																															 
-	 ##																Getter und Setter									
-	 ##                                                   															    
-	 #####################################################
-	 ####################################################*/
+    /*#####################################################
+     #####################################################
+     ##
+     ##                                                             Getter und Setter
+     ##
+     #####################################################
+     ####################################################*/
 
-	public String getDatei() {
-		return this.datei;
-	}
+    public String getDatei() {
+        return this.datei;
+    }
 
-	public void setDatei(String datei) {
-		this.datei = datei;
-	}
+    public void setDatei(String datei) {
+        this.datei = datei;
+    }
 
-	public Integer getId() {
-		return this.id;
-	}
+    public Integer getId() {
+        return this.id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getTitel() {
-		return this.titel;
-	}
+    public String getTitel() {
+        return this.titel;
+    }
 
-	public void setTitel(String titel) {
-		this.titel = titel;
-	}
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
 
-	public Prefs getPreferences() {
-		Prefs mypreferences = new Prefs();
-		try {
-			mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + getDatei());
-		} catch (PreferencesException e) {
-			logger.error(e);
-		}
-		return mypreferences;
-	}
+    public Prefs getPreferences() {
+        Prefs mypreferences = new Prefs();
+        try {
+            mypreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + getDatei());
+        } catch (PreferencesException e) {
+            logger.error(e);
+        }
+        return mypreferences;
+    }
 
-	public boolean isOrderMetadataByRuleset() {
-		return isOrderMetadataByRulesetHibernate();
-	}
+    public boolean isOrderMetadataByRuleset() {
+        return isOrderMetadataByRulesetHibernate();
+    }
 
-	public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
-		this.orderMetadataByRuleset = orderMetadataByRuleset;
-	}
+    public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
+        this.orderMetadataByRuleset = orderMetadataByRuleset;
+    }
 
-	public Boolean isOrderMetadataByRulesetHibernate() {
-		if (this.orderMetadataByRuleset == null) {
-			this.orderMetadataByRuleset = false;
-		}
-		return this.orderMetadataByRuleset;
-	}
+    public Boolean isOrderMetadataByRulesetHibernate() {
+        if (this.orderMetadataByRuleset == null) {
+            this.orderMetadataByRuleset = false;
+        }
+        return this.orderMetadataByRuleset;
+    }
 
-	public void setOrderMetadataByRulesetHibernate(
-			Boolean orderMetadataByRuleset) {
-		this.orderMetadataByRuleset = orderMetadataByRuleset;
-	}
+    public void setOrderMetadataByRulesetHibernate(
+            Boolean orderMetadataByRuleset) {
+        this.orderMetadataByRuleset = orderMetadataByRuleset;
+    }
 }

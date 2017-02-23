@@ -17,7 +17,7 @@ import com.sharkysoft.util.UnreachableCodeException;
 
 /**
  * Class to generate different sorts of paginations.
- * 
+ *
  * @author Matthias Ronge
  */
 public class Paginator implements Iterator<String> {
@@ -98,7 +98,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * Creates a new paginator.
-     * 
+     *
      * @param initializer
      *            initial value
      */
@@ -383,7 +383,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * The iterator does not support {@code remove()}.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if invoked.
      */
@@ -395,7 +395,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * Returns a concise string representation of this instance.
-     * 
+     *
      * @return a string representing this instance
      */
     @Override

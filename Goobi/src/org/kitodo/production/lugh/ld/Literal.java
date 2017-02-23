@@ -131,7 +131,7 @@ public class Literal implements AccessibleObject {
      */
     protected Literal(String value, String type) {
         this.value = value != null ? value : "";
-        assert URI_SCHEME.matcher(type).find() : "Illegal type."; 
+        assert URI_SCHEME.matcher(type).find() : "Illegal type.";
         this.type = type;
     }
 

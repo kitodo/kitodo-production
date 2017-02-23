@@ -15,19 +15,19 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 public class SimpleDAO extends BaseDAO {
 
-	private static final long serialVersionUID = 599953115583442026L;
+    private static final long serialVersionUID = 599953115583442026L;
 
-	public void save(Object t) throws DAOException {
-		storeObj(t);
-	}
+    public void save(Object t) throws DAOException {
+        storeObj(t);
+    }
 
-	public void remove(Object t) throws DAOException {
-		removeObj(t);
-	}
+    public void remove(Object t) throws DAOException {
+        removeObj(t);
+    }
 
-	
-	public void refreshObject(Object t) {
-		Object o = t;
-		refresh(o);
-	}
+
+    public void refreshObject(Object t) {
+        Object o = t;
+        refresh(o);
+    }
 }

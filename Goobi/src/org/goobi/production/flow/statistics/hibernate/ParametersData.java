@@ -12,38 +12,38 @@
 package org.goobi.production.flow.statistics.hibernate;
 
 /**
- * This class is passed on to criteriaBuilders so that certain parameter 
- * can be set which depend on the parsing of the filter string 
- * 
- * 
+ * This class is passed on to criteriaBuilders so that certain parameter
+ * can be set which depend on the parsing of the filter string
+ *
+ *
  * @author Wulf
  *
  */
 public class ParametersData {
-	private Boolean flagCriticalQuery = false;
-	private Integer exactStepDone;
+    private Boolean flagCriticalQuery = false;
+    private Integer exactStepDone;
 
-	public ParametersData() {
-	}
+    public ParametersData() {
+    }
 
-	public ParametersData(Boolean flagCriticalQuery, Integer exactStepDone) {
-		this.flagCriticalQuery = flagCriticalQuery;
-		this.exactStepDone = exactStepDone;
-	}
+    public ParametersData(Boolean flagCriticalQuery, Integer exactStepDone) {
+        this.flagCriticalQuery = flagCriticalQuery;
+        this.exactStepDone = exactStepDone;
+    }
 
-	public Boolean getFlagCriticalQuery() {
-		return flagCriticalQuery;
-	}
+    public Boolean getFlagCriticalQuery() {
+        return flagCriticalQuery;
+    }
 
-	public void setCriticalQuery() {
-		this.flagCriticalQuery = true;
-	}
+    public void setCriticalQuery() {
+        this.flagCriticalQuery = true;
+    }
 
-	public Integer getExactStepDone() {
-		return exactStepDone;
-	}
+    public Integer getExactStepDone() {
+        return exactStepDone;
+    }
 
-	public void setStepDone(Integer exactStepDone) {
-		this.exactStepDone = exactStepDone;
-	}
+    public void setStepDone(Integer exactStepDone) {
+        this.exactStepDone = exactStepDone;
+    }
 }

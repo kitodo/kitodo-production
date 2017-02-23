@@ -36,31 +36,31 @@ import de.sub.goobi.helper.Helper;
  * The CatalogueConfiguration class provides the Jersey API URL pattern
  * ${SERVLET_CONTEXT}/rest/projects which returns the major data from the
  * project configuration in XML or JSON format.
- * 
+ *
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
 @Path("/projects")
 public class Projects {
 
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
-		Map<Projekt, Set<Prozess>> data = new HashMap<Projekt, Set<Prozess>>();
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
+        Map<Projekt, Set<Prozess>> data = new HashMap<Projekt, Set<Prozess>>();
 
-		Criteria query = Helper.getHibernateSession().createCriteria(Prozess.class);
-		@SuppressWarnings("unchecked")
-		List<Prozess> processTemplates = query.add(Restrictions.eq("istTemplate", Boolean.TRUE)).list();
-		for (Prozess processTemplate : processTemplates) {
-			Projekt project = processTemplate.getProjekt();
-			Set<Prozess> templates = data.containsKey(project) ? data.get(project) : new HashSet<Prozess>();
-			templates.add(processTemplate);
-			data.put(project, templates);
-		}
-		List<Projekt> result = new ArrayList<Projekt>();
-		for (Projekt project : data.keySet()) {
-			project.template = new ArrayList<Prozess>(data.get(project));
-			result.add(project);
-		}
-		return new ProjectsRootNode(result);
-	}
+        Criteria query = Helper.getHibernateSession().createCriteria(Prozess.class);
+        @SuppressWarnings("unchecked")
+        List<Prozess> processTemplates = query.add(Restrictions.eq("istTemplate", Boolean.TRUE)).list();
+        for (Prozess processTemplate : processTemplates) {
+            Projekt project = processTemplate.getProjekt();
+            Set<Prozess> templates = data.containsKey(project) ? data.get(project) : new HashSet<Prozess>();
+            templates.add(processTemplate);
+            data.put(project, templates);
+        }
+        List<Projekt> result = new ArrayList<Projekt>();
+        for (Projekt project : data.keySet()) {
+            project.template = new ArrayList<Prozess>(data.get(project));
+            result.add(project);
+        }
+        return new ProjectsRootNode(result);
+    }
 }
