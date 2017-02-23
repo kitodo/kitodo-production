@@ -17,6 +17,6 @@ package org.kitodo.api.schemaconverter;
 public interface SchemaFormat {
 
     /** returns the enum values, is overwritten by enums default 'values()' method */
-    public SchemaFormat[] values();
+    SchemaFormat[] values();
 
 }

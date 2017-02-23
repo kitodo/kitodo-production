@@ -18,7 +18,7 @@ import java.nio.file.Path;
 
 public interface MetsValidationInterface extends ValidationInterface {
 
-    public ValidationResult validate(Path metsFilePath, Path rulesetFilePath);
+    ValidationResult validate(Path metsFilePath, Path rulesetFilePath);
 
 
 }

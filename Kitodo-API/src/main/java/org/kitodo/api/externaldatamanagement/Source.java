@@ -15,6 +15,6 @@ package org.kitodo.api.externaldatamanagement;
 public interface Source {
 
 	/** returns the enum values, is overwritten by enums default 'values()' method */
-	public Source[] values();
+	Source[] values();
 
 }

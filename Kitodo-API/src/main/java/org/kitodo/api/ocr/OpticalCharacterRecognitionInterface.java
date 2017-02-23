@@ -19,6 +19,6 @@ public interface OpticalCharacterRecognitionInterface {
      * @param input the OCRInput, which contains necessary information.
      * @return an OCRResult.
      */
-	public OCRResult process(OCRInput input);
+	OCRResult process(OCRInput input);
 
 }

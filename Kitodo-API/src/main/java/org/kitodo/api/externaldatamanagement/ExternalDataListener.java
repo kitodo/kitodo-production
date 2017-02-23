@@ -16,6 +16,6 @@ public interface ExternalDataListener {
     /**
      * Is called, if external data has changed.
      */
-    public void externalDataUpdated();
+    void externalDataUpdated();
 
 }

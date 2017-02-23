@@ -19,6 +19,6 @@ import java.nio.file.Path;
 
 public interface RulesetValidationInterface extends ValidationInterface {
 
-    public ValidationResult validate(Path rulesetFilePath);
+    ValidationResult validate(Path rulesetFilePath);
 
 }

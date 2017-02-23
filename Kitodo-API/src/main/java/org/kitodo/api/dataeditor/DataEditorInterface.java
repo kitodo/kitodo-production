@@ -20,7 +20,7 @@ public interface DataEditorInterface {
      *
      * @param xmlFilePath The Path to the xml file to read.
      */
-    public void readData(Path xmlFilePath);
+    void readData(Path xmlFilePath);
 
     /**
      * Opens an editor to edit an xmlfile.
@@ -29,6 +29,6 @@ public interface DataEditorInterface {
      * @param rulesetFilePath The Path to the rulesetFilePath.
      * @return true, if editing was succesfull, false otherwise.
      */
-    public boolean editData(Path xmlFilePath, Path rulesetFilePath);
+    boolean editData(Path xmlFilePath, Path rulesetFilePath);
 
 }

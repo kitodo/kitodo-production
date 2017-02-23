@@ -24,7 +24,7 @@ public interface DocketInterface {
      * @param pathToXslFile - the path to the schema xsl file
      * @return a docket file
      */
-    public File generateDocket(DocketData docketData, Path pathToXslFile);
+    File generateDocket(DocketData docketData, Path pathToXslFile);
 
     /**
      * Generates multiple dockets
@@ -33,6 +33,6 @@ public interface DocketInterface {
      * @param pathToXslFile - the path to the schema xsl file
      * @return a list of docket files.
      */
-    public File generateMultipleDockets(ArrayList<DocketData> docketData, Path pathToXslFile);
+    File generateMultipleDockets(ArrayList<DocketData> docketData, Path pathToXslFile);
 
 }

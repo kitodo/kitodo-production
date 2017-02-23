@@ -25,6 +25,6 @@ public interface RulesetEditorInterface {
      *            The rulesetfile to edit.
      * @return an edited rulesetfile.
      */
-    public File editRulesetfile(File rulesetFile);
+    File editRulesetfile(File rulesetFile);
 
 }

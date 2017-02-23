@@ -19,6 +19,6 @@ public interface GeneratorInterface {
      * @param identifier the identifier of the specific object to which the URN points.
      * @return a valid URN (including check digit).
      */
-    public String generateUnifiedResourceName(String namespace, String identifier);
+    String generateUnifiedResourceName(String namespace, String identifier);
 
 }

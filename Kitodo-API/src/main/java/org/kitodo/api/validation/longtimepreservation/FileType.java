@@ -17,6 +17,6 @@ package org.kitodo.api.validation.longtimepreservation;
 public interface FileType {
 
     /** returns the enum values, is overwritten by enums default 'values()' method */
-    public FileType[] values();
+    FileType[] values();
 
 }

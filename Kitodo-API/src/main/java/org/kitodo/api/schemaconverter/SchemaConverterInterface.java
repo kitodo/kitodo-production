@@ -26,6 +26,6 @@ public interface SchemaConverterInterface {
 	 *            The Format of the resultFile.
 	 * @return The converted File.
 	 */
-	public File convert(File inputFile, SchemaFormat baseFormat, SchemaFormat resultFormat);
+	File convert(File inputFile, SchemaFormat baseFormat, SchemaFormat resultFormat);
 
 }

@@ -23,27 +23,27 @@ public interface ExternalDataManagementInterface {
      * @param source The source to search in.
      * @return A list of result data.
      */
-    public ArrayList<ImportData> getData(String field, String term, Source source);
+    ArrayList<ImportData> getData(String field, String term, Source source);
 
     /**
      * A method from the listener pattern, adds a listener.
      *
      * @param listener The listener which should be notified, if external data is updated.
      */
-    public void addListener(ExternalDataListener listener);
+    void addListener(ExternalDataListener listener);
 
     /**
      * A method from the listener pattern, removes a listener.
      *
      * @param listener The listener, which should be removed.
      */
-    public void removeListener(ExternalDataListener listener);
+    void removeListener(ExternalDataListener listener);
 
     /**
      * Notifies all listeners, that external data has changed.
      *
      * @param event The externalDataEvent.
      */
-    public void notifyExternalDataListener(ExternalDataEvent event);
+    void notifyExternalDataListener(ExternalDataEvent event);
 
 }

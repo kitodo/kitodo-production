@@ -18,6 +18,6 @@ import java.nio.file.Path;
 
 public interface LongTimePreservationValidationInterface extends ValidationInterface {
 
-    public ValidationResult validate(Path imageFilePath, FileType fileType);
+    ValidationResult validate(Path imageFilePath, FileType fileType);
 
 }

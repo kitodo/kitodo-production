@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 public interface SearchInterface<T>  {
 
-    public ArrayList<Integer> search(String query);
+    ArrayList<Integer> search(String query);
 
-    public ArrayList<Integer> search(ArrayList<SearchCondition<?, ?>> searchConditions);
+    ArrayList<Integer> search(ArrayList<SearchCondition<?, ?>> searchConditions);
 }
