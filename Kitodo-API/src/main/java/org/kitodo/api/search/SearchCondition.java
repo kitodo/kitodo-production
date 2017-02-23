@@ -11,11 +11,12 @@
 
 package org.kitodo.api.search;
 
-import java.util.ArrayList;
+public class SearchCondition<S,V> {
 
-public interface SearchInterface<T>  {
+    private String fieldName;
 
-    public ArrayList<Integer> search(String query);
+    private boolean include;
 
-    public ArrayList<Integer> search(ArrayList<SearchCondition<?, ?>> searchConditions);
+    private V value;
+
 }
