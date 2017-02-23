@@ -12,6 +12,7 @@
 package org.kitodo.api.docket;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public interface DocketInterface {
      * @param pathToXslFile - the path to the schema xsl file
      * @return a docket file
      */
-    File generateDocket(DocketData docketData, Path pathToXslFile);
+    File generateDocket(DocketData docketData, Path pathToXslFile) throws IOException;
 
     /**
      * Generates multiple dockets
@@ -33,6 +34,6 @@ public interface DocketInterface {
      * @param pathToXslFile - the path to the schema xsl file
      * @return a list of docket files.
      */
-    File generateMultipleDockets(ArrayList<DocketData> docketData, Path pathToXslFile);
+    File generateMultipleDockets(ArrayList<DocketData> docketData, Path pathToXslFile) throws IOException;
 
 }
