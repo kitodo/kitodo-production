@@ -22,6 +22,28 @@ import com.sharkysoft.util.UnreachableCodeException;
  */
 public class Paginator implements Iterator<String> {
 
+    /**
+     * To pass a mutable value to a function.
+     * 
+     * @param <T>
+     *            type of value to pass
+     */
+    private static class Mutable<T> {
+        public Mutable(T value) {
+            this.value = value;
+        }
+
+        private T value;
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    /**
+     * Type of character and state of the buffer.
+     */
     private enum State {
         /**
          * A decimal number.
@@ -29,24 +51,25 @@ public class Paginator implements Iterator<String> {
         DECIMAL,
 
         /**
-         * The buffer is currently empty.
+         * The buffer is currently empty. (Not a character class.)
          */
         EMPTY,
 
         /**
-         * Final run, clear the buffer.
+         * Final run, clear the buffer. (Fictitious character class and not a
+         * buffer state.)
          */
         END,
 
         /**
          * The next element is only to display if the counter value is full (1,
-         * 2, 3).
+         * 2, 3). (Not a buffer state.)
          */
         FULL_INTEGER,
 
         /**
          * The next element is only to display if the counter value is half
-         * (1.5, 2.5, 3.5).
+         * (1.5, 2.5, 3.5). (Not a buffer state.)
          */
         HALF_INTEGER,
 
@@ -56,27 +79,32 @@ public class Paginator implements Iterator<String> {
         INCREMENT,
 
         /**
-         * Initial state of the parser.
-         */
-        INITIAL,
-
-        /**
-         * A lowercase roman number.
+         * An lower-case Roman numeral. This may still turn into a static text
+         * if the next character is a letter.
          */
         LOWERCASE_ROMAN,
 
         /**
-         * Plain text
+         * Other characters. If the next character is {@code LOWERCASE_ROMAN} or
+         * {@code UPPERCASE_ROMAN}, it may be treated as Roman numeral.
+         */
+        SYMBOL,
+
+        /**
+         * Letters. If the next character is of type {@code LOWERCASE_ROMAN} or
+         * {@code UPPERCASE_ROMAN}, it will be treated as text.
          */
         TEXT,
 
         /**
-         * A text escape marker.
+         * A text escape marker. Whatever the buffer contains, treat it as
+         * text..
          */
         TEXT_ESCAPE_TRANSITION,
 
         /**
-         * An uppercase roman number.
+         * An upper-case Roman numeral. This may still turn into a static text
+         * if the next character is a letter.
          */
         UPPERCASE_ROMAN
     }
@@ -84,7 +112,7 @@ public class Paginator implements Iterator<String> {
     /**
      * Fragments a pagination is composed of (text elements, counters, …)
      */
-    private LinkedList<Fragment> fragments = new LinkedList<Fragment>();
+    private final LinkedList<Fragment> fragments = new LinkedList<Fragment>();
 
     /**
      * Supports rigth-to-left double page counting (2 1, 4 3, 6 5, …)
@@ -96,22 +124,14 @@ public class Paginator implements Iterator<String> {
      */
     private HalfInteger value;
 
-    /**
-     * Creates a new paginator.
-     * 
-     * @param initializer
-     *            initial value
-     */
-    public Paginator(String initializer) {
-        State currentState = State.INITIAL;
-        boolean valueHalf = false;
-        int valueFull;
-        boolean textEscapeMode = false;
-        StringBuilder buffer = new StringBuilder();
+    private final void parse(String initializer) {
+        final StringBuilder buffer = new StringBuilder();
+        final Mutable<State> bufferState = new Mutable<State>(State.EMPTY);
 
         /* iterate through the code points of the initializer string plus one
          * more iteration to process the last content of the buffer */
 
+        final Mutable<Boolean> page = new Mutable<>(null);
         int length = initializer.length();
         for (int offset = 0; offset <= length;) {
             int codePoint;
@@ -124,129 +144,130 @@ public class Paginator implements Iterator<String> {
                 codePointClass = codePointClassOf(codePoint);
             }
 
-            // Whatever is in back-ticks is not interpreted as number
+            // Whatever is in back-ticks is not interpreted
 
             if (codePointClass.equals(State.TEXT_ESCAPE_TRANSITION)) {
-                if (currentState.equals(State.DECIMAL)) {
-                    fragments.addLast(new DecimalNumeral(buffer.toString()));
-                    buffer.setLength(0);
-                } else if (currentState.equals(State.UPPERCASE_ROMAN) || currentState.equals(State.LOWERCASE_ROMAN)) {
-                    fragments.addLast(new RomanNumeral(buffer.toString(), currentState.equals(State.UPPERCASE_ROMAN)));
-                    buffer.setLength(0);
-                } else if (currentState.equals(State.INCREMENT)) {
-                    fragments.peekLast().setIncrement(HalfInteger.valueOf(buffer.toString()));
-                    buffer.setLength(0);
+                if (bufferState.value.equals(State.EMPTY)) {
+                    bufferState.value = State.TEXT_ESCAPE_TRANSITION;
+                } else {
+                    State stateBeforeWrite = bufferState.value;
+                    createFragment(buffer, bufferState, page);
+                    bufferState.value = stateBeforeWrite.equals(State.TEXT_ESCAPE_TRANSITION) ? State.EMPTY
+                            : State.TEXT_ESCAPE_TRANSITION;
                 }
-                currentState = State.TEXT;
-                textEscapeMode = !textEscapeMode;
-                offset += Character.charCount(codePoint);
-                continue;
-            }
-            if (textEscapeMode) {
+            } else if (bufferState.value.equals(State.TEXT_ESCAPE_TRANSITION)) {
                 buffer.appendCodePoint(codePoint);
             }
 
-            else {
-                switch (currentState) {
-                case INITIAL:
+            /* Recto/verso-only symbols cause a buffer write (or they would be
+             * applied to the current buffer content (modify their left side),
+             * but they shall be applied on the next write (modify their right
+             * side)). They set the page variable and are not written to the
+             * buffer by themselves. */
 
-                    /* If the initialisation string starts with a half
-                     * increment marker this increments the initial counter
-                     * value by one half. This is to allow starting with an
-                     * even subpage */
-
-                    if (codePoint == '½') {
-                        valueHalf = true;
-                        break;
-                    }
-                    //$FALL-THROUGH$
-
-                    /* Parse different types of fragments from the
-                     * initialiser string */
-
-                case EMPTY:
-                    if (!codePointClass.equals(State.FULL_INTEGER) && !codePointClass.equals(State.HALF_INTEGER)) {
-                        buffer.appendCodePoint(codePoint);
-                    }
-                    if (codePointClass.equals(State.INCREMENT))
-                        fragments.addLast(new StaticText(""));
-                    currentState = codePointClass;
-                    break;
-
-                case DECIMAL:
-                    if (codePointClass.equals(State.DECIMAL)) {
-                        buffer.appendCodePoint(codePoint);
-                    } else {
-                        fragments.addLast(new DecimalNumeral(buffer.toString()));
-                        buffer.setLength(0);
-                        if (!codePointClass.equals(State.FULL_INTEGER) || !codePointClass.equals(State.HALF_INTEGER)) {
-                            buffer.appendCodePoint(codePoint);
-                        }
-                        currentState = codePointClass;
-                    }
-                    break;
-
-                case UPPERCASE_ROMAN:
-                case LOWERCASE_ROMAN:
-                    if (codePointClass.equals(currentState)) {
-                        buffer.appendCodePoint(codePoint);
-                    } else {
-                        fragments.addLast(
-                                new RomanNumeral(buffer.toString(), currentState.equals(State.UPPERCASE_ROMAN)));
-                        buffer.setLength(0);
-                        if (!codePointClass.equals(State.FULL_INTEGER) || !codePointClass.equals(State.HALF_INTEGER)) {
-                            buffer.appendCodePoint(codePoint);
-                        }
-                        currentState = codePointClass;
-                    }
-                    break;
-
-                case TEXT:
-                    if (codePointClass.equals(State.UPPERCASE_ROMAN) || codePointClass.equals(State.LOWERCASE_ROMAN)
-                            || codePointClass.equals(State.TEXT)) {
-                        buffer.appendCodePoint(codePoint);
-                    } else {
-                        fragments.addLast(new StaticText(buffer.toString()));
-                        buffer.setLength(0);
-                        if (!codePointClass.equals(State.FULL_INTEGER) && !codePointClass.equals(State.HALF_INTEGER)) {
-                            buffer.appendCodePoint(codePoint);
-                        }
-                        currentState = codePointClass;
-                    }
-                    break;
-
-                case FULL_INTEGER:
-                case HALF_INTEGER:
-                    buffer.appendCodePoint(codePoint);
-                    fragments.addLast(new StaticText(buffer.toString(), currentState.equals(State.FULL_INTEGER)));
-                    buffer.setLength(0);
-                    currentState = State.EMPTY;
-                    break;
-
-                case INCREMENT:
-                    if (codePointClass.equals(State.INCREMENT)) {
-                        buffer.appendCodePoint(codePoint);
-                    } else {
-                        fragments.peekLast().setIncrement(HalfInteger.valueOf(buffer.toString()));
-                        buffer.setLength(0);
-                        if (!codePointClass.equals(State.FULL_INTEGER) || !codePointClass.equals(State.FULL_INTEGER)) {
-                            buffer.appendCodePoint(codePoint);
-                        }
-                        currentState = codePointClass;
-                    }
-                    break;
-
-                default: throw new UnreachableCodeException("Complete switch");
+            else if (codePointClass.equals(State.HALF_INTEGER) || codePointClass.equals(State.FULL_INTEGER)) {
+                if (!bufferState.value.equals(State.EMPTY)) {
+                    createFragment(buffer, bufferState, page);
                 }
+                page.value = codePointClass.equals(State.HALF_INTEGER);
             }
+
+            /* If the buffer is empty or contains the same sort of content as
+             * the current input, just write it to the buffer. If the buffer
+             * contains text, we can write symbols as well, the same is true the
+             * other way ‘round. */
+
+            else if (bufferState.value.equals(codePointClass) || bufferState.value.equals(State.EMPTY)
+                    || (bufferState.value.equals(State.TEXT) && codePointClass.equals(State.SYMBOL))
+                    || (bufferState.value.equals(State.SYMBOL) && codePointClass.equals(State.TEXT))) {
+                buffer.appendCodePoint(codePoint);
+                bufferState.value = codePointClass;
+            }
+
+            /* If we got text, and the content of the buffer is a Roman numeral,
+             * or the other way round, we can still write to the buffer, but the
+             * result of the operation is always text. This is an important
+             * catch in order to, for example, prevent the C in ‘Chapter’ start
+             * counting. (Remember, Roman numeral C is 100.) */
+
+            else if ((bufferState.value.equals(State.TEXT)
+                    && (codePointClass.equals(State.LOWERCASE_ROMAN) || codePointClass.equals(State.UPPERCASE_ROMAN)))
+                    || ((bufferState.value.equals(State.LOWERCASE_ROMAN)
+                            || bufferState.value.equals(State.UPPERCASE_ROMAN)) && codePointClass.equals(State.TEXT))) {
+
+                buffer.appendCodePoint(codePoint);
+                bufferState.value = State.TEXT;
+            }
+
+            // In any other case, we have to write out the buffer.
+
+            else {
+                createFragment(buffer, bufferState, page);
+                buffer.appendCodePoint(codePoint);
+                bufferState.value = codePointClass;
+            }
+
             offset += Character.charCount(codePoint);
         }
+    }
 
-        /* Initialise missing increments, find initial value and optional
-         * reverse operation mode */
+    /**
+     * Stores the buffer as fragment and resets the buffer, buffer state and
+     * page. The type of fragment is derived from the the buffer’s state and the
+     * page directive. A page directive causes what is immediately thereafter to
+     * be treated as text in any case.
+     * 
+     * @param buffer
+     *            characters
+     * @param fragmentType
+     *            type of fragment to create
+     * @param pageType
+     *            page information
+     */
+    private final void createFragment(StringBuilder buffer, Mutable<State> fragmentType, Mutable<Boolean> pageType) {
+        if (pageType.value == null && fragmentType.value.equals(State.DECIMAL)) {
+            fragments.addLast(new DecimalNumeral(buffer.toString()));
+        } else if (pageType.value == null && (fragmentType.value.equals(State.UPPERCASE_ROMAN)
+                || fragmentType.value.equals(State.LOWERCASE_ROMAN))) {
+            fragments.addLast(new RomanNumeral(buffer.toString(), fragmentType.value.equals(State.UPPERCASE_ROMAN)));
+        } else if (fragmentType.value.equals(State.INCREMENT)) {
+            fragments.peekLast().setIncrement(HalfInteger.valueOf(buffer.toString()));
+        } else if (!fragmentType.value.equals(State.EMPTY)) {
+            fragments.addLast(new StaticText(buffer.toString(), pageType.value));
+        }
+        pageType.value = null;
+        buffer.setLength(0);
+        fragmentType.value = State.EMPTY;
+    }
 
+    /**
+     * Creates a new paginator.
+     * 
+     * @param initializer
+     *            initial value
+     */
+    public Paginator(String initializer) {
+
+        /*
+         * If the initialisation string starts with a half increment marker this
+         * increments the initial counter value by one half. This is to allow
+         * starting with an interemdiate (verso) subpage.
+         */
+        boolean aHalf = !initializer.isEmpty() && initializer.codePointAt(0) == '½';
+
+        parse(aHalf ? initializer.substring(1) : initializer);
+        initializeIncrements(aHalf);
+    }
+
+    /**
+     * Initialises missing increments, finds the initial value and, optional, a
+     * reverse operation mode.
+     */
+    private final void initializeIncrements(boolean aHalf) {
         Fragment first = null;
         Fragment last = null;
+        int valueFull;
+
         for (Fragment fragment : fragments) {
             if (fragment.intValue() == null)
                 continue;
@@ -303,10 +324,10 @@ public class Paginator implements Iterator<String> {
             }
 
         }
-        this.value = new HalfInteger(valueFull, valueHalf);
+        this.value = new HalfInteger(valueFull, aHalf);
     }
 
-    private State codePointClassOf(int codePoint) {
+    private static State codePointClassOf(int codePoint) {
         switch (codePoint) {
         case '0':
         case '1':
@@ -348,7 +369,17 @@ public class Paginator implements Iterator<String> {
         case '¿':
             return State.HALF_INTEGER;
         default:
-            return State.TEXT;
+            switch (Character.getType(codePoint)) {
+            case Character.UPPERCASE_LETTER:
+            case Character.LOWERCASE_LETTER:
+            case Character.TITLECASE_LETTER:
+            case Character.MODIFIER_LETTER:
+            case Character.OTHER_LETTER:
+            case Character.NON_SPACING_MARK:
+                return State.TEXT;
+            default:
+                return State.SYMBOL;
+            }
         }
     }
 
