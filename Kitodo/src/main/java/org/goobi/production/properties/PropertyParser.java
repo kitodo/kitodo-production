@@ -28,14 +28,6 @@ import de.sub.goobi.helper.Helper;
 public class PropertyParser {
 	private static final Logger logger = Logger.getLogger(PropertyParser.class);
 
-	public static void main(String[] args) {
-		PropertyParser parser = new PropertyParser();
-		parser.readConfigAsSample();
-//		System.out.println("finish");
-	}
-
-	
-
 	public static ArrayList<ProcessProperty> getPropertiesForStep(Schritt mySchritt) {
 		Hibernate.initialize(mySchritt.getProzess());
 		Hibernate.initialize(mySchritt.getProzess().getProjekt());
@@ -277,74 +269,5 @@ public class PropertyParser {
 
 		return properties;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	private void readConfigAsSample() {
-		ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
 
-		String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
-		XMLConfiguration config;
-		try {
-			config = new XMLConfiguration(path);
-		} catch (ConfigurationException e) {
-			logger.error(e);
-			config = new XMLConfiguration();
-		}
-		config.setListDelimiter('&');
-		config.setReloadingStrategy(new FileChangedReloadingStrategy());
-
-		// run though all properties
-		int countProperties = config.getMaxIndex("property");
-		for (int i = 0; i <= countProperties; i++) {
-
-			// general values for property
-			ProcessProperty pp = new ProcessProperty();
-			pp.setName(config.getString("property(" + i + ")[@name]"));
-			pp.setContainer(config.getInt("property(" + i + ")[@container]"));
-
-			// projects
-			int count = config.getMaxIndex("property(" + i + ").project");
-			for (int j = 0; j <= count; j++) {
-				pp.getProjects().add(config.getString("property(" + i + ").project(" + j + ")"));
-			}
-
-			// showStep
-			count = config.getMaxIndex("property(" + i + ").showStep");
-			for (int j = 0; j <= count; j++) {
-				ShowStepCondition ssc = new ShowStepCondition();
-				ssc.setName(config.getString("property(" + i + ").showStep(" + j + ")[@name]"));
-				String access = config.getString("property(" + i + ").showStep(" + j + ")[@access]");
-				boolean duplicate = config.getBoolean("property(" + i + ").showStep(" + j + ")[@duplicate]", false);
-				ssc.setAccessCondition(AccessCondition.getAccessConditionByName(access));
-				ssc.setDuplication(duplicate);
-				pp.getShowStepConditions().add(ssc);
-			}
-
-			// showProcessGroupAccessCondition
-			String groupAccess = config.getString("property(" + i + ").showProcessGroup[@access]");
-			pp.setShowProcessGroupAccessCondition(AccessCondition.getAccessConditionByName(groupAccess));
-
-			// validation expression
-			pp.setValidation(config.getString("property(" + i + ").validation"));
-			// type
-			pp.setType(Type.getTypeByName(config.getString("property(" + i + ").type")));
-			// (default) value
-			pp.setValue(config.getString("property(" + i + ").defaultvalue"));
-
-			// possible values
-			count = config.getMaxIndex("property(" + i + ").value");
-			for (int j = 0; j <= count; j++) {
-				pp.getPossibleValues().add(config.getString("property(" + i + ").value(" + j + ")"));
-			}
-			properties.add(pp);
-		}
-	}
 }
