@@ -80,8 +80,7 @@ public class DecimalNumeral implements Fragment {
      */
     @Override
     public String toString() {
-        return String.format("%0" + digits + "d", value)
-                + (increment != null ? (" (" + increment + ")") : " (default)");
+        return String.format(digits, value) + (increment != null ? (" (" + increment + ")") : " (default)");
     }
 
 }
