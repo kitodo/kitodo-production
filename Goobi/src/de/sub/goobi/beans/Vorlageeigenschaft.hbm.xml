@@ -17,22 +17,22 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.beans.Vorlageeigenschaft" table="vorlageneigenschaften">
-		<id name="id" column="vorlageneigenschaftenID" type="integer">
-			<generator class="native" />
-		</id>
+    <class name="de.sub.goobi.beans.Vorlageeigenschaft" table="vorlageneigenschaften">
+        <id name="id" column="vorlageneigenschaftenID" type="integer">
+            <generator class="native" />
+        </id>
 
-		<property name="titel" column="Titel" type="string" />
-		<property name="wert" column="Wert" type="text" />
-		<property name="istObligatorisch" type="java.lang.Boolean">
-			<column name="IstObligatorisch" sql-type="bit"/>
-		</property>
-		<property name="datentyp" column="DatentypenID" type="integer" />
-		<property name="auswahl" column="Auswahl" type="string" />
-		<property name="creationDate" column="creationDate" type="timestamp"/>
-		<property name="container" column="container" type="integer" />			
-		<many-to-one name="vorlage" class="de.sub.goobi.beans.Vorlage" column="vorlagenID" foreign-key="FK_VorlagenID"/>
-		
-	</class>
+        <property name="titel" column="Titel" type="string" />
+        <property name="wert" column="Wert" type="text" />
+        <property name="istObligatorisch" type="java.lang.Boolean">
+            <column name="IstObligatorisch" sql-type="bit"/>
+        </property>
+        <property name="datentyp" column="DatentypenID" type="integer" />
+        <property name="auswahl" column="Auswahl" type="string" />
+        <property name="creationDate" column="creationDate" type="timestamp"/>
+        <property name="container" column="container" type="integer" />
+        <many-to-one name="vorlage" class="de.sub.goobi.beans.Vorlage" column="vorlagenID" foreign-key="FK_VorlagenID"/>
+
+    </class>
 
 </hibernate-mapping>

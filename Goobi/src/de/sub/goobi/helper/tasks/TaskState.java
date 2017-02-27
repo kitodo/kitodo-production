@@ -16,7 +16,7 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 /**
  * TaskState defines a set of states that a task can be in. Their meanings are
  * the followings:
- * 
+ *
  * <dl>
  * <dt><code>CRASHED</code></dt>
  * <dd>The thread has terminated abnormally. The field “exception” is holding
@@ -36,9 +36,9 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
  * <dt><code>WORKING</code></dt>
  * <dd>The thread is in operation.</dd>
  * </dl>
- * 
+ *
  * @author Matthias Ronge
  */
 enum TaskState {
-	CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING
+    CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING
 }

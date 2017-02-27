@@ -17,22 +17,22 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.beans.Benutzereigenschaft" table="benutzereigenschaften">
-		<id name="id" column="benutzereigenschaftenID" type="integer">
-			<generator class="native" />
-		</id>
+    <class name="de.sub.goobi.beans.Benutzereigenschaft" table="benutzereigenschaften">
+        <id name="id" column="benutzereigenschaftenID" type="integer">
+            <generator class="native" />
+        </id>
 
-		<property name="titel" column="Titel" type="string" />
-		<property name="wert" column="Wert" type="string" />
-		<property name="istObligatorisch" type="java.lang.Boolean">
-			<column name="IstObligatorisch" sql-type="bit"/>
-		</property>
-		<property name="datentyp" column="DatentypenID" type="integer" />
-		<property name="auswahl" column="Auswahl" type="string" />
-		<property name="creationDate" column="creationDate" type="timestamp"/>
-				
-		<many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID" foreign-key="FK_BenutzerID"/>
-		
-	</class>
+        <property name="titel" column="Titel" type="string" />
+        <property name="wert" column="Wert" type="string" />
+        <property name="istObligatorisch" type="java.lang.Boolean">
+            <column name="IstObligatorisch" sql-type="bit"/>
+        </property>
+        <property name="datentyp" column="DatentypenID" type="integer" />
+        <property name="auswahl" column="Auswahl" type="string" />
+        <property name="creationDate" column="creationDate" type="timestamp"/>
+
+        <many-to-one name="benutzer" class="de.sub.goobi.beans.Benutzer" column="BenutzerID" foreign-key="FK_BenutzerID"/>
+
+    </class>
 
 </hibernate-mapping>

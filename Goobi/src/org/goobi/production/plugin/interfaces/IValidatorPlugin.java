@@ -16,17 +16,17 @@ import de.sub.goobi.beans.Schritt;
 import de.sub.goobi.persistence.apache.StepObject;
 
 public interface IValidatorPlugin extends IPlugin {
-	
-	public void initialize(Prozess inProcess);
 
-	public boolean validate();
-	
-	public Schritt getStep();
-	
-	public void setStep(Schritt step);
-	
-	public StepObject getStepObject();
-	
-	public void setStepObject(StepObject so);
-	
+    public void initialize(Prozess inProcess);
+
+    public boolean validate();
+
+    public Schritt getStep();
+
+    public void setStep(Schritt step);
+
+    public StepObject getStepObject();
+
+    public void setStepObject(StepObject so);
+
 }

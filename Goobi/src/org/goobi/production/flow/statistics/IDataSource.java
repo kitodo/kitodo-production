@@ -17,16 +17,16 @@ import java.util.List;
 /**
  * This interface defines some general dataset for all future kind of
  * statistical questions
- * 
+ *
  * @author Wulf Riebensahm
  * @author Steffen Hankiewicz
  */
 public interface IDataSource extends Serializable {
 
-	/**
-	 * This method returns the original Data and enables the continued use of
-	 * older Statistic functions in the restructured data flow
-	 ****************************************************************************/
-	public List<Object> getSourceData();
+    /**
+     * This method returns the original Data and enables the continued use of
+     * older Statistic functions in the restructured data flow
+     ****************************************************************************/
+    public List<Object> getSourceData();
 
 }

@@ -34,99 +34,99 @@ import de.sub.goobi.helper.Helper;
 
 public enum StatisticsMode {
 
-	SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false),
-	PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false,false, false),
-	STATUS_VOLUMES("statusOfVolumes", StatQuestVolumeStatus.class, false, false, false),
-	USERGROUPS("statusForUsers", StatQuestUsergroups.class, false, false, false),
-	// the following statistcs are the new statistics from june 2009
-	THROUGHPUT("productionThroughput", StatQuestThroughput.class, true, false, true),
-	CORRECTIONS("errorTracking", StatQuestCorrections.class, false,	false, true),
-	STORAGE("storageCalculator", StatQuestStorage.class, false, false, true),
-	PRODUCTION("productionStatistics", StatQuestProduction.class, false, false, true);
+    SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false),
+    PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false,false, false),
+    STATUS_VOLUMES("statusOfVolumes", StatQuestVolumeStatus.class, false, false, false),
+    USERGROUPS("statusForUsers", StatQuestUsergroups.class, false, false, false),
+    // the following statistcs are the new statistics from june 2009
+    THROUGHPUT("productionThroughput", StatQuestThroughput.class, true, false, true),
+    CORRECTIONS("errorTracking", StatQuestCorrections.class, false, false, true),
+    STORAGE("storageCalculator", StatQuestStorage.class, false, false, true),
+    PRODUCTION("productionStatistics", StatQuestProduction.class, false, false, true);
 
-	private IStatisticalQuestion question;
-	private String title;
-	private Boolean renderIncludeLoops;
-	private Boolean isSimpleStatistic;
-	private Boolean restrictDate;
+    private IStatisticalQuestion question;
+    private String title;
+    private Boolean renderIncludeLoops;
+    private Boolean isSimpleStatistic;
+    private Boolean restrictDate;
 
-	/**
-	 * private constructor,
-	 ****************************************************************************/
-	private StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion, Boolean renderIncludeLoops, Boolean isSimpleStatistic,
-			Boolean restrictDate) {
-		title = inTitle;
-		if (inQuestion != null) {
-			try {
-				question = inQuestion.newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		this.renderIncludeLoops = renderIncludeLoops;
-		this.isSimpleStatistic = isSimpleStatistic;
-		this.restrictDate = restrictDate;
-	}
+    /**
+     * private constructor,
+     ****************************************************************************/
+    private StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion, Boolean renderIncludeLoops, Boolean isSimpleStatistic,
+            Boolean restrictDate) {
+        title = inTitle;
+        if (inQuestion != null) {
+            try {
+                question = inQuestion.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        this.renderIncludeLoops = renderIncludeLoops;
+        this.isSimpleStatistic = isSimpleStatistic;
+        this.restrictDate = restrictDate;
+    }
 
-	/**
-	 * return boolean, if it is an old simple jfreechart statistic
-	 *
-	 * @return if it is as simple old statistic
-	 ****************************************************************************/
-	public Boolean getRestrictedDate() {
-		return restrictDate;
-	}
+    /**
+     * return boolean, if it is an old simple jfreechart statistic
+     *
+     * @return if it is as simple old statistic
+     ****************************************************************************/
+    public Boolean getRestrictedDate() {
+        return restrictDate;
+    }
 
-	/**
-	 * return boolean, if it is an old simple jfreechart statistic
-	 *
-	 * @return if it is as simple old statistic
-	 ****************************************************************************/
-	public Boolean getIsSimple() {
-		return isSimpleStatistic;
-	}
+    /**
+     * return boolean, if it is an old simple jfreechart statistic
+     *
+     * @return if it is as simple old statistic
+     ****************************************************************************/
+    public Boolean getIsSimple() {
+        return isSimpleStatistic;
+    }
 
-	/**
-	 * return localized title of statistic view from standard-jsf-messages-files
-	 *
-	 * @return title of statistic question mode
-	 ****************************************************************************/
-	public String getTitle() {
-		return Helper.getTranslation(title);
-	}
+    /**
+     * return localized title of statistic view from standard-jsf-messages-files
+     *
+     * @return title of statistic question mode
+     ****************************************************************************/
+    public String getTitle() {
+        return Helper.getTranslation(title);
+    }
 
-	/**
-	 * return our implementation initialized
-	 *
-	 * @return the implemented {@link IStatisticalQuestion}
-	 ****************************************************************************/
-	public IStatisticalQuestion getStatisticalQuestion() {
-		return question;
-	}
+    /**
+     * return our implementation initialized
+     *
+     * @return the implemented {@link IStatisticalQuestion}
+     ****************************************************************************/
+    public IStatisticalQuestion getStatisticalQuestion() {
+        return question;
+    }
 
-	/**
-	 * return StatisticsMode by given {@link IStatisticalQuestion}-Class
-	 *
-	 * @return {@link StatisticsMode}
-	 ****************************************************************************/
-	public static StatisticsMode getByClassName(Class<? extends IStatisticalQuestion> inQuestion) {
-		for (StatisticsMode sm : values()) {
-			if (sm.getStatisticalQuestion() != null && sm.getStatisticalQuestion().getClass().getName().equals(inQuestion.getName())) {
-				return sm;
-			}
-		}
-		return PRODUCTION;
+    /**
+     * return StatisticsMode by given {@link IStatisticalQuestion}-Class
+     *
+     * @return {@link StatisticsMode}
+     ****************************************************************************/
+    public static StatisticsMode getByClassName(Class<? extends IStatisticalQuestion> inQuestion) {
+        for (StatisticsMode sm : values()) {
+            if (sm.getStatisticalQuestion() != null && sm.getStatisticalQuestion().getClass().getName().equals(inQuestion.getName())) {
+                return sm;
+            }
+        }
+        return PRODUCTION;
 
-	}
+    }
 
-	public Boolean isRenderIncludeLoops() {
-		return this.renderIncludeLoops;
-	}
+    public Boolean isRenderIncludeLoops() {
+        return this.renderIncludeLoops;
+    }
 
-	public String getMode() {
-		return this.title;
-	}
+    public String getMode() {
+        return this.title;
+    }
 
 }

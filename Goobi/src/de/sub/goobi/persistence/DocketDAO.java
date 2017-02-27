@@ -18,40 +18,40 @@ import de.sub.goobi.helper.exceptions.DAOException;
 
 public class DocketDAO extends BaseDAO {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1913256950316879121L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1913256950316879121L;
 
-	public Docket save(Docket t) throws DAOException {
-		storeObj(t);
-		return (Docket) retrieveObj(Docket.class, t.getId());
-	}
+    public Docket save(Docket t) throws DAOException {
+        storeObj(t);
+        return (Docket) retrieveObj(Docket.class, t.getId());
+    }
 
-	public Docket get(Integer id) throws DAOException {
-		Docket rueckgabe = (Docket) retrieveObj(Docket.class, id);
-		if (rueckgabe == null) {
-			throw new DAOException("Object cannot be found in database");
-		}
-		return rueckgabe;
-	}
+    public Docket get(Integer id) throws DAOException {
+        Docket rueckgabe = (Docket) retrieveObj(Docket.class, id);
+        if (rueckgabe == null) {
+            throw new DAOException("Object cannot be found in database");
+        }
+        return rueckgabe;
+    }
 
-	public void remove(Docket t) throws DAOException {
-		if (t.getId() != null) {
-			removeObj(t);
-		}
-	}
+    public void remove(Docket t) throws DAOException {
+        if (t.getId() != null) {
+            removeObj(t);
+        }
+    }
 
-	public void remove(Integer id) throws DAOException {
-		removeObj(Docket.class, id);
-	}
+    public void remove(Integer id) throws DAOException {
+        removeObj(Docket.class, id);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Docket> search(String query) throws DAOException {
-		return retrieveObjs(query);
-	}
+    @SuppressWarnings("unchecked")
+    public List<Docket> search(String query) throws DAOException {
+        return retrieveObjs(query);
+    }
 
-	public Long count(String query) throws DAOException {
-		return retrieveAnzahl(query);
-	}
+    public Long count(String query) throws DAOException {
+        return retrieveAnzahl(query);
+    }
 }

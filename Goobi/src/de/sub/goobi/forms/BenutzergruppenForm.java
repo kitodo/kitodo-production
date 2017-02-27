@@ -27,77 +27,77 @@ import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.SimpleDAO;
 
 public class BenutzergruppenForm extends BasisForm {
-	private static final long serialVersionUID = 8051160917458068675L;
-	private Benutzergruppe myBenutzergruppe = new Benutzergruppe();
-	private BenutzergruppenDAO dao = new BenutzergruppenDAO();
+    private static final long serialVersionUID = 8051160917458068675L;
+    private Benutzergruppe myBenutzergruppe = new Benutzergruppe();
+    private BenutzergruppenDAO dao = new BenutzergruppenDAO();
 
-	public String Neu() {
-		this.myBenutzergruppe = new Benutzergruppe();
-		return "BenutzergruppenBearbeiten";
-	}
+    public String Neu() {
+        this.myBenutzergruppe = new Benutzergruppe();
+        return "BenutzergruppenBearbeiten";
+    }
 
-	public String Speichern() {
-		try {
-			this.dao.save(this.myBenutzergruppe);
-			return "BenutzergruppenAlle";
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-			return "";
-		}
-	}
+    public String Speichern() {
+        try {
+            this.dao.save(this.myBenutzergruppe);
+            return "BenutzergruppenAlle";
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+            return "";
+        }
+    }
 
-	public String Loeschen() {
-		try {
-			new SimpleDAO().refreshObject(this.myBenutzergruppe);
-			if (this.myBenutzergruppe.getBenutzer().size() > 0) {
-				for (Benutzer b : this.myBenutzergruppe.getBenutzer()) {
-					b.getBenutzergruppen().remove(this.myBenutzergruppe);
-				}
-				this.myBenutzergruppe.setBenutzer(new HashSet<Benutzer>());
-				this.dao.save(this.myBenutzergruppe);
-			}
-			if (this.myBenutzergruppe.getSchritte().size() > 0) {
-				Helper.setFehlerMeldung("userGroupAssignedError");
-				return "";
-			}
-			this.dao.remove(this.myBenutzergruppe);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
-			return "";
-		}
-		return "BenutzergruppenAlle";
-	}
+    public String Loeschen() {
+        try {
+            new SimpleDAO().refreshObject(this.myBenutzergruppe);
+            if (this.myBenutzergruppe.getBenutzer().size() > 0) {
+                for (Benutzer b : this.myBenutzergruppe.getBenutzer()) {
+                    b.getBenutzergruppen().remove(this.myBenutzergruppe);
+                }
+                this.myBenutzergruppe.setBenutzer(new HashSet<Benutzer>());
+                this.dao.save(this.myBenutzergruppe);
+            }
+            if (this.myBenutzergruppe.getSchritte().size() > 0) {
+                Helper.setFehlerMeldung("userGroupAssignedError");
+                return "";
+            }
+            this.dao.remove(this.myBenutzergruppe);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
+            return "";
+        }
+        return "BenutzergruppenAlle";
+    }
 
-	public String FilterKein() {
-		try {
-			Session session = Helper.getHibernateSession();
-			session.clear();
-			Criteria crit = session.createCriteria(Benutzergruppe.class);
-			crit.addOrder(Order.asc("titel"));
-			this.page = new Page(crit, 0);
-		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-			return "";
-		}
-		return "BenutzergruppenAlle";
-	}
+    public String FilterKein() {
+        try {
+            Session session = Helper.getHibernateSession();
+            session.clear();
+            Criteria crit = session.createCriteria(Benutzergruppe.class);
+            crit.addOrder(Order.asc("titel"));
+            this.page = new Page(crit, 0);
+        } catch (HibernateException he) {
+            Helper.setFehlerMeldung("Error, could not read", he.getMessage());
+            return "";
+        }
+        return "BenutzergruppenAlle";
+    }
 
-	public String FilterKeinMitZurueck() {
-		FilterKein();
-		return this.zurueck;
-	}
+    public String FilterKeinMitZurueck() {
+        FilterKein();
+        return this.zurueck;
+    }
 
-	/*
- 	 * Getter und Setter 
-	 */
+    /*
+     * Getter und Setter
+     */
 
-	public Benutzergruppe getMyBenutzergruppe() {
-		return this.myBenutzergruppe;
-	}
+    public Benutzergruppe getMyBenutzergruppe() {
+        return this.myBenutzergruppe;
+    }
 
-	public void setMyBenutzergruppe(Benutzergruppe myBenutzergruppe) {
-		Helper.getHibernateSession().clear();
-		this.myBenutzergruppe = myBenutzergruppe;
-	}
+    public void setMyBenutzergruppe(Benutzergruppe myBenutzergruppe) {
+        Helper.getHibernateSession().clear();
+        this.myBenutzergruppe = myBenutzergruppe;
+    }
 
 }

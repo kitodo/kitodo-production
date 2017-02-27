@@ -24,18 +24,18 @@ import de.unigoettingen.goobi.module.api.dataprovider.process.ProcessImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 /**
- * Das ist die Implementierung von ProcessInterface. 
+ * Das ist die Implementierung von ProcessInterface.
  * Wird auf Goobi-Seiten Ausgeführt
  * Ist auch vorläufer für GoobiEngine
- * 
+ *
  * Erweitert um die individuellen Api-Aufrufe
- * 
+ *
  * @author Igor Toker
  */
 public class ExtendedProzessImpl extends ProcessImpl {
-   
+
    /**
-    * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten. 
+    * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten.
     * Die Implementierung dieser Methode ist optional.
     * @param sessionID
     * @return ProzessID
@@ -114,7 +114,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    }
 
    /**
-    * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen. 
+    * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen.
     * Die Implementierung dieser Methode ist optional.
     * @param sessionId
     * @return Parameter Struktur
@@ -127,21 +127,21 @@ public class ExtendedProzessImpl extends ProcessImpl {
       Prozess p = ModuleServerForm.getProcessFromShortSession(sessionId);
       myMap.put("ruleset", ConfigMain.getParameter("RegelsaetzeVerzeichnis") + p.getRegelsatz().getDatei());
       try {
-		myMap.put("tifdirectory", p.getImagesTifDirectory(false));
-		} catch (IOException e) {
-	        throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-		} catch (InterruptedException e) {
-	        throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-		} catch (SwapException e) {
-	        throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-		} catch (DAOException e) {
-	        throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));	
-	    }
-	    return myMap;
+        myMap.put("tifdirectory", p.getImagesTifDirectory(false));
+        } catch (IOException e) {
+            throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+        } catch (InterruptedException e) {
+            throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+        } catch (SwapException e) {
+            throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+        } catch (DAOException e) {
+            throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+        }
+        return myMap;
    }
 
    /**
-    * Diese Methode liefert das Projekt eines Prozesses. 
+    * Diese Methode liefert das Projekt eines Prozesses.
     * Die Implementierung dieser Methode ist optional.
     * @param sessionId
     * @return Projekttitel (String)
@@ -154,7 +154,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
    }
 
    /**
-    * Diese Methode liefert den Titel eines Prozesses. 
+    * Diese Methode liefert den Titel eines Prozesses.
     * Die Implementierung dieser Methode ist optional.
     * @param sessionId
     * @return Prozesstitel (String)

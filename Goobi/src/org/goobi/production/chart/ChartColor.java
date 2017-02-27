@@ -15,15 +15,15 @@ import java.awt.Color;
 
 public enum ChartColor {
 
-	green(0, 130, 80), yellow(250, 220, 50), red(200, 0, 0);
+    green(0, 130, 80), yellow(250, 220, 50), red(200, 0, 0);
 
-	private Color color;
+    private Color color;
 
-	private ChartColor(int red, int green, int blue) {
-		color = new Color(red, green, blue);
-	}
-	
-	public Color getColor() {
-		return color;
-	}
+    private ChartColor(int red, int green, int blue) {
+        color = new Color(red, green, blue);
+    }
+
+    public Color getColor() {
+        return color;
+    }
 }

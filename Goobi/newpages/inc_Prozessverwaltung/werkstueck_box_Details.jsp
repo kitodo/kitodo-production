@@ -18,43 +18,43 @@
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 
 <htm:table cellpadding="3" cellspacing="0" width="100%"
-	styleClass="main_statistikboxen">
+    styleClass="main_statistikboxen">
 
-	<htm:tr>
-		<htm:td styleClass="main_statistikboxen_row1">
-			<h:outputText value="#{msgs.eigenschaften}" />
-		</htm:td>
-		<htm:td styleClass="main_statistikboxen_row1" align="right">
-			<h:commandLink action="#{ProzessverwaltungForm.Reload}">
-				<h:graphicImage value="/newpages/images/reload.gif" />
-			</h:commandLink>
-		</htm:td>
-	</htm:tr>
+    <htm:tr>
+        <htm:td styleClass="main_statistikboxen_row1">
+            <h:outputText value="#{msgs.eigenschaften}" />
+        </htm:td>
+        <htm:td styleClass="main_statistikboxen_row1" align="right">
+            <h:commandLink action="#{ProzessverwaltungForm.Reload}">
+                <h:graphicImage value="/newpages/images/reload.gif" />
+            </h:commandLink>
+        </htm:td>
+    </htm:tr>
 
-		<htm:tr>
-			<htm:td styleClass="main_statistikboxen_row2" colspan="2">
+        <htm:tr>
+            <htm:td styleClass="main_statistikboxen_row2" colspan="2">
 
-				<htm:table border="0" width="90%" cellpadding="2">
-					<htm:tr>
-						<htm:td width="150">
-							<h:outputText value="#{msgs.id}:" />
-						</htm:td>
-						<htm:td>
-							<h:outputText value="#{ProzessverwaltungForm.myWerkstueck.id}" />
-						</htm:td>
-						<htm:td rowspan="2" align="right">
-						
-							<h:commandLink title="#{msgs.loeschen}"
-								action="#{ProzessverwaltungForm.WerkstueckLoeschen}" style="margin-right:20px">
-								<h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" />
-							</h:commandLink>
-							
-						</htm:td>
-					</htm:tr>
+                <htm:table border="0" width="90%" cellpadding="2">
+                    <htm:tr>
+                        <htm:td width="150">
+                            <h:outputText value="#{msgs.id}:" />
+                        </htm:td>
+                        <htm:td>
+                            <h:outputText value="#{ProzessverwaltungForm.myWerkstueck.id}" />
+                        </htm:td>
+                        <htm:td rowspan="2" align="right">
 
-				</htm:table>
+                            <h:commandLink title="#{msgs.loeschen}"
+                                action="#{ProzessverwaltungForm.WerkstueckLoeschen}" style="margin-right:20px">
+                                <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" />
+                            </h:commandLink>
 
-			</htm:td>
-		</htm:tr>
+                        </htm:td>
+                    </htm:tr>
+
+                </htm:table>
+
+            </htm:td>
+        </htm:tr>
 </htm:table>
 

@@ -34,7 +34,7 @@ public class AuthorityFileUtil {
 
     /**
      * Returns the downloadable URL for an URI.
-     * 
+     *
      * @param recordURI
      *            A record URI
      * @param config
@@ -52,7 +52,7 @@ public class AuthorityFileUtil {
 
     /**
      * Downloads an Authority record.
-     * 
+     *
      * @param recordURI
      *            record URI, like {@code http://d-nb.info/gnd/118514768}
      * @return a node with the data retrieved
@@ -75,7 +75,7 @@ public class AuthorityFileUtil {
 
     /**
      * Returns the record URI from this meta-data group.
-     * 
+     *
      * @param metaDataGroup
      */
     public static String getRecordURI(MetadataGroup metaDataGroup) {
@@ -92,7 +92,7 @@ public class AuthorityFileUtil {
 
     /**
      * Parses an authority record read from the Internet to the internal format.
-     * 
+     *
      * @param HANDLE
      *            to read from
      * @param base

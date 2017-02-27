@@ -13,7 +13,7 @@ package org.kitodo.persistence.exceptions;
 
 public class InfrastructureException extends RuntimeException {
 
-	public InfrastructureException(Throwable cause) {
-		super(cause);
-	}
+    public InfrastructureException(Throwable cause) {
+        super(cause);
+    }
 }

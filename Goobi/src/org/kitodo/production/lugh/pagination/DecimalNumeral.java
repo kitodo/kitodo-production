@@ -12,7 +12,7 @@ package org.kitodo.production.lugh.pagination;
 
 /**
  * A decimal numeral as part of a pagination sequence.
- * 
+ *
  * @author Matthias Ronge
  */
 public class DecimalNumeral implements Fragment {
@@ -20,7 +20,7 @@ public class DecimalNumeral implements Fragment {
     /**
      * A format string to create at least the number of digits as the initial
      * value had.
-     * 
+     *
      * @see java.util.Formatter
      */
     private String digits;
@@ -75,7 +75,7 @@ public class DecimalNumeral implements Fragment {
 
     /**
      * Returns a concise string representation of this instance.
-     * 
+     *
      * @return a string representing this instance
      */
     @Override

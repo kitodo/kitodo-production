@@ -20,58 +20,58 @@ import de.sub.goobi.helper.exceptions.DAOException;
 public class ProzessDAO extends BaseDAO {
 
 
-	private static final long serialVersionUID = 3538712266212954394L;
+    private static final long serialVersionUID = 3538712266212954394L;
 
-	public Prozess save(Prozess t) throws DAOException {
-		t.setSortHelperStatus(t.getFortschritt());
-		storeObj(t);
-		return (Prozess) retrieveObj(Prozess.class, t.getId());
-	}
+    public Prozess save(Prozess t) throws DAOException {
+        t.setSortHelperStatus(t.getFortschritt());
+        storeObj(t);
+        return (Prozess) retrieveObj(Prozess.class, t.getId());
+    }
 
-	public void saveList(List<Prozess> list) throws DAOException {
-		List<Object> l = new ArrayList<Object>();
-		l.addAll(list);
-		storeList(l);
-	}
-	
-	public Prozess get(Integer id) throws DAOException {
-		Prozess rueckgabe = (Prozess) retrieveObj(Prozess.class, id);
-		if (rueckgabe == null) {
-			throw new DAOException("Object cannot be found in database");
-		}
-		return rueckgabe;
-	}
+    public void saveList(List<Prozess> list) throws DAOException {
+        List<Object> l = new ArrayList<Object>();
+        l.addAll(list);
+        storeList(l);
+    }
 
-	public void remove(Prozess t) throws DAOException {
-		if (t.getId() != null) {
-			removeObj(t);
-		}
-	}
+    public Prozess get(Integer id) throws DAOException {
+        Prozess rueckgabe = (Prozess) retrieveObj(Prozess.class, id);
+        if (rueckgabe == null) {
+            throw new DAOException("Object cannot be found in database");
+        }
+        return rueckgabe;
+    }
 
-	public void remove(Integer id) throws DAOException {
-		removeObj(Prozess.class, id);
-	}
+    public void remove(Prozess t) throws DAOException {
+        if (t.getId() != null) {
+            removeObj(t);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<Prozess> search(String query) throws DAOException {
-		return retrieveObjs(query);
-	}
+    public void remove(Integer id) throws DAOException {
+        removeObj(Prozess.class, id);
+    }
 
-	public Long count(String query) throws DAOException {
-		return retrieveAnzahl(query);
-	}
-	
-	public void refresh(Prozess t) {
-		Object o = t;
-		refresh(o);
-	}
-	public void update(Prozess t) {
-		Object o = t;
-		updateObj(o);
-	}
-	
-	public Prozess load(int id) throws DAOException {
-		return (Prozess) loadObj(Prozess.class, id);
-	}
-	
+    @SuppressWarnings("unchecked")
+    public List<Prozess> search(String query) throws DAOException {
+        return retrieveObjs(query);
+    }
+
+    public Long count(String query) throws DAOException {
+        return retrieveAnzahl(query);
+    }
+
+    public void refresh(Prozess t) {
+        Object o = t;
+        refresh(o);
+    }
+    public void update(Prozess t) {
+        Object o = t;
+        updateObj(o);
+    }
+
+    public Prozess load(int id) throws DAOException {
+        return (Prozess) loadObj(Prozess.class, id);
+    }
+
 }

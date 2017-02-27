@@ -15,17 +15,17 @@ import java.util.Date;
 
 /******************************************************************************************
  * Extension of {@link IStatisticalQuestion}. Statistical request limited by time frame.
- * 
+ *
  *****************************************************************************************/
 public interface IStatisticalQuestionLimitedTimeframe extends
-		IStatisticalQuestion {
+        IStatisticalQuestion {
 
-	/************************************************************************
-	 * Define time frame.
-	 *  
-	 * @param timeFrom Date - from 
-	 * @param timeTo   Date - to
-	 ***********************************************************************/
-	public void setTimeFrame(Date timeFrom, Date timeTo);
+    /************************************************************************
+     * Define time frame.
+     *
+     * @param timeFrom Date - from
+     * @param timeTo   Date - to
+     ***********************************************************************/
+    public void setTimeFrame(Date timeFrom, Date timeTo);
 
 }

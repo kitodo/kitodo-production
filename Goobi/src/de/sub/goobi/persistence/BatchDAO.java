@@ -23,77 +23,77 @@ import de.sub.goobi.helper.exceptions.DAOException;
 /**
  * The class BatchDAO provides for to create, restore, update and delete
  * {@link de.sub.goobi.beans.Batch} objects by Hibernate.
- * 
+ *
  * @author Matthias Ronge
  */
 public class BatchDAO extends BaseDAO {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * The method deleteAll() removes all batches specified by the given IDs
-	 * from the database
-	 * 
-	 * @param ids
-	 *            IDs of batches to delete
-	 * @throws DAOException
-	 *             if the current session can't be retrieved or an exception is
-	 *             thrown while performing the rollback
-	 */
-	public static void deleteAll(Iterable<Integer> ids) throws DAOException {
-		for (Integer id : ids)
-			removeObj(Batch.class, id);
-	}
+    /**
+     * The method deleteAll() removes all batches specified by the given IDs
+     * from the database
+     *
+     * @param ids
+     *            IDs of batches to delete
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public static void deleteAll(Iterable<Integer> ids) throws DAOException {
+        for (Integer id : ids)
+            removeObj(Batch.class, id);
+    }
 
-	/**
-	 * The function read() retrieves a Batch identified by the given ID from the
-	 * database
-	 * 
-	 * @param id
-	 *            number of batch to load
-	 * @return persisted batch
-	 * @throws DAOException
-	 *             if a HibernateException is thrown
-	 */
-	public static Batch read(Integer id) throws DAOException {
-		return (Batch) retrieveObj(Batch.class, id);
-	}
+    /**
+     * The function read() retrieves a Batch identified by the given ID from the
+     * database
+     *
+     * @param id
+     *            number of batch to load
+     * @return persisted batch
+     * @throws DAOException
+     *             if a HibernateException is thrown
+     */
+    public static Batch read(Integer id) throws DAOException {
+        return (Batch) retrieveObj(Batch.class, id);
+    }
 
-	/**
-	 * The function readAll() retrieves all batches Batches from the database
-	 * 
-	 * @return all persisted batches
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<Batch> readAll() {
-		Session session = Helper.getHibernateSession();
-		Criteria criteria = session.createCriteria(Batch.class);
-		return criteria.list();
-	}
+    /**
+     * The function readAll() retrieves all batches Batches from the database
+     *
+     * @return all persisted batches
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Batch> readAll() {
+        Session session = Helper.getHibernateSession();
+        Criteria criteria = session.createCriteria(Batch.class);
+        return criteria.list();
+    }
 
-	/**
-	 * The function reattach() reattaches a batch to a Hibernate session, i.e.
-	 * for accessing properties that are lazy loaded.
-	 * 
-	 * @param batch
-	 *            Batch to reattach
-	 * @return the batch
-	 */
-	public static Batch reattach(Batch batch) {
-		Session session = Helper.getHibernateSession();
-		session.refresh(batch);
-		return batch;
-	}
+    /**
+     * The function reattach() reattaches a batch to a Hibernate session, i.e.
+     * for accessing properties that are lazy loaded.
+     *
+     * @param batch
+     *            Batch to reattach
+     * @return the batch
+     */
+    public static Batch reattach(Batch batch) {
+        Session session = Helper.getHibernateSession();
+        session.refresh(batch);
+        return batch;
+    }
 
-	/**
-	 * The method save() saves a batch to the database.
-	 * 
-	 * @param batch
-	 *            batch to persist
-	 * @throws DAOException
-	 *             if the current session can't be retrieved or an exception is
-	 *             thrown while performing the rollback
-	 */
-	public static void save(Batch batch) throws DAOException {
-		storeObj(batch);
-	}
+    /**
+     * The method save() saves a batch to the database.
+     *
+     * @param batch
+     *            batch to persist
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public static void save(Batch batch) throws DAOException {
+        storeObj(batch);
+    }
 }

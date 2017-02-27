@@ -34,7 +34,7 @@ public class NodeReference implements IdentifiableNode, NodeType {
 
     /**
      * Compares two node references for equality.
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -69,7 +69,7 @@ public class NodeReference implements IdentifiableNode, NodeType {
 
     /**
      * Returns a hash code value for this node reference.
-     * 
+     *
      * @return a has code for this instance
      */
     @Override

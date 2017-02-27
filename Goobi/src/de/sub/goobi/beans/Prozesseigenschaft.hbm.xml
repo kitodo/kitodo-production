@@ -17,22 +17,22 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.beans.Prozesseigenschaft" table="prozesseeigenschaften">
-		<id name="id" column="prozesseeigenschaftenID" type="integer">
-			<generator class="native" />
-		</id>
+    <class name="de.sub.goobi.beans.Prozesseigenschaft" table="prozesseeigenschaften">
+        <id name="id" column="prozesseeigenschaftenID" type="integer">
+            <generator class="native" />
+        </id>
 
-		<property name="titel" column="Titel" type="string" />
-		<property name="wert" column="Wert" type="text" />
-		<property name="istObligatorisch" type="java.lang.Boolean">
-			<column name="IstObligatorisch" sql-type="bit"/>
-		</property>
-		<property name="datentyp" column="DatentypenID" type="integer" />
-		<property name="auswahl" column="Auswahl" type="string" />
-		<property name="creationDate" column="creationDate" type="timestamp"/>
-		<property name="container" column="container" type="integer" />	
-		<many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="prozesseID" foreign-key="FK_ProzesseID"/>
-		
-	</class>
+        <property name="titel" column="Titel" type="string" />
+        <property name="wert" column="Wert" type="text" />
+        <property name="istObligatorisch" type="java.lang.Boolean">
+            <column name="IstObligatorisch" sql-type="bit"/>
+        </property>
+        <property name="datentyp" column="DatentypenID" type="integer" />
+        <property name="auswahl" column="Auswahl" type="string" />
+        <property name="creationDate" column="creationDate" type="timestamp"/>
+        <property name="container" column="container" type="integer" />
+        <many-to-one name="prozess" class="de.sub.goobi.beans.Prozess" column="prozesseID" foreign-key="FK_ProzesseID"/>
+
+    </class>
 
 </hibernate-mapping>

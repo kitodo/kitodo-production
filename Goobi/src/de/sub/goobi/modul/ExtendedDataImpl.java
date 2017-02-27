@@ -35,26 +35,26 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
  * Namenraum Process.Data
  * Adressierung von Prozessmetadaten
  * Prozessmetadaten werden über eine Kombination aus SessionID, Typ, Nummer und Name angesprochen.
- * ·   Der Typ ist dabei ein String um z.B. zwischen Scanvorlage („TEMPLATE“) 
+ * ·   Der Typ ist dabei ein String um z.B. zwischen Scanvorlage („TEMPLATE“)
  *     und Werkstück („WORKPIECE“) unterscheiden zu können.
  * ·   Die Nummer ist dabei die Nummer von z.B. Scanvorlage oder Werkstück.
  * Für Daten des Prozesses ist der Typ entweder „PROCESS“ oder leer, die Nummer wird ignoriert.
- * 
- * Für zukünftige Versionen bleiben Feldnamen mit dem Präfix „#“ reserviert, 
+ *
+ * Für zukünftige Versionen bleiben Feldnamen mit dem Präfix „#“ reserviert,
  * sie dürfen durch die API nicht ausgelesen oder geschrieben werden.
- * Für die Adressierung und den Austausch von einzelnen Prozesseigenschaften 
- * wird die Datenstruktur „Process Property“ verwendet. Dabei wird die Struktur 
+ * Für die Adressierung und den Austausch von einzelnen Prozesseigenschaften
+ * wird die Datenstruktur „Process Property“ verwendet. Dabei wird die Struktur
  * abhängig vom Kontext interpretiert:
  * ·   Die Methode „add“ ignoriert das Feld „id“.
  * ·   Die Methode „set“ kann das Feld „name“ ignorieren oder es zur Validierung einsetzen.
- * 
+ *
  * @author Steffen Hankiewicz
  */
 public class ExtendedDataImpl extends DataImpl {
    private static final String isProcess = "PROCESS";
    private static final String isWorkpiece = "WORKPIECE";
    private static final String isTemplate = "TEMPLATE";
-   
+
    /**
     * Diese Methode wird benötigt um Metadaten zu schreiben.
     * @param sessionId
@@ -195,7 +195,7 @@ public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String ty
        * Prozesseigenschaften
        * --------------------------------*/
       if (type.equals("") || type.equals(isProcess)) {
-    	  //TODO: Use for loops
+          //TODO: Use for loops
          for (Iterator<Prozesseigenschaft> it = p.getEigenschaftenList().iterator(); it.hasNext();) {
             Prozesseigenschaft pe = it.next();
             if (!pe.getTitel().startsWith("#"))
@@ -283,7 +283,7 @@ public int set(String sessionId, String type, int count, HashMap pp) throws Goob
       myquery += " and titel='" + gpp.getName() + "' and id=" + gpp.getId();
 
       try {
-    	 //TODO: Use generics
+         //TODO: Use generics
          List hits = new ProzessDAO().search(myquery);
          if (hits.size() > 0) {
             if (type.equals("") || type.equals(isProcess)) {

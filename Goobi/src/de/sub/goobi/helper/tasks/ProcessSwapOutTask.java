@@ -33,81 +33,81 @@ import de.sub.goobi.persistence.ProzessDAO;
 
 public class ProcessSwapOutTask extends LongRunningTask {
 
-	private static final Logger logger = Logger.getLogger(ProcessSwapOutTask.class);
+    private static final Logger logger = Logger.getLogger(ProcessSwapOutTask.class);
 
-	/**
-	 * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
-	 */
+    /**
+     * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
+     */
 
-	static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
-			throws IOException {
-		if (srcDir.isDirectory()) {
-			if (!dstDir.exists()) {
-				dstDir.mkdir();
-				dstDir.setLastModified(srcDir.lastModified());
-			}
-			String[] children = srcDir.list();
-			for (int i = 0; i < children.length; i++) {
-				copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
-						goobipathlength, inRoot);
-			}
-		} else {
-			Long crc = CopyFile.start(srcDir, dstDir);
-			Element file = new Element("file");
-			file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
-			file.setAttribute("crc32", String.valueOf(crc));
-			inRoot.addContent(file);
-		}
-	}
+    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
+            throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!dstDir.exists()) {
+                dstDir.mkdir();
+                dstDir.setLastModified(srcDir.lastModified());
+            }
+            String[] children = srcDir.list();
+            for (int i = 0; i < children.length; i++) {
+                copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
+                        goobipathlength, inRoot);
+            }
+        } else {
+            Long crc = CopyFile.start(srcDir, dstDir);
+            Element file = new Element("file");
+            file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
+            file.setAttribute("crc32", String.valueOf(crc));
+            inRoot.addContent(file);
+        }
+    }
 
-	/**
-	 * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files.
-	 */
-	static boolean deleteDataInDir(SafeFile dir) {
-		if (dir.isDirectory()) {
-			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].endsWith(".xml")) {
-					boolean success = new SafeFile(dir, children[i]).deleteDir();
-					if (!success) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+    /**
+     * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files.
+     */
+    static boolean deleteDataInDir(SafeFile dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                if (!children[i].endsWith(".xml")) {
+                    boolean success = new SafeFile(dir, children[i]).deleteDir();
+                    if (!success) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
-	/**
-	 * No-argument constructor. Creates an empty ProcessSwapOutTask. Must be
-	 * made explicit because a constructor taking an argument is present.
-	 */
-	public ProcessSwapOutTask() {
-	}
+    /**
+     * No-argument constructor. Creates an empty ProcessSwapOutTask. Must be
+     * made explicit because a constructor taking an argument is present.
+     */
+    public ProcessSwapOutTask() {
+    }
 
-	/**
-	 * The clone constructor creates a new instance of this object. This is
-	 * necessary for Threads that have terminated in order to render to run them
-	 * again possible.
-	 *
-	 * @param processSwapOutTask
-	 *            copy master to create a clone of
-	 */
-	public ProcessSwapOutTask(ProcessSwapOutTask processSwapOutTask) {
-		super(processSwapOutTask);
-	}
+    /**
+     * The clone constructor creates a new instance of this object. This is
+     * necessary for Threads that have terminated in order to render to run them
+     * again possible.
+     *
+     * @param processSwapOutTask
+     *            copy master to create a clone of
+     */
+    public ProcessSwapOutTask(ProcessSwapOutTask processSwapOutTask) {
+        super(processSwapOutTask);
+    }
 
-	/**
-	 * Returns the display name of the task to show to the user.
-	 *
-	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
-	 */
-	@Override
-	public String getDisplayName() {
-		return Helper.getTranslation("ProcessSwapOutTask");
-	}
+    /**
+     * Returns the display name of the task to show to the user.
+     *
+     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     */
+    @Override
+    public String getDisplayName() {
+        return Helper.getTranslation("ProcessSwapOutTask");
+    }
 
-	@Override
+    @Override
    public void initialize(Prozess inProzess) {
       super.initialize(inProzess);
       setTitle("Auslagerung: " + inProzess.getTitel());
@@ -125,8 +125,8 @@ public void run() {
       String processDirectory = "";
 
       if (ConfigMain.getBooleanParameter("useSwapping")) {
-		swapPath = ConfigMain.getParameter("swapPath", "");
-	} else {
+        swapPath = ConfigMain.getParameter("swapPath", "");
+    } else {
          setStatusMessage("swapping not activated");
          setStatusProgress(-1);
          return;
@@ -146,7 +146,7 @@ public void run() {
          processDirectory = getProzess().getProcessDataDirectoryIgnoreSwapping();
          //TODO: Don't catch Exception (the super class)
       } catch (Exception e) {
-    	  logger.warn("Exception:", e);
+          logger.warn("Exception:", e);
          setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - "
                + e.getMessage());
          setStatusProgress(-1);
@@ -185,7 +185,7 @@ public void run() {
         setStatusMessage("copying process folder");
         copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
       } catch (IOException e) {
-    	  logger.warn("IOException:", e);
+          logger.warn("IOException:", e);
          setStatusMessage("IOException in copyDirectory: " + e.getMessage());
          setStatusProgress(-1);
          return;
@@ -204,7 +204,7 @@ public void run() {
          xmlOut.output(doc, fos);
          //TODO: Don't catch Exception (the super class)
       } catch (Exception e) {
-    	  logger.warn("Exception:", e);
+          logger.warn("Exception:", e);
          setStatusMessage(e.getClass().getName() + " in xmlOut.output: " + e.getMessage());
          setStatusProgress(-1);
          return;
@@ -227,17 +227,17 @@ public void run() {
       setStatusProgress(100);
    }
 
-	/**
-	 * Calls the clone constructor to create a not yet executed instance of this
-	 * thread object. This is necessary for threads that have terminated in
-	 * order to render possible to restart them.
-	 *
-	 * @return a not-yet-executed replacement of this thread
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
-	 */
-	@Override
-	public ProcessSwapOutTask replace() {
-		return new ProcessSwapOutTask(this);
-	}
+    /**
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
+     *
+     * @return a not-yet-executed replacement of this thread
+     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     */
+    @Override
+    public ProcessSwapOutTask replace() {
+        return new ProcessSwapOutTask(this);
+    }
 
 }

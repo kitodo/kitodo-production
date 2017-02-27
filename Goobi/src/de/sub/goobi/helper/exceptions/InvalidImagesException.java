@@ -12,13 +12,13 @@
 package de.sub.goobi.helper.exceptions;
 
 public class InvalidImagesException extends Exception {
-	private static final long serialVersionUID = -2677207359216957351L;
-	
-	public InvalidImagesException(Exception e) {
-		super(e);
-	}
+    private static final long serialVersionUID = -2677207359216957351L;
 
-	public InvalidImagesException(String string) {
-		super(string);
-	}
+    public InvalidImagesException(Exception e) {
+        super(e);
+    }
+
+    public InvalidImagesException(String string) {
+        super(string);
+    }
 }

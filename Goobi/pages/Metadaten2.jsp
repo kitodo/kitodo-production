@@ -21,39 +21,39 @@
 <html>
 <f:view locale="#{SpracheForm.locale}">
 
-	<%@include file="/newpages/inc/head.jsp"%>
+    <%@include file="/newpages/inc/head.jsp"%>
 
-	<script type="text/javascript">
+    <script type="text/javascript">
 
-	function checkFrameLoad(){
+    function checkFrameLoad(){
 
-		var testObject = rechts.document.getElementById("metadatenRechts");
-		if(testObject!=null){
-		}else{
-			rechts.location.href=rechts.location.href;
-		}
-		testObject = oben.document.getElementById("formularOben");
-		if (testObject!=null){
-		}else{
-			oben.location.href=oben.location.href;
-		}
-		
-		testObject = links.document.getElementById("treeform:tabelle");
-		if (testObject!=null){
-		}else{
-			links.location.href = links.location.href;
-		}
-	}
-			
-	</script>
+        var testObject = rechts.document.getElementById("metadatenRechts");
+        if(testObject!=null){
+        }else{
+            rechts.location.href=rechts.location.href;
+        }
+        testObject = oben.document.getElementById("formularOben");
+        if (testObject!=null){
+        }else{
+            oben.location.href=oben.location.href;
+        }
 
-	<frameset rows="59px,*" bordercolor="#003399" onload="setTimeout('checkFrameLoad()',100);">
-		<frame name="oben" src="../pages/Metadaten2oben.jsf" scrolling="no" />
-		<frameset cols="210px,*" bordercolor="#003399">
-			<frame name="links" src="../pages/Metadaten3links.jsf"
-				scrolling="auto" />
-			<frame name="rechts" src="../pages/Metadaten2rechts.jsf" />
-		</frameset>
-	</frameset>
+        testObject = links.document.getElementById("treeform:tabelle");
+        if (testObject!=null){
+        }else{
+            links.location.href = links.location.href;
+        }
+    }
+
+    </script>
+
+    <frameset rows="59px,*" bordercolor="#003399" onload="setTimeout('checkFrameLoad()',100);">
+        <frame name="oben" src="../pages/Metadaten2oben.jsf" scrolling="no" />
+        <frameset cols="210px,*" bordercolor="#003399">
+            <frame name="links" src="../pages/Metadaten3links.jsf"
+                scrolling="auto" />
+            <frame name="rechts" src="../pages/Metadaten2rechts.jsf" />
+        </frameset>
+    </frameset>
 </f:view>
 </html>

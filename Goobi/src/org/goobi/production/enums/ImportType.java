@@ -12,55 +12,55 @@
 package org.goobi.production.enums;
 
 public enum ImportType {
-	
-	
-	
-	Record("1","record"), ID("2", "id"), FILE("3","file"), FOLDER("4", "folder");
-	
-	private String id;
-	private String title;
-	
-	private ImportType(String id, String title) {
-		this.id = id;
-		this.title = title;
-	}
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return this.id;
-	}
 
-	/**
-	 * @param title the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    Record("1","record"), ID("2", "id"), FILE("3","file"), FOLDER("4", "folder");
 
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return this.title;
-	}
-	
-	public static ImportType getByTitle(String title) {
-		for (ImportType t : ImportType.values()) {
-			if (t.getTitle().equals(title)) {
-				return t;
-			}
-		}		
-		return null;
-	}
-	
+    private String id;
+    private String title;
+
+    private ImportType(String id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
+    public static ImportType getByTitle(String title) {
+        for (ImportType t : ImportType.values()) {
+            if (t.getTitle().equals(title)) {
+                return t;
+            }
+        }
+        return null;
+    }
+
 
 }
