@@ -32,9 +32,10 @@ import org.kitodo.data.database.beans.UserGroup;
 /**
  * Implementation of Task Type.
  */
-public class TaskType /*extends BaseType*/ {
+public class TaskType extends BaseType<Task> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Task task) {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -91,6 +92,7 @@ public class TaskType /*extends BaseType*/ {
         return new NStringEntity(taskObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Task> tasks) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Task task : tasks) {

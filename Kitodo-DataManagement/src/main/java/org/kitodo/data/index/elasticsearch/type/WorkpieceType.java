@@ -28,9 +28,10 @@ import org.kitodo.data.database.beans.WorkpieceProperty;
 /**
  * Implementation of Workpiece Type.
  */
-public class WorkpieceType /*extends BaseType*/ {
+public class WorkpieceType extends BaseType<Workpiece> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Workpiece workpiece) {
 
         LinkedHashMap<String, String> orderedWorkpieceMap = new LinkedHashMap<>();
@@ -52,6 +53,7 @@ public class WorkpieceType /*extends BaseType*/ {
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Workpiece> workpieces) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Workpiece workpiece : workpieces) {

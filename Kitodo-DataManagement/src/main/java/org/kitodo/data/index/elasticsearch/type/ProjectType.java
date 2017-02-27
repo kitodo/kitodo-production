@@ -32,9 +32,10 @@ import org.kitodo.data.database.beans.User;
 /**
  * Implementation of Project Type.
  */
-public class ProjectType /*extends BaseType*/ {
+public class ProjectType extends BaseType<Project> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Project project) {
 
         LinkedHashMap<String, String> orderedProjectMap = new LinkedHashMap<>();
@@ -87,6 +88,7 @@ public class ProjectType /*extends BaseType*/ {
         return new NStringEntity(projectObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Project> projects) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Project project : projects) {

@@ -28,9 +28,10 @@ import org.kitodo.data.database.beans.Process;
 /**
  * Implementation of Batch Type.
  */
-public class BatchType /*extends BaseType*/ {
+public class BatchType extends BaseType<Batch> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Batch batch) {
 
         LinkedHashMap<String, String> orderedBatchMap = new LinkedHashMap<>();
@@ -52,6 +53,7 @@ public class BatchType /*extends BaseType*/ {
         return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Batch> batches) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Batch batch : batches) {

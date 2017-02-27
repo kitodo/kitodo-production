@@ -26,9 +26,10 @@ import org.kitodo.data.database.beans.Docket;
 /**
  * Implementation of Docket Type.
  */
-public class DocketType /*extends BaseType*/ {
+public class DocketType extends BaseType<Docket> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Docket docket) {
 
         LinkedHashMap<String, String> orderedDocketMap = new LinkedHashMap<>();
@@ -39,6 +40,7 @@ public class DocketType /*extends BaseType*/ {
         return new NStringEntity(docketObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Docket> dockets) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Docket docket : dockets) {

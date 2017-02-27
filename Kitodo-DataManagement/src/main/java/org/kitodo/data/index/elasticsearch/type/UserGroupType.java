@@ -28,9 +28,10 @@ import org.kitodo.data.database.beans.UserGroup;
 /**
  * Implementation of BatchGroup Type.
  */
-public class UserGroupType /*extends BaseType*/ {
+public class UserGroupType extends BaseType<UserGroup> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(UserGroup userGroup) {
 
         LinkedHashMap<String, String> orderedUserGroupMap = new LinkedHashMap<>();
@@ -51,6 +52,7 @@ public class UserGroupType /*extends BaseType*/ {
         return new NStringEntity(userGroupObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<UserGroup> userGroups) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (UserGroup userGroup : userGroups) {

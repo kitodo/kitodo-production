@@ -28,9 +28,10 @@ import org.kitodo.data.database.beans.TemplateProperty;
 /**
  * Implementation of Template Type.
  */
-public class TemplateType /*extends BaseType*/ {
+public class TemplateType extends BaseType<Template> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Template template) {
 
         LinkedHashMap<String, String> orderedTemplateMap = new LinkedHashMap<>();
@@ -52,6 +53,7 @@ public class TemplateType /*extends BaseType*/ {
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Template> templates) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Template template : templates) {

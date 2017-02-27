@@ -30,9 +30,10 @@ import org.kitodo.data.database.beans.ProcessProperty;
 /**
  * Implementation of Process Type.
  */
-public class ProcessType /*extends BaseType*/ {
+public class ProcessType extends BaseType<Process> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Process process) {
 
         LinkedHashMap<String, String> orderedProcessMap = new LinkedHashMap<>();
@@ -64,6 +65,7 @@ public class ProcessType /*extends BaseType*/ {
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Process> processes) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Process process : processes) {

@@ -29,9 +29,10 @@ import org.kitodo.data.database.beans.UserProperty;
 /**
  * Implementation of User Type.
  */
-public class UserType /*extends BaseType*/ {
+public class UserType extends BaseType<User> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(User user) {
 
         LinkedHashMap<String, String> orderedUserMap = new LinkedHashMap<>();
@@ -69,6 +70,7 @@ public class UserType /*extends BaseType*/ {
         return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<User> users) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (User user : users) {

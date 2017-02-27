@@ -26,9 +26,10 @@ import org.kitodo.data.database.beans.Ruleset;
 /**
  * Implementation of Ruleset Type.
  */
-public class RulesetType /*extends BaseType*/ {
+public class RulesetType extends BaseType<Ruleset> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(Ruleset ruleset) {
 
         LinkedHashMap<String, String> orderedRulesetMap = new LinkedHashMap<>();
@@ -40,6 +41,7 @@ public class RulesetType /*extends BaseType*/ {
         return new NStringEntity(rulesetObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<Ruleset> rulesets) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (Ruleset ruleset : rulesets) {

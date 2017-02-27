@@ -28,9 +28,10 @@ import org.kitodo.data.database.beans.History;
 /**
  * Implementation of History Type.
  */
-public class HistoryType /*extends BaseType*/ {
+public class HistoryType extends BaseType<History> {
 
     @SuppressWarnings("unchecked")
+    @Override
     public HttpEntity createDocument(History history) {
 
         LinkedHashMap<String, String> orderedHistoryMap = new LinkedHashMap<>();
@@ -47,6 +48,7 @@ public class HistoryType /*extends BaseType*/ {
         return new NStringEntity(historyObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<History> histories) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (History history : histories) {
