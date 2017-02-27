@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -47,5 +48,10 @@ public class DocketServiceTestIT {
 
         List<Docket> dockets = docketService.findAll();
         assertEquals("Not all dockets were found in database!", 2, dockets.size());
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

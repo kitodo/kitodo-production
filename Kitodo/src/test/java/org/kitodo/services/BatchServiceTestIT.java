@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,6 +31,11 @@ public class BatchServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 
     @Test

@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -69,5 +70,10 @@ public class TemplatePropertyServiceTestIT {
         String expected = "first_value";
         String actual = processPropertyService.getNormalizedValue(processProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

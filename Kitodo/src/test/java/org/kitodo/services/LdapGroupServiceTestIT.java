@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -37,5 +38,10 @@ public class LdapGroupServiceTestIT {
         LdapGroup ldapGroup = ldapGroupService.find(1);
         boolean condition = ldapGroup.getTitle().equals("LG") && ldapGroup.getDisplayName().equals("Name");
         assertTrue("LDAP group was not found in database!", condition);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

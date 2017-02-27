@@ -38,6 +38,16 @@ public class HistoryDAO extends BaseDAO {
         return result;
     }
 
+    /**
+     * The function findAll() retrieves all histories from the database.
+     *
+     * @return all persisted histories
+     */
+    @SuppressWarnings("unchecked")
+    public List<History> findAll() {
+        return retrieveAllObjects(History.class);
+    }
+
     public History save(History history) throws DAOException {
         storeObject(history);
         return (History) retrieveObject(History.class, history.getId());

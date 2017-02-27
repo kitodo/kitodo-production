@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -61,5 +62,10 @@ public class ProjectServiceTestIT {
         List<StepInformation> expected = new ArrayList<>();
         List<StepInformation> actual = projectService.getWorkFlow(project);
         assertEquals("Work flow doesn't match to given work flow!", expected, actual);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

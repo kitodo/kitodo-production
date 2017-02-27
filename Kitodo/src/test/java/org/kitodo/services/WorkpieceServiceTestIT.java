@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,5 +56,10 @@ public class WorkpieceServiceTestIT {
         Workpiece workpiece = workpieceService.find(1);
         int actual = workpieceService.getPropertiesSize(workpiece);
         assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

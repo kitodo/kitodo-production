@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -61,5 +62,10 @@ public class UserGroupServiceTestIT {
         UserGroup userGroup = userGroupService.find(1);
         int actual = userGroupService.getTasksSize(userGroup);
         assertEquals("Tasks size is not equal to given value!", 2, actual);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

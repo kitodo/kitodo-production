@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
@@ -28,6 +30,10 @@ public class HistoryService {
 
     public History find(Integer id) throws DAOException {
         return historyDao.find(id);
+    }
+
+    public List<History> findAll() throws DAOException {
+        return historyDao.findAll();
     }
 
     public void remove(History history) throws DAOException {

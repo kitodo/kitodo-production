@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -60,5 +61,10 @@ public class RulesetServiceTestIT {
         //not sure how to really check if Pref is correct
         System.out.println("Preferences: " + actual);
         assertEquals("Preference is incorrect!", "1.1-20091117", actual);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

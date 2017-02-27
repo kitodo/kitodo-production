@@ -11,6 +11,9 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,7 +31,6 @@ public class HistoryServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertHistory();
     }
 
     @Test
@@ -40,4 +42,16 @@ public class HistoryServiceTestIT {
         assertTrue("History was not found in database!", condition);
     }
 
+    @Test
+    public void shouldFindAllHistories() throws Exception {
+        HistoryService historyService = new HistoryService();
+
+        List<History> histories = historyService.findAll();
+        assertEquals("Not all histories were found in database!", 1, histories.size());
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
 }

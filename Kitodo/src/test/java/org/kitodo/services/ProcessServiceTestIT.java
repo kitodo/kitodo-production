@@ -16,6 +16,7 @@ import de.sub.goobi.helper.FilesystemHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class ProcessServiceTestIT {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
-        assertEquals("Not all processes were found in database!", 4, processes.size());
+        assertEquals("Not all processes were found in database!", 2, processes.size());
     }
 
     @Test
@@ -232,7 +233,6 @@ public class ProcessServiceTestIT {
         assertTrue("BatchId doesn't match to given plain text!", condition);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetTasksSize() throws Exception {
         ProcessService processService = new ProcessService();
@@ -240,9 +240,12 @@ public class ProcessServiceTestIT {
         Process process = processService.find(1);
         int actual = processService.getTasksSize(process);
         assertEquals("Tasks' size is incorrect!", 1, actual);
+
+        process = processService.find(2);
+        actual = processService.getTasksSize(process);
+        assertEquals("Tasks' size is incorrect!", 3, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetHistorySize() throws Exception {
         ProcessService processService = new ProcessService();
@@ -531,4 +534,8 @@ public class ProcessServiceTestIT {
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
 }

@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,7 +32,6 @@ public class TaskServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertTasks();
     }
 
     @Test
@@ -173,5 +173,10 @@ public class TaskServiceTestIT {
         //System.out.println("Normal: " + task.getUsers().size());
         //System.out.println("Current: " + currentTask.getUsers().size());
         assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

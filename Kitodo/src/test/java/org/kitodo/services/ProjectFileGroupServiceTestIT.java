@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,11 +32,16 @@ public class ProjectFileGroupServiceTestIT {
     }
 
     @Test
-    public void shouldFindHistory() throws Exception {
+    public void shouldFindProjectFileGroup() throws Exception {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
         ProjectFileGroup projectFileGroup = projectFileGroupService.find(1);
         boolean condition = projectFileGroup.getName().equals("MAX") && projectFileGroup.getMimeType().equals("image/jpeg");
         assertTrue("Project file group was not found in database!", condition);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }

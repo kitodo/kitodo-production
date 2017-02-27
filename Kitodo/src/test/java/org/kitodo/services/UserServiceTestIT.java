@@ -16,6 +16,7 @@ import de.sub.goobi.config.ConfigMain;
 import java.io.File;
 import java.util.List;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +35,6 @@ public class UserServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertTasks();
     }
 
     @Test
@@ -187,5 +187,10 @@ public class UserServiceTestIT {
         condition = userService.getHomeDirectory(user).contains("nowak");
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 }
