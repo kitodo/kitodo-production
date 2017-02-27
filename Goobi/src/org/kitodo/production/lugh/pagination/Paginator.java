@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 /**
  * Class to generate different sorts of paginations.
- * 
+ *
  * @author Matthias Ronge
  */
 public class Paginator implements Iterator<String> {
@@ -198,7 +198,7 @@ public class Paginator implements Iterator<String> {
      * is derived from the the buffer’s state and the page directive. A page
      * directive causes what is immediately thereafter to be treated as text in
      * any case.
-     * 
+     *
      * @param buffer
      *            characters
      * @param fragmentType
@@ -222,7 +222,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * Creates a new paginator.
-     * 
+     *
      * @param initializer
      *            initial value
      */
@@ -394,7 +394,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * The iterator does not support {@code remove()}.
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if invoked.
      */
@@ -406,7 +406,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * Returns a concise string representation of this instance.
-     * 
+     *
      * @return a string representing this instance
      */
     @Override
