@@ -49,341 +49,341 @@ import de.unigoettingen.goobi.module.api.types.GoobiModuleParameter;
 import de.unigoettingen.goobi.module.api.util.UniqueID;
 
 public class ModuleServerForm {
-	private Boolean running = false;
-	private static volatile GoobiModuleManager modulmanager = null;
-	private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();
-	private ModuleDesc myModule;
-	Helper help = new Helper();
-	static ProzessDAO pdao = new ProzessDAO();
-	Timer messageTimer;
-	private static final Logger logger = Logger.getLogger(ModuleServerForm.class);
+    private Boolean running = false;
+    private static volatile GoobiModuleManager modulmanager = null;
+    private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();
+    private ModuleDesc myModule;
+    Helper help = new Helper();
+    static ProzessDAO pdao = new ProzessDAO();
+    Timer messageTimer;
+    private static final Logger logger = Logger.getLogger(ModuleServerForm.class);
 
-	/**
-	 * initialize all modules ================================================================
-	 */
-	public void startAllModules() {
-		if (modulmanager == null)
-			readAllModulesFromConfiguration();
+    /**
+     * initialize all modules ================================================================
+     */
+    public void startAllModules() {
+        if (modulmanager == null)
+            readAllModulesFromConfiguration();
 
-		/*
-		 * -------------------------------- alle Module initialisieren --------------------------------
-		 */
-		for (ModuleDesc md : modulmanager) {
-			try {
-				md.getModuleClient().initialize();
-			} catch (GoobiModuleException e) {
-				Helper.setFehlerMeldung("GoobiModuleException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage());
-				logger.error(e);
-			} catch (XmlRpcException e) {
-				Helper.setFehlerMeldung("XmlRpcException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage() + "\n"
-						+ Helper.getStacktraceAsString(e));
-			}
-		}
-		running = true;
-	}
+        /*
+         * -------------------------------- alle Module initialisieren --------------------------------
+         */
+        for (ModuleDesc md : modulmanager) {
+            try {
+                md.getModuleClient().initialize();
+            } catch (GoobiModuleException e) {
+                Helper.setFehlerMeldung("GoobiModuleException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage());
+                logger.error(e);
+            } catch (XmlRpcException e) {
+                Helper.setFehlerMeldung("XmlRpcException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ", e.getMessage() + "\n"
+                        + Helper.getStacktraceAsString(e));
+            }
+        }
+        running = true;
+    }
 
-	/**
-	 * Start module server.
-	 */
-	public void readAllModulesFromConfiguration() {
-		if (modulmanager == null) {
-			synchronized (ModuleServerForm.class) {
-				if (modulmanager == null) {
-					int port = ConfigMain.getIntParameter("goobiModuleServerPort");
-					final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
-							new ExtendedDataImpl());
+    /**
+     * Start module server.
+     */
+    public void readAllModulesFromConfiguration() {
+        if (modulmanager == null) {
+            synchronized (ModuleServerForm.class) {
+                if (modulmanager == null) {
+                    int port = ConfigMain.getIntParameter("goobiModuleServerPort");
+                    final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
+                            new ExtendedDataImpl());
 
-					// Alle Modulbeschreibungen aus der Konfigurationsdatei modules.xml einlesen
-					for (ModuleDesc md : getModulesFromConfigurationFile()) {
-						manager.add(md);
-					}
-					modulmanager = manager;
-				}
+                    // Alle Modulbeschreibungen aus der Konfigurationsdatei modules.xml einlesen
+                    for (ModuleDesc md : getModulesFromConfigurationFile()) {
+                        manager.add(md);
+                    }
+                    modulmanager = manager;
+                }
 
-				// Nachrichtensystem initialisieren
-				int delay = 5000;
-				int period = 1000;
-				messageTimer = new Timer();
-				messageTimer.scheduleAtFixedRate(new TimerTask() {
-					@Override
-					public void run() {
-						ModuleServerForm.check_new_messages(modulmanager);
-					}
-				}, delay, period);
+                // Nachrichtensystem initialisieren
+                int delay = 5000;
+                int period = 1000;
+                messageTimer = new Timer();
+                messageTimer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ModuleServerForm.check_new_messages(modulmanager);
+                    }
+                }, delay, period);
 
-				running = true;
-			}
-		}
-	}
+                running = true;
+            }
+        }
+    }
 
-	/**
-	 * shutdown Modulmanager ================================================================
-	 */
-	public void stopAllModules() {
-		if (modulmanager != null)
-			modulmanager.shutdown();
-		modulmanager = null;
-		running = false;
-	}
+    /**
+     * shutdown Modulmanager ================================================================
+     */
+    public void stopAllModules() {
+        if (modulmanager != null)
+            modulmanager.shutdown();
+        modulmanager = null;
+        running = false;
+    }
 
-	/**
-	 * initialize Module ================================================================
-	 */
-	public void startModule() {
-		if (myModule == null)
-			return;
-		try {
-			myModule.getModuleClient().initialize();
-		} catch (GoobiModuleException e) {
-			Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-			logger.error(e);
-		} catch (XmlRpcException e) {
-			Helper.setFehlerMeldung("XmlRpcException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-			logger.error(e);
-		}
-	}
+    /**
+     * initialize Module ================================================================
+     */
+    public void startModule() {
+        if (myModule == null)
+            return;
+        try {
+            myModule.getModuleClient().initialize();
+        } catch (GoobiModuleException e) {
+            Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+            logger.error(e);
+        } catch (XmlRpcException e) {
+            Helper.setFehlerMeldung("XmlRpcException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+            logger.error(e);
+        }
+    }
 
-	/**
-	 * shut Module down ================================================================
-	 */
-	public void stopModule() {
-		if (myModule == null)
-			return;
-		try {
-			myModule.getModuleClient().shutdown();
-		} catch (GoobiModuleException e) {
-			Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-			logger.error(e);
-		} catch (XmlRpcException e) {
-		}
-	}
+    /**
+     * shut Module down ================================================================
+     */
+    public void stopModule() {
+        if (myModule == null)
+            return;
+        try {
+            myModule.getModuleClient().shutdown();
+        } catch (GoobiModuleException e) {
+            Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+            logger.error(e);
+        } catch (XmlRpcException e) {
+        }
+    }
 
-	/**
-	 * Module-Konfigurationen aus externer xml-Datei modules.xml einlesen ================================================================
-	 */
-	@SuppressWarnings("unchecked")
-	private List<ModuleDesc> getModulesFromConfigurationFile() {
-		List<ModuleDesc> rueckgabe = new ArrayList<ModuleDesc>();
-		String filename = help.getGoobiConfigDirectory() + "modules.xml";
-		if (!(new File(filename).exists())) {
-			Helper.setFehlerMeldung("File not found: ", filename);
-			return rueckgabe;
-		}
-		try {
-			SAXBuilder builder = new SAXBuilder();
-			Document doc = builder.build(new File(filename));
-			Element root = doc.getRootElement();
-			/* alle Module durchlaufen */
-			for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
-				Element myModule = iter.next();
-				rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"), null, myModule
-						.getAttributeValue("description")));
-			}
-		} catch (JDOMException e1) {
-			Helper.setFehlerMeldung("Error on reading, JDOMException: ", e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
-			logger.error(e1);
-		} catch (IOException e1) {
-			Helper.setFehlerMeldung("Error on reading, IOException: ", e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
-			logger.error(e1);
-		}
-		return rueckgabe;
-	}
+    /**
+     * Module-Konfigurationen aus externer xml-Datei modules.xml einlesen ================================================================
+     */
+    @SuppressWarnings("unchecked")
+    private List<ModuleDesc> getModulesFromConfigurationFile() {
+        List<ModuleDesc> rueckgabe = new ArrayList<ModuleDesc>();
+        String filename = help.getGoobiConfigDirectory() + "modules.xml";
+        if (!(new File(filename).exists())) {
+            Helper.setFehlerMeldung("File not found: ", filename);
+            return rueckgabe;
+        }
+        try {
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new File(filename));
+            Element root = doc.getRootElement();
+            /* alle Module durchlaufen */
+            for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
+                Element myModule = iter.next();
+                rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"), null, myModule
+                        .getAttributeValue("description")));
+            }
+        } catch (JDOMException e1) {
+            Helper.setFehlerMeldung("Error on reading, JDOMException: ", e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
+            logger.error(e1);
+        } catch (IOException e1) {
+            Helper.setFehlerMeldung("Error on reading, IOException: ", e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
+            logger.error(e1);
+        }
+        return rueckgabe;
+    }
 
-	/**
-	 * Eine Shortsession für einen Schritt starten ================================================================
-	 */
-	public String startShortSession(Schritt inSchritt) throws GoobiException, XmlRpcException {
-		myModule = null;
-		if (inSchritt.getTypModulName() == null || inSchritt.getTypModulName().length() == 0) {
-			Helper.setFehlerMeldung("this step has no mudule");
-			return "";
-		}
+    /**
+     * Eine Shortsession für einen Schritt starten ================================================================
+     */
+    public String startShortSession(Schritt inSchritt) throws GoobiException, XmlRpcException {
+        myModule = null;
+        if (inSchritt.getTypModulName() == null || inSchritt.getTypModulName().length() == 0) {
+            Helper.setFehlerMeldung("this step has no mudule");
+            return "";
+        }
 
-		/*
-		 * --------------------- zusätzliche Parameter neben dem Modulnamen -------------------
-		 */
-		HashMap<String, Object> typeParameters = new HashMap<String, Object>();
-		String schrittModuleName = inSchritt.getTypModulName();
-		StrTokenizer tokenizer = new StrTokenizer(inSchritt.getTypModulName());
-		int counter = 0;
-		while (tokenizer.hasNext()) {
-			String tok = (String) tokenizer.next();
-			if (counter == 0)
-				schrittModuleName = tok;
-			else {
-				if (tok.contains(":")) {
-					String key = tok.split(":")[0];
-					String value = tok.split(":")[1];
-					typeParameters.put(key, value);
-				}
-			}
-			counter++;
-		}
+        /*
+         * --------------------- zusätzliche Parameter neben dem Modulnamen -------------------
+         */
+        HashMap<String, Object> typeParameters = new HashMap<String, Object>();
+        String schrittModuleName = inSchritt.getTypModulName();
+        StrTokenizer tokenizer = new StrTokenizer(inSchritt.getTypModulName());
+        int counter = 0;
+        while (tokenizer.hasNext()) {
+            String tok = (String) tokenizer.next();
+            if (counter == 0)
+                schrittModuleName = tok;
+            else {
+                if (tok.contains(":")) {
+                    String key = tok.split(":")[0];
+                    String value = tok.split(":")[1];
+                    typeParameters.put(key, value);
+                }
+            }
+            counter++;
+        }
 
-		/*
-		 * -------------------------------- Modulserver läuft noch nicht --------------------------------
-		 */
-		if (modulmanager == null)
-			throw new GoobiException(0, "Der Modulserver läuft nicht");
+        /*
+         * -------------------------------- Modulserver läuft noch nicht --------------------------------
+         */
+        if (modulmanager == null)
+            throw new GoobiException(0, "Der Modulserver läuft nicht");
 
-		/*
-		 * -------------------------------- ohne gewähltes Modul gleich wieder raus --------------------------------
-		 */
-		for (ModuleDesc md : modulmanager)
-			if (md.getName().equals(schrittModuleName))
-				myModule = md;
-		if (myModule == null) {
-			Helper.setFehlerMeldung("Module not found");
-			return "";
-		}
+        /*
+         * -------------------------------- ohne gewähltes Modul gleich wieder raus --------------------------------
+         */
+        for (ModuleDesc md : modulmanager)
+            if (md.getName().equals(schrittModuleName))
+                myModule = md;
+        if (myModule == null) {
+            Helper.setFehlerMeldung("Module not found");
+            return "";
+        }
 
-		/*
-		 * -------------------------------- Verbindung zum Modul aufbauen und url zurückgeben --------------------------------
-		 */
-		String processId = String.valueOf(inSchritt.getProzess().getId().intValue());
-		String tempID = UniqueID.generate_session();
-		myRunningShortSessions.put(tempID, processId);
+        /*
+         * -------------------------------- Verbindung zum Modul aufbauen und url zurückgeben --------------------------------
+         */
+        String processId = String.valueOf(inSchritt.getProzess().getId().intValue());
+        String tempID = UniqueID.generate_session();
+        myRunningShortSessions.put(tempID, processId);
 
-		GoobiModuleParameter gmp1 = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, typeParameters);
-		HttpSession insession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+        GoobiModuleParameter gmp1 = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, typeParameters);
+        HttpSession insession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
 
-		String applicationUrl = new HelperForm().getServletPathWithHostAsUrl();
-		gmp1.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/AktuelleSchritteBearbeiten.jsf?jsessionId=" + insession.getId());
-		myModule.getGmps().add(gmp1); // add session in den Manager
-		return myModule.getModuleClient().start(gmp1);
-	}
+        String applicationUrl = new HelperForm().getServletPathWithHostAsUrl();
+        gmp1.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/AktuelleSchritteBearbeiten.jsf?jsessionId=" + insession.getId());
+        myModule.getGmps().add(gmp1); // add session in den Manager
+        return myModule.getModuleClient().start(gmp1);
+    }
 
-	/**
-	 * Test for shortsession of selected module ================================================================
-	 */
-	public void startShortSessionTest() throws GoobiException, XmlRpcException {
-		/*
-		 * -------------------------------- ohne gewähltes Modul gleich wieder raus --------------------------------
-		 */
-		if (myModule == null)
-			return;
+    /**
+     * Test for shortsession of selected module ================================================================
+     */
+    public void startShortSessionTest() throws GoobiException, XmlRpcException {
+        /*
+         * -------------------------------- ohne gewähltes Modul gleich wieder raus --------------------------------
+         */
+        if (myModule == null)
+            return;
 
-		String processId = "3346";
-		String tempID = UniqueID.generate_session();
-		myRunningShortSessions.put(tempID, processId);
-		GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, null);
+        String processId = "3346";
+        String tempID = UniqueID.generate_session();
+        myRunningShortSessions.put(tempID, processId);
+        GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID, null);
 
-		String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
+        String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
 
-		gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId=" + tempID);
-		gmp.put("type", "PRODUCE");
+        gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId=" + tempID);
+        gmp.put("type", "PRODUCE");
 
-		myModule.getGmps().add(gmp); // add shortsession in den Manager
-		Helper.setMeldung(myModule.getModuleClient().start(gmp));
-		Helper.setMeldung(gmp.toString());
+        myModule.getGmps().add(gmp); // add shortsession in den Manager
+        Helper.setMeldung(myModule.getModuleClient().start(gmp));
+        Helper.setMeldung(gmp.toString());
 
-	}
+    }
 
-	/*
-	 * ##################################################### ##################################################### ## ## Messaging system ##
-	 * ##################################################### ####################################################
-	 */
+    /*
+     * ##################################################### ##################################################### ## ## Messaging system ##
+     * ##################################################### ####################################################
+     */
 
-	/**
-	 * Diese Methode überprüft, ob wir was neues in unserem Container haben. ================================================================
-	 */
-	private static void check_new_messages(GoobiModuleManager modules) {
-		Message message = null;
-		while (MessageContainer.size() > 0) {
-			message = MessageContainer.pop();
-			handle_message(message, modules);
-		}
-	}
+    /**
+     * Diese Methode überprüft, ob wir was neues in unserem Container haben. ================================================================
+     */
+    private static void check_new_messages(GoobiModuleManager modules) {
+        Message message = null;
+        while (MessageContainer.size() > 0) {
+            message = MessageContainer.pop();
+            handle_message(message, modules);
+        }
+    }
 
-	/**
-	 * Mit dieser Methode werden die messages abgearbeitet
-	 * 
-	 * @param message
-	 *            messages
-	 * @param modules
-	 *            GoobiModuleManager ================================================================
-	 */
-	private static void handle_message(Message message, GoobiModuleManager modules) {
-		if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
-			String in_session = message.from;
-			/*
-			 * erstmal wird geschaut welcher module und welche session ist der Absender.
-			 */
-			int i = 0;
-			if (modules.size() == i) {
-			} else {
-				i++;
-				ArrayList<GoobiModuleParameter> gmps = modules.get(i - 1).getGmps();
-				for (GoobiModuleParameter gmp : gmps) {
-					if (gmp.sessionId.equals(in_session)) {
-						/*
-						 * Jetzt wird herausgefunden um was für eine Message es geht. dabei ist: Module : modules.get(i) Session wird durch gmp
-						 * beschrieben
-						 */
-						if (message.body.type.equals("trigger")) {
-							// Behandlung aller trigger messages
-							/*
-							 * Behandlung von "trigger - END"
-							 */
-							try {
-								modules.get(i - 1).getModuleClient().stop(gmp);
-							} catch (GoobiModuleException e) {
-								logger.error(e);
-							} catch (XmlRpcException e) {
-								logger.error(e);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    /**
+     * Mit dieser Methode werden die messages abgearbeitet
+     *
+     * @param message
+     *            messages
+     * @param modules
+     *            GoobiModuleManager ================================================================
+     */
+    private static void handle_message(Message message, GoobiModuleManager modules) {
+        if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
+            String in_session = message.from;
+            /*
+             * erstmal wird geschaut welcher module und welche session ist der Absender.
+             */
+            int i = 0;
+            if (modules.size() == i) {
+            } else {
+                i++;
+                ArrayList<GoobiModuleParameter> gmps = modules.get(i - 1).getGmps();
+                for (GoobiModuleParameter gmp : gmps) {
+                    if (gmp.sessionId.equals(in_session)) {
+                        /*
+                         * Jetzt wird herausgefunden um was für eine Message es geht. dabei ist: Module : modules.get(i) Session wird durch gmp
+                         * beschrieben
+                         */
+                        if (message.body.type.equals("trigger")) {
+                            // Behandlung aller trigger messages
+                            /*
+                             * Behandlung von "trigger - END"
+                             */
+                            try {
+                                modules.get(i - 1).getModuleClient().stop(gmp);
+                            } catch (GoobiModuleException e) {
+                                logger.error(e);
+                            } catch (XmlRpcException e) {
+                                logger.error(e);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
-	 */
+    /*
+     * ##################################################### ##################################################### ## ## Getter und Setter ##
+     * ##################################################### ####################################################
+     */
 
-	public GoobiModuleManager getModulmanager() {
-		return modulmanager;
-	}
+    public GoobiModuleManager getModulmanager() {
+        return modulmanager;
+    }
 
-	public ModuleDesc getMyModule() {
-		return myModule;
-	}
+    public ModuleDesc getMyModule() {
+        return myModule;
+    }
 
-	public void setMyModule(ModuleDesc myModule) {
-		this.myModule = myModule;
-	}
+    public void setMyModule(ModuleDesc myModule) {
+        this.myModule = myModule;
+    }
 
-	public static String getProcessIDFromShortSession(String sessionId) {
-		return myRunningShortSessions.get(sessionId);
-	}
+    public static String getProcessIDFromShortSession(String sessionId) {
+        return myRunningShortSessions.get(sessionId);
+    }
 
-	public Boolean getRunning() {
-		return running;
-	}
+    public Boolean getRunning() {
+        return running;
+    }
 
-	/**
-	 * get Prozess von shortSessionID ================================================================
-	 */
-	public static Prozess getProcessFromShortSession(String sessionId) throws GoobiException {
-		String prozessidStr = getProcessIDFromShortSession(sessionId);
-		try {
-			Prozess tempProz = pdao.get(Integer.parseInt(prozessidStr));
-			Helper.getHibernateSession().flush();
-			Helper.getHibernateSession().clear();
-			if (tempProz != null && tempProz.getId() != null)
-				Helper.getHibernateSession().refresh(tempProz);
+    /**
+     * get Prozess von shortSessionID ================================================================
+     */
+    public static Prozess getProcessFromShortSession(String sessionId) throws GoobiException {
+        String prozessidStr = getProcessIDFromShortSession(sessionId);
+        try {
+            Prozess tempProz = pdao.get(Integer.parseInt(prozessidStr));
+            Helper.getHibernateSession().flush();
+            Helper.getHibernateSession().clear();
+            if (tempProz != null && tempProz.getId() != null)
+                Helper.getHibernateSession().refresh(tempProz);
 
-			return tempProz;
-		} catch (NumberFormatException e) {
-			new Helper();
-			throw new GoobiException(5, "******** wrapped NumberFormatException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-		} catch (DAOException e) {
-			new Helper();
-			throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
-		}
-	}
+            return tempProz;
+        } catch (NumberFormatException e) {
+            new Helper();
+            throw new GoobiException(5, "******** wrapped NumberFormatException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+        } catch (DAOException e) {
+            new Helper();
+            throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
+        }
+    }
 
 }

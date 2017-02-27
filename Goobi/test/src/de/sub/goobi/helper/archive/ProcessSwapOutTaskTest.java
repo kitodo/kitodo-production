@@ -26,10 +26,10 @@ import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 import de.sub.goobi.persistence.ProzessDAO;
 
-@Ignore("Crashing") 
+@Ignore("Crashing")
 public class ProcessSwapOutTaskTest {
    static Prozess proz = null;
-   
+
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
       proz = new ProzessDAO().get(119);
@@ -37,7 +37,7 @@ public class ProcessSwapOutTaskTest {
 
    @AfterClass
    public static void tearDownAfterClass() throws Exception {
-      
+
    }
 
    @Before
@@ -53,19 +53,19 @@ public class ProcessSwapOutTaskTest {
       proz.setSwappedOutGui(false);
       swapOut();
    }
-   
+
    private void swapOut() {
       ProcessSwapOutTask psot = new ProcessSwapOutTask();
       psot.initialize(proz);
-		psot.run();
+        psot.run();
       assertTrue(proz.isSwappedOutGui());
    }
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
    private void swapIn() {
       ProcessSwapInTask psot = new ProcessSwapInTask();
       psot.initialize(proz);
-		psot.run();
+        psot.run();
       assertFalse(proz.isSwappedOutGui());
    }
 

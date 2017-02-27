@@ -17,27 +17,27 @@ import org.quartz.JobExecutionException;
 
 public interface IGoobiJob {
 
-	/***************************************************************************
-	 * execute this {@link Job} for all database and metadata content
-	 * don't overwrite this method
-	 * 
-	 * @throws JobExecutionException
-	 **************************************************************************/
-	public abstract void execute(JobExecutionContext context)
-			throws JobExecutionException;
+    /***************************************************************************
+     * execute this {@link Job} for all database and metadata content
+     * don't overwrite this method
+     *
+     * @throws JobExecutionException
+     **************************************************************************/
+    public abstract void execute(JobExecutionContext context)
+            throws JobExecutionException;
 
-	public abstract void setIsRunning(Boolean inisRunning);
+    public abstract void setIsRunning(Boolean inisRunning);
 
-	public abstract Boolean getIsRunning();
+    public abstract Boolean getIsRunning();
 
-	/***************************************************************************
-	 * getter for JobName
-	 **************************************************************************/
-	public abstract String getJobName();
+    /***************************************************************************
+     * getter for JobName
+     **************************************************************************/
+    public abstract String getJobName();
 
-	/***************************************************************************
-	 * override this method to let the job be called automatically
-	 **************************************************************************/
-	public abstract void execute();
+    /***************************************************************************
+     * override this method to let the job be called automatically
+     **************************************************************************/
+    public abstract void execute();
 
 }

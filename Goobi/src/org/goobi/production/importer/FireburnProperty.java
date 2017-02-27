@@ -14,43 +14,43 @@ package org.goobi.production.importer;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
- * 
+ *
  * @author Igor Toker
  *
  */
 @XStreamAlias("property")
 public class FireburnProperty {
-	@XStreamAsAttribute
-	@XStreamAlias("cdName")
-	public String cdName;
-	@XStreamAsAttribute
-	@XStreamAlias("titel")
-	public String titel;
-	@XStreamAsAttribute
-	@XStreamAlias("date")
-	public String date;
+    @XStreamAsAttribute
+    @XStreamAlias("cdName")
+    public String cdName;
+    @XStreamAsAttribute
+    @XStreamAlias("titel")
+    public String titel;
+    @XStreamAsAttribute
+    @XStreamAlias("date")
+    public String date;
 
-	//Anzahl der Cd's
-	@XStreamAlias("cdnumber")
-	@XStreamAsAttribute
-	public int cdnumber = 1;
-	@XStreamAlias("size")
-	@XStreamAsAttribute
-	public long size;
-	@XStreamAlias("type")
-	@XStreamAsAttribute
-	public String type;
+    //Anzahl der Cd's
+    @XStreamAlias("cdnumber")
+    @XStreamAsAttribute
+    public int cdnumber = 1;
+    @XStreamAlias("size")
+    @XStreamAsAttribute
+    public long size;
+    @XStreamAlias("type")
+    @XStreamAsAttribute
+    public String type;
 
-	public FireburnProperty(String cdName, String titel, String date, int cdnumber, String type, long size) {
-		super();
-		this.cdName = cdName;
-		this.titel = titel;
-		this.date = date;
+    public FireburnProperty(String cdName, String titel, String date, int cdnumber, String type, long size) {
+        super();
+        this.cdName = cdName;
+        this.titel = titel;
+        this.date = date;
 
-		this.cdnumber = cdnumber;
-		this.type = type;
-		this.size = size;
-	}
+        this.cdnumber = cdnumber;
+        this.type = type;
+        this.size = size;
+    }
 
 
 }

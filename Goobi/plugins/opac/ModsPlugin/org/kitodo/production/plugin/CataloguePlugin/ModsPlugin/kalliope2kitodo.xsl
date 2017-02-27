@@ -55,13 +55,13 @@
         <xsl:choose>
             <xsl:when test="$role='author'">
                 <goobi:metadata name="Author" type="person">
-	                <goobi:lastName><xsl:value-of select="$last_name" /></goobi:lastName>
-	                <goobi:firstName><xsl:value-of select="$first_name" /></goobi:firstName>
-	                <goobi:displayName><xsl:value-of select="$last_name" />,<xsl:value-of select="$first_name" /></goobi:displayName>
-	                <xsl:if test="$uri and contains($uri, 'gnd')">
-	                    <goobi:identifier><xsl:value-of select="tokenize($uri, '/')[last()]" /></goobi:identifier>
-	                    <goobi:identifierType>GND</goobi:identifierType>
-	                </xsl:if>
+                    <goobi:lastName><xsl:value-of select="$last_name" /></goobi:lastName>
+                    <goobi:firstName><xsl:value-of select="$first_name" /></goobi:firstName>
+                    <goobi:displayName><xsl:value-of select="$last_name" />,<xsl:value-of select="$first_name" /></goobi:displayName>
+                    <xsl:if test="$uri and contains($uri, 'gnd')">
+                        <goobi:identifier><xsl:value-of select="tokenize($uri, '/')[last()]" /></goobi:identifier>
+                        <goobi:identifierType>GND</goobi:identifierType>
+                    </xsl:if>
                 </goobi:metadata>
             </xsl:when>
             <xsl:when test="$role='addressee'">
@@ -98,7 +98,7 @@
         <goobi:metadata name="FormatSourcePrint"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>
 
-    <!-- ### CatalogIDDigital ### --> 
+    <!-- ### CatalogIDDigital ### -->
     <xsl:template match="mods:mods/mods:recordInfo/mods:recordIdentifier">
         <goobi:metadata name="CatalogIDDigital"><xsl:value-of select="normalize-space()" /></goobi:metadata>
     </xsl:template>

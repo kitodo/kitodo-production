@@ -25,24 +25,24 @@ import javax.servlet.http.HttpSession;
 
 public class SecurityCheckFilter implements Filter {
 
-   
+
 
    public SecurityCheckFilter() { //called once. no method arguments allowed here!
    }
 
-   
+
 
    @Override
 public void init(FilterConfig conf) throws ServletException {
    }
 
-   
+
 
    @Override
 public void destroy() {
    }
 
-   
+
 
    /** Creates a new instance of SecurityCheckFilter */
    @Override
@@ -58,7 +58,7 @@ public void doFilter(ServletRequest request, ServletResponse response, FilterCha
          return;
       }
 
-      //deliver request to next filter 
+      //deliver request to next filter
       chain.doFilter(request, response);
    }
 }

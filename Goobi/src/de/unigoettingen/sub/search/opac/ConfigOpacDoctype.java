@@ -25,77 +25,77 @@ import org.goobi.webapi.beans.Label.KeyAttribute;
 import com.sharkysoft.util.NotImplementedException;
 
 public class ConfigOpacDoctype {
-	private String title = "";
-	private String rulesetType = "";
-	private String tifHeaderType = "";
-	private boolean periodical = false;
-	private boolean multiVolume = false;
-	private HashMap<String, String> labels;
-	private ArrayList<String> mappings;
-	private boolean newspaper;
+    private String title = "";
+    private String rulesetType = "";
+    private String tifHeaderType = "";
+    private boolean periodical = false;
+    private boolean multiVolume = false;
+    private HashMap<String, String> labels;
+    private ArrayList<String> mappings;
+    private boolean newspaper;
 
-	public ConfigOpacDoctype() {
-		throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
-	}
-	
-	ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
-			boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
-			ArrayList<String> inMappings) {
-		this.title = inTitle;
-		this.rulesetType = inRulesetType;
-		this.tifHeaderType = inTifHeaderType;
-		this.periodical = inPeriodical;
-		this.multiVolume = inMultiVolume;
-		this.newspaper = newspaper;
-		this.labels = inLabels;
-		this.mappings = inMappings;
-	}
+    public ConfigOpacDoctype() {
+        throw new NotImplementedException("Jersey API requires no-arg constructor which is never used");
+    }
 
-	@XmlAttribute(name="key")
-	public String getTitle() {
-		return this.title;
-	}
+    ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
+            boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
+            ArrayList<String> inMappings) {
+        this.title = inTitle;
+        this.rulesetType = inRulesetType;
+        this.tifHeaderType = inTifHeaderType;
+        this.periodical = inPeriodical;
+        this.multiVolume = inMultiVolume;
+        this.newspaper = newspaper;
+        this.labels = inLabels;
+        this.mappings = inMappings;
+    }
 
-	public String getRulesetType() {
-		return this.rulesetType;
-	}
+    @XmlAttribute(name="key")
+    public String getTitle() {
+        return this.title;
+    }
 
-	@XmlElement(name="tiffHeaderTag")
-	public String getTifHeaderType() {
-		return this.tifHeaderType;
-	}
+    public String getRulesetType() {
+        return this.rulesetType;
+    }
 
-	public boolean isPeriodical() {
-		return this.periodical;
-	}
+    @XmlElement(name="tiffHeaderTag")
+    public String getTifHeaderType() {
+        return this.tifHeaderType;
+    }
 
-	public boolean isMultiVolume() {
-		return this.multiVolume;
-	}
+    public boolean isPeriodical() {
+        return this.periodical;
+    }
 
-	public boolean isNewspaper() {
-		return this.newspaper;
-	}
+    public boolean isMultiVolume() {
+        return this.multiVolume;
+    }
 
-	@XmlElement(name = "label")
-	public List<Label> getLabelsForJerseyApi() {
-		return Label.toListOfLabels(labels, KeyAttribute.LANGUAGE);
-	}
+    public boolean isNewspaper() {
+        return this.newspaper;
+    }
 
-	@XmlElement(name = "receivingValue")
-	public ArrayList<String> getMappings() {
-		return this.mappings;
-	}
+    @XmlElement(name = "label")
+    public List<Label> getLabelsForJerseyApi() {
+        return Label.toListOfLabels(labels, KeyAttribute.LANGUAGE);
+    }
 
-	public String getLocalizedLabel() {
-		String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
-		if (currentLocale != null && !currentLocale.equals("")) {
-			String answer = this.labels.get(currentLocale);
-			if (answer != null && !answer.equals("")) {
-				return answer;
-			}
-		}
-		return this.labels.get(this.labels.keySet().iterator().next());
-	}
+    @XmlElement(name = "receivingValue")
+    public ArrayList<String> getMappings() {
+        return this.mappings;
+    }
+
+    public String getLocalizedLabel() {
+        String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
+        if (currentLocale != null && !currentLocale.equals("")) {
+            String answer = this.labels.get(currentLocale);
+            if (answer != null && !answer.equals("")) {
+                return answer;
+            }
+        }
+        return this.labels.get(this.labels.keySet().iterator().next());
+    }
 
 }

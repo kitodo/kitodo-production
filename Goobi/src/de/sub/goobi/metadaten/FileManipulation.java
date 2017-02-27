@@ -107,15 +107,15 @@ public class FileManipulation {
                     uploadedFileName = uploadedFileName + fileExtension;
                 }
                 basename = uploadedFileName;
-                
+
             }
             if(logger.isTraceEnabled()){
-            	logger.trace("folder to import: " + currentFolder);
+                logger.trace("folder to import: " + currentFolder);
             }
             String filename = metadataBean.getMyProzess().getImagesDirectory() + currentFolder + File.separator + basename;
 
             if(logger.isTraceEnabled()){
-            	logger.trace("filename to import: " + filename);
+                logger.trace("filename to import: " + filename);
             }
 
             if (new SafeFile(filename).exists()) {
@@ -134,14 +134,14 @@ public class FileManipulation {
                 outputStream.write(buf, 0, len);
             }
             if(logger.isTraceEnabled()){
-            	logger.trace(filename + " was imported");
+                logger.trace(filename + " was imported");
             }
             // if file was uploaded into media folder, update pagination sequence
             if (metadataBean.getMyProzess().getImagesTifDirectory(false).equals(
                     metadataBean.getMyProzess().getImagesDirectory() + currentFolder + File.separator)) {
-            	if(logger.isTraceEnabled()){
-            		logger.trace("update pagination for " + metadataBean.getMyProzess().getTitel());
-            	}
+                if(logger.isTraceEnabled()){
+                    logger.trace("update pagination for " + metadataBean.getMyProzess().getTitel());
+                }
                 updatePagination(filename);
 
             }
@@ -234,7 +234,7 @@ public class FileManipulation {
                     if (insertMode.equalsIgnoreCase("uncounted")) {
                         mdTemp.setValue("uncounted");
                     } else {
-                        // set new logical no. for new and old page 
+                        // set new logical no. for new and old page
                         Metadata oldPageNo = oldPage.getAllMetadataByType(logicalPageNoType).get(0);
                         mdTemp.setValue(oldPageNo.getValue());
                         if (index + 1 < pageList.size()) {
@@ -499,7 +499,7 @@ public class FileManipulation {
 
     /**
      * import files from folder
-     * 
+     *
      */
 
     public List<String> getAllImportFolder() {
@@ -560,7 +560,7 @@ public class FileManipulation {
                             List<SafeFile> sortedList = Arrays.asList(objectInFolder);
                             Collections.sort(sortedList);
                            for (SafeFile object : sortedList) {
-                        	   object.copyFileToDirectory(masterDirectory);
+                               object.copyFileToDirectory(masterDirectory);
                             }
                         } catch (SwapException e) {
                             logger.error(e);
@@ -664,7 +664,7 @@ public class FileManipulation {
 
         for (String importName : selectedFiles) {
             SafeFile importfolder = new SafeFile(tempDirectory + "fileupload" + File.separator + importName);
-           	importfolder.deleteQuietly();
+            importfolder.deleteQuietly();
         }
         metadataBean.retrieveAllImages();
         metadataBean.BildErmitteln(0);

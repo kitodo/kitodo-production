@@ -26,42 +26,42 @@ import de.intranda.commons.chart.results.DataTable;
 
 public class StatQuestProjectAssociationsTest {
 
-	Locale locale = new Locale("GERMAN");
-	IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-	StatQuestProjectAssociations test = new StatQuestProjectAssociations();
+    Locale locale = new Locale("GERMAN");
+    IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+    StatQuestProjectAssociations test = new StatQuestProjectAssociations();
 
-	@Ignore("Crashing") 
-	@Test
-	public void testGetDataTables() {
-		IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-		test.setTimeUnit(TimeUnit.days);
-		List<DataTable> table = test.getDataTables(testFilter);
-		assertNotNull(table);
-	}
+    @Ignore("Crashing")
+    @Test
+    public void testGetDataTables() {
+        IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+        test.setTimeUnit(TimeUnit.days);
+        List<DataTable> table = test.getDataTables(testFilter);
+        assertNotNull(table);
+    }
 
-	@Test
-	public void testIsRendererInverted() {
-		IRenderer inRenderer = new ChartRenderer();
-		IRenderer inRenderer2 = new HtmlTableRenderer();
-		assertFalse(test.isRendererInverted(inRenderer));
-		assertTrue(test.isRendererInverted(inRenderer2));
-	}
+    @Test
+    public void testIsRendererInverted() {
+        IRenderer inRenderer = new ChartRenderer();
+        IRenderer inRenderer2 = new HtmlTableRenderer();
+        assertFalse(test.isRendererInverted(inRenderer));
+        assertTrue(test.isRendererInverted(inRenderer2));
+    }
 
-	@Test
-	public void testSetCalculationUnit() {
-		test.setCalculationUnit(CalculationUnit.pages);
-	}
+    @Test
+    public void testSetCalculationUnit() {
+        test.setCalculationUnit(CalculationUnit.pages);
+    }
 
-	@Test
-	public void testSetTimeUnit() {
-		test.setTimeUnit(TimeUnit.days);
-	}
+    @Test
+    public void testSetTimeUnit() {
+        test.setTimeUnit(TimeUnit.days);
+    }
 
-	@Test
-	public void testGetNumberFormatPattern() {
-		String answer = null;
-		answer = test.getNumberFormatPattern();
-		assertNotNull(answer);
-	}
+    @Test
+    public void testGetNumberFormatPattern() {
+        String answer = null;
+        answer = test.getNumberFormatPattern();
+        assertNotNull(answer);
+    }
 
 }

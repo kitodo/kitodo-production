@@ -17,17 +17,17 @@
 
 <hibernate-mapping>
 
-	<class name="de.sub.goobi.beans.Regelsatz" table="metadatenkonfigurationen">
-		<id name="id" column="MetadatenKonfigurationID" type="integer">
-			<generator class="native"/>
-		</id>
-		
-		<property name="titel" column="Titel" type="string"/>
-		<property name="datei" column="Datei" type="string"/>
-		<property name="orderMetadataByRulesetHibernate" type="java.lang.Boolean">
-			<column name="orderMetadataByRuleset" sql-type="bit"/>
-		</property>
-		
-	</class>
+    <class name="de.sub.goobi.beans.Regelsatz" table="metadatenkonfigurationen">
+        <id name="id" column="MetadatenKonfigurationID" type="integer">
+            <generator class="native"/>
+        </id>
+
+        <property name="titel" column="Titel" type="string"/>
+        <property name="datei" column="Datei" type="string"/>
+        <property name="orderMetadataByRulesetHibernate" type="java.lang.Boolean">
+            <column name="orderMetadataByRuleset" sql-type="bit"/>
+        </property>
+
+    </class>
 
 </hibernate-mapping>

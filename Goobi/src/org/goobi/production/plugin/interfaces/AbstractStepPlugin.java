@@ -24,58 +24,58 @@ import de.sub.goobi.beans.Schritt;
 @PluginImplementation
 public abstract class AbstractStepPlugin implements IStepPlugin {
 
-	private static final Logger logger = Logger.getLogger(AbstractStepPlugin.class);
+    private static final Logger logger = Logger.getLogger(AbstractStepPlugin.class);
 
-	protected String name = "Abstract Step Plugin";
-	protected String version = "1.0";
-	protected String description = "Abstract description for abstract step";
+    protected String name = "Abstract Step Plugin";
+    protected String version = "1.0";
+    protected String description = "Abstract description for abstract step";
 
-	protected Schritt myStep;
-	protected String returnPath;
+    protected Schritt myStep;
+    protected String returnPath;
 
-	@Override
-	public void initialize(Schritt inStep, String inReturnPath) {
-		this.myStep = inStep;
-		this.returnPath = inReturnPath;
-	}
+    @Override
+    public void initialize(Schritt inStep, String inReturnPath) {
+        this.myStep = inStep;
+        this.returnPath = inReturnPath;
+    }
 
-	@Override
-	public String getTitle() {
-		return this.name + " v" + this.version;
-	}
+    @Override
+    public String getTitle() {
+        return this.name + " v" + this.version;
+    }
 
 
-	
-	@Override
-	public String getDescription() {
-		return this.description;
-	}
-	
-	@Override
-	public PluginType getType() {
-		return PluginType.Step;
-	}
 
-	@Override
-	public Schritt getStep() {
-		return this.myStep;
-	}
+    @Override
+    public String getDescription() {
+        return this.description;
+    }
 
-	@Override
-	public String finish() {
-		logger.debug("finish called");
-		return this.returnPath;
-	}
+    @Override
+    public PluginType getType() {
+        return PluginType.Step;
+    }
 
-	@Override
-	public String cancel() {
-		logger.debug("cancel called");
-		return this.returnPath;
-	}
+    @Override
+    public Schritt getStep() {
+        return this.myStep;
+    }
 
-	@Override
-	public HashMap<String, StepReturnValue> validate() {
-		return null;
-	}
+    @Override
+    public String finish() {
+        logger.debug("finish called");
+        return this.returnPath;
+    }
+
+    @Override
+    public String cancel() {
+        logger.debug("cancel called");
+        return this.returnPath;
+    }
+
+    @Override
+    public HashMap<String, StepReturnValue> validate() {
+        return null;
+    }
 
 }

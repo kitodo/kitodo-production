@@ -19,68 +19,68 @@
 <%@ taglib uri="http://sourceforge.net/projects/jsf-comp/easysi" prefix="si"%>
 <%@ taglib uri="https://ajax4jsf.dev.java.net/ajax" prefix="a4j"%>
 
-<%-- ######################################## 
+<%-- ########################################
 
-							Alle Aktuellen Schritte in der Übersicht
+                            Alle Aktuellen Schritte in der Übersicht
 
-	#########################################--%>
+    #########################################--%>
 <a4j:keepAlive beanName="AktuelleSchritteForm" />
 <html>
 <f:view locale="#{SpracheForm.locale}">
 
-	<%@include file="inc/head.jsp"%>
-	<body>
+    <%@include file="inc/head.jsp"%>
+    <body>
 
-		<htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
-			<%@include file="inc/tbl_Kopf.jsp"%>
-			</htm:table>
-		<htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
-			align="center">
-			<htm:tr>
-				<%@include file="inc/tbl_Navigation.jsp"%>
-				<htm:td valign="top" styleClass="layoutInhalt">
+        <htm:table styleClass="headTable" cellspacing="0" cellpadding="0" style="padding-left:5px;padding-right:5px;margin-top:5px;">
+            <%@include file="inc/tbl_Kopf.jsp"%>
+            </htm:table>
+        <htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
+            align="center">
+            <htm:tr>
+                <%@include file="inc/tbl_Navigation.jsp"%>
+                <htm:td valign="top" styleClass="layoutInhalt">
 
-					<%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
-					<h:form id="id0" style="margin:0px">
-						<%-- Breadcrumb --%>
-						<h:panelGrid id="id1" width="100%" columns="1" styleClass="layoutInhaltKopf">
-							<h:panelGroup id="id2">
-								<h:commandLink id="id3" value="#{msgs.startseite}" action="newMain" />
-								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:commandLink id="id4" value="#{msgs.aktuelleSchritte}" action="AktuelleSchritteAlle" />
-								<f:verbatim> &#8250;&#8250; </f:verbatim>
-								<h:outputText id="id5" value="#{msgs.detailsOfBatch}" />
-							</h:panelGroup>
-						</h:panelGrid>
-					</h:form>
-					<htm:table id="editBatch" border="0" align="center" width="100%" cellpadding="15" rendered="#{LoginForm.myBenutzer!=null}">
-						<htm:tr>
-							<htm:td>
+                    <%-- ++++++++++++++++     Inhalt      ++++++++++++++++ --%>
+                    <h:form id="id0" style="margin:0px">
+                        <%-- Breadcrumb --%>
+                        <h:panelGrid id="id1" width="100%" columns="1" styleClass="layoutInhaltKopf">
+                            <h:panelGroup id="id2">
+                                <h:commandLink id="id3" value="#{msgs.startseite}" action="newMain" />
+                                <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                <h:commandLink id="id4" value="#{msgs.aktuelleSchritte}" action="AktuelleSchritteAlle" />
+                                <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                <h:outputText id="id5" value="#{msgs.detailsOfBatch}" />
+                            </h:panelGroup>
+                        </h:panelGrid>
+                    </h:form>
+                    <htm:table id="editBatch" border="0" align="center" width="100%" cellpadding="15" rendered="#{LoginForm.myBenutzer!=null}">
+                        <htm:tr>
+                            <htm:td>
 
-								<%-- Ueberschrift --%>
-								<htm:h3>
-									<h:outputText id="id6" value="#{msgs.batch}" />
-								</htm:h3>
+                                <%-- Ueberschrift --%>
+                                <htm:h3>
+                                    <h:outputText id="id6" value="#{msgs.batch}" />
+                                </htm:h3>
 
-								<%-- globale Warn- und Fehlermeldungen --%>
-								<h:messages id="id7" globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
+                                <%-- globale Warn- und Fehlermeldungen --%>
+                                <h:messages id="id7" globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true" showSummary="true" tooltip="true" />
 
-								<%@include file="inc_Batches/batch_box_Details.jsp"%>
+                                <%@include file="inc_Batches/batch_box_Details.jsp"%>
 
-								<%@include file="inc_Batches/batch_box_Properties.jsp"%>
+                                <%@include file="inc_Batches/batch_box_Properties.jsp"%>
 
-								<%@include file="inc_Batches/batch_box_Action.jsp"%>
-							</htm:td>
-						</htm:tr>
-					</htm:table>
-					<%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
+                                <%@include file="inc_Batches/batch_box_Action.jsp"%>
+                            </htm:td>
+                        </htm:tr>
+                    </htm:table>
+                    <%-- ++++++++++++++++    // Inhalt      ++++++++++++++++ --%>
 
-				</htm:td>
-			</htm:tr>
-			<%@include file="inc/tbl_Fuss.jsp"%>
-		</htm:table>
+                </htm:td>
+            </htm:tr>
+            <%@include file="inc/tbl_Fuss.jsp"%>
+        </htm:table>
 
-	</body>
+    </body>
 </f:view>
 
 </html>

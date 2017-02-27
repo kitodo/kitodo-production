@@ -29,53 +29,53 @@ import de.sub.goobi.helper.enums.StepStatus;
 
 public class HibernateProjectTaskList implements IProvideProjectTaskList {
 
-	@Override
-	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
-		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
-		calculate(inProject, myTaskList, countImages, inMax);
-		return myTaskList;
-	}
+    @Override
+    public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
+        List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
+        calculate(inProject, myTaskList, countImages, inMax);
+        return myTaskList;
+    }
 
-	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
-		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Schritt.class);
-		crit.addOrder(Order.asc("reihenfolge"));
-		crit.createCriteria("prozess", "proz");
-		crit.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
-		crit.add(Restrictions.eq("proz.projekt", inProject));
+    private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+        Session session = Helper.getHibernateSession();
+        Criteria crit = session.createCriteria(Schritt.class);
+        crit.addOrder(Order.asc("reihenfolge"));
+        crit.createCriteria("prozess", "proz");
+        crit.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
+        crit.add(Restrictions.eq("proz.projekt", inProject));
 
-		ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
+        ScrollableResults list = crit.setCacheMode(CacheMode.IGNORE).scroll(ScrollMode.FORWARD_ONLY);
 
-		while (list.next()) {
-			Schritt step = (Schritt) list.get(0);
-			String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
+        while (list.next()) {
+            Schritt step = (Schritt) list.get(0);
+            String shorttitle = (step.getTitel().length() > 60 ? step.getTitel().substring(0, 60) + "..." : step.getTitel());
 
-			IProjectTask pt = null;
-			for (IProjectTask task : myTaskList) {
-				if (task.getTitle().equals(shorttitle)) {
-					pt = task;
-					break;
-				}
-			}
-			if (pt == null) {
-				pt = new ProjectTask(shorttitle, 0, 0);
-				myTaskList.add(pt);
-			}
+            IProjectTask pt = null;
+            for (IProjectTask task : myTaskList) {
+                if (task.getTitle().equals(shorttitle)) {
+                    pt = task;
+                    break;
+                }
+            }
+            if (pt == null) {
+                pt = new ProjectTask(shorttitle, 0, 0);
+                myTaskList.add(pt);
+            }
 
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-				if (countImages) {
-					pt.setStepsCompleted(pt.getStepsCompleted() + step.getProzess().getSortHelperImages());
-				} else {
-					pt.setStepsCompleted(pt.getStepsCompleted() + 1);
-				}
-			}
+            if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
+                if (countImages) {
+                    pt.setStepsCompleted(pt.getStepsCompleted() + step.getProzess().getSortHelperImages());
+                } else {
+                    pt.setStepsCompleted(pt.getStepsCompleted() + 1);
+                }
+            }
 
-			if (countImages) {
-				pt.setStepsMax(pt.getStepsMax() + step.getProzess().getSortHelperImages());
-			} else {
-				pt.setStepsMax(pt.getStepsMax() + 1);
-			}
-		}
-	}
+            if (countImages) {
+                pt.setStepsMax(pt.getStepsMax() + step.getProzess().getSortHelperImages());
+            } else {
+                pt.setStepsMax(pt.getStepsMax() + 1);
+            }
+        }
+    }
 
 }

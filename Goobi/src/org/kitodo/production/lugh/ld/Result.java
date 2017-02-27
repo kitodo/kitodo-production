@@ -237,7 +237,7 @@ public class Result extends HashSet<ObjectType> {
     public boolean isUniqueIdentifiableNode() {
         return super.size() == 1 && super.iterator().next() instanceof IdentifiableNode;
     }
-    
+
     /**
      * Returns the accessible node.
      *

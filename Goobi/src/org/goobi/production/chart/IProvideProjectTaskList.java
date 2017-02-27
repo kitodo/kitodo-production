@@ -28,12 +28,12 @@ import de.sub.goobi.beans.Projekt;
 
 public interface IProvideProjectTaskList {
 
-	/**
-	 *
-	 * @param inProject
-	 * @param countImages
-	 * @return List
-	 */
+    /**
+     *
+     * @param inProject
+     * @param countImages
+     * @return List
+     */
 
-	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax);
+    public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax);
 }

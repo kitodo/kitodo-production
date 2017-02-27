@@ -20,45 +20,45 @@ public enum MetadataFormat {
 /*
  *
  */
-	
-	RDF("Rdf", true, RDFFile.class),
-	METS("Mets", true, MetsMods.class),
-	XSTREAM("XStream", true, XStream.class),
-	METS_AND_RDF("Mets & Rdf", false, null);
 
-	private final String name;
-	private final boolean usableForInternal;
-	private final Class<? extends Fileformat> clazz;
+    RDF("Rdf", true, RDFFile.class),
+    METS("Mets", true, MetsMods.class),
+    XSTREAM("XStream", true, XStream.class),
+    METS_AND_RDF("Mets & Rdf", false, null);
 
-	MetadataFormat(String inName, boolean inUsableForInternal, Class<? extends Fileformat> implClass) {
-		this.name = inName;
-		this.usableForInternal = inUsableForInternal;
-		this.clazz = implClass;
-	}
+    private final String name;
+    private final boolean usableForInternal;
+    private final Class<? extends Fileformat> clazz;
 
-	public String getName() {
-		return this.name;
-	}
-	
-	public boolean isUsableForInternal() {
-		return this.usableForInternal;
-	}
+    MetadataFormat(String inName, boolean inUsableForInternal, Class<? extends Fileformat> implClass) {
+        this.name = inName;
+        this.usableForInternal = inUsableForInternal;
+        this.clazz = implClass;
+    }
 
-	public static MetadataFormat findFileFormatsHelperByName(String inName){
-		for (MetadataFormat s : MetadataFormat.values()) {
-			if (s.getName().equals(inName)) {
-				return s;
-			}
-		}
-		return XSTREAM;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public static MetadataFormat getDefaultFileFormat() {
-		return XSTREAM;
-	}
-	
-	public Class<? extends Fileformat> getImplClass () {
-		return this.clazz;
-	}
-	
+    public boolean isUsableForInternal() {
+        return this.usableForInternal;
+    }
+
+    public static MetadataFormat findFileFormatsHelperByName(String inName){
+        for (MetadataFormat s : MetadataFormat.values()) {
+            if (s.getName().equals(inName)) {
+                return s;
+            }
+        }
+        return XSTREAM;
+    }
+
+    public static MetadataFormat getDefaultFileFormat() {
+        return XSTREAM;
+    }
+
+    public Class<? extends Fileformat> getImplClass () {
+        return this.clazz;
+    }
+
 }

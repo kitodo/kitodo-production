@@ -58,7 +58,7 @@ public class Namespace {
     /**
      * Recomposes an URL from a namespace and a local name, adding a number sign
      * in between if the URL does not end in a slash.
-     * 
+     *
      * @param namespace
      *            namespace for URL
      * @param localName

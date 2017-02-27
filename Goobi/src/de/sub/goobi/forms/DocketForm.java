@@ -28,92 +28,92 @@ import de.sub.goobi.persistence.DocketDAO;
 import de.sub.goobi.persistence.apache.ProcessManager;
 
 public class DocketForm extends BasisForm {
-	private static final long serialVersionUID = -445707928042517243L;
-	private Docket myDocket = new Docket();
-	private DocketDAO dao = new DocketDAO();
-	private static final Logger logger = Logger.getLogger(DocketForm.class);
+    private static final long serialVersionUID = -445707928042517243L;
+    private Docket myDocket = new Docket();
+    private DocketDAO dao = new DocketDAO();
+    private static final Logger logger = Logger.getLogger(DocketForm.class);
 
-	public String Neu() {
-		this.myDocket = new Docket();
-		return "DocketEdit";
-	}
+    public String Neu() {
+        this.myDocket = new Docket();
+        return "DocketEdit";
+    }
 
-	public String Speichern() {
-		try {
-			if (hasValidRulesetFilePath(myDocket, ConfigMain.getParameter("xsltFolder"))) {
-				this.dao.save(myDocket);
-				return "DocketList";
-			} else {
-				Helper.setFehlerMeldung("DocketNotFound");
-				return "";
-			}
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-			logger.error(e);
-			return "";
-		}
-	}
+    public String Speichern() {
+        try {
+            if (hasValidRulesetFilePath(myDocket, ConfigMain.getParameter("xsltFolder"))) {
+                this.dao.save(myDocket);
+                return "DocketList";
+            } else {
+                Helper.setFehlerMeldung("DocketNotFound");
+                return "";
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+            logger.error(e);
+            return "";
+        }
+    }
 
-	private boolean hasValidRulesetFilePath(Docket d, String pathToRulesets) {
-		File rulesetFile = new File(pathToRulesets + d.getFile());
-		return rulesetFile.exists();
-	}
+    private boolean hasValidRulesetFilePath(Docket d, String pathToRulesets) {
+        File rulesetFile = new File(pathToRulesets + d.getFile());
+        return rulesetFile.exists();
+    }
 
-	public String Loeschen() {
-		try {
-			if (hasAssignedProcesses(myDocket)) {
-				Helper.setFehlerMeldung("DocketInUse");
-				return "";
-			} else {
-				this.dao.remove(this.myDocket);
-			}
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-			return "";
-		}
-		return "DocketList";
-	}
+    public String Loeschen() {
+        try {
+            if (hasAssignedProcesses(myDocket)) {
+                Helper.setFehlerMeldung("DocketInUse");
+                return "";
+            } else {
+                this.dao.remove(this.myDocket);
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+            return "";
+        }
+        return "DocketList";
+    }
 
-	private boolean hasAssignedProcesses(Docket d) {
-		Integer number = ProcessManager.getNumberOfProcessesWithDocket(d.getId());
-		if (number != null && number > 0) {
-			return true;
-		}
-		return false;
-	}
+    private boolean hasAssignedProcesses(Docket d) {
+        Integer number = ProcessManager.getNumberOfProcessesWithDocket(d.getId());
+        if (number != null && number > 0) {
+            return true;
+        }
+        return false;
+    }
 
-	public String FilterKein() {
-		try {
-			// HibernateUtil.clearSession();
-			Session session = Helper.getHibernateSession();
-			// session.flush();
-			session.clear();
-			Criteria crit = session.createCriteria(Docket.class);
-			crit.addOrder(Order.asc("name"));
-			this.page = new Page(crit, 0);
-		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-			return "";
-		}
-		return "DocketList";
-	}
+    public String FilterKein() {
+        try {
+            // HibernateUtil.clearSession();
+            Session session = Helper.getHibernateSession();
+            // session.flush();
+            session.clear();
+            Criteria crit = session.createCriteria(Docket.class);
+            crit.addOrder(Order.asc("name"));
+            this.page = new Page(crit, 0);
+        } catch (HibernateException he) {
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+            return "";
+        }
+        return "DocketList";
+    }
 
-	public String FilterKeinMitZurueck() {
-		FilterKein();
-		return this.zurueck;
-	}
+    public String FilterKeinMitZurueck() {
+        FilterKein();
+        return this.zurueck;
+    }
 
-	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
-	 */
+    /*
+     * ##################################################### ##################################################### ## ## Getter und Setter ##
+     * ##################################################### ####################################################
+     */
 
-	public Docket getMyDocket() {
-		return this.myDocket;
-	}
+    public Docket getMyDocket() {
+        return this.myDocket;
+    }
 
-	public void setMyDocket(Docket docket) {
-		Helper.getHibernateSession().clear();
-		this.myDocket = docket;
-	}
+    public void setMyDocket(Docket docket) {
+        Helper.getHibernateSession().clear();
+        this.myDocket = docket;
+    }
 }

@@ -21,22 +21,22 @@ import de.sub.goobi.beans.Prozess;
 @Deprecated
 public interface IIndexer {
 
-	/**
-	 * adds an object to index
-	 * @param process the process to add
-	 */
-	public void addObject(Prozess process);
+    /**
+     * adds an object to index
+     * @param process the process to add
+     */
+    public void addObject(Prozess process);
 
-	/**
-	 * removes an object from index
-	 * @param process the process to remove
-	 */
-	public void removeObject(Prozess process);
+    /**
+     * removes an object from index
+     * @param process the process to remove
+     */
+    public void removeObject(Prozess process);
 
-	/**
-	 * updates an object in index
-	 * @param process the process to update
-	 */
-	public void updateObject(Prozess process);
+    /**
+     * updates an object in index
+     * @param process the process to update
+     */
+    public void updateObject(Prozess process);
 
 }

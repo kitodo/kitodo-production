@@ -23,55 +23,55 @@ import java.io.FilenameFilter;
  */
 public class FileUtils {
 
-	/**
-	 * calculate all files with given file extension at specified directory
-	 * recursivly
-	 *
-	 * @param inDir
-	 *            the directory to run through
-	 * @return number of files as Integer
-	 */
-	public static Integer getNumberOfFiles(SafeFile inDir) {
-		int anzahl = 0;
-		if (inDir.isDirectory()) {
-			/* --------------------------------
-			 * die Images zählen
-			 * --------------------------------*/
-			anzahl = inDir.list(Helper.imageNameFilter).length;
+    /**
+     * calculate all files with given file extension at specified directory
+     * recursivly
+     *
+     * @param inDir
+     *            the directory to run through
+     * @return number of files as Integer
+     */
+    public static Integer getNumberOfFiles(SafeFile inDir) {
+        int anzahl = 0;
+        if (inDir.isDirectory()) {
+            /* --------------------------------
+             * die Images zählen
+             * --------------------------------*/
+            anzahl = inDir.list(Helper.imageNameFilter).length;
 
-			/* --------------------------------
-			 * die Unterverzeichnisse durchlaufen
-			 * --------------------------------*/
-			String[] children = inDir.list();
-			for (int i = 0; i < children.length; i++) {
-				anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));
-				}
-		}
-		return anzahl;
-	}
+            /* --------------------------------
+             * die Unterverzeichnisse durchlaufen
+             * --------------------------------*/
+            String[] children = inDir.list();
+            for (int i = 0; i < children.length; i++) {
+                anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));
+                }
+        }
+        return anzahl;
+    }
 
-	public static Integer getNumberOfFiles(String inDir) {
-		return getNumberOfFiles(new SafeFile(inDir));
-	}
-
-
+    public static Integer getNumberOfFiles(String inDir) {
+        return getNumberOfFiles(new SafeFile(inDir));
+    }
 
 
 
 
-	public static class FileListFilter implements FilenameFilter {
-		  private String name;
-		  public FileListFilter(String name) {
-		    this.name = name;
-		  }
-		  @Override
-		public boolean accept(File directory, String filename) {
-		    boolean fileOK = true;
-		    if (this.name != null) {
-		      fileOK &= filename.matches(this.name);
-		    }
-		    return fileOK;
-		  }
-		}
+
+
+    public static class FileListFilter implements FilenameFilter {
+          private String name;
+          public FileListFilter(String name) {
+            this.name = name;
+          }
+          @Override
+        public boolean accept(File directory, String filename) {
+            boolean fileOK = true;
+            if (this.name != null) {
+              fileOK &= filename.matches(this.name);
+            }
+            return fileOK;
+          }
+        }
 
 }

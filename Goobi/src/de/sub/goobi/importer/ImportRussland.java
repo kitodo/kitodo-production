@@ -89,13 +89,13 @@ public class ImportRussland {
       line = reader.readLine();
       //      logger.info(line + " : " + myProzesseID);
       if (line == null) {
-		throw new WrongImportFileException("Importfehler: ungültige Importdatei oder falsche Kodierung");
-	}
+        throw new WrongImportFileException("Importfehler: ungültige Importdatei oder falsche Kodierung");
+    }
 
       if (!line.equals("+ " + prozessID + " (ProzessID)")) {
-		throw new WrongImportFileException("Importfehler: Importdatei gehört zu einem anderen Werk ('"
+        throw new WrongImportFileException("Importfehler: Importdatei gehört zu einem anderen Werk ('"
                + prozessID + "' <> '" + line + "')");
-	}
+    }
 
       /* --------------------------------
        * xml-Datei einlesen und Hauptelement ermitteln
@@ -127,8 +127,8 @@ public class ImportRussland {
          } else if (!line.substring(0, 1).equals("+")) {
             /* wenn zeile kein Kommentar ist, Zeile in Liste für Auswertung übernehmen */
             if (line.length() > 3) {
-				listeDaten.add(line);
-			}
+                listeDaten.add(line);
+            }
          }
       }
 
@@ -144,22 +144,22 @@ public class ImportRussland {
    private void AbsatzAuswerten(List<String> inListe) throws ugh.exceptions.MetadataTypeNotAllowedException,
          WrongImportFileException {
       if (inListe.size() == 0) {
-		return;
-	}
+        return;
+    }
 
       String detail = inListe.get(0);
       String meineDetailNr = detail.substring(0, 3);
 
       if (meineDetailNr.equals("080") || meineDetailNr.equals("090")) {
-		ArtikelDetails(inListe);
-	} else if (meineDetailNr.equals("010")) {
-		ZeitschriftDetails(inListe);
-	} else if (meineDetailNr.equals("050")) {
-		BandDetails(inListe);
-	} else {
-		throw new WrongImportFileException("Parsingfehler: Neuer Block mit ungültigem ersten Identifier ('"
+        ArtikelDetails(inListe);
+    } else if (meineDetailNr.equals("010")) {
+        ZeitschriftDetails(inListe);
+    } else if (meineDetailNr.equals("050")) {
+        BandDetails(inListe);
+    } else {
+        throw new WrongImportFileException("Parsingfehler: Neuer Block mit ungültigem ersten Identifier ('"
                + detail + "'), möglicherweise sind an einer falschen Stelle Zeilenumbrüche eingefügt worden.");
-	}
+    }
    }
 
 
@@ -169,27 +169,27 @@ public class ImportRussland {
       for (Iterator<String> iter = inListe.iterator(); iter.hasNext();) {
          String meinDetail = iter.next();
          String meineDetailNr = meinDetail.substring(0, 3);
-         //			logger.debug("---- " + meinDetail);
+         //         logger.debug("---- " + meinDetail);
 
          /* Zeitschrift Titel russisch */
          if (meineDetailNr.equals("020")) {
-			MetadatumHinzufuegen(this.logicalTopstruct, "RUSMainTitle", meinDetail);
-		}
+            MetadatumHinzufuegen(this.logicalTopstruct, "RUSMainTitle", meinDetail);
+        }
 
          /* Zeitschrift Herausgeber (wiederholbar) */
          if (meineDetailNr.equals("030")) {
-			MetadatumHinzufuegen(this.logicalTopstruct, "RUSPublisher", meinDetail);
-		}
+            MetadatumHinzufuegen(this.logicalTopstruct, "RUSPublisher", meinDetail);
+        }
 
          /* Zeitschrift Ort (wiederholbar) */
          if (meineDetailNr.equals("040")) {
-			MetadatumHinzufuegen(this.logicalTopstruct, "RUSPlaceOfPublication", meinDetail);
-		}
+            MetadatumHinzufuegen(this.logicalTopstruct, "RUSPlaceOfPublication", meinDetail);
+        }
 
          /* Verlag / Publishing house - russisch */
          if (meineDetailNr.equals("042")) {
-			MetadatumHinzufuegen(this.logicalTopstruct, "RUSPublicationHouse", meinDetail);
-		}
+            MetadatumHinzufuegen(this.logicalTopstruct, "RUSPublicationHouse", meinDetail);
+        }
 
       }
    }
@@ -206,13 +206,13 @@ public class ImportRussland {
 
          /* Band Herausgeber (wiederholbar)  */
          if (meineDetailNr.equals("060")) {
-			MetadatumHinzufuegen(ds, "RUSPublisher", meinDetail);
-		}
+            MetadatumHinzufuegen(ds, "RUSPublisher", meinDetail);
+        }
 
          /* Band Ort (wiederholbar) */
          if (meineDetailNr.equals("070")) {
-			MetadatumHinzufuegen(ds, "RUSPlaceOfPublication", meinDetail);
-		}
+            MetadatumHinzufuegen(ds, "RUSPlaceOfPublication", meinDetail);
+        }
 
       }
 
@@ -246,7 +246,7 @@ public class ImportRussland {
       MetadataType mdt_id = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLIdentifier");
       MetadataType mdt_tempId = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLTempID");
            DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
-      //		logger.info(band.getType().getName());
+      //        logger.info(band.getType().getName());
       List<DocStruct> listHefte = band.getAllChildren();
       if (listHefte != null) {
          for (Iterator<DocStruct> iter = listHefte.iterator(); iter.hasNext();) {
@@ -261,10 +261,10 @@ public class ImportRussland {
                   if (artikel.getAllMetadataByType(mdt_id).size() > 0 || artikel.getAllMetadataByType(mdt_tempId).size() > 0) {
                      Metadata md;
                      if (artikel.getAllMetadataByType(mdt_id).size() > 0) {
-						md = artikel.getAllMetadataByType(mdt_id).get(0);
-					} else {
-						md = artikel.getAllMetadataByType(mdt_tempId).get(0);
-					}
+                        md = artikel.getAllMetadataByType(mdt_id).get(0);
+                    } else {
+                        md = artikel.getAllMetadataByType(mdt_tempId).get(0);
+                    }
                      //                  logger.debug(md.getValue());
                      if (md.getValue().equals(zblID)) {
                         //                     logger.info("------------ Artikel gefunden -------------");
@@ -276,38 +276,38 @@ public class ImportRussland {
 
                            /* Artikel Autor russisch (wiederholbar)  */
                            if (meineDetailNr.equals("120")) {
-							PersonHinzufuegen(artikel, "Author", meinDetail);
-						}
+                            PersonHinzufuegen(artikel, "Author", meinDetail);
+                        }
 
                            /* Artikel Autor-Variation (wiederholbar) */
                            if (meineDetailNr.equals("130")) {
-							PersonHinzufuegen(artikel, "AuthorVariation", meinDetail);
-						}
+                            PersonHinzufuegen(artikel, "AuthorVariation", meinDetail);
+                        }
 
                            /* Artikel Autor-Kontributor (wiederholbar) */
                            if (meineDetailNr.equals("140")) {
-							PersonHinzufuegen(artikel, "Contributor", meinDetail);
-						}
+                            PersonHinzufuegen(artikel, "Contributor", meinDetail);
+                        }
 
                            /* Artikel Person als Subjekt des Artikels (wiederholbar) */
                            if (meineDetailNr.equals("150")) {
-							MetadatumHinzufuegen(artikel, "PersonAsSubject", meinDetail);
-						}
+                            MetadatumHinzufuegen(artikel, "PersonAsSubject", meinDetail);
+                        }
 
                            /* Artikel Titel russisch */
                            if (meineDetailNr.equals("170")) {
-							MetadatumHinzufuegen(artikel, "RUSMainTitle", meinDetail);
-						}
+                            MetadatumHinzufuegen(artikel, "RUSMainTitle", meinDetail);
+                        }
 
                            /* Artikel Klassifikation UDK (wiederholbar) */
                            if (meineDetailNr.equals("190")) {
-							MetadatumHinzufuegen(artikel, "ClassificationUDK", meinDetail);
-						}
+                            MetadatumHinzufuegen(artikel, "ClassificationUDK", meinDetail);
+                        }
 
                            /* Artikel Keywords russisch */
                            if (meineDetailNr.equals("210")) {
-							MetadatumHinzufuegen(artikel, "RUSKeyword", meinDetail);
-						}
+                            MetadatumHinzufuegen(artikel, "RUSKeyword", meinDetail);
+                        }
 
                         }
 
@@ -318,9 +318,9 @@ public class ImportRussland {
             }
 
             if (!iter.hasNext() && !artikelGefunden) {
-				throw new WrongImportFileException(
-				         "Parsingfehler: Artikel mit der ZBL-ID wurde nicht gefunden ('" + zblID + "')");
-			}
+                throw new WrongImportFileException(
+                         "Parsingfehler: Artikel mit der ZBL-ID wurde nicht gefunden ('" + zblID + "')");
+            }
          }
       } else {
          throw new WrongImportFileException(
@@ -357,8 +357,8 @@ public class ImportRussland {
          List<Person> listPersons = new ArrayList<Person>(inStrukturelement.getAllPersons());
          for (Person p : listPersons) {
             if (p.getRole().equals("Author")) {
-				inStrukturelement.removePerson(p);
-			}
+                inStrukturelement.removePerson(p);
+            }
          }
       }
 
@@ -409,12 +409,12 @@ public class ImportRussland {
       Person p = new Person(this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName(inRole));
       String pName = inDetail.substring(4).trim();
       if (pName.length() == 0) {
-		return;
-	}
+        return;
+    }
       if (pName.indexOf(",") == -1) {
-		throw new WrongImportFileException(
+        throw new WrongImportFileException(
                "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + inDetail + "')");
-	}
+    }
       p.setLastname(pName.substring(0, pName.indexOf(",")).trim());
       p.setFirstname(pName.substring(pName.indexOf(",") + 1, pName.length()).trim());
       p.setRole(inRole);

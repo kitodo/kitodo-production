@@ -185,7 +185,7 @@ public class GoobiScript {
         }
         Helper.setMeldung("goobiScriptfield", "", "updateContentFiles finished");
     }
-    
+
     private void deleteProcess(List<Prozess> inProzesse, boolean contentOnly) {
         ProzessDAO dao = new ProzessDAO();
         for (Prozess p : inProzesse) {
@@ -256,8 +256,8 @@ public class GoobiScript {
         for (Prozess p : inProzesse) {
             ProcessSwapOutTask task = new ProcessSwapOutTask();
             task.initialize(p);
-			TaskManager.addTask(task);
-			task.start();
+            TaskManager.addTask(task);
+            task.start();
         }
     }
 
@@ -268,8 +268,8 @@ public class GoobiScript {
         for (Prozess p : inProzesse) {
             ProcessSwapInTask task = new ProcessSwapInTask();
             task.initialize(p);
-			TaskManager.addTask(task);
-			task.start();
+            TaskManager.addTask(task);
+            task.start();
         }
     }
 
@@ -303,7 +303,7 @@ public class GoobiScript {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is not existing");
                     } else {
-                    	sourceFolderProzess.copyDir(imagesFolder);
+                        sourceFolderProzess.copyDir(imagesFolder);
                         Helper.setMeldung("goobiScriptfield", "", "The directory for process " + p.getTitel() + " [" + p.getId().intValue()
                                 + "] is copied");
                     }
@@ -952,16 +952,16 @@ public class GoobiScript {
     }
 
     private void exportDms(List<Prozess> processes, String exportImages, boolean exportFulltext) {
-		boolean withoutImages = exportImages != null && exportImages.equals("false");
+        boolean withoutImages = exportImages != null && exportImages.equals("false");
         for (Prozess prozess : processes) {
             try {
-				Hibernate.initialize(prozess.getProjekt());
-				Hibernate.initialize(prozess.getProjekt().getFilegroups());
-				Hibernate.initialize(prozess.getRegelsatz());
-				ExportDms dms = new ExportDms(!withoutImages);
-				if (withoutImages) {
-					dms.setExportFulltext(exportFulltext);
-				}
+                Hibernate.initialize(prozess.getProjekt());
+                Hibernate.initialize(prozess.getProjekt().getFilegroups());
+                Hibernate.initialize(prozess.getRegelsatz());
+                ExportDms dms = new ExportDms(!withoutImages);
+                if (withoutImages) {
+                    dms.setExportFulltext(exportFulltext);
+                }
                 dms.startExport(prozess);
             } catch (DocStructHasNoTypeException e) {
                 logger.error("DocStructHasNoTypeException", e);

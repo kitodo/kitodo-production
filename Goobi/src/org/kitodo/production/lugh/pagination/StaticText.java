@@ -13,7 +13,7 @@ package org.kitodo.production.lugh.pagination;
 /**
  * A static piece of text as part of a pagination sequence. The text may either
  * appear on the front, back, or both sides of a sheet.
- * 
+ *
  * @author Matthias Ronge
  */
 public class StaticText implements Fragment {
@@ -25,7 +25,7 @@ public class StaticText implements Fragment {
 
     /**
      * Creates a static text that is used on either page.
-     * 
+     *
      * @param value
      *            text string
      */
@@ -35,7 +35,7 @@ public class StaticText implements Fragment {
 
     /**
      * Creates a static text that is used on odd or even pages only.
-     * 
+     *
      * @param value
      *            text string
      * @param odd
@@ -85,7 +85,7 @@ public class StaticText implements Fragment {
 
     /**
      * Returns a concise string representation of this instance.
-     * 
+     *
      * @return a string representing this instance
      */
     @Override

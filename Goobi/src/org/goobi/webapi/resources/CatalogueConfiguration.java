@@ -25,15 +25,15 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
  * The CatalogueConfiguration class provides the Jersey API URL pattern
  * ${SERVLET_CONTEXT}/rest/catalogueConfiguration which returns the major data
  * from the ConfigOpac() configuration class in XML or JSON format.
- * 
+ *
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
 @Path("/catalogueConfiguration")
 public class CatalogueConfiguration {
 
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ConfigOpac getCatalogueConfiguration() throws IOException {
-		return new ConfigOpac();
-	}
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public ConfigOpac getCatalogueConfiguration() throws IOException {
+        return new ConfigOpac();
+    }
 }

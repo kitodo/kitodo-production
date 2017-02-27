@@ -20,188 +20,188 @@ import de.sub.goobi.beans.property.IGoobiProperty;
 import de.sub.goobi.helper.enums.PropertyType;
 
 public class Benutzereigenschaft implements Serializable, IGoobiProperty {
-	private static final long serialVersionUID = -2356566712752716107L;
+    private static final long serialVersionUID = -2356566712752716107L;
 
-	private Benutzer benutzer;
-	private Integer id;
-	private String titel;
-	private String wert;
-	private Boolean istObligatorisch;
-	private Integer datentyp;
-	private String auswahl;
-	private Date creationDate;
+    private Benutzer benutzer;
+    private Integer id;
+    private String titel;
+    private String wert;
+    private Boolean istObligatorisch;
+    private Integer datentyp;
+    private String auswahl;
+    private Date creationDate;
 
-	public Benutzereigenschaft() {
-		this.istObligatorisch = false;
-		this.datentyp = PropertyType.String.getId();
-		this.creationDate = new Date();
-	}
+    public Benutzereigenschaft() {
+        this.istObligatorisch = false;
+        this.datentyp = PropertyType.String.getId();
+        this.creationDate = new Date();
+    }
 
-	private List<String> valueList;
+    private List<String> valueList;
 
-	@Override
-	public String getAuswahl() {
-		return this.auswahl;
-	}
+    @Override
+    public String getAuswahl() {
+        return this.auswahl;
+    }
 
-	@Override
-	public void setAuswahl(String auswahl) {
-		this.auswahl = auswahl;
-	}
+    @Override
+    public void setAuswahl(String auswahl) {
+        this.auswahl = auswahl;
+    }
 
-	@Override
-	public Integer getId() {
-		return this.id;
-	}
+    @Override
+    public Integer getId() {
+        return this.id;
+    }
 
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	@Override
-	public Boolean isIstObligatorisch() {
-		if (this.istObligatorisch == null) {
-			this.istObligatorisch = false;
-		}
-		return this.istObligatorisch;
-	}
+    @Override
+    public Boolean isIstObligatorisch() {
+        if (this.istObligatorisch == null) {
+            this.istObligatorisch = false;
+        }
+        return this.istObligatorisch;
+    }
 
-	@Override
-	public void setIstObligatorisch(Boolean istObligatorisch) {
-		this.istObligatorisch = istObligatorisch;
-	}
+    @Override
+    public void setIstObligatorisch(Boolean istObligatorisch) {
+        this.istObligatorisch = istObligatorisch;
+    }
 
-	@Override
-	public String getTitel() {
-		return this.titel;
-	}
+    @Override
+    public String getTitel() {
+        return this.titel;
+    }
 
-	@Override
-	public void setTitel(String titel) {
-		this.titel = titel;
-	}
+    @Override
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
 
-	@Override
-	public String getWert() {
-		return this.wert;
-	}
+    @Override
+    public String getWert() {
+        return this.wert;
+    }
 
-	@Override
-	public void setWert(String wert) {
-		this.wert = wert;
-	}
+    @Override
+    public void setWert(String wert) {
+        this.wert = wert;
+    }
 
-	@Override
-	public void setCreationDate(Date creation) {
-		this.creationDate = creation;
-	}
+    @Override
+    public void setCreationDate(Date creation) {
+        this.creationDate = creation;
+    }
 
-	@Override
-	public Date getCreationDate() {
-		return this.creationDate;
-	}
+    @Override
+    public Date getCreationDate() {
+        return this.creationDate;
+    }
 
-	/**
-	 * getter for datentyp set to private for hibernate
-	 * 
-	 * for use in program use getType instead
-	 * 
-	 * @return datentyp as integer
-	 */
-	@SuppressWarnings("unused")
-	private Integer getDatentyp() {
-		return this.datentyp;
-	}
+    /**
+     * getter for datentyp set to private for hibernate
+     *
+     * for use in program use getType instead
+     *
+     * @return datentyp as integer
+     */
+    @SuppressWarnings("unused")
+    private Integer getDatentyp() {
+        return this.datentyp;
+    }
 
-	/**
-	 * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
-	 * 
-	 * @param datentyp
-	 *            as Integer
-	 */
-	@SuppressWarnings("unused")
-	private void setDatentyp(Integer datentyp) {
-		this.datentyp = datentyp;
-	}
+    /**
+     * set datentyp to defined integer. only for internal use through hibernate, for changing datentyp use setType instead
+     *
+     * @param datentyp
+     *            as Integer
+     */
+    @SuppressWarnings("unused")
+    private void setDatentyp(Integer datentyp) {
+        this.datentyp = datentyp;
+    }
 
-	/**
-	 * set datentyp to specific value from {@link PropertyType}
-	 * 
-	 * @param inType
-	 *            as {@link PropertyType}
-	 */
-	@Override
-	public void setType(PropertyType inType) {
-		this.datentyp = inType.getId();
-	}
+    /**
+     * set datentyp to specific value from {@link PropertyType}
+     *
+     * @param inType
+     *            as {@link PropertyType}
+     */
+    @Override
+    public void setType(PropertyType inType) {
+        this.datentyp = inType.getId();
+    }
 
-	/**
-	 * get datentyp as {@link PropertyType}
-	 * 
-	 * @return current datentyp
-	 */
-	@Override
-	public PropertyType getType() {
-		if (this.datentyp == null) {
-			this.datentyp = PropertyType.String.getId();
-		}
-		return PropertyType.getById(this.datentyp);
-	}
+    /**
+     * get datentyp as {@link PropertyType}
+     *
+     * @return current datentyp
+     */
+    @Override
+    public PropertyType getType() {
+        if (this.datentyp == null) {
+            this.datentyp = PropertyType.String.getId();
+        }
+        return PropertyType.getById(this.datentyp);
+    }
 
-	public List<String> getValueList() {
-		if (this.valueList == null) {
-			this.valueList = new ArrayList<String>();
-		}
-		return this.valueList;
-	}
+    public List<String> getValueList() {
+        if (this.valueList == null) {
+            this.valueList = new ArrayList<String>();
+        }
+        return this.valueList;
+    }
 
-	public void setValueList(List<String> valueList) {
-		this.valueList = valueList;
-	}
+    public void setValueList(List<String> valueList) {
+        this.valueList = valueList;
+    }
 
-	/**
-	 * 
-	 * @return user (owner) of property
-	 */
+    /**
+     *
+     * @return user (owner) of property
+     */
 
-	public Benutzer getBenutzer() {
-		return this.benutzer;
-	}
+    public Benutzer getBenutzer() {
+        return this.benutzer;
+    }
 
-	/**
-	 * sets the user(owner) of property
-	 * @param benutzer
-	 */
-	
-	public void setBenutzer(Benutzer benutzer) {
-		this.benutzer = benutzer;
-	}
+    /**
+     * sets the user(owner) of property
+     * @param benutzer
+     */
 
-	
+    public void setBenutzer(Benutzer benutzer) {
+        this.benutzer = benutzer;
+    }
 
-	@Override
-	public Integer getContainer() {
-		return 0;
-	}
 
-	@Override
-	public void setContainer(Integer order) {
-		
-	}
 
-	@Override
-	public String getNormalizedTitle() {
-		return this.titel.replace(" ", "_").trim();
-	}
+    @Override
+    public Integer getContainer() {
+        return 0;
+    }
 
-	@Override
-	public String getNormalizedValue() {
-		return this.wert.replace(" ", "_").trim();
-	}
-	
+    @Override
+    public void setContainer(Integer order) {
 
-		
-	
+    }
+
+    @Override
+    public String getNormalizedTitle() {
+        return this.titel.replace(" ", "_").trim();
+    }
+
+    @Override
+    public String getNormalizedValue() {
+        return this.wert.replace(" ", "_").trim();
+    }
+
+
+
+
 
 }

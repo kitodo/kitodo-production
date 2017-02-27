@@ -14,47 +14,47 @@ package org.goobi.production.chart;
 import java.io.Serializable;
 
 public class ProjectTask implements IProjectTask, Serializable {
-	private static final long serialVersionUID = 1L;
-	private String taskTitle;
-	private Integer taskStepsCompleted;
-	private Integer taskStepsMax;
+    private static final long serialVersionUID = 1L;
+    private String taskTitle;
+    private Integer taskStepsCompleted;
+    private Integer taskStepsMax;
 
-	
-	public ProjectTask(String title, Integer stepsCompleted, Integer stepsMax) {
-		taskTitle = title;
-		taskStepsCompleted = stepsCompleted;
-		taskStepsMax = stepsMax;
-		checkSizes();
-	}
 
-	@Override
-	public String getTitle() {
-		return taskTitle;
-	}
+    public ProjectTask(String title, Integer stepsCompleted, Integer stepsMax) {
+        taskTitle = title;
+        taskStepsCompleted = stepsCompleted;
+        taskStepsMax = stepsMax;
+        checkSizes();
+    }
 
-	@Override
-	public Integer getStepsCompleted() {
-		return taskStepsCompleted;
-	}
+    @Override
+    public String getTitle() {
+        return taskTitle;
+    }
 
-	@Override
-	public Integer getStepsMax() {
-		return taskStepsMax;
-	}
+    @Override
+    public Integer getStepsCompleted() {
+        return taskStepsCompleted;
+    }
 
-	@Override
-	public void setStepsCompleted(Integer stepsCompleted) {
-		taskStepsCompleted = stepsCompleted;
-	}
+    @Override
+    public Integer getStepsMax() {
+        return taskStepsMax;
+    }
 
-	@Override
-	public void setStepsMax(Integer stepsMax) {
-		taskStepsMax = stepsMax;
-	}
+    @Override
+    public void setStepsCompleted(Integer stepsCompleted) {
+        taskStepsCompleted = stepsCompleted;
+    }
 
-	private void checkSizes() {
-		if (taskStepsCompleted > taskStepsMax) {
-			taskStepsMax = taskStepsCompleted;
-		}
-	}
+    @Override
+    public void setStepsMax(Integer stepsMax) {
+        taskStepsMax = stepsMax;
+    }
+
+    private void checkSizes() {
+        if (taskStepsCompleted > taskStepsMax) {
+            taskStepsMax = taskStepsCompleted;
+        }
+    }
 }

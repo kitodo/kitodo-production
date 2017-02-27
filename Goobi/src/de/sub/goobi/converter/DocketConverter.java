@@ -26,7 +26,7 @@ import de.sub.goobi.persistence.DocketDAO;
 public class DocketConverter implements Converter {
    public static final String CONVERTER_ID = "DocketConverter";
    private static final Logger logger = Logger.getLogger(DocketConverter.class);
-   
+
    @Override
 public Object getAsObject(FacesContext context, UIComponent component, String value)
          throws ConverterException {
@@ -34,14 +34,14 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new DocketDAO().get(Integer.valueOf(value));
-			} catch (NumberFormatException e) {
-				logger.error(e);
-				return "0";
-			} catch (DAOException e) {
-				logger.error(e);
-				return "0";
-			}
+                return new DocketDAO().get(Integer.valueOf(value));
+            } catch (NumberFormatException e) {
+                logger.error(e);
+                return "0";
+            } catch (DAOException e) {
+                logger.error(e);
+                return "0";
+            }
       }
    }
 

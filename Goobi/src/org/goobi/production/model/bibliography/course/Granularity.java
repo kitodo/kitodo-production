@@ -19,7 +19,7 @@ import com.sharkysoft.util.NotImplementedException;
 /**
  * The Granularity indicates one out of six options how a course of appearance
  * of a newspaper can be broken into processes. These are as follows:
- * 
+ *
  * <dl>
  * <dt>ISSUES</dt>
  * <dd>Each issue is scanned in an individual process.</dd>
@@ -36,46 +36,46 @@ import com.sharkysoft.util.NotImplementedException;
  * <dt>YEARS</dt>
  * <dd>All issues of a year are scanned in one process.</dd>
  * </dl>
- * 
+ *
  * @author Matthias Ronge
  */
 public enum Granularity {
-	ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS;
+    ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS;
 
-	/**
-	 * The function format() converts a given LocalDate to a String
-	 * representation of the date in the given granularity. For the 1st January
-	 * 2000 it will return:
-	 * 
-	 *   • for DAYS:     2000-01-01
-	 *   • for WEEKS:    1999-W52
-	 *   • for MONTHS:   2000-01
-	 *   • for QUARTERS: 2000/Q1
-	 *   • for YEARS:    2000
-	 * 
-	 * The remaining cases are undefined and will throw NotImplementedException.
-	 * 
-	 * @param date
-	 *            date to format
-	 * @return an expression of the date in the given granularity
-	 */
-	@SuppressWarnings("incomplete-switch")
-	public String format(LocalDate date) {
-		switch (this) {
-		case DAYS:
-			return ISODateTimeFormat.date().print(date);
-		case MONTHS:
-			return ISODateTimeFormat.yearMonth().print(date);
-		case QUARTERS:
-			return ISODateTimeFormat.year().print(date) + "/Q"
-					+ Integer.toString(((date.getMonthOfYear() - 1) / 3) + 1);
-		case WEEKS:
-			return ISODateTimeFormat.weekyearWeek().print(date);
+    /**
+     * The function format() converts a given LocalDate to a String
+     * representation of the date in the given granularity. For the 1st January
+     * 2000 it will return:
+     *
+     *   • for DAYS:     2000-01-01
+     *   • for WEEKS:    1999-W52
+     *   • for MONTHS:   2000-01
+     *   • for QUARTERS: 2000/Q1
+     *   • for YEARS:    2000
+     *
+     * The remaining cases are undefined and will throw NotImplementedException.
+     *
+     * @param date
+     *            date to format
+     * @return an expression of the date in the given granularity
+     */
+    @SuppressWarnings("incomplete-switch")
+    public String format(LocalDate date) {
+        switch (this) {
+        case DAYS:
+            return ISODateTimeFormat.date().print(date);
+        case MONTHS:
+            return ISODateTimeFormat.yearMonth().print(date);
+        case QUARTERS:
+            return ISODateTimeFormat.year().print(date) + "/Q"
+                    + Integer.toString(((date.getMonthOfYear() - 1) / 3) + 1);
+        case WEEKS:
+            return ISODateTimeFormat.weekyearWeek().print(date);
 
-		case YEARS:
-			return ISODateTimeFormat.year().print(date);
+        case YEARS:
+            return ISODateTimeFormat.year().print(date);
 
-		}
-		throw new NotImplementedException();
-	}
+        }
+        throw new NotImplementedException();
+    }
 }

@@ -19,11 +19,11 @@ import org.junit.Test;
 
 import de.sub.goobi.beans.Benutzer;
 
-@Ignore("Crashing") 
+@Ignore("Crashing")
 public class BenutzerTest {
 
 
-   @Test 
+   @Test
    public void testLogin1() {
       Benutzer b = new Benutzer();
       b.setLogin("ein Name");
@@ -31,7 +31,7 @@ public class BenutzerTest {
    }
 
    @Test
-   @Ignore ("hallo") 
+   @Ignore ("hallo")
    public void testLogin2() {
       Benutzer b = new Benutzer();
       b.setLogin("ein Name");

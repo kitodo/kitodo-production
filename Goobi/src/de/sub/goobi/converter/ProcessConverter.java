@@ -26,7 +26,7 @@ import de.sub.goobi.persistence.ProzessDAO;
 public class ProcessConverter implements Converter {
    public static final String CONVERTER_ID = "ProcessConverter";
    private static final Logger logger = Logger.getLogger(ProcessConverter.class);
-   
+
    @Override
 public Object getAsObject(FacesContext context, UIComponent component, String value)
          throws ConverterException {
@@ -34,14 +34,14 @@ public Object getAsObject(FacesContext context, UIComponent component, String va
          return null;
       } else {
          try {
-				return new ProzessDAO().get(Integer.valueOf(value));
-			} catch (NumberFormatException e) {
-				logger.error(e);
-				return "0";
-			} catch (DAOException e) {
-				logger.error(e);
-				return "0";
-			}
+                return new ProzessDAO().get(Integer.valueOf(value));
+            } catch (NumberFormatException e) {
+                logger.error(e);
+                return "0";
+            } catch (DAOException e) {
+                logger.error(e);
+                return "0";
+            }
       }
    }
 

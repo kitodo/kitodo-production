@@ -15,32 +15,32 @@ import java.util.ArrayList;
 
 public class IntegerSequence extends ArrayList<Integer> {
 
-	public IntegerSequence() {
-	}
+    public IntegerSequence() {
+    }
 
-	public IntegerSequence(int start, int end) {
+    public IntegerSequence(int start, int end) {
 
-		generateElements(start, end, 1);
+        generateElements(start, end, 1);
 
-	}
+    }
 
-	public IntegerSequence(int start, int end, int increment) {
+    public IntegerSequence(int start, int end, int increment) {
 
-		generateElements(start, end, increment);
+        generateElements(start, end, increment);
 
-	}
+    }
 
-	private void generateElements(int start, int end, int increment) {
+    private void generateElements(int start, int end, int increment) {
 
-		if (start > end) {
-			throw new IllegalArgumentException("Sequence end value cannot be smaller than start value.");
-		}
+        if (start > end) {
+            throw new IllegalArgumentException("Sequence end value cannot be smaller than start value.");
+        }
 
-		this.ensureCapacity(end - start);
+        this.ensureCapacity(end - start);
 
-		for (int i = start; i <= end; i = (i + increment)) {
-			this.add(Integer.valueOf(i));
-		}
-	}
+        for (int i = start; i <= end; i = (i + increment)) {
+            this.add(Integer.valueOf(i));
+        }
+    }
 
 }

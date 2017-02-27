@@ -32,107 +32,107 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
  * Import von Metadaten aus upgeloadeten Dateien
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 25.06.2005
  */
 public class Import {
-	private static final Logger logger = Logger.getLogger(Import.class);
-	private String importFehler = "";
-	private String importMeldung = "";
-	private Schritt mySchritt;
-	private UploadedFile upDatei;
+    private static final Logger logger = Logger.getLogger(Import.class);
+    private String importFehler = "";
+    private String importMeldung = "";
+    private Schritt mySchritt;
+    private UploadedFile upDatei;
 
-	/**
-	 * Allgemeiner Konstruktor ()
-	 */
-	public Import() {
-	}
+    /**
+     * Allgemeiner Konstruktor ()
+     */
+    public Import() {
+    }
 
-	public String Start() {
-		logger.info("Import Start - start");
-		this.importFehler = "";
-		this.importMeldung = "";
-		try {
-			// Einlesen(prozessID.toString());
-			Einlesen();
-		} catch (Exception e) {
-			this.importFehler = "An error occurred: " + e.getMessage();
-			logger.error(e);
-		}
-		logger.info("Import Start - ende");
-		return "";
-	}
+    public String Start() {
+        logger.info("Import Start - start");
+        this.importFehler = "";
+        this.importMeldung = "";
+        try {
+            // Einlesen(prozessID.toString());
+            Einlesen();
+        } catch (Exception e) {
+            this.importFehler = "An error occurred: " + e.getMessage();
+            logger.error(e);
+        }
+        logger.info("Import Start - ende");
+        return "";
+    }
 
-	private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
-			MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
-		logger.debug("Einlesen() - Start");
-		BufferedReader reader = null;
-		try {
+    private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
+            MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
+        logger.debug("Einlesen() - Start");
+        BufferedReader reader = null;
+        try {
 
-			/*
-			 * -------------------------------- prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
-			 * --------------------------------
-			 */
+            /*
+             * -------------------------------- prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
+             * --------------------------------
+             */
 
-			/* russischer Import */
-			if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == true) {
-				String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
-				reader = new BufferedReader(new StringReader(gesamteDatei));
-				ImportRussland myImport = new ImportRussland();
-				myImport.Parsen(reader, this.mySchritt.getProzess());
-				this.importMeldung = "Der russische Import wurde erfolgreich abgeschlossen";
-			}
+            /* russischer Import */
+            if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == true) {
+                String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
+                reader = new BufferedReader(new StringReader(gesamteDatei));
+                ImportRussland myImport = new ImportRussland();
+                myImport.Parsen(reader, this.mySchritt.getProzess());
+                this.importMeldung = "Der russische Import wurde erfolgreich abgeschlossen";
+            }
 
-			/* Zentralblatt-Import */
-			if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == false) {
-				String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
-				reader = new BufferedReader(new StringReader(gesamteDatei));
-				ImportZentralblatt myImport = new ImportZentralblatt();
-				myImport.Parsen(reader, this.mySchritt.getProzess());
-				this.importMeldung = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
-			}
+            /* Zentralblatt-Import */
+            if (this.mySchritt.isTypImportFileUpload() && this.mySchritt.isTypExportRus() == false) {
+                String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
+                reader = new BufferedReader(new StringReader(gesamteDatei));
+                ImportZentralblatt myImport = new ImportZentralblatt();
+                myImport.Parsen(reader, this.mySchritt.getProzess());
+                this.importMeldung = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
+            }
 
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					logger.error("Die Datei kann nicht geschlossen werden", e);
-				}
-			}
-		}
-		/* wenn alles ok ist, 0 zurückgeben */
-		logger.debug("Einlesen() - Ende");
-	}
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    logger.error("Die Datei kann nicht geschlossen werden", e);
+                }
+            }
+        }
+        /* wenn alles ok ist, 0 zurückgeben */
+        logger.debug("Einlesen() - Ende");
+    }
 
-	/*
-	 * ##################################################### ##################################################### ## ## allgemeine Getter und Setter
-	 * ## ##################################################### ####################################################
-	 */
+    /*
+     * ##################################################### ##################################################### ## ## allgemeine Getter und Setter
+     * ## ##################################################### ####################################################
+     */
 
-	public String getImportFehler() {
-		return this.importFehler;
-	}
+    public String getImportFehler() {
+        return this.importFehler;
+    }
 
-	public String getImportMeldung() {
-		return this.importMeldung;
-	}
+    public String getImportMeldung() {
+        return this.importMeldung;
+    }
 
-	public UploadedFile getUpDatei() {
-		return this.upDatei;
-	}
+    public UploadedFile getUpDatei() {
+        return this.upDatei;
+    }
 
-	public void setUpDatei(UploadedFile inUpDatei) {
-		this.upDatei = inUpDatei;
-	}
+    public void setUpDatei(UploadedFile inUpDatei) {
+        this.upDatei = inUpDatei;
+    }
 
-	public Schritt getMySchritt() {
-		return this.mySchritt;
-	}
+    public Schritt getMySchritt() {
+        return this.mySchritt;
+    }
 
-	public void setMySchritt(Schritt mySchritt) {
-		this.mySchritt = mySchritt;
-	}
+    public void setMySchritt(Schritt mySchritt) {
+        this.mySchritt = mySchritt;
+    }
 
 }

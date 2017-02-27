@@ -41,15 +41,15 @@ public class JobCreation {
     public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
         String processTitle = io.getProcessTitle();
         if(logger.isTraceEnabled()){
-        	logger.trace("processtitle is " + processTitle);
+            logger.trace("processtitle is " + processTitle);
         }
         String metsfilename = io.getMetsFilename();
         if(logger.isTraceEnabled()){
-        	logger.trace("mets filename is " + metsfilename);
+            logger.trace("mets filename is " + metsfilename);
         }
         String basepath = metsfilename.substring(0, metsfilename.length() - 4);
         if(logger.isTraceEnabled()){
-        	logger.trace("basepath is " + basepath);
+            logger.trace("basepath is " + basepath);
         }
         SafeFile metsfile = new SafeFile(metsfilename);
         Prozess p = null;
@@ -58,22 +58,22 @@ public class JobCreation {
             // removing all data
             SafeFile imagesFolder = new SafeFile(basepath);
             if (imagesFolder.isDirectory()) {
-            	imagesFolder.deleteQuietly();
+                imagesFolder.deleteQuietly();
             } else {
                 imagesFolder = new SafeFile(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
                 if (imagesFolder.isDirectory()) {
-                	imagesFolder.deleteQuietly();
+                    imagesFolder.deleteQuietly();
                 }
             }
             try {
-            	metsfile.forceDelete();
+                metsfile.forceDelete();
             } catch (Exception e) {
                 logger.error("Cannot delete file " + processTitle, e);
                 return null;
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
             if (anchor.exists()) {
-            	anchor.deleteQuietly();
+                anchor.deleteQuietly();
             }
             return null;
         }
@@ -166,7 +166,7 @@ public class JobCreation {
             // copy pdf files
             SafeFile pdfs = new SafeFile(basepath + "_pdf" + File.separator);
             if (pdfs.isDirectory()) {
-            	pdfs.moveDirectory(p.getPdfDirectory());
+                pdfs.moveDirectory(p.getPdfDirectory());
             }
 
             // copy fulltext files
@@ -175,25 +175,25 @@ public class JobCreation {
 
             if (fulltext.isDirectory()) {
 
-            	fulltext.moveDirectory(p.getTxtDirectory());
+                fulltext.moveDirectory(p.getTxtDirectory());
             }
 
             // copy source files
 
             SafeFile sourceDir = new SafeFile(basepath + "_src" + File.separator);
             if (sourceDir.isDirectory()) {
-            	sourceDir.moveDirectory(p.getImportDirectory());
+                sourceDir.moveDirectory(p.getImportDirectory());
             }
 
             try {
-            	metsfile.forceDelete();
+                metsfile.forceDelete();
             } catch (Exception e) {
                 logger.error("Cannot delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
 
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
             if (anchor.exists()) {
-            	anchor.deleteQuietly();
+                anchor.deleteQuietly();
             }
         }
 
@@ -208,10 +208,10 @@ public class JobCreation {
                         for (SafeFile imagedir : imageList) {
                             if (imagedir.isDirectory()) {
                                 for (SafeFile file : imagedir.listFiles()) {
-                                	file.moveFile(new SafeFile(p.getImagesDirectory() + imagedir.getName(), file.getName()));
+                                    file.moveFile(new SafeFile(p.getImagesDirectory() + imagedir.getName(), file.getName()));
                                 }
                             } else {
-                            	imagedir.moveFile(new SafeFile(p.getImagesDirectory(), imagedir.getName()));
+                                imagedir.moveFile(new SafeFile(p.getImagesDirectory(), imagedir.getName()));
                             }
                         }
                     } else if (directory.getName().contains("ocr")) {
@@ -222,9 +222,9 @@ public class JobCreation {
                         SafeFile[] ocrList = directory.listFiles();
                         for (SafeFile ocrdir : ocrList) {
                             if (ocrdir.isDirectory()) {
-                            	ocrdir.moveDirectory(new SafeFile(ocr, ocrdir.getName()));
+                                ocrdir.moveDirectory(new SafeFile(ocr, ocrdir.getName()));
                             } else {
-                            	ocrdir.moveFile(new SafeFile(ocr, ocrdir.getName()));
+                                ocrdir.moveFile(new SafeFile(ocr, ocrdir.getName()));
                             }
                         }
                     } else {
@@ -235,16 +235,16 @@ public class JobCreation {
                         SafeFile[] importList = directory.listFiles();
                         for (SafeFile importdir : importList) {
                             if (importdir.isDirectory()) {
-                            	importdir.moveDirectory(new SafeFile(i, importdir.getName()));
+                                importdir.moveDirectory(new SafeFile(i, importdir.getName()));
                             } else {
-                            	importdir.moveFile(new SafeFile(i, importdir.getName()));
+                                importdir.moveFile(new SafeFile(i, importdir.getName()));
                             }
                         }
                     }
                 }
                 importFolder.deleteDirectory();
 
-               	metsfile.deleteQuietly();
+                metsfile.deleteQuietly();
             }
 
         }
