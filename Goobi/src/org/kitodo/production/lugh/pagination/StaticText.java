@@ -24,25 +24,15 @@ public class StaticText implements Fragment {
     private String value;
 
     /**
-     * Creates a static text that is used on either page.
-     *
-     * @param value
-     *            text string
-     */
-    StaticText(String value) {
-        this.value = value;
-    }
-
-    /**
      * Creates a static text that is used on odd or even pages only.
      *
      * @param value
      *            text string
      * @param odd
      *            if true, the text is printed for odd pages only, else for even
-     *            pages only
+     *            pages only, null for both pages
      */
-    StaticText(String value, boolean odd) {
+    StaticText(String value, Boolean odd) {
         this.value = value;
         this.page = odd;
     }
@@ -52,7 +42,7 @@ public class StaticText implements Fragment {
      */
     @Override
     public String format(HalfInteger value) {
-        if (page == null || page != value.isHalf())
+        if (page == null || page == value.isHalf())
             return this.value;
         else
             return "";
@@ -90,7 +80,7 @@ public class StaticText implements Fragment {
      */
     @Override
     public String toString() {
-        return value + " (" + (increment != null ? increment : "default") + (page != null ? ", " + page : "") + ")";
+        return '"' + value + "\" (" + (increment != null ? increment : "default") + (page != null ? ", " + page : "") + ")";
     }
 
 }

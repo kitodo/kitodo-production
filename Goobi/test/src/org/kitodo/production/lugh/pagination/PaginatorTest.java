@@ -140,4 +140,40 @@ public class PaginatorTest {
         assertEquals("8 7", p.next());
         assertEquals("10 9", p.next());
     }
+
+    @Test
+    public void ignoreRomanNumeralsThatArePartsOfWordsWithLatin() {
+        Paginator p = new Paginator("Kapitel 1");
+        assertEquals("Kapitel 1", p.next());
+        assertEquals("Kapitel 2", p.next());
+        assertEquals("Kapitel 3", p.next());
+        assertEquals("Kapitel 4", p.next());
+    }
+
+    @Test
+    public void ignoreRomanNumeralsThatArePartsOfWordsWithLowercaseRoman() {
+        Paginator p = new Paginator("Kapitel i");
+        assertEquals("Kapitel i", p.next());
+        assertEquals("Kapitel ii", p.next());
+        assertEquals("Kapitel iii", p.next());
+        assertEquals("Kapitel iv", p.next());
+    }
+
+    @Test
+    public void handleRectoVersoForWhiteSpaceCharacterAsWell() {
+        Paginator p = new Paginator("1°¿ ¿(¿R¿ü¿c¿k¿s¿e¿i¿t¿e¿)½");
+        assertEquals("1", p.next());
+        assertEquals("1 (Rückseite)", p.next());
+        assertEquals("2", p.next());
+        assertEquals("2 (Rückseite)", p.next());
+    }
+
+    @Test
+    public void allowGroupingOfRectoVersoText() {
+        Paginator p = new Paginator("1°¿` (Rückseite)`½");
+        assertEquals("1", p.next());
+        assertEquals("1 (Rückseite)", p.next());
+        assertEquals("2", p.next());
+        assertEquals("2 (Rückseite)", p.next());
+    }
 }
