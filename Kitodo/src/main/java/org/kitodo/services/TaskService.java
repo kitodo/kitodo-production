@@ -11,8 +11,11 @@
 
 package org.kitodo.services;
 
+import com.sun.research.ws.wadl.HTTPMethods;
+
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
@@ -28,15 +31,28 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.data.index.Indexer;
+import org.kitodo.data.index.elasticsearch.type.TaskType;
 
 public class TaskService {
 
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
     private TaskDAO taskDao = new TaskDAO();
+    private TaskType taskType = new TaskType();
+    private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
 
-    public void save(Task task) throws DAOException {
+    /**
+     * Method saves object to database and insert document to the index of Elastic Search.
+     *
+     * @param task object
+     */
+    public void save(Task task) throws DAOException, IOException {
         taskDao.save(task);
+        //org.elasticsearch.client.ResponseException: PUT http://localhost:9200/kitodo/task/2: HTTP/1.1 400 Bad Request
+        //{"error":{"root_cause":[{"type":"mapper_parsing_exception","reason":"failed to parse [processingEnd]"}],"type":"mapper_parsing_exception","reason":"failed to parse [processingEnd]","caused_by":{"type":"illegal_argument_exception","reason":"Invalid format: \"null\""}},"status":400
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(task, taskType);
     }
 
     public Task find(Integer id) throws DAOException {
@@ -47,8 +63,15 @@ public class TaskService {
         return taskDao.findAll();
     }
 
-    public void remove(Task task) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param task object
+     */
+    public void remove(Task task) throws DAOException, IOException {
         taskDao.remove(task);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(task, taskType);
     }
 
     public void remove(Integer id) throws DAOException {
