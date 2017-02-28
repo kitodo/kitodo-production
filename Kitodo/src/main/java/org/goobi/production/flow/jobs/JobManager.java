@@ -140,23 +140,4 @@ public class JobManager implements ServletContextListener {
 		}
 	}
 
-	/***************************************************************************
-	 * get current time plus 60 seconds as milliseconds from midnight to debug jobmanager
-	 **************************************************************************/
-	public static void main(String[] args) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.HOUR_OF_DAY, 0);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-
-		Calendar calNow = Calendar.getInstance();
-		
-		if(logger.isDebugEnabled()){
-			logger.debug(calNow.getTime() + " --- "+ cal.getTime());
-			logger.debug("60 seconds from now in milliseconds from 0:00 are " + (calNow.getTimeInMillis()-cal.getTimeInMillis() + 60000));
-		}
-		
-	}
-	
 }
