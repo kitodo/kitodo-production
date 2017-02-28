@@ -14,6 +14,7 @@ package org.kitodo.services;
 import de.sub.goobi.config.ConfigMain;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -32,7 +33,7 @@ import static org.junit.Assert.*;
 public class UserServiceTestIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertTasks();
     }

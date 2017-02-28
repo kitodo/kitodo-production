@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
 public class WorkpiecePropertyServiceTestIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertWorkpieces();
         MockDatabase.insertWorkpieceProperties();

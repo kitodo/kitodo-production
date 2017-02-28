@@ -11,6 +11,7 @@
 
 package org.kitodo;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ import static org.kitodo.data.database.beans.Batch.Type.*;
  */
 public class MockDatabase {
 
-    public static void insertBatches() throws DAOException {
+    public static void insertBatches() throws DAOException, IOException {
         BatchService batchService = new BatchService();
 
         Batch firstBatch = new Batch();
@@ -54,7 +55,7 @@ public class MockDatabase {
         batchService.save(fourthBatch);
     }
 
-    public static void insertDockets() throws DAOException {
+    public static void insertDockets() throws DAOException, IOException {
         DocketService docketService = new DocketService();
 
         Docket firstDocket = new Docket();
@@ -68,7 +69,7 @@ public class MockDatabase {
         docketService.save(secondDocket);
     }
 
-    public static void insertHistory() throws DAOException {
+    public static void insertHistory() throws DAOException, IOException {
         HistoryService historyService = new HistoryService();
         ProcessService processService = new ProcessService();
 
@@ -93,7 +94,7 @@ public class MockDatabase {
         ldapGroupService.save(firstLdapGroup);
     }
 
-    public static void insertProcesses() throws DAOException {
+    public static void insertProcesses() throws DAOException, IOException {
         BatchService batchService = new BatchService();
         DocketService docketService = new DocketService();
         ProcessService processService = new ProcessService();
@@ -164,7 +165,7 @@ public class MockDatabase {
         processPropertyService.save(secondProcessProperty);
     }
 
-    public static void insertProcessesFull() throws DAOException {
+    public static void insertProcessesFull() throws DAOException, IOException {
         MockDatabase.insertBatches();
         MockDatabase.insertDockets();
         MockDatabase.insertRulesets();
@@ -175,7 +176,7 @@ public class MockDatabase {
         MockDatabase.insertProcesses();
     }
 
-    public static void insertProjects() throws DAOException {
+    public static void insertProjects() throws DAOException, IOException {
         ProjectService projectService = new ProjectService();
 
         Project firstProject = new Project();
@@ -262,7 +263,7 @@ public class MockDatabase {
         projectFileGroupService.save(fifthProjectFileGroup);
     }
 
-    public static void insertRulesets() throws DAOException {
+    public static void insertRulesets() throws DAOException, IOException {
         RulesetService rulesetService = new RulesetService();
 
         Ruleset firstRuleset = new Ruleset();
@@ -278,7 +279,7 @@ public class MockDatabase {
         rulesetService.save(secondRuleset);
     }
 
-    public static void insertTasks() throws DAOException {
+    public static void insertTasks() throws DAOException, IOException {
         ProcessService processService = new ProcessService();
         TaskService taskService = new TaskService();
         UserService userService = new UserService();
@@ -345,7 +346,7 @@ public class MockDatabase {
         taskService.save(fourthTask);
     }
 
-    public static void insertTemplates() throws DAOException {
+    public static void insertTemplates() throws DAOException, IOException {
 
     }
 
@@ -378,7 +379,7 @@ public class MockDatabase {
         templatePropertyService.save(secondTemplateProperty);
     }
 
-    public static void insertUsers() throws DAOException {
+    public static void insertUsers() throws DAOException, IOException {
         LdapGroupService ldapGroupService = new LdapGroupService();
         UserService userService = new UserService();
 
@@ -410,7 +411,7 @@ public class MockDatabase {
         userService.save(thirdUser);
     }
 
-    public static void insertUserGroups() throws DAOException {
+    public static void insertUserGroups() throws DAOException, IOException {
         UserService userService = new UserService();
         UserGroupService userGroupService = new UserGroupService();
 
@@ -465,7 +466,7 @@ public class MockDatabase {
         userPropertyService.save(secondUserProperty);
     }
 
-    public static void insertWorkpieces() throws DAOException {
+    public static void insertWorkpieces() throws DAOException, IOException {
         ProcessService processService = new ProcessService();
         WorkpieceService workpieceService = new WorkpieceService();
 

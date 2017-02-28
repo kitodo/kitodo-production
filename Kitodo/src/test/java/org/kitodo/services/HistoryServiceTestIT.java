@@ -18,6 +18,8 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -26,7 +28,7 @@ import static org.junit.Assert.*;
 public class HistoryServiceTestIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertHistory();
     }
