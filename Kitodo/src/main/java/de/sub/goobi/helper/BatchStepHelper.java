@@ -19,6 +19,7 @@ import de.sub.goobi.metadaten.MetadatenVerifizierung;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -183,7 +184,9 @@ public class BatchStepHelper {
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
-			}
+            } catch (IOException e) {
+                logger.error(e);
+            }
 		}
 	}
 
@@ -254,7 +257,9 @@ public class BatchStepHelper {
 					logger.error(e);
 					Helper.setFehlerMeldung("Properties for process " + process.getTitle()
 							+ " could not be saved");
-				}
+                } catch (IOException e) {
+                    logger.error(e);
+                }
 			}
 		}
 		if (!error) {
@@ -395,7 +400,7 @@ public class BatchStepHelper {
 		}
 		try {
 			this.processService.save(this.currentStep.getProcess());
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
 			logger.error(e);
 		}
 	}
@@ -712,7 +717,7 @@ public class BatchStepHelper {
 			this.addToWikiField = "";
 			try {
 				this.processService.save(this.currentStep.getProcess());
-			} catch (DAOException e) {
+			} catch (DAOException | IOException e) {
 				logger.error(e);
 			}
 		}
@@ -727,7 +732,7 @@ public class BatchStepHelper {
 						"user", message));
 				try {
 					this.processService.save(s.getProcess());
-				} catch (DAOException e) {
+				} catch (DAOException | IOException e) {
 					logger.error(e);
 				}
 			}
@@ -791,7 +796,8 @@ public class BatchStepHelper {
 
 			try {
 				this.processService.save(s.getProcess());
-			} catch (DAOException e) {
+			} catch (DAOException | IOException e) {
+                logger.error(e);
 			}
 		}
 		AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");

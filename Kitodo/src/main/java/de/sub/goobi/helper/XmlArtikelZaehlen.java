@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
@@ -72,7 +74,7 @@ public class XmlArtikelZaehlen {
 		myProcess.setSortHelperArticles(Integer.valueOf(rueckgabe));
 		try {
 			processService.save(myProcess);
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
 			logger.error(e);
 		}
 		return rueckgabe;

@@ -11,6 +11,7 @@
 
 package de.sub.goobi.helper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -143,7 +144,9 @@ public class BatchProcessHelper {
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("propertyNotSaved");
-			}
+            } catch (IOException e) {
+                logger.error(e);
+            }
 		}
 	}
 
@@ -214,13 +217,16 @@ public class BatchProcessHelper {
 				try {
 					processService.save(process);
 				} catch (DAOException e) {
-					error = true;
-					logger.error(e);
-					List<String> param = new ArrayList<String>();
-					param.add(process.getTitle());
-					String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
-					Helper.setFehlerMeldung(value);
-				}
+                    error = true;
+                    logger.error(e);
+                    List<String> param = new ArrayList<String>();
+                    param.add(process.getTitle());
+                    String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
+                    Helper.setFehlerMeldung(value);
+                } catch (IOException e) {
+                    error = true;
+                    logger.error(e);
+                }
 			}
 		}
 		if (!error) {

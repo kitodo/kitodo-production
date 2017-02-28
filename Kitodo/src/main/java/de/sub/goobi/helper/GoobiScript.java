@@ -217,6 +217,8 @@ public class GoobiScript {
                     Helper.setMeldung("Process " + title + " deleted.");
                 } catch (DAOException e) {
                     Helper.setFehlerMeldung("could not delete process " + p.getTitle(), e);
+                } catch (IOException e) {
+                    Helper.setFehlerMeldung("could not delete document for process " + p.getTitle(), e);
                 }
             }
         }
@@ -458,6 +460,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Removed step from process: ",
 								proz.getTitle());
@@ -507,6 +514,10 @@ public class GoobiScript {
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitle(), e);
                 logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+            } catch (IOException e) {
+                Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                        + proz.getTitle(), e);
+                logger.error("goobiScriptfield" + "Error while inserting to index process: " + proz.getTitle(), e);
             }
             Helper.setMeldung("goobiScriptfield", "Added step to process: ", proz.getTitle());
         }
@@ -553,6 +564,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Added script to step: ", proz.getTitle());
                         break;
@@ -596,6 +612,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Added module to step: ", proz.getTitle());
                         break;
@@ -681,6 +702,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while sinserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Error while saving process: ", proz.getTitle());
                         break;

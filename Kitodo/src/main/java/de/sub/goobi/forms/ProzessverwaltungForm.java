@@ -30,9 +30,6 @@ import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
-import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -87,18 +84,21 @@ import org.hibernate.criterion.Restrictions;
 import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
 
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 import org.kitodo.services.ProcessService;
 import org.kitodo.services.ProjectService;
@@ -300,7 +300,9 @@ public class ProzessverwaltungForm extends BasisForm {
 				processService.save(this.myProzess);
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-			}
+            } catch (IOException e) {
+                Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+            }
 		} else {
 			Helper.setFehlerMeldung("titleEmpty");
 		}
@@ -311,7 +313,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		deleteMetadataDirectory();
 		try {
 			processService.remove(this.myProzess);
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
 			Helper.setFehlerMeldung("could not delete ", e);
 			return "";
 		}
@@ -528,7 +530,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			processService.getPropertiesInitialized(myProzess).remove(myProzessEigenschaft);
 			processService.save(myProzess);
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
 		return "";
@@ -538,7 +540,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			myVorlage.getProperties().remove(myVorlageEigenschaft);
 			processService.save(myProzess);
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
 		return "";
@@ -548,7 +550,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		try {
 			myWerkstueck.getProperties().remove(myWerkstueckEigenschaft);
 			processService.save(myProzess);
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 		}
 		return "";
@@ -945,7 +947,7 @@ public class ProzessverwaltungForm extends BasisForm {
 		}
 	}
 
-	private void stepStatusDown(Process proz) throws DAOException {
+	private void stepStatusDown(Process proz) throws DAOException, IOException {
 		List<Task> tempList = new ArrayList<Task>(proz.getTasks());
 		debug("templist: ", tempList);
 
@@ -968,14 +970,14 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void BearbeitungsstatusRuntersetzenPage() throws DAOException {
+	public void BearbeitungsstatusRuntersetzenPage() throws DAOException, IOException {
 		for (Process proz : (List<Process>) this.page.getListReload()) {
 			stepStatusDown(proz);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public void BearbeitungsstatusRuntersetzenSelection() throws DAOException {
+	public void BearbeitungsstatusRuntersetzenSelection() throws DAOException, IOException {
 		for (Process proz : (List<Process>) this.page.getListReload()) {
 			if (proz.isSelected()) {
 				stepStatusDown(proz);
@@ -984,7 +986,7 @@ public class ProzessverwaltungForm extends BasisForm {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void BearbeitungsstatusRuntersetzenHits() throws DAOException {
+	public void BearbeitungsstatusRuntersetzenHits() throws DAOException, IOException {
 		for (Process proz : (List<Process>) this.page.getCompleteList()) {
 			stepStatusDown(proz);
 		}
@@ -1808,7 +1810,7 @@ public class ProzessverwaltungForm extends BasisForm {
 			this.addToWikiField = "";
 			try {
 				processService.save(myProzess);
-			} catch (DAOException e) {
+			} catch (DAOException | IOException e) {
 				logger.error(e);
 			}
 		}
@@ -1897,7 +1899,9 @@ public class ProzessverwaltungForm extends BasisForm {
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
-			}
+            } catch (IOException e) {
+                logger.error(e);
+            }
 		}
 	}
 
@@ -1936,7 +1940,9 @@ public class ProzessverwaltungForm extends BasisForm {
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("propertiesNotSaved");
-			}
+            } catch (IOException e) {
+                logger.error(e);
+            }
 		}
 		loadProcessProperties();
 	}
@@ -1988,7 +1994,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		} catch (DAOException e) {
 			logger.error(e);
 			Helper.setFehlerMeldung("propertiesNotDeleted");
-		}
+        } catch (IOException e) {
+            logger.error(e);
+        }
 		// saveWithoutValidation();
 		loadProcessProperties();
 	}
@@ -2068,7 +2076,9 @@ public class ProzessverwaltungForm extends BasisForm {
 		} catch (DAOException e) {
 			logger.error(e);
 			Helper.setFehlerMeldung("propertiesNotSaved");
-		}
+        } catch (IOException e) {
+            logger.error(e);
+        }
 		loadProcessProperties();
 
 		return "";

@@ -132,7 +132,7 @@ public class AdministrationForm implements Serializable {
 	}
 
 
-	public void ProzesseDurchlaufen() throws DAOException {
+	public void ProzesseDurchlaufen() throws DAOException, IOException {
 		List<Process> auftraege = processService.search("from Process");
 		for (Process auf : auftraege) {
 			processService.save(auf);
@@ -175,7 +175,7 @@ public class AdministrationForm implements Serializable {
 		Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
 	}
 
-	public void StandardRegelsatzSetzen() throws DAOException {
+	public void StandardRegelsatzSetzen() throws DAOException, IOException {
 		Ruleset mk = rulesetService.find(1);
 
 		List<Process> auftraege = processService.search("from Process");
@@ -205,7 +205,7 @@ public class AdministrationForm implements Serializable {
 		}
 	}
 
-	public void ProzesseDatumSetzen() throws DAOException {
+	public void ProzesseDatumSetzen() throws DAOException, IOException {
 		List<Process> auftraege = processService.search("from Process");
 		for (Process auf : auftraege) {
 

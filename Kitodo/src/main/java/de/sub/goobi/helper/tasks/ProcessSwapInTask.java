@@ -212,8 +212,9 @@ public class ProcessSwapInTask extends LongRunningTask {
 			setStatusMessage("DAOException while saving process: " + e.getMessage());
 			logger.warn("DAOException:", e);
 			setStatusProgress(-1);
-			return;
-		}
+        } catch (IOException e) {
+            logger.warn("IOException:", e);
+        }
 		setStatusMessage("done");
 
 		setStatusProgress(100);
