@@ -13,16 +13,16 @@ package de.sub.goobi.helper;
 
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 import de.sub.goobi.helper.tasks.TaskManager;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -39,12 +39,15 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.services.ProcessService;
 import org.kitodo.services.RulesetService;
 import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
 import org.kitodo.services.UserGroupService;
+import org.kitodo.services.UserService;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -423,6 +426,11 @@ public class GoobiScript {
 							proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
                     logger.error("Error on save while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
 							+ " : " + s2.getTitle(), e);
+                } catch (IOException e) {
+                    Helper.setFehlerMeldung("goobiScriptfield", "Error on insert while swapping steps in process: ",
+                            proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
+                    logger.error("Error on insert while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
+                            + " : " + s2.getTitle(), e);
                 }
 
                 Helper.setMeldung("goobiScriptfield", "Swapped steps in: ", proz.getTitle());
@@ -705,7 +713,7 @@ public class GoobiScript {
                         } catch (IOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
                                     + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while sinserting to index process: "
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
                                     + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Error while saving process: ", proz.getTitle());
@@ -755,6 +763,11 @@ public class GoobiScript {
 								+ proz.getTitle(), e);
                         logger.error("goobiScriptfield" + "Error while saving process: "
 								+ proz.getTitle(), e);
+                    } catch (IOException e) {
+                        Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                + proz.getTitle(), e);
+                        logger.error("goobiScriptfield" + "Error while inserting to index  process: "
+                                + proz.getTitle(), e);
                     }
                     Helper.setMeldung("goobiScriptfield", "stepstatus set in process: ", proz.getTitle());
                     break;
@@ -801,6 +814,11 @@ public class GoobiScript {
 								+ proz.getTitle(), e);
                         logger.error("goobiScriptfield" + "Error while saving process: "
 								+ proz.getTitle(), e);
+                    } catch (IOException e) {
+                        Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                + proz.getTitle(), e);
+                        logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                + proz.getTitle(), e);
                     }
                     Helper.setMeldung("goobiScriptfield", "step order changed in process: ", proz.getTitle());
                     break;
@@ -862,6 +880,9 @@ public class GoobiScript {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving - " + proz.getTitle(), e);
                             return;
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting - " + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting - " + proz.getTitle(), e);
                         }
                     }
                 }
@@ -920,6 +941,10 @@ public class GoobiScript {
                             taskService.save(s);
                         } catch (DAOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitle(), e);
+                            return;
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting - "
+                                    + proz.getTitle(), e);
                             return;
                         }
                     }

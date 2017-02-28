@@ -161,7 +161,7 @@ public class AdministrationForm implements Serializable {
 	}
 
 	//TODO: Remove this
-	public void SiciKorr() throws DAOException {
+	public void SiciKorr() throws DAOException, IOException {
 		UserGroup gruppe = userGroupService.find(15);
 		List<UserGroup> neueGruppen = new ArrayList<>();
 		neueGruppen.add(gruppe);

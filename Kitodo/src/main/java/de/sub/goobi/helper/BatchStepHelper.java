@@ -442,7 +442,7 @@ public class BatchStepHelper {
 	 * Error management
 	 */
 
-	public String ReportProblemForSingle() {
+	public String ReportProblemForSingle() throws IOException {
 
 		this.myDav.UploadFromHome(this.currentStep.getProcess());
 		reportProblem();
@@ -453,7 +453,7 @@ public class BatchStepHelper {
 		return asf.FilterAlleStart();
 	}
 
-	public String ReportProblemForAll() {
+	public String ReportProblemForAll() throws  IOException {
 		for (Task s : this.steps) {
 			this.currentStep = s;
 			this.myDav.UploadFromHome(this.currentStep.getProcess());
@@ -466,7 +466,7 @@ public class BatchStepHelper {
 		return asf.FilterAlleStart();
 	}
 
-	private void reportProblem() {
+	private void reportProblem() throws IOException {
 		Date myDate = new Date();
 		this.currentStep.setProcessingStatusEnum(TaskStatus.LOCKED);
 		this.currentStep.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -555,7 +555,7 @@ public class BatchStepHelper {
 		return answer;
 	}
 
-	public String SolveProblemForSingle() {
+	public String SolveProblemForSingle() throws IOException {
 		try {
 			solveProblem();
 			saveStep();
@@ -570,7 +570,7 @@ public class BatchStepHelper {
 		}
 	}
 
-	public String SolveProblemForAll() {
+	public String SolveProblemForAll() throws IOException {
 		try {
 			for (Task s : this.steps) {
 				this.currentStep = s;
@@ -588,7 +588,7 @@ public class BatchStepHelper {
 		}
 	}
 
-	private void solveProblem() throws AuthenticationException {
+	private void solveProblem() throws AuthenticationException, IOException {
 		User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 		if (ben == null) {
 			throw new AuthenticationException("userNotFound");
