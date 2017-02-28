@@ -11,6 +11,7 @@
 
 package org.kitodo.services;
 
+import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -60,6 +61,8 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
 
+import org.kitodo.data.index.Indexer;
+import org.kitodo.data.index.elasticsearch.type.ProcessType;
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -86,6 +89,8 @@ public class ProcessService {
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
     private ProcessDAO processDao = new ProcessDAO();
+    private ProcessType processType = new ProcessType();
+    private Indexer<Process, ProcessType> indexer = new Indexer<>("kitodo", Process.class);
     private UserService userService = new UserService();
 
     public Process find(Integer id) throws DAOException {
@@ -96,16 +101,30 @@ public class ProcessService {
         return processDao.findAll();
     }
 
-    public void save(Process process) throws DAOException {
+    /**
+     * Method saves object to database and insert document to the index of Elastic Search.
+     *
+     * @param process object
+     */
+    public void save(Process process) throws DAOException, IOException {
         processDao.save(process, getProgress(process));
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(process, processType);
     }
 
     public void saveList(List<Process> list) throws DAOException {
         processDao.saveList(list);
     }
 
-    public void remove(Process process) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param process object
+     */
+    public void remove(Process process) throws DAOException, IOException {
         processDao.remove(process);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(process, processType);
     }
 
     public void remove(Integer id) throws DAOException {
