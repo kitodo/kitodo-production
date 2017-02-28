@@ -21,8 +21,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -35,7 +33,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.Hibernate;
 
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -49,11 +46,6 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 public class Process extends BaseBean implements Serializable {
 
     private static final long serialVersionUID = -6503348094655786275L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "title")
     private String title;
@@ -143,14 +135,6 @@ public class Process extends BaseBean implements Serializable {
         this.tasks = new ArrayList<>();
         this.creationDate = new Date();
 
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     @XmlAttribute(name = "key")

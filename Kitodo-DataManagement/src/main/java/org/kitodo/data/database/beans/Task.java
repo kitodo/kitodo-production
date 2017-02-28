@@ -20,8 +20,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -36,11 +34,6 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 @Table(name = "task")
 public class Task extends BaseBean implements Serializable {
     private static final long serialVersionUID = 6831844584239811846L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "title")
     private String title;
@@ -207,14 +200,6 @@ public class Task extends BaseBean implements Serializable {
         this.userGroups = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {

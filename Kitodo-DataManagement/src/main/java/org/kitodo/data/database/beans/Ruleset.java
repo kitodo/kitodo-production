@@ -15,8 +15,6 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
@@ -26,11 +24,6 @@ import org.apache.log4j.Logger;
 public class Ruleset extends BaseBean implements Serializable {
     private static final long serialVersionUID = -6663371963274685060L;
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
-
     @Column(name = "title")
     private String title;
 
@@ -39,16 +32,6 @@ public class Ruleset extends BaseBean implements Serializable {
 
     @Column(name = "orderMetadataByRuleset")
     private Boolean orderMetadataByRuleset = false;
-
-    private static final Logger logger = Logger.getLogger(Ruleset.class);
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getTitle() {
         return this.title;

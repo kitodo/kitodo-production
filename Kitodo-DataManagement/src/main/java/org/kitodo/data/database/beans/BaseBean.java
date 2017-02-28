@@ -11,9 +11,31 @@
 
 package org.kitodo.data.database.beans;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
 /**
  * Base bean class.
  */
-public abstract class BaseBean {
+@MappedSuperclass
+public abstract class BaseBean implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue
+    private Integer id;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

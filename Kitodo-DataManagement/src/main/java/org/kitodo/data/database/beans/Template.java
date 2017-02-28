@@ -19,8 +19,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -32,11 +30,6 @@ import javax.persistence.Transient;
 @Table(name = "template")
 public class Template extends BaseBean implements Serializable {
     private static final long serialVersionUID = 1736135433162833277L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "origin")
     private String origin;
@@ -54,14 +47,6 @@ public class Template extends BaseBean implements Serializable {
 
     public Template() {
         this.properties = new ArrayList<>();
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getOrigin() {

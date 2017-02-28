@@ -16,10 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -31,11 +28,6 @@ import javax.persistence.Transient;
 @Table(name = "workpiece")
 public class Workpiece extends BaseBean implements Serializable {
     private static final long serialVersionUID = 123266825187246791L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "process_id")
@@ -50,14 +42,6 @@ public class Workpiece extends BaseBean implements Serializable {
 
     public Workpiece() {
         this.properties = new ArrayList<>();
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Process getProcess() {

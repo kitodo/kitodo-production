@@ -21,8 +21,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -54,15 +52,6 @@ public class Batch extends BaseBean {
     public enum Type {
         LOGISTIC, NEWSPAPER, SERIAL
     }
-
-    /**
-     * The field id holds the database record identifier. It is null in case that the Batch has not yet been saved
-     * by Hibernate.
-     */
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     /**
      * The field title holds the batch title. Using titles for batches is optional, the field may be null.
@@ -149,27 +138,6 @@ public class Batch extends BaseBean {
     }
 
     /**
-     * The function getId() returns the database record identifier for the batch. In case that the Batch has not yet
-     * been saved by Hibernate it returns null.
-     * This method is required by Hibernate.
-     *
-     * @return the database record identifier for the batch
-     */
-    public Integer getId() {
-        return id;
-    }
-
-    /**
-     * The method setId() sets the database record identifier of this batch. This method is solely intended to be
-     * called by Hibernate when creating objects from the database.
-     *
-     * @param id database record identifier of this batch
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    /**
      * The function getTitle() returns the batch title. Using titles for batches is optional, the field may be null.
      * If so, the function returns null.
      *
@@ -249,7 +217,7 @@ public class Batch extends BaseBean {
             return false;
         }
         Batch other = (Batch) object;
-        if (id != null && id.equals(other.id)) {
+        if (this.getId() != null && this.getId().equals(other.getId())) {
             return true;
         }
         if (title == null) {
