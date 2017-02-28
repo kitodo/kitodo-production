@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Page;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -52,7 +53,10 @@ public class RegelsaetzeForm extends BasisForm {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
 			logger.error(e);
 			return "";
-		}
+        } catch (IOException e) {
+            logger.error(e);
+            return "";
+        }
 	}
 
 	private boolean hasValidRulesetFilePath(Ruleset r, String pathToRulesets) {
@@ -71,7 +75,10 @@ public class RegelsaetzeForm extends BasisForm {
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 			return "";
-		}
+        } catch (IOException e) {
+            logger.error(e);
+            return "";
+        }
 		return "RegelsaetzeAlle";
 	}
 
