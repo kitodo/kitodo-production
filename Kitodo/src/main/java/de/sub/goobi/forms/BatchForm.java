@@ -290,14 +290,16 @@ public class BatchForm extends BasisForm {
 					this.processService.saveList(this.selectedProcesses);
 				}
 			}
-			return;
 		} catch (DAOException e) {
 			logger.error(e);
 			Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
-		}
+        } catch (IOException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+        }
 	}
 
-	public void removeProcessesFromBatch() throws DAOException{
+	public void removeProcessesFromBatch() throws DAOException, IOException {
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
 			return;
@@ -306,27 +308,22 @@ public class BatchForm extends BasisForm {
 			Helper.setFehlerMeldung("noProcessSelected");
 			return;
 		}
-		try {
-			for (String entry : this.selectedBatches) {
-				Batch batch = batchService.find(Integer.parseInt(entry));
-				batchService.removeAll(batch, this.selectedProcesses);
-				batchService.save(batch);
-				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Process p : this.selectedProcesses) {
-						processService.addToWikiField(
-								Helper.getTranslation("removeFromBatch",
-										Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
-					}
-					this.processService.saveList(this.selectedProcesses);
-				}
-			}
-		} catch (DAOException e) {
-			logger.error(e);
-			Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
-			return;
-		}
-		FilterAlleStart();
-	}
+
+        for (String entry : this.selectedBatches) {
+            Batch batch = batchService.find(Integer.parseInt(entry));
+            batchService.removeAll(batch, this.selectedProcesses);
+            batchService.save(batch);
+            if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
+                for (Process p : this.selectedProcesses) {
+                    processService.addToWikiField(
+                        Helper.getTranslation("removeFromBatch",
+                            Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
+                }
+                this.processService.saveList(this.selectedProcesses);
+            }
+        }
+        FilterAlleStart();
+    }
 
 	public void renameBatch() {
 		if (this.selectedBatches.size() == 0) {
@@ -348,12 +345,14 @@ public class BatchForm extends BasisForm {
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
 				logger.error(e);
-				return;
+			} catch (IOException e ) {
+				Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+				logger.error(e);
 			}
 		}
 	}
 
-	public void createNewBatch() throws DAOException {
+	public void createNewBatch() throws DAOException, IOException {
 		if (selectedProcesses.size() > 0) {
 			Batch batch = null;
 			if(batchTitle != null && batchTitle.trim().length() > 0){
@@ -361,22 +360,17 @@ public class BatchForm extends BasisForm {
 			}else{
 				batch = new Batch(Type.LOGISTIC, selectedProcesses);
 			}
-			try {
-				batchService.save(batch);
-				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Process p : selectedProcesses) {
-						processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
-					}
-					this.processService.saveList(selectedProcesses);
-				}
-			} catch (DAOException e) {
-				Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
-				logger.error(e);
-				return;
-			}
-		}
-		FilterAlleStart();
-	}
+
+			batchService.save(batch);
+            if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
+                for (Process p : selectedProcesses) {
+                    processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
+                }
+                this.processService.saveList(selectedProcesses);
+            }
+        }
+        FilterAlleStart();
+    }
 
 	/*
 	 * properties
@@ -511,6 +505,9 @@ public class BatchForm extends BasisForm {
 		} catch (DAOException e) {
 			logger.error(e);
 			Helper.setFehlerMeldung("fehlerBeimEinlesen");
-		}
+        } catch (IOException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("errorElasticSearch");
+        }
 	}
 }
