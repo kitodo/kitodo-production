@@ -11,7 +11,6 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -51,14 +50,5 @@ public class BatchType extends BaseType<Batch> {
         batchObject.put("processes", processes);
 
         return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Batch> batches) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Batch batch : batches) {
-            documents.put(batch.getId(), createDocument(batch));
-        }
-        return documents;
     }
 }

@@ -11,9 +11,7 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -38,14 +36,5 @@ public class DocketType extends BaseType<Docket> {
         JSONObject docketObject = new JSONObject(orderedDocketMap);
 
         return new NStringEntity(docketObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Docket> dockets) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Docket docket : dockets) {
-            documents.put(docket.getId(), createDocument(docket));
-        }
-        return documents;
     }
 }

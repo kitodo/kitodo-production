@@ -13,9 +13,7 @@ package org.kitodo.data.index.elasticsearch.type;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -46,14 +44,5 @@ public class HistoryType extends BaseType<History> {
         JSONObject historyObject = new JSONObject(orderedHistoryMap);
 
         return new NStringEntity(historyObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<History> histories) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (History history : histories) {
-            documents.put(history.getId(), createDocument(history));
-        }
-        return documents;
     }
 }

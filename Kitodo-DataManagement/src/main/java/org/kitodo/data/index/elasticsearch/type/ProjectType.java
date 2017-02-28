@@ -13,7 +13,6 @@ package org.kitodo.data.index.elasticsearch.type;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -86,14 +85,5 @@ public class ProjectType extends BaseType<Project> {
         projectObject.put("projectFileGroups", projectFileGroups);
 
         return new NStringEntity(projectObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Project> projects) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Project project : projects) {
-            documents.put(project.getId(), createDocument(project));
-        }
-        return documents;
     }
 }

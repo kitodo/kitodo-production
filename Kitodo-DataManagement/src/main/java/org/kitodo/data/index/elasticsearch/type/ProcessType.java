@@ -13,7 +13,6 @@ package org.kitodo.data.index.elasticsearch.type;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -63,14 +62,5 @@ public class ProcessType extends BaseType<Process> {
         processObject.put("properties", properties);
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Process> processes) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Process process : processes) {
-            documents.put(process.getId(), createDocument(process));
-        }
-        return documents;
     }
 }

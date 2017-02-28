@@ -11,7 +11,6 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -68,14 +67,5 @@ public class UserType extends BaseType<User> {
         userObject.put("properties", properties);
 
         return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<User> users) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (User user : users) {
-            documents.put(user.getId(), createDocument(user));
-        }
-        return documents;
     }
 }

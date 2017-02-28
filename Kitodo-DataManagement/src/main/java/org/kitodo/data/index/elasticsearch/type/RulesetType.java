@@ -11,9 +11,7 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
@@ -39,14 +37,5 @@ public class RulesetType extends BaseType<Ruleset> {
         JSONObject rulesetObject = new JSONObject(orderedRulesetMap);
 
         return new NStringEntity(rulesetObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Ruleset> rulesets) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Ruleset ruleset : rulesets) {
-            documents.put(ruleset.getId(), createDocument(ruleset));
-        }
-        return documents;
     }
 }

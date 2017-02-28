@@ -11,7 +11,6 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -50,14 +49,5 @@ public class UserGroupType extends BaseType<UserGroup> {
         userGroupObject.put("users", users);
 
         return new NStringEntity(userGroupObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<UserGroup> userGroups) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (UserGroup userGroup : userGroups) {
-            documents.put(userGroup.getId(), createDocument(userGroup));
-        }
-        return documents;
     }
 }

@@ -13,7 +13,6 @@ package org.kitodo.data.index.elasticsearch.type;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -24,7 +23,6 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -90,14 +88,5 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("userGroups", userGroups);
 
         return new NStringEntity(taskObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Task> tasks) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Task task : tasks) {
-            documents.put(task.getId(), createDocument(task));
-        }
-        return documents;
     }
 }

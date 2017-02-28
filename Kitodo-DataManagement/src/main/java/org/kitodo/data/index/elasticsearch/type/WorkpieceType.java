@@ -11,7 +11,6 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -51,14 +50,5 @@ public class WorkpieceType extends BaseType<Workpiece> {
         processObject.put("properties", properties);
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
-    }
-
-    @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<Workpiece> workpieces) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-        for (Workpiece workpiece : workpieces) {
-            documents.put(workpiece.getId(), createDocument(workpiece));
-        }
-        return documents;
     }
 }
