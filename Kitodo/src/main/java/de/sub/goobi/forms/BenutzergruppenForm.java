@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -43,9 +44,12 @@ public class BenutzergruppenForm extends BasisForm {
 			this.userGroupService.save(this.myBenutzergruppe);
 			return "BenutzergruppenAlle";
 		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-			return "";
-		}
+            Helper.setFehlerMeldung("Error, could not save", e.getMessage());
+            return "";
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
+            return "";
+        }
 	}
 
 	public String Loeschen() {
@@ -66,7 +70,10 @@ public class BenutzergruppenForm extends BasisForm {
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("Error, could not delete from index", e.getMessage());
+            return "";
+        }
 		return "BenutzergruppenAlle";
 	}
 
