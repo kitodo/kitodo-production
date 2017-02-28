@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Page;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -52,7 +53,11 @@ public class DocketForm extends BasisForm {
 			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
 			logger.error(e);
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+            logger.error(e);
+            return "";
+        }
 	}
 
 	private boolean hasValidRulesetFilePath(Docket d, String pathToRulesets) {
@@ -71,7 +76,10 @@ public class DocketForm extends BasisForm {
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+            return "";
+        }
 		return "DocketList";
 	}
 
