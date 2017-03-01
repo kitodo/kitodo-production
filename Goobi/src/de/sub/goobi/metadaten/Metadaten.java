@@ -1093,22 +1093,25 @@ public class Metadaten {
          */
 
         DocStruct ds = null;
+        int last = addServeralStructuralElementsMode ? elementsCount - 1 : 0;
+        for (int i = 0; i < last; i++) {
         /*
          * -------------------------------- vor das aktuelle Element --------------------------------
          */
-        if (this.neuesElementWohin.equals("1")) {
+        switch(this.neuesElementWohin) {
+        case "1": {
             if (this.addDocStructType1 == null || this.addDocStructType1.equals("")) {
-                return "Metadaten3links";
+                break;
             }
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
             ds = this.mydocument.createDocStruct(dst);
             if (this.myDocStruct == null) {
-                return "Metadaten3links";
+                break;
             }
             DocStruct parent = this.myDocStruct.getParent();
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
+                break;
             }
             List<DocStruct> alleDS = new ArrayList<DocStruct>();
 
@@ -1132,18 +1135,18 @@ public class Metadaten {
             for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
                 parent.addChild(iter.next());
             }
-        }
+        break; }
 
         /*
          * -------------------------------- hinter das aktuelle Element --------------------------------
          */
-        if (this.neuesElementWohin.equals("2")) {
+        case "2": {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
             ds = this.mydocument.createDocStruct(dst);
             DocStruct parent = this.myDocStruct.getParent();
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
+                break;
             }
             List<DocStruct> alleDS = new ArrayList<DocStruct>();
 
@@ -1166,18 +1169,18 @@ public class Metadaten {
             for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
                 parent.addChild(iter.next());
             }
-        }
+        break; }
 
         /*
          * -------------------------------- als erstes Child --------------------------------
          */
-        if (this.neuesElementWohin.equals("3")) {
+        case "3": {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
             ds = this.mydocument.createDocStruct(dst);
             DocStruct parent = this.myDocStruct;
             if (parent == null) {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
+                break;
             }
             List<DocStruct> alleDS = new ArrayList<DocStruct>();
             alleDS.add(ds);
@@ -1191,15 +1194,16 @@ public class Metadaten {
             for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
                 parent.addChild(iter.next());
             }
-        }
+        break; }
 
         /*
          * -------------------------------- als letztes Child --------------------------------
          */
-        if (this.neuesElementWohin.equals("4")) {
+        case "4": {
             DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
             ds = this.mydocument.createDocStruct(dst);
             this.myDocStruct.addChild(ds);
+        break; }
         }
 
         if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
@@ -1211,7 +1215,10 @@ public class Metadaten {
             this.myDocStruct = temp;
         }
 
-        return MetadatenalsTree3Einlesen1();
+        }
+
+        MetadatenalsTree3Einlesen1();
+        return SperrungAktualisieren() ? "Metadaten3links" : "SperrungAbgelaufen";
     }
 
     /**
@@ -3326,7 +3333,7 @@ public class Metadaten {
         if (elementsCount.isEmpty()) {
             this.elementsCount = 1;
         } else try{
-            this.elementsCount = Integer.valueOf(elementsCount.trim());
+            this.elementsCount = Math.abs(Integer.valueOf(elementsCount.trim()));
         }catch(NumberFormatException e){
             Helper.setFehlerMeldung("nan", e.getMessage());
             this.elementsCount = 1;
