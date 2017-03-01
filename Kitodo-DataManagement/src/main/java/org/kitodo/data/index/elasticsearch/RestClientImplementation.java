@@ -22,6 +22,8 @@ import org.apache.commons.io.IOUtils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 
 import org.elasticsearch.client.Response;
@@ -54,7 +56,6 @@ public class RestClientImplementation implements ClientInterface {
      * Get information about client server.
      *
      * @return information about the server
-     * @throws IOException add description
      */
     public String getServerInformation() throws IOException {
         Response response = restClient.performRequest("GET", "/",
@@ -77,7 +78,6 @@ public class RestClientImplementation implements ClientInterface {
      * @param entity with document which is going to be indexed
      * @param id of document - equal to the id from table in database
      * @return response from the server
-     * @throws IOException add description
      */
     public String addDocument(HttpEntity entity, Integer id)
             throws IOException {
@@ -96,9 +96,9 @@ public class RestClientImplementation implements ClientInterface {
      *
      * @param documentsToIndex list of json documents to the index
      */
-    public ArrayList<String> addType(HashMap<Integer, HttpEntity> documentsToIndex) throws InterruptedException {
+    public String addType(HashMap<Integer, HttpEntity> documentsToIndex) throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
-        final ArrayList<String> test = new ArrayList<>();
+        final StringBuilder output = new StringBuilder();
 
         for (HashMap.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
             restClient.performRequestAsync(
@@ -111,7 +111,7 @@ public class RestClientImplementation implements ClientInterface {
                         //problem with return type - it should be String
                         //dirty hack private variable ArrayResult
                         public void onSuccess(Response response) {
-                            test.add(response.toString());
+                            output.append(response.toString());
                             latch.countDown();
                         }
 
@@ -124,7 +124,7 @@ public class RestClientImplementation implements ClientInterface {
         }
         latch.await();
 
-        return test;
+        return output.toString();
     }
 
     /**
@@ -132,7 +132,6 @@ public class RestClientImplementation implements ClientInterface {
      *
      * @param id of the document
      * @return response from server
-     * @throws IOException add description
      */
     public String deleteDocument(Integer id) throws IOException {
         Response indexResponse = restClient.performRequest(
@@ -141,8 +140,24 @@ public class RestClientImplementation implements ClientInterface {
         return indexResponse.toString();
     }
 
-    public ArrayList<String> deleteType() {
-        return null;
+    /**
+     * Delete all documents of certain type from the index.
+     *
+     * @return response from server
+     */
+    public String deleteType() throws IOException {
+        String query = "{\n"
+                + "  \"query\": {\n"
+                + "    \"match_all\": {}\n"
+                + "  }\n"
+                + "}";
+        HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
+        Response indexResponse = restClient.performRequest(
+                "POST",
+                "/" + this.getIndex() + "/" + this.getType() +  "/_delete_by_query",
+                Collections.<String, String>emptyMap(),
+                entity);
+        return indexResponse.toString();
     }
 
     public String getIndex() {
