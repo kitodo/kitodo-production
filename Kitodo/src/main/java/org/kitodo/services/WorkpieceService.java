@@ -53,8 +53,15 @@ public class WorkpieceService {
         indexer.performSingleRequest(workpiece, workpieceType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         workpieceDao.remove(id);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(id);
     }
 
     /**

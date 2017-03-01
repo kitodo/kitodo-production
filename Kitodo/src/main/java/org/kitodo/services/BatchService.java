@@ -62,8 +62,15 @@ public class BatchService {
         indexer.performSingleRequest(batch, batchType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         batchDao.remove(id);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {

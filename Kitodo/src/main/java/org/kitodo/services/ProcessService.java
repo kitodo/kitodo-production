@@ -127,8 +127,15 @@ public class ProcessService {
         indexer.performSingleRequest(process, processType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         processDao.remove(id);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
 
     public List<Process> search(String query) throws DAOException {

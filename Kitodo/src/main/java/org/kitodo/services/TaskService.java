@@ -72,8 +72,15 @@ public class TaskService {
         indexer.performSingleRequest(task, taskType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         taskDao.remove(id);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
     public List<Task> search(String query) throws DAOException {
         return taskDao.search(query);

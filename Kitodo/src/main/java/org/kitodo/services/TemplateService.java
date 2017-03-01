@@ -53,8 +53,15 @@ public class TemplateService {
         indexer.performSingleRequest(template, templateType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         templateDao.remove(id);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(id);
     }
 
     /**

@@ -69,8 +69,15 @@ public class ProjectService {
         indexer.performSingleRequest(project, projectType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         projectDao.remove(id);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
 
     public List<Project> search(String query) throws DAOException {
