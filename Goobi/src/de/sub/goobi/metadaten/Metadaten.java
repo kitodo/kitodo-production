@@ -1084,8 +1084,9 @@ public class Metadaten {
      * @throws TypeNotAllowedForParentException
      * @throws TypeNotAllowedAsChildException
      * @throws TypeNotAllowedAsChildException ============================================================ == ==
+     * @throws MetadataTypeNotAllowedException 
      */
-    public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
+    public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 
         /*
          * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
@@ -1094,6 +1095,7 @@ public class Metadaten {
 
         DocStruct ds = null;
         int last = addServeralStructuralElementsMode ? elementsCount - 1 : 0;
+        Paginator enumeratingLabel = !addMetaDataType.isEmpty() && !addMetaDataValue.isEmpty() ? new Paginator(addMetaDataValue) : null;
         for (int i = 0; i < last; i++) {
         /*
          * -------------------------------- vor das aktuelle Element --------------------------------
@@ -1213,6 +1215,10 @@ public class Metadaten {
             this.ajaxSeiteEnde = this.pagesEnd;
             AjaxSeitenStartUndEndeSetzen();
             this.myDocStruct = temp;
+        }
+
+        if(enumeratingLabel != null) {
+            ds.addMetadata(addMetaDataType, enumeratingLabel.next());
         }
 
         }
