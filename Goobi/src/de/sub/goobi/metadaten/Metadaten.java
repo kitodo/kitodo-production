@@ -169,6 +169,7 @@ public class Metadaten {
     private boolean addMetadataGroupMode = false;
 
     private RenderableMetadataGroup newMetadataGroup;
+    private boolean addServeralStructuralElementsMode = false;
 
     /**
      * Konstruktor ================================================================
@@ -3274,5 +3275,14 @@ public class Metadaten {
      */
     public boolean isAdvancedPaginationEnabled() {
         return ConfigMain.getBooleanParameter("advancedPaginationEnabled", true);
+    }
+
+    public boolean isAddServeralStructuralElementsMode() {
+        return addServeralStructuralElementsMode;
+    }
+
+    public String ToggleAddServeralStructuralElementsMode() {
+        addServeralStructuralElementsMode = !addServeralStructuralElementsMode;
+        return "";
     }
 }
