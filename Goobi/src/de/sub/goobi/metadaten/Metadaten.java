@@ -170,6 +170,9 @@ public class Metadaten {
 
     private RenderableMetadataGroup newMetadataGroup;
     private boolean addServeralStructuralElementsMode = false;
+    private int elementsCount = 1;
+    private String addMetaDataType;
+    private String addMetaDataValue;
 
     /**
      * Konstruktor ================================================================
@@ -455,11 +458,15 @@ public class Metadaten {
      * die noch erlaubten Metadaten zurückgeben ================================================================
      */
     public ArrayList<SelectItem> getAddableMetadataTypes() {
+        return getAddableMetadataTypes(myDocStruct, tempMetadatumList);
+    }
+
+    private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
         ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
         /*
          * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
          */
-        List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
+        List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
             return myList;
         }
@@ -488,7 +495,9 @@ public class Metadaten {
                 Metadata md = new Metadata(mdt);
                 MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.myProzess);
                 counter++;
-                this.tempMetadatumList.add(mdum);
+                if (tempMetadatumList != null) {
+                    tempMetadatumList.add(mdum);
+                }
 
             } catch (MetadataTypeNotAllowedException e) {
                 logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
@@ -3277,12 +3286,123 @@ public class Metadaten {
         return ConfigMain.getBooleanParameter("advancedPaginationEnabled", true);
     }
 
+    /**
+     * Returns whether the mode to add several structural elements is enabled.
+     * If so, the dialog to add structural elements is rendered differently.
+     * 
+     * @return whether the mode to add several structural elements is enabled
+     */
     public boolean isAddServeralStructuralElementsMode() {
         return addServeralStructuralElementsMode;
     }
 
+    /**
+     * Toggles the mode to add several structural elements on/off.
+     * 
+     * @return the empty string, telling JSF to remain on that page
+     */
     public String ToggleAddServeralStructuralElementsMode() {
         addServeralStructuralElementsMode = !addServeralStructuralElementsMode;
         return "";
+    }
+
+    /**
+     * Returns the text to be shown in the ‘count’ text field.
+     * 
+     * @return value for ‘count’
+     */
+    public String getElementsCount() {
+        return Integer.toString(elementsCount);
+    }
+
+    /**
+     * Sets the number of structural elements to create from the text input
+     * received from the user.
+     * 
+     * @param elementsCount
+     *            text input for ‘count’
+     */
+    public void setElementsCount(String elementsCount) {
+        if (elementsCount.isEmpty()) {
+            this.elementsCount = 1;
+        } else try{
+            this.elementsCount = Integer.valueOf(elementsCount.trim());
+        }catch(NumberFormatException e){
+            Helper.setFehlerMeldung("nan", e.getMessage());
+            this.elementsCount = 1;
+        }
+    }
+
+    /**
+     * Returns the object that shall be selected in the drop-down box to select
+     * a meta-data type to add.
+     * 
+     * @return selected meta-data type to add
+     */
+    public Object getAddMetaDataType() {
+        return addMetaDataType;
+    }
+
+    /**
+     * To set the object the user selected in the drop-down box to select a
+     * meta-data type to add.
+     * 
+     * @param addMetaDataType
+     *            selected meta-data type to add
+     */
+    public void setAddMetaDataType(Object addMetaDataType) {
+        this.addMetaDataType = (String) addMetaDataType;
+    }
+
+    /**
+     * Returns the text to be shown in the text field to add as meta-datum.
+     * 
+     * @return value for meta-datum
+     */
+    public String getAddMetaDataValue() {
+        return addMetaDataValue;
+    }
+
+    /**
+     * To set the text the user entered in the text field to add as meta-datum.
+     * 
+     * @param addMetaDataValue
+     *            value for meta-datum
+     */
+    public void setAddMetaDataValue(String addMetaDataValue) {
+        this.addMetaDataValue = addMetaDataValue;
+    }
+
+    /**
+     * Returns the elements available in the drop-down box to select a meta-data
+     * type to add.
+     * 
+     * @return selected meta-data type to add
+     * @throws TypeNotAllowedForParentException 
+     */
+    public ArrayList<SelectItem> getAddableMetaDataTypes() throws TypeNotAllowedForParentException {
+        ArrayList<SelectItem> result = new ArrayList<>();
+
+        // an element to disable adding meta-data
+        result.add(new SelectItem((Object) "", Helper.getTranslation("keineNutzung")));
+
+        /* If neuesElementWohin is string "1" or "2", the available meta-data
+         * elements depend on the selection in the drop-down element to add a
+         * structural instance as neighbour (addDocStructType1), if it is "3" or
+         * "4", they depend on the selection in the drop-down element to add a
+         * structural instance as child (addDocStructType2). */
+
+        int code = neuesElementWohin.codePointAt(0);
+        String docStructType = (code & 1) != (code & 2) >>> 1 ? addDocStructType1 : addDocStructType2;
+
+        /* To obtain the list of addable meta-data types, a new structure level
+         * of the determined type, without any meta-data, is assumed. */
+
+        DocStructType type = myPrefs.getDocStrctTypeByName(docStructType);
+        if (type != null) {
+            DocStruct empty = mydocument.createDocStruct(type);
+            result.addAll(getAddableMetadataTypes(empty, null));
+        }
+        return result;
     }
 }

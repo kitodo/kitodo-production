@@ -58,7 +58,7 @@
                     </h:panelGroup>
                 </h:panelGrid>
 
-                <h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column">
+                <h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column" rendered="#{not Metadaten.addServeralStructuralElementsMode}">
                     <h:outputText value="#{msgs.ersteSeite}: " />
                     <h:panelGroup id="pageStartGroup">
                         <x:inputText id="pagestart1" forceId="true" value="#{Metadaten.pagesStart}" />
@@ -89,6 +89,14 @@
                         <h:graphicImage value="/newpages/images/buttons/left_20px.gif" style="border: 0px;vertical-align:middle;" />
                         <x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
                     </a4j:commandLink>
+                </h:panelGrid>
+                <h:panelGrid columns="2" width="100%" rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                    <h:outputText value="#{msgs.count}: " />
+                    <h:inputText value="#{Metadaten.elementsCount}"/>
+                    <x:selectOneMenu value="#{Metadaten.addMetaDataType}">
+                        <f:selectItems value="#{Metadaten.addableMetaDataTypes}" />
+                    </x:selectOneMenu>
+                    <h:inputText value="#{Metadaten.addMetaDataType ne '' ? Metadaten.addMetaDataValue : ''}" readonly="#{Metadaten.addMetaDataType eq ''}"/>
                 </h:panelGrid>
             </htm:td>
         </htm:tr>
