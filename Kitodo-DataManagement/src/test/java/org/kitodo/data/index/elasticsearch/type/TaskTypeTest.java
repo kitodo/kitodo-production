@@ -130,12 +130,13 @@ public class TaskTypeTest {
         task = prepareData().get(1);
         document = taskType.createDocument(task);
         actual = EntityUtils.toString(document);
+        System.out.println(actual);
         excepted = "{\"process\":\"null\",\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":\"2\","
                 + "\"typeMetadata\":\"false\",\"title\":\"Rendering\",\"priority\":\"2\","
                 + "\"typeImportFileUpload\":\"false\",\"processingTime\":\"2017-02-17\","
                 + "\"processingBegin\":\"2017-02-10\",\"batchStep\":\"false\",\"users\":[{\"id\":1},{\"id\":2}],"
                 + "\"processingUser\":\"2\",\"processingStatus\":\"INWORK\",\"userGroups\":[{\"id\":\"1\"},"
-                + "{\"id\":\"2\"}],\"typeImagesWrite\":\"false\",\"processingEnd\":\"null\","
+                + "{\"id\":\"2\"}],\"typeImagesWrite\":\"false\",\"processingEnd\":null,"
                 + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}";
         assertEquals("Task JSON string doesn't match to given plain text!", excepted, actual);
 
@@ -144,9 +145,9 @@ public class TaskTypeTest {
         actual = EntityUtils.toString(document);
         excepted = "{\"process\":\"null\",\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":\"0\","
                 + "\"typeMetadata\":\"false\",\"title\":\"Incomplete\",\"priority\":\"0\","
-                + "\"typeImportFileUpload\":\"false\",\"processingTime\":\"null\",\"processingBegin\":\"null\","
+                + "\"typeImportFileUpload\":\"false\",\"processingTime\":null,\"processingBegin\":null,"
                 + "\"batchStep\":\"false\",\"users\":[],\"processingUser\":\"null\",\"processingStatus\":\"OPEN\","
-                + "\"userGroups\":[],\"typeImagesWrite\":\"false\",\"processingEnd\":\"null\","
+                + "\"userGroups\":[],\"typeImagesWrite\":\"false\",\"processingEnd\":null,"
                 + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}";
         assertEquals("Task JSON string doesn't match to given plain text!", excepted, actual);
     }

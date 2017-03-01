@@ -49,8 +49,6 @@ public class TaskService {
      */
     public void save(Task task) throws DAOException, IOException {
         taskDao.save(task);
-        //org.elasticsearch.client.ResponseException: PUT http://localhost:9200/kitodo/task/2: HTTP/1.1 400 Bad Request
-        //{"error":{"root_cause":[{"type":"mapper_parsing_exception","reason":"failed to parse [processingEnd]"}],"type":"mapper_parsing_exception","reason":"failed to parse [processingEnd]","caused_by":{"type":"illegal_argument_exception","reason":"Invalid format: \"null\""}},"status":400
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(task, taskType);
     }

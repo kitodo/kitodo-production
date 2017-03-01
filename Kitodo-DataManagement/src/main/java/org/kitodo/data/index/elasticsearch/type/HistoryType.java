@@ -37,7 +37,7 @@ public class HistoryType extends BaseType<History> {
         orderedHistoryMap.put("stringValue", history.getStringValue());
         orderedHistoryMap.put("type", history.getHistoryType().toString());
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String date = history.getDate() != null ? dateFormat.format(history.getDate()) : "null";
+        String date = history.getDate() != null ? dateFormat.format(history.getDate()) : null;
         orderedHistoryMap.put("date", date);
         orderedHistoryMap.put("process", history.getProcess().getId().toString());
 

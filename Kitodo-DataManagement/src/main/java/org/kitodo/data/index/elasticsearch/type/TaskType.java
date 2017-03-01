@@ -47,12 +47,12 @@ public class TaskType extends BaseType<Task> {
         String processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().toString() :
                 "null";
         orderedTaskMap.put("processingStatus", processingStatus);
-        String processingTime = task.getProcessingTime() != null ? dateFormat.format(task.getProcessingTime()) : "null";
+        String processingTime = task.getProcessingTime() != null ? dateFormat.format(task.getProcessingTime()) : null;
         orderedTaskMap.put("processingTime", processingTime);
         String processingBegin = task.getProcessingBegin() != null ? dateFormat.format(task.getProcessingBegin()) :
-                "null";
+                null;
         orderedTaskMap.put("processingBegin", processingBegin);
-        String processingEnd = task.getProcessingEnd() != null ? dateFormat.format(task.getProcessingEnd()) : "null";
+        String processingEnd = task.getProcessingEnd() != null ? dateFormat.format(task.getProcessingEnd()) : null;
         orderedTaskMap.put("processingEnd", processingEnd);
         orderedTaskMap.put("homeDirectory", String.valueOf(task.getHomeDirectory()));
         orderedTaskMap.put("typeMetadata", String.valueOf(task.isTypeMetadata()));

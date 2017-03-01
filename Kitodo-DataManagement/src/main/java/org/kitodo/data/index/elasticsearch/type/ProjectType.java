@@ -40,9 +40,9 @@ public class ProjectType extends BaseType<Project> {
         LinkedHashMap<String, String> orderedProjectMap = new LinkedHashMap<>();
         orderedProjectMap.put("name", project.getTitle());
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String startDate = project.getStartDate() != null ? dateFormat.format(project.getStartDate()) : "null";
+        String startDate = project.getStartDate() != null ? dateFormat.format(project.getStartDate()) : null;
         orderedProjectMap.put("startDate", startDate);
-        String endDate = project.getEndDate() != null ? dateFormat.format(project.getEndDate()) : "null";
+        String endDate = project.getEndDate() != null ? dateFormat.format(project.getEndDate()) : null;
         orderedProjectMap.put("endDate", endDate);
         String numberOfPages = project.getNumberOfPages() != null ? project.getNumberOfPages().toString() : "null";
         orderedProjectMap.put("numberOfPages", numberOfPages);
