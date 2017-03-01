@@ -44,10 +44,11 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     }
 
     /**
-     * Perform request depending on given parameters.
+     * Perform request depending on given parameters of HTTPMethods.
      *
+     * @param baseBean bean object which will be added or deleted from index
+     * @param baseType type on which will be called method createDocument()
      * @return response from the server
-     * @throws IOException add description
      */
     @SuppressWarnings("unchecked")
     public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException {
@@ -64,7 +65,32 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
         } else if (method == HTTPMethods.DELETE) {
             response = restClient.deleteDocument(baseBean.getId());
         } else {
-            response = "Not implemented yet";
+            response = "Incorrect HTTP method!";
+        }
+
+        restClient.closeClient();
+
+        return response;
+    }
+
+    /**
+     * Perform delete request depending on given id of the bean.
+     *
+     * @param beanId
+     * response from the server
+     */
+    public String performSingleRequest(Integer beanId) throws IOException {
+        RestClientImplementation restClient = new RestClientImplementation();
+        String response;
+
+        restClient.initiateClient("localhost", 9200, "http");
+        restClient.setIndex(index);
+        restClient.setType(type);
+
+        if (method == HTTPMethods.DELETE) {
+            response = restClient.deleteDocument(beanId);
+        } else {
+            response = "Incorrect HTTP method!";
         }
 
         restClient.closeClient();
