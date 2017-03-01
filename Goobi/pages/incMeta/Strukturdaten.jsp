@@ -42,6 +42,7 @@
                         <f:selectItem itemValue="2" itemLabel="#{msgs.hinterDasAktuelleElement}" />
                         <f:selectItem itemValue="3" itemLabel="#{msgs.alsErstesKindDesAktuellenElements}" />
                         <f:selectItem itemValue="4" itemLabel="#{msgs.alsLetztesKindDesAktuellenElements}" />
+                        <a4j:support event="onchange" reRender="addServeralGroup" />
                     </x:selectOneRadio>
 
                     <x:inputText id="secretElement" forceId="true" value="#{Metadaten.neuesElementWohin}" style="display:none;" />
@@ -50,10 +51,12 @@
                         <x:selectOneMenu id="auswahlAddable1" forceId="true" style="width:315px;margin-left:8px;margin-bottom:4px"
                             value="#{Metadaten.addDocStructType1}">
                             <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}" />
+                            <a4j:support event="onchange" reRender="addServeralGroup" />
                         </x:selectOneMenu>
                         <x:selectOneMenu id="auswahlAddable2" forceId="true" style="width:315px;margin-left:8px;margin-bottom:4px"
                             value="#{Metadaten.addDocStructType2}">
                             <f:selectItems value="#{Metadaten.addableDocStructTypenAlsKind}" />
+                            <a4j:support event="onchange" reRender="addServeralGroup" />
                         </x:selectOneMenu>
                     </h:panelGroup>
                 </h:panelGrid>
@@ -90,13 +93,13 @@
                         <x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
                     </a4j:commandLink>
                 </h:panelGrid>
-                <h:panelGrid columns="2" width="100%" rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                <h:panelGrid columns="2" width="100%" id="addServeralGroup" rendered="#{Metadaten.addServeralStructuralElementsMode}">
                     <h:outputText value="#{msgs.count}: " />
                     <h:inputText value="#{Metadaten.elementsCount}"/>
                     <x:selectOneMenu value="#{Metadaten.addMetaDataType}">
                         <f:selectItems value="#{Metadaten.addableMetaDataTypes}" />
                     </x:selectOneMenu>
-                    <h:inputText value="#{Metadaten.addMetaDataType ne '' ? Metadaten.addMetaDataValue : ''}" readonly="#{Metadaten.addMetaDataType eq ''}"/>
+                    <h:inputText value="#{Metadaten.addMetaDataValue}"/>
                 </h:panelGrid>
             </htm:td>
         </htm:tr>
