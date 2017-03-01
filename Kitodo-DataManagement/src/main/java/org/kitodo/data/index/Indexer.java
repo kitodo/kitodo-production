@@ -105,20 +105,27 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * @throws InterruptedException add description
      */
     @SuppressWarnings("unchecked")
-    public ArrayList<String> performMultipleRequests(List<T> baseBeans, S baseType)
+    public String performMultipleRequests(List<T> baseBeans, S baseType)
             throws DAOException, IOException, InterruptedException {
         RestClientImplementation restClient = new RestClientImplementation();
+        String response;
 
         restClient.initiateClient("localhost", 9200, "http");
         restClient.setIndex(index);
         restClient.setType(type);
 
-        HashMap<Integer, HttpEntity> test = baseType.createDocuments(baseBeans);
-        restClient.addType(test);
+        if (method == HTTPMethods.PUT) {
+            HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseBeans);
+            response = restClient.addType(documents);
+        } else if (method == HTTPMethods.DELETE) {
+            response = restClient.deleteType();
+        } else {
+            response = "Incorrect HTTP method!";
+        }
 
         restClient.closeClient();
 
-        return null;
+        return response;
     }
 
     /**
