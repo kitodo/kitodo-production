@@ -183,9 +183,11 @@ public class LoginForm {
 					Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
 				} catch (DAOException e) {
 					Helper.setFehlerMeldung("could not save", e.getMessage());
-				} catch (NoSuchAlgorithmException e) {
-					Helper.setFehlerMeldung("ldap errror", e.getMessage());
-				}
+                } catch (NoSuchAlgorithmException e) {
+                    Helper.setFehlerMeldung("ldap errror", e.getMessage());
+                } catch (IOException e) {
+                    Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+                }
 			}
 		return "";
 	}
@@ -204,7 +206,9 @@ public class LoginForm {
 			Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+        }
 		return "";
 	}
 
