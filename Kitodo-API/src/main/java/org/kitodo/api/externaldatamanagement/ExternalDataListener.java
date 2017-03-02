@@ -17,7 +17,9 @@ public interface ExternalDataListener extends EventListener {
 
     /**
      * Is called, if external data has changed.
+     *
+     * @param event the event with the information of the changed data
      */
-    void externalDataUpdated();
+    void externalDataUpdated(ExternalDataEvent event);
 
 }

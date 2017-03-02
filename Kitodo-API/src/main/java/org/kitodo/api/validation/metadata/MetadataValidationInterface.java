@@ -9,22 +9,23 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.validation.ruleset;
+package org.kitodo.api.validation.metadata;
 
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
-import java.io.File;
 import java.nio.file.Path;
 
-public interface RulesetValidationInterface extends ValidationInterface {
+public interface MetadataValidationInterface extends ValidationInterface {
 
     /**
-     * Validates if a rulesetfile is valid.
+     * Validates if a mets file is confirm to a rulesetFile
      *
-     * @param rulesetFilePath The path to the rulesetfile, which should be validated.
+     * @param metsFilePath The path to the mets file which should be validated.
+     * @param rulesetFilePath The path to the ruleset file to validate against.
      * @return A validation result.
      */
-    ValidationResult validate(Path rulesetFilePath);
+    ValidationResult validate(Path metsFilePath, Path rulesetFilePath);
+
 
 }

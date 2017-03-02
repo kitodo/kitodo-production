@@ -28,12 +28,12 @@ public interface ImageManagementInterface {
     /**
      * Creates a derivative for an image at a given path.
      *
-     * @param imagefilePath The path to the image.
+     * @param imageFilePath The path to the image.
      * @param percent The percentage of scaling for the derivative.
      * @param resultFilePath The path to save the derivative to.
      * @param resultFileFormat The formate for the derivative.
      * @return true, if creation was successfull, false otherwise.
      */
-    boolean createDerivative(Path imagefilePath, double percent, Path resultFilePath, ImageFileFormat resultFileFormat);
+    boolean createDerivative(Path imageFilePath, double percent, Path resultFilePath, ImageFileFormat resultFileFormat);
 
 }

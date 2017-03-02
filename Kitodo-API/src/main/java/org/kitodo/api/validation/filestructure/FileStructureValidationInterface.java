@@ -9,9 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.dataeditor.structuraldata;
+package org.kitodo.api.validation.filestructure;
 
-import org.kitodo.api.dataeditor.DataEditorInterface;
+import org.kitodo.api.validation.ValidationResult;
 
-public interface StructuralDataEditorInterface extends DataEditorInterface {
+import java.io.File;
+
+public interface FileStructureValidationInterface<T> {
+
+    ValidationResult validate(File xmlFile, T xsdFilePath);
+
 }
