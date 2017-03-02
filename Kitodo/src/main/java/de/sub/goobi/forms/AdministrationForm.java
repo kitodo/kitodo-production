@@ -19,6 +19,8 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.sub.goobi.helper.encryption.MD5;
+import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
@@ -40,18 +42,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.encryption.DesEncrypter;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
-import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
-import org.kitodo.services.UserGroupService;
+import org.kitodo.services.*;
 
 import org.quartz.SchedulerException;
 
@@ -69,11 +62,17 @@ public class AdministrationForm implements Serializable {
 	private String passwort;
 	private boolean istPasswortRichtig = false;
 	private boolean rusFullExport = false;
+    private BatchService batchService = new BatchService();
+    private DocketService docketService = new DocketService();
+    private HistoryService historyService = new HistoryService();
 	private ProcessService processService = new ProcessService();
+    private ProjectService projectService = new ProjectService();
 	private RulesetService rulesetService = new RulesetService();
 	private TaskService taskService = new TaskService();
+    private TemplateService templateService = new TemplateService();
 	private UserService userService = new UserService();
 	private UserGroupService userGroupService = new UserGroupService();
+    private WorkpieceService workpieceService = new WorkpieceService();
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
@@ -592,5 +591,22 @@ public class AdministrationForm implements Serializable {
 	public void setRusFullExport(boolean rusFullExport) {
 		this.rusFullExport = rusFullExport;
 	}
+
+    /**
+     * Get all data stored in database and insert it to ElasticSearch index.
+     */
+    public void addTypesToIndex() throws DAOException, InterruptedException, IOException {
+        batchService.addAllObjectsToIndex();
+        docketService.addAllObjectsToIndex();
+        historyService.addAllObjectsToIndex();
+        processService.addAllObjectsToIndex();
+        projectService.addAllObjectsToIndex();
+        rulesetService.addAllObjectsToIndex();
+        taskService.addAllObjectsToIndex();
+        templateService.addAllObjectsToIndex();
+        userService.addAllObjectsToIndex();
+        userGroupService.addAllObjectsToIndex();
+        workpieceService.addAllObjectsToIndex();
+    }
 
 }
