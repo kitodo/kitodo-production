@@ -17,51 +17,51 @@ import java.util.ArrayList;
 public class OCRResult {
 
     /** The process id. */
-	private Integer processId;
+    private Integer processId;
     /** The result, if OCR was successfull */
-	private boolean success;
+    private boolean success;
     /** A result message */
-	private String message;
+    private String message;
     /** The generated OCD Files */
-	private ArrayList<File> outputFiles;
+    private ArrayList<File> outputFiles;
 
-	/** Gets the processId. */
-	public Integer getProcessId() {
-		return processId;
-	}
+    /** Gets the processId. */
+    public Integer getProcessId() {
+        return processId;
+    }
 
-	/** Sets the processId. */
-	public void setProcessId(Integer processId) {
-		this.processId = processId;
-	}
+    /** Sets the processId. */
+    public void setProcessId(Integer processId) {
+        this.processId = processId;
+    }
 
-	/** Gets the success. */
-	public boolean isSuccess() {
-		return success;
-	}
+    /** Gets the success. */
+    public boolean isSuccess() {
+        return success;
+    }
 
-	/** Sets the success. */
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
+    /** Sets the success. */
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
-	/** Gets the messages. */
-	public String getMessage() {
-		return message;
-	}
+    /** Gets the messages. */
+    public String getMessage() {
+        return message;
+    }
 
-	/** Sets the messages. */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /** Sets the messages. */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	/** Gets the outputFiles. */
-	public ArrayList<File> getOutputFiles() {
-		return outputFiles;
-	}
+    /** Gets the outputFiles. */
+    public ArrayList<File> getOutputFiles() {
+        return outputFiles;
+    }
 
-	/** Sets the outputFiles. */
-	public void setOutputFiles(ArrayList<File> outputFiles) {
-		this.outputFiles = outputFiles;
-	}
+    /** Sets the outputFiles. */
+    public void setOutputFiles(ArrayList<File> outputFiles) {
+        this.outputFiles = outputFiles;
+    }
 }

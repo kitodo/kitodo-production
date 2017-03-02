@@ -15,9 +15,9 @@ import java.nio.file.Path;
 
 public class FileProperty {
 
-	/** The input file path. */
-	private Path inputFilePath;
+    /** The input file path. */
+    private Path inputFilePath;
 
-	/** The name of the generated file. */
-	private String outputFileName;
+    /** The name of the generated file. */
+    private String outputFileName;
 }
