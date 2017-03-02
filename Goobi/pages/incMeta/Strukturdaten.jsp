@@ -95,7 +95,7 @@
                 </h:panelGrid>
                 <h:panelGrid columns="2" width="100%" id="addServeralGroup" rendered="#{Metadaten.addServeralStructuralElementsMode}">
                     <h:outputText value="#{msgs.count}: " />
-                    <h:inputText value="#{Metadaten.elementsCount}"/>
+                    <h:inputText value="#{Metadaten.elementsCount}" id="elementsCount"/>
                     <x:selectOneMenu value="#{Metadaten.addMetaDataType}">
                         <f:selectItems value="#{Metadaten.addableMetaDataTypes}" />
                     </x:selectOneMenu>
@@ -105,10 +105,33 @@
         </htm:tr>
         <htm:tr>
             <htm:td styleClass="eingabeBoxen_row3">
-                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementHinzufuegen}" target="links" style="float:right;" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
-                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementeHinzufuegen}" target="links" style="float:right;" rendered="#{Metadaten.addServeralStructuralElementsMode}" />
-                <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.several}" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
-                <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.once}" rendered="#{Metadaten.addServeralStructuralElementsMode}" />
+                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementHinzufuegen}"
+                    target="links" style="float:right;" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
+                <htm:script rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                    <h:outputText value="    function checkAddServeralStructuralElements(){
+        var inputBox = document.getElementById('formular2:elementsCount'); 
+        var count = inputBox.value;
+        if (count != '' && !isNaN(count)) {
+            var value = parseInt(count);
+            if(value > 28) {
+                return confirm('#{msgs.reallyAddManyDocStructs}'.replace('{0}', count));
+            } else if(value > 0) {
+                return true;
+            }
+        }
+        alert('#{msgs.nan}: ' + count);
+        inputBox.select();
+        inputBox.focus();
+        return false;
+    }" />
+                </htm:script>
+                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementeHinzufuegen}"
+                    target="links" style="float:right;" rendered="#{Metadaten.addServeralStructuralElementsMode}"
+                    onclick="if(!checkAddServeralStructuralElements())return false" />
+                <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.several}"
+                    rendered="#{not Metadaten.addServeralStructuralElementsMode}" onclick="" />
+                <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.once}"
+                    rendered="#{Metadaten.addServeralStructuralElementsMode}" />
             </htm:td>
         </htm:tr>
     </htm:table>
