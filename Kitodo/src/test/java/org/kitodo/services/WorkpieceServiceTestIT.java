@@ -30,15 +30,13 @@ public class WorkpieceServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertWorkpieces();
-        MockDatabase.insertWorkpieceProperties();
     }
 
-    //weird update on database:
-    //Hibernate: update workpieceProperty set choice=?, container=?, creationDate=?, dataType=?, obligatory=?,
-    //title=?, value=?, workpiece_id=? where id=?
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
 
-    @Ignore("problem with lazy fetching?")
     @Test
     public void shouldFindWorkpiece() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
@@ -48,7 +46,6 @@ public class WorkpieceServiceTestIT {
         assertTrue("Workpiece was not found in database!", condition);
     }
 
-    @Ignore("problem with lazy fetching?")
     @Test
     public void shouldGetPropertiesSize() throws Exception {
         WorkpieceService workpieceService = new WorkpieceService();
@@ -56,10 +53,5 @@ public class WorkpieceServiceTestIT {
         Workpiece workpiece = workpieceService.find(1);
         int actual = workpieceService.getPropertiesSize(workpiece);
         assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

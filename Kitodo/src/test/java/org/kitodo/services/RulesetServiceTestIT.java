@@ -35,6 +35,11 @@ public class RulesetServiceTestIT {
         MockDatabase.insertRulesets();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindRuleset() throws Exception {
         RulesetService rulesetService = new RulesetService();
@@ -61,10 +66,5 @@ public class RulesetServiceTestIT {
         //not sure how to really check if Pref is correct
         System.out.println("Preferences: " + actual);
         assertEquals("Preference is incorrect!", "1.1-20091117", actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

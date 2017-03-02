@@ -37,6 +37,11 @@ public class UserServiceTestIT {
         MockDatabase.insertProcessesFull();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindUser() throws Exception {
         UserService userService = new UserService();
@@ -111,18 +116,19 @@ public class UserServiceTestIT {
         assertEquals("User groups' size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetTasksSize() throws Exception {
         UserService userService = new UserService();
 
-        User user = userService.find(1);
-        User currentUser = userService.getCurrent(user);
-        int actual = userService.getTasksSize(currentUser);
+        User user = userService.find(2);
+        int actual = userService.getTasksSize(user);
+        assertEquals("Tasks' size is incorrect!", 2, actual);
+
+        user = userService.find(3);
+        actual = userService.getTasksSize(user);
         assertEquals("Tasks' size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetProcessingTasksSize() throws Exception {
         UserService userService = new UserService();
@@ -132,17 +138,20 @@ public class UserServiceTestIT {
         assertEquals("Processing tasks' size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetProjectsSize() throws Exception {
         UserService userService = new UserService();
 
         User user = userService.find(1);
         int actual = userService.getProjectsSize(user);
+        assertEquals("Projects' size is incorrect!", 2, actual);
+
+        user = userService.find(2);
+        actual = userService.getProjectsSize(user);
         assertEquals("Projects' size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching")
+    @Ignore("problem with lazy fetching - properties are inserted...")
     @Test
     public void shouldGetPropertiesSize() throws Exception {
         UserService userService = new UserService();
@@ -187,10 +196,5 @@ public class UserServiceTestIT {
         condition = userService.getHomeDirectory(user).contains("nowak");
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

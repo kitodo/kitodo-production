@@ -33,6 +33,11 @@ public class DocketServiceTestIT {
         MockDatabase.insertDockets();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindDocket() throws Exception {
         DocketService docketService = new DocketService();
@@ -48,10 +53,5 @@ public class DocketServiceTestIT {
 
         List<Docket> dockets = docketService.findAll();
         assertEquals("Not all dockets were found in database!", 2, dockets.size());
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

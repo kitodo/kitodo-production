@@ -34,6 +34,11 @@ public class TaskServiceTestIT {
         MockDatabase.insertProcessesFull();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindTask() throws Exception {
         TaskService taskService = new TaskService();
@@ -173,10 +178,5 @@ public class TaskServiceTestIT {
         //System.out.println("Normal: " + task.getUsers().size());
         //System.out.println("Current: " + currentTask.getUsers().size());
         assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

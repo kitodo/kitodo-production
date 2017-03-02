@@ -31,8 +31,11 @@ public class TemplatePropertyServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertTemplates();
-        MockDatabase.insertTemplateProperties();
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -40,7 +43,7 @@ public class TemplatePropertyServiceTestIT {
         TemplatePropertyService templatePropertyService = new TemplatePropertyService();
 
         TemplateProperty templateProperty = templatePropertyService.find(1);
-        boolean condition = templateProperty.getTitle().equals("First Property") && templateProperty.getValue().equals("first value");
+        boolean condition = templateProperty.getTitle().equals("first title") && templateProperty.getValue().equals("first value");
         assertTrue("Process property was not found in database!", condition);
     }
 
@@ -57,7 +60,7 @@ public class TemplatePropertyServiceTestIT {
         TemplatePropertyService templatePropertyService = new TemplatePropertyService();
 
         TemplateProperty templateProperty = templatePropertyService.find(1);
-        String expected = "First_Property";
+        String expected = "first_title";
         String actual = templatePropertyService.getNormalizedTitle(templateProperty);
         assertEquals("Normalized title doesn't match to given plain text!", expected, actual);
     }
@@ -70,10 +73,5 @@ public class TemplatePropertyServiceTestIT {
         String expected = "first_value";
         String actual = processPropertyService.getNormalizedValue(processProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

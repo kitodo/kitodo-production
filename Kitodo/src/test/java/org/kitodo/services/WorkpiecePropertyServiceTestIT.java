@@ -31,8 +31,11 @@ public class WorkpiecePropertyServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertWorkpieces();
-        MockDatabase.insertWorkpieceProperties();
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -70,10 +73,5 @@ public class WorkpiecePropertyServiceTestIT {
         String expected = "first_value";
         String actual = workpiecePropertyService.getNormalizedValue(workpieceProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

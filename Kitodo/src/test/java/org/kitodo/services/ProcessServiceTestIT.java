@@ -69,16 +69,18 @@ public class ProcessServiceTestIT {
         assertTrue("Table size is incorrect!", condition);
     }
 
-    @Ignore("problem with lazy fetching")
+    @Ignore("for second process is attached task which is processed by blocked user")
     @Test
     public void shouldGetBlockedUsers() throws Exception {
         ProcessService processService = new ProcessService();
         UserService userService = new UserService();
 
         Process process = processService.find(1);
-        System.out.println(process.getTitle() + " " + process.getDocket().getName());
-        System.out.println(userService.find(3).getFullName() + " " + userService.find(3).getTasks().size());
-        boolean condition = processService.getBlockedUsers(process) == userService.find(3);
+        boolean condition = processService.getBlockedUsers(process) == null;
+        assertTrue("Process has blocked user but it shouldn't!", condition);
+
+        process = processService.find(2);
+        condition = processService.getBlockedUsers(process) == userService.find(3);
         assertTrue("Blocked user doesn't match to given user!", condition);
     }
 
@@ -255,37 +257,33 @@ public class ProcessServiceTestIT {
         assertEquals("History's size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetPropertiesSize() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
         int actual = processService.getPropertiesSize(process);
-        assertEquals("Properties' size is incorrect!", 1, actual);
+        assertEquals("Properties' size is incorrect!", 2, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetWorkpiecesSize() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
         int actual = processService.getWorkpiecesSize(process);
-        assertEquals("Workpieces' size is incorrect!", 1, actual);
+        assertEquals("Workpieces' size is incorrect!", 2, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetTemplatesSize() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
         int actual = processService.getTemplatesSize(process);
-        assertEquals("Templates' size is incorrect!", 1, actual);
+        assertEquals("Templates' size is incorrect!", 2, actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetCurrentTask() throws Exception {
         ProcessService processService = new ProcessService();
@@ -425,12 +423,11 @@ public class ProcessServiceTestIT {
         assertTrue("It was not possible to write metadata as template file!", condition);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetContainsUnreachableSteps() throws Exception {
         ProcessService processService = new ProcessService();
 
-        Process process = processService.find(2);
+        Process process = processService.find(3);
         boolean condition = processService.getContainsUnreachableSteps(process);
         assertTrue("Process doesn't contain unreachable tasks!", condition);
     }
@@ -449,13 +446,13 @@ public class ProcessServiceTestIT {
         assertTrue("Image folder is not in use but it should be!", condition);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetImageFolderInUseUser() throws Exception {
         ProcessService processService = new ProcessService();
         UserService userService = new UserService();
 
         Process process = processService.find(2);
+        System.out.println(process.getTasks().get(2).getProcessingStatusEnum().getTitle());
         User expected = userService.find(2);
         User actual = processService.getImageFolderInUseUser(process);
         assertEquals("Processing user doesn't match to the given user!", expected, actual);
@@ -472,7 +469,6 @@ public class ProcessServiceTestIT {
         assertTrue("Processing user doesn't match to the given user!", condition);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetFirstOpenStep() throws Exception {
         ProcessService processService = new ProcessService();

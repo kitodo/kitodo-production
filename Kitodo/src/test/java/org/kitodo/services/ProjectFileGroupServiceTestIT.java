@@ -19,6 +19,8 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -31,6 +33,11 @@ public class ProjectFileGroupServiceTestIT {
         MockDatabase.insertProcessesFull();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindProjectFileGroup() throws Exception {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
@@ -40,8 +47,11 @@ public class ProjectFileGroupServiceTestIT {
         assertTrue("Project file group was not found in database!", condition);
     }
 
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
+    @Test
+    public void shouldFindAllProjectFileGroups() throws Exception {
+        ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
+
+        List<ProjectFileGroup> projectFileGroups = projectFileGroupService.findAll();
+        assertEquals("Project file group was not found in database!", 5, projectFileGroups.size());
     }
 }

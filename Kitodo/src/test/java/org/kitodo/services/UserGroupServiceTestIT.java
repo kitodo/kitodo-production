@@ -32,6 +32,11 @@ public class UserGroupServiceTestIT {
         MockDatabase.insertProcessesFull();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
@@ -54,7 +59,6 @@ public class UserGroupServiceTestIT {
         assertEquals("Permission string doesn't match to given plain text!", "4", actual);
     }
 
-    @Ignore("problem with lazy fetching")
     @Test
     public void shouldGetTasksSize() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
@@ -62,10 +66,5 @@ public class UserGroupServiceTestIT {
         UserGroup userGroup = userGroupService.find(1);
         int actual = userGroupService.getTasksSize(userGroup);
         assertEquals("Tasks size is not equal to given value!", 2, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

@@ -34,6 +34,11 @@ public class UserPropertyServiceTestIT {
         MockDatabase.insertUserProperties();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindProcessUser() throws Exception {
         UserPropertyService userPropertyService = new UserPropertyService();
@@ -69,10 +74,5 @@ public class UserPropertyServiceTestIT {
         String expected = "first_value";
         String actual = userPropertyService.getNormalizedValue(userProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

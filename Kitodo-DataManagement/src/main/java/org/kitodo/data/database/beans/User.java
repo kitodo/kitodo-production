@@ -242,6 +242,9 @@ public class User implements Serializable {
     }
 
     public List<Task> getProcessingTasks() {
+        if (this.processingTasks == null) {
+            this.processingTasks = new ArrayList<>();
+        }
         return this.processingTasks;
     }
 

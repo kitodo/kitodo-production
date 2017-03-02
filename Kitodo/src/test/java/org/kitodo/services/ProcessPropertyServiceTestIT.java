@@ -31,7 +31,11 @@ public class ProcessPropertyServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertProcessProperties();
+    }
+
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -69,10 +73,5 @@ public class ProcessPropertyServiceTestIT {
         String expected = "first_value";
         String actual = processPropertyService.getNormalizedValue(processProperty);
         assertEquals("Normalized value doesn't match to given plain text!", expected, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

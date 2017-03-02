@@ -34,6 +34,16 @@ public class ProjectFileGroupDAO extends BaseDAO {
         return result;
     }
 
+    /**
+     * The function findAll() retrieves all projects' file groups from the database.
+     *
+     * @return all persisted projects
+     */
+    @SuppressWarnings("unchecked")
+    public List<ProjectFileGroup> findAll() {
+        return retrieveAllObjects(ProjectFileGroup.class);
+    }
+
     public ProjectFileGroup save(ProjectFileGroup projectFileGroup) throws DAOException {
         storeObject(projectFileGroup);
         return (ProjectFileGroup) retrieveObject(ProjectFileGroup.class, projectFileGroup.getId());

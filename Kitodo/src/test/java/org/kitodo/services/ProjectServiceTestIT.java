@@ -36,6 +36,11 @@ public class ProjectServiceTestIT {
         MockDatabase.insertProcessesFull();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindProject() throws Exception {
         ProjectService projectService = new ProjectService();
@@ -62,10 +67,5 @@ public class ProjectServiceTestIT {
         List<StepInformation> expected = new ArrayList<>();
         List<StepInformation> actual = projectService.getWorkFlow(project);
         assertEquals("Work flow doesn't match to given work flow!", expected, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

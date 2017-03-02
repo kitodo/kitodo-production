@@ -33,6 +33,11 @@ public class HistoryServiceTestIT {
         MockDatabase.insertProcessesFull();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindHistory() throws Exception {
         HistoryService historyService = new HistoryService();
@@ -48,10 +53,5 @@ public class HistoryServiceTestIT {
 
         List<History> histories = historyService.findAll();
         assertEquals("Not all histories were found in database!", 1, histories.size());
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

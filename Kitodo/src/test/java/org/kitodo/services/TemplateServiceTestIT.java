@@ -30,21 +30,21 @@ public class TemplateServiceTestIT {
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertTemplates();
-        MockDatabase.insertTemplateProperties();
     }
 
-    @Ignore("problem with lazy fetching?")
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindTemplate() throws Exception {
         TemplateService templateService = new TemplateService();
 
         Template template = templateService.find(1);
-        boolean condition = template.getProperties().size() == 2;
-        assertTrue("Template was not found in database!", condition);
+        assertTrue("Template was not found in database!", template.getOrigin().equals("test"));
     }
 
-    @Ignore("problem with lazy fetching?")
     @Test
     public void shouldGetPropertiesSize() throws Exception {
         TemplateService templateService = new TemplateService();
@@ -52,10 +52,5 @@ public class TemplateServiceTestIT {
         Template template = templateService.find(1);
         int actual = templateService.getPropertiesSize(template);
         assertEquals("Template's properties size is not equal to given value!", 2, actual);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }

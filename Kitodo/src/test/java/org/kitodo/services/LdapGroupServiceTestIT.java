@@ -31,6 +31,11 @@ public class LdapGroupServiceTestIT {
         MockDatabase.insertLdapGroups();
     }
 
+    @AfterClass
+    public static void cleanDatabase() {
+        MockDatabase.cleanDatabase();
+    }
+
     @Test
     public void shouldFindLdapGroup() throws Exception {
         LdapGroupService ldapGroupService = new LdapGroupService();
@@ -38,10 +43,5 @@ public class LdapGroupServiceTestIT {
         LdapGroup ldapGroup = ldapGroupService.find(1);
         boolean condition = ldapGroup.getTitle().equals("LG") && ldapGroup.getDisplayName().equals("Name");
         assertTrue("LDAP group was not found in database!", condition);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
     }
 }
