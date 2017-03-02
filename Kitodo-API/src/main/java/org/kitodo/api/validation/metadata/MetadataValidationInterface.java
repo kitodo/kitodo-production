@@ -14,6 +14,7 @@ package org.kitodo.api.validation.metadata;
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
+import java.io.File;
 import java.nio.file.Path;
 
 public interface MetadataValidationInterface extends ValidationInterface {
@@ -21,11 +22,11 @@ public interface MetadataValidationInterface extends ValidationInterface {
     /**
      * Validates if a mets file is confirm to a rulesetFile
      *
-     * @param metsFilePath The path to the mets file which should be validated.
+     * @param metadataFile The metadata file which should be validated.
      * @param rulesetFilePath The path to the ruleset file to validate against.
      * @return A validation result.
      */
-    ValidationResult validate(Path metsFilePath, Path rulesetFilePath);
+    ValidationResult validate(File metadataFile, Path rulesetFilePath);
 
 
 }
