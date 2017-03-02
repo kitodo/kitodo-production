@@ -39,6 +39,7 @@ import org.kitodo.production.lugh.ld.*;
 import org.kitodo.production.lugh.pagination.*;
 
 import com.hp.hpl.jena.shared.JenaException;
+import com.sharkysoft.util.UnreachableCodeException;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -51,14 +52,7 @@ import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
 import ugh.dl.Reference;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.IncompletePersonObjectException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
+import ugh.exceptions.*;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
@@ -1077,154 +1071,123 @@ public class Metadaten {
     }
 
     /**
-     * Knoten hinzufügen
-     *
-     * @throws TypeNotAllowedForParentException
-     * @throws IOException
-     * @throws TypeNotAllowedForParentException
-     * @throws TypeNotAllowedAsChildException
-     * @throws TypeNotAllowedAsChildException ============================================================ == ==
-     * @throws MetadataTypeNotAllowedException 
+     * Adds structural elements to the structural tree.
+     * 
+     * @return ID of the page to navigate to
      */
-    public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
-
-        /*
-         * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
-         * gewählt wird und abschliessend richtig einfügen --------------------------------
-         */
-
-        DocStruct ds = null;
-        int last = addServeralStructuralElementsMode ? elementsCount - 1 : 0;
-        Paginator enumeratingLabel = !addMetaDataType.isEmpty() && !addMetaDataValue.isEmpty() ? new Paginator(addMetaDataValue) : null;
-        for (int i = 0; i < last; i++) {
-        /*
-         * -------------------------------- vor das aktuelle Element --------------------------------
-         */
-        switch(this.neuesElementWohin) {
-        case "1": {
-            if (this.addDocStructType1 == null || this.addDocStructType1.equals("")) {
-                break;
-            }
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
-            ds = this.mydocument.createDocStruct(dst);
-            if (this.myDocStruct == null) {
-                break;
-            }
-            DocStruct parent = this.myDocStruct.getParent();
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                break;
-            }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
-
-            /* alle Elemente des Parents durchlaufen */
-            for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct tempDS = iter.next();
-
-                /* wenn das aktuelle Element das gesuchte ist */
-                if (tempDS == this.myDocStruct) {
-                    alleDS.add(ds);
-                }
-                alleDS.add(tempDS);
-            }
-
-            /* anschliessend alle Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
-            }
-        break; }
-
-        /*
-         * -------------------------------- hinter das aktuelle Element --------------------------------
-         */
-        case "2": {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
-            ds = this.mydocument.createDocStruct(dst);
-            DocStruct parent = this.myDocStruct.getParent();
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                break;
-            }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
-
-            /* alle Elemente des Parents durchlaufen */
-            for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct tempDS = iter.next();
-                alleDS.add(tempDS);
-                /* wenn das aktuelle Element das gesuchte ist */
-                if (tempDS == this.myDocStruct) {
-                    alleDS.add(ds);
-                }
-            }
-
-            /* anschliessend alle Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
-            }
-        break; }
-
-        /*
-         * -------------------------------- als erstes Child --------------------------------
-         */
-        case "3": {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
-            ds = this.mydocument.createDocStruct(dst);
-            DocStruct parent = this.myDocStruct;
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                break;
-            }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
-            alleDS.add(ds);
-
-            if (parent.getAllChildren() != null && parent.getAllChildren().size() != 0) {
-                alleDS.addAll(parent.getAllChildren());
-                parent.getAllChildren().retainAll(new ArrayList<DocStruct>());
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
-            }
-        break; }
-
-        /*
-         * -------------------------------- als letztes Child --------------------------------
-         */
-        case "4": {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
-            ds = this.mydocument.createDocStruct(dst);
-            this.myDocStruct.addChild(ds);
-        break; }
+    public String addNodesClick() {
+        TreeInsertionMode mode = TreeInsertionMode.fromIntString(neuesElementWohin);
+        DocStructType type;
+        switch (mode) {
+        case BEFORE_ELEMENT:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType1);
+            break;
+        case AFTER_ELEMENT:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType1);
+            break;
+        case AS_FIRST_CHILD:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType2);
+            break;
+        case AS_LAST_CHILD:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType2);
+            break;
+        default:
+            throw new UnreachableCodeException("complete switch");
         }
-
-        if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-            DocStruct temp = this.myDocStruct;
-            this.myDocStruct = ds;
-            this.ajaxSeiteStart = this.pagesStart;
-            this.ajaxSeiteEnde = this.pagesEnd;
-            AjaxSeitenStartUndEndeSetzen();
-            this.myDocStruct = temp;
+        int quantity = addServeralStructuralElementsMode ? elementsCount : 1;
+        if (type != null) {
+            DocStruct ds = addNodes(myDocStruct, mydocument, type, mode, quantity, addMetaDataType, addMetaDataValue);
+            if (!addServeralStructuralElementsMode && ds != null) {
+                DocStruct temp = this.myDocStruct;
+                this.myDocStruct = ds;
+                this.ajaxSeiteStart = this.pagesStart;
+                this.ajaxSeiteEnde = this.pagesEnd;
+                AjaxSeitenStartUndEndeSetzen();
+                this.myDocStruct = temp;
+            }
         }
-
-        if(enumeratingLabel != null) {
-            ds.addMetadata(addMetaDataType, enumeratingLabel.next());
-        }
-
-        }
-
         MetadatenalsTree3Einlesen1();
         return SperrungAktualisieren() ? "Metadaten3links" : "SperrungAbgelaufen";
+    }
+
+    /**
+     * Adds nodes to the document structure tree.
+     * 
+     * @param selection
+     *            structural element currently selected
+     * @param factory
+     *            digital document able to create structural elements
+     * @param type
+     *            type of structural element to create
+     * @param mode
+     *            insert location relative to the selection
+     * @param quantity
+     *            number of elements to create
+     * @param field
+     *            meta-data field to be added to the child
+     * @param value
+     *            value to be written in the meta-data field
+     * @return the first created element
+     */
+    private static DocStruct addNodes(DocStruct selection, DigitalDocument factory, DocStructType type,
+            TreeInsertionMode mode, int quantity, String field, String value) {
+        try {
+            Paginator enumeratingLabel = !field.isEmpty() && !value.isEmpty() ? new Paginator(value) : null;
+            ArrayList<DocStruct> createdElements = new ArrayList<>(quantity);
+            for (int i = 0; i < quantity; i++) {
+                DocStruct createdElement = factory.createDocStruct(type);
+                if (enumeratingLabel != null) {
+                    createdElement.addMetadata(field, enumeratingLabel.next());
+                }
+                createdElements.add(createdElement);
+            }
+            if (mode.equals(TreeInsertionMode.AS_LAST_CHILD)) {
+                for (DocStruct element : createdElements) {
+                    selection.addChild(element);
+                }
+            } else {
+                DocStruct edited = mode.equals(TreeInsertionMode.AS_FIRST_CHILD) ? selection
+                        : selection.getParent();
+                if (edited == null) {
+                    logger.debug("The selected element cannot investigate the father.");
+                    return null;
+                }
+
+                // Build a new list of children for the edited element
+                List<DocStruct> newChildren = new ArrayList<>(edited.getAllChildren().size() + 1);
+                if (mode.equals(TreeInsertionMode.AS_FIRST_CHILD)) {
+                    for (DocStruct createdElement : createdElements) {
+                        selection.addChild(createdElement);
+                    }
+                }
+                for (DocStruct child : edited.getAllChildren()) {
+                    if (child == selection && mode.equals(TreeInsertionMode.BEFORE_ELEMENT)) {
+                        for (DocStruct element : createdElements) {
+                            selection.addChild(element);
+                        }
+                    }
+                    newChildren.add(child);
+                    if (child == selection && mode.equals(TreeInsertionMode.AFTER_ELEMENT)) {
+                        for (DocStruct element : createdElements) {
+                            selection.addChild(element);
+                        }
+                    }
+                }
+
+                // Remove the existing children
+                for (DocStruct child : newChildren) {
+                    edited.removeChild(child);
+                }
+
+                // Set the new children on the edited element
+                for (DocStruct child : newChildren) {
+                    edited.addChild(child);
+                }
+            }
+            return createdElements.iterator().next();
+        } catch (UGHException iek) {
+            throw new RuntimeException(iek.getMessage(), iek);
+        }
     }
 
     /**

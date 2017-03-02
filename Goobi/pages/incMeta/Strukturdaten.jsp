@@ -105,8 +105,8 @@
         </htm:tr>
         <htm:tr>
             <htm:td styleClass="eingabeBoxen_row3">
-                <h:commandLink action="#{Metadaten.KnotenAdd}" value="#{msgs.strukturelementHinzufuegen}" target="links" style="float:right;" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
-                <h:commandLink action="#{Metadaten.KnotenAdd}" value="#{msgs.strukturelementeHinzufuegen}" target="links" style="float:right;" rendered="#{Metadaten.addServeralStructuralElementsMode}" />
+                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementHinzufuegen}" target="links" style="float:right;" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
+                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementeHinzufuegen}" target="links" style="float:right;" rendered="#{Metadaten.addServeralStructuralElementsMode}" />
                 <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.several}" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
                 <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.once}" rendered="#{Metadaten.addServeralStructuralElementsMode}" />
             </htm:td>
