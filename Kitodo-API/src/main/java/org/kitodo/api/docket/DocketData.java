@@ -34,92 +34,128 @@ public class DocketData {
     /** The process properties. */
     private ArrayList<ProcessProperty> processProperties;
 
-    /** Gets the processName. */
+    /** Gets the processName.
+     * @return The processName.
+     */
     public String getProcessName() {
         return processName;
     }
 
-    /** Sets the processName. */
+    /** Sets the processName.
+     * @param processName The query to execute.
+     */
     public void setProcessName(String processName) {
         this.processName = processName;
     }
 
-    /** Gets the processId. */
+    /** Gets the processId.
+     * @return The processId.
+     */
     public String getProcessId() {
         return processId;
     }
 
-    /** Sets the processId. */
+    /** Sets the processId.
+     * @param processId The processId.
+     */
     public void setProcessId(String processId) {
         this.processId = processId;
     }
 
-    /** Gets the projectName. */
+    /** Gets the projectName.
+     * @return The projectName.
+     */
     public String getProjectName() {
         return projectName;
     }
 
-    /** Sets the projectName. */
+    /** Sets the projectName.
+     * @param projectName The projectName.
+     */
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
 
-    /** Gets the rulesetName. */
+    /** Gets the rulesetName.
+     * @return The rulesetName.
+     */
     public String getRulesetName() {
         return rulesetName;
     }
 
-    /** Sets the rulesetName. */
+    /** Sets the rulesetName.
+     * @param rulesetName The rulesetName.
+     */
     public void setRulesetName(String rulesetName) {
         this.rulesetName = rulesetName;
     }
 
-    /** Gets the creationDate. */
+    /** Gets the creationDate.
+     * @return The creationDate.
+     */
     public String getCreationDate() {
         return creationDate;
     }
 
-    /** Sets the creationDate. */
+    /** Sets the creationDate.
+     * @param creationDate The creationDate.
+     */
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    /** Gets the comment. */
+    /** Gets the comment.
+     * @return The comment.
+     */
     public String getComment() {
         return comment;
     }
 
-    /** Sets the comment. */
+    /** Sets the comment.
+     * @param comment The comment.
+     */
     public void setComment(String comment) {
         this.comment = comment;
     }
 
-    /** Gets the templateProperties. */
+    /** Gets the templateProperties.
+     * @return The templateProperties.
+     */
     public ArrayList<TemplateProperty> getTemplateProperties() {
         return templateProperties;
     }
 
-    /** Sets the templateProperties. */
+    /** Sets the templateProperties.
+     * @param templateProperties The templateProperties.
+     */
     public void setTemplateProperties(ArrayList<TemplateProperty> templateProperties) {
         this.templateProperties = templateProperties;
     }
 
-    /** Gets the workpieceProperties. */
+    /** Gets the workpieceProperties.
+     * @return The workpieceProperties.
+     */
     public ArrayList<WorkpieceProperty> getWorkpieceProperties() {
         return workpieceProperties;
     }
 
-    /** Sets the workpieceProperties. */
+    /** Sets the workpieceProperties.
+     * @param workpieceProperties The workpieceProperties.
+     */
     public void setWorkpieceProperties(ArrayList<WorkpieceProperty> workpieceProperties) {
         this.workpieceProperties = workpieceProperties;
     }
 
-    /** Gets the processProperties. */
+    /** Gets the processProperties.
+     * @return The processProperties.
+     */
     public ArrayList<ProcessProperty> getProcessProperties() {
         return processProperties;
     }
 
-    /** Sets the processProperties. */
+    /** Sets the processProperties.
+     * @param processProperties The processProperties.
+     */
     public void setProcessProperties(ArrayList<ProcessProperty> processProperties) {
         this.processProperties = processProperties;
     }

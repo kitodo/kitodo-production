@@ -22,22 +22,30 @@ public class ImportData {
     /** The imported data as a file. */
     private File resultFile;
 
-    /** Gets the data. */
+    /** Gets the data.
+     * @return The data.
+     */
     public HashMap<String, String> getData() {
         return data;
     }
 
-    /** Sets the data. */
+    /** Sets the data.
+     * @param data The data.
+     */
     public void setData(HashMap<String, String> data) {
         this.data = data;
     }
 
-    /** Gets the resultFile. */
+    /** Gets the resultFile.
+     * @return The resultFile.
+     */
     public File getResultFile() {
         return resultFile;
     }
 
-    /** Sets the resultFile. */
+    /** Sets the resultFile.
+     * @param resultFile The resultFile.
+     */
     public void setResultFile(File resultFile) {
         this.resultFile = resultFile;
     }

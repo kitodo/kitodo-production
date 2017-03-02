@@ -33,12 +33,16 @@ public class ExternalDataEvent extends EventObject {
         this.identifier=identifier;
     }
 
-    /** Gets the source. */
+    /** Gets the source.
+     * @return The source.
+     */
     public Source getSource(){
         return source;
     }
 
-    /** Gets the identifier. */
+    /** Gets the identifier.
+     * @return The identifier.
+     */
     public String getIdentifier(){
         return identifier;
     }

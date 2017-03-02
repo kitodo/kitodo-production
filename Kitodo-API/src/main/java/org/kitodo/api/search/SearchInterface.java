@@ -19,7 +19,7 @@ public interface SearchInterface<T>  {
      * Searches with a given query.
      *
      * @param query The query to execute.
-     * @return
+     * @return A list of ids of the found objects.
      */
     ArrayList<Integer> search(String query);
 

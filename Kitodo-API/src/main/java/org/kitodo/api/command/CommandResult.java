@@ -41,22 +41,30 @@ public class CommandResult {
         this.messages = messages;
     }
 
-    /** Gets the id. */
+    /** Gets the id.
+     * @return The id.
+     */
     public Integer getId() {
         return id;
     }
 
-    /** Gets the command. */
+    /** Gets the command.
+     * @return The command.
+     */
     public String getCommand() {
         return command;
     }
 
-    /** Gets if command was successfull. */
+    /** Gets if command was successfull.
+     * @return The successful.
+     */
     public boolean isSuccessful() {
         return successful;
     }
 
-    /** Gets the messages. */
+    /** Gets the messages.
+     * @return The messages.
+     */
     public ArrayList<String> getMessages() {
         return messages;
     }

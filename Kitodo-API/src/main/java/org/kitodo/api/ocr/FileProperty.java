@@ -20,4 +20,34 @@ public class FileProperty {
 
     /** The name of the generated file. */
     private String outputFileName;
+
+    /**
+     * Gets the inputFilePath.
+     * @return The inputFilePath.
+     */
+    public Path getInputFilePath() {
+        return inputFilePath;
+    }
+
+    /** Sets the inputFilePath.
+     * @param inputFilePath The inputFilePath.
+     */
+    public void setInputFilePath(Path inputFilePath) {
+        this.inputFilePath = inputFilePath;
+    }
+
+    /**
+     * Gets the outputFileName.
+     * @return The outputFileName.
+     */
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    /** Sets the outputFileName.
+     * @param outputFileName The outputFileName.
+     */
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
+    }
 }
