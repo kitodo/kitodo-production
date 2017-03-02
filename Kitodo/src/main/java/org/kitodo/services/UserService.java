@@ -92,6 +92,14 @@ public class UserService  {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), userType);
+    }
+
+    /**
      * Get the current object for this row.
      *
      * @return the current object representing a row.

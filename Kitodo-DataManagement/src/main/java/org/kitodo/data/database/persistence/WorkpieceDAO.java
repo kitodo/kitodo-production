@@ -34,6 +34,16 @@ public class WorkpieceDAO extends BaseDAO {
         return result;
     }
 
+    /**
+     * The function findAll() retrieves all workpieces from the database.
+     *
+     * @return all persisted dockets
+     */
+    @SuppressWarnings("unchecked")
+    public List<Workpiece> findAll() {
+        return retrieveAllObjects(Workpiece.class);
+    }
+
     public Workpiece save(Workpiece workpiece) throws DAOException {
         storeObject(workpiece);
         return (Workpiece) retrieveObject(Workpiece.class, workpiece.getId());

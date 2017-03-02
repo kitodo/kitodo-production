@@ -14,6 +14,7 @@ package org.kitodo.services;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -42,6 +43,10 @@ public class WorkpieceService {
         return workpieceDao.find(id);
     }
 
+    public List<Workpiece> findAll() throws DAOException {
+        return workpieceDao.findAll();
+    }
+
     /**
      * Method removes object from database and document from the index of Elastic Search.
      *
@@ -62,6 +67,14 @@ public class WorkpieceService {
         workpieceDao.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), workpieceType);
     }
 
     /**

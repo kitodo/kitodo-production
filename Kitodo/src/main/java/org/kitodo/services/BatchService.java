@@ -78,6 +78,14 @@ public class BatchService {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), batchType);
+    }
+
+    /**
      * The function add() adds the given process to this batch if it is not already present.
      * TODO: Not sure if this method is needed, check it
      *

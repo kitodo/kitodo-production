@@ -85,6 +85,14 @@ public class ProjectService {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), projectType);
+    }
+
+    /**
      * Get workflow.
      *
      * @return a list with information for each step on workflow

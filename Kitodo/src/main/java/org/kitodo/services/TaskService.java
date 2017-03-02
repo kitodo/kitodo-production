@@ -91,6 +91,14 @@ public class TaskService {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), taskType);
+    }
+
+    /**
      * Convert Date start date to String.
      *
      * @param task object

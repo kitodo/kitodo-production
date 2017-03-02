@@ -83,6 +83,14 @@ public class RulesetService {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), rulesetType);
+    }
+
+    /**
      * Get preferences.
      *
      * @param ruleset object

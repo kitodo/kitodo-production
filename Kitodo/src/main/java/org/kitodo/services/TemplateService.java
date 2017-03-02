@@ -13,13 +13,14 @@ package org.kitodo.services;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.index.Indexer;
 import org.kitodo.data.index.elasticsearch.type.TemplateType;
-
-import java.io.IOException;
 
 public class TemplateService {
 
@@ -42,6 +43,10 @@ public class TemplateService {
         return templateDao.find(id);
     }
 
+    public List<Template> findAll() throws DAOException {
+        return templateDao.findAll();
+    }
+
     /**
      * Method removes object from database and document from the index of Elastic Search.
      *
@@ -62,6 +67,14 @@ public class TemplateService {
         templateDao.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), templateType);
     }
 
     /**

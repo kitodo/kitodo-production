@@ -151,6 +151,14 @@ public class ProcessService {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), processType);
+    }
+
+    /**
      * Returns the batches of the desired type for a process.
      *
      * @param type of batches to return

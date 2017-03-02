@@ -64,4 +64,12 @@ public class DocketService {
     public Long count(String query) throws DAOException {
         return docketDao.count(query);
     }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), docketType);
+    }
 }

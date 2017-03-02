@@ -30,6 +30,10 @@ public class UserGroupService {
         return userGroupDao.find(id);
     }
 
+    public List<UserGroup> findAll() throws DAOException {
+        return userGroupDao.findAll();
+    }
+
     /**
      * Method saves object to database and insert document to the index of Elastic Search.
      *
@@ -58,6 +62,14 @@ public class UserGroupService {
 
     public Long count(String query) throws DAOException {
         return userGroupDao.count(query);
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), userGroupType);
     }
 
     /**
