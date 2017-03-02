@@ -1072,7 +1072,7 @@ public class Metadaten {
 
     /**
      * Adds structural elements to the structural tree.
-     * 
+     *
      * @return ID of the page to navigate to
      */
     public String addNodesClick() {
@@ -1112,7 +1112,7 @@ public class Metadaten {
 
     /**
      * Adds nodes to the document structure tree.
-     * 
+     *
      * @param selection
      *            structural element currently selected
      * @param factory
@@ -3265,7 +3265,7 @@ public class Metadaten {
     /**
      * Returns whether the mode to add several structural elements is enabled.
      * If so, the dialog to add structural elements is rendered differently.
-     * 
+     *
      * @return whether the mode to add several structural elements is enabled
      */
     public boolean isAddServeralStructuralElementsMode() {
@@ -3274,7 +3274,7 @@ public class Metadaten {
 
     /**
      * Toggles the mode to add several structural elements on/off.
-     * 
+     *
      * @return the empty string, telling JSF to remain on that page
      */
     public String ToggleAddServeralStructuralElementsMode() {
@@ -3284,7 +3284,7 @@ public class Metadaten {
 
     /**
      * Returns the text to be shown in the ‘count’ text field.
-     * 
+     *
      * @return value for ‘count’
      */
     public String getElementsCount() {
@@ -3294,7 +3294,7 @@ public class Metadaten {
     /**
      * Sets the number of structural elements to create from the text input
      * received from the user.
-     * 
+     *
      * @param elementsCount
      *            text input for ‘count’
      */
@@ -3312,7 +3312,7 @@ public class Metadaten {
     /**
      * Returns the object that shall be selected in the drop-down box to select
      * a meta-data type to add.
-     * 
+     *
      * @return selected meta-data type to add
      */
     public Object getAddMetaDataType() {
@@ -3322,7 +3322,7 @@ public class Metadaten {
     /**
      * To set the object the user selected in the drop-down box to select a
      * meta-data type to add.
-     * 
+     *
      * @param addMetaDataType
      *            selected meta-data type to add
      */
@@ -3332,7 +3332,7 @@ public class Metadaten {
 
     /**
      * Returns the text to be shown in the text field to add as meta-datum.
-     * 
+     *
      * @return value for meta-datum
      */
     public String getAddMetaDataValue() {
@@ -3341,7 +3341,7 @@ public class Metadaten {
 
     /**
      * To set the text the user entered in the text field to add as meta-datum.
-     * 
+     *
      * @param addMetaDataValue
      *            value for meta-datum
      */
@@ -3352,9 +3352,9 @@ public class Metadaten {
     /**
      * Returns the elements available in the drop-down box to select a meta-data
      * type to add.
-     * 
+     *
      * @return selected meta-data type to add
-     * @throws TypeNotAllowedForParentException 
+     * @throws TypeNotAllowedForParentException
      */
     public ArrayList<SelectItem> getAddableMetaDataTypes() throws TypeNotAllowedForParentException {
         ArrayList<SelectItem> result = new ArrayList<>();

@@ -19,7 +19,7 @@ enum TreeInsertionMode {
 
     /**
      * Returns the mode by its integer identifier.
-     * 
+     *
      * @param i
      *            identifier
      * @return the corresponding tree insertion mode
