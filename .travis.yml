@@ -13,6 +13,12 @@ services:
 
 script: mvn clean install -Pall-tests,flyway
 
+before_install:
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
+  - sudo dpkg -i --force-confnew elasticsearch-5.1.1.deb
+  - sudo /etc/init.d/elasticsearch start
+  - until curl --silent -XGET --fail http://localhost:9200; do printf '.'; sleep 1; done
+
 before_script:
   - cp config/database.yml.travis config/database.yml
   - mysql -u root -e 'CREATE DATABASE kitodo;'
