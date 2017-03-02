@@ -25,34 +25,42 @@ public class OCRResult {
     /** The generated OCD Files */
 	private ArrayList<File> outputFiles;
 
+	/** Gets the processId. */
 	public Integer getProcessId() {
 		return processId;
 	}
 
+	/** Sets the processId. */
 	public void setProcessId(Integer processId) {
 		this.processId = processId;
 	}
 
+	/** Gets the success. */
 	public boolean isSuccess() {
 		return success;
 	}
 
+	/** Sets the success. */
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
 
+	/** Gets the messages. */
 	public String getMessage() {
 		return message;
 	}
 
+	/** Sets the messages. */
 	public void setMessage(String message) {
 		this.message = message;
 	}
 
+	/** Gets the outputFiles. */
 	public ArrayList<File> getOutputFiles() {
 		return outputFiles;
 	}
 
+	/** Sets the outputFiles. */
 	public void setOutputFiles(ArrayList<File> outputFiles) {
 		this.outputFiles = outputFiles;
 	}

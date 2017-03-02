@@ -16,28 +16,28 @@ import java.util.HashMap;
 
 public class ImportData {
 
-    /**
-     * The data imported from the source as a map.
-     */
+    /** The data imported from the source as a map. */
     private HashMap<String, String> data;
 
-    /**
-     * The imported data as a file.
-     */
+    /** The imported data as a file. */
     private File resultFile;
 
+    /** Gets the data. */
     public HashMap<String, String> getData() {
         return data;
     }
 
+    /** Sets the data. */
     public void setData(HashMap<String, String> data) {
         this.data = data;
     }
 
+    /** Gets the resultFile. */
     public File getResultFile() {
         return resultFile;
     }
 
+    /** Sets the resultFile. */
     public void setResultFile(File resultFile) {
         this.resultFile = resultFile;
     }

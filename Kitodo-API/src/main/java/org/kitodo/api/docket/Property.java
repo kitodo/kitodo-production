@@ -20,26 +20,32 @@ public class Property {
     /** The value of the property. */
     private String value;
 
+    /** Gets the id. */
     public Integer getId() {
         return id;
     }
 
+    /** Sets the id. */
     public void setId(Integer id) {
         this.id = id;
     }
 
+    /** Gets the title. */
     public String getTitle() {
         return title;
     }
 
+    /** Sets the title. */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /** Gets the value. */
     public String getValue() {
         return value;
     }
 
+    /** Sets the value. */
     public void setValue(String value) {
         this.value = value;
     }

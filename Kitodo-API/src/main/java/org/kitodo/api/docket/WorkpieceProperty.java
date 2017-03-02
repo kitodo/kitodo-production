@@ -16,10 +16,12 @@ public class WorkpieceProperty extends Property {
     /** The workpieceId. */
     private Integer workpieceId;
 
+    /** Gets the workpieceId. */
     public Integer getWorkpieceId() {
         return workpieceId;
     }
 
+    /** Sets the workpieceId. */
     public void setWorkpieceId(Integer workpieceId) {
         this.workpieceId = workpieceId;
     }

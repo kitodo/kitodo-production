@@ -34,74 +34,92 @@ public class DocketData {
     /** The process properties. */
     private ArrayList<ProcessProperty> processProperties;
 
+    /** Gets the processName. */
     public String getProcessName() {
         return processName;
     }
 
+    /** Sets the processName. */
     public void setProcessName(String processName) {
         this.processName = processName;
     }
 
+    /** Gets the processId. */
     public String getProcessId() {
         return processId;
     }
 
+    /** Sets the processId. */
     public void setProcessId(String processId) {
         this.processId = processId;
     }
 
+    /** Gets the projectName. */
     public String getProjectName() {
         return projectName;
     }
 
+    /** Sets the projectName. */
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
 
+    /** Gets the rulesetName. */
     public String getRulesetName() {
         return rulesetName;
     }
 
+    /** Sets the rulesetName. */
     public void setRulesetName(String rulesetName) {
         this.rulesetName = rulesetName;
     }
 
+    /** Gets the creationDate. */
     public String getCreationDate() {
         return creationDate;
     }
 
+    /** Sets the creationDate. */
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
+    /** Gets the comment. */
     public String getComment() {
         return comment;
     }
 
+    /** Sets the comment. */
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    /** Gets the templateProperties. */
     public ArrayList<TemplateProperty> getTemplateProperties() {
         return templateProperties;
     }
 
+    /** Sets the templateProperties. */
     public void setTemplateProperties(ArrayList<TemplateProperty> templateProperties) {
         this.templateProperties = templateProperties;
     }
 
+    /** Gets the workpieceProperties. */
     public ArrayList<WorkpieceProperty> getWorkpieceProperties() {
         return workpieceProperties;
     }
 
+    /** Sets the workpieceProperties. */
     public void setWorkpieceProperties(ArrayList<WorkpieceProperty> workpieceProperties) {
         this.workpieceProperties = workpieceProperties;
     }
 
+    /** Gets the processProperties. */
     public ArrayList<ProcessProperty> getProcessProperties() {
         return processProperties;
     }
 
+    /** Sets the processProperties. */
     public void setProcessProperties(ArrayList<ProcessProperty> processProperties) {
         this.processProperties = processProperties;
     }

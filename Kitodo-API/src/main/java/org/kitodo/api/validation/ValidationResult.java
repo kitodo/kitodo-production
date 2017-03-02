@@ -15,14 +15,29 @@ import java.util.ArrayList;
 
 public class ValidationResult {
 
-    /**
-     * If the validation is valid.
-     */
+    /** If the validation is valid. */
     private boolean valid;
 
-    /**
-     * A list of result messages.
-     */
+    /** A list of result messages. */
     private ArrayList<String> resultMessages;
 
+    /** Gets valid. */
+    public boolean isValid() {
+        return valid;
+    }
+
+    /** Sets valid. */
+    public void setValid(boolean valid) {
+        this.valid = valid;
+    }
+
+    /** Gets the resultMessages. */
+    public ArrayList<String> getResultMessages() {
+        return resultMessages;
+    }
+
+    /** Sets the resultMessages. */
+    public void setResultMessages(ArrayList<String> resultMessages) {
+        this.resultMessages = resultMessages;
+    }
 }

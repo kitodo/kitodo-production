@@ -15,26 +15,30 @@ import java.util.EventObject;
 
 public class ExternalDataEvent extends EventObject {
 
-    /**
-     * The source, where the change has taken place.
-     */
+    /** The source, where the change has taken place. */
     private Source source;
 
-    /**
-     * The identifier of the entry, which has changed.
-     */
+    /** The identifier of the entry, which has changed. */
     private String identifier;
 
+    /**
+     * Constructor
+     * @param eventInitiator The event initiator.
+     * @param source The source.
+     * @param identifier The identifier.
+     */
     public ExternalDataEvent(Object eventInitiator, Source source, String identifier){
         super(eventInitiator);
         this.source=source;
         this.identifier=identifier;
     }
 
+    /** Gets the source. */
     public Source getSource(){
         return source;
     }
 
+    /** Gets the identifier. */
     public String getIdentifier(){
         return identifier;
     }
