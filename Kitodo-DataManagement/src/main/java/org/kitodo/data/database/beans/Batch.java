@@ -11,22 +11,12 @@
 
 package org.kitodo.data.database.beans;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * The class Batch represents a user-definable, unordered collection of processes that methods can be applied on
@@ -36,7 +26,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "batch")
-public class Batch {
+public class Batch implements Serializable {
+
+    private static final long serialVersionUID = -5187947220333984868L;
+
     /**
      * Type of batch:
      *
@@ -81,7 +74,7 @@ public class Batch {
     /**
      * The field processes holds the processes that belong to the batch.
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "batch_x_process",
             joinColumns = {
                     @JoinColumn(
