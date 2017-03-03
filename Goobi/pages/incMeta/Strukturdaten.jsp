@@ -42,6 +42,7 @@
                         <f:selectItem itemValue="2" itemLabel="#{msgs.hinterDasAktuelleElement}" />
                         <f:selectItem itemValue="3" itemLabel="#{msgs.alsErstesKindDesAktuellenElements}" />
                         <f:selectItem itemValue="4" itemLabel="#{msgs.alsLetztesKindDesAktuellenElements}" />
+                        <a4j:support event="onchange" reRender="addServeralGroup" />
                     </x:selectOneRadio>
 
                     <x:inputText id="secretElement" forceId="true" value="#{Metadaten.neuesElementWohin}" style="display:none;" />
@@ -50,15 +51,17 @@
                         <x:selectOneMenu id="auswahlAddable1" forceId="true" style="width:315px;margin-left:8px;margin-bottom:4px"
                             value="#{Metadaten.addDocStructType1}">
                             <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}" />
+                            <a4j:support event="onchange" reRender="addServeralGroup" />
                         </x:selectOneMenu>
                         <x:selectOneMenu id="auswahlAddable2" forceId="true" style="width:315px;margin-left:8px;margin-bottom:4px"
                             value="#{Metadaten.addDocStructType2}">
                             <f:selectItems value="#{Metadaten.addableDocStructTypenAlsKind}" />
+                            <a4j:support event="onchange" reRender="addServeralGroup" />
                         </x:selectOneMenu>
                     </h:panelGroup>
                 </h:panelGrid>
 
-                <h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column">
+                <h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column" rendered="#{not Metadaten.addServeralStructuralElementsMode}">
                     <h:outputText value="#{msgs.ersteSeite}: " />
                     <h:panelGroup id="pageStartGroup">
                         <x:inputText id="pagestart1" forceId="true" value="#{Metadaten.pagesStart}" />
@@ -90,11 +93,45 @@
                         <x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
                     </a4j:commandLink>
                 </h:panelGrid>
+                <h:panelGrid columns="2" width="100%" id="addServeralGroup" rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                    <h:outputText value="#{msgs.count}: " />
+                    <h:inputText value="#{Metadaten.elementsCount}" id="elementsCount"/>
+                    <x:selectOneMenu value="#{Metadaten.addMetaDataType}">
+                        <f:selectItems value="#{Metadaten.addableMetaDataTypes}" />
+                    </x:selectOneMenu>
+                    <h:inputText value="#{Metadaten.addMetaDataValue}"/>
+                </h:panelGrid>
             </htm:td>
         </htm:tr>
         <htm:tr>
-            <htm:td styleClass="eingabeBoxen_row3" align="right">
-                <h:commandLink action="#{Metadaten.KnotenAdd}" value="#{msgs.strukturelementHinzufuegen}" target="links" />
+            <htm:td styleClass="eingabeBoxen_row3">
+                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementHinzufuegen}"
+                    target="links" style="float:right;" rendered="#{not Metadaten.addServeralStructuralElementsMode}" />
+                <htm:script rendered="#{Metadaten.addServeralStructuralElementsMode}">
+                    <h:outputText value="    function checkAddServeralStructuralElements(){
+        var inputBox = document.getElementById('formular2:elementsCount'); 
+        var count = inputBox.value;
+        if (count != '' && !isNaN(count)) {
+            var value = parseInt(count);
+            if(value > 28) {
+                return confirm('#{msgs.reallyAddManyDocStructs}'.replace('{0}', count));
+            } else if(value > 0) {
+                return true;
+            }
+        }
+        alert('#{msgs.nan}: ' + count);
+        inputBox.select();
+        inputBox.focus();
+        return false;
+    }" />
+                </htm:script>
+                <h:commandLink action="#{Metadaten.addNodesClick}" value="#{msgs.strukturelementeHinzufuegen}"
+                    target="links" style="float:right;" rendered="#{Metadaten.addServeralStructuralElementsMode}"
+                    onclick="if(!checkAddServeralStructuralElements())return false" />
+                <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.several}"
+                    rendered="#{not Metadaten.addServeralStructuralElementsMode}" onclick="" />
+                <h:commandLink action="#{Metadaten.ToggleAddServeralStructuralElementsMode}" value="#{msgs.once}"
+                    rendered="#{Metadaten.addServeralStructuralElementsMode}" />
             </htm:td>
         </htm:tr>
     </htm:table>

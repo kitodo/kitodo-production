@@ -39,6 +39,7 @@ import org.kitodo.production.lugh.ld.*;
 import org.kitodo.production.lugh.pagination.*;
 
 import com.hp.hpl.jena.shared.JenaException;
+import com.sharkysoft.util.UnreachableCodeException;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -51,14 +52,7 @@ import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
 import ugh.dl.Reference;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.IncompletePersonObjectException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
-import ugh.exceptions.PreferencesException;
-import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
+import ugh.exceptions.*;
 import de.sub.goobi.beans.Prozess;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FileUtils;
@@ -169,6 +163,10 @@ public class Metadaten {
     private boolean addMetadataGroupMode = false;
 
     private RenderableMetadataGroup newMetadataGroup;
+    private boolean addServeralStructuralElementsMode = false;
+    private int elementsCount = 1;
+    private String addMetaDataType;
+    private String addMetaDataValue;
 
     /**
      * Konstruktor ================================================================
@@ -454,11 +452,15 @@ public class Metadaten {
      * die noch erlaubten Metadaten zurückgeben ================================================================
      */
     public ArrayList<SelectItem> getAddableMetadataTypes() {
+        return getAddableMetadataTypes(myDocStruct, tempMetadatumList);
+    }
+
+    private ArrayList<SelectItem> getAddableMetadataTypes(DocStruct myDocStruct, ArrayList<MetadatumImpl> tempMetadatumList) {
         ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
         /*
          * -------------------------------- zuerst mal alle addierbaren Metadatentypen ermitteln --------------------------------
          */
-        List<MetadataType> types = this.myDocStruct.getAddableMetadataTypes();
+        List<MetadataType> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
             return myList;
         }
@@ -487,7 +489,9 @@ public class Metadaten {
                 Metadata md = new Metadata(mdt);
                 MetadatumImpl mdum = new MetadatumImpl(md, counter, this.myPrefs, this.myProzess);
                 counter++;
-                this.tempMetadatumList.add(mdum);
+                if (tempMetadatumList != null) {
+                    tempMetadatumList.add(mdum);
+                }
 
             } catch (MetadataTypeNotAllowedException e) {
                 logger.error("Fehler beim sortieren der Metadaten: " + e.getMessage());
@@ -1067,141 +1071,123 @@ public class Metadaten {
     }
 
     /**
-     * Knoten hinzufügen
+     * Adds structural elements to the structural tree.
      *
-     * @throws TypeNotAllowedForParentException
-     * @throws IOException
-     * @throws TypeNotAllowedForParentException
-     * @throws TypeNotAllowedAsChildException
-     * @throws TypeNotAllowedAsChildException ============================================================ == ==
+     * @return ID of the page to navigate to
      */
-    public String KnotenAdd() throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-
-        /*
-         * -------------------------------- prüfen, wohin das Strukturelement gepackt werden soll, anschliessend entscheiden, welches Strukturelement
-         * gewählt wird und abschliessend richtig einfügen --------------------------------
-         */
-
-        DocStruct ds = null;
-        /*
-         * -------------------------------- vor das aktuelle Element --------------------------------
-         */
-        if (this.neuesElementWohin.equals("1")) {
-            if (this.addDocStructType1 == null || this.addDocStructType1.equals("")) {
-                return "Metadaten3links";
+    public String addNodesClick() {
+        TreeInsertionMode mode = TreeInsertionMode.fromIntString(neuesElementWohin);
+        DocStructType type;
+        switch (mode) {
+        case BEFORE_ELEMENT:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType1);
+            break;
+        case AFTER_ELEMENT:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType1);
+            break;
+        case AS_FIRST_CHILD:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType2);
+            break;
+        case AS_LAST_CHILD:
+            type = myPrefs.getDocStrctTypeByName(addDocStructType2);
+            break;
+        default:
+            throw new UnreachableCodeException("complete switch");
+        }
+        int quantity = addServeralStructuralElementsMode ? elementsCount : 1;
+        if (type != null) {
+            DocStruct ds = addNodes(myDocStruct, mydocument, type, mode, quantity, addMetaDataType, addMetaDataValue);
+            if (!addServeralStructuralElementsMode && ds != null) {
+                DocStruct temp = this.myDocStruct;
+                this.myDocStruct = ds;
+                this.ajaxSeiteStart = this.pagesStart;
+                this.ajaxSeiteEnde = this.pagesEnd;
+                AjaxSeitenStartUndEndeSetzen();
+                this.myDocStruct = temp;
             }
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
-            ds = this.mydocument.createDocStruct(dst);
-            if (this.myDocStruct == null) {
-                return "Metadaten3links";
-            }
-            DocStruct parent = this.myDocStruct.getParent();
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
-            }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
+        }
+        MetadatenalsTree3Einlesen1();
+        return SperrungAktualisieren() ? "Metadaten3links" : "SperrungAbgelaufen";
+    }
 
-            /* alle Elemente des Parents durchlaufen */
-            for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct tempDS = iter.next();
-
-                /* wenn das aktuelle Element das gesuchte ist */
-                if (tempDS == this.myDocStruct) {
-                    alleDS.add(ds);
+    /**
+     * Adds nodes to the document structure tree.
+     *
+     * @param selection
+     *            structural element currently selected
+     * @param factory
+     *            digital document able to create structural elements
+     * @param type
+     *            type of structural element to create
+     * @param mode
+     *            insert location relative to the selection
+     * @param quantity
+     *            number of elements to create
+     * @param field
+     *            meta-data field to be added to the child
+     * @param value
+     *            value to be written in the meta-data field
+     * @return the first created element
+     */
+    private static DocStruct addNodes(DocStruct selection, DigitalDocument factory, DocStructType type,
+            TreeInsertionMode mode, int quantity, String field, String value) {
+        try {
+            Paginator enumeratingLabel = !field.isEmpty() && !value.isEmpty() ? new Paginator(value) : null;
+            ArrayList<DocStruct> createdElements = new ArrayList<>(quantity);
+            for (int i = 0; i < quantity; i++) {
+                DocStruct createdElement = factory.createDocStruct(type);
+                if (enumeratingLabel != null) {
+                    createdElement.addMetadata(field, enumeratingLabel.next());
                 }
-                alleDS.add(tempDS);
+                createdElements.add(createdElement);
             }
+            if (mode.equals(TreeInsertionMode.AS_LAST_CHILD)) {
+                for (DocStruct element : createdElements) {
+                    selection.addChild(element);
+                }
+            } else {
+                DocStruct edited = mode.equals(TreeInsertionMode.AS_FIRST_CHILD) ? selection
+                        : selection.getParent();
+                if (edited == null) {
+                    logger.debug("The selected element cannot investigate the father.");
+                    return null;
+                }
 
-            /* anschliessend alle Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
-            }
+                // Build a new list of children for the edited element
+                List<DocStruct> newChildren = new ArrayList<>(edited.getAllChildren().size() + 1);
+                if (mode.equals(TreeInsertionMode.AS_FIRST_CHILD)) {
+                    for (DocStruct createdElement : createdElements) {
+                        selection.addChild(createdElement);
+                    }
+                }
+                for (DocStruct child : edited.getAllChildren()) {
+                    if (child == selection && mode.equals(TreeInsertionMode.BEFORE_ELEMENT)) {
+                        for (DocStruct element : createdElements) {
+                            selection.addChild(element);
+                        }
+                    }
+                    newChildren.add(child);
+                    if (child == selection && mode.equals(TreeInsertionMode.AFTER_ELEMENT)) {
+                        for (DocStruct element : createdElements) {
+                            selection.addChild(element);
+                        }
+                    }
+                }
 
-            /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
-            }
-        }
+                // Remove the existing children
+                for (DocStruct child : newChildren) {
+                    edited.removeChild(child);
+                }
 
-        /*
-         * -------------------------------- hinter das aktuelle Element --------------------------------
-         */
-        if (this.neuesElementWohin.equals("2")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType1);
-            ds = this.mydocument.createDocStruct(dst);
-            DocStruct parent = this.myDocStruct.getParent();
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
-            }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
-
-            /* alle Elemente des Parents durchlaufen */
-            for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
-                DocStruct tempDS = iter.next();
-                alleDS.add(tempDS);
-                /* wenn das aktuelle Element das gesuchte ist */
-                if (tempDS == this.myDocStruct) {
-                    alleDS.add(ds);
+                // Set the new children on the edited element
+                for (DocStruct child : newChildren) {
+                    edited.addChild(child);
                 }
             }
-
-            /* anschliessend alle Childs entfernen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.removeChild(iter.next());
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
-            }
+            return createdElements.iterator().next();
+        } catch (UGHException iek) {
+            throw new RuntimeException(iek.getMessage(), iek);
         }
-
-        /*
-         * -------------------------------- als erstes Child --------------------------------
-         */
-        if (this.neuesElementWohin.equals("3")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
-            ds = this.mydocument.createDocStruct(dst);
-            DocStruct parent = this.myDocStruct;
-            if (parent == null) {
-                logger.debug("das gewählte Element kann den Vater nicht ermitteln");
-                return "Metadaten3links";
-            }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
-            alleDS.add(ds);
-
-            if (parent.getAllChildren() != null && parent.getAllChildren().size() != 0) {
-                alleDS.addAll(parent.getAllChildren());
-                parent.getAllChildren().retainAll(new ArrayList<DocStruct>());
-            }
-
-            /* anschliessend die neue Childliste anlegen */
-            for (Iterator<DocStruct> iter = alleDS.iterator(); iter.hasNext();) {
-                parent.addChild(iter.next());
-            }
-        }
-
-        /*
-         * -------------------------------- als letztes Child --------------------------------
-         */
-        if (this.neuesElementWohin.equals("4")) {
-            DocStructType dst = this.myPrefs.getDocStrctTypeByName(this.addDocStructType2);
-            ds = this.mydocument.createDocStruct(dst);
-            this.myDocStruct.addChild(ds);
-        }
-
-        if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-            DocStruct temp = this.myDocStruct;
-            this.myDocStruct = ds;
-            this.ajaxSeiteStart = this.pagesStart;
-            this.ajaxSeiteEnde = this.pagesEnd;
-            AjaxSeitenStartUndEndeSetzen();
-            this.myDocStruct = temp;
-        }
-
-        return MetadatenalsTree3Einlesen1();
     }
 
     /**
@@ -3274,5 +3260,125 @@ public class Metadaten {
      */
     public boolean isAdvancedPaginationEnabled() {
         return ConfigMain.getBooleanParameter("advancedPaginationEnabled", true);
+    }
+
+    /**
+     * Returns whether the mode to add several structural elements is enabled.
+     * If so, the dialog to add structural elements is rendered differently.
+     *
+     * @return whether the mode to add several structural elements is enabled
+     */
+    public boolean isAddServeralStructuralElementsMode() {
+        return addServeralStructuralElementsMode;
+    }
+
+    /**
+     * Toggles the mode to add several structural elements on/off.
+     *
+     * @return the empty string, telling JSF to remain on that page
+     */
+    public String ToggleAddServeralStructuralElementsMode() {
+        addServeralStructuralElementsMode = !addServeralStructuralElementsMode;
+        return "";
+    }
+
+    /**
+     * Returns the text to be shown in the ‘count’ text field.
+     *
+     * @return value for ‘count’
+     */
+    public String getElementsCount() {
+        return Integer.toString(elementsCount);
+    }
+
+    /**
+     * Sets the number of structural elements to create from the text input
+     * received from the user.
+     *
+     * @param elementsCount
+     *            text input for ‘count’
+     */
+    public void setElementsCount(String elementsCount) {
+        if (elementsCount.isEmpty()) {
+            this.elementsCount = 1;
+        } else try{
+            this.elementsCount = Math.abs(Integer.valueOf(elementsCount.trim()));
+        }catch(NumberFormatException e){
+            Helper.setFehlerMeldung("nan", e.getMessage());
+            this.elementsCount = 1;
+        }
+    }
+
+    /**
+     * Returns the object that shall be selected in the drop-down box to select
+     * a meta-data type to add.
+     *
+     * @return selected meta-data type to add
+     */
+    public Object getAddMetaDataType() {
+        return addMetaDataType;
+    }
+
+    /**
+     * To set the object the user selected in the drop-down box to select a
+     * meta-data type to add.
+     *
+     * @param addMetaDataType
+     *            selected meta-data type to add
+     */
+    public void setAddMetaDataType(Object addMetaDataType) {
+        this.addMetaDataType = (String) addMetaDataType;
+    }
+
+    /**
+     * Returns the text to be shown in the text field to add as meta-datum.
+     *
+     * @return value for meta-datum
+     */
+    public String getAddMetaDataValue() {
+        return addMetaDataValue;
+    }
+
+    /**
+     * To set the text the user entered in the text field to add as meta-datum.
+     *
+     * @param addMetaDataValue
+     *            value for meta-datum
+     */
+    public void setAddMetaDataValue(String addMetaDataValue) {
+        this.addMetaDataValue = addMetaDataValue;
+    }
+
+    /**
+     * Returns the elements available in the drop-down box to select a meta-data
+     * type to add.
+     *
+     * @return selected meta-data type to add
+     * @throws TypeNotAllowedForParentException
+     */
+    public ArrayList<SelectItem> getAddableMetaDataTypes() throws TypeNotAllowedForParentException {
+        ArrayList<SelectItem> result = new ArrayList<>();
+
+        // an element to disable adding meta-data
+        result.add(new SelectItem((Object) "", Helper.getTranslation("keineNutzung")));
+
+        /* If neuesElementWohin is string "1" or "2", the available meta-data
+         * elements depend on the selection in the drop-down element to add a
+         * structural instance as neighbour (addDocStructType1), if it is "3" or
+         * "4", they depend on the selection in the drop-down element to add a
+         * structural instance as child (addDocStructType2). */
+
+        int code = neuesElementWohin.codePointAt(0);
+        String docStructType = (code & 1) != (code & 2) >>> 1 ? addDocStructType1 : addDocStructType2;
+
+        /* To obtain the list of addable meta-data types, a new structure level
+         * of the determined type, without any meta-data, is assumed. */
+
+        DocStructType type = myPrefs.getDocStrctTypeByName(docStructType);
+        if (type != null) {
+            DocStruct empty = mydocument.createDocStruct(type);
+            result.addAll(getAddableMetadataTypes(empty, null));
+        }
+        return result;
     }
 }
