@@ -574,7 +574,6 @@ public class ModsPlugin implements Plugin {
                 for (Object rulesetObject : structureNode.getAttributes("rulesetType")) {
                     ConfigurationNode rulesetNode = (ConfigurationNode) rulesetObject;
                     structureTypeName = (String) rulesetNode.getValue();
-                    break;
                 }
 
                 if (!structureTypeMandatoryElements.containsKey(structureTypeName)) {
@@ -639,17 +638,11 @@ public class ModsPlugin implements Plugin {
             for (Object rulesetTypeObject : docTypeNode.getAttributes("rulesetType")) {
                 ConfigurationNode rulesetTypeNode = (ConfigurationNode) rulesetTypeObject;
                 rulesetTypeString = (String) rulesetTypeNode.getValue();
-                if (rulesetTypeString != "") {
-                    break;
-                }
             }
 
             for (Object titleObject : docTypeNode.getAttributes(CONF_TITLE)) {
                 ConfigurationNode titleNode = (ConfigurationNode) titleObject;
                 titleString = (String) titleNode.getValue();
-                if (titleString != "") {
-                    break;
-                }
             }
 
             if (!Objects.equals(titleString, "") && !Objects.equals(titleString, null)
