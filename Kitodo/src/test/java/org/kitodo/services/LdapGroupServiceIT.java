@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for LdapGroupService class.
  */
-public class LdapGroupServiceTestIT {
+public class LdapGroupServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

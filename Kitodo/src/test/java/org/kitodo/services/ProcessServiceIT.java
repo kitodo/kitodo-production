@@ -36,7 +36,7 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 /**
  * Tests for ProcessService class.
  */
-public class ProcessServiceTestIT {
+public class ProcessServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for UserPropertyService class.
  */
-public class UserPropertyServiceTestIT {
+public class UserPropertyServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

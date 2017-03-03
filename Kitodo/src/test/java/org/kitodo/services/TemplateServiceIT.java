@@ -11,26 +11,25 @@
 
 package org.kitodo.services;
 
-import java.util.List;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
- * Tests for DocketService class.
+ * Tests for TemplateService class.
  */
-public class DocketServiceTestIT {
+public class TemplateServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
-        MockDatabase.insertDockets();
+        MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
@@ -39,19 +38,19 @@ public class DocketServiceTestIT {
     }
 
     @Test
-    public void shouldFindDocket() throws Exception {
-        DocketService docketService = new DocketService();
+    public void shouldFindTemplate() throws Exception {
+        TemplateService templateService = new TemplateService();
 
-        Docket docket = docketService.find(1);
-        boolean condition = docket.getName().equals("default") && docket.getFile().equals("docket.xsl");
-        assertTrue("Docket was not found in database!", condition);
+        Template template = templateService.find(1);
+        assertTrue("Template was not found in database!", template.getOrigin().equals("test"));
     }
 
     @Test
-    public void shouldFindAllDockets() throws Exception {
-        DocketService docketService = new DocketService();
+    public void shouldGetPropertiesSize() throws Exception {
+        TemplateService templateService = new TemplateService();
 
-        List<Docket> dockets = docketService.findAll();
-        assertEquals("Not all dockets were found in database!", 2, dockets.size());
+        Template template = templateService.find(1);
+        int actual = templateService.getPropertiesSize(template);
+        assertEquals("Template's properties size is not equal to given value!", 2, actual);
     }
 }

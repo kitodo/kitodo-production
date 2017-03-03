@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for BatchService class.
  */
-public class BatchServiceTestIT {
+public class BatchServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for TaskService class.
  */
-public class HistoryServiceTestIT {
+public class HistoryServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

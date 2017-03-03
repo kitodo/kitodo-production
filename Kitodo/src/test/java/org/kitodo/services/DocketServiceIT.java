@@ -11,25 +11,26 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
- * Tests for TemplateService class.
+ * Tests for DocketService class.
  */
-public class TemplateServiceTestIT {
+public class DocketServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
-        MockDatabase.insertProcessesFull();
+        MockDatabase.insertDockets();
     }
 
     @AfterClass
@@ -38,19 +39,19 @@ public class TemplateServiceTestIT {
     }
 
     @Test
-    public void shouldFindTemplate() throws Exception {
-        TemplateService templateService = new TemplateService();
+    public void shouldFindDocket() throws Exception {
+        DocketService docketService = new DocketService();
 
-        Template template = templateService.find(1);
-        assertTrue("Template was not found in database!", template.getOrigin().equals("test"));
+        Docket docket = docketService.find(1);
+        boolean condition = docket.getName().equals("default") && docket.getFile().equals("docket.xsl");
+        assertTrue("Docket was not found in database!", condition);
     }
 
     @Test
-    public void shouldGetPropertiesSize() throws Exception {
-        TemplateService templateService = new TemplateService();
+    public void shouldFindAllDockets() throws Exception {
+        DocketService docketService = new DocketService();
 
-        Template template = templateService.find(1);
-        int actual = templateService.getPropertiesSize(template);
-        assertEquals("Template's properties size is not equal to given value!", 2, actual);
+        List<Docket> dockets = docketService.findAll();
+        assertEquals("Not all dockets were found in database!", 2, dockets.size());
     }
 }

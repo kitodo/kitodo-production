@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for RulesetService class.
  */
-public class RulesetServiceTestIT {
+public class RulesetServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for ProcessPropertyService class.
  */
-public class ProcessPropertyServiceTestIT {
+public class ProcessPropertyServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

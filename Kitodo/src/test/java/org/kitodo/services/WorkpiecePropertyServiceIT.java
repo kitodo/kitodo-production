@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for WorkpiecePropertyService class.
  */
-public class WorkpiecePropertyServiceTestIT {
+public class WorkpiecePropertyServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

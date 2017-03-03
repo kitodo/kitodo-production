@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for TaskService class.
  */
-public class ProjectFileGroupServiceTestIT {
+public class ProjectFileGroupServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

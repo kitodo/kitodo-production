@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for ProjectService class.
  */
-public class ProjectServiceTestIT {
+public class ProjectServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {

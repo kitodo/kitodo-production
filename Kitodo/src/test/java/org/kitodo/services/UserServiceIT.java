@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for UserService class.
  */
-public class UserServiceTestIT {
+public class UserServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
