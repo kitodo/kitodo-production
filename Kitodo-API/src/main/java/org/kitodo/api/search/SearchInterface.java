@@ -11,6 +11,23 @@
 
 package org.kitodo.api.search;
 
+import java.util.ArrayList;
+
 public interface SearchInterface<T>  {
 
+    /**
+     * Searches with a given query.
+     *
+     * @param query The query to execute.
+     * @return A list of ids of the found objects.
+     */
+    ArrayList<Integer> search(String query);
+
+    /**
+     * Searches with given search conditions.
+     *
+     * @param searchConditions The search conditions for the search.
+     * @return A list of ids of the found objects.
+     */
+    ArrayList<Integer> search(ArrayList<SearchCondition<?, ?>> searchConditions);
 }

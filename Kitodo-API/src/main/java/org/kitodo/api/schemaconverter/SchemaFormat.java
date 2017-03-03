@@ -9,10 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.validation.ruleset;
+package org.kitodo.api.schemaconverter;
 
-import org.kitodo.api.validation.ValidationInterface;
+/**
+ * Determines the Schema Formats supported by the module. Needs to be implemented by an emun.
+ */
+public interface SchemaFormat {
 
-public interface RulesetValidationInterface extends ValidationInterface {
+    /** returns the enum values, is overwritten by enums default 'values()' method */
+    SchemaFormat[] values();
 
 }

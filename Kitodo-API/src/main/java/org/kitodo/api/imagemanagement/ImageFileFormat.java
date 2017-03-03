@@ -9,9 +9,16 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.dataeditor.structuraldata;
+package org.kitodo.api.imagemanagement;
 
-import org.kitodo.api.dataeditor.DataEditorInterface;
+public enum ImageFileFormat {
 
-public interface StructuralDataEditorInterface extends DataEditorInterface {
+    JPEG,
+    JPEG2000,
+    GIF,
+    PNG,
+    BMP,
+    PDF,
+    TIFF;
+
 }
