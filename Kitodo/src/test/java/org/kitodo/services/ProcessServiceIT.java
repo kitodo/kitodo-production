@@ -57,7 +57,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
-        assertEquals("Not all processes were found in database!", 2, processes.size());
+        assertEquals("Not all processes were found in database!", 3, processes.size());
     }
 
     @Test
