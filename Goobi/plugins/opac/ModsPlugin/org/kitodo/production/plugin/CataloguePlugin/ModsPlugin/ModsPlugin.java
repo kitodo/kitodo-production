@@ -809,7 +809,7 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
-     * Clones the given document 'doc' and removes all children from the cloned documen
+     * Clones the given document 'doc' and removes all children from the cloned document
      * except the child at position 'index'. Returns the cloned document with one remaining
      * child.
      *
@@ -832,9 +832,11 @@ public class ModsPlugin implements Plugin {
                     remainingChild = currentRecord;
                 }
             }
+            if (Objects.equals(remainingChild, null)) {
+                return clone;
+            }
             return remainingChild.getDocument();
         } catch (JDOMException e) {
-            e.printStackTrace();
             logger.error("Unable to remove children from given document.");
             return null;
         }
