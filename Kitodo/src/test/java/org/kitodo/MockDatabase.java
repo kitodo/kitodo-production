@@ -34,22 +34,26 @@ import static org.kitodo.data.database.beans.Batch.Type.*;
 public class MockDatabase {
 
     public static void insertProcessesFull() throws DAOException {
-        insertBatches();
-        insertDockets();
-        insertRulesets();
-        insertLdapGroups();
-        insertUsers();
-        insertUserGroups();
-        insertProjects();
-        insertProjectFileGroups();
-        insertProcesses();
-        insertProcessProperties();
-        insertWorkpieces();
-        insertWorkpieceProperties();
-        insertTemplates();
-        insertTemplateProperties();
-        insertTasks();
-        insertHistory();
+        BatchService batchService = new BatchService();
+        if(batchService.find(1) == null) {
+            System.out.println(batchService.find(1));
+            insertBatches();
+            insertDockets();
+            insertRulesets();
+            insertLdapGroups();
+            insertUsers();
+            insertUserGroups();
+            insertProjects();
+            insertProjectFileGroups();
+            insertProcesses();
+            insertProcessProperties();
+            insertWorkpieces();
+            insertWorkpieceProperties();
+            insertTemplates();
+            insertTemplateProperties();
+            insertTasks();
+            insertHistory();
+        }
     }
 
     private static void insertBatches() throws DAOException {
@@ -625,6 +629,7 @@ public class MockDatabase {
         workpieceService.save(workpiece);
     }
 
+    //TODO: find out why this method doesn't clean database after every test's class
     public static void cleanDatabase() {
         Session session = Helper.getHibernateSession();
         session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
