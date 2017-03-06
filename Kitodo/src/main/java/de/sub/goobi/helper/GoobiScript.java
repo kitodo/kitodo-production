@@ -77,7 +77,7 @@ public class GoobiScript {
     /**
      * Starten des Scripts.
      */
-    public void execute(List<Process> inProzesse, String inScript) {
+    public void execute(List<Process> inProzesse, String inScript) throws IOException {
         this.myParameters = new HashMap<String, String>();
         /*
          * alle Suchparameter zerlegen und erfassen
@@ -638,7 +638,7 @@ public class GoobiScript {
     /**
      * Flag von Schritten setzen.
      */
-    private void setTaskProperty(List<Process> inProzesse) {
+    private void setTaskProperty(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -710,11 +710,6 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
-                        } catch (IOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
-                                    + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
-                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Error while saving process: ", proz.getTitle());
                         break;
@@ -728,7 +723,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Status setzen.
      */
-    private void setStepStatus(List<Process> inProzesse) {
+    private void setStepStatus(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -763,11 +758,6 @@ public class GoobiScript {
 								+ proz.getTitle(), e);
                         logger.error("goobiScriptfield" + "Error while saving process: "
 								+ proz.getTitle(), e);
-                    } catch (IOException e) {
-                        Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
-                                + proz.getTitle(), e);
-                        logger.error("goobiScriptfield" + "Error while inserting to index  process: "
-                                + proz.getTitle(), e);
                     }
                     Helper.setMeldung("goobiScriptfield", "stepstatus set in process: ", proz.getTitle());
                     break;
@@ -780,7 +770,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Reihenfolge setzen.
      */
-    private void setStepNumber(List<Process> inProzesse) {
+    private void setStepNumber(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -814,11 +804,6 @@ public class GoobiScript {
 								+ proz.getTitle(), e);
                         logger.error("goobiScriptfield" + "Error while saving process: "
 								+ proz.getTitle(), e);
-                    } catch (IOException e) {
-                        Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
-                                + proz.getTitle(), e);
-                        logger.error("goobiScriptfield" + "Error while inserting to index process: "
-                                + proz.getTitle(), e);
                     }
                     Helper.setMeldung("goobiScriptfield", "step order changed in process: ", proz.getTitle());
                     break;
@@ -831,7 +816,7 @@ public class GoobiScript {
     /**
      * Benutzer zu Schritt hinzufügen.
      */
-    private void adduser(List<Process> inProzesse) {
+    private void adduser(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -880,9 +865,6 @@ public class GoobiScript {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving - " + proz.getTitle(), e);
                             return;
-                        } catch (IOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting - " + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while inserting - " + proz.getTitle(), e);
                         }
                     }
                 }
@@ -895,7 +877,7 @@ public class GoobiScript {
     /**
      * Benutzergruppe zu Schritt hinzufügen.
      */
-    private void addusergroup(List<Process> inProzesse) {
+    private void addusergroup(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -941,10 +923,6 @@ public class GoobiScript {
                             taskService.save(s);
                         } catch (DAOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitle(), e);
-                            return;
-                        } catch (IOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting - "
-                                    + proz.getTitle(), e);
                             return;
                         }
                     }

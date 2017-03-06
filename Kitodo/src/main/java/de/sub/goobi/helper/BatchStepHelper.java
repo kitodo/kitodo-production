@@ -152,7 +152,7 @@ public class BatchStepHelper {
 		}
 	}
 
-	public void saveCurrentProperty() {
+	public void saveCurrentProperty() throws  IOException {
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
@@ -184,13 +184,11 @@ public class BatchStepHelper {
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("Properties could not be saved");
-            } catch (IOException e) {
-                logger.error(e);
             }
 		}
 	}
 
-	public void saveCurrentPropertyForAll() {
+	public void saveCurrentPropertyForAll() throws IOException {
 		boolean error = false;
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
@@ -257,8 +255,6 @@ public class BatchStepHelper {
 					logger.error(e);
 					Helper.setFehlerMeldung("Properties for process " + process.getTitle()
 							+ " could not be saved");
-                } catch (IOException e) {
-                    logger.error(e);
                 }
 			}
 		}
@@ -356,7 +352,7 @@ public class BatchStepHelper {
 		return answer;
 	}
 
-	public String duplicateContainerForSingle() {
+	public String duplicateContainerForSingle() throws IOException {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
 		// search for all properties in container
@@ -390,7 +386,7 @@ public class BatchStepHelper {
 		return "";
 	}
 
-	private void saveStep() {
+	private void saveStep() throws IOException {
 		Process p = this.currentStep.getProcess();
 		List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
 		for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
@@ -400,12 +396,12 @@ public class BatchStepHelper {
 		}
 		try {
 			this.processService.save(this.currentStep.getProcess());
-		} catch (DAOException | IOException e) {
+		} catch (DAOException e) {
 			logger.error(e);
 		}
 	}
 
-	public String duplicateContainerForAll() {
+	public String duplicateContainerForAll() throws IOException {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
 		// search for all properties in container
@@ -707,7 +703,7 @@ public class BatchStepHelper {
 		this.addToWikiField = addToWikiField;
 	}
 
-	public void addToWikiField() {
+	public void addToWikiField() throws IOException {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + userService.getFullName(user) + ")";
@@ -717,13 +713,13 @@ public class BatchStepHelper {
 			this.addToWikiField = "";
 			try {
 				this.processService.save(this.currentStep.getProcess());
-			} catch (DAOException | IOException e) {
+			} catch (DAOException e) {
 				logger.error(e);
 			}
 		}
 	}
 
-	public void addToWikiFieldForAll() {
+	public void addToWikiFieldForAll() throws IOException {
 		if (addToWikiField != null && addToWikiField.length() > 0) {
 			User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
 			String message = this.addToWikiField + " (" + userService.getFullName(user) + ")";
@@ -732,7 +728,7 @@ public class BatchStepHelper {
 						"user", message));
 				try {
 					this.processService.save(s.getProcess());
-				} catch (DAOException | IOException e) {
+				} catch (DAOException e) {
 					logger.error(e);
 				}
 			}
@@ -778,7 +774,7 @@ public class BatchStepHelper {
 		}
 	}
 
-	public String BatchDurchBenutzerZurueckgeben() {
+	public String BatchDurchBenutzerZurueckgeben() throws IOException {
 
 		for (Task s : this.steps) {
 
@@ -796,7 +792,7 @@ public class BatchStepHelper {
 
 			try {
 				this.processService.save(s.getProcess());
-			} catch (DAOException | IOException e) {
+			} catch (DAOException e) {
                 logger.error(e);
 			}
 		}

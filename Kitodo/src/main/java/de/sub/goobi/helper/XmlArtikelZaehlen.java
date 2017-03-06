@@ -39,7 +39,7 @@ public class XmlArtikelZaehlen {
 	 *
 	 * @param myProcess process object
 	 */
-	public int getNumberOfUghElements(Process myProcess, CountType inType) {
+	public int getNumberOfUghElements(Process myProcess, CountType inType) throws IOException {
 		int rueckgabe = 0;
 
 		/*
@@ -74,7 +74,7 @@ public class XmlArtikelZaehlen {
 		myProcess.setSortHelperArticles(Integer.valueOf(rueckgabe));
 		try {
 			processService.save(myProcess);
-		} catch (DAOException | IOException e) {
+		} catch (DAOException e) {
 			logger.error(e);
 		}
 		return rueckgabe;

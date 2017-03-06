@@ -15,14 +15,18 @@ import com.thoughtworks.xstream.XStream;
 
 import de.sub.goobi.config.ConfigMain;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
@@ -58,7 +62,6 @@ import org.kitodo.services.UserGroupService;
  * @author Robert Sehr
  * 
  */
-
 public class ProductionDataImport {
 	
 	// TODO Namen mit Rolfs Liste abgleichen
@@ -75,13 +78,13 @@ public class ProductionDataImport {
 	private UserGroupService userGroupService = new UserGroupService();
 	private Session session;
 
-	private ProductionDataImport() {
+	private ProductionDataImport() throws IOException {
 		session = HibernateUtilOld.getSessionFactory().openSession();
 		altdaten = generateProject();
 		try {
 			projectService.save(altdaten);
 			projectList = projectService.search("from Project");
-		} catch (DAOException | IOException e) {
+		} catch (DAOException e) {
 			System.exit(1);
 		}
 	}
@@ -95,7 +98,7 @@ public class ProductionDataImport {
 	 */
 
 	public static void main(String[] args) throws HibernateException, SQLException, ConfigurationException, DAOException,
-			FileNotFoundException {
+			FileNotFoundException, IOException {
 		new ProductionDataImport().importData();
 
 	}
