@@ -1337,8 +1337,13 @@ public class ProzessverwaltungForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public void GoobiScriptHits() {
 		GoobiScript gs = new GoobiScript();
-		gs.execute(this.page.getCompleteList(), this.goobiScript);
+        try {
+            gs.execute(this.page.getCompleteList(), this.goobiScript);
+        } catch (IOException e) {
+            logger.error("ElastichSearch", e);
+        }
 	}
+
 
 	/**
 	 * Starte GoobiScript über alle Treffer der Seite
@@ -1346,7 +1351,11 @@ public class ProzessverwaltungForm extends BasisForm {
 	@SuppressWarnings("unchecked")
 	public void GoobiScriptPage() {
 		GoobiScript gs = new GoobiScript();
-		gs.execute(this.page.getListReload(), this.goobiScript);
+		try {
+            gs.execute(this.page.getListReload(), this.goobiScript);
+        } catch (IOException e) {
+            logger.error("ElastichSearch", e);
+        }
 	}
 
 	/**
@@ -1361,7 +1370,11 @@ public class ProzessverwaltungForm extends BasisForm {
 			}
 		}
 		GoobiScript gs = new GoobiScript();
-		gs.execute(auswahl, this.goobiScript);
+		try {
+            gs.execute(auswahl, this.goobiScript);
+        } catch (IOException e) {
+            logger.error("ElastichSearch", e);
+        }
 	}
 
 	/*
