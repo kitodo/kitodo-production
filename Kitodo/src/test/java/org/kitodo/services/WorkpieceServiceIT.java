@@ -11,14 +11,10 @@
 
 package org.kitodo.services;
 
-<<<<<<< HEAD:Kitodo/src/test/java/org/kitodo/services/WorkpieceServiceTestIT.java
 import java.io.IOException;
 
-=======
 import org.junit.AfterClass;
->>>>>>> 9d9b7712568883bb5b9632280fd8cca102e58442:Kitodo/src/test/java/org/kitodo/services/WorkpieceServiceIT.java
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
