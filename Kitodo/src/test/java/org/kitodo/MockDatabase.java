@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.sub.goobi.helper.Helper;
+import org.hibernate.Session;
 import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
@@ -32,7 +34,30 @@ import static org.kitodo.data.database.beans.Batch.Type.*;
  */
 public class MockDatabase {
 
-    public static void insertBatches() throws DAOException, IOException {
+    public static void insertProcessesFull() throws DAOException, IOException {
+        BatchService batchService = new BatchService();
+        if(batchService.find(1) == null) {
+            System.out.println(batchService.find(1));
+            insertBatches();
+            insertDockets();
+            insertRulesets();
+            insertLdapGroups();
+            insertUsers();
+            insertUserGroups();
+            insertProjects();
+            insertProjectFileGroups();
+            insertProcesses();
+            insertProcessProperties();
+            insertWorkpieces();
+            insertWorkpieceProperties();
+            insertTemplates();
+            insertTemplateProperties();
+            insertTasks();
+            insertHistory();
+        }
+    }
+
+    private static void insertBatches() throws DAOException, IOException {
         BatchService batchService = new BatchService();
 
         Batch firstBatch = new Batch();
@@ -69,18 +94,21 @@ public class MockDatabase {
         docketService.save(secondDocket);
     }
 
-    public static void insertHistory() throws DAOException, IOException {
+    private static void insertHistory() throws DAOException, IOException {
         HistoryService historyService = new HistoryService();
         ProcessService processService = new ProcessService();
 
         History firstHistory = new History();
+        Process firstProcess = processService.find(1);
         firstHistory.setNumericValue(2.0);
         firstHistory.setStringValue("History");
         firstHistory.setHistoryType(HistoryType.color);
         LocalDate localDate = new LocalDate(2017,1,14);
         firstHistory.setDate(localDate.toDate());
-        firstHistory.setProcess(processService.find(1));
+        firstHistory.setProcess(firstProcess);
         historyService.save(firstHistory);
+        firstProcess.getHistory().add(firstHistory);
+        processService.save(firstProcess);
     }
 
     public static void insertLdapGroups() throws DAOException {
@@ -94,7 +122,7 @@ public class MockDatabase {
         ldapGroupService.save(firstLdapGroup);
     }
 
-    public static void insertProcesses() throws DAOException, IOException {
+    private static void insertProcesses() throws DAOException, IOException {
         BatchService batchService = new BatchService();
         DocketService docketService = new DocketService();
         ProcessService processService = new ProcessService();
@@ -134,13 +162,25 @@ public class MockDatabase {
         secondProcess.setProject(projectService.find(1));
         secondProcess.setRuleset(rulesetService.find(1));
         processService.save(secondProcess);
+
+        Process thirdProcess = new Process();
+        thirdProcess.setTitle("Second process");
+        thirdProcess.setOutputName("Unreachable");
+        thirdProcess.setWikiField("problem");
+        localDate = new LocalDate(2017,2,10);
+        thirdProcess.setCreationDate(localDate.toDate());
+        thirdProcess.setDocket(docketService.find(1));
+        thirdProcess.setProject(projectService.find(1));
+        thirdProcess.setRuleset(rulesetService.find(1));
+        processService.save(thirdProcess);
     }
 
-    public static void insertProcessProperties() throws DAOException {
+    private static void insertProcessProperties() throws DAOException, IOException {
         ProcessService processService = new ProcessService();
         ProcessPropertyService processPropertyService = new ProcessPropertyService();
 
         ProcessProperty firstProcessProperty = new ProcessProperty();
+        Process process = processService.find(1);
         firstProcessProperty.setTitle("First Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
@@ -149,7 +189,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017,1,14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.setContainer(1);
-        firstProcessProperty.setProcess(processService.find(1));
+        firstProcessProperty.setProcess(process);
         processPropertyService.save(firstProcessProperty);
 
         ProcessProperty secondProcessProperty = new ProcessProperty();
@@ -161,23 +201,20 @@ public class MockDatabase {
         localDate = new LocalDate(2017,1,15);
         secondProcessProperty.setCreationDate(localDate.toDate());
         secondProcessProperty.setContainer(2);
-        secondProcessProperty.setProcess(processService.find(1));
+        secondProcessProperty.setProcess(process);
         processPropertyService.save(secondProcessProperty);
+
+        process.getProperties().add(firstProcessProperty);
+        process.getProperties().add(secondProcessProperty);
+        processService.save(process);
     }
 
-    public static void insertProcessesFull() throws DAOException, IOException {
-        MockDatabase.insertBatches();
-        MockDatabase.insertDockets();
-        MockDatabase.insertRulesets();
-        MockDatabase.insertLdapGroups();
-        MockDatabase.insertUsers();
-        MockDatabase.insertUserGroups();
-        MockDatabase.insertProjects();
-        MockDatabase.insertProcesses();
-    }
-
-    public static void insertProjects() throws DAOException, IOException {
+    private static void insertProjects() throws DAOException, IOException {
         ProjectService projectService = new ProjectService();
+        UserService userService = new UserService();
+
+        User firstUser = userService.find(1);
+        User secondUser = userService.find(2);
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
@@ -188,6 +225,8 @@ public class MockDatabase {
         firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
+        firstProject.getUsers().add(firstUser);
+        firstProject.getUsers().add(secondUser);
         projectService.save(firstProject);
 
         Project secondProject = new Project();
@@ -199,7 +238,14 @@ public class MockDatabase {
         secondProject.setEndDate(localDate.toDate());
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
+        secondProject.getUsers().add(firstUser);
         projectService.save(secondProject);
+
+        firstUser.getProjects().add(firstProject);
+        firstUser.getProjects().add(secondProject);
+        secondUser.getProjects().add(firstProject);
+        userService.save(firstUser);
+        userService.save(secondUser);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Archived project");
@@ -213,9 +259,11 @@ public class MockDatabase {
         projectService.save(thirdProject);
     }
 
-    public static void insertProjectFileGroups() throws DAOException {
+    private static void insertProjectFileGroups() throws DAOException, IOException {
         ProjectService projectService = new ProjectService();
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
+
+        Project project = projectService.find(1);
 
         ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
         firstProjectFileGroup.setName("MAX");
@@ -223,7 +271,7 @@ public class MockDatabase {
         firstProjectFileGroup.setMimeType("image/jpeg");
         firstProjectFileGroup.setSuffix("jpg");
         firstProjectFileGroup.setPreviewImage(false);
-        firstProjectFileGroup.setProject(projectService.find(1));
+        firstProjectFileGroup.setProject(project);
         projectFileGroupService.save(firstProjectFileGroup);
 
         ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
@@ -232,7 +280,7 @@ public class MockDatabase {
         secondProjectFileGroup.setMimeType("image/jpeg");
         secondProjectFileGroup.setSuffix("jpg");
         secondProjectFileGroup.setPreviewImage(false);
-        secondProjectFileGroup.setProject(projectService.find(1));
+        secondProjectFileGroup.setProject(project);
         projectFileGroupService.save(secondProjectFileGroup);
 
         ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
@@ -241,7 +289,7 @@ public class MockDatabase {
         thirdProjectFileGroup.setMimeType("image/jpeg");
         thirdProjectFileGroup.setSuffix("jpg");
         thirdProjectFileGroup.setPreviewImage(false);
-        thirdProjectFileGroup.setProject(projectService.find(1));
+        thirdProjectFileGroup.setProject(project);
         projectFileGroupService.save(thirdProjectFileGroup);
 
         ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
@@ -250,7 +298,7 @@ public class MockDatabase {
         fourthProjectFileGroup.setMimeType("text/xml");
         fourthProjectFileGroup.setSuffix("xml");
         fourthProjectFileGroup.setPreviewImage(false);
-        fourthProjectFileGroup.setProject(projectService.find(1));
+        fourthProjectFileGroup.setProject(project);
         projectFileGroupService.save(fourthProjectFileGroup);
 
         ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
@@ -259,8 +307,16 @@ public class MockDatabase {
         fifthProjectFileGroup.setMimeType("application/pdf");
         fifthProjectFileGroup.setSuffix("pdf");
         fifthProjectFileGroup.setPreviewImage(false);
-        fifthProjectFileGroup.setProject(projectService.find(1));
+        fifthProjectFileGroup.setProject(project);
         projectFileGroupService.save(fifthProjectFileGroup);
+
+        project.getProjectFileGroups().add(fifthProjectFileGroup);
+        project.getProjectFileGroups().add(fifthProjectFileGroup);
+        project.getProjectFileGroups().add(fifthProjectFileGroup);
+        project.getProjectFileGroups().add(fifthProjectFileGroup);
+        project.getProjectFileGroups().add(fifthProjectFileGroup);
+
+        projectService.save(project);
     }
 
     public static void insertRulesets() throws DAOException, IOException {
@@ -279,13 +335,15 @@ public class MockDatabase {
         rulesetService.save(secondRuleset);
     }
 
-    public static void insertTasks() throws DAOException, IOException {
+    private static void insertTasks() throws DAOException, IOException {
         ProcessService processService = new ProcessService();
         TaskService taskService = new TaskService();
         UserService userService = new UserService();
         UserGroupService userGroupService = new UserGroupService();
 
         Task firstTask = new Task();
+        Process firstProcess = processService.find(1);
+        UserGroup userGroup = userGroupService.find(1);
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
@@ -294,14 +352,20 @@ public class MockDatabase {
         firstTask.setProcessingBegin(localDate.toDate());
         localDate = new LocalDate(2016,12,24);
         firstTask.setProcessingEnd(localDate.toDate());
-        firstTask.setProcessingUser(userService.find(1));
+        User firstUser = userService.find(1);
+        firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        firstTask.setProcess(processService.find(1));
+        firstTask.setProcess(firstProcess);
         firstTask.setUsers(userService.findAll());
-        List<UserGroup> userGroups = new ArrayList<>();
-        userGroups.add(userGroupService.find(1));
-        firstTask.setUserGroups(userGroups);
-        taskService.save(firstTask);
+        firstTask.getUserGroups().add(userGroup);
+        firstProcess.getTasks().add(firstTask);
+        processService.save(firstProcess);
+        firstUser.getProcessingTasks().add(firstTask);
+        userService.save(firstUser);
+
+        Process secondProcess = processService.find(2);
+        User blockedUser = userService.find(3);
+        User secondUser = userService.find(2);
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
@@ -310,17 +374,18 @@ public class MockDatabase {
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016,9,25);
         secondTask.setProcessingBegin(localDate.toDate());
-        secondTask.setProcessingUser(userService.find(3));
+        secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        secondTask.setProcess(processService.find(2));
-        secondTask.setUsers(userService.findAll());
+        secondTask.setProcess(secondProcess);
+        secondTask.getUsers().add(blockedUser);
+        secondTask.getUsers().add(secondUser);
+        secondTask.getUserGroups().add(userGroup);
         secondTask.setScriptName1("scriptName");
         secondTask.setTypeAutomaticScriptPath("../type/automatic/script/path");
         secondTask.setScriptName2("secondScriptName");
         secondTask.setTypeAutomaticScriptPath2("../type/automatic/script/path2");
         secondTask.setScriptName3("thirdScriptName");
         secondTask.setTypeAutomaticScriptPath3("../type/automatic/script/path3");
-        taskService.save(secondTask);
 
         Task thirdTask = new Task();
         thirdTask.setTitle("Testing and Blocking");
@@ -329,41 +394,76 @@ public class MockDatabase {
         localDate = new LocalDate(2017,1,25);
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        thirdTask.setProcess(processService.find(2));
-        thirdTask.setUsers(userService.findAll());
-        taskService.save(thirdTask);
+        thirdTask.setProcess(secondProcess);
+        thirdTask.getUsers().add(secondUser);
 
         Task fourthTask = new Task();
         fourthTask.setTitle("Progress");
         fourthTask.setOrdering(4);
         fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fourthTask.setTypeImagesWrite(true);
         localDate = new LocalDate(2017,1,29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         fourthTask.setProcessingUser(userService.find(2));
-        fourthTask.setProcess(processService.find(2));
+        fourthTask.setProcess(secondProcess);
         fourthTask.setUsers(userService.findAll());
-        taskService.save(fourthTask);
+
+        secondProcess.getTasks().add(secondTask);
+        secondProcess.getTasks().add(thirdTask);
+        secondProcess.getTasks().add(fourthTask);
+        System.out.println("tasks2 " + secondProcess.getTasks().size());
+        processService.save(secondProcess);
+
+        blockedUser.getProcessingTasks().add(secondTask);
+        blockedUser.getTasks().add(secondTask);
+        secondUser.getTasks().add(secondTask);
+        secondUser.getTasks().add(thirdTask);
+        userService.save(blockedUser);
+        userService.save(secondUser);
+
+        userGroup.getTasks().add(firstTask);
+        userGroup.getTasks().add(secondTask);
+        userGroupService.save(userGroup);
     }
 
-    public static void insertTemplates() throws DAOException, IOException {
+    private static void insertTemplates() throws DAOException, IOException {
+        ProcessService processService = new ProcessService();
+        TemplateService templateService = new TemplateService();
 
+        Process process = processService.find(1);
+
+        Template firstTemplate = new Template();
+        firstTemplate.setProcess(process);
+        firstTemplate.setOrigin("test");
+        templateService.save(firstTemplate);
+
+        Template secondTemplate = new Template();
+        secondTemplate.setProcess(process);
+        secondTemplate.setOrigin("addition");
+        templateService.save(secondTemplate);
+
+        process.getTemplates().add(firstTemplate);
+        process.getTemplates().add(secondTemplate);
+        processService.save(process);
     }
 
-    public static void insertTemplateProperties() throws DAOException {
+    private static void insertTemplateProperties() throws DAOException, IOException {
         TemplateService templateService = new TemplateService();
         TemplatePropertyService templatePropertyService = new TemplatePropertyService();
 
+        Template template = templateService.find(1);
+
         TemplateProperty firstTemplateProperty = new TemplateProperty();
-        firstTemplateProperty.setTitle("title");
-        firstTemplateProperty.setValue("value");
+        firstTemplateProperty.setTitle("first title");
+        firstTemplateProperty.setValue("first value");
         firstTemplateProperty.setObligatory(true);
         firstTemplateProperty.setType(PropertyType.general);
         firstTemplateProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017,1,14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
         firstTemplateProperty.setContainer(1);
-        firstTemplateProperty.setTemplate(templateService.find(1));
+        firstTemplateProperty.setTemplate(template);
         templatePropertyService.save(firstTemplateProperty);
 
         TemplateProperty secondTemplateProperty = new TemplateProperty();
@@ -375,11 +475,15 @@ public class MockDatabase {
         localDate = new LocalDate(2017,1,15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
         secondTemplateProperty.setContainer(2);
-        secondTemplateProperty.setTemplate(templateService.find(1));
+        secondTemplateProperty.setTemplate(template);
         templatePropertyService.save(secondTemplateProperty);
+
+        template.getProperties().add(firstTemplateProperty);
+        template.getProperties().add(secondTemplateProperty);
+        templateService.save(template);
     }
 
-    public static void insertUsers() throws DAOException, IOException {
+    private static void insertUsers() throws DAOException, IOException {
         LdapGroupService ldapGroupService = new LdapGroupService();
         UserService userService = new UserService();
 
@@ -411,7 +515,7 @@ public class MockDatabase {
         userService.save(thirdUser);
     }
 
-    public static void insertUserGroups() throws DAOException, IOException {
+    private static void insertUserGroups() throws DAOException, IOException {
         UserService userService = new UserService();
         UserGroupService userGroupService = new UserGroupService();
 
@@ -437,9 +541,11 @@ public class MockDatabase {
         userGroupService.save(thirdUserGroup);
     }
 
-    public static void insertUserProperties() throws DAOException {
+    public static void insertUserProperties() throws DAOException, IOException {
         UserService userService = new UserService();
         UserPropertyService userPropertyService = new UserPropertyService();
+
+        User user = userService.find(1);
 
         UserProperty firstUserProperty = new UserProperty();
         firstUserProperty.setTitle("First Property");
@@ -450,7 +556,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017,1,14);
         firstUserProperty.setCreationDate(localDate.toDate());
         firstUserProperty.setContainer(1);
-        firstUserProperty.setUser(userService.find(1));
+        firstUserProperty.setUser(user);
         userPropertyService.save(firstUserProperty);
 
         UserProperty secondUserProperty = new UserProperty();
@@ -462,37 +568,49 @@ public class MockDatabase {
         localDate = new LocalDate(2017,1,15);
         secondUserProperty.setCreationDate(localDate.toDate());
         secondUserProperty.setContainer(2);
-        secondUserProperty.setUser(userService.find(1));
+        secondUserProperty.setUser(user);
         userPropertyService.save(secondUserProperty);
+
+        user.getProperties().add(firstUserProperty);
+        user.getProperties().add(secondUserProperty);
+        userService.save(user);
     }
 
-    public static void insertWorkpieces() throws DAOException, IOException {
+    private static void insertWorkpieces() throws DAOException, IOException {
         ProcessService processService = new ProcessService();
         WorkpieceService workpieceService = new WorkpieceService();
 
+        Process process = processService.find(1);
+
         Workpiece firstWorkpiece = new Workpiece();
-        firstWorkpiece.setProcess(processService.find(1));
+        firstWorkpiece.setProcess(process);
         workpieceService.save(firstWorkpiece);
 
         Workpiece secondWorkpiece = new Workpiece();
-        secondWorkpiece.setProcess(processService.find(1));
+        secondWorkpiece.setProcess(process);
         workpieceService.save(secondWorkpiece);
+
+        process.getWorkpieces().add(firstWorkpiece);
+        process.getWorkpieces().add(secondWorkpiece);
+        processService.save(process);
     }
 
-    public static void insertWorkpieceProperties() throws DAOException {
+    private static void insertWorkpieceProperties() throws DAOException, IOException {
         WorkpieceService workpieceService = new WorkpieceService();
         WorkpiecePropertyService workpiecePropertyService = new WorkpiecePropertyService();
 
+        Workpiece workpiece = workpieceService.find(1);
+
         WorkpieceProperty firstWorkpieceProperty = new WorkpieceProperty();
-        firstWorkpieceProperty.setTitle("title");
-        firstWorkpieceProperty.setValue("value");
+        firstWorkpieceProperty.setTitle("First Property");
+        firstWorkpieceProperty.setValue("first value");
         firstWorkpieceProperty.setObligatory(true);
         firstWorkpieceProperty.setType(PropertyType.general);
         firstWorkpieceProperty.setChoice("choice");
         LocalDate localDate = new LocalDate(2017,1,13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
         firstWorkpieceProperty.setContainer(1);
-        firstWorkpieceProperty.setWorkpiece(workpieceService.find(1));
+        firstWorkpieceProperty.setWorkpiece(workpiece);
         workpiecePropertyService.save(firstWorkpieceProperty);
 
         WorkpieceProperty secondWorkpieceProperty = new WorkpieceProperty();
@@ -504,7 +622,36 @@ public class MockDatabase {
         localDate = new LocalDate(2017,1,14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());
         secondWorkpieceProperty.setContainer(2);
-        secondWorkpieceProperty.setWorkpiece(workpieceService.find(1));
+        secondWorkpieceProperty.setWorkpiece(workpiece);
         workpiecePropertyService.save(secondWorkpieceProperty);
+
+        workpiece.getProperties().add(firstWorkpieceProperty);
+        workpiece.getProperties().add(secondWorkpieceProperty);
+        workpieceService.save(workpiece);
+    }
+
+    //TODO: find out why this method doesn't clean database after every test's class
+    public static void cleanDatabase() {
+        Session session = Helper.getHibernateSession();
+        session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        session.createQuery("DELETE FROM History WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM User WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Process WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Project WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Workpiece WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Batch WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM LdapGroup WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM User WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Docket WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM ProcessProperty WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM ProjectFileGroup WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Ruleset WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Task WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM Template WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM TemplateProperty WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM UserGroup WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM UserProperty WHERE id !=null").executeUpdate();
+        session.createQuery("DELETE FROM WorkpieceProperty WHERE id !=null").executeUpdate();
+        //session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
     }
 }

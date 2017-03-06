@@ -290,14 +290,20 @@ public class Process extends BaseBean implements Serializable {
     }
 
     public List<Task> getTasks() {
+        if (this.tasks == null) {
+            this.tasks = new ArrayList<>();
+        }
         return this.tasks;
     }
 
-    public void setTasks(List<Task> steps) {
-        this.tasks = steps;
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public List<History> getHistory() {
+        if (this.history == null) {
+            this.history = new ArrayList<>();
+        }
         return this.history;
     }
 

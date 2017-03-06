@@ -41,7 +41,7 @@ public class HistoryDAO extends BaseDAO {
     /**
      * The function findAll() retrieves all histories from the database.
      *
-     * @return all persisted dockets
+     * @return all persisted histories
      */
     @SuppressWarnings("unchecked")
     public List<History> findAll() {

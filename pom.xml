@@ -77,10 +77,31 @@
     <modules>
         <module>OpacPica-Plugin</module>
         <module>Kitodo-DataManagement</module>
+        <module>Kitodo-API</module>
         <module>Kitodo</module>
     </modules>
 
     <profiles>
+        <profile>
+            <id>all-tests</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.19.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>checkstyle</id>
             <build>

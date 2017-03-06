@@ -22,16 +22,16 @@ public class DBConnectionTestIT {
     public void test() throws Exception {
 
         Process test = new Process();
-        test.setTitle("TestTitle");
+        test.setTitle("First process");
         ProcessService processService = new ProcessService();
         processService.save(test);
 
         long counted = processService.count("from Process");
         Assert.assertNotNull("No Process found",counted);
-        Assert.assertEquals(1, counted);
+        Assert.assertEquals(4, counted);
 
         String title = processService.find(1).getTitle();
-        Assert.assertEquals("TestTitle", title);
+        Assert.assertEquals("First process", title);
 
     }
 }

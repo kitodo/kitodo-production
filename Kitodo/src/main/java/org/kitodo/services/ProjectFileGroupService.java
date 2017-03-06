@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectFileGroupDAO;
@@ -25,6 +27,10 @@ public class ProjectFileGroupService {
 
     public ProjectFileGroup find(Integer id) throws DAOException {
         return projectFileGroupDao.find(id);
+    }
+
+    public List<ProjectFileGroup> findAll() throws DAOException {
+        return projectFileGroupDao.findAll();
     }
 
     public void remove(ProjectFileGroup projectFileGroup) throws DAOException {
