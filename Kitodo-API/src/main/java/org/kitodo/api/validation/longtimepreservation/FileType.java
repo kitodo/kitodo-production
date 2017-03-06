@@ -9,11 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.validation.mets;
+package org.kitodo.api.validation.longtimepreservation;
 
-import org.kitodo.api.validation.ValidationInterface;
+/**
+ * Determines the File Types supported by the module. Must be implemented by an Enum.
+ */
+public interface FileType {
 
-public interface MetsValidationInterface extends ValidationInterface {
-
+    /** returns the enum values, is overwritten by enums default 'values()' method */
+    FileType[] values();
 
 }

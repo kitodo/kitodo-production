@@ -9,16 +9,12 @@
  * distributed with this source code.
  */
 
-package org.kitodo.api.ocr;
+package org.kitodo.api.externaldatamanagement;
 
-public interface OpticalCharacterRecognitionInterface {
+/** Determines the possible sources of external Data. Needs to be implemented by an Emun. */
+public interface Source {
 
-    /**
-     * Processes files with OCR.
-     *
-     * @param input the OCRInput, which contains necessary information.
-     * @return an OCRResult.
-     */
-    OCRResult process(OCRInput input);
+	/** returns the enum values, is overwritten by enums default 'values()' method */
+	Source[] values();
 
 }

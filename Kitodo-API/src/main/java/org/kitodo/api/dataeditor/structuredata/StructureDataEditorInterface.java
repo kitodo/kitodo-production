@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.imagecontent;
+package org.kitodo.api.dataeditor.structuredata;
 
-public interface ImageContentServerInterface {
+import org.kitodo.api.dataeditor.DataEditorInterface;
+
+public interface StructureDataEditorInterface extends DataEditorInterface {
 }
