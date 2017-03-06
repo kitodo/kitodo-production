@@ -36,7 +36,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseBean implements Serializable {
+public class Batch extends BaseBean {
     private static final long serialVersionUID = -5187947220333984868L;
 
     /**

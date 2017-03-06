@@ -31,7 +31,7 @@ import org.kitodo.data.database.helper.enums.HistoryType;
  */
 @Entity
 @Table(name = "history")
-public class History extends BaseBean implements Serializable {
+public class History extends BaseBean {
     private static final long serialVersionUID = 991946177515032238L;
 
     @Column(name = "date")

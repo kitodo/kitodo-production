@@ -26,7 +26,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "workpiece")
-public class Workpiece extends BaseBean implements Serializable {
+public class Workpiece extends BaseBean {
     private static final long serialVersionUID = 123266825187246791L;
 
     @ManyToOne

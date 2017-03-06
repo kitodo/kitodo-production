@@ -43,7 +43,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 // the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
-public class Process extends BaseBean implements Serializable {
+public class Process extends BaseBean {
 
     private static final long serialVersionUID = -6503348094655786275L;
 

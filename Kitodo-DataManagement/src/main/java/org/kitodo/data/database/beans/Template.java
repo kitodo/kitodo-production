@@ -28,7 +28,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "template")
-public class Template extends BaseBean implements Serializable {
+public class Template extends BaseBean {
     private static final long serialVersionUID = 1736135433162833277L;
 
     @Column(name = "origin")

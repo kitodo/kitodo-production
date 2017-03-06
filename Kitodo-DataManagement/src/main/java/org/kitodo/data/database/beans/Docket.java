@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "docket")
-public class Docket extends BaseBean implements Serializable {
+public class Docket extends BaseBean {
 
     private static final long serialVersionUID = -5187947220333984868L;
 

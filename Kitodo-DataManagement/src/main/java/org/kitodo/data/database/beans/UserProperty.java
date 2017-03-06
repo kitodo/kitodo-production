@@ -30,7 +30,7 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "userProperty")
-public class UserProperty implements Serializable, GoobiPropertyInterface {
+public class UserProperty implements GoobiPropertyInterface {
     private static final long serialVersionUID = -2356566712752716107L;
 
     @Id

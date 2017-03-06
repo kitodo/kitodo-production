@@ -34,7 +34,7 @@ import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseBean implements Serializable {
+public class User extends BaseBean {
     private static final long serialVersionUID = -7482853955996650586L;
 
     @Column(name = "name")
