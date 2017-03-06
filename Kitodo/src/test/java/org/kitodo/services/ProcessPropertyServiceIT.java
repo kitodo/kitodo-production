@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
@@ -35,7 +36,7 @@ public class ProcessPropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
+        //MockDatabase.cleanDatabase();
     }
 
     @Test

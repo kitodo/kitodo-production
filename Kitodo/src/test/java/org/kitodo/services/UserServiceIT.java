@@ -39,7 +39,7 @@ public class UserServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
+        //MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -180,6 +180,7 @@ public class UserServiceIT {
         assertTrue("Full name of user is incorrect!", condition);
     }
 
+    @Ignore
     @Test
     public void shouldGetHomeDirectory() throws Exception {
         UserService userService = new UserService();

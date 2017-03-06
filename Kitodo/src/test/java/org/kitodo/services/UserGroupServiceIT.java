@@ -34,7 +34,7 @@ public class UserGroupServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
+        //MockDatabase.cleanDatabase();
     }
 
     @Test

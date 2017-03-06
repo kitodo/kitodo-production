@@ -30,12 +30,12 @@ public class DocketServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException {
-        MockDatabase.insertDockets();
+        MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
     public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
+        //MockDatabase.cleanDatabase();
     }
 
     @Test

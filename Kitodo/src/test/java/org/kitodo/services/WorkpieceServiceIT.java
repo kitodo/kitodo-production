@@ -34,7 +34,7 @@ public class WorkpieceServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        MockDatabase.cleanDatabase();
+        //MockDatabase.cleanDatabase();
     }
 
     @Test
