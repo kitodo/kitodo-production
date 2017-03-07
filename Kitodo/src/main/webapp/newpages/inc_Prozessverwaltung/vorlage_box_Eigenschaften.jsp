@@ -33,21 +33,21 @@
 	width="100%" cellspacing="1px" cellpadding="1px"
 	headerClass="standardTable_Header" rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.myVorlage.eigenschaftenList}"
+	var="item" value="#{ProzessverwaltungForm.myVorlage.properties}"
 	rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlageeigenschaft'}">
 
 	<h:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.titel}" />
 		</f:facet>
-		<h:outputText value="#{item.titel}" />
+		<h:outputText value="#{item.title}" />
 	</h:column>
 
 	<h:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.wert}" />
 		</f:facet>
-		<h:outputText value="#{item.wert}" />
+		<h:outputText value="#{item.value}" />
 	</h:column>
 
 	<h:column>
@@ -108,7 +108,7 @@
 				<h:panelGroup>
 					<h:inputText id="eigenschafttitel"
 						style="width: 300px;margin-right:15px"
-						value="#{ProzessverwaltungForm.myVorlageEigenschaft.titel}"
+						value="#{ProzessverwaltungForm.myVorlageEigenschaft.title}"
 						required="true" />
 					<x:message for="eigenschafttitel" style="color: red"
 						detailFormat="#{msgs.keinTitelAngegeben}" />
@@ -118,7 +118,7 @@
 				<h:panelGroup>
 					<h:inputText id="eigenschaftwert"
 						style="width: 300px;margin-right:15px"
-						value="#{ProzessverwaltungForm.myVorlageEigenschaft.wert}" />
+						value="#{ProzessverwaltungForm.myVorlageEigenschaft.value}" />
 				</h:panelGroup>
 			</h:panelGrid>
 

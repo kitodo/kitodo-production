@@ -11,6 +11,9 @@
 
 package de.sub.goobi.importer;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.WrongImportFileException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +22,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -34,9 +41,6 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
@@ -49,9 +53,10 @@ public class ImportZentralblatt {
 	String Trennzeichen;
 	private final Helper help;
 	private Prefs myPrefs;
+	private RulesetService rulesetService = new RulesetService();
 
 	/**
-	 * Allgemeiner Konstruktor ()
+	 * Allgemeiner Konstruktor ().
 	 */
 	public ImportZentralblatt() {
 		this.help = new Helper();
@@ -65,10 +70,10 @@ public class ImportZentralblatt {
 	 * @throws MetadataTypeNotAllowedException
 	 * @throws WriteException
 	 */
-	protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+	protected void Parsen(BufferedReader reader, Process inProzess) throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
 			TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
 		myLogger.debug("ParsenZentralblatt() - Start");
-		this.myPrefs = inProzess.getRegelsatz().getPreferences();
+		this.myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
 		String prozessID = String.valueOf(inProzess.getId().intValue());
 		String line;
 		this.Trennzeichen = ":";
@@ -77,7 +82,7 @@ public class ImportZentralblatt {
 		LinkedList<DocStruct> listArtikel = new LinkedList<DocStruct>();
 
 		/*
-		 * -------------------------------- Vorbereitung der Dokumentenstruktur --------------------------------
+		 * Vorbereitung der Dokumentenstruktur
 		 */
 		DigitalDocument dd = new DigitalDocument();
 		DocStructType dst = this.myPrefs.getDocStrctTypeByName("Periodical");
@@ -87,13 +92,13 @@ public class ImportZentralblatt {
 		dsPeriodical.addChild(dsPeriodicalVolume);
 
 		/*
-		 * -------------------------------- alle Zeilen durchlaufen --------------------------------
+		 * alle Zeilen durchlaufen
 		 */
 		while ((line = reader.readLine()) != null) {
 			// myLogger.debug(line);
 
 			/*
-			 * -------------------------------- wenn die Zeile leer ist, ist es das Ende eines Absatzes --------------------------------
+			 * wenn die Zeile leer ist, ist es das Ende eines Absatzes
 			 */
 			if (line.length() == 0) {
 				istAbsatz = false;
@@ -160,13 +165,13 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- physischer Baum (Seiten) --------------------------------
+		 * physischer Baum (Seiten)
 		 */
 		dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
 		DocStruct dsBoundBook = dd.createDocStruct(dst);
 
 		/*
-		 * -------------------------------- jetzt die Gesamtstruktur bauen und in xml schreiben --------------------------------
+		 * jetzt die Gesamtstruktur bauen und in xml schreiben
 		 */
 		// DigitalDocument dd = new DigitalDocument();
 		dd.setLogicalDocStruct(dsPeriodical);
@@ -176,7 +181,7 @@ public class ImportZentralblatt {
 			gdzfile.setDigitalDocument(dd);
 
 			/*
-			 * -------------------------------- Datei am richtigen Ort speichern --------------------------------
+			 * Datei am richtigen Ort speichern
 			 */
 			gdzfile.write(this.help.getGoobiDataDirectory() + prozessID + File.separator + "meta.xml");
 		} catch (PreferencesException e) {
@@ -282,7 +287,7 @@ public class ImportZentralblatt {
 		// Y: Jahrgang
 
 		/*
-		 * -------------------------------- Zeitschriftenname --------------------------------
+		 * Zeitschriftenname
 		 */
 		if (myLeft.equals("J")) {
 			mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
@@ -305,7 +310,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Jahrgang --------------------------------
+		 * Jahrgang
 		 */
 		if (myLeft.equals("Y")) {
 			mdt = this.myPrefs.getMetadataTypeByName("PublicationYear");
@@ -332,7 +337,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Bandnummer --------------------------------
+		 * Bandnummer
 		 */
 		if (myLeft.equals("V")) {
 			mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
@@ -384,15 +389,14 @@ public class ImportZentralblatt {
 		//		
 
 		/*
-		 * -------------------------------- erledigt
+		 * erledigt
 		 * 
-		 * TI: Titel AU: Autor LA: Sprache NH: Namensvariationen CC: MSC 2000 KW: Keywords AN: Zbl und/oder JFM Nummer P: Seiten
-		 * 
-		 * --------------------------------
+		 * TI: Titel AU: Autor LA: Sprache NH: Namensvariationen CC: MSC 2000 KW: Keywords AN: Zbl und/oder
+		 * JFM Nummer P: Seiten
 		 */
 
 		/*
-		 * -------------------------------- Titel --------------------------------
+		 * Titel
 		 */
 		if (myLeft.equals("TI")) {
 			if (istErsterTitel) {
@@ -407,7 +411,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Sprache --------------------------------
+		 * Sprache
 		 */
 		if (myLeft.equals("LA")) {
 			mdt = this.myPrefs.getMetadataTypeByName("DocLanguage");
@@ -418,7 +422,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLIdentifier --------------------------------
+		 * ZBLIdentifier
 		 */
 		if (myLeft.equals("AN")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLIdentifier");
@@ -429,7 +433,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLPageNumber --------------------------------
+		 * ZBLPageNumber
 		 */
 		if (myLeft.equals("P")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLPageNumber");
@@ -440,7 +444,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLSource --------------------------------
+		 * ZBLSource
 		 */
 		if (myLeft.equals("SO")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLSource");
@@ -451,7 +455,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLAbstract --------------------------------
+		 * ZBLAbstract
 		 */
 		if (myLeft.equals("AB")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLAbstract");
@@ -462,7 +466,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLReviewAuthor --------------------------------
+		 * ZBLReviewAuthor
 		 */
 		if (myLeft.equals("RV")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewAuthor");
@@ -473,7 +477,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLCita --------------------------------
+		 * ZBLCita
 		 */
 		if (myLeft.equals("CI")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLCita");
@@ -484,7 +488,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLTempID --------------------------------
+		 * ZBLTempID
 		 */
 		if (myLeft.equals("DE")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLTempID");
@@ -495,7 +499,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLReviewLink --------------------------------
+		 * ZBLReviewLink
 		 */
 		if (myLeft.equals("SI")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLReviewLink");
@@ -506,7 +510,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- ZBLIntern --------------------------------
+		 * ZBLIntern
 		 */
 		if (myLeft.equals("XX")) {
 			mdt = this.myPrefs.getMetadataTypeByName("ZBLIntern");
@@ -517,7 +521,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Keywords --------------------------------
+		 * Keywords
 		 */
 		if (myLeft.equals("KW")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
@@ -531,7 +535,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- Autoren als Personen --------------------------------
+		 * Autoren als Personen
 		 */
 		if (myLeft.equals("AU")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
@@ -552,7 +556,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- AutorVariationen als Personen --------------------------------
+		 * AutorVariationen als Personen
 		 */
 		if (myLeft.equals("NH")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight, ";");
@@ -573,7 +577,7 @@ public class ImportZentralblatt {
 		}
 
 		/*
-		 * -------------------------------- MSC 2000 - ClassificationMSC --------------------------------
+		 * MSC 2000 - ClassificationMSC
 		 */
 		if (myLeft.equals("CC")) {
 			StringTokenizer tokenizer = new StringTokenizer(myRight);

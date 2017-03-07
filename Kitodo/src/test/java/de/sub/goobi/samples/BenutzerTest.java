@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.sub.goobi.beans.Benutzer;
+import org.kitodo.data.database.beans.User;
 
 @Ignore("Crashing") 
 public class BenutzerTest {
@@ -25,18 +25,18 @@ public class BenutzerTest {
 
    @Test 
    public void testLogin1() {
-      Benutzer b = new Benutzer();
+      User b = new User();
       b.setLogin("ein Name");
-      System.out.println(b.getPasswortCrypt());
+      System.out.println(b.getPasswordDecrypted());
    }
 
    @Test
    @Ignore ("hallo") 
    public void testLogin2() {
-      Benutzer b = new Benutzer();
+      User b = new User();
       b.setLogin("ein Name");
 //      b.setMitMassendownload(true);
-      assertTrue("wert falsch" ,b.isMitMassendownload());
+      assertTrue("wert falsch" ,b.isWithMassDownload());
       assertEquals("ein Name", b.getLogin());
    }
 }

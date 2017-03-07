@@ -11,6 +11,13 @@
 
 package de.sub.goobi.forms;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.results.ChartDraw.ChartType;
+
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -51,24 +58,19 @@ import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.results.ChartDraw.ChartType;
-import de.sub.goobi.beans.ProjectFileGroup;
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProjektDAO;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProjectService;
 
 public class ProjekteForm extends BasisForm {
 	private static final long serialVersionUID = 6735912903249358786L;
 	private static final Logger myLogger = Logger.getLogger(ProjekteForm.class);
 
-	private Projekt myProjekt = new Projekt();
+	private Project myProjekt = new Project();
 	private ProjectFileGroup myFilegroup;
-	private final ProjektDAO dao = new ProjektDAO();
+	private final ProjectService projectService = new ProjectService();
 
 	// lists accepting the preliminary actions of adding and delting filegroups
 	// it needs the execution of commit fileGroups to make these changes permanent
@@ -97,16 +99,15 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * this method deletes filegroups by their id's in the list
+	 * this method deletes filegroups by their id's in the list.
 	 *
-	 * @param List
-	 *            <Integer> fileGroups
+	 * @param fileGroups List
 	 */
 	private void deleteFileGroups(List<Integer> fileGroups) {
 		for (Integer id : fileGroups) {
-			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
+			for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
 				if (f.getId() == null ? id == null : f.getId().equals(id)) {
-					this.myProjekt.getFilegroups().remove(f);
+					this.myProjekt.getProjectFileGroups().remove(f);
 					break;
 				}
 			}
@@ -114,7 +115,8 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting, making the removal permanent
+	 * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting,
+	 * making the removal permanent.
 	 */
 	private void commitFileGroups() {
 		// resetting the List of new fileGroups
@@ -142,7 +144,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	public String Neu() {
-		this.myProjekt = new Projekt();
+		this.myProjekt = new Project();
 		return "ProjekteBearbeiten";
 	}
 
@@ -150,7 +152,7 @@ public class ProjekteForm extends BasisForm {
 		// call this to make saving and deleting permanent
 		this.commitFileGroups();
 		try {
-			this.dao.save(this.myProjekt);
+			projectService.save(this.myProjekt);
 			return "ProjekteAlle";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
@@ -164,7 +166,7 @@ public class ProjekteForm extends BasisForm {
 		myLogger.trace("Apply wird aufgerufen...");
 		this.commitFileGroups();
 		try {
-			this.dao.save(this.myProjekt);
+			projectService.save(this.myProjekt);
 			return "";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
@@ -174,12 +176,12 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	public String Loeschen() {
-		if (this.myProjekt.getBenutzer().size() > 0) {
+		if (this.myProjekt.getUsers().size() > 0) {
 			Helper.setFehlerMeldung("userAssignedError");
 			return "";
 		} else {
 		try {
-			this.dao.remove(this.myProjekt);
+			projectService.remove(this.myProjekt);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("could not delete", e.getMessage());
 			myLogger.error(e.getMessage());
@@ -193,8 +195,8 @@ public class ProjekteForm extends BasisForm {
 		try {
 			Session session = Helper.getHibernateSession();
 			session.clear();
-			Criteria crit = session.createCriteria(Projekt.class);
-			crit.addOrder(Order.asc("titel"));
+			Criteria crit = session.createCriteria(Project.class);
+			crit.addOrder(Order.asc("title"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("could not read", he.getMessage());
@@ -217,11 +219,11 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	public String filegroupSave() {
-		if (this.myProjekt.getFilegroups() == null) {
-			this.myProjekt.setFilegroups(new HashSet<ProjectFileGroup>());
+		if (this.myProjekt.getProjectFileGroups() == null) {
+			this.myProjekt.setProjectFileGroups(new ArrayList<ProjectFileGroup>());
 		}
-		if (!this.myProjekt.getFilegroups().contains(this.myFilegroup)) {
-			this.myProjekt.getFilegroups().add(this.myFilegroup);
+		if (!this.myProjekt.getProjectFileGroups().contains(this.myFilegroup)) {
+			this.myProjekt.getProjectFileGroups().add(this.myFilegroup);
 		}
 
 		return "jeniaClosePopupFrameWithAction";
@@ -242,27 +244,27 @@ public class ProjekteForm extends BasisForm {
 	 * Getter und Setter
 	 */
 
-	public Projekt getMyProjekt() {
+	public Project getMyProjekt() {
 		return this.myProjekt;
 	}
 
-	public void setMyProjekt(Projekt inProjekt) {
+	public void setMyProjekt(Project inProjekt) {
 		// has to be called if a page back move was done
 		this.Cancel();
 		this.myProjekt = inProjekt;
 	}
 
 	/**
-	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups marked for delete are not shown
-	 * anymore
+	 * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups
+	 * marked for delete are not shown anymore.
 	 *
 	 * @return modified ArrayList
 	 */
 	public ArrayList<ProjectFileGroup> getFileGroupList() {
-		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<ProjectFileGroup>(this.myProjekt.getFilegroupsList());
+		ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<>(this.myProjekt.getProjectFileGroups());
 
 		for (Integer id : this.deletedFileGroups) {
-			for (ProjectFileGroup f : this.myProjekt.getFilegroupsList()) {
+			for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
 				if (f.getId() == null ? id == null : f.getId().equals(id)) {
 					filteredFileGroupList.remove(f);
 					break;
@@ -331,7 +333,7 @@ public class ProjekteForm extends BasisForm {
 
 	@SuppressWarnings("rawtypes")
 	public void GenerateValuesForStatistics() {
-		Criteria crit = Helper.getHibernateSession().createCriteria(Prozess.class).add(Restrictions.eq("projekt", this.myProjekt));
+		Criteria crit = Helper.getHibernateSession().createCriteria(Process.class).add(Restrictions.eq("projekt", this.myProjekt));
 		ProjectionList pl = Projections.projectionList();
 		pl.add(Projections.sum("sortHelperImages"));
 		pl.add(Projections.count("sortHelperImages"));
@@ -349,7 +351,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate pages per volume depending on given values, requested multiple times via ajax
+	 * calculate pages per volume depending on given values, requested multiple times via ajax.
 	 *
 	 * @return Integer of calculation
 	 */
@@ -364,7 +366,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * get calculated duration from start and end date
+	 * get calculated duration from start and end date.
 	 *
 	 * @return String of duration
 	 */
@@ -375,7 +377,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of volumes per year
+	 * calculate throughput of volumes per year.
 	 *
 	 * @return calculation
 	 */
@@ -391,7 +393,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of pages per year
+	 * calculate throughput of pages per year.
 	 *
 	 * @return calculation
 	 */
@@ -406,7 +408,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of volumes per quarter
+	 * calculate throughput of volumes per quarter.
 	 *
 	 * @return calculation
 	 */
@@ -420,7 +422,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of pages per quarter
+	 * calculate throughput of pages per quarter.
 	 *
 	 * @return calculation
 	 */
@@ -433,7 +435,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of volumes per month
+	 * calculate throughput of volumes per month.
 	 *
 	 * @return calculation
 	 */
@@ -446,7 +448,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of pages per month
+	 * calculate throughput of pages per month.
 	 *
 	 * @return calculation
 	 */
@@ -473,7 +475,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of volumes per day
+	 * calculate throughput of volumes per day.
 	 *
 	 * @return calculation
 	 */
@@ -502,7 +504,7 @@ public class ProjekteForm extends BasisForm {
 	}
 
 	/**
-	 * calculate throughput of pages per day
+	 * calculate throughput of pages per day.
 	 *
 	 * @return calculation
 	 */
@@ -518,7 +520,7 @@ public class ProjekteForm extends BasisForm {
 			synchronized (this.projectProgressData) {
 			try {
 
-				this.projectProgressData.setCommonWorkflow(this.myProjekt.getWorkFlow());
+				this.projectProgressData.setCommonWorkflow(projectService.getWorkFlow(this.myProjekt));
 				this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
 				this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
 				this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(), this.getMyProjekt().getEndDate());
@@ -552,7 +554,8 @@ public class ProjekteForm extends BasisForm {
 	 */
 	public String getProjectProgressImage() {
 
-		if (this.projectProgressImage == null || this.projectProgressData == null || this.projectProgressData.hasChanged()) {
+		if (this.projectProgressImage == null || this.projectProgressData == null
+				|| this.projectProgressData.hasChanged()) {
 			try {
 				calcProgressCharts();
 			} catch (Exception e) {
@@ -580,10 +583,9 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
-	/*********************************************************
-	 * Static Statistics
-	 *********************************************************/
-
+	/**
+	 * Static Statistics.
+	 */
 	public String getProjectStatImages() throws IOException, InterruptedException {
 		if (this.projectStatImages == null) {
 			this.projectStatImages = System.currentTimeMillis() + "images.png";
@@ -619,7 +621,7 @@ public class ProjekteForm extends BasisForm {
 			inMax = this.myProjekt.getNumberOfVolumes();
 		}
 
-		ProjectStatusDataTable pData = new ProjectStatusDataTable(this.myProjekt.getTitel(), start, end);
+		ProjectStatusDataTable pData = new ProjectStatusDataTable(this.myProjekt.getTitle(), start, end);
 
 		IProvideProjectTaskList ptl = new WorkflowProjectTaskList();
 
@@ -682,22 +684,21 @@ public class ProjekteForm extends BasisForm {
 		}
 	}
 
-
-	/*************************************************************************************
-	 * Getter for showStatistics
+	/**
+	 * Getter for showStatistics.
 	 *
 	 * @return the showStatistics
-	 *************************************************************************************/
+	 */
 	public boolean getShowStatistics() {
 		return this.showStatistics;
 	}
 
-	/**************************************************************************************
-	 * Setter for showStatistics
+	/**
+	 * Setter for showStatistics.
 	 *
 	 * @param showStatistics
 	 *            the showStatistics to set
-	 **************************************************************************************/
+	 */
 	public void setShowStatistics(boolean showStatistics) {
 		this.showStatistics = showStatistics;
 	}

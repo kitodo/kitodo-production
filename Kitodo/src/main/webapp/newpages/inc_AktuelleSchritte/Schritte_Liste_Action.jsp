@@ -27,7 +27,7 @@
 			<h:outputText value="#{msgs.moeglicheAktionen}" />
 		</htm:td>
 	</htm:tr>
-	<htm:tr valign="top" rendered="#{LoginForm.myBenutzer.mitMassendownload && AktuelleSchritteForm.page.totalResults > 0}">
+	<htm:tr valign="top" rendered="#{LoginForm.myBenutzer.withMassDownload && AktuelleSchritteForm.page.totalResults > 0}">
 		<htm:td styleClass="eingabeBoxen_row2">
 			<h:panelGrid columns="1">
 

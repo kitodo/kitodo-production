@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.exceptions.DAOException;
 import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -30,6 +29,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+
+import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

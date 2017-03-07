@@ -127,16 +127,16 @@
 											<h:panelGrid columns="1" width="200">
 												<h:outputText rendered="#{LoginForm.myBenutzer != null}"
 										style="font-weight:bold"
-										value="#{LoginForm.myBenutzer.nachname}, #{LoginForm.myBenutzer.vorname}" />
+										value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}" />
 										
 									
 
 												<x:dataList var="intern" style="font-weight: normal"
-													rendered="#{LoginForm.myBenutzer.benutzergruppenSize != 0}"
-													value="#{LoginForm.myBenutzer.benutzergruppenList}"
+													rendered="#{LoginForm.myBenutzer.userGroupSize != 0}"
+													value="#{LoginForm.myBenutzer.userGroups}"
 													layout="ordered list" rowCountVar="rowCount"
 													rowIndexVar="rowIndex">
-													<h:outputText value="#{intern.titel}" />
+													<h:outputText value="#{intern.title}" />
 													<h:outputText value=";"
 														rendered="#{rowIndex + 1 < rowCount}" />
 												</x:dataList>

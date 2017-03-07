@@ -11,6 +11,14 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.export.dms.ExportDms;
+import de.sub.goobi.helper.BatchProcessHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
+import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
+import de.sub.goobi.helper.tasks.TaskManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,21 +45,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Batch.Type;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.BatchProcessHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
-import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.persistence.BatchDAO;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.services.BatchService;
+import org.kitodo.services.ProcessService;
 
 public class BatchForm extends BasisForm {
 
@@ -59,50 +59,51 @@ public class BatchForm extends BasisForm {
 
 	private static final Logger logger = Logger.getLogger(BatchForm.class);
 
-	private List<Prozess> currentProcesses;
-	private List<Prozess> selectedProcesses;
+	private List<Process> currentProcesses;
+	private List<Process> selectedProcesses;
 	private List<Batch> currentBatches;
 	private List<String> selectedBatches;
 	private String batchfilter;
 	private String processfilter;
 	private IEvaluableFilter myFilteredDataSource;
-	
-	private final ProzessDAO dao = new ProzessDAO();
+
+	private BatchService batchService = new BatchService();
+	private ProcessService processService = new ProcessService();
 	private String modusBearbeiten = "";
 
 	private String batchTitle;
 
-	public List<Prozess> getCurrentProcesses() {
+	public List<Process> getCurrentProcesses() {
 		return this.currentProcesses;
 	}
 
-	public void setCurrentProcesses(List<Prozess> currentProcesses) {
+	public void setCurrentProcesses(List<Process> currentProcesses) {
 		this.currentProcesses = currentProcesses;
 	}
 
-	public void loadBatchData() {
+	public void loadBatchData() throws DAOException {
 		if (selectedProcesses == null || selectedProcesses.size() == 0) {
-			this.currentBatches = BatchDAO.readAll();
+			this.currentBatches = batchService.findAll();
 			this.selectedBatches = new ArrayList<String>();
 		} else {
 			selectedBatches = new ArrayList<String>();
-			HashSet<Batch> batchesToSelect = new HashSet<Batch>();
-			for (Prozess process : selectedProcesses) {
-				batchesToSelect.addAll(process.getBatchesInitialized());
+			List<Batch> batchesToSelect = new ArrayList<>();
+			for (Process process : selectedProcesses) {
+				batchesToSelect.addAll(processService.getBatchesInitialized(process));
 			}
 			for (Batch batch : batchesToSelect) {
-				selectedBatches.add(batch.getIdString());
+				selectedBatches.add(batchService.getIdString(batch));
 			}
 		}
 	}
 
 	public void loadProcessData() {
-		Set<Prozess> processes = new HashSet<Prozess>();
+		List<Process> processes = new ArrayList<>();
 		try {
 			for (String b : selectedBatches) {
-				processes.addAll(BatchDAO.read(Integer.parseInt(b)).getProcesses());
+				processes.addAll(batchService.find(Integer.parseInt(b)).getProcesses());
 			}
-			currentProcesses = new ArrayList<Prozess>(processes);
+			currentProcesses = new ArrayList<Process>(processes);
 		} catch (Exception e) { // NumberFormatException, DAOException
 			logger.error(e);
 			Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -118,8 +119,8 @@ public class BatchForm extends BasisForm {
 		}
 		this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
 		Criteria crit = this.myFilteredDataSource.getCriteria();
-		crit.addOrder(Order.desc("erstellungsdatum"));
-		crit.add(Restrictions.eq("istTemplate", Boolean.FALSE));
+		crit.addOrder(Order.desc("creationDate"));
+		crit.add(Restrictions.eq("template", Boolean.FALSE));
 		int batchMaxSize = ConfigMain.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
 		if (batchMaxSize > 0) {
 			crit.setMaxResults(batchMaxSize);
@@ -127,14 +128,14 @@ public class BatchForm extends BasisForm {
 		try {
 			this.currentProcesses = crit.list();
 		} catch (HibernateException e) {
-			this.currentProcesses = new ArrayList<Prozess>();
+			this.currentProcesses = new ArrayList<Process>();
 		}
 	}
 
-	public void filterBatches() {
+	public void filterBatches() throws DAOException {
 		currentBatches = new ArrayList<Batch>();
-		for (Batch batch : BatchDAO.readAll()) {
-			if (batch.contains(batchfilter)) {
+		for (Batch batch : batchService.findAll()) {
+			if (batchService.contains(batch, batchfilter)) {
 				currentBatches.add(batch);
 			}
 		}
@@ -142,8 +143,8 @@ public class BatchForm extends BasisForm {
 
 	public List<SelectItem> getCurrentProcessesAsSelectItems() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
-		for (Prozess p : this.currentProcesses) {
-			answer.add(new SelectItem(p, p.getTitel()));
+		for (Process p : this.currentProcesses) {
+			answer.add(new SelectItem(p, p.getTitle()));
 		}
 		return answer;
 	}
@@ -180,11 +181,11 @@ public class BatchForm extends BasisForm {
 		this.currentBatches = currentBatches;
 	}
 
-	public List<Prozess> getSelectedProcesses() {
+	public List<Process> getSelectedProcesses() {
 		return this.selectedProcesses;
 	}
 
-	public void setSelectedProcesses(List<Prozess> selectedProcesses) {
+	public void setSelectedProcesses(List<Process> selectedProcesses) {
 		this.selectedProcesses = selectedProcesses;
 	}
 
@@ -196,7 +197,7 @@ public class BatchForm extends BasisForm {
 		this.selectedBatches = selectedBatches;
 	}
 
-	public String FilterAlleStart() {
+	public String FilterAlleStart() throws DAOException {
 		filterBatches();
 		filterProcesses();
 		return "BatchesAll";
@@ -207,12 +208,12 @@ public class BatchForm extends BasisForm {
 		String rootpath = ConfigMain.getParameter("xsltFolder");
 		File xsltfile = new File(rootpath, "docket_multipage.xsl");
 		FacesContext facesContext = FacesContext.getCurrentInstance();
-		Set<Prozess> docket = Collections.emptySet();
+		List<Process> docket = Collections.emptyList();
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
 		} else if (this.selectedBatches.size() == 1) {
 			try {
-				docket = BatchDAO.read(Integer.valueOf(selectedBatches.get(0))).getProcesses();
+				docket = batchService.find(Integer.valueOf(selectedBatches.get(0))).getProcesses();
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -260,7 +261,7 @@ public class BatchForm extends BasisForm {
 			ids.add(Integer.parseInt(entry));
 		}
 		try {
-			BatchDAO.deleteAll(ids);
+			batchService.removeAll(ids);
 			FilterAlleStart();
 		} catch (DAOException e) {
 			logger.error(e);
@@ -279,15 +280,14 @@ public class BatchForm extends BasisForm {
 		}
 		try {
 			for (String entry : this.selectedBatches) {
-				Batch batch = BatchDAO.read(Integer.parseInt(entry));
-				batch.addAll(this.selectedProcesses);
-				BatchDAO.save(batch);
+				Batch batch = batchService.find(Integer.parseInt(entry));
+				batchService.addAll(batch, this.selectedProcesses);
+				batchService.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Prozess p : this.selectedProcesses) {
-						p.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+					for (Process p : this.selectedProcesses) {
+						processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
 					}
-					this.dao.saveList(this.selectedProcesses);
+					this.processService.saveList(this.selectedProcesses);
 				}
 			}
 			return;
@@ -297,7 +297,7 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
-	public void removeProcessesFromBatch() {
+	public void removeProcessesFromBatch() throws DAOException{
 		if (this.selectedBatches.size() == 0) {
 			Helper.setFehlerMeldung("noBatchSelected");
 			return;
@@ -308,17 +308,16 @@ public class BatchForm extends BasisForm {
 		}
 		try {
 			for (String entry : this.selectedBatches) {
-				Batch batch = BatchDAO.read(Integer.parseInt(entry));
-				batch.removeAll(this.selectedProcesses);
-				BatchDAO.save(batch);
+				Batch batch = batchService.find(Integer.parseInt(entry));
+				batchService.removeAll(batch, this.selectedProcesses);
+				batchService.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Prozess p : this.selectedProcesses) {
-						p.addToWikiField(
-								"debug",
+					for (Process p : this.selectedProcesses) {
+						processService.addToWikiField(
 								Helper.getTranslation("removeFromBatch",
-										Arrays.asList(new String[] { batch.getLabel() })));
+										Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
 					}
-					this.dao.saveList(this.selectedProcesses);
+					this.processService.saveList(this.selectedProcesses);
 				}
 			}
 		} catch (DAOException e) {
@@ -342,7 +341,7 @@ public class BatchForm extends BasisForm {
 				for (Batch batch : currentBatches) {
 					if (selected.equals(batch.getId())) {
 						batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
-						BatchDAO.save(batch);
+						batchService.save(batch);
 						return;
 					}
 				}
@@ -354,7 +353,7 @@ public class BatchForm extends BasisForm {
 		}
 	}
 
-	public void createNewBatch() {
+	public void createNewBatch() throws DAOException {
 		if (selectedProcesses.size() > 0) {
 			Batch batch = null;
 			if(batchTitle != null && batchTitle.trim().length() > 0){
@@ -363,13 +362,12 @@ public class BatchForm extends BasisForm {
 				batch = new Batch(Type.LOGISTIC, selectedProcesses);
 			}
 			try {
-				BatchDAO.save(batch);
+				batchService.save(batch);
 				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Prozess p : selectedProcesses) {
-						p.addToWikiField("debug",
-								Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batch.getLabel() })));
+					for (Process p : selectedProcesses) {
+						processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
 					}
-					this.dao.saveList(selectedProcesses);
+					this.processService.saveList(selectedProcesses);
 				}
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
@@ -396,7 +394,7 @@ public class BatchForm extends BasisForm {
 			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("") && !this.selectedBatches.get(0).equals("null")) {
 				Batch batch;
 				try {
-					batch = BatchDAO.read(Integer.valueOf(selectedBatches.get(0)));
+					batch = batchService.find(Integer.valueOf(selectedBatches.get(0)));
 					this.batchHelper = new BatchProcessHelper(batch);
 					return "BatchProperties";
 				} catch (DAOException e) {
@@ -443,13 +441,13 @@ public class BatchForm extends BasisForm {
 		}
 		for (String batchID : selectedBatches) {
 			try {
-				Batch batch = BatchDAO.read(Integer.valueOf(batchID));
+				Batch batch = batchService.find(Integer.valueOf(batchID));
 				switch (batch.getType()) {
 				case LOGISTIC:
-					for (Prozess prozess : batch.getProcesses()) {
-						Hibernate.initialize(prozess.getProjekt());
-						Hibernate.initialize(prozess.getProjekt().getFilegroups());
-						Hibernate.initialize(prozess.getRegelsatz());
+					for (Process prozess : batch.getProcesses()) {
+						Hibernate.initialize(prozess.getProject());
+						Hibernate.initialize(prozess.getProject().getProjectFileGroups());
+						Hibernate.initialize(prozess.getRuleset());
 						ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
 								true));
 						dms.startExport(prozess);
@@ -507,7 +505,7 @@ public class BatchForm extends BasisForm {
 			for (Batch batch : currentBatches) {
 				if (selectedBatches.contains(batch.getId().toString())) {
 					batch.setType(type);
-					BatchDAO.save(batch);
+					batchService.save(batch);
 				}
 			}
 		} catch (DAOException e) {

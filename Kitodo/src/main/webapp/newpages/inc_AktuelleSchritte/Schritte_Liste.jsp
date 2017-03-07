@@ -69,7 +69,7 @@
 		<f:facet name="header">
 			<h:outputText value="#{msgs.id}" />
 		</f:facet>
-		<h:outputText value="#{item.prozess.id}" />
+		<h:outputText value="#{item.process.id}" />
 	</x:column>
 
 	<x:column style="text-align:left" rendered="#{true}">
@@ -97,16 +97,16 @@
 		</f:facet>
 
 		<a4j:commandLink reRender="auflistungIntern,myself" id="myself" style="color:black">
-			<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelAusgeklappt}" />
-			<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelAusgeklappt}" />
-			<x:updateActionListener value="#{item.panelAusgeklappt?false:true}" property="#{item.panelAusgeklappt}" />
-			<h:outputText value="#{item.titel}" />
+			<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelShown}" />
+			<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelShown}" />
+			<x:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}" />
+			<h:outputText value="#{item.title}" />
 			<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender" />
 		</a4j:commandLink>
 
 		<h:panelGroup id="auflistungIntern">
 
-			<x:div style="width:90%;margin-top;margin-left:12px;margin-top:5px" rendered="#{item.panelAusgeklappt}">
+			<x:div style="width:90%;margin-top;margin-left:12px;margin-top:5px" rendered="#{item.panelShown}">
 				<%-- Schrittdetails --%>
 				<%@include file="Schritte_Liste_DetailsKlein.jsp"%>
 			</x:div>
@@ -140,10 +140,10 @@
 			<%-- Bearbeiten-Schaltknopf: konkrete Prozesse --%>
 			<h:commandLink action="ProzessverwaltungBearbeiten" id="edit1" title="#{msgs.prozessBearbeiten}">
 				<h:graphicImage value="/newpages/images/buttons/goInto.gif" style="margin-right:3px" />
-				<x:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item.prozess}" />
+				<x:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item.process}" />
 				<x:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="" />
 			</h:commandLink>
-			<h:outputText value="#{item.prozess.titel}" />
+			<h:outputText value="#{item.process.title}" />
 		</h:panelGrid>
 	</x:column>
 
@@ -170,7 +170,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.prozess.erstellungsdatum}" />
+		<h:outputText value="#{item.process.creationDate}" />
 	</x:column>
 
 	<x:column style="text-align:center" rendered="#{AktuelleSchritteForm.anzeigeAnpassen['modules']}">
@@ -196,7 +196,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.typModulName}" />
+		<h:outputText value="#{item.typeModulName}" />
 	</x:column>
 
 	<x:column style="text-align:center">
@@ -222,7 +222,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.prozess.projekt.titel}" />
+		<h:outputText value="#{item.process.project.title}" />
 	</x:column>
 
 	<%-- +++++++++++++++++  Sperrungen ++++++++++++++++++++++++ --%>
@@ -249,7 +249,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.benutzerGesperrt.nachVorname}" rendered="#{item.prozess.benutzerGesperrt != null}" />
+		<h:outputText value="#{item.blockedUsers.fullName}" rendered="#{item.process.blockedUsers != null}" />
 	</x:column>
 	
 	<%-- +++++++++++++++++  Batch ID ++++++++++++++++++++++++ --%>
@@ -276,7 +276,7 @@
 				</h:commandLink>
 			</x:div>
 		</f:facet>
-		<h:outputText value="#{item.prozess.batchID}" rendered="#{item.prozess.batchID != null}" />
+		<h:outputText value="#{item.process.batchID}" rendered="#{item.process.batchID != null}" />
 	</x:column>
 
 	<x:column style="text-align:center">
@@ -303,26 +303,26 @@
 			</x:div>
 		</f:facet>
 
-		<h:graphicImage value="#{item.bearbeitungsstatusEnum.bigImagePath}" title="#{item.bearbeitungsstatusEnum.title}" />
+		<h:graphicImage value="#{item.processingStatusEnum.bigImagePath}" title="#{item.processingStatusEnum.title}" />
 
-		<h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.prioritaet == 1}" />
-		<h:outputText value="!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.prioritaet == 2}" />
-		<h:outputText value="!!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.prioritaet == 3}" />
+		<h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.priority == 1}" />
+		<h:outputText value="!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.priority == 2}" />
+		<h:outputText value="!!!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px" rendered="#{item.priority == 3}" />
 
 		<%-- Popup --%>
 		<x:popup id="popup" closePopupOnExitingElement="true" closePopupOnExitingPopup="true" displayAtDistanceX="-400" displayAtDistanceY="5"
-			rendered="#{item.prioritaet == 10}">
+			rendered="#{item.priority == 10}">
 
 			<f:facet name="popup">
 				<htm:div>
 					<h:panelGrid columns="1" width="400" style="background-color:#f3ebeb; font-size:11px; border: 1px solid #a24033; padding: 1px;">
 
-						<x:dataTable var="intern" rendered="#{item.prozess.eigenschaftenSize!=0}" value="#{item.prozess.sortedCorrectionSolutionMessages}">
+						<x:dataTable var="intern" rendered="#{item.process.propertiesSize!=0}" value="#{item.process.sortedCorrectionSolutionMessages}">
 							<x:column style="vertical-align: top;">
-								<h:outputText value="#{intern.titel}:" />
+								<h:outputText value="#{intern.title}:" />
 							</x:column>
 							<x:column style="vertical-align: top;">
-								<h:outputText value="#{intern.wert}" />
+								<h:outputText value="#{intern.value}" />
 							</x:column>
 						</x:dataTable>
 
@@ -343,7 +343,7 @@
 		</f:facet>
 
 		<%-- Bearbeitung übernehmen-Schaltknopf --%>
-		<h:commandLink id="take" action="#{AktuelleSchritteForm.SchrittDurchBenutzerUebernehmen}" rendered="#{(item.bearbeitungsstatusEnum == 'OPEN' && !item.batchStep) || (item.bearbeitungsstatusEnum == 'OPEN' && item.batchStep && !item.batchSize)}"
+		<h:commandLink id="take" action="#{AktuelleSchritteForm.SchrittDurchBenutzerUebernehmen}" rendered="#{(item.processingStatusEnum == 'OPEN' && !item.batchStep) || (item.processingStatusEnum == 'OPEN' && item.batchStep && !item.batchSize)}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin2a.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
@@ -351,28 +351,28 @@
 
 		<%-- Bearbeiten-Schaltknopf (eigener Schritt) --%>
 		<h:commandLink action="#{AktuelleSchritteForm.EditStep}" id="view1"
-			rendered="#{(item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && !item.batchStep) || (item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep && !item.batchSize)}"
-			title="#{msgs.inBearbeitungDurch}: #{item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname:''}">
+			rendered="#{(item.processingStatusEnum == 'INWORK' && item.processingUser.id == LoginForm.myBenutzer.id && !item.batchStep) || (item.processingStatusEnum == 'INWORK' && item.processingUser.id == LoginForm.myBenutzer.id && item.batchStep && !item.batchSize)}"
+			title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null && item.processingUser.id!=0 ? item.processingUser.fullName:''}">
 			<h:graphicImage value="/newpages/images/buttons/admin1b.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
 		</h:commandLink>
 
 		<%-- Bearbeiten-Schaltknopf (fremder Schritt) --%>
 		<h:commandLink action="#{AktuelleSchritteForm.EditStep}" id="view2"
-			rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && (!item.batchStep || !item.batchSize)}"
-			title="#{msgs.inBearbeitungDurch}: #{(item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname : '')}">
+			rendered="#{item.processingStatusEnum == 'INWORK' && item.processingUser.id != LoginForm.myBenutzer.id && (!item.batchStep || !item.batchSize)}"
+			title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null && item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
 			<h:graphicImage value="/newpages/images/buttons/admin1c.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.mySchritt}" value="#{item}" />
 		</h:commandLink>
 
 		<%-- edit batch step --%>
-		<h:commandLink id="batch" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.bearbeitungsstatusEnum == 'OPEN' && item.batchStep && item.batchSize}"
+		<h:commandLink id="batch" action="#{AktuelleSchritteForm.TakeOverBatch}" rendered="#{item.processingStatusEnum == 'OPEN' && item.batchStep && item.batchSize}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin3a.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
 		</h:commandLink>
 		<%-- edit batch step --%>
-		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.BatchesEdit}" rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && item.batchStep && item.batchSize}"
+		<h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.BatchesEdit}" rendered="#{item.processingStatusEnum == 'INWORK' && item.processingUser.id == LoginForm.myBenutzer.id && item.batchStep && item.batchSize}"
 			title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
 			<h:graphicImage value="/newpages/images/buttons/admin3.gif" />
 			<x:updateActionListener property="#{AktuelleSchritteForm.step}" value="#{item}" />
@@ -380,9 +380,9 @@
 		
 		<%-- edit batch step --%>
 		<h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.BatchesEdit}" 
-		rendered="#{item.bearbeitungsstatusEnum == 'INWORK' && item.bearbeitungsbenutzer.id != LoginForm.myBenutzer.id && item.batchStep && item.batchSize}"
+		rendered="#{item.processingStatusEnum == 'INWORK' && item.processingUser.id != LoginForm.myBenutzer.id && item.batchStep && item.batchSize}"
 			
-			title="#{msgs.inBearbeitungDurch}: #{(item.bearbeitungsbenutzer!=null && item.bearbeitungsbenutzer.id!=0 ? item.bearbeitungsbenutzer.nachVorname : '')}">
+			title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null && item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
 			
 			
 			<h:graphicImage value="/newpages/images/buttons/admin3c.gif" />

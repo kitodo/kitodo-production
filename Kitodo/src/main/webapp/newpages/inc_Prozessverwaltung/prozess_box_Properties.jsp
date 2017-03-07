@@ -40,13 +40,13 @@
 
 	<htm:thead styleClass="standardTable_Header">
 		<htm:th>
-			<h:outputText value="#{msgs.titel}" />
+			<h:outputText value="#{msgs.title}" />
 		</htm:th>
 		<htm:th>
-			<h:outputText value="#{msgs.wert}" />
+			<h:outputText value="#{msgs.value}" />
 		</htm:th>
 		<htm:th>
-			<h:outputText value="#{msgs.auswahl}" />
+			<h:outputText value="#{msgs.choice}" />
 		</htm:th>
 	</htm:thead>
 

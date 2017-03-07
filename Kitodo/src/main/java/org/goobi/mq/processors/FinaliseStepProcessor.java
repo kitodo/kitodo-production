@@ -11,6 +11,9 @@
 
 package org.goobi.mq.processors;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.AktuelleSchritteForm;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +22,8 @@ import org.goobi.mq.MapMessageObjectReader;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.AktuelleSchritteForm;
-import de.sub.goobi.persistence.SchrittDAO;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.TaskService;
 
 /**
  * This is a web service interface to close steps. You have to provide the step
@@ -31,6 +33,9 @@ import de.sub.goobi.persistence.SchrittDAO;
  * @author Matthias Ronge <matthias.ronge@zeutschel.de>
  */
 public class FinaliseStepProcessor extends ActiveMQProcessor {
+
+	private ProcessService processService = new ProcessService();
+	private TaskService taskService = new TaskService();
 
 	/**
 	 * The default constructor looks up the queue name to use in
@@ -47,27 +52,26 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 	 * AktuelleSchritteForm object, sets it to the appropriate step which is
 	 * retrieved from the database, appends the message − if any − to the wiki
 	 * field, and executes the form’s the step close function.
-	 * 
+	 *
 	 * @param ticket
 	 *            the incoming message
-	 * 
+	 *
 	 * @see org.goobi.mq.ActiveMQProcessor#process(org.goobi.mq.MapMessageObjectReader)
 	 */
 	@Override
 	protected void process(MapMessageObjectReader ticket) throws Exception {
 		AktuelleSchritteForm dialog = new AktuelleSchritteForm();
 		Integer stepID = ticket.getMandatoryInteger("id");
-		dialog.setMySchritt(new SchrittDAO().get(stepID));
+		dialog.setMySchritt(taskService.find(stepID));
 		if (ticket.hasField("properties")) updateProperties(dialog, ticket.getMapOfStringToString("properties"));
 		if (ticket.hasField("message"))
-			dialog.getMySchritt().getProzess().addToWikiField(ticket.getString("message"));
+			processService.addToWikiField(ticket.getString("message"), dialog.getMySchritt().getProcess());
 		dialog.SchrittDurchBenutzerAbschliessen();
 	}
 
 	/**
-	 * The method updateProperties() transfers the properties to set into
-	 * Goobi’s data model.
-	 * 
+	 * The method updateProperties() transfers the properties to set into Goobi’s data model.
+	 *
 	 * @param dialog
 	 *            The AktuelleSchritteForm that we work with
 	 * @param propertiesToSet

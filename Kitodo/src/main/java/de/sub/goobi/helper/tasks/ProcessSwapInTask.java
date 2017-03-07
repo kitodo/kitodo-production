@@ -11,22 +11,23 @@
 
 package de.sub.goobi.helper.tasks;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.goobi.io.SafeFile;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
 
 public class ProcessSwapInTask extends LongRunningTask {
 
@@ -50,9 +51,9 @@ public class ProcessSwapInTask extends LongRunningTask {
 	}
 
 	@Override
-	public void initialize(Prozess inProzess) {
-		super.initialize(inProzess);
-		setTitle("Einlagerung: " + inProzess.getTitel());
+	public void initialize(Process inputProcess) {
+		super.initialize(inputProcess);
+		setTitle("Einlagerung: " + inputProcess.getTitle());
 	}
 
 	/**
@@ -73,7 +74,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 	public void run() {
 		setStatusProgress(5);
 		String swapPath = null;
-		ProzessDAO dao = new ProzessDAO();
+		ProcessService processService = new ProcessService();
 		String processDirectory = "";
 
 		if (ConfigMain.getBooleanParameter("useSwapping")) {
@@ -95,25 +96,26 @@ public class ProcessSwapInTask extends LongRunningTask {
 			return;
 		}
 		try {
-			processDirectory = getProzess().getProcessDataDirectoryIgnoreSwapping();
+			processDirectory = processService.getProcessDataDirectoryIgnoreSwapping(getProcess());
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
-			setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - " + e.getMessage());
+			setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - "
+					+ e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}
 
 		SafeFile fileIn = new SafeFile(processDirectory);
-		SafeFile fileOut = new SafeFile(swapPath + getProzess().getId() + File.separator);
+		SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
 
 		if (!fileOut.exists()) {
-			setStatusMessage(getProzess().getTitel() + ": swappingOutTarget does not exist");
+			setStatusMessage(getProcess().getTitle() + ": swappingOutTarget does not exist");
 			setStatusProgress(-1);
 			return;
 		}
 		if (!fileIn.exists()) {
-			setStatusMessage(getProzess().getTitel() + ": process data folder does not exist");
+			setStatusMessage(getProcess().getTitle() + ": process data folder does not exist");
 			setStatusProgress(-1);
 			return;
 		}
@@ -126,13 +128,14 @@ public class ProcessSwapInTask extends LongRunningTask {
 			// TODO: Don't catch Exception (the super class)
 		} catch (Exception e) {
 			logger.warn("Exception:", e);
-			setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName() + " - " + e.getMessage());
+			setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName()
+					+ " - " + e.getMessage());
 			setStatusProgress(-1);
 			return;
 		}
 
 		/*
-		 * --------------------- alte Checksummen in HashMap schreiben -------------------
+		 * alte Checksummen in HashMap schreiben
 		 */
 		setStatusMessage("reading checksums");
 		Element rootOld = docOld.getRootElement();
@@ -147,14 +150,14 @@ public class ProcessSwapInTask extends LongRunningTask {
 		ProcessSwapOutTask.deleteDataInDir(fileIn);
 
 		/*
-		 * --------------------- Dateien kopieren und Checksummen ermitteln -------------------
+		 * Dateien kopieren und Checksummen ermitteln
 		 */
 		Document doc = new Document();
 		Element root = new Element("goobiArchive");
 		doc.setRootElement(root);
 
 		/*
-		 * --------------------- Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren -------------------
+		 * Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren
 		 */
 		setStatusProgress(50);
 		try {
@@ -169,7 +172,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 		setStatusProgress(80);
 
 		/*
-		 * --------------------- Checksummen vergleichen -------------------
+		 * Checksummen vergleichen
 		 */
 		setStatusMessage("checking checksums");
 		// TODO: Don't use Iterators
@@ -187,7 +190,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 
 		setStatusProgress(85);
 		/*
-		 * --------------------- prüfen, ob noch Dateien fehlen -------------------
+		 * prüfen, ob noch Dateien fehlen
 		 */
 		setStatusMessage("checking missing files");
 		if (crcMap.size() > 0) {
@@ -202,9 +205,9 @@ public class ProcessSwapInTask extends LongRunningTask {
 		fileOut.deleteDir();
 		try {
 			setStatusMessage("saving process");
-			Prozess myProzess = dao.get(getProzess().getId());
-			myProzess.setSwappedOutGui(false);
-			dao.save(myProzess);
+			Process myProcess = processService.find(getProcess().getId());
+			myProcess.setSwappedOutGui(false);
+			processService.save(myProcess);
 		} catch (DAOException e) {
 			setStatusMessage("DAOException while saving process: " + e.getMessage());
 			logger.warn("DAOException:", e);

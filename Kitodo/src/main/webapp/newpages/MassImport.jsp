@@ -91,10 +91,10 @@
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
 															<h:outputText value="#{msgs.project}:" />
-															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.project.title}" />
 
 															<h:outputText value="#{msgs.prozessvorlage}:" />
-															<h:outputText value="#{MassImportForm.template.titel}" />
+															<h:outputText value="#{MassImportForm.template.title}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
 															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
@@ -121,10 +121,10 @@
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
 															<h:outputText value="#{msgs.project}:" />
-															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.project.title}" />
 
 															<h:outputText value="#{msgs.prozessvorlage}:" />
-															<h:outputText value="#{MassImportForm.template.titel}" />
+															<h:outputText value="#{MassImportForm.template.title}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
 															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">
@@ -150,10 +150,10 @@
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
 															<h:outputText value="#{msgs.project}:" />
-															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.project.title}" />
 
 															<h:outputText value="#{msgs.prozessvorlage}:" />
-															<h:outputText value="#{MassImportForm.template.titel}" />
+															<h:outputText value="#{MassImportForm.template.title}" />
 
 															<h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
 
@@ -189,10 +189,10 @@
 															columnClasses="prozessKopieSpalte1,prozessKopieSpalte2">
 
 															<h:outputText value="#{msgs.project}:" />
-															<h:outputText value="#{MassImportForm.template.projekt.titel}" />
+															<h:outputText value="#{MassImportForm.template.project.title}" />
 
 															<h:outputText value="#{msgs.prozessvorlage}:" />
-															<h:outputText value="#{MassImportForm.template.titel}" />
+															<h:outputText value="#{MassImportForm.template.title}" />
 
 															<h:outputLabel for="digitaleKollektionen" value="#{msgs.digitaleKollektionen}:" />
 															<h:selectManyListbox id="digitaleKollektionen" value="#{MassImportForm.digitalCollections}" styleClass="processMassImport" size="5">

@@ -57,7 +57,7 @@
 					<htm:td styleClass="standardTable_ColumnCentered">
 
 						<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && proc.currentStepAccessCondition != 'READ'}">
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id && proc.currentStepAccessCondition != 'READ'}">
 							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="0" />
@@ -98,7 +98,7 @@
 						rendered="#{propInd ==0}">
 						<%-- edit container --%>
 						<h:panelGroup
-							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && process_item.currentStepAccessCondition != 'READ'}">
+							rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id && process_item.currentStepAccessCondition != 'READ'}">
 							<h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
 								<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 								<x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
@@ -204,7 +204,7 @@
 
 	<%-- Box für die Bearbeitung der Details --%>
 	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
-		rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+		rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">

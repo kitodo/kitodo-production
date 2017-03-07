@@ -32,7 +32,7 @@
 
 			<h:outputText rendered="#{LoginForm.myBenutzer != null}"
 				style="font-weight: normal"
-				value="#{LoginForm.myBenutzer.nachname}, #{LoginForm.myBenutzer.vorname}" />
+				value="#{LoginForm.myBenutzer.surname}, #{LoginForm.myBenutzer.name}" />
 
 			<f:facet name="popup">
 				<h:panelGroup>
@@ -41,11 +41,11 @@
 							value="#{msgs.benutzergruppen}" />
 
 						<x:dataList var="intern" style="font-weight: normal"
-							rendered="#{LoginForm.myBenutzer.benutzergruppenSize != 0}"
-							value="#{LoginForm.myBenutzer.benutzergruppenList}"
+							rendered="#{LoginForm.myBenutzer.userGroupSize != 0}"
+							value="#{LoginForm.myBenutzer.userGroups}"
 							layout="ordered list" rowCountVar="rowCount"
 							rowIndexVar="rowIndex">
-							<h:outputText value="#{intern.titel}" />
+							<h:outputText value="#{intern.title}" />
 							<h:outputText value=";" rendered="#{rowIndex + 1 < rowCount}" />
 						</x:dataList>
 
@@ -70,11 +70,11 @@
 					value="#{LoginForm.login}" />
 			</h:panelGroup>
 
-			<h:outputText value="#{msgs.passwort}" />
+			<h:outputText value="#{msgs.password}" />
 			<h:panelGroup>
 				<h:message id="messpasswort" for="passwort" style="color: red" />
 				<x:inputSecret id="passwort" forceId="true" style="width: 80px"
-					value="#{LoginForm.passwort}"
+					value="#{LoginForm.password}"
 					onkeypress="return submitEnter('LoginAbsenden2',event)" />
 			</h:panelGroup>
 

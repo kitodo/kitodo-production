@@ -11,6 +11,13 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,12 +35,7 @@ import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /*****************************************************************************
  * Imlpementation of {@link IStatisticalQuestion}. This is used for the
@@ -65,11 +67,10 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
 	/**
 	 * loops included means that all step open all stepdone are considered loops
-	 * not included means that only min(date) or max(date) - depending on option
-	 * in
-	 * 
-	 * @see HistoryEventType
-	 * 
+	 * not included means that only min(date) or max(date) - depending on option in.
+	 *
+	 * @see HistoryType
+	 *
 	 * @return status of loops included or not
 	 */
 	public Boolean getIncludeLoops() {
@@ -245,7 +246,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 			return this.myDataTable;
 		}
 
-		DataTable tableStepCompleted = getAllSteps(HistoryEventType.stepDone);
+		DataTable tableStepCompleted = getAllSteps(HistoryType.taskDone);
 
 		tableStepCompleted.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepCompleted.setName(Helper.getTranslation("doneSteps"));
@@ -315,7 +316,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 	 * @param requestedType
 	 * @return
 	 */
-	private DataTable getAllSteps(HistoryEventType requestedType) {
+	private DataTable getAllSteps(HistoryType requestedType) {
 
 		// adding time restrictions
 		String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true,

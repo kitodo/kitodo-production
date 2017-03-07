@@ -11,6 +11,9 @@
 
 package de.sub.goobi.helper.tasks;
 
+import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +28,15 @@ import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
+
 import org.joda.time.LocalDate;
+
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Batch.Type;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.BatchService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -35,13 +46,6 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Batch.Type;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.forms.ProzesskopieForm;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BatchDAO;
 
 /**
  * The class CreateNewspaperProcessesTask is a LongRunningTask to create
@@ -50,6 +54,9 @@ import de.sub.goobi.persistence.BatchDAO;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateNewspaperProcessesTask extends EmptyTask {
+
+	private BatchService batchService = new BatchService();
+	private RulesetService rulesetService = new RulesetService();
 
 	/**
 	 * The field batchLabel is set in addToBatches() on the first function call
@@ -188,7 +195,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 				List<IndividualIssue> issues = processes.get(nextProcessToCreate);
 				if (issues.size() > 0) {
 					ProzesskopieForm newProcess = CreateNewProcessProcessor.newProcessFromTemplate(pattern
-							.getProzessVorlage().getTitel());
+							.getProzessVorlage().getTitle());
 					newProcess.setDigitalCollections(pattern.getDigitalCollections());
 					newProcess.setDocType(pattern.getDocType());
 					newProcess.setAdditionalFields(pattern.getAdditionalFields());
@@ -299,7 +306,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 			throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 
 		// initialise
-		Prefs ruleset = newProcess.getProzessKopie().getRegelsatz().getPreferences();
+		Prefs ruleset = rulesetService.getPreferences(newProcess.getProzessKopie().getRuleset());
 		DigitalDocument document;
 		try {
 			document = newProcess.getFileformat().getDigitalDocument();
@@ -393,7 +400,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 * The method addToBatches() adds a given process to the allover and the
 	 * annual batch. If the break mark changes, the logistics batch will be
 	 * flushed and the process will be added to a new logistics batch.
-	 * 
+	 *
 	 * @param process
 	 *            process to add
 	 * @param issues
@@ -404,7 +411,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 *             if the current session can't be retrieved or an exception is
 	 *             thrown while performing the rollback
 	 */
-	private void addToBatches(Prozess process, List<IndividualIssue> issues, String processTitle) throws DAOException {
+	private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle) throws DAOException {
 		if (createBatches != null) {
 			int lastIndex = issues.size() - 1;
 			int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
@@ -414,10 +421,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 			if (batchLabel == null) {
 				batchLabel = createBatches.format(issues.get(lastIndex).getDate());
 			}
-			logisticsBatch.add(process);
+			batchService.add(logisticsBatch, process);
 			currentBreakMark = breakMark;
 		}
-		fullBatch.add(process);
+		batchService.add(fullBatch, process);
 	}
 
 	/**
@@ -432,9 +439,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 *             thrown while performing the rollback
 	 */
 	private void flushLogisticsBatch(String processTitle) throws DAOException {
-		if (logisticsBatch.size() > 0) {
+		if (batchService.size(logisticsBatch) > 0) {
 			logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
-			BatchDAO.save(logisticsBatch);
+			batchService.save(logisticsBatch);
 			logisticsBatch = new Batch(Type.LOGISTIC);
 		}
 		currentBreakMark = null;
@@ -452,9 +459,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	}
 
 	/**
-	 * The method saveFullBatch() sets the title for the allover batch and saves
-	 * it to hibernate.
-	 * 
+	 * The method saveFullBatch() sets the title for the allover batch and saves it to hibernate.
+	 *
 	 * @param theProcessTitle
 	 *            the title of the process
 	 * @throws DAOException
@@ -463,7 +469,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 */
 	private void saveFullBatch(String theProcessTitle) throws DAOException {
 		fullBatch.setTitle(firstGroupFrom(theProcessTitle));
-		BatchDAO.save(fullBatch);
+		batchService.save(fullBatch);
 	}
 
 	/**

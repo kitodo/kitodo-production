@@ -17,26 +17,28 @@ import java.util.List;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
 
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.services.ProcessService;
 
 public class StatistikBenutzergruppen {
 
-	public static Dataset getDiagramm(List<Prozess> inProzesse) {
+	public static Dataset getDiagramm(List<Process> inProzesse) {
+		ProcessService processService = new ProcessService();
 		DefaultPieDataset dataset = new DefaultPieDataset();
-		for (Prozess proz : inProzesse) {
-			Schritt step = proz.getAktuellerSchritt();
+		for (Process proz : inProzesse) {
+			Task step = processService.getCurrentTask(proz);
 			/* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
 			if (step != null) {
 				/* von dem Schritt alle verantwortlichen Benutzergruppen ermitteln und im Diagramm erfassen */
-				for (Iterator<Benutzergruppe> iter2 = step.getBenutzergruppenList().iterator(); iter2.hasNext();) {
-					Benutzergruppe group = iter2.next();
-					if (dataset.getIndex(group.getTitel()) != -1) {
+				for (Iterator<UserGroup> iter2 = step.getUserGroups().iterator(); iter2.hasNext();) {
+					UserGroup group = iter2.next();
+					if (dataset.getIndex(group.getTitle()) != -1) {
 						dataset
-								.setValue(group.getTitel(), dataset.getValue(group.getTitel()).intValue() + 1);
+								.setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
 					} else {
-						dataset.setValue(group.getTitel(), 1);
+						dataset.setValue(group.getTitle(), 1);
 					}
 				}
 

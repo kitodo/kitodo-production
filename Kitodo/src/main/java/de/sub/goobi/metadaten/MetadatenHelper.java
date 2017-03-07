@@ -11,6 +11,10 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.HelperComparator;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -29,6 +33,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 
+import org.kitodo.data.database.beans.Process;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;
@@ -41,10 +47,6 @@ import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
 
 public class MetadatenHelper implements Comparator<Object> {
 	private static final Logger myLogger = Logger.getLogger(MetadatenHelper.class);
@@ -54,14 +56,11 @@ public class MetadatenHelper implements Comparator<Object> {
 	private Prefs myPrefs;
 	private DigitalDocument mydocument;
 
-	/* =============================================================== */
-
 	public MetadatenHelper(Prefs inPrefs, DigitalDocument inDocument) {
 		this.myPrefs = inPrefs;
 		this.mydocument = inDocument;
 	}
 
-	/* =============================================================== */
 	public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType) throws DocStructHasNoTypeException,
 			MetadataTypeNotAllowedException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException {
 		// inOldDocstruct.getType().getName()
@@ -311,19 +310,19 @@ public class MetadatenHelper implements Comparator<Object> {
 		Collections.sort(newTypes, c);
 
 		/*
-		 * -------------------------------- nun ein Array mit der richtigen Größe anlegen --------------------------------
+		 * nun ein Array mit der richtigen Größe anlegen
 		 */
 		int zaehler = newTypes.size();
 		myTypes = new SelectItem[zaehler];
 
 		/*
-		 * -------------------------------- und anschliessend alle Elemente in das Array packen --------------------------------
+		 * und anschliessend alle Elemente in das Array packen
 		 */
 		zaehler = 0;
 		Iterator<DocStructType> it = newTypes.iterator();
 		while (it.hasNext()) {
 			DocStructType dst = it.next();
-			String label = dst.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+			String label = dst.getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
 			if (label == null) {
 				label = dst.getName();
 			}
@@ -334,8 +333,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv aufrufen
-	 * ================================================================
+	 * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv aufrufen.
 	 */
 	public void deleteAllUnusedElements(DocStruct inStruct) {
 		inStruct.deleteUnusedPersonsAndMetadata();
@@ -409,11 +407,10 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden DefaultDisplay-Metadaten ergänzen
-	 * ================================================================
+	 * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden DefaultDisplay-Metadaten ergänzen.
 	 */
 	@SuppressWarnings("deprecation")
-	public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage, boolean inIsPerson, Prozess inProzess) {
+	public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage, boolean inIsPerson, Process inProzess) {
 		List<MetadataType> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
 		/* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
 		if (displayMetadataTypes != null) {
@@ -445,13 +442,13 @@ public class MetadatenHelper implements Comparator<Object> {
 		 */
 		if (inIsPerson) {
 			List<Person> persons = inStruct.getAllPersons();
-			if (persons != null && !inProzess.getRegelsatz().isOrderMetadataByRuleset()) {
+			if (persons != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
 				Collections.sort(persons, new MetadataComparator(inLanguage));
 			}
 			return persons;
 		} else {
 			List<Metadata> metadata = inStruct.getAllMetadata();
-			if (metadata != null && !inProzess.getRegelsatz().isOrderMetadataByRuleset()) {
+			if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
 				Collections.sort(metadata, new MetadataComparator(inLanguage));
 			}
 			return getAllVisibleMetadataHack(inStruct);
@@ -516,10 +513,10 @@ public class MetadatenHelper implements Comparator<Object> {
 
 	/**
 	 * @param inMdt
-	 * @return localized Title of metadata type ================================================================
+	 * @return localized Title of metadata type
 	 */
 	public String getMetadatatypeLanguage(MetadataType inMdt) {
-		String label = inMdt.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}"));
+		String label = inMdt.getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
 		if (label == null) {
 			label = inMdt.getName();
 		}
@@ -527,7 +524,7 @@ public class MetadatenHelper implements Comparator<Object> {
 	}
 
 	/**
-	 * Comparator für die Metadaten ================================================================
+	 * Comparator für die Metadaten.
 	 */
 	// TODO: Uses generics, if possible
 	public static class MetadataComparator implements Comparator<Object> {

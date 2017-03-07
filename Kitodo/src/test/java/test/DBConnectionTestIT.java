@@ -11,8 +11,8 @@
 
 package test;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.persistence.ProzessDAO;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ProcessService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,17 +21,17 @@ public class DBConnectionTestIT {
     @Test
     public void test() throws Exception {
 
-        Prozess test = new Prozess();
-        test.setTitel("TestTitle");
-        ProzessDAO dao = new ProzessDAO();
-        dao.save(test);
+        Process test = new Process();
+        test.setTitle("First process");
+        ProcessService processService = new ProcessService();
+        processService.save(test);
 
-        long counted = dao.count("from Prozess");
-        Assert.assertNotNull("No Prozess found",counted);
-        Assert.assertEquals(1, counted);
+        long counted = processService.count("from Process");
+        Assert.assertNotNull("No Process found",counted);
+        Assert.assertEquals(4, counted);
 
-        String title = dao.get(1).getTitel();
-        Assert.assertEquals("TestTitle", title);
+        String title = processService.find(1).getTitle();
+        Assert.assertEquals("First process", title);
 
     }
 }

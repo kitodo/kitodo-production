@@ -13,62 +13,65 @@ package de.sub.goobi.helper;
 
 import org.apache.log4j.Logger;
 
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
 import ugh.dl.Person;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.ProzessDAO;
 
 public class XmlArtikelZaehlen {
+	private ProcessService processService = new ProcessService();
 	private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);
+
 	public enum CountType {
 		METADATA, DOCSTRUCT;
 	}
 
-
-
 	/**
-	 * Anzahl der Strukturelemente ermitteln
-	 * @param myProzess
+	 * Anzahl der Strukturelemente ermitteln.
+	 *
+	 * @param myProcess process object
 	 */
-	public int getNumberOfUghElements(Prozess myProzess, CountType inType) {
+	public int getNumberOfUghElements(Process myProcess, CountType inType) {
 		int rueckgabe = 0;
 
-		/* --------------------------------
+		/*
 		 * Dokument einlesen
-		 * --------------------------------*/
+		 */
 		Fileformat gdzfile;
 		try {
-			gdzfile = myProzess.readMetadataFile();
+			gdzfile = processService.readMetadataFile(myProcess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("xml error", e.getMessage());
 			return -1;
 		}
 
-		/* --------------------------------
+		/*
 		 * DocStruct rukursiv durchlaufen
-		 * --------------------------------*/
+		 */
 		DigitalDocument mydocument = null;
 		try {
 			mydocument = gdzfile.getDigitalDocument();
 			DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
 			rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
 		} catch (PreferencesException e1) {
-			Helper.setFehlerMeldung("[" + myProzess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
+			Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ",
+					e1.getMessage());
 			logger.error(e1);
 			rueckgabe = 0;
 		}
 
-		/* --------------------------------
+		/*
 		 * die ermittelte Zahl im Prozess speichern
-		 * --------------------------------*/
-		myProzess.setSortHelperArticles(Integer.valueOf(rueckgabe));
+		 */
+		myProcess.setSortHelperArticles(Integer.valueOf(rueckgabe));
 		try {
-			new ProzessDAO().save(myProzess);
+			processService.save(myProcess);
 		} catch (DAOException e) {
 			logger.error(e);
 		}
@@ -78,16 +81,17 @@ public class XmlArtikelZaehlen {
 
 
 	/**
-	 * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band hat, rekursiv durchlaufen
+	 * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band hat, rekursiv durchlaufen.
+	 *
 	 * @param inStruct
 	 * @param inType
 	 */
 	public int getNumberOfUghElements(DocStruct inStruct, CountType inType) {
 		int rueckgabe = 0;
 		if (inStruct != null) {
-			/* --------------------------------
+			/*
 			 * increment number of docstructs, or add number of metadata elements
-			 * --------------------------------*/
+			 */
 			if (inType == CountType.DOCSTRUCT) {
 				rueckgabe++;
 			} else {
@@ -109,9 +113,9 @@ public class XmlArtikelZaehlen {
 				}
 			}
 
-			/* --------------------------------
+			/*
 			 * call children recursive
-			 * --------------------------------*/
+			 */
 			if (inStruct.getAllChildren() != null) {
 				for (DocStruct struct : inStruct.getAllChildren()) {
 					rueckgabe += getNumberOfUghElements(struct, inType);

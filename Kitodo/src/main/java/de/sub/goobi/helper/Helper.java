@@ -11,6 +11,11 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.forms.SpracheForm;
+import de.sub.goobi.helper.enums.ReportLevel;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -48,13 +53,11 @@ import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.forms.SpracheForm;
-import de.sub.goobi.helper.enums.ReportLevel;
-import de.sub.goobi.persistence.HibernateUtilOld;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.helper.Util;
+import org.kitodo.data.database.persistence.HibernateUtilOld;
 
+//TODO: split this class! here should be only parts of Helper which are needed for Beans and Persistence
 public class Helper implements Serializable, Observer {
 
 	/**
@@ -430,7 +433,7 @@ public class Helper implements Serializable, Observer {
 		return fullpath.substring(0, fullpath.indexOf(servletpath));
 	}
 
-	public static Benutzer getCurrentUser() {
+	public static User getCurrentUser() {
 		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 		return login != null ? login.getMyBenutzer() : null;
 	}

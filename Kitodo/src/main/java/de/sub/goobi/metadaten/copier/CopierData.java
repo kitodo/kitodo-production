@@ -11,16 +11,19 @@
 
 package de.sub.goobi.metadaten.copier;
 
+import org.kitodo.data.database.persistence.apache.MySQLHelper;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+
 import java.sql.SQLException;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.persistence.apache.MySQLHelper;
-import de.sub.goobi.persistence.apache.ProcessObject;
 
 /**
  * A CopierData object contains all the data the data copier has access to. It
@@ -30,6 +33,8 @@ import de.sub.goobi.persistence.apache.ProcessObject;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CopierData {
+
+	private RulesetService rulesetService = new RulesetService();
 
 	/**
 	 * A metadata selector relative to which the data shall be read during
@@ -116,9 +121,9 @@ public class CopierData {
 	 */
 	public Prefs getPreferences() throws SQLException {
 		if (process instanceof ProcessObject) {
-			return MySQLHelper.getRulesetForId(((ProcessObject) process).getRulesetId()).getPreferences();
+			return rulesetService.getPreferences(MySQLHelper.getRulesetForId(((ProcessObject) process).getRulesetId()));
 		} else {
-			return ((Prozess) process).getRegelsatz().getPreferences();
+			return rulesetService.getPreferences(((Process) process).getRuleset());
 		}
 	}
 
@@ -128,8 +133,8 @@ public class CopierData {
 	 * @return the process title
 	 */
 	public String getProcessTitle() {
-		if (process instanceof Prozess) {
-			return ((Prozess) process).getTitel();
+		if (process instanceof Process) {
+			return ((Process) process).getTitle();
 		} else if (process instanceof ProcessObject) {
 			return ((ProcessObject) process).getTitle();
 		} else {

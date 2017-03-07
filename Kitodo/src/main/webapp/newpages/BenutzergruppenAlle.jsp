@@ -90,14 +90,14 @@
 												style="margin-left:12px;margin-top:5px" cellspacing="1px"
 												cellpadding="1px" headerClass="standardTable_Header"
 												rowClasses="standardTable_Row1"
-												rendered="#{item.panelAusgeklappt}"
+												rendered="#{item.panelShown}"
 												columnClasses="standardTable_ColumnSchmal,standardTable_Column,standardTable_ColumnCentered"
-												var="step" value="#{item.benutzerList}">
+												var="step" value="#{item.users}">
 												<h:column id="id12">
 													<f:facet name="header">
 														<h:outputText id="id13" value="#{msgs.benutzer}" />
 													</f:facet>
-													<h:outputText id="id14" value="#{step.nachVorname}" />
+													<h:outputText id="id14" value="#{step.fullName}" />
 												</h:column>
 											</x:dataTable>
 										</h:column>
@@ -123,7 +123,7 @@
 									<%-- Neu-Schaltknopf --%>
 									<h:commandLink id="id52" action="#{BenutzergruppenForm.Neu}"
 										immediate="true"
-										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (BenutzergruppenForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}" 
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (BenutzergruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
 
 										>
 										<h:outputText id="id62"

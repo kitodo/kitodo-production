@@ -11,11 +11,27 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.ProjectManager;
+import org.kitodo.data.database.persistence.apache.ProjectObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -29,18 +45,6 @@ import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.ProjectManager;
-import de.sub.goobi.persistence.apache.ProjectObject;
 
 public class MetadatenVerifizierungWithoutHibernate {
 	List<DocStruct> docStructsOhneSeiten;
@@ -48,14 +52,17 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	private String title;
 
-	public boolean validate(Prozess inProzess) {
-		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+
+	public boolean validate(Process inProzess) {
+		Prefs myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
 		/*
-		 * -------------------------------- Fileformat einlesen --------------------------------
+		 * Fileformat einlesen
 		 */
 		Fileformat gdzfile;
 		try {
-			gdzfile = inProzess.readMetadataFile();
+			gdzfile = processService.readMetadataFile(inProzess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + this.title, e.getMessage());
 			return false;
@@ -65,10 +72,10 @@ public class MetadatenVerifizierungWithoutHibernate {
 
 	public boolean validate(Fileformat gdzfile, Prefs inPrefs, int processId, String title) {
 		ProcessObject process = ProcessManager.getProcessObjectForId(processId);
-		ProjectObject project = ProjectManager.getProjectById(process.getProjekteID());
+		ProjectObject project = ProjectManager.getProjectById(process.getProjectId());
 		FolderInformation fi = new FolderInformation(processId, process.getTitle());
 		this.title = title;
-		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
 		boolean ergebnis = true;
 
 		DigitalDocument dd = null;
@@ -325,16 +332,16 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
+	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten
 	 */
 	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language,
 			ProjectObject project) {
 		/*
-		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
+		 * Konfiguration öffnen und die Validierungsdetails auslesen
 		 */
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(project.getTitel());
+			cp = new ConfigProjects(project.getTitle());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("[" + this.title + "] " + "IOException", e.getMessage());
 			return inFehlerList;
@@ -514,7 +521,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	}
 
 	/**
-	 * automatisch speichern lassen, wenn Änderungen nötig waren ================================================================
+	 * automatisch speichern lassen, wenn Änderungen nötig waren.
 	 */
 	public boolean isAutoSave() {
 		return this.autoSave;
@@ -528,7 +535,7 @@ public class MetadatenVerifizierungWithoutHibernate {
 	public boolean validateIdentifier(DocStruct uppermostStruct) {
 		
 		if (uppermostStruct.getType().getAnchorClass() != null) {
-			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+			String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
 
 			if (uppermostStruct.getAllIdentifierMetadata() != null && uppermostStruct.getAllIdentifierMetadata().size() > 0) {
 				Metadata identifierTopStruct = uppermostStruct.getAllIdentifierMetadata().get(0);

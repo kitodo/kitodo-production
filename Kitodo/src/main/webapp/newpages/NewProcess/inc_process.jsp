@@ -80,12 +80,12 @@
 
 	<%-- Prozessvorlage --%>
 	<h:outputText value="#{msgs.prozessvorlage}" />
-	<h:outputText value="#{ProzesskopieForm.prozessVorlage.titel}" />
+	<h:outputText value="#{ProzesskopieForm.prozessVorlage.title}" />
 
 	<%-- ProzessTitel --%>
 	<h:outputText value="#{msgs.prozessTitel}" />
 	<h:panelGroup>
-		<h:inputText value="#{ProzesskopieForm.prozessKopie.titel}" styleClass="prozessKopieFeldbreite" />
+		<h:inputText value="#{ProzesskopieForm.prozessKopie.title}" styleClass="prozessKopieFeldbreite" />
 		<h:commandLink action="#{ProzesskopieForm.CalcProzesstitel}" value="#{msgs.generieren}" />
 	</h:panelGroup>
 
@@ -100,7 +100,7 @@
 	<%-- Preferences --%>
 	<h:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.preferences}" value="#{msgs.regelsatz}" />
 	<h:panelGroup rendered="#{ProzesskopieForm.standardFields.preferences}">
-		<h:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.regelsatz}" converter="RegelsatzConverter"
+		<h:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="RegelsatzConverter"
 			onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite" required="true">
 			<f:selectItems value="#{HelperForm.regelsaetze}" />
 		</h:selectOneMenu>
@@ -123,7 +123,7 @@
 	<h:inputText value="#{ProzesskopieForm.tifHeader_imagedescription}" styleClass="prozessKopieFeldbreite" />
 
 	<h:outputText value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}" />
-	<h:selectBooleanCheckbox rendered="#{ProzesskopieForm.useTemplates}" value="#{ProzesskopieForm.prozessKopie.inAuswahllisteAnzeigen}" />
+	<h:selectBooleanCheckbox rendered="#{ProzesskopieForm.useTemplates}" value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}" />
 
 
 	<h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}" />

@@ -18,80 +18,85 @@ import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.WorkpieceProperty;
 
 public class ImportObject {
 
 	// TODO must end with ".xml" in current implementation
-	private String processTitle ="";
+	private String processTitle = "";
 	private final Collection<Batch> batches = new LinkedList<Batch>();
 	
-	private String metsFilename ="";
-
-    private String importFileName = "";
+	private String metsFilename = "";
+	private String importFileName = "";
 
 	// error handling
 	private ImportReturnValue importReturnValue = ImportReturnValue.ExportFinished;
 	private String errorMessage ="";
 	
 	// additional information
-	private List<Prozesseigenschaft> processProperties = new ArrayList<Prozesseigenschaft>();
-	private List<Werkstueckeigenschaft> workProperties = new ArrayList<Werkstueckeigenschaft>();
-	private List<Vorlageeigenschaft> templateProperties = new ArrayList<Vorlageeigenschaft>();
-	
-	
-	
+	private List<ProcessProperty> processProperties = new ArrayList<>();
+	private List<WorkpieceProperty> workProperties = new ArrayList<>();
+	private List<TemplateProperty> templateProperties = new ArrayList<>();
+
 	public ImportObject() {
-		
-	
 	}
-	
-	
-	
-	
+
 	public String getProcessTitle() {
 		return this.processTitle;
 	}
+
 	public void setProcessTitle(String processTitle) {
 		this.processTitle = processTitle;
 	}
+
 	public String getMetsFilename() {
 		return this.metsFilename;
 	}
+
 	public void setMetsFilename(String metsFilename) {
 		this.metsFilename = metsFilename;
 	}
+
 	public ImportReturnValue getImportReturnValue() {
 		return this.importReturnValue;
 	}
+
 	public void setImportReturnValue(ImportReturnValue importReturnValue) {
 		this.importReturnValue = importReturnValue;
 	}
+
 	public String getErrorMessage() {
 		return this.errorMessage;
 	}
+
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	public List<Prozesseigenschaft> getProcessProperties() {
+
+	public List<ProcessProperty> getProcessProperties() {
 		return this.processProperties;
 	}
-	public void setProcessProperties(List<Prozesseigenschaft> processProperties) {
+
+	public void setProcessProperties(List<ProcessProperty> processProperties) {
 		this.processProperties = processProperties;
 	}
-	public List<Werkstueckeigenschaft> getWorkProperties() {
+
+	public List<WorkpieceProperty> getWorkProperties() {
 		return this.workProperties;
 	}
-	public void setWorkProperties(List<Werkstueckeigenschaft> workProperties) {
+
+	public void setWorkProperties(List<WorkpieceProperty> workProperties) {
 		this.workProperties = workProperties;
 	}
-	public List<Vorlageeigenschaft> getTemplateProperties() {
+
+	public List<TemplateProperty> getTemplateProperties() {
 		return this.templateProperties;
 	}
-	public void setTemplateProperties(List<Vorlageeigenschaft> templateProperties) {
+
+	public void setTemplateProperties(List<TemplateProperty> templateProperties) {
 		this.templateProperties = templateProperties;
 	}
 
@@ -99,12 +104,11 @@ public class ImportObject {
 		return batches;
 	}
 
-    public String getImportFileName() {
+	public String getImportFileName() {
         return importFileName;
     }
 
-    public void setImportFileName(String importFileName) {
+	public void setImportFileName(String importFileName) {
         this.importFileName = importFileName;
     }
-	
 }

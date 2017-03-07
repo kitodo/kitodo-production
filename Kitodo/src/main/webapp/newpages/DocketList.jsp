@@ -113,7 +113,7 @@
 									</x:dataTable>
 									<h:commandLink id="id52" action="#{DocketForm.Neu}"
 										immediate="true"
-										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (DocketForm.page.totalResults > LoginForm.myBenutzer.tabellengroesse)}">
+										rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (DocketForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
 										<h:outputText id="id62" value="#{msgs.createNewDocket}" />
 									</h:commandLink>
 									<htm:table width="100%" border="0">

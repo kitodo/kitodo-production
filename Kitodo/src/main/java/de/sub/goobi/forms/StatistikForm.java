@@ -11,6 +11,9 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -24,15 +27,16 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.BenutzerDAO;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.sub.goobi.persistence.SchrittDAO;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.TaskService;
+import org.kitodo.services.UserService;
 
 public class StatistikForm {
+	private ProcessService processService = new ProcessService();
+	private TaskService taskService = new TaskService();
+	private UserService userService = new UserService();
 	private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
 	Calendar cal = new GregorianCalendar();
 	int n = 200;
@@ -46,9 +50,9 @@ public class StatistikForm {
 	}
 
 	/**
-	 * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment. Since user accounts are not hard
-	 * deleted from the database when the delete button is pressed a where clause is used in the SQL statement to exclude the deleted accounts from
-	 * the sum.
+	 * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment.
+	 * Since user accounts are not hard deleted from the database when the delete button is pressed a where clause
+	 * is used in the SQL statement to exclude the deleted accounts from the sum.
 	 * 
 	 * @return the count of valid user accounts
 	 * @throws DAOException
@@ -57,7 +61,7 @@ public class StatistikForm {
 
 	public Long getAnzahlBenutzer() {
 		try {
-			return new BenutzerDAO().count("from Benutzer where isVisible is null");
+			return userService.count("from User where visible is null");
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
 			return null;
@@ -70,7 +74,7 @@ public class StatistikForm {
 	 */
 	public Long getAnzahlBenutzergruppen() {
 		try {
-			return new BenutzerDAO().count("from Benutzergruppe");
+			return userService.count("from UserGroup");
 		} catch (DAOException e) {
 			Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
 			return null;
@@ -83,7 +87,7 @@ public class StatistikForm {
 	 */
 	public Long getAnzahlProzesse() {
 		try {
-			return new ProzessDAO().count("from Prozess");
+			return processService.count("from Process");
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
 			return null;
@@ -96,7 +100,7 @@ public class StatistikForm {
 	 */
 	public Long getAnzahlSchritte() {
 		try {
-			return new SchrittDAO().count("from Schritt");
+			return taskService.count("from Task");
 		} catch (DAOException e) {
 			myLogger.error("Hibernate error", e);
 			Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
@@ -110,7 +114,7 @@ public class StatistikForm {
 	 */
 	public Long getAnzahlVorlagen() {
 		Session session = Helper.getHibernateSession();
-		return (Long) session.createQuery("select count(*) " + "from Vorlage").uniqueResult();
+		return (Long) session.createQuery("select count(*) " + "from Template").uniqueResult();
 	}
 
 	/**
@@ -119,7 +123,7 @@ public class StatistikForm {
 	 */
 	public Long getAnzahlWerkstuecke() {
 		Session session = Helper.getHibernateSession();
-		return (Long) session.createQuery("select count(*) " + "from Werkstueck").uniqueResult();
+		return (Long) session.createQuery("select count(*) " + "from Workpiece").uniqueResult();
 	}
 
 	/**
@@ -153,71 +157,71 @@ public class StatistikForm {
 
 		try {
 			Session session = Helper.getHibernateSession();
-			Criteria crit = session.createCriteria(Schritt.class);
+			Criteria crit = session.createCriteria(Task.class);
 
 			/* Liste der IDs */
 			List<Integer> trefferListe = new ArrayList<Integer>();
 
 			/*
-			 * -------------------------------- die Treffer der Benutzergruppen --------------------------------
+			 * die Treffer der Benutzergruppen
 			 */
-			Criteria critGruppen = session.createCriteria(Schritt.class);
+			Criteria critGruppen = session.createCriteria(Task.class);
 			if (!inOffen && !inBearbeitet) {
-				critGruppen.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
-						Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+				critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+						Restrictions.like("processingStatus", Integer.valueOf(2))));
 			}
 			if (inOffen) {
-				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
+				critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
 			}
 			if (inBearbeitet) {
-				critGruppen.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
+				critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
 			}
 
 			/* nur Prozesse, die keine Vorlagen sind */
-			critGruppen.createCriteria("prozess", "proz");
-			critGruppen.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
+			critGruppen.createCriteria("process", "proz");
+			critGruppen.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
 			/* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
-			critGruppen.createCriteria("benutzergruppen", "gruppen").createCriteria("benutzer", "gruppennutzer");
+			critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
 			critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */
-			for (Iterator<Schritt> iter = critGruppen.list().iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
+			for (Iterator<Task> iter = critGruppen.list().iterator(); iter.hasNext();) {
+				Task step = iter.next();
 				trefferListe.add(step.getId());
 			}
 
 			/*
-			 * -------------------------------- Treffer der Benutzer --------------------------------
+			 * Treffer der Benutzer
 			 */
-			Criteria critBenutzer = session.createCriteria(Schritt.class);
+			Criteria critBenutzer = session.createCriteria(Task.class);
 			if (!inOffen && !inBearbeitet) {
-				critBenutzer.add(Restrictions.or(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)),
-						Restrictions.like("bearbeitungsstatus", Integer.valueOf(2))));
+				critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+						Restrictions.like("processingStatus", Integer.valueOf(2))));
 			}
 			if (inOffen) {
-				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(1)));
+				critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
 			}
 			if (inBearbeitet) {
-				critBenutzer.add(Restrictions.eq("bearbeitungsstatus", Integer.valueOf(2)));
+				critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
 			}
 
 			/* nur Prozesse, die keine Vorlagen sind */
-			critBenutzer.createCriteria("prozess", "proz");
-			critBenutzer.add(Restrictions.eq("proz.istTemplate", Boolean.FALSE));
+			critBenutzer.createCriteria("process", "proz");
+			critBenutzer.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
 			/* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
-			critBenutzer.createCriteria("benutzer", "nutzer");
+			critBenutzer.createCriteria("user", "nutzer");
 			critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
 
 			/* die Treffer sammeln */
-			for (Iterator<Schritt> iter = critBenutzer.list().iterator(); iter.hasNext();) {
-				Schritt step = iter.next();
+			for (Iterator<Task> iter = critBenutzer.list().iterator(); iter.hasNext();) {
+				Task step = iter.next();
 				trefferListe.add(step.getId());
 			}
 
 			/*
-			 * -------------------------------- nun nur die Treffer übernehmen, die in der Liste sind --------------------------------
+			 * nun nur die Treffer übernehmen, die in der Liste sind
 			 */
 			crit.add(Restrictions.in("id", trefferListe));
 			return crit.list().size();

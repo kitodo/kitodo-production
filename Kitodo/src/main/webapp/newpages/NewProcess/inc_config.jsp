@@ -35,14 +35,14 @@
 		rowCountVar="rowCount" rowIndexVar="rowIndex">
 		<htm:tr rendered="#{intern.showDependingOnDoctype}">
 			<htm:td width="150">
-				<h:outputText value="#{intern.titel}:" />
+				<h:outputText value="#{intern.title}:" />
 			</htm:td>
 			<htm:td>
-				<h:inputText value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList==null}" />
+				<h:inputText value="#{intern.value}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList==null}" />
 		<%--  		<h:selectOneMenu  value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
 					<f:selectItems value="#{intern.selectList}" />
 				</h:selectOneMenu> --%>
-				<h:selectOneListbox  value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
+				<h:selectOneListbox  value="#{intern.value}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
 					<f:selectItems value="#{intern.selectList}" />
 				</h:selectOneListbox>
 				

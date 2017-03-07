@@ -11,6 +11,11 @@
 
 package de.sub.goobi.helper.tasks;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.metadaten.MetadatenHelper;
+import de.sub.goobi.metadaten.MetadatenVerifizierung;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import org.goobi.io.SafeFile;
@@ -27,23 +32,20 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenVerifizierung;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ProcessService;
 
-/*************************************************************************************
+/**
  * Creation of PDF-Files as long running task for GoobiContentServerServlet
- * First of all the variables have to be set via the setters after that you can
- * initialize and run it
+ * First of all the variables have to be set via the setters after that you can initialize and run it
  * 
  * @author Steffen Hankiewicz
  * @version 12.02.2009
- *************************************************************************************/
+ */
 public class CreatePdfFromServletThread extends LongRunningTask {
 	private static final Logger logger = Logger.getLogger(CreatePdfFromServletThread.class);
 	private SafeFile targetFolder;
+	private ProcessService processService = new ProcessService();
 	private String internalServletPath;
 	private URL metsURL;
 
@@ -63,58 +65,54 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	}
 
 	@Override
-	public void initialize(Prozess inProzess) {
+	public void initialize(Process inProzess) {
 		super.initialize(inProzess);
-		setTitle("Create PDF: " + inProzess.getTitel());
+		setTitle("Create PDF: " + inProzess.getTitle());
 	}
 
 	/**
-	 * Aufruf als Thread
-	 * ================================================================
+	 * Aufruf als Thread.
 	 */
 	@Override
 	public void run() {
 		setStatusProgress(30);
-		if ((this.getProzess() == null) || (this.targetFolder == null) || (this.internalServletPath == null)) {
+		if ((this.getProcess() == null) || (this.targetFolder == null) || (this.internalServletPath == null)) {
 			setStatusMessage("parameters for temporary and final folder and internal servlet path not defined");
 			setStatusProgress(-1);
 			return;
 		}
 		GetMethod method = null;
 		try {
-			/* --------------------------------
+			/*
 			 * define path for mets and pdfs
-			 * --------------------------------*/
+			 */
 			URL goobiContentServerUrl = null;
 			String contentServerUrl = ConfigMain.getParameter("goobiContentServerUrl");
 			new SafeFile("");
-			SafeFile tempPdf = SafeFile.createTempFile(this.getProzess().getTitel(), ".pdf");
-			SafeFile finalPdf = new SafeFile(this.targetFolder, this.getProzess().getTitel() + ".pdf");
+			SafeFile tempPdf = SafeFile.createTempFile(this.getProcess().getTitle(), ".pdf");
+			SafeFile finalPdf = new SafeFile(this.targetFolder, this.getProcess().getTitle() + ".pdf");
 			Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
 			
-			/* --------------------------------
+			/*
 			 * using mets file
-			 * --------------------------------*/
-
-			
-			if (new MetadatenVerifizierung().validate(this.getProzess()) && (this.metsURL != null)) {
+			 */
+			if (new MetadatenVerifizierung().validate(this.getProcess()) && (this.metsURL != null)) {
 				/* if no contentserverurl defined use internal goobiContentServerServlet */
 					if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
 						contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
 					}
-				goobiContentServerUrl = new URL(contentServerUrl + this.metsURL);		
+				goobiContentServerUrl = new URL(contentServerUrl + this.metsURL);
 			
-				/* --------------------------------
+				/*
 				 * mets data does not exist or is invalid
-				 * --------------------------------*/
-				
+				 */
 			} else {
 				if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
 					contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
 				}
 				String url = "";
 				FilenameFilter filter = Helper.imageNameFilter;
-				SafeFile imagesDir = new SafeFile(this.getProzess().getImagesTifDirectory(true));
+				SafeFile imagesDir = new SafeFile(processService.getImagesTifDirectory(true, this.getProcess()));
 				SafeFile[] meta = imagesDir.listFiles(filter);
 				ArrayList<String> filenames = new ArrayList<String>();
 				for (SafeFile data : meta) {
@@ -127,13 +125,13 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 					url = url + f + "$";
 				}
 				String imageString = url.substring(0, url.length()-1);
-				String targetFileName = "&targetFileName=" + this.getProzess().getTitel()+".pdf";	
+				String targetFileName = "&targetFileName=" + this.getProcess().getTitle()+".pdf";
 				goobiContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
 			}
-			
-			/* --------------------------------
+
+			/*
 			 * get pdf from servlet and forward response to file 
-			 * --------------------------------*/
+			 */
 
 			HttpClient httpclient = new HttpClient();
 			if(logger.isDebugEnabled()){
@@ -170,11 +168,12 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 			} finally {
 				method.releaseConnection();
 			}
-			/* --------------------------------
+			/*
 			 * copy pdf from temp to final destination
-			 * --------------------------------*/
+			 */
 			if(logger.isDebugEnabled()){
-				logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to " + finalPdf.getAbsolutePath());
+				logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to "
+						+ finalPdf.getAbsolutePath());
 			}
 			tempPdf.copyFile(finalPdf, false);
 			if(logger.isDebugEnabled()){
@@ -186,19 +185,22 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 				tempMets.delete();
 			}
 		} catch (Exception e) {
-			logger.error("Error while creating pdf for " + this.getProzess().getTitel(), e);
-			setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: " + e.getMessage());
+			logger.error("Error while creating pdf for " + this.getProcess().getTitle(), e);
+			setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: "
+					+ e.getMessage());
 			setStatusProgress(-1);
 
-			/* --------------------------------
+			/*
 			 * report Error to User as Error-Log
-			 * --------------------------------*/
+			 */
 			String text = "error while pdf creation: " + e.getMessage();
-			SafeFile file = new SafeFile(this.targetFolder, this.getProzess().getTitel() + ".PDF-ERROR.log");
+			SafeFile file = new SafeFile(this.targetFolder, this.getProcess().getTitle()
+					+ ".PDF-ERROR.log");
 			try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
 				output.write(text);
 			} catch (IOException e1) {
-				logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);
+				logger.error("Error while reporting error to user in file "
+						+ file.getAbsolutePath(), e);
 			}
 			return;
 		} finally {
@@ -211,23 +213,22 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 		setStatusProgress(100);
 	}
 
-
-	/**************************************************************************************
-	 * Setter for targetFolder
-	 * 
+	/**
+	 * Setter for targetFolder.
+	 *
 	 * @param targetFolder
 	 *            the targetFolder to set
-	 **************************************************************************************/
+	 */
 	public void setTargetFolder(SafeFile targetFolder) {
 		this.targetFolder = targetFolder;
 	}
 
-	/**************************************************************************************
-	 * Setter for internalServletPath
-	 * 
+	/**
+	 * Setter for internalServletPath.
+	 *
 	 * @param internalServletPath
 	 *            the internalServletPath to set
-	 **************************************************************************************/
+	 */
 	public void setInternalServletPath(String internalServletPath) {
 		this.internalServletPath = internalServletPath;
 	}
@@ -244,7 +245,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 	 * Calls the clone constructor to create a not yet executed instance of this
 	 * thread object. This is necessary for threads that have terminated in
 	 * order to render possible to restart them.
-	 * 
+	 *
 	 * @return a not-yet-executed replacement of this thread
 	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
 	 */
@@ -255,7 +256,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
 	/**
 	 * Returns the display name of the task to show to the user.
-	 * 
+	 *
 	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
 	 */
 	@Override

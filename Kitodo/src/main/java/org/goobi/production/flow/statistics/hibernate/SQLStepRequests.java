@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /**
  * Class provides SQL for Step Requests statistics on the history table
@@ -28,16 +28,15 @@ import de.sub.goobi.helper.enums.HistoryEventType;
  */
 public class SQLStepRequests extends SQLGenerator {
 
-	public SQLStepRequests(Date timeFrom, Date timeTo, TimeUnit timeUnit,
-			List<Integer> ids) {
-		// "history.processid - overrides the default value of prozesse.prozesseID
-		// which is set in super class SQLGenerator
-		super(timeFrom, timeTo, timeUnit, ids, "history.processID");
-	}
+    public SQLStepRequests(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
+        // "history.processid - overrides the default value of prozesse.prozesseID
+        // which is set in super class SQLGenerator
+        super(timeFrom, timeTo, timeUnit, ids, "history.process_id");
+    }
 
-	/** This is an extended SQL generator for an SQL extracting data from the historyEvent log.
-	 *  depending on the parameters the query returns up to four fields
-	 *
+	/**
+     * This is an extended SQL generator for an SQL extracting data from the historyEvent log.
+	 * Depending on the parameters the query returns up to four fields
 	 * (non-Javadoc)
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
 	 *
@@ -48,51 +47,49 @@ public class SQLStepRequests extends SQLGenerator {
 	 *
 	 * @return SQLExpression for MySQL DBMS - default fields stepCount and intervall
 	 */
-	public String getSQL(HistoryEventType typeSelection, Integer stepOrder,
+	public String getSQL(HistoryType typeSelection, Integer stepOrder,
 			Boolean stepOrderGrouping, Boolean includeLoops) {
 
-		String timeLimiter = "history.date" ;
-		String groupInnerSelect = "";
+        String timeLimiter = "history.date" ;
+        String groupInnerSelect = "";
 
 		//evaluate if groupingFunction comes along with HistoryEventType
 		// and if so implement this function in sql
-		if (typeSelection.getGroupingFunction()!=null && !includeLoops){
-				timeLimiter = typeSelection.getGroupingFunction() + "(history.date)";
-				groupInnerSelect = " group by history.processid, history.numericvalue ";
-		}
+        if (typeSelection.getGroupingFunction() != null && !includeLoops){
+            timeLimiter = typeSelection.getGroupingFunction() + "(history.date)";
+            groupInnerSelect = " group by history.process_id, history.numericValue ";
+        }
 
-		String subQuery = "";
-		String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
+        String subQuery = "";
+        String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
 				this.myTimeFrom, this.myTimeTo, "timeLimiter");
 		String outerWhereClause = "";
 
-		if (outerWhereClauseTimeFrame.length() > 0) {
-			outerWhereClause = "WHERE " + outerWhereClauseTimeFrame;
-		}
+        if (outerWhereClauseTimeFrame.length() > 0) {
+            outerWhereClause = "WHERE " + outerWhereClauseTimeFrame;
+        }
 
 		//inner table -> alias "table_1"
-		String innerWhereClause;
+        String innerWhereClause;
 
-		if (this.myIdsCondition != null) {
+        if (this.myIdsCondition != null) {
 			// adding ids to the where clause
-			innerWhereClause = "(history.type="
-					+ typeSelection.getValue().toString() + ")  AND ("
+            innerWhereClause = "(history.type=" + typeSelection.getValue().toString() + ")  AND ("
 					+ this.myIdsCondition + ") ";
-		} else {
-			innerWhereClause = "(history.type="
-					+ typeSelection.getValue().toString() + ") ";
-		}
+        } else {
+            innerWhereClause = "(history.type=" + typeSelection.getValue().toString() + ") ";
+        }
 
 		// adding a stepOrder filter to numericvalue if parameter is set
-		if (stepOrder != null) {
-			innerWhereClause = innerWhereClause + " AND history.numericvalue="
+        if (stepOrder != null) {
+			innerWhereClause = innerWhereClause + " AND history.numericValue="
 					+ stepOrder.toString() + " ";
-		}
+        }
 
-		subQuery = "(SELECT numericvalue AS 'stepOrder', "
+        subQuery = "(SELECT numericValue AS 'stepOrder', "
 				+ getIntervallExpression(this.myTimeUnit, "history.date")
 				+ " "
-				+ "AS 'intervall', " + timeLimiter + " AS 'timeLimiter', history.stringvalue AS 'stepName' "
+				+ "AS 'intervall', " + timeLimiter + " AS 'timeLimiter', history.stringValue AS 'stepName' "
 				+ "FROM history WHERE " + innerWhereClause + groupInnerSelect + ") AS table_1";
 
 		this.mySql = "SELECT count(table_1.stepOrder) AS 'stepCount', table_1.intervall AS 'intervall' "
@@ -106,8 +103,8 @@ public class SQLStepRequests extends SQLGenerator {
 				+ " ORDER BY  table_1.intervall"
 				+ addedSorting(stepOrderGrouping);
 
-		return this.mySql;
-	}
+        return this.mySql;
+    }
 
 	/** Method is purposfully not implemented. Method getSQL is overloaded
 	 *  with parametered method.
@@ -115,12 +112,13 @@ public class SQLStepRequests extends SQLGenerator {
 	 * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
 	 */
 	@Override
-	public String getSQL() {
+    public String getSQL() {
 		throw new UnsupportedOperationException(
 				"The class "
 						+ this.getClass().getName()
-						+ " does not support the parameterless getSQL() method. Instead you need to use getSQL() with parameters.");
-	}
+						+ " does not support the parameterless getSQL() method. "
+                        + "Instead you need to use getSQL() with parameters.");
+    }
 
 	/**
 	 *
@@ -167,61 +165,52 @@ public class SQLStepRequests extends SQLGenerator {
 	 * @param eventSelection
 	 * @return SQL String to retrieve the highest numericvalue (stepOrder) for the event defined in eventSelection
 	 */
-	public String SQLMaxStepOrder(HistoryEventType eventSelection) {
+	public String SQLMaxStepOrder(HistoryType eventSelection) {
 
-		String timeRestriction;
-		String innerWhereClause = null;
-		if (this.myIdsCondition != null) {
+        String timeRestriction;
+        String innerWhereClause = null;
+        if (this.myIdsCondition != null) {
 			// adding ids to the where clause
-			innerWhereClause = "(history.type="
-					+ eventSelection.getValue().toString() + ")  AND ("
+            innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ")  AND ("
 					+ this.myIdsCondition + ") ";
-		} else {
-			innerWhereClause = "(history.type="
-					+ eventSelection.getValue().toString() + ") ";
-		}
+        } else {
+            innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ") ";
+        }
 
 		timeRestriction = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo,
 				"history.date");
 
-		if (timeRestriction.length() > 0) {
-			innerWhereClause = innerWhereClause.concat(" AND "
-					+ timeRestriction);
-		}
+        if (timeRestriction.length() > 0) {
+            innerWhereClause = innerWhereClause.concat(" AND " + timeRestriction);
+        }
 
-		return "SELECT max(history.numericvalue) AS maxStep FROM history WHERE "
-				+ innerWhereClause;
-	}
+        return "SELECT max(history.numericValue) AS maxStep FROM history WHERE " + innerWhereClause;
+    }
 
 	/**
 	 *
 	 * @param eventSelection
-	 * @return SQL String to retrieve the lowest numericvalue (stepOrder) for the event defined in eventSelection
+	 * @return SQL String to retrieve the lowest numericValue (stepOrder) for the event defined in eventSelection
 	 */
-	public String SQLMinStepOrder(HistoryEventType eventSelection) {
+	public String SQLMinStepOrder(HistoryType eventSelection) {
 
-		String timeRestriction;
-		String innerWhereClause = null;
-		if (this.myIdsCondition != null) {
+        String timeRestriction;
+        String innerWhereClause = null;
+        if (this.myIdsCondition != null) {
 			// adding ids to the where clause
 			innerWhereClause = "(history.type="
 					+ eventSelection.getValue().toString() + ")  AND ("
 					+ this.myIdsCondition + ") ";
-		} else {
-			innerWhereClause = "(history.type="
-					+ eventSelection.getValue().toString() + ") ";
-		}
+        } else {
+            innerWhereClause = "(history.type=" + eventSelection.getValue().toString() + ") ";
+        }
 
-		timeRestriction = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo,
-				"history.date");
+        timeRestriction = getWhereClauseForTimeFrame(this.myTimeFrom, this.myTimeTo, "history.date");
 
-		if (timeRestriction.length() > 0) {
-			innerWhereClause = innerWhereClause.concat(" AND "
-					+ timeRestriction);
-		}
+        if (timeRestriction.length() > 0) {
+            innerWhereClause = innerWhereClause.concat(" AND " + timeRestriction);
+        }
 
-		return "SELECT min(history.numericvalue) AS minStep FROM history WHERE "
-				+ innerWhereClause;
-	}
-
+        return "SELECT min(history.numericValue) AS minStep FROM history WHERE " + innerWhereClause;
+    }
 }

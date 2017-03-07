@@ -562,12 +562,10 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	
-	
 	<!-- HibernateSessionLong-Bean -->
     <managed-bean>
        <managed-bean-name>HibernateSessionLong</managed-bean-name>
-       <managed-bean-class>de.sub.goobi.persistence.HibernateSessionLong</managed-bean-class>
+       <managed-bean-class>org.kitodo.data.database.persistence.HibernateSessionLong</managed-bean-class>
        <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 	

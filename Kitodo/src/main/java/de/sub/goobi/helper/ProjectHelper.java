@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -25,40 +26,37 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.enums.StepStatus;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 
 public class ProjectHelper {
 
 	/**
 	 * static to reduce load
 	 *
-	 * @param project
+	 * @param project object
 	 * @return a GoobiCollection of the following structure:
-	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,stepCount,stepImageCount
-	 *                  ,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection Inteface using the getItem(<name>) method
-	 *
-	 *                  standard workflow of the project according to the definition that only steps shared by all processes are returned. The
-	 *                  workflow order is returned according to the average order returen by a grouping by step titel
-	 *
-	 *                  consider workflow structure to be a prototype, it would probably make things easier, to either assemble the underlying
-	 *                  construction in separate classes or to create a new class with these properties
+	 *  GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,stepOrder,
+	 *  stepCount,stepImageCount,totalProcessCount,totalImageCount which can get extracted by the IGoobiCollection
+	 *  Interface using the getItem(<name>) method standard workflow of the project according to the definition that
+	 *  only steps shared by all processes are returned. The workflow order is returned according to the average
+	 *  order return by a grouping by step title consider workflow structure to be a prototype, it would probably make
+	 *  things easier, to either assemble the underlying construction in separate classes or to create a new class
+	 *  with these properties
 	 */
 
 	@SuppressWarnings("unchecked")
-	synchronized public static List<StepInformation> getProjectWorkFlowOverview(Projekt project) {
+	synchronized public static List<StepInformation> getProjectWorkFlowOverview(Project project) {
 		Long totalNumberOfProc = 0l;
 		Long totalNumberOfImages = 0l;
 
 		Session session = Helper.getHibernateSession();
 
-
-
-		Criteria critTotals = session.createCriteria(Prozess.class, "proc");
-		critTotals.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critTotals.add(Restrictions.eq("proc.projekt", project));
+		Criteria critTotals = session.createCriteria(Process.class, "proc");
+		critTotals.add(Restrictions.eq("proc.template", Boolean.FALSE));
+		critTotals.add(Restrictions.eq("proc.project", project));
 
 		ProjectionList proList = Projections.projectionList();
 
@@ -80,21 +78,19 @@ public class ProjectHelper {
 		proList = null;
 		list = null;
 
+		Criteria critSteps = session.createCriteria(Task.class);
 
+		critSteps.createCriteria("process", "proc");
+		critSteps.addOrder(Order.asc("ordering"));
 
-		Criteria critSteps = session.createCriteria(Schritt.class);
-
-		critSteps.createCriteria("prozess", "proc");
-		critSteps.addOrder(Order.asc("reihenfolge"));
-
-		critSteps.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critSteps.add(Restrictions.eq("proc.projekt", project));
+		critSteps.add(Restrictions.eq("proc.template", Boolean.FALSE));
+		critSteps.add(Restrictions.eq("proc.project", project));
 
 		proList = Projections.projectionList();
 
-		proList.add(Projections.groupProperty(("titel")));
+		proList.add(Projections.groupProperty(("title")));
 		proList.add(Projections.count("id"));
-		proList.add(Projections.avg("reihenfolge"));
+		proList.add(Projections.avg("ordering"));
 
 
 		critSteps.setProjection(proList);
@@ -128,17 +124,17 @@ public class ProjectHelper {
 			}
 		}
 
-		Criteria critStepDone = session.createCriteria(Schritt.class, "step");
+		Criteria critStepDone = session.createCriteria(Task.class, "step");
 
-		critStepDone.createCriteria("prozess", "proc");
+		critStepDone.createCriteria("process", "proc");
 
-		critStepDone.add(Restrictions.eq("step.bearbeitungsstatus", StepStatus.DONE.getValue()));
-		critStepDone.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		critStepDone.add(Restrictions.eq("proc.projekt", project));
+		critStepDone.add(Restrictions.eq("step.processingStatus", TaskStatus.DONE.getValue()));
+		critStepDone.add(Restrictions.eq("proc.template", Boolean.FALSE));
+		critStepDone.add(Restrictions.eq("proc.project", project));
 
 		ProjectionList proCount = Projections.projectionList();
 
-		proCount.add(Projections.groupProperty(("step.titel")));
+		proCount.add(Projections.groupProperty(("step.title")));
 		proCount.add(Projections.count("proc.id"));
 		proCount.add(Projections.sum("proc.sortHelperImages"));
 

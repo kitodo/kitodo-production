@@ -14,9 +14,9 @@ package de.sub.goobi.helper;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.persistence.HibernateUtilOld;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.persistence.HibernateUtilOld;
 
 public class RefreshObject {
 	private static final Logger logger = Logger.getLogger(RefreshObject.class);
@@ -45,7 +45,7 @@ public class RefreshObject {
 			}
 
 			logger.debug("created a new session");
-			Prozess o = (Prozess) session.get(Prozess.class, Integer.valueOf(processID));
+			Process o = (Process) session.get(Process.class, Integer.valueOf(processID));
 			logger.debug("loaded process");
 			session.refresh(o);
 			logger.debug("refreshed process");
@@ -70,7 +70,7 @@ public class RefreshObject {
 				session = HibernateUtilOld.getSessionFactory().openSession();
 				needsClose = true;
 			}
-			Prozess o = (Prozess) session.get(Prozess.class, processID);
+			Process o = (Process) session.get(Process.class, processID);
 			logger.debug("loaded process");
 			session.refresh(o);
 			logger.debug("refreshed process");
@@ -90,7 +90,7 @@ public class RefreshObject {
 		try {
 
 			Session session = HibernateUtilOld.getSessionFactory().openSession();
-			Schritt o = (Schritt) session.get(Schritt.class, stepID);
+			Task o = (Task) session.get(Task.class, stepID);
 			session.refresh(o);
 			session.close();
 		} catch (Exception e) {

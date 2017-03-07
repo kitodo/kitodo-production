@@ -11,6 +11,12 @@
 
 package de.sub.goobi.helper.ldap;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.helper.Helper;
+
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,31 +46,29 @@ import javax.naming.ldap.LdapContext;
 import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.services.UserService;
 
 public class Ldap {
 	private static final Logger myLogger = Logger.getLogger(Ldap.class);
+
+	private UserService userService = new UserService();
 
 	public Ldap() {
 
 	}
 
-	private String getUserDN(Benutzer inUser) {
-		String userDN = inUser.getLdapGruppe().getUserDN();
+	private String getUserDN(User inUser) {
+		String userDN = inUser.getLdapGroup().getUserDN();
 		userDN = userDN.replaceAll("\\{login\\}", inUser.getLogin());
-		if (inUser.getLdaplogin() != null) {
-			userDN = userDN.replaceAll("\\{ldaplogin\\}", inUser.getLdaplogin());
+		if (inUser.getLdapLogin() != null) {
+			userDN = userDN.replaceAll("\\{ldaplogin\\}", inUser.getLdapLogin());
 		}
-		userDN = userDN.replaceAll("\\{firstname\\}", inUser.getVorname());
-		userDN = userDN.replaceAll("\\{lastname\\}", inUser.getNachname());
+		userDN = userDN.replaceAll("\\{firstname\\}", inUser.getName());
+		userDN = userDN.replaceAll("\\{lastname\\}", inUser.getSurname());
 		return userDN;
 	}
 
@@ -78,8 +82,8 @@ public class Ldap {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public void createNewUser(Benutzer inBenutzer, String inPasswort) throws NamingException, NoSuchAlgorithmException, IOException,
-			InterruptedException {
+	public void createNewUser(User inBenutzer, String inPasswort)
+			throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
 
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 			Hashtable<String, String> env = LdapConnectionSettings();
@@ -92,9 +96,10 @@ public class Ldap {
 			ctx.bind(getUserDN(inBenutzer), dr);
 			ctx.close();
 			setNextUidNumber();
-			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " " + inBenutzer.getNachVorname(), "");
+			Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " "
+					+ userService.getFullName(inBenutzer), "");
 			/*
-			 * -------------------------------- check if HomeDir exists, else create it --------------------------------
+			 * check if HomeDir exists, else create it
 			 */
 			myLogger.debug("HomeVerzeichnis pruefen");
 			String homePath = getUserHomeDirectory(inBenutzer);
@@ -117,7 +122,7 @@ public class Ldap {
 	 * @param inPasswort
 	 * @return Login correct or not
 	 */
-	public boolean isUserPasswordCorrect(Benutzer inBenutzer, String inPasswort) {
+	public boolean isUserPasswordCorrect(User inBenutzer, String inPasswort) {
 		myLogger.debug("start login session with ldap");
 		Hashtable<String, String> env = LdapConnectionSettings();
 
@@ -223,7 +228,7 @@ public class Ldap {
 	 * @param inBenutzer
 	 * @return path as string
 	 */
-	public String getUserHomeDirectory(Benutzer inBenutzer) {
+	public String getUserHomeDirectory(User inBenutzer) {
 		if (ConfigMain.getBooleanParameter("useLocalDirectory", false)) {
 			return ConfigMain.getParameter("dir_Users") + inBenutzer.getLogin();
 		}
@@ -436,7 +441,8 @@ public class Ldap {
 	 * @return boolean about result of change
 	 * @throws NoSuchAlgorithmException
 	 */
-	public boolean changeUserPassword(Benutzer inUser, String inOldPassword, String inNewPassword) throws NoSuchAlgorithmException {
+	public boolean changeUserPassword(User inUser, String inOldPassword, String inNewPassword)
+			throws NoSuchAlgorithmException {
 		Hashtable<String, String> env = LdapConnectionSettings();
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 			env.put(Context.SECURITY_PRINCIPAL, ConfigMain.getParameter("ldap_adminLogin"));
@@ -447,7 +453,7 @@ public class Ldap {
 
 
 				/*
-				 * -------------------------------- Encryption of password and Base64-Encoding --------------------------------
+				 * Encryption of password and Base64-Encoding
 				 */
 				MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
 				md.update(inNewPassword.getBytes(StandardCharsets.UTF_8));
@@ -455,7 +461,7 @@ public class Ldap {
 				ModificationItem[] mods = new ModificationItem[4];
 
 				/*
-				 * -------------------------------- UserPasswort-Attribut ändern --------------------------------
+				 * UserPasswort-Attribut ändern
 				 */
 				BasicAttribute userpassword = new BasicAttribute("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}"
 						+ digestBase64);

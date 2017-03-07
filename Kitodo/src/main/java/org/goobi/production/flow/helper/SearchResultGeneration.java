@@ -11,6 +11,8 @@
 
 package org.goobi.production.flow.helper;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -23,9 +25,8 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
 
 public class SearchResultGeneration {
 
@@ -56,7 +57,7 @@ public class SearchResultGeneration {
 		Order order = Order.asc("titel");
 		crit.addOrder(order);
 		@SuppressWarnings("unchecked")
-		List<Prozess> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
+		List<Process> pl = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Search results");
@@ -106,20 +107,20 @@ public class SearchResultGeneration {
 		headercell8.setCellValue(Helper.getTranslation("b-number"));
 
 		int rowcounter = 2;
-		for (Prozess p : pl) {
+		for (Process p : pl) {
 			HSSFRow row = sheet.createRow(rowcounter);
 			HSSFCell cell0 = row.createCell(0);
-			cell0.setCellValue(p.getTitel());
+			cell0.setCellValue(p.getTitle());
 			HSSFCell cell1 = row.createCell(1);
 			cell1.setCellValue(p.getId());
 			HSSFCell cell2 = row.createCell(2);
-			cell2.setCellValue(p.getErstellungsdatum().toGMTString());
+			cell2.setCellValue(p.getCreationDate().toGMTString());
 			HSSFCell cell3 = row.createCell(3);
 			cell3.setCellValue(p.getSortHelperImages());
 			HSSFCell cell4 = row.createCell(4);
 			cell4.setCellValue(p.getSortHelperDocstructs());
 			HSSFCell cell5 = row.createCell(5);
-			cell5.setCellValue(p.getProjekt().getTitel());
+			cell5.setCellValue(p.getProject().getTitle());
 
 			HSSFCell cell6 = row.createCell(6);
 
@@ -129,12 +130,12 @@ public class SearchResultGeneration {
 			cell7.setCellValue("");
 			HSSFCell cell8 = row.createCell(8);
 			cell8.setCellValue("");
-			if (p.getEigenschaftenList().size() > 0) {
-				for (Prozesseigenschaft pe : p.getEigenschaftenList()) {
-					if (pe.getTitel().equals("AltRefNo")) {
-						cell7.setCellValue(pe.getWert());
-					} else if (pe.getTitel().equals("b-number")) {
-						cell8.setCellValue(pe.getWert());
+			if (p.getProperties().size() > 0) {
+				for (ProcessProperty pe : p.getProperties()) {
+					if (pe.getTitle().equals("AltRefNo")) {
+						cell7.setCellValue(pe.getValue());
+					} else if (pe.getTitle().equals("b-number")) {
+						cell8.setCellValue(pe.getValue());
 					}
 				}
 			}

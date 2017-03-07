@@ -27,7 +27,7 @@
 	cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
 	rowClasses="standardTable_Row1,standardTable_Row2"
 	columnClasses="standardTable_ColumnCentered,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
-	var="item" value="#{ProzessverwaltungForm.myProzess.werkstueckeList}"
+	var="item" value="#{ProzessverwaltungForm.myProzess.workpieces}"
 	rowIndexVar="index">
 
 	<%-- ===================== Nr ====================== --%>
@@ -44,12 +44,12 @@
 		<f:facet name="header">
 			<h:outputText value="#{msgs.eigenschaften}" />
 		</f:facet>
-		<x:dataTable value="#{item.eigenschaften}" var="prop">
+		<x:dataTable value="#{item.properties}" var="prop">
 			<h:column>
-				<h:outputText value="#{prop.titel}:" style="color:grey" />
+				<h:outputText value="#{prop.title}:" style="color:grey" />
 			</h:column>
 			<h:column>
-				<h:outputText value="#{prop.wert}" />
+				<h:outputText value="#{prop.value}" />
 			</h:column>
 		</x:dataTable>
 	</h:column>

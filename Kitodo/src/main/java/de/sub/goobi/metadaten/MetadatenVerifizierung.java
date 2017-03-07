@@ -11,11 +11,22 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -29,44 +40,41 @@ import ugh.dl.Reference;
 import ugh.exceptions.DocStructHasNoTypeException;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class MetadatenVerifizierung {
 	List<DocStruct> docStructsOhneSeiten;
-	Prozess myProzess;
+	Process myProcess;
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
 	boolean autoSave = false;
 
-	public boolean validate(Prozess inProzess) {
-		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
+	public boolean validate(Process process) {
+		Prefs myPrefs = rulesetService.getPreferences(process.getRuleset());
 		/*
-		 * -------------------------------- Fileformat einlesen --------------------------------
+		 * Fileformat einlesen
 		 */
 		Fileformat gdzfile;
 		try {
-			gdzfile = inProzess.readMetadataFile();
+			gdzfile = processService.readMetadataFile(process);
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + inProzess.getTitel(), e.getMessage());
+			Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + process.getTitle(),
+					e.getMessage());
 			return false;
 		}
-		return validate(gdzfile, myPrefs, inProzess);
+		return validate(gdzfile, myPrefs, process);
 	}
 
-	public boolean validate(Fileformat gdzfile, Prefs inPrefs, Prozess inProzess) {
-		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
-		this.myProzess = inProzess;
+	public boolean validate(Fileformat gdzfile, Prefs inPrefs, Process process) {
+		String metadataLanguage = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
+		this.myProcess = process;
 		boolean ergebnis = true;
 
 		DigitalDocument dd = null;
 		try {
 			dd = gdzfile.getDigitalDocument();
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + inProzess.getTitel(), e.getMessage());
+			Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(),
+					e.getMessage());
 			return false;
 		}
 
@@ -109,19 +117,20 @@ public class MetadatenVerifizierung {
 			ergebnis = false;
 		}
 		/*
-		 * -------------------------------- PathImagesFiles prüfen --------------------------------
+		 * PathImagesFiles prüfen
 		 */
 		if (!this.isValidPathImageFiles(dd.getPhysicalDocStruct(), inPrefs)) {
 			ergebnis = false;
 		}
 
 		/*
-		 * -------------------------------- auf Docstructs ohne Seiten prüfen --------------------------------
+		 * auf Docstructs ohne Seiten prüfen
 		 */
 		DocStruct logicalTop = dd.getLogicalDocStruct();
-		this.docStructsOhneSeiten = new ArrayList<DocStruct>();
+		this.docStructsOhneSeiten = new ArrayList<>();
 		if (logicalTop == null) {
-			Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationError"));
+			Helper.setFehlerMeldung(process.getTitle() + ": "
+					+ Helper.getTranslation("MetadataPaginationError"));
 			ergebnis = false;
 		} else {
 			this.checkDocStructsOhneSeiten(logicalTop);
@@ -130,67 +139,72 @@ public class MetadatenVerifizierung {
 		if (this.docStructsOhneSeiten.size() != 0) {
 			for (Iterator<DocStruct> iter = this.docStructsOhneSeiten.iterator(); iter.hasNext();) {
 				DocStruct ds = iter.next();
-				Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationStructure")
+				Helper.setFehlerMeldung(process.getTitle() + ": "
+						+ Helper.getTranslation("MetadataPaginationStructure")
 						+ ds.getType().getNameByLanguage(metadataLanguage));
 			}
 			ergebnis = false;
 		}
 
 		/*
-		 * -------------------------------- auf Seiten ohne Docstructs prüfen --------------------------------
+		 * uf Seiten ohne Docstructs prüfen
 		 */
 		List<String> seitenOhneDocstructs = null;
 		try {
 			seitenOhneDocstructs = checkSeitenOhneDocstructs(gdzfile);
 		} catch (PreferencesException e1) {
-			Helper.setFehlerMeldung("[" + inProzess.getTitel() + "] Can not check pages without docstructs: ");
+			Helper.setFehlerMeldung("[" + process.getTitle() + "] Can not check pages without docstructs: ");
 			ergebnis = false;
 		}
 		if (seitenOhneDocstructs != null && seitenOhneDocstructs.size() != 0) {
 			for (Iterator<String> iter = seitenOhneDocstructs.iterator(); iter.hasNext();) {
 				String seite = iter.next();
-				Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataPaginationPages"), seite);
+				Helper.setFehlerMeldung(process.getTitle() + ": "
+						+ Helper.getTranslation("MetadataPaginationPages"), seite);
 			}
 			ergebnis = false;
 		}
 
 		/*
-		 * -------------------------------- auf mandatory Values der Metadaten prüfen --------------------------------
+		 * auf mandatory Values der Metadaten prüfen
 		 */
-		List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<String>(), metadataLanguage);
+		List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<String>(),
+				metadataLanguage);
 		if (mandatoryList.size() != 0) {
 			for (Iterator<String> iter = mandatoryList.iterator(); iter.hasNext();) {
 				String temp = iter.next();
-				Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataMandatoryElement"), temp);
+				Helper.setFehlerMeldung(process.getTitle() + ": "
+						+ Helper.getTranslation("MetadataMandatoryElement"), temp);
 			}
 			ergebnis = false;
 		}
 
 		/*
-		 * -------------------------------- auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
-		 * --------------------------------
+		 * auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
 		 */
-		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<String>(), inPrefs, metadataLanguage);
+		List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(),
+				new ArrayList<String>(), inPrefs, metadataLanguage);
 		if (configuredList.size() != 0) {
 			for (Iterator<String> iter = configuredList.iterator(); iter.hasNext();) {
 				String temp = iter.next();
-				Helper.setFehlerMeldung(inProzess.getTitel() + ": " + Helper.getTranslation("MetadataInvalidData"), temp);
+				Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataInvalidData"), temp);
 			}
 			ergebnis = false;
 		}
 
 		MetadatenImagesHelper mih = new MetadatenImagesHelper(inPrefs, dd);
 		try {
-			if (!mih.checkIfImagesValid(inProzess.getTitel(), inProzess.getImagesTifDirectory(true))) {
+			if (!mih.checkIfImagesValid(process.getTitle(),
+					processService.getImagesTifDirectory(true, process))) {
 				ergebnis = false;
 			}
 		} catch (Exception e) {
-			Helper.setFehlerMeldung(inProzess.getTitel() + ": ", e);
+			Helper.setFehlerMeldung(process.getTitle() + ": ", e);
 			ergebnis = false;
 		}
 		
 		try {
-			List<String> images = mih.getDataFiles(myProzess);
+			List<String> images = mih.getDataFiles(myProcess);
 			if (images != null) {
 				int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
 				int sizeOfImages = images.size();
@@ -203,20 +217,20 @@ public class MetadatenVerifizierung {
 				}
 			} 
 		} catch (InvalidImagesException e1) {
-			Helper.setFehlerMeldung(inProzess.getTitel() + ": ", e1);
+			Helper.setFehlerMeldung(process.getTitle() + ": ", e1);
 			ergebnis = false;
 		}
 			
 
 		/*
-		 * -------------------------------- Metadaten ggf. zum Schluss speichern --------------------------------
+		 * Metadaten ggf. zum Schluss speichern
 		 */
 		try {
 			if (this.autoSave) {
-				inProzess.writeMetadataFile(gdzfile);
+				processService.writeMetadataFile(gdzfile, process);
 			}
 		} catch (Exception e) {
-			Helper.setFehlerMeldung("Error while writing metadata: " + inProzess.getTitel(), e);
+			Helper.setFehlerMeldung("Error while writing metadata: " + process.getTitle(), e);
 		}
 		return ergebnis;
 	}
@@ -231,11 +245,13 @@ public class MetadatenVerifizierung {
 
 				return true;
 			} else {
-				Helper.setFehlerMeldung(this.myProzess.getTitel() + ": " + "Can not verify, image path is not set", "");
+				Helper.setFehlerMeldung(this.myProcess.getTitle() + ": "
+						+ "Can not verify, image path is not set", "");
 				return false;
 			}
 		} catch (UghHelperException e) {
-			Helper.setFehlerMeldung(this.myProzess.getTitel() + ": " + "Verify aborted, error: ", e.getMessage());
+			Helper.setFehlerMeldung(this.myProcess.getTitle() + ": " + "Verify aborted, error: ",
+					e.getMessage());
 			return false;
 		}
 	}
@@ -324,17 +340,17 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten ================================================================
+	 * individuelle konfigurierbare projektspezifische Validierung der Metadaten
 	 */
 	private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList, Prefs inPrefs, String language) {
 		/*
-		 * -------------------------------- Konfiguration öffnen und die Validierungsdetails auslesen --------------------------------
+		 * Konfiguration öffnen und die Validierungsdetails auslesen
 		 */
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.myProzess.getProjekt().getTitel());
+			cp = new ConfigProjects(this.myProcess.getProject().getTitle());
 		} catch (IOException e) {
-			Helper.setFehlerMeldung("[" + this.myProzess.getTitel() + "] " + "IOException", e.getMessage());
+			Helper.setFehlerMeldung("[" + this.myProcess.getTitle() + "] " + "IOException", e.getMessage());
 			return inFehlerList;
 		}
 		int count = cp.getParamList("validate.metadata").size();
@@ -351,7 +367,8 @@ public class MetadatenVerifizierung {
 			try {
 				mdt = UghHelper.getMetadataType(inPrefs, prop_metadatatype);
 			} catch (UghHelperException e) {
-				Helper.setFehlerMeldung("[" + this.myProzess.getTitel() + "] " + "Metadatatype does not exist: ", prop_metadatatype);
+				Helper.setFehlerMeldung("[" + this.myProcess.getTitle() + "] " + "Metadatatype does not exist: ",
+						prop_metadatatype);
 			}
 			/*
 			 * wenn das Metadatum des FirstChilds überprüfen werden soll, dann dieses jetzt (sofern vorhanden) übernehmen
@@ -379,8 +396,8 @@ public class MetadatenVerifizierung {
 							listOfFromMdts.add(emdete);
 						} catch (UghHelperException e) {
 							/*
-							 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp nicht existieren, Exception abfangen und
-							 * nicht weiter drauf eingehen
+							 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp nicht
+							 * existieren, Exception abfangen und nicht weiter drauf eingehen
 							 */
 						}
 					}
@@ -396,15 +413,15 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
-	 * vorhanden ================================================================
+	 * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an der
+	 * jeweiligen Stelle erlaubt und noch nicht vorhanden
 	 */
-	private void checkCreateElementFrom(ArrayList<String> inFehlerList, ArrayList<MetadataType> inListOfFromMdts, DocStruct myStruct,
-			MetadataType mdt, String language) {
+	private void checkCreateElementFrom(ArrayList<String> inFehlerList, ArrayList<MetadataType> inListOfFromMdts,
+										DocStruct myStruct, MetadataType mdt, String language) {
 
 		/*
-		 * -------------------------------- existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
-		 * in das neue Element schreiben --------------------------------
+		 * existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
+		 * in das neue Element schreiben
 		 */
 		List<? extends Metadata> createMetadaten = myStruct.getAllMetadataByType(mdt);
 		if (createMetadaten == null || createMetadaten.size() == 0) {
@@ -426,7 +443,8 @@ public class MetadatenVerifizierung {
 
 					
 							if (p.getRole() == null) {
-								Helper.setFehlerMeldung("[" + this.myProzess.getTitel() + " " + myStruct.getType().getNameByLanguage(language) + "] "
+								Helper.setFehlerMeldung("[" + this.myProcess.getTitle() + " "
+										+ myStruct.getType().getNameByLanguage(language) + "] "
 										+ Helper.getTranslation("MetadataPersonWithoutRole"));
 								break;
 							} else {
@@ -455,7 +473,7 @@ public class MetadatenVerifizierung {
 		}
 
 		/*
-		 * -------------------------------- alle Kinder durchlaufen --------------------------------
+		 * alle Kinder durchlaufen
 		 */
 		List<DocStruct> children = myStruct.getAllChildren();
 		if (children != null && children.size() > 0) {
@@ -466,7 +484,7 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * Metadatum soll mit bestimmten String beginnen oder enden ================================================================
+	 * Metadatum soll mit bestimmten String beginnen oder enden
 	 */
 	private void checkStartsEndsWith(List<String> inFehlerList, String prop_startswith, String prop_endswith, DocStruct myStruct, MetadataType mdt,
 			String language) {
@@ -517,7 +535,7 @@ public class MetadatenVerifizierung {
 	}
 
 	/**
-	 * automatisch speichern lassen, wenn Änderungen nötig waren ================================================================
+	 * automatisch speichern lassen, wenn Änderungen nötig waren
 	 */
 	public boolean isAutoSave() {
 		return this.autoSave;

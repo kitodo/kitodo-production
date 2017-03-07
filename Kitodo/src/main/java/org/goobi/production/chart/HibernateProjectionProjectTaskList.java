@@ -11,6 +11,8 @@
 
 package org.goobi.production.chart;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,53 +25,50 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.StepStatus;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 
 /**
  * This class implements the IProvideProjectTaskList and approaches the problem
  * by using a projection on the hibernate criteria, which accelerates data  retrieval
- * 
+ *
  * @author Wulf Riebensahm
  *
  */
-
-
 public class HibernateProjectionProjectTaskList implements IProvideProjectTaskList {
 	private static final Logger logger = Logger.getLogger(HibernateProjectionProjectTaskList.class);
 	
 	@Override
-	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
+	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
 		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
 		calculate(inProject, myTaskList, countImages, inMax);
 		return myTaskList;
 	}
 
 	@SuppressWarnings("rawtypes")
-	private synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+	private synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
 
 		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Schritt.class);
+		Criteria crit = session.createCriteria(Task.class);
 
-		crit.createCriteria("prozess", "proc");
+		crit.createCriteria("process", "proc");
 		
-		crit.addOrder(Order.asc("reihenfolge"));
+		crit.addOrder(Order.asc("ordering"));
 
-		crit.add(Restrictions.eq("proc.istTemplate", Boolean.FALSE));
-		crit.add(Restrictions.eq("proc.projekt", inProject));
+		crit.add(Restrictions.eq("proc.template", Boolean.FALSE));
+		crit.add(Restrictions.eq("proc.project", inProject));
 
 		ProjectionList proList = Projections.projectionList();
 
-		proList.add(Projections.property("titel"));
-		proList.add(Projections.property("bearbeitungsstatus"));
+		proList.add(Projections.property("title"));
+		proList.add(Projections.property("processingStatus"));
 		proList.add(Projections.sum("proc.sortHelperImages"));
 		proList.add(Projections.count("id"));
-//		proList.add(Projections.groupProperty(("reihenfolge")));
+		//proList.add(Projections.groupProperty(("reihenfolge")));
 		
-		proList.add(Projections.groupProperty(("titel")));
-		proList.add(Projections.groupProperty(("bearbeitungsstatus")));
+		proList.add(Projections.groupProperty(("title")));
+		proList.add(Projections.groupProperty(("processingStatus")));
 
 		crit.setProjection(proList);
 
@@ -107,7 +106,7 @@ public class HibernateProjectionProjectTaskList implements IProvideProjectTaskLi
 						myTaskList.add(pt);
 					}
 
-					if (StepStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
+					if (TaskStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
 						if (countImages) {
 							pt.setStepsCompleted((Integer) row[FieldList.pageCount.getFieldLocation()]);
 						} else {

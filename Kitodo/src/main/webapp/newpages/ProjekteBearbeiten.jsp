@@ -135,7 +135,7 @@
 																<h:panelGroup id="id18">
 																	<h:inputText id="titel"
 																		style="width: 200px;margin-right:15px"
-																		value="#{ProjekteForm.myProjekt.titel}"
+																		value="#{ProjekteForm.myProjekt.title}"
 																		required="true" />
 																	<x:message id="id19" for="titel" style="color: red"
 																		replaceIdWithLabel="true" />
@@ -787,7 +787,7 @@
 																		</htm:p>
 
 																		<h:graphicImage id="vzid36" alt="volumes"
-																			title="#{ProjekteForm.myProjekt.titel}"
+																			title="#{ProjekteForm.myProjekt.title}"
 																			value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectStatVolumes}" />
 
 																		<htm:p style="width: 50px;">
@@ -796,7 +796,7 @@
 																		</htm:p>
 
 																		<h:graphicImage id="vzid41" alt="images"
-																			title="#{ProjekteForm.myProjekt.titel}"
+																			title="#{ProjekteForm.myProjekt.title}"
 																			value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectStatImages}" />
 
 																	</htm:div>

@@ -11,6 +11,8 @@
 
 package org.goobi.webapi.beans;
 
+import de.sub.goobi.config.ConfigProjects;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
 
-import de.sub.goobi.beans.Projekt;
-import de.sub.goobi.config.ConfigProjects;
+import org.kitodo.data.database.beans.Project;
 
 @XmlType(propOrder = { "required", "from", "option", "ughbinding", "docstruct" })
 public class Field {
@@ -42,10 +43,10 @@ public class Field {
 	@XmlElement(name="insertionLevel")
 	private String docstruct;
 
-	public static List<Field> getFieldConfigForProject(Projekt project) throws IOException {
-		List<Field> fields = new ArrayList<Field>();
+	public static List<Field> getFieldConfigForProject(Project project) throws IOException {
+		List<Field> fields = new ArrayList<>();
 
-		ConfigProjects projectConfig = new ConfigProjects(project.getTitel());
+		ConfigProjects projectConfig = new ConfigProjects(project.getTitle());
 		Integer numFields = projectConfig.getParamList("createNewProcess.itemlist.item").size();
 
 		for (Integer field = 0; field < numFields; field++) {

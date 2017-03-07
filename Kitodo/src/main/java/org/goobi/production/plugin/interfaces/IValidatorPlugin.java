@@ -11,19 +11,20 @@
 
 package org.goobi.production.plugin.interfaces;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.apache.StepObject;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 
 public interface IValidatorPlugin extends IPlugin {
 	
-	public void initialize(Prozess inProcess);
+	public void initialize(Process inProcess);
 
 	public boolean validate();
 	
-	public Schritt getStep();
+	public Task getStep();
 	
-	public void setStep(Schritt step);
+	public void setStep(Task step);
 	
 	public StepObject getStepObject();
 	

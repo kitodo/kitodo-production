@@ -11,15 +11,16 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.PaginatingCriteria;
+
 import java.util.List;
 import java.util.Observable;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.PaginatingCriteria;
+import org.kitodo.data.database.beans.Process;
 
 /*****************************************************************************
  * Filter, that uses Criteria, changed by {@link FilterHelper}.
@@ -43,7 +44,7 @@ public class UserProcessesFilter implements IEvaluableFilter, Cloneable {
 	@Override
 	public Criteria getCriteria() {
 		Session session = Helper.getHibernateSession();
-		PaginatingCriteria crit = new PaginatingCriteria(Prozess.class, session);
+		PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
 
 		FilterHelper.criteriaBuilder(session, null, crit, false, null, false, null, clearSession);
 		return crit;

@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper.ldap;
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -45,10 +47,8 @@ import edu.sysu.virgoftp.ftp.encrypt.MD4;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.LdapGruppe;
-import de.sub.goobi.config.ConfigMain;
-
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.LdapGroup;
 /**
  * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like the LDAP system providers.
  */
@@ -74,12 +74,12 @@ public class LdapUser implements DirContext {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public void configure(Benutzer inUser, String inPassword, String inUidNumber) throws NamingException, NoSuchAlgorithmException, IOException,
-			InterruptedException {
+	public void configure(User inUser, String inPassword, String inUidNumber)
+			throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
 		if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
 
 			this.type = inUser.getLogin();
-			LdapGruppe lp = inUser.getLdapGruppe();
+			LdapGroup lp = inUser.getLdapGroup();
 			if (lp.getObjectClasses() == null) {
 				throw new NamingException("no objectclass defined");
 			}
@@ -116,7 +116,7 @@ public class LdapUser implements DirContext {
 			this.myAttrs.put("gidNumber", ReplaceVariables(lp.getGidNumber(), inUser, inUidNumber));
 
 			/*
-			 * -------------------------------- Samba passwords --------------------------------
+			 * Samba passwords
 			 */
 			/* LanMgr */
 			try {
@@ -133,7 +133,7 @@ public class LdapUser implements DirContext {
 			}
 
 			/*
-			 * -------------------------------- Encryption of password und Base64-Enconding --------------------------------
+			 * Encryption of password und Base64-Enconding
 			 */
 
 			MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
@@ -142,30 +142,27 @@ public class LdapUser implements DirContext {
 			this.myAttrs.put("userPassword", "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
 		}
 	}
-	
-	
-	
 
 	/**
-	 * Replace Variables with current user details
-	 * 
+	 * Replace Variables with current user details.
+	 *
 	 * @param inString
 	 * @param inUser
 	 * @return String with replaced variables
 	 */
-	private String ReplaceVariables(String inString, Benutzer inUser, String inUidNumber) {
+	private String ReplaceVariables(String inString, User inUser, String inUidNumber) {
 		if (inString == null) {
 			return "";
 		}
-		String rueckgabe = inString.replaceAll("\\{login\\}", inUser.getLogin());
-		rueckgabe = rueckgabe.replaceAll("\\{user full name\\}", inUser.getVorname() + " " + inUser.getNachname());
-		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
-		rueckgabe = rueckgabe.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
+		String result = inString.replaceAll("\\{login\\}", inUser.getLogin());
+		result = result.replaceAll("\\{user full name\\}", inUser.getName() + " " + inUser.getSurname());
+		result = result.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
+		result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
 		if(myLogger.isDebugEnabled()){
 			myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
-			myLogger.debug("Replace outstring: " + rueckgabe);
+			myLogger.debug("Replace outstring: " + result);
 		}
-		return rueckgabe;
+		return result;
 	}
 
 	/**

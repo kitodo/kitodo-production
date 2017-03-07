@@ -47,7 +47,7 @@ public class UserDefinedFilterTest {
 		crit1 = filter.getCriteria();
 		crit2 = filter2.getCriteria();
 		assertEquals(
-			"CriteriaImpl(de.sub.goobi.Beans.Prozess:this[Subcriteria(projekt:proj), Subcriteria(schritte:steps)][steps.reihenfolge=5 and steps.bearbeitungsstatus=3, ()])",
+			"CriteriaImpl(org.goobi.kitodo.data.database.beans.Process:this[Subcriteria(project:proj), Subcriteria(schritte:steps)][steps.ordering=5 and steps.processingStatus=3, ()])",
 			crit1.toString());
 		assertNotNull(crit2);
 	}

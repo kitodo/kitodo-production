@@ -31,13 +31,13 @@
 			<h:panelGrid columns="1">
 
 				<%-- Upload-Schaltknopf --%>
-				<h:commandLink rendered="#{LoginForm.myBenutzer.mitMassendownload && ProzessverwaltungForm.page.totalResults > 0 }" id="action1" action="#{ProzessverwaltungForm.UploadFromHomeAlle}"
+				<h:commandLink rendered="#{LoginForm.myBenutzer.withMassDownload && ProzessverwaltungForm.page.totalResults > 0 }" id="action1" action="#{ProzessverwaltungForm.UploadFromHomeAlle}"
 					title="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}" onclick="if (!confirm('#{msgs.upload}?')) return">
 					<h:graphicImage value="/newpages/images/buttons/load_up_set_20px.gif" style="margin-left:0px;margin-right:0px;vertical-align:middle" />
 					<h:outputText value="#{msgs.verzeichnisFertigAusHomeverzeichnisEntfernen}" />
 				</h:commandLink>
 
-				<h:panelGroup rendered="#{LoginForm.myBenutzer.mitMassendownload && ProzessverwaltungForm.modusAnzeige=='aktuell' && ProzessverwaltungForm.page.totalResults > 0 }">
+				<h:panelGroup rendered="#{LoginForm.myBenutzer.withMassDownload && ProzessverwaltungForm.modusAnzeige=='aktuell' && ProzessverwaltungForm.page.totalResults > 0 }">
 					<jd:hideableController for="download" id="downloadswitcher" title="#{msgs.downloadInMeinHomeverzeichnis}">
 						<h:graphicImage value="/newpages/images/buttons/load_down_set_20px.gif" style="margin-left:0px;margin-right:0px;vertical-align:middle" />
 						<h:outputText value="#{msgs.imHomeVerzeichnisVerlinken}" />

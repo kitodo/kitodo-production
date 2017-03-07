@@ -11,6 +11,11 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+
 import java.io.File;
 
 import org.apache.log4j.Logger;
@@ -19,18 +24,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.Docket;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.DocketDAO;
-import de.sub.goobi.persistence.apache.ProcessManager;
+import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.DocketService;
 
 public class DocketForm extends BasisForm {
 	private static final long serialVersionUID = -445707928042517243L;
 	private Docket myDocket = new Docket();
-	private DocketDAO dao = new DocketDAO();
+	private DocketService docketService = new DocketService();
 	private static final Logger logger = Logger.getLogger(DocketForm.class);
 
 	public String Neu() {
@@ -41,7 +42,7 @@ public class DocketForm extends BasisForm {
 	public String Speichern() {
 		try {
 			if (hasValidRulesetFilePath(myDocket, ConfigMain.getParameter("xsltFolder"))) {
-				this.dao.save(myDocket);
+				this.docketService.save(myDocket);
 				return "DocketList";
 			} else {
 				Helper.setFehlerMeldung("DocketNotFound");
@@ -65,7 +66,7 @@ public class DocketForm extends BasisForm {
 				Helper.setFehlerMeldung("DocketInUse");
 				return "";
 			} else {
-				this.dao.remove(this.myDocket);
+				this.docketService.remove(this.myDocket);
 			}
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
@@ -104,8 +105,7 @@ public class DocketForm extends BasisForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Getter und Setter ##
-	 * ##################################################### ####################################################
+	 * Getter und Setter
 	 */
 
 	public Docket getMyDocket() {

@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper.servletfilter;
 
+import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -23,8 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
 
-import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
-import de.sub.goobi.persistence.HibernateSessionLong;
+import org.kitodo.data.database.persistence.HibernateSessionLong;
 
 // TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because 
 // de.sub.goobi.Persistence.HibernateSessionConversationFilter does not work like it should

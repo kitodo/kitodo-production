@@ -11,6 +11,14 @@
 
 package org.goobi.production.flow.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,15 +29,10 @@ import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.StepManager;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+
+import org.kitodo.services.ProcessService;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
@@ -38,7 +41,7 @@ public class JobCreation {
     private static final Logger logger = Logger.getLogger(JobCreation.class);
 
     @SuppressWarnings("static-access")
-    public static Prozess generateProcess(ImportObject io, Prozess vorlage) {
+    public static Process generateProcess(ImportObject io, Process vorlage) {
         String processTitle = io.getProcessTitle();
         if(logger.isTraceEnabled()){
         	logger.trace("processtitle is " + processTitle);
@@ -52,7 +55,7 @@ public class JobCreation {
         	logger.trace("basepath is " + basepath);
         }
         SafeFile metsfile = new SafeFile(metsfilename);
-        Prozess p = null;
+        Process p = null;
         if (!testTitle(processTitle)) {
             logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
             // removing all data
@@ -82,7 +85,7 @@ public class JobCreation {
         cp.setProzessVorlage(vorlage);
         cp.metadataFile = metsfilename;
         cp.prepare(io);
-        cp.getProzessKopie().setTitel(processTitle);
+        cp.getProzessKopie().setTitle(processTitle);
         logger.trace("testing title");
         if (cp.testTitle()) {
             logger.trace("title is valid");
@@ -93,7 +96,7 @@ public class JobCreation {
                     moveFiles(metsfile, basepath, p);
                     List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
                     for (StepObject s : steps) {
-                        if (s.getBearbeitungsstatus() == 1 && s.isTypAutomatisch()) {
+                        if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
                             ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
                             myThread.start();
                         }
@@ -142,7 +145,9 @@ public class JobCreation {
     }
 
     @SuppressWarnings("static-access")
-    public static void moveFiles(SafeFile metsfile, String basepath, Prozess p) throws SwapException, DAOException, IOException, InterruptedException {
+    public static void moveFiles(SafeFile metsfile, String basepath, Process p)
+			throws SwapException, DAOException, IOException, InterruptedException {
+		ProcessService processService = new ProcessService();
         if (ConfigMain.getBooleanParameter("importUseOldConfiguration", false)) {
             SafeFile imagesFolder = new SafeFile(basepath);
             if (!imagesFolder.exists()) {
@@ -157,7 +162,8 @@ public class JobCreation {
                 }
                 for (String file : imageDir) {
                     SafeFile image = new SafeFile(imagesFolder, file);
-                    SafeFile dest = new SafeFile(p.getImagesOrigDirectory(false) + image.getName());
+                    SafeFile dest = new SafeFile(processService.getImagesOrigDirectory(false, p)
+							+ image.getName());
                     image.moveFile(dest);
                 }
                 imagesFolder.deleteDirectory();
@@ -166,7 +172,7 @@ public class JobCreation {
             // copy pdf files
             SafeFile pdfs = new SafeFile(basepath + "_pdf" + File.separator);
             if (pdfs.isDirectory()) {
-            	pdfs.moveDirectory(p.getPdfDirectory());
+            	pdfs.moveDirectory(processService.getPdfDirectory(p));
             }
 
             // copy fulltext files
@@ -175,20 +181,21 @@ public class JobCreation {
 
             if (fulltext.isDirectory()) {
 
-            	fulltext.moveDirectory(p.getTxtDirectory());
+            	fulltext.moveDirectory(processService.getTxtDirectory(p));
             }
 
             // copy source files
 
             SafeFile sourceDir = new SafeFile(basepath + "_src" + File.separator);
             if (sourceDir.isDirectory()) {
-            	sourceDir.moveDirectory(p.getImportDirectory());
+            	sourceDir.moveDirectory(processService.getImportDirectory(p));
             }
 
             try {
             	metsfile.forceDelete();
             } catch (Exception e) {
-                logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitel() + " into goobi", e);
+                logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitle()
+						+ " into goobi", e);
 
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
@@ -208,14 +215,15 @@ public class JobCreation {
                         for (SafeFile imagedir : imageList) {
                             if (imagedir.isDirectory()) {
                                 for (SafeFile file : imagedir.listFiles()) {
-                                	file.moveFile(new SafeFile(p.getImagesDirectory() + imagedir.getName(), file.getName()));
+                                	file.moveFile(new SafeFile(processService.getImagesDirectory(p)
+											+ imagedir.getName(), file.getName()));
                                 }
                             } else {
-                            	imagedir.moveFile(new SafeFile(p.getImagesDirectory(), imagedir.getName()));
+                            	imagedir.moveFile(new SafeFile(processService.getImagesDirectory(p), imagedir.getName()));
                             }
                         }
                     } else if (directory.getName().contains("ocr")) {
-                        SafeFile ocr = new SafeFile(p.getOcrDirectory());
+                        SafeFile ocr = new SafeFile(processService.getOcrDirectory(p));
                         if (!ocr.exists()) {
                             ocr.mkdir();
                         }
@@ -228,7 +236,7 @@ public class JobCreation {
                             }
                         }
                     } else {
-                        SafeFile i = new SafeFile(p.getImportDirectory());
+                        SafeFile i = new SafeFile(processService.getImportDirectory(p));
                         if (!i.exists()) {
                             i.mkdir();
                         }

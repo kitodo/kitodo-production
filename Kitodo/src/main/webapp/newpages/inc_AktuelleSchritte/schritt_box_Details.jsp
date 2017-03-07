@@ -39,7 +39,7 @@
 									<h:outputText value="#{msgs.titel}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.titelLokalisiert}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.localizedTitle}" />
 								</htm:td>
 							</htm:tr>
 
@@ -48,7 +48,7 @@
 									<h:outputText value="#{msgs.prozessTitel}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.prozess.titel}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.process.title}" />
 								</htm:td>
 							</htm:tr>
 							<htm:tr>
@@ -56,7 +56,7 @@
 									<h:outputText value="#{msgs.reihenfolge}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.reihenfolge}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.ordering}" />
 								</htm:td>
 							</htm:tr>
 							<htm:tr>
@@ -64,8 +64,8 @@
 									<h:outputText value="#{msgs.prioritaet}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.prioritaet}" rendered="#{AktuelleSchritteForm.mySchritt.prioritaet!=10}" />
-									<h:outputText value="#{msgs.korrektur}" rendered="#{AktuelleSchritteForm.mySchritt.prioritaet==10}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.priority}" rendered="#{AktuelleSchritteForm.mySchritt.priority!=10}" />
+									<h:outputText value="#{msgs.korrektur}" rendered="#{AktuelleSchritteForm.mySchritt.priority==10}" />
 								</htm:td>
 							</htm:tr>
 							<htm:tr>
@@ -73,28 +73,28 @@
 									<h:outputText value="#{msgs.status}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.bearbeitungsstatusEnum.title}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.processingStatusEnum.title}" />
 								</htm:td>
 							</htm:tr>
 
-							<htm:tr rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbeginn !=null && !HelperForm.anonymized}">
+							<htm:tr rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null && !HelperForm.anonymized}">
 								<htm:td width="150">
 									<h:outputText value="#{msgs.bearbeitungsbeginn}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.bearbeitungsbeginnAsFormattedString}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.processingBeginAsFormattedString}" />
 								</htm:td>
 							</htm:tr>
-							<htm:tr rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+							<htm:tr rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">
 								<htm:td width="150">
 									<h:outputText value="#{msgs.zuletztBearbeitet}:" />
 								</htm:td>
 								<htm:td>
-									<h:outputText value="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunktAsFormattedString}" />
+									<h:outputText value="#{AktuelleSchritteForm.mySchritt.processingTimeAsFormattedString}" />
 								</htm:td>
 							</htm:tr>
 
-							<htm:tr rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungszeitpunkt !=null && !HelperForm.anonymized}">
+							<htm:tr rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">
 								<htm:td width="150">
 									<h:outputText value="#{msgs.aktualisierungstyp}:" />
 								</htm:td>

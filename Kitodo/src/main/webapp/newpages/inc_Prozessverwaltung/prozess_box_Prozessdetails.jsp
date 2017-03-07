@@ -44,7 +44,7 @@
 										<h:outputText value="#{msgs.prozessTitel}:" />
 									</htm:td>
 									<htm:td>
-										<h:outputText value="#{ProzessverwaltungForm.myProzess.titel}" />
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.title}" />
 									</htm:td>
 									<htm:td rowspan="2" align="right" rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
 										<h:commandLink title="#{msgs.prozessdetailsBearbeiten}" action="#{NavigationForm.Reload}" style=";margin-right:20px">
@@ -59,7 +59,7 @@
 										<h:outputText value="#{msgs.projekt}:" />
 									</htm:td>
 									<htm:td>
-										<h:outputText value="#{ProzessverwaltungForm.myProzess.projekt.titel}" />
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.project.title}" />
 									</htm:td>
 								</htm:tr>
 
@@ -78,7 +78,7 @@
 										<h:outputText value="#{msgs.erstellungsdatum}:" />
 									</htm:td>
 									<htm:td>
-										<h:outputText value="#{ProzessverwaltungForm.myProzess.erstellungsdatum}" />
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.creationDate}" />
 									</htm:td>
 								</htm:tr>
 
@@ -87,7 +87,7 @@
 										<h:outputText value="#{msgs.regelsatz}:" />
 									</htm:td>
 									<htm:td>
-										<h:outputText value="#{ProzessverwaltungForm.myProzess.regelsatz.titel}" />
+										<h:outputText value="#{ProzessverwaltungForm.myProzess.ruleset.title}" />
 									</htm:td>
 								</htm:tr>
 
@@ -96,8 +96,8 @@
 										<h:outputText value="#{msgs.inAuswahllisteAnzeigen}:" />
 									</htm:td>
 									<htm:td>
-										<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
-										<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
+										<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.inChoiceListShown}" />
+										<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.inChoiceListShown}" />
 									</htm:td>
 								</htm:tr>
 
@@ -106,8 +106,8 @@
 										<h:outputText value="#{msgs.istTemplate}:" />
 									</htm:td>
 									<htm:td>
-										<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.istTemplate}" />
-										<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.istTemplate}" />
+										<h:graphicImage value="/newpages/images/check_false.gif" rendered="#{not ProzessverwaltungForm.myProzess.template}" />
+										<h:graphicImage value="/newpages/images/check_true.gif" rendered="#{ProzessverwaltungForm.myProzess.template}" />
 									</htm:td>
 								</htm:tr>
 
@@ -193,14 +193,14 @@
 					<%-- Preferences --%>
 					<h:outputLabel for="Regelsatz" value="#{msgs.regelsatz}" />
 					<h:panelGroup>
-						<h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.myProzess.regelsatz}" converter="RegelsatzConverter"
+						<h:selectOneMenu id="Regelsatz" value="#{ProzessverwaltungForm.myProzess.ruleset}" converter="RegelsatzConverter"
 							style="width: 300px;margin-right:15px" required="true">
 							<f:selectItems value="#{HelperForm.regelsaetze}" />
 						</h:selectOneMenu>
 						<x:message for="Regelsatz" style="color: red" replaceIdWithLabel="true" />
 					</h:panelGroup>
 
-					<h:outputLabel for="Docket" value="#{msgs.docket}" />
+					<h:outputLabel for="docket" value="#{msgs.docket}" />
 					<h:panelGroup>
 						<h:selectOneMenu id="docket" style="width: 300px;margin-right:15px" value="#{ProzessverwaltungForm.myProzess.docket}"
 							converter="DocketConverter">
@@ -210,10 +210,10 @@
 					</h:panelGroup>
 
 					<h:outputText value="#{msgs.inAuswahllisteAnzeigen}" />
-					<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.myProzess.inAuswahllisteAnzeigen}" />
+					<h:selectBooleanCheckbox value="#{ProzessverwaltungForm.myProzess.inChoiceListShown}" />
 
 					<h:outputText value="#{msgs.istTemplate}" />
-					<h:selectBooleanCheckbox id="check" value="#{ProzessverwaltungForm.myProzess.istTemplate}" />
+					<h:selectBooleanCheckbox id="check" value="#{ProzessverwaltungForm.myProzess.template}" />
 				</h:panelGrid>
 
 			</htm:td>

@@ -50,7 +50,7 @@
 							<f:facet name="header">
 								<h:outputText value="#{msgs.benutzergruppe}" />
 							</f:facet>
-							<h:outputText value="#{item.titel}" />
+							<h:outputText value="#{item.title}" />
 						</h:column>
 
 						<h:column>

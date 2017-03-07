@@ -17,7 +17,7 @@
 <%@ taglib uri="http://jsftutorials.net/htmLib" prefix="htm"%>
 <%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="x"%>
 
-<h:panelGroup rendered="#{mypage.totalResults > LoginForm.myBenutzer.tabellengroesse}">
+<h:panelGroup rendered="#{mypage.totalResults > LoginForm.myBenutzer.tableSize}">
 	<%-- erste und vorherige Seite --%>
 	<h:commandLink action="#{mypage.cmdMoveFirst}" id="gofirst">
 		<h:graphicImage url="/newpages/images/datascroller/arrow-first.gif"

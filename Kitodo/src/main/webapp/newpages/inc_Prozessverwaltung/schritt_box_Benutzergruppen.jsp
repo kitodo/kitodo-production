@@ -32,13 +32,13 @@
 	headerClass="standardTable_Header" rowClasses="standardTable_Row1"
 	columnClasses="standardTable_Column,standardTable_ColumnCentered"
 	var="item"
-	value="#{ProzessverwaltungForm.mySchritt.benutzergruppenList}">
+	value="#{ProzessverwaltungForm.mySchritt.userGroups}">
 
 	<h:column>
 		<f:facet name="header">
 			<h:outputText value="#{msgs.titel}" />
 		</f:facet>
-		<h:outputText value="#{item.titel}" />
+		<h:outputText value="#{item.title}" />
 	</h:column>
 	<h:column>
 		<f:facet name="header">

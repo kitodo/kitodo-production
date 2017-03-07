@@ -11,10 +11,11 @@
 
 package de.sub.goobi.helper.tasks;
 
+import de.sub.goobi.helper.Helper;
+
 import org.apache.log4j.Logger;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
+import org.kitodo.data.database.beans.Process;
 
 /**
  * @author unascribed
@@ -44,16 +45,16 @@ public abstract class LongRunningTask extends EmptyTask {
 	 */
 	public LongRunningTask(LongRunningTask master) {
 		super(master);
-		initialize(master.prozess);
+		initialize(master.process);
 	}
 
 	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
-	private Prozess prozess;
+	private Process process;
 	private boolean isSingleThread = true;
 
-	public void initialize(Prozess inProzess) {
-		this.prozess = inProzess;
+	public void initialize(Process inputProcess) {
+		this.process = inputProcess;
 	}
 
 	/**
@@ -110,17 +111,15 @@ public abstract class LongRunningTask extends EmptyTask {
 	public abstract String getDisplayName();
 
 	/**
-	 * Prozess-Getter
-	 * ================================================================
+	 * Process-Getter.
 	 */
-	public Prozess getProzess() {
-		return this.prozess;
+	public Process getProcess() {
+		return this.process;
 	}
 
 	/**
-	 * Status des Tasks in Angabe von Prozent
-	 * ================================================================
-	 * 
+	 * Status des Tasks in Angabe von Prozent.
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#getProgress()}.
 	 */
 	@Deprecated
@@ -188,9 +187,8 @@ public abstract class LongRunningTask extends EmptyTask {
 	}
 
 	/**
-	 * Setter für Titel nur für vererbte Klassen
-	 * ================================================================
-	 * 
+	 * Setter für Titel nur für vererbte Klassen.
+	 *
 	 * @deprecated Replaced by {@link EmptyTask#EmptyTask(String)}.
 	 */
 	@Deprecated
@@ -199,12 +197,11 @@ public abstract class LongRunningTask extends EmptyTask {
 	}
 
 	/**
-	 * Setter für Prozess nur für vererbte Klassen
-	 * ================================================================
+	 * Setter für Prozess nur für vererbte Klassen.
 	 */
-	protected void setProzess(Prozess prozess) {
-		this.prozess = prozess;
-		setNameDetail(prozess.getTitel());
+	protected void setProcess(Process process) {
+		this.process = process;
+		setNameDetail(process.getTitle());
 	}
 
 	/**

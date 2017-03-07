@@ -11,6 +11,10 @@
 
 package org.goobi.production.export;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.ExportFileException;
+import org.kitodo.data.database.exceptions.SwapException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,14 +24,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.sub.goobi.helper.enums.StepStatus;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
+
 import org.goobi.production.IProcessDataExport;
+
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
+
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -39,18 +45,20 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 
-import de.sub.goobi.beans.Batch;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.services.BatchService;
+import org.kitodo.services.ProcessService;
+import org.kitodo.services.TaskService;
+import org.kitodo.services.UserService;
 
 /**
  * This class provides xml logfile generation. After the generation the file will be written to user home directory
@@ -60,11 +68,15 @@ import de.sub.goobi.helper.exceptions.SwapException;
  * 
  */
 public class ExportXmlLog implements IProcessDataExport {
+	private BatchService batchService = new BatchService();
+	private ProcessService processService = new ProcessService();
+	private TaskService taskService = new TaskService();
+	private UserService userService = new UserService();
 	private static final Logger logger = Logger.getLogger(ExportXmlLog.class);
 	
 	/**
-	 * This method exports the production metadata as xml to a given directory
-	 * 
+	 * This method exports the production metadata as xml to a given directory.
+	 *
 	 * @param p
 	 *            the process to export
 	 * @param destination
@@ -74,13 +86,13 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @throws ExportFileException
 	 */
 
-	public void startExport(Prozess p, String destination) throws FileNotFoundException, IOException {
+	public void startExport(Process p, String destination) throws FileNotFoundException, IOException {
 		try (FileOutputStream ostream = new FileOutputStream(destination)) {
 			startExport(p, ostream, null);
 		}
 	}
 
-	public void startExport(Prozess p, File dest) throws FileNotFoundException, IOException {
+	public void startExport(Process p, File dest) throws FileNotFoundException, IOException {
 		try (FileOutputStream ostream = new FileOutputStream(dest)) {
 			startExport(p, ostream, null);
 		}
@@ -88,7 +100,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	/**
 	 * This method exports the production metadata as xml to a given stream.
-	 * 
+	 *
 	 * @param process
 	 *            the process to export
 	 * @param os
@@ -97,7 +109,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @throws ExportFileException
 	 */
 	@Override
-	public void startExport(Prozess process, OutputStream os, String xslt) throws IOException {
+	public void startExport(Process process, OutputStream os, String xslt) throws IOException {
 		try {
 			Document doc = createDocument(process, true);
 
@@ -113,14 +125,14 @@ public class ExportXmlLog implements IProcessDataExport {
 	}
 
 	/**
-	 * This method creates a new xml document with process metadata
-	 * 
+	 * This method creates a new xml document with process metadata.
+	 *
 	 * @param process
 	 *            the process to export
 	 * @return a new xml document
 	 * @throws ConfigurationException
 	 */
-	public Document createDocument(Prozess process, boolean addNamespace) {
+	public Document createDocument(Process process, boolean addNamespace) {
 
 		Element processElm = new Element("process");
 		Document doc = new Document(processElm);
@@ -134,43 +146,44 @@ public class ExportXmlLog implements IProcessDataExport {
 
 			Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 			processElm.addNamespaceDeclaration(xsi);
-			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
+			Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile"
+					+ " XML-logfile.xsd", xsi);
 			processElm.setAttribute(attSchema);
 		}
 		// process information
 
 		ArrayList<Element> processElements = new ArrayList<Element>();
 		Element processTitle = new Element("title", xmlns);
-		processTitle.setText(process.getTitel());
+		processTitle.setText(process.getTitle());
 		processElements.add(processTitle);
 
 		Element project = new Element("project", xmlns);
-		project.setText(process.getProjekt().getTitel());
+		project.setText(process.getProject().getTitle());
 		processElements.add(project);
 
 		Element date = new Element("time", xmlns);
 		date.setAttribute("type", "creation date");
-		date.setText(String.valueOf(process.getErstellungsdatum()));
+		date.setText(String.valueOf(process.getCreationDate()));
 		processElements.add(date);
 
 		Element ruleset = new Element("ruleset", xmlns);
-		ruleset.setText(process.getRegelsatz().getDatei());
+		ruleset.setText(process.getRuleset().getFile());
 		processElements.add(ruleset);
 
 		Element comment = new Element("comment", xmlns);
-		comment.setText(process.getWikifield());
+		comment.setText(process.getWikiField());
 		processElements.add(comment);
 
 		StringBuilder batches = new StringBuilder();
-		for (Batch batch : process.getBatchesInitialized()) {
+		for (Batch batch : processService.getBatchesInitialized(process)) {
 			if (batch.getType() != null) {
-				batches.append(batch.getTypeTranslated());
+				batches.append(batchService.getTypeTranslated(batch));
 				batches.append(": ");
 			}
 			if (batches.length() != 0) {
 				batches.append(", ");
 			}
-			batches.append(batch.getLabel());
+			batches.append(batchService.getLabel(batch));
 		}
 		if (batches.length() != 0) {
 			Element batch = new Element("batch", xmlns);
@@ -180,18 +193,18 @@ public class ExportXmlLog implements IProcessDataExport {
 	
 
 		ArrayList<Element> processProperties = new ArrayList<Element>();
-		for (Prozesseigenschaft prop : process.getEigenschaftenList()) {
+		for (ProcessProperty prop : process.getProperties()) {
 			Element property = new Element("property", xmlns);
-			property.setAttribute("propertyIdentifier", prop.getTitel());
-			if (prop.getWert() != null) {
-				property.setAttribute("value", replacer(prop.getWert()));
+			property.setAttribute("propertyIdentifier", prop.getTitle());
+			if (prop.getValue() != null) {
+				property.setAttribute("value", replacer(prop.getValue()));
 			} else {
 				property.setAttribute("value", "");
 			}
 		
 			Element label = new Element("label", xmlns);
 			
-			label.setText(prop.getTitel());
+			label.setText(prop.getTitle());
 			property.addContent(label);
 			processProperties.add(property);
 		}
@@ -204,31 +217,31 @@ public class ExportXmlLog implements IProcessDataExport {
 		// step information
 		Element steps = new Element("steps", xmlns);
 		ArrayList<Element> stepElements = new ArrayList<Element>();
-		for (Schritt s : process.getSchritteList()) {
+		for (Task s : process.getTasks()) {
 			Element stepElement = new Element("step", xmlns);
 			stepElement.setAttribute("stepID", String.valueOf(s.getId()));
 
 			Element steptitle = new Element("title", xmlns);
-			steptitle.setText(s.getTitel());
+			steptitle.setText(s.getTitle());
 			stepElement.addContent(steptitle);
 
 			Element state = new Element("processingstatus", xmlns);
-			state.setText(s.getBearbeitungsstatusAsString());
+			state.setText(taskService.getProcessingStatusAsString(s));
 			stepElement.addContent(state);
 
 			Element begin = new Element("time", xmlns);
 			begin.setAttribute("type", "start time");
-			begin.setText(String.valueOf(s.getBearbeitungsbeginn()));
+			begin.setText(String.valueOf(s.getProcessingBegin()));
 			stepElement.addContent(begin);
 
 			Element end = new Element("time", xmlns);
 			end.setAttribute("type", "end time");
-			end.setText(String.valueOf(s.getBearbeitungsendeAsFormattedString()));
+			end.setText(String.valueOf(taskService.getProcessingEndAsFormattedString(s)));
 			stepElement.addContent(end);
 
 			if (isNonOpenStateAndHasRegularUser(s)) {
 				Element user = new Element("user", xmlns);
-				user.setText(s.getBearbeitungsbenutzer().getNachVorname());
+				user.setText(userService.getFullName(s.getProcessingUser()));
 				stepElement.addContent(user);
 			}
 			Element editType = new Element("edittype", xmlns);
@@ -243,33 +256,33 @@ public class ExportXmlLog implements IProcessDataExport {
 		// template information
 		Element templates = new Element("originals", xmlns);
 		ArrayList<Element> templateElements = new ArrayList<Element>();
-		for (Vorlage v : process.getVorlagenList()) {
+		for (Template v : process.getTemplates()) {
 			Element template = new Element("original", xmlns);
 			template.setAttribute("originalID", String.valueOf(v.getId()));
 
 			ArrayList<Element> templateProperties = new ArrayList<Element>();
-			for (Vorlageeigenschaft prop : v.getEigenschaftenList()) {
+			for (TemplateProperty prop : v.getProperties()) {
 				Element property = new Element("property", xmlns);
-				property.setAttribute("propertyIdentifier", prop.getTitel());
-				if (prop.getWert() != null) {
-					property.setAttribute("value", replacer(prop.getWert()));
+				property.setAttribute("propertyIdentifier", prop.getTitle());
+				if (prop.getValue() != null) {
+					property.setAttribute("value", replacer(prop.getValue()));
 				} else {
 					property.setAttribute("value", "");
 				}
 				
 				Element label = new Element("label", xmlns);
 		
-				label.setText(prop.getTitel());
+				label.setText(prop.getTitle());
 				property.addContent(label);
 
 				templateProperties.add(property);
-				if (prop.getTitel().equals("Signatur")) {
+				if (prop.getTitle().equals("Signatur")) {
 					Element secondProperty = new Element("property", xmlns);
-					secondProperty.setAttribute("propertyIdentifier", prop.getTitel() + "Encoded");
-					if (prop.getWert() != null) {
-						secondProperty.setAttribute("value", "vorl:" + replacer(prop.getWert()));
+					secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+					if (prop.getValue() != null) {
+						secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
 						Element secondLabel = new Element("label", xmlns);
-						secondLabel.setText(prop.getTitel());
+						secondLabel.setText(prop.getTitle());
 						secondProperty.addContent(secondLabel);
 						templateProperties.add(secondProperty);
 					}
@@ -288,23 +301,23 @@ public class ExportXmlLog implements IProcessDataExport {
 		// digital document information
 		Element digdoc = new Element("digitalDocuments", xmlns);
 		ArrayList<Element> docElements = new ArrayList<Element>();
-		for (Werkstueck w : process.getWerkstueckeList()) {
+		for (Workpiece w : process.getWorkpieces()) {
 			Element dd = new Element("digitalDocument", xmlns);
 			dd.setAttribute("digitalDocumentID", String.valueOf(w.getId()));
 
 			ArrayList<Element> docProperties = new ArrayList<Element>();
-			for (Werkstueckeigenschaft prop : w.getEigenschaftenList()) {
+			for (WorkpieceProperty prop : w.getProperties()) {
 				Element property = new Element("property", xmlns);
-				property.setAttribute("propertyIdentifier", prop.getTitel());
-				if (prop.getWert() != null) {
-					property.setAttribute("value", replacer(prop.getWert()));
+				property.setAttribute("propertyIdentifier", prop.getTitle());
+				if (prop.getValue() != null) {
+					property.setAttribute("value", replacer(prop.getValue()));
 				} else {
 					property.setAttribute("value", "");
 				}
 	
 				Element label = new Element("label", xmlns);
 		
-				label.setText(prop.getTitel());
+				label.setText(prop.getTitle());
 				property.addContent(label);
 				docProperties.add(property);
 			}
@@ -323,10 +336,10 @@ public class ExportXmlLog implements IProcessDataExport {
 		ArrayList<Element> metadataElements = new ArrayList<Element>();
 
 		try {
-			String filename = process.getMetadataFilePath();
+			String filename = processService.getMetadataFilePath(process);
 			Document metsDoc = new SAXBuilder().build(filename);
 			Document anchorDoc = null;
-			String anchorfilename = process.getMetadataFilePath().replace("meta.xml", "meta_anchor.xml");
+			String anchorfilename = processService.getMetadataFilePath(process).replace("meta.xml", "meta_anchor.xml");
 			File anchorFile = new File(anchorfilename);
 			if (anchorFile.exists() && anchorFile.canRead()) {
 				anchorDoc = new SAXBuilder().build(anchorfilename);
@@ -425,11 +438,13 @@ public class ExportXmlLog implements IProcessDataExport {
 
 	}
 
-	public void startTransformation(OutputStream out, Prozess p, String filename) throws ConfigurationException, XSLTransformException, IOException {
+	public void startTransformation(OutputStream out, Process p, String filename)
+			throws ConfigurationException, XSLTransformException, IOException {
 		startTransformation(p, out, filename);
 	}
 
-	public void startTransformation(Prozess p, OutputStream out, String filename) throws ConfigurationException, XSLTransformException, IOException {
+	public void startTransformation(Process p, OutputStream out, String filename)
+			throws ConfigurationException, XSLTransformException, IOException {
 		Document doc = createDocument(p, true);
 		XmlTransformation(out, doc, filename);
 	}
@@ -451,7 +466,7 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @param xslt
 	 */
 
-	public void startExport(Iterable<Prozess> processList, OutputStream outputStream, String xslt) {
+	public void startExport(Iterable<Process> processList, OutputStream outputStream, String xslt) {
 		Document answer = new Document();
 		Element root = new Element("processes");
 		answer.setRootElement(root);
@@ -460,9 +475,10 @@ public class ExportXmlLog implements IProcessDataExport {
 		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.addNamespaceDeclaration(xsi);
 		root.setNamespace(xmlns);
-		Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd", xsi);
+		Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile"
+				+ " XML-logfile.xsd", xsi);
 		root.setAttribute(attSchema);
-		for (Prozess p : processList) {
+		for (Process p : processList) {
 			Document doc = createDocument(p, false);
 			Element processRoot = doc.getRootElement();
 			processRoot.detach();
@@ -545,11 +561,11 @@ public class ExportXmlLog implements IProcessDataExport {
 	 * @param s step to check
 	 * @return boolean
 	 */
-	private boolean isNonOpenStateAndHasRegularUser(Schritt s) {
-		return (!StepStatus.OPEN.equals(s.getBearbeitungsstatusEnum()))
-				&& (s.getBearbeitungsbenutzer() != null)
-				&& (s.getBearbeitungsbenutzer().getId() != 0)
-				&& (s.getBearbeitungsbenutzer().getNachVorname() != null);
+	private boolean isNonOpenStateAndHasRegularUser(Task s) {
+		return (!TaskStatus.OPEN.equals(s.getProcessingStatusEnum()))
+				&& (s.getProcessingUser() != null)
+				&& (s.getProcessingUser().getId() != 0)
+				&& (userService.getFullName(s.getProcessingUser()) != null);
 	}
 
 }

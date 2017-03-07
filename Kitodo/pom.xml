@@ -24,7 +24,7 @@
         <name>kitodo.org</name>
         <url>http://kitodo.org</url>
     </organization>
-    <name>Kitodo</name>
+    <name>Kitodo - Core</name>
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
@@ -47,6 +47,11 @@
             <artifactId>tomcat-servlet-api</artifactId>
             <version>7.0.68</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kitodo.data</groupId>
+            <artifactId>kitodo-data-management</artifactId>
+            <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>avalon-framework</groupId>
@@ -146,16 +151,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>1.3</version>
-        </dependency>
-        <dependency>
             <groupId>commons-discovery</groupId>
             <artifactId>commons-discovery</artifactId>
             <version>0.4</version>
@@ -169,11 +164,6 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>commons-jxpath</groupId>
@@ -219,11 +209,6 @@
             <version>1.6.1</version>
         </dependency>
         <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.4</version>
@@ -242,11 +227,6 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -303,22 +283,6 @@
             <version>3.0.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.myfaces.core</groupId>
-            <artifactId>myfaces-api</artifactId>
-            <version>1.1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.myfaces.core</groupId>
-            <artifactId>myfaces-impl</artifactId>
-            <version>1.1.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
             <artifactId>tomahawk</artifactId>
             <version>1.1.9</version>
@@ -369,16 +333,6 @@
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>xmlgraphics-commons</artifactId>
             <version>1.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>4.3.11.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-c3p0</artifactId>
-            <version>4.3.11.Final</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
@@ -462,11 +416,6 @@
         <dependency>
             <groupId>de.unigoettingen</groupId>
             <artifactId>kitodo-contentserver</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kitodo</groupId>
-            <artifactId>kitodo-ugh</artifactId>
             <version>2.0.0</version>
         </dependency>
         <dependency>
@@ -626,8 +575,7 @@
                 <configuration>
                     <webResources>
                         <resource>
-                            <!-- this is relative to the pom.xml directory -->
-                            <directory>${session.executionRootDirectory}/OpacPica-Plugin/target</directory>
+                            <directory>${parent.basedir}/OpacPica-Plugin/target</directory>
                             <targetPath>plugins/opac</targetPath>
                             <includes>
                                 <include>*.jar</include>
@@ -648,26 +596,6 @@
         </plugins>
     </build>
     <profiles>
-        <profile>
-            <id>all-tests</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.19.1</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
         <profile>
             <id>formatter</id>
             <build>
@@ -703,7 +631,7 @@
                         <configuration>
                             <!-- local configuration file -->
                             <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
+                            <configFile>src/main/resources/db/config/flyway.properties</configFile>-->
                         </configuration>
                         <dependencies>
                             <dependency>
@@ -715,7 +643,7 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>clean</goal>
+                                    <goal>baseline</goal>
                                     <goal>migrate</goal>
                                 </goals>
                             </execution>

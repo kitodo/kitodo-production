@@ -92,7 +92,7 @@
 					<htm:td styleClass="standardTable_ColumnCentered">
 
 						<h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}" 
-							rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && proc.currentStepAccessCondition != 'READ'}">
+							rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id && proc.currentStepAccessCondition != 'READ'}">
 							<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.processProperty}" value="#{proc}" />
 							<x:updateActionListener property="#{AktuelleSchritteForm.container}" value="0" />
@@ -133,7 +133,7 @@
 					</htm:td>
 					<htm:td styleClass="standardTable_ColumnCentered" rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"
 						rendered="#{propInd ==0}">
-						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && process_item.currentStepAccessCondition != 'READ'}">
+						<h:panelGroup rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id && process_item.currentStepAccessCondition != 'READ'}">
 							<h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}">
 								<h:graphicImage value="/newpages/images/buttons/edit.gif" />
 								<x:updateActionListener property="#{AktuelleSchritteForm.container}" value="#{container}" />
@@ -158,7 +158,7 @@
 
 
 	<htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
-		rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.mySchritt.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
+		rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
 
 		<htm:tr>
 			<htm:td styleClass="eingabeBoxen_row1" colspan="2">

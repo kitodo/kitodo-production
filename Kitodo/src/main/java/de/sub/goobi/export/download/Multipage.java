@@ -10,6 +10,9 @@
  */
 
 package de.sub.goobi.export.download;
+import org.kitodo.data.database.exceptions.SwapException;
+
+import de.sub.goobi.helper.Helper;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -32,10 +35,9 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
 
 /**
  * Die Klasse Multipage dient zur Erzeugung von mehrseitigen Tiffs
@@ -45,12 +47,13 @@ import de.sub.goobi.helper.exceptions.SwapException;
  */
 
 public class Multipage {
+	private ProcessService processService = new ProcessService();
 	private static final Logger myLogger = Logger.getLogger(Multipage.class);
 	Helper help = new Helper();
 
-	private void create(Prozess inProzess) throws IOException, InterruptedException, SwapException, DAOException {
+	private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
 		/* alle tifs durchlaufen */
-		String pfad = inProzess.getImagesDirectory();
+		String pfad = processService.getImagesDirectory(process);
 		File dir = new File(pfad);
 	
 		String[] dateien = dir.list(Helper.imageNameFilter);
@@ -72,9 +75,10 @@ public class Multipage {
 		myLogger.debug("Bilder durchlaufen");
 
 		/*
-		 * -------------------------------- alle Bilder als Multipage erzeugen --------------------------------
+		 * alle Bilder als Multipage erzeugen
 		 */
-		OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + inProzess.getId().intValue() + File.separator + "multipage.tiff");
+		OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + process.getId()
+				+ File.separator + "multipage.tiff");
 		TIFFEncodeParam param = new TIFFEncodeParam();
 		param.setCompression(4);
 		ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
@@ -88,12 +92,13 @@ public class Multipage {
 		myLogger.debug("fertig");
 	}
 
-	public void ExportStart(Prozess inProzess) throws IOException, InterruptedException, SwapException, DAOException {
+	public void ExportStart(Process process)
+			throws IOException, InterruptedException, SwapException, DAOException {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		if (!facesContext.getResponseComplete()) {
 			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
-			String fileName = inProzess.getTitel() + ".tif";
+			String fileName = process.getTitle() + ".tif";
 
 			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
 			String contentType = servletContext.getMimeType(fileName);
@@ -102,11 +107,12 @@ public class Multipage {
 			ServletOutputStream out = response.getOutputStream();
 
 			/*
-			 * -------------------------------- die txt-Datei direkt in den Stream schreiben lassen --------------------------------
+			 * die txt-Datei direkt in den Stream schreiben lassen
 			 */
-			String filename = this.help.getGoobiDataDirectory() + inProzess.getId().intValue() + File.separator + "multipage.tiff";
+			String filename = this.help.getGoobiDataDirectory() + process.getId() + File.separator
+					+ "multipage.tiff";
 			if (!(new File(filename)).exists()) {
-				create(inProzess);
+				create(process);
 			}
 			FileInputStream fis = null;
 			try {
@@ -123,7 +129,7 @@ public class Multipage {
 			}
 
 			/*
-			 * -------------------------------- den Stream zurückgeben --------------------------------
+			 * den Stream zurückgeben
 			 */
 			out.flush();
 			facesContext.responseComplete();

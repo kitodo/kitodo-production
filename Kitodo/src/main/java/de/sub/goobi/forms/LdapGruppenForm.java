@@ -11,30 +11,31 @@
 
 package de.sub.goobi.forms;
 
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 
-import de.sub.goobi.beans.LdapGruppe;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.persistence.LdapGruppenDAO;
+import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.LdapGroupService;
 
 public class LdapGruppenForm extends BasisForm {
 	private static final long serialVersionUID = -5644561256582235244L;
-	private LdapGruppe myLdapGruppe = new LdapGruppe();
-	private LdapGruppenDAO dao = new LdapGruppenDAO();
+	private LdapGroup myLdapGruppe = new LdapGroup();
+	private LdapGroupService ldapGroupService = new LdapGroupService();
 
 	public String Neu() {
-		this.myLdapGruppe = new LdapGruppe();
+		this.myLdapGruppe = new LdapGroup();
 		return "LdapGruppenBearbeiten";
 	}
 
 	public String Speichern() {
 		try {
-			this.dao.save(this.myLdapGruppe);
+			this.ldapGroupService.save(this.myLdapGruppe);
 			return "LdapGruppenAlle";
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Could not save", e.getMessage());
@@ -44,7 +45,7 @@ public class LdapGruppenForm extends BasisForm {
 
 	public String Loeschen() {
 		try {
-			this.dao.remove(this.myLdapGruppe);
+			this.ldapGroupService.remove(this.myLdapGruppe);
 		} catch (DAOException e) {
 			Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
 			return "";
@@ -56,8 +57,8 @@ public class LdapGruppenForm extends BasisForm {
 		try {
 			Session session = Helper.getHibernateSession();
 				session.clear();
-			Criteria crit = session.createCriteria(LdapGruppe.class);
-			crit.addOrder(Order.asc("titel"));
+			Criteria crit = session.createCriteria(LdapGroup.class);
+			crit.addOrder(Order.asc("title"));
 			this.page = new Page(crit, 0);
 		} catch (HibernateException he) {
 			Helper.setFehlerMeldung("Error on reading database", he.getMessage());
@@ -75,11 +76,11 @@ public class LdapGruppenForm extends BasisForm {
 	 * Getter und Setter     
 	 */
 
-	public LdapGruppe getMyLdapGruppe() {
+	public LdapGroup getMyLdapGruppe() {
 		return this.myLdapGruppe;
 	}
 
-	public void setMyLdapGruppe(LdapGruppe myLdapGruppe) {
+	public void setMyLdapGruppe(LdapGroup myLdapGruppe) {
 		this.myLdapGruppe = myLdapGruppe;
 	}
 

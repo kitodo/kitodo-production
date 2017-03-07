@@ -11,6 +11,14 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+import de.sub.goobi.persistence.apache.FolderInformation;
+import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.database.persistence.apache.ProcessObject;
+import org.kitodo.data.database.persistence.apache.Property;
+import org.kitodo.data.database.persistence.apache.StepObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,19 +30,13 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import org.kitodo.data.database.beans.Ruleset;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
-import de.sub.goobi.beans.Regelsatz;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.apache.FolderInformation;
-import de.sub.goobi.persistence.apache.ProcessManager;
-import de.sub.goobi.persistence.apache.ProcessObject;
-import de.sub.goobi.persistence.apache.Property;
-import de.sub.goobi.persistence.apache.StepObject;
 
 public class VariableReplacerWithoutHibernate {
 
@@ -98,9 +100,9 @@ public class VariableReplacerWithoutHibernate {
 			String ocrBasisPath = fi.getOcrDirectory().replace("\\", "/");
 			String ocrPlaintextPath = fi.getTxtDirectory().replace("\\", "/");
 			String sourcePath = fi.getSourceDirectory().replace("\\", "/");
-			String importPath = fi.getImportDirectory().replace("\\", "/");	
-			Regelsatz ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
-			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getDatei();
+			String importPath = fi.getImportDirectory().replace("\\", "/");
+			Ruleset ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
+			String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile();
 
 			/* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
 			if (tifpath.endsWith(File.separator)) {

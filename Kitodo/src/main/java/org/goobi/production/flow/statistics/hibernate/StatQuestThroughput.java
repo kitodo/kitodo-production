@@ -11,6 +11,13 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,12 +35,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.enums.HistoryEventType;
+import org.kitodo.data.database.helper.enums.HistoryType;
 
 /*****************************************************************************
  * Imlpementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -54,7 +56,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	 * not included means that only min(date) or max(date) - depending on option
 	 * in
 	 * 
-	 * @see HistoryEventType
+	 * @see HistoryType
 	 * 
 	 * @return status of loops included or not
 	 */
@@ -122,7 +124,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		// a list of DataTables is expected as return Object, even if there is
 		// only one
 		// Data Table as it is here in this implementation
-		DataTable tableStepOpenAndDone = getAllSteps(HistoryEventType.stepOpen);
+		DataTable tableStepOpenAndDone = getAllSteps(HistoryType.taskOpen);
 		tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " (" + Helper.getTranslation("openSteps") + ")");
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
@@ -130,7 +132,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		tableStepOpenAndDone.setShowableInChart(false);
 		allTables.add(tableStepOpenAndDone);
 
-		tableStepOpenAndDone = getAllSteps(HistoryEventType.stepDone);
+		tableStepOpenAndDone = getAllSteps(HistoryType.taskDone);
 		tableStepOpenAndDone.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 		tableStepOpenAndDone.setName(StatisticsMode.getByClassName(this.getClass()).getTitle() + " (" + Helper.getTranslation("doneSteps") + ")");
 		tableStepOpenAndDone.setShowableInChart(false);
@@ -138,17 +140,12 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		tableStepOpenAndDone = tableStepOpenAndDone.getDataTableInverted();
 		allTables.add(tableStepOpenAndDone);
 
-		/*
-		 * ======================================================================
-		 * ==============
-		 */
-
 		// what do we do here?
 		// okay ... first we find out how many steps the selected set has
 		// finding lowest step and highest step (no step name discrimination)
 		Integer uBound;
-		Integer uBoundOpen = getMaxStepCount(HistoryEventType.stepOpen);
-		Integer uBoundDone = getMaxStepCount(HistoryEventType.stepDone);
+		Integer uBoundOpen = getMaxStepCount(HistoryType.taskOpen);
+		Integer uBoundDone = getMaxStepCount(HistoryType.taskDone);
 		if (uBoundOpen < uBoundDone) {
 			uBound = uBoundDone;
 		} else {
@@ -156,8 +153,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		}
 
 		Integer lBound;
-		Integer lBoundOpen = getMinStepCount(HistoryEventType.stepOpen);
-		Integer lBoundDone = getMinStepCount(HistoryEventType.stepDone);
+		Integer lBoundOpen = getMinStepCount(HistoryType.taskOpen);
+		Integer lBoundDone = getMinStepCount(HistoryType.taskDone);
 
 		if (lBoundOpen < lBoundDone) {
 			lBound = lBoundDone;
@@ -170,12 +167,12 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 		for (Integer i = lBound; i <= uBound; i++) {
 
 			DataTable tableStepOpen;
-			tableStepOpen = getSpecificSteps(i, HistoryEventType.stepOpen);
+			tableStepOpen = getSpecificSteps(i, HistoryType.taskOpen);
 			
 			tableStepOpen.setShowableInTable(true);
 
 			DataTable tableStepDone;
-			tableStepDone = getSpecificSteps(i, HistoryEventType.stepDone);
+			tableStepDone = getSpecificSteps(i, HistoryType.taskDone);
 			
 			tableStepDone.setShowableInTable(true);
 
@@ -287,7 +284,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	 * @param requestedType
 	 * @return
 	 */
-	private DataTable getAllSteps(HistoryEventType requestedType) {
+	private DataTable getAllSteps(HistoryType requestedType) {
 
 		// adding time restrictions
 		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null,
@@ -312,7 +309,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	 * @return
 	 */
 
-	private DataTable getSpecificSteps(Integer step, HistoryEventType requestedType) {
+	private DataTable getSpecificSteps(Integer step, HistoryType requestedType) {
 
 		// adding time restrictions
 		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, step, true, this.flagIncludeLoops);
@@ -326,8 +323,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	 * Method generates a DataTable based on the input SQL. Methods success is
 	 * depending on a very specific data structure ... so don't use it if you
 	 * don't exactly understand it
-	 * 
-	 * 
+	 *
 	 * @param natSQL
 	 *            , headerFromSQL -> to be used, if headers need to be read in
 	 *            first in order to get a certain sorting
@@ -441,10 +437,10 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
 	/**
 	 * method retrieves the highest step order in the requested history range
-	 * 
+	 *
 	 * @param requestedType
 	 */
-	private Integer getMaxStepCount(HistoryEventType requestedType) {
+	private Integer getMaxStepCount(HistoryType requestedType) {
 
 		// adding time restrictions
 		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist)
@@ -468,11 +464,11 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 	}
 
 	/**
-	 * method retrieves the lowest step order in the requested history range
-	 * 
+	 * method retrieves the lowest step order in the requested history range.
+	 *
 	 * @param requestedType
 	 */
-	private Integer getMinStepCount(HistoryEventType requestedType) {
+	private Integer getMinStepCount(HistoryType requestedType) {
 		// adding time restrictions
 		String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist)
 				.SQLMinStepOrder(requestedType);

@@ -11,31 +11,35 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.helper.exceptions.UghHelperException;
+
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.RulesetService;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
 import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 
 public class UghHelper {
 	private static final Logger myLogger = Logger.getLogger(UghHelper.class);
 
 	/**
-	 * MetadataType aus Preferences eines Prozesses ermitteln
+	 * MetadataType aus Preferences eines Prozesses ermitteln.
 	 * 
 	 * @param inProzess
 	 * @param inName
 	 * @return MetadataType
 	 * @throws UghHelperException
 	 */
-	public static MetadataType getMetadataType(Prozess inProzess, String inName) throws UghHelperException {
-		Prefs myPrefs = inProzess.getRegelsatz().getPreferences();
+	public static MetadataType getMetadataType(Process inProzess, String inName) throws UghHelperException {
+		RulesetService rulesetService = new RulesetService();
+		Prefs myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
 		return getMetadataType(myPrefs, inName);
 	}
 

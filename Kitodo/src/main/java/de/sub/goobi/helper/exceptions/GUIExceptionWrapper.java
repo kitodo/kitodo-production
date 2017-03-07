@@ -193,7 +193,7 @@ public class GUIExceptionWrapper extends Exception {
 
 	/**
 	 *
-	 * @param aThrowable
+	 * @param stackTrace
 	 * @return stack trace as String
 	 */
 	private String getStackTrace(StackTraceElement[] stackTrace) {

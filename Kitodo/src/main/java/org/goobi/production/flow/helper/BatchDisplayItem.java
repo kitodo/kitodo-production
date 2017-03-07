@@ -15,23 +15,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.helper.enums.StepStatus;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.services.TaskService;
 
 public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
 
 	private String stepTitle = "";
 	private Integer stepOrder = null;
-	private StepStatus stepStatus = StepStatus.DONE;
+	private TaskStatus stepStatus = TaskStatus.DONE;
+	private TaskService taskService = new TaskService();
 	private HashMap<String, String> scripts = new HashMap<String, String>();
 	private boolean exportDMS = false;
 
-	public BatchDisplayItem(Schritt s) {
-		this.stepTitle = s.getTitel();
-		this.stepOrder = s.getReihenfolge();
-		this.stepStatus = s.getBearbeitungsstatusEnum();
-		this.scripts.putAll(s.getAllScripts());
-		this.exportDMS = s.isTypExportDMS();
+	public BatchDisplayItem(Task s) {
+		this.stepTitle = s.getTitle();
+		this.stepOrder = s.getOrdering();
+		this.stepStatus = s.getProcessingStatusEnum();
+		this.scripts.putAll(taskService.getAllScripts(s));
+		this.exportDMS = s.isTypeExportDMS();
 	}
 
 	public String getStepTitle() {
@@ -50,11 +52,11 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
 		this.stepOrder = stepOrder;
 	}
 
-	public StepStatus getStepStatus() {
+	public TaskStatus getStepStatus() {
 		return this.stepStatus;
 	}
 
-	public void setStepStatus(StepStatus stepStatus) {
+	public void setStepStatus(TaskStatus stepStatus) {
 		this.stepStatus = stepStatus;
 	}
 

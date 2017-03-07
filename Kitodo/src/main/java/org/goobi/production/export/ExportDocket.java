@@ -11,6 +11,8 @@
 
 package org.goobi.production.export;
 
+import de.sub.goobi.helper.exceptions.ExportFileException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,19 +33,19 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.goobi.production.IProcessDataExport;
 
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.ExportFileException;
+import org.kitodo.data.database.beans.Process;
 
 /**
- * This class provides generating a run note based on the generated xml log
- * 
+ * This class provides generating a run note based on the generated xml log.
+ *
  * @author Steffen Hankiewicz
  */
 public class ExportDocket implements IProcessDataExport {
 
 	/**
-	 * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in the config-folder
-	 * 
+	 * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in
+	 * the config-folder.
+	 *
 	 * @param process
 	 *            the process to export
 	 * @param os
@@ -52,7 +54,7 @@ public class ExportDocket implements IProcessDataExport {
 	 * @throws ExportFileException
 	 */
 	@Override
-	public void startExport(Prozess process, OutputStream os, String xsltfile) throws IOException {
+	public void startExport(Process process, OutputStream os, String xsltfile) throws IOException {
 
 		ExportXmlLog exl = new ExportXmlLog();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -81,14 +83,12 @@ public class ExportDocket implements IProcessDataExport {
 		os.write(pdfBytes);
 	}
 
-	public void startExport(Iterable<Prozess> processList, OutputStream os, String xsltfile) throws IOException {
+	public void startExport(Iterable<Process> processList, OutputStream os, String xsltfile) throws IOException {
 
 		ExportXmlLog exl = new ExportXmlLog();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		exl.startExport(processList, out, null);
 
-		
-		
 		// generate pdf file
 		StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
 		StreamSource transformSource = new StreamSource(xsltfile);

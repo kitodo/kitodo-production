@@ -16,10 +16,8 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 
-import de.sub.goobi.beans.Projekt;
-
-
-
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.services.ProjectService;
 
 /**
  * This implementation get the workflow from the project.
@@ -27,19 +25,18 @@ import de.sub.goobi.beans.Projekt;
  * @author Wulf Riebensahm
  *
  */
-
 public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 
 	@Override
-	public List<IProjectTask> calculateProjectTasks(Projekt inProject, Boolean countImages, Integer inMax) {
+	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
 		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
 		calculate(inProject, myTaskList, countImages, inMax);
 		return myTaskList;
 	}
 
-	private static synchronized void calculate(Projekt inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
-
-		List<StepInformation> workFlow = inProject.getWorkFlow();
+	private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+		ProjectService projectService = new ProjectService();
+		List<StepInformation> workFlow = projectService.getWorkFlow(inProject);
 		Integer usedMax = 0;
 
 		for (StepInformation step : workFlow) {

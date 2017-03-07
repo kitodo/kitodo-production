@@ -26,13 +26,13 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import de.sub.goobi.beans.Prozess;
+import org.kitodo.data.database.beans.Process;
 
 public class DigitalCollections {
 
 	@SuppressWarnings("unchecked")
 	public static List<String> possibleDigitalCollectionsForProcess(
-			Prozess process) throws JDOMException, IOException {
+			Process process) throws JDOMException, IOException {
 		
 		List<String> result = new ArrayList<String>();
 		String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
@@ -51,12 +51,12 @@ public class DigitalCollections {
 			Element projekt = iter.next();
 			List<Element> projektnamen = projekt.getChildren("name");
 			for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-				Element projektname = iterator.next();
+				Element projectName = iterator.next();
 
 				/*
 				 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
 				 */
-				if (projektname.getText().equalsIgnoreCase(process.getProjekt().getTitel())) {
+				if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
 					List<Element> myCols = projekt.getChildren("DigitalCollection");
 					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 						Element col = it2.next();

@@ -12,295 +12,293 @@
 package de.sub.goobi.helper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
-import de.sub.goobi.beans.Benutzer;
-import de.sub.goobi.beans.Benutzergruppe;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.services.ProcessService;
 
 public class BeanHelper {
 
-	public static void EigenschaftHinzufuegen(Prozess inProzess, String inTitel, String inWert) {
-		Prozesseigenschaft eig = new Prozesseigenschaft();
-		eig.setTitel(inTitel);
-		eig.setWert(inWert);
-		eig.setProzess(inProzess);
-		Set<Prozesseigenschaft> eigenschaften = inProzess.getEigenschaftenInitialized();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Prozesseigenschaft>();
+	public static void addProperty(Process process, String title, String value) {
+		ProcessProperty property = new ProcessProperty();
+		ProcessService processService = new ProcessService();
+		property.setTitle(title);
+		property.setValue(value);
+		property.setProcess(process);
+		List<ProcessProperty> properties = processService.getPropertiesInitialized(process);
+		if (properties == null) {
+			properties = new ArrayList<>();
 		}
-		eigenschaften.add(eig);
+		properties.add(property);
 	}
 
-	public static void EigenschaftHinzufuegen(Vorlage inVorlage, String inTitel, String inWert) {
-		Vorlageeigenschaft eig = new Vorlageeigenschaft();
-		eig.setTitel(inTitel);
-		eig.setWert(inWert);
-		eig.setVorlage(inVorlage);
-		Set<Vorlageeigenschaft> eigenschaften = inVorlage.getEigenschaften();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Vorlageeigenschaft>();
+	public static void addProperty(Template template, String title, String value) {
+		TemplateProperty property = new TemplateProperty();
+		property.setTitle(title);
+		property.setValue(value);
+		property.setTemplate(template);
+		List<TemplateProperty> properties = template.getProperties();
+		if (properties == null) {
+			properties = new ArrayList<>();
 		}
-		eigenschaften.add(eig);
+		properties.add(property);
 	}
 
-	public static void EigenschaftHinzufuegen(Werkstueck inWerkstueck, String inTitel, String inWert) {
-		Werkstueckeigenschaft eig = new Werkstueckeigenschaft();
-		eig.setTitel(inTitel);
-		eig.setWert(inWert);
-		eig.setWerkstueck(inWerkstueck);
-		Set<Werkstueckeigenschaft> eigenschaften = inWerkstueck.getEigenschaften();
-		if (eigenschaften == null) {
-			eigenschaften = new HashSet<Werkstueckeigenschaft>();
+	public static void addProperty(Workpiece workpiece, String title, String value) {
+		WorkpieceProperty property = new WorkpieceProperty();
+		property.setTitle(title);
+		property.setValue(value);
+		property.setWorkpiece(workpiece);
+		List<WorkpieceProperty> properties = workpiece.getProperties();
+		if (properties == null) {
+			properties = new ArrayList<>();
 		}
-		eigenschaften.add(eig);
+		properties.add(property);
 	}
 
-	public static void SchritteKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
-		HashSet<Schritt> mySchritte = new HashSet<Schritt>();
-		for (Schritt step : prozessVorlage.getSchritteList()) {
+	public static void copyTasks(Process processTemplate, Process processCopy) {
+		List<Task> myTasks = new ArrayList<>();
+		for (Task task : processTemplate.getTasks()) {
 
-			/* --------------------------------
+			/*
 			 * Details des Schritts
-			 * --------------------------------*/
-			Schritt stepneu = new Schritt();
-			stepneu.setTypAutomatisch(step.isTypAutomatisch());
-			stepneu.setScriptname1(step.getScriptname1());
-			stepneu.setScriptname2(step.getScriptname2());
-			stepneu.setScriptname3(step.getScriptname3());
-			stepneu.setScriptname4(step.getScriptname4());
-			stepneu.setScriptname5(step.getScriptname5());
-			
-			stepneu.setTypAutomatischScriptpfad(step.getTypAutomatischScriptpfad());
-			stepneu.setTypAutomatischScriptpfad2(step.getTypAutomatischScriptpfad2());
-			stepneu.setTypAutomatischScriptpfad3(step.getTypAutomatischScriptpfad3());
-			stepneu.setTypAutomatischScriptpfad4(step.getTypAutomatischScriptpfad4());
-			stepneu.setTypAutomatischScriptpfad5(step.getTypAutomatischScriptpfad5());
-			stepneu.setBatchStep(step.getBatchStep());
-			stepneu.setTypScriptStep(step.getTypScriptStep());
-			stepneu.setTypBeimAnnehmenAbschliessen(step.isTypBeimAnnehmenAbschliessen());
-			stepneu.setTypBeimAnnehmenModul(step.isTypBeimAnnehmenModul());
-			stepneu.setTypBeimAnnehmenModulUndAbschliessen(step.isTypBeimAnnehmenModulUndAbschliessen());
-			stepneu.setTypModulName(step.getTypModulName());
-			stepneu.setTypExportDMS(step.isTypExportDMS());
-			stepneu.setTypExportRus(step.isTypExportRus());
-			stepneu.setTypImagesLesen(step.isTypImagesLesen());
-			stepneu.setTypImagesSchreiben(step.isTypImagesSchreiben());
-			stepneu.setTypImportFileUpload(step.isTypImportFileUpload());
-			stepneu.setTypMetadaten(step.isTypMetadaten());
-			stepneu.setPrioritaet(step.getPrioritaet());
-			stepneu.setBearbeitungsstatusEnum(step.getBearbeitungsstatusEnum());
-			stepneu.setReihenfolge(step.getReihenfolge());
-			stepneu.setTitel(step.getTitel());
-			stepneu.setHomeverzeichnisNutzen(step.getHomeverzeichnisNutzen());
-			stepneu.setProzess(prozessKopie);
-			
-			stepneu.setStepPlugin(step.getStepPlugin());
-			stepneu.setValidationPlugin(step.getValidationPlugin());
-			
-			//Fixing a bug found by Holger Busse (Berlin)
-			stepneu.setTypBeimAbschliessenVerifizieren(step.isTypBeimAbschliessenVerifizieren());
-			
-			/* --------------------------------
+			 */
+			Task taskNew = new Task();
+			taskNew.setTypeAutomatic(task.isTypeAutomatic());
+			taskNew.setScriptName1(task.getScriptName1());
+			taskNew.setScriptName2(task.getScriptName2());
+			taskNew.setScriptName3(task.getScriptName3());
+			taskNew.setScriptName4(task.getScriptName4());
+			taskNew.setScriptName5(task.getScriptName5());
+
+			taskNew.setTypeAutomaticScriptPath(task.getTypeAutomaticScriptPath());
+			taskNew.setTypeAutomaticScriptPath2(task.getTypeAutomaticScriptPath2());
+			taskNew.setTypeAutomaticScriptPath3(task.getTypeAutomaticScriptPath3());
+			taskNew.setTypeAutomaticScriptPath4(task.getTypeAutomaticScriptPath4());
+			taskNew.setTypeAutomaticScriptPath5(task.getTypeAutomaticScriptPath5());
+			taskNew.setBatchStep(task.getBatchStep());
+			taskNew.setTypeScriptStep(task.getTypeScriptStep());
+			taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
+			taskNew.setTypeAcceptModule(task.isTypeAcceptModule());
+			taskNew.setTypeAcceptModuleAndClose(task.isTypeAcceptModuleAndClose());
+			taskNew.setTypeCloseVerify(task.isTypeCloseVerify());
+			taskNew.setTypeModuleName(task.getTypeModuleName());
+			taskNew.setTypeExportDMS(task.isTypeExportDMS());
+			taskNew.setTypeExportRussian(task.isTypeExportRussian());
+			taskNew.setTypeImagesRead(task.isTypeImagesRead());
+			taskNew.setTypeImagesWrite(task.isTypeImagesWrite());
+			taskNew.setTypeImportFileUpload(task.isTypeImportFileUpload());
+			taskNew.setTypeMetadata(task.isTypeMetadata());
+			taskNew.setPriority(task.getPriority());
+			taskNew.setProcessingStatusEnum(task.getProcessingStatusEnum());
+			taskNew.setOrdering(task.getOrdering());
+			taskNew.setTitle(task.getTitle());
+			taskNew.setHomeDirectory(task.getHomeDirectory());
+			taskNew.setProcess(processCopy);
+
+			taskNew.setStepPlugin(task.getStepPlugin());
+			taskNew.setValidationPlugin(task.getValidationPlugin());
+
+			/*
 			 * Benutzer übernehmen
-			 * --------------------------------*/
-			HashSet<Benutzer> myBenutzer = new HashSet<Benutzer>();
-			for (Benutzer benneu : step.getBenutzer()) {
-				myBenutzer.add(benneu);
+			 */
+			List<User> myUsers = new ArrayList<>();
+			for (User userNew : task.getUsers()) {
+				myUsers.add(userNew);
 			}
-			stepneu.setBenutzer(myBenutzer);
+			taskNew.setUsers(myUsers);
 
-			/* --------------------------------
+			/*
 			 * Benutzergruppen übernehmen
-			 * --------------------------------*/
-			HashSet<Benutzergruppe> myBenutzergruppen = new HashSet<Benutzergruppe>();
-			for (Benutzergruppe grupneu : step.getBenutzergruppen()) {
-				myBenutzergruppen.add(grupneu);
+			 */
+			List<UserGroup> myUserGroups = new ArrayList<>();
+			for (UserGroup userGroupNew : task.getUserGroups()) {
+				myUserGroups.add(userGroupNew);
 			}
-			stepneu.setBenutzergruppen(myBenutzergruppen);
+			taskNew.setUserGroups(myUserGroups);
 
 			/* Schritt speichern */
-			mySchritte.add(stepneu);
+			myTasks.add(taskNew);
 		}
-		prozessKopie.setSchritte(mySchritte);
+		processCopy.setTasks(myTasks);
 	}
 
-	public static void WerkstueckeKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
-		HashSet<Werkstueck> myWerkstuecke = new HashSet<Werkstueck>();
-		for (Werkstueck werk : prozessVorlage.getWerkstuecke()) {
-			/* --------------------------------
+	public static void copyWorkpieces(Process processTemplate, Process processCopy) {
+		List<Workpiece> myWorkpieces = new ArrayList<>();
+		for (Workpiece workpiece : processTemplate.getWorkpieces()) {
+			/*
 			 * Details des Werkstücks
-			 * --------------------------------*/
-			Werkstueck werkneu = new Werkstueck();
-			werkneu.setProzess(prozessKopie);
+			 */
+			Workpiece workpieceNew = new Workpiece();
+			workpieceNew.setProcess(processCopy);
 
-			/* --------------------------------
+			/*
 			 * Eigenschaften des Schritts
-			 * --------------------------------*/
-			HashSet<Werkstueckeigenschaft> myEigenschaften = new HashSet<Werkstueckeigenschaft>();
-			for (Iterator<Werkstueckeigenschaft> iterator = werk.getEigenschaften().iterator(); iterator.hasNext();) {
-				Werkstueckeigenschaft eig = iterator.next();
-				Werkstueckeigenschaft eigneu = new Werkstueckeigenschaft();
-				eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-				eigneu.setType(eig.getType());
-				eigneu.setTitel(eig.getTitel());
-				eigneu.setWert(eig.getWert());
-				eigneu.setWerkstueck(werkneu);
-				myEigenschaften.add(eigneu);
+			 */
+			List<WorkpieceProperty> myProperties = new ArrayList<>();
+			for (Iterator<WorkpieceProperty> iterator = workpiece.getProperties().iterator(); iterator.hasNext();) {
+				WorkpieceProperty property = iterator.next();
+				WorkpieceProperty propertyNew = new WorkpieceProperty();
+				propertyNew.setObligatory(property.isObligatory());
+				propertyNew.setType(property.getType());
+				propertyNew.setTitle(property.getTitle());
+				propertyNew.setValue(property.getValue());
+				propertyNew.setWorkpiece(workpieceNew);
+				myProperties.add(propertyNew);
 			}
-			werkneu.setEigenschaften(myEigenschaften);
+			workpieceNew.setProperties(myProperties);
 
 			/* Schritt speichern */
-			myWerkstuecke.add(werkneu);
+			myWorkpieces.add(workpieceNew);
 		}
-		prozessKopie.setWerkstuecke(myWerkstuecke);
+		processCopy.setWorkpieces(myWorkpieces);
 	}
 
-	public static void EigenschaftenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
-		TreeSet<Prozesseigenschaft> myEigenschaften = new TreeSet<Prozesseigenschaft>();
-		for (Iterator<Prozesseigenschaft> iterator = prozessVorlage.getEigenschaftenList().iterator(); iterator.hasNext();) {
-			Prozesseigenschaft eig = iterator.next();
-			Prozesseigenschaft eigneu = new Prozesseigenschaft();
-			eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-			eigneu.setType(eig.getType());
-			eigneu.setTitel(eig.getTitel());
-			eigneu.setWert(eig.getWert());
-			eigneu.setProzess(prozessKopie);
-			myEigenschaften.add(eigneu);
+	public static void copyProperties(Process processTemplate, Process processCopy) {
+		List<ProcessProperty> myProperties = new ArrayList<>();
+		for (Iterator<ProcessProperty> iterator = processTemplate.getProperties().iterator(); iterator.hasNext();) {
+			ProcessProperty property = iterator.next();
+			ProcessProperty propertyNew = new ProcessProperty();
+			propertyNew.setObligatory(property.isObligatory());
+			propertyNew.setType(property.getType());
+			propertyNew.setTitle(property.getTitle());
+			propertyNew.setValue(property.getValue());
+			propertyNew.setProcess(processCopy);
+			myProperties.add(propertyNew);
 		}
 		// TODO read property configuration
-		prozessKopie.setEigenschaften(myEigenschaften);
+		processCopy.setProperties(myProperties);
 	}
 
-	public static void ScanvorlagenKopieren(Prozess prozessVorlage, Prozess prozessKopie) {
-		HashSet<Vorlage> myVorlagen = new HashSet<Vorlage>();
-		for (Vorlage vor : prozessVorlage.getVorlagen()) {
-			/* --------------------------------
+	public static void copyScanTemplates(Process processTemplate, Process processCopy) {
+		List<Template> myTemplates = new ArrayList<>();
+		for (Template template : processTemplate.getTemplates()) {
+			/*
 			 * Details der Vorlage
-			 * --------------------------------*/
-			Vorlage vorneu = new Vorlage();
-			vorneu.setHerkunft(vor.getHerkunft());
-			vorneu.setProzess(prozessKopie);
+			 */
+			Template templateNew = new Template();
+			templateNew.setOrigin(template.getOrigin());
+			templateNew.setProcess(processCopy);
 
-			/* --------------------------------
+			/*
 			 * Eigenschaften des Schritts
-			 * --------------------------------*/
-			HashSet<Vorlageeigenschaft> myEigenschaften = new HashSet<Vorlageeigenschaft>();
-			for (Iterator<Vorlageeigenschaft> iterator = vor.getEigenschaften().iterator(); iterator.hasNext();) {
-				Vorlageeigenschaft eig = iterator.next();
-				Vorlageeigenschaft eigneu = new Vorlageeigenschaft();
-				eigneu.setIstObligatorisch(eig.isIstObligatorisch());
-				eigneu.setType(eig.getType());
-				eigneu.setTitel(eig.getTitel());
-				eigneu.setWert(eig.getWert());
-				eigneu.setVorlage(vorneu);
-				myEigenschaften.add(eigneu);
+			 */
+			List<TemplateProperty> myProperties = new ArrayList<>();
+			for (Iterator<TemplateProperty> iterator = template.getProperties().iterator(); iterator.hasNext();) {
+				TemplateProperty property = iterator.next();
+				TemplateProperty propertyNew = new TemplateProperty();
+				propertyNew.setObligatory(property.isObligatory());
+				propertyNew.setType(property.getType());
+				propertyNew.setTitle(property.getTitle());
+				propertyNew.setValue(property.getValue());
+				propertyNew.setTemplate(templateNew);
+				myProperties.add(propertyNew);
 			}
-			vorneu.setEigenschaften(myEigenschaften);
+			templateNew.setProperties(myProperties);
 
 			/* Schritt speichern */
-			myVorlagen.add(vorneu);
+			myTemplates.add(templateNew);
 		}
-		prozessKopie.setVorlagen(myVorlagen);
+		processCopy.setTemplates(myTemplates);
 	}
 
-	public static String WerkstueckEigenschaftErmitteln(Prozess myProzess, String inEigenschaft) {
-		String Eigenschaft = "";
-		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
-			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft)) {
-					Eigenschaft = eigenschaft.getWert();
+	public static String determineWorkpieceProperty(Process myProcess, String inputProperty) {
+		String propertyString = "";
+		for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
+			for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+				if (property.getTitle().equals(inputProperty)) {
+					propertyString = property.getValue();
 				}
 			}
 		}
-		return Eigenschaft;
+		return propertyString;
 	}
 
-	public static String ScanvorlagenEigenschaftErmitteln(Prozess myProzess, String inEigenschaft) {
-		String Eigenschaft = "";
-		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
-			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft)) {
-					Eigenschaft = eigenschaft.getWert();
+	public static String determineScanTemplateProperty(Process myProcess, String inputProperty) {
+		String propertyString = "";
+		for (Template myTemplate : myProcess.getTemplates()) {
+			for (TemplateProperty property : myTemplate.getProperties()) {
+				if (property.getTitle().equals(inputProperty)) {
+					propertyString = property.getValue();
 				}
 			}
 		}
-		return Eigenschaft;
+		return propertyString;
 	}
 
-	public static void WerkstueckEigenschaftAendern(Prozess myProzess, String inEigenschaft, String inWert) {
-		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
-			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft)) {
-					eigenschaft.setWert(inWert);
-				}
-			}
-		}
-	}
-
-	public static void ScanvorlagenEigenschaftAendern(Prozess myProzess, String inEigenschaft, String inWert) {
-		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
-			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft)) {
-					eigenschaft.setWert(inWert);
+	public static void changeWorkpieceProperty(Process myProcess, String inputProperty, String inputValue) {
+		for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
+			for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+				if (property.getTitle().equals(inputProperty)) {
+					property.setValue(inputValue);
 				}
 			}
 		}
 	}
 
-	public static void WerkstueckEigenschaftLoeschen(Prozess myProzess, String inEigenschaft, String inWert) {
-		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
-			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft) && eigenschaft.getWert().equals(inWert)) {
-					myWerkstueck.getEigenschaften().remove(eigenschaft);
+	public static void changeScanTemplateProperty(Process myProcess, String inputProperty, String inputValue) {
+		for (Template myTemplate : myProcess.getTemplates()) {
+			for (TemplateProperty property : myTemplate.getProperties()) {
+				if (property.getTitle().equals(inputProperty)) {
+					property.setValue(inputValue);
 				}
 			}
 		}
 	}
 
-	public static void ScanvorlagenEigenschaftLoeschen(Prozess myProzess, String inEigenschaft, String inWert) {
-		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
-			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
-				if (eigenschaft.getTitel().equals(inEigenschaft) && eigenschaft.getWert().equals(inWert)) {
-					myVorlage.getEigenschaften().remove(eigenschaft);
+	public static void removeWorkpieceProperty(Process myProcess, String inputProperty, String inputValue) {
+		for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
+			for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+				if (property.getTitle().equals(inputProperty) && property.getValue().equals(inputValue)) {
+					myWorkpiece.getProperties().remove(property);
 				}
 			}
 		}
 	}
 
-	public static void WerkstueckEigenschaftDoppelteLoeschen(Prozess myProzess) {
-		for (Werkstueck myWerkstueck : myProzess.getWerkstueckeList()) {
-			List<String> einzelstuecke = new ArrayList<String>();
-			for (Werkstueckeigenschaft eigenschaft : myWerkstueck.getEigenschaftenList()) {
+	public static void removeScanTemplateProperty(Process myProcess, String inputProperty, String inputValue) {
+		for (Template myTemplate : myProcess.getTemplates()) {
+			for (TemplateProperty property : myTemplate.getProperties()) {
+				if (property.getTitle().equals(inputProperty) && property.getValue().equals(inputValue)) {
+					myTemplate.getProperties().remove(property);
+				}
+			}
+		}
+	}
+
+	public static void removeDoubleWorkpieceProperty(Process myProcess) {
+		for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
+			List<String> einzelstuecke = new ArrayList<>();
+			for (WorkpieceProperty property : myWorkpiece.getProperties()) {
 				/* prüfen, ob die Eigenschaft doppelt, wenn ja, löschen */
-				if (einzelstuecke.contains(eigenschaft.getTitel() + "|" + eigenschaft.getWert())) {
-					myWerkstueck.getEigenschaften().remove(eigenschaft);
+				if (einzelstuecke.contains(property.getTitle() + "|" + property.getValue())) {
+					myWorkpiece.getProperties().remove(property);
 				} else {
-					einzelstuecke.add(eigenschaft.getTitel() + "|" + eigenschaft.getWert());
+					einzelstuecke.add(property.getTitle() + "|" + property.getValue());
 				}
 			}
 		}
 	}
 
-	public static void ScanvorlageEigenschaftDoppelteLoeschen(Prozess myProzess) {
-		for (Vorlage myVorlage : myProzess.getVorlagenList()) {
-			List<String> einzelstuecke = new ArrayList<String>();
-			for (Vorlageeigenschaft eigenschaft : myVorlage.getEigenschaftenList()) {
+	public static void removeDoubleScanTemplateProperty(Process myProcess) {
+		for (Template myTemplate : myProcess.getTemplates()) {
+			List<String> einzelstuecke = new ArrayList<>();
+			for (TemplateProperty property : myTemplate.getProperties()) {
 				/* prüfen, ob die Eigenschaft doppelt, wenn ja, löschen */
-				if (einzelstuecke.contains(eigenschaft.getTitel() + "|" + eigenschaft.getWert())) {
-					myVorlage.getEigenschaften().remove(eigenschaft);
+				if (einzelstuecke.contains(property.getTitle() + "|" + property.getValue())) {
+					myTemplate.getProperties().remove(property);
 				} else {
-					einzelstuecke.add(eigenschaft.getTitel() + "|" + eigenschaft.getWert());
+					einzelstuecke.add(property.getTitle() + "|" + property.getValue());
 				}
 			}
 		}

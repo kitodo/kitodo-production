@@ -78,14 +78,14 @@
 												headerClass="standardTable_Header"
 												columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
 												var="item"
-												value="#{ProzesskopieForm.prozessKopie.eigenschaftenList}">
+												value="#{ProzesskopieForm.prozessKopie.properties}">
 
 												<h:column>
-													<h:outputText value="#{item.titel}" />
+													<h:outputText value="#{item.title}" />
 												</h:column>
 
 												<h:column>
-													<h:inputText value="#{item.wert}" style="width:500px" />
+													<h:inputText value="#{item.value}" style="width:500px" />
 												</h:column>
 											</x:dataTable>
 										

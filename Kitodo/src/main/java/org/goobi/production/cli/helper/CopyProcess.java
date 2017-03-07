@@ -11,16 +11,28 @@
 
 package org.goobi.production.cli.helper;
 
+import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.forms.AdditionalField;
+import de.sub.goobi.forms.LoginForm;
+import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.BeanHelper;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.UghHelper;
+import org.kitodo.data.database.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.UghHelperException;
+
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
@@ -35,6 +47,8 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import org.kitodo.services.RulesetService;
+import org.kitodo.services.TaskService;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -46,29 +60,18 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.beans.Prozesseigenschaft;
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.beans.Vorlage;
-import de.sub.goobi.beans.Vorlageeigenschaft;
-import de.sub.goobi.beans.Werkstueck;
-import de.sub.goobi.beans.Werkstueckeigenschaft;
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.forms.AdditionalField;
-import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.forms.ProzesskopieForm;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.enums.StepEditType;
-import de.sub.goobi.helper.enums.StepStatus;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.persistence.ProzessDAO;
-import de.unigoettingen.sub.search.opac.ConfigOpac;
-import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
+
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.helper.enums.TaskEditType;
+import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
 
 public class CopyProcess extends ProzesskopieForm {
 
@@ -77,8 +80,11 @@ public class CopyProcess extends ProzesskopieForm {
 	private String opacSuchfeld = "12";
 	private String opacSuchbegriff;
 	private String opacKatalog;
-	private Prozess prozessVorlage = new Prozess();
-	private Prozess prozessKopie = new Prozess();
+	private Process prozessVorlage = new Process();
+	private Process prozessKopie = new Process();
+	private ProcessService processService = new ProcessService();
+	private RulesetService rulesetService = new RulesetService();
+	private TaskService taskService = new TaskService();
 	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
 	private boolean useOpac;
 	private boolean useTemplates;
@@ -99,15 +105,13 @@ public class CopyProcess extends ProzesskopieForm {
 
 	public final static String DIRECTORY_SUFFIX = "_tif";
 
-	/* =============================================================== */
-
 	public String prepare(ImportObject io) {
-		if (this.prozessVorlage.getContainsUnreachableSteps()) {
+		if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
 			return "";
 		}
 
 		clearValues();
-		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
+		Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
 		try {
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
@@ -117,40 +121,39 @@ public class CopyProcess extends ProzesskopieForm {
 			myLogger.error(e);
 		}
 		;
-		this.prozessKopie = new Prozess();
-		this.prozessKopie.setTitel("");
-		this.prozessKopie.setIstTemplate(false);
-		this.prozessKopie.setInAuswahllisteAnzeigen(false);
-		this.prozessKopie.setProjekt(this.prozessVorlage.getProjekt());
-		this.prozessKopie.setRegelsatz(this.prozessVorlage.getRegelsatz());
+		this.prozessKopie = new Process();
+		this.prozessKopie.setTitle("");
+		this.prozessKopie.setTemplate(false);
+		this.prozessKopie.setInChoiceListShown(false);
+		this.prozessKopie.setProject(this.prozessVorlage.getProject());
+		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
 		this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
 		this.digitalCollections = new ArrayList<String>();
 
 		/*
-		 * -------------------------------- Kopie der Prozessvorlage anlegen --------------------------------
+		 * Kopie der Prozessvorlage anlegen
 		 */
-		BeanHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
-
+		BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
 
 		return this.naviFirstPage;
 	}
 
 	@Override
 	public String prepare() {
-		if (this.prozessVorlage.getContainsUnreachableSteps()) {
-			for (Schritt s : this.prozessVorlage.getSchritteList()) {
-				if (s.getBenutzergruppenSize() == 0 && s.getBenutzerSize() == 0) {
-					Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitel());
+		if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
+			for (Task s : this.prozessVorlage.getTasks()) {
+				if (taskService.getUserGroupsSize(s) == 0 && taskService.getUsersSize(s) == 0) {
+					Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
 				}
 			}
 			return "";
 		}
 
 		clearValues();
-		Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
+		Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
 		try {
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
@@ -160,36 +163,34 @@ public class CopyProcess extends ProzesskopieForm {
 			myLogger.error(e);
 		}
 		;
-		this.prozessKopie = new Prozess();
-		this.prozessKopie.setTitel("");
-		this.prozessKopie.setIstTemplate(false);
-		this.prozessKopie.setInAuswahllisteAnzeigen(false);
-		this.prozessKopie.setProjekt(this.prozessVorlage.getProjekt());
-		this.prozessKopie.setRegelsatz(this.prozessVorlage.getRegelsatz());
+		this.prozessKopie = new Process();
+		this.prozessKopie.setTitle("");
+		this.prozessKopie.setTemplate(false);
+		this.prozessKopie.setInChoiceListShown(false);
+		this.prozessKopie.setProject(this.prozessVorlage.getProject());
+		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
 		this.digitalCollections = new ArrayList<String>();
 
 		/*
-		 * -------------------------------- Kopie der Prozessvorlage anlegen --------------------------------
+		 * Kopie der Prozessvorlage anlegen
 		 */
-		BeanHelper.SchritteKopieren(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.ScanvorlagenKopieren(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.WerkstueckeKopieren(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.EigenschaftenKopieren(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
+		BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
 
 		initializePossibleDigitalCollections();
 
 		return this.naviFirstPage;
 	}
 
-	/* =============================================================== */
-
 	private void readProjectConfigs() {
-		/*-------------------------------- 
+		/*
 		 * projektabhängig die richtigen Felder in der Gui anzeigen 
-		 * --------------------------------*/
+		 */
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
+			cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
@@ -205,20 +206,20 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		/*
-		 * -------------------------------- die auszublendenden Standard-Felder ermitteln --------------------------------
+		 * die auszublendenden Standard-Felder ermitteln
 		 */
 		for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
 			this.standardFields.put(t, false);
 		}
 
 		/*
-		 * -------------------------------- die einzublendenen (zusätzlichen) Eigenschaften ermitteln --------------------------------
+		 * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
 		 */
 		int count = cp.getParamList("createNewProcess.itemlist.item").size();
 		for (int i = 0; i < count; i++) {
 			AdditionalField fa = new AdditionalField(this);
 			fa.setFrom(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@from]"));
-			fa.setTitel(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
+			fa.setTitle(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
 			fa.setRequired(cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@required]"));
 			fa.setIsdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isdoctype]"));
 			fa.setIsnotdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isnotdoctype]"));
@@ -230,7 +231,7 @@ public class CopyProcess extends ProzesskopieForm {
 			fa.setInitEnd(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initEnd]"));
 
 			/*
-			 * -------------------------------- Bindung an ein Metadatum eines Docstructs --------------------------------
+			 * Bindung an ein Metadatum eines Docstructs
 			 */
 			if (cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@ughbinding]")) {
 				fa.setUghbinding(true);
@@ -239,7 +240,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 
 			/*
-			 * -------------------------------- prüfen, ob das aktuelle Item eine Auswahlliste werden soll --------------------------------
+			 * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
 			 */
 			int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
 			/* Children durchlaufen und SelectItems erzeugen */
@@ -259,7 +260,7 @@ public class CopyProcess extends ProzesskopieForm {
 		clearValues();
 		readProjectConfigs();
 		try {
-			Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
+			Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
@@ -285,7 +286,7 @@ public class CopyProcess extends ProzesskopieForm {
 		clearValues();
 		readProjectConfigs();
 		try {
-			Prefs myPrefs = this.prozessVorlage.getRegelsatz().getPreferences();
+			Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
 			/* den Opac abfragen und ein RDF draus bauen lassen */
 			this.myRdf = new MetsMods(myPrefs);
 			this.myRdf.read(this.metadataFile);
@@ -303,11 +304,9 @@ public class CopyProcess extends ProzesskopieForm {
 		return "";
 	}
 
-	/* =============================================================== */
-
 	/**
-	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen
-	 * 
+	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen.
+	 *
 	 * @throws PreferencesException
 	 */
 	private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
@@ -344,14 +343,14 @@ public class CopyProcess extends ProzesskopieForm {
 									myautoren = myautoren.substring(0, myautoren.length() - 2);
 								}
 							}
-							field.setWert(myautoren);
+							field.setValue(myautoren);
 						} else {
 							/* bei normalen Feldern die Inhalte auswerten */
-							MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz()
-									.getPreferences(), field.getMetadata());
+							MetadataType mdt = UghHelper.getMetadataType(rulesetService
+									.getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
 							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
 							if (md != null) {
-								field.setWert(md.getValue());
+								field.setValue(md.getValue());
 							}
 						}
 					} catch (UghHelperException e) {
@@ -366,7 +365,7 @@ public class CopyProcess extends ProzesskopieForm {
 		for (AdditionalField field : this.additionalFields) {
 			if (!field.isUghbinding() && field.getShowDependingOnDoctype()) {
 				if (field.getSelectList() != null && field.getSelectList().size() > 0) {
-					field.setWert((String) field.getSelectList().get(0).getValue());
+					field.setValue((String) field.getSelectList().get(0).getValue());
 				}
 
 			}
@@ -376,7 +375,7 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * alle Konfigurationseigenschaften und Felder zurücksetzen ================================================================
+	 * alle Konfigurationseigenschaften und Felder zurücksetzen.
 	 */
 	private void clearValues() {
 		if (this.opacKatalog == null) {
@@ -392,43 +391,42 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * Auswahl des Prozesses auswerten
-	 * 
+	 * Auswahl des Prozesses auswerten.
+	 *
 	 * @throws DAOException
 	 * @throws NamingException
 	 * @throws SQLException
-	 *             ============================================================ == ==
 	 */
 	@Override
 	public String TemplateAuswahlAuswerten() throws DAOException {
 		/* den ausgewählten Prozess laden */
-		Prozess tempProzess = new ProzessDAO().get(this.auswahl);
-		if (tempProzess.getWerkstueckeSize() > 0) {
+		Process tempProzess = processService.find(this.auswahl);
+		if (processService.getWorkpiecesSize(tempProzess) > 0) {
 			/* erstes Werkstück durchlaufen */
-			Werkstueck werk = tempProzess.getWerkstueckeList().get(0);
-			for (Werkstueckeigenschaft eig : werk.getEigenschaften()) {
+			Workpiece werk = tempProzess.getWorkpieces().get(0);
+			for (WorkpieceProperty eig : werk.getProperties()) {
 				for (AdditionalField field : this.additionalFields) {
-					if (field.getTitel().equals(eig.getTitel())) {
-						field.setWert(eig.getWert());
+					if (field.getTitle().equals(eig.getTitle())) {
+						field.setValue(eig.getValue());
 					}
 				}
 			}
 		}
 
-		if (tempProzess.getVorlagenSize() > 0) {
+		if (processService.getTemplatesSize(tempProzess) > 0) {
 			/* erste Vorlage durchlaufen */
-			Vorlage vor = tempProzess.getVorlagenList().get(0);
-			for (Vorlageeigenschaft eig : vor.getEigenschaften()) {
+			Template vor = tempProzess.getTemplates().get(0);
+			for (TemplateProperty eig : vor.getProperties()) {
 				for (AdditionalField field : this.additionalFields) {
-					if (field.getTitel().equals(eig.getTitel())) {
-						field.setWert(eig.getWert());
+					if (field.getTitle().equals(eig.getTitle())) {
+						field.setValue(eig.getValue());
 					}
 				}
 			}
 		}
 
 		try {
-			this.myRdf = tempProzess.readMetadataAsTemplateFile();
+			this.myRdf = processService.readMetadataAsTemplateFile(tempProzess);
 		} catch (Exception e) {
 			Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
 		}
@@ -452,75 +450,76 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * Validierung der Eingaben
-	 * 
-	 * @return sind Fehler bei den Eingaben vorhanden? ================================================================
+	 * Validierung der Eingaben.
+	 *
+	 * @return sind Fehler bei den Eingaben vorhanden?
 	 */
 	private boolean isContentValid() {
 		/*
-		 * -------------------------------- Vorbedingungen prüfen --------------------------------
+		 * Vorbedingungen prüfen
 		 */
 		boolean valide = true;
 
 		/*
-		 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
+		 * grundsätzlich den Vorgangstitel prüfen
 		 */
 		/* kein Titel */
-		if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
+		if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+					+ Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 		}
 
 		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
-		if (!this.prozessKopie.getTitel().matches(validateRegEx)) {
+		if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
 			valide = false;
 			Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
 		}
 
 		/* prüfen, ob der Prozesstitel schon verwendet wurde */
-		if (this.prozessKopie.getTitel() != null) {
+		if (this.prozessKopie.getTitle() != null) {
 			long anzahl = 0;
 			try {
-				anzahl = new ProzessDAO().count("from Prozess where titel='" + this.prozessKopie.getTitel() + "'");
+				anzahl = processService.count("from Process where title='" + this.prozessKopie.getTitle() + "'");
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
 				valide = false;
 			}
 			if (anzahl > 0) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ") + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
+				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ")
+						+ Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
 			}
 		}
 
 		/*
-		 * -------------------------------- Prüfung der standard-Eingaben, die angegeben werden müssen --------------------------------
+		 * Prüfung der standard-Eingaben, die angegeben werden müssen
 		 */
 		/* keine Collektion ausgewählt */
 		if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
 			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorNoCollection"));
+			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+					+ Helper.getTranslation("ProcessCreationErrorNoCollection"));
 		}
 
 		/*
-		 * -------------------------------- Prüfung der additional-Eingaben, die angegeben werden müssen --------------------------------
+		 * Prüfung der additional-Eingaben, die angegeben werden müssen
 		 */
 		for (AdditionalField field : this.additionalFields) {
-			if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getWert()))) {
+			if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
+					&& (StringUtils.isBlank(field.getValue()))) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitel() + " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty")); 
+				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle()
+						+ " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
 			}
 		}
 		return valide;
 	}
 
-	/* =============================================================== */
-
 	@Override
 	public String GoToSeite1() {
 		return this.naviFirstPage;
 	}
-
-	/* =============================================================== */
 
 	@Override
 	public String GoToSeite2() {
@@ -536,32 +535,35 @@ public class CopyProcess extends ProzesskopieForm {
 
 		if (ConfigMain.getBooleanParameter("MassImportUniqueTitle", true)) {
 			/*
-			 * -------------------------------- grundsätzlich den Vorgangstitel prüfen --------------------------------
+			 * grundsätzlich den Vorgangstitel prüfen
 			 */
 			/* kein Titel */
-			if (this.prozessKopie.getTitel() == null || this.prozessKopie.getTitel().equals("")) {
+			if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
 				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+						+ Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
 			}
 
 			String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
-			if (!this.prozessKopie.getTitel().matches(validateRegEx)) {
+			if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
 				valide = false;
 				Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
 			}
 
 			/* prüfen, ob der Prozesstitel schon verwendet wurde */
-			if (this.prozessKopie.getTitel() != null) {
+			if (this.prozessKopie.getTitle() != null) {
 				long anzahl = 0;
 				try {
-					anzahl = new ProzessDAO().count("from Prozess where titel='" + this.prozessKopie.getTitel() + "'");
+					anzahl = processService.count("from Prozess where titel='" + this.prozessKopie.getTitle()
+							+ "'");
 				} catch (DAOException e) {
 					Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
 					valide = false;
 				}
 				if (anzahl > 0) {
 					valide = false;
-					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:") + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
+					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
+							+ Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
 				}
 			}
 		}
@@ -569,52 +571,50 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * Anlegen des Prozesses und Speichern der Metadaten ================================================================
-	 * 
+	 * Anlegen des Prozesses und Speichern der Metadaten.
+	 *
 	 * @throws DAOException
 	 * @throws SwapException
 	 * @throws WriteException
 	 */
 
-	public Prozess NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
+	public Process NeuenProzessAnlegen2()
+			throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
 			WriteException {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
-		
+
 		addProperties(null);
 
-	
-		for (Schritt step : this.prozessKopie.getSchritteList()) {
+		for (Task step : this.prozessKopie.getTasks()) {
 			/*
-			 * -------------------------------- always save date and user for each step --------------------------------
+			 * always save date and user for each step
 			 */
-			step.setBearbeitungszeitpunkt(this.prozessKopie.getErstellungsdatum());
-			step.setEditTypeEnum(StepEditType.AUTOMATIC);
+			step.setProcessingTime(this.prozessKopie.getCreationDate());
+			step.setEditTypeEnum(TaskEditType.AUTOMATIC);
 			LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 			if (loginForm != null) {
-				step.setBearbeitungsbenutzer(loginForm.getMyBenutzer());
+				step.setProcessingUser(loginForm.getMyBenutzer());
 			}
 
 			/*
-			 * -------------------------------- only if its done, set edit start and end date --------------------------------
+			 * only if its done, set edit start and end date
 			 */
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-				step.setBearbeitungsbeginn(this.prozessKopie.getErstellungsdatum());
-				// this concerns steps, which are set as done right on creation
-				// bearbeitungsbeginn is set to creation timestamp of process
-				// because the creation of it is basically begin of work
+			if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
+				step.setProcessingBegin(this.prozessKopie.getCreationDate());
+				// this concerns steps, which are set as done right on creation bearbeitungsbeginn is
+				// set to creation timestamp of process because the creation of it is basically begin
+				// of work
 				Date myDate = new Date();
-				step.setBearbeitungszeitpunkt(myDate);
-				step.setBearbeitungsende(myDate);
+				step.setProcessingTime(myDate);
+				step.setProcessingEnd(myDate);
 			}
-
 		}
 
 		try {
-			ProzessDAO dao = new ProzessDAO();
-			dao.save(this.prozessKopie);
-			dao.refresh(this.prozessKopie);
+			processService.save(this.prozessKopie);
+			processService.refresh(this.prozessKopie);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			myLogger.error("error on save: ", e);
@@ -628,14 +628,14 @@ public class CopyProcess extends ProzesskopieForm {
 			createNewFileformat();
 		}
 
-		this.prozessKopie.writeMetadataFile(this.myRdf);
+		processService.writeMetadataFile(this.myRdf, this.prozessKopie);
 
 		// Adding process to history
 		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
 			Helper.setFehlerMeldung("historyNotUpdated");
 		} else {
 			try {
-				new ProzessDAO().save(this.prozessKopie);
+				processService.save(this.prozessKopie);
 			} catch (DAOException e) {
 				e.printStackTrace();
 				myLogger.error("error on save: ", e);
@@ -643,7 +643,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 		}
 
-		this.prozessKopie.readMetadataFile();
+		processService.readMetadataFile(this.prozessKopie);
 
 		/* damit die Sortierung stimmt nochmal einlesen */
 		Helper.getHibernateSession().refresh(this.prozessKopie);
@@ -651,47 +651,45 @@ public class CopyProcess extends ProzesskopieForm {
 
 	}
 
-	public Prozess createProcess(ImportObject io) throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
+	public Process createProcess(ImportObject io)
+			throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
 			DAOException, WriteException {
 		Helper.getHibernateSession().evict(this.prozessKopie);
 
 		this.prozessKopie.setId(null);
 		addProperties(io);
 
-	
-		for (Schritt step : this.prozessKopie.getSchritteList()) {
+		for (Task step : this.prozessKopie.getTasks()) {
 			/*
-			 * -------------------------------- always save date and user for each step --------------------------------
+			 * always save date and user for each step
 			 */
-			step.setBearbeitungszeitpunkt(this.prozessKopie.getErstellungsdatum());
-			step.setEditTypeEnum(StepEditType.AUTOMATIC);
+			step.setProcessingTime(this.prozessKopie.getCreationDate());
+			step.setEditTypeEnum(TaskEditType.AUTOMATIC);
 			LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
 			if (loginForm != null) {
-				step.setBearbeitungsbenutzer(loginForm.getMyBenutzer());
+				step.setProcessingUser(loginForm.getMyBenutzer());
 			}
 
 			/*
-			 * -------------------------------- only if its done, set edit start and end date --------------------------------
+			 * only if its done, set edit start and end date
 			 */
-			if (step.getBearbeitungsstatusEnum() == StepStatus.DONE) {
-				step.setBearbeitungsbeginn(this.prozessKopie.getErstellungsdatum());
+			if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
+				step.setProcessingBegin(this.prozessKopie.getCreationDate());
 				// this concerns steps, which are set as done right on creation
 				// bearbeitungsbeginn is set to creation timestamp of process
 				// because the creation of it is basically begin of work
 				Date myDate = new Date();
-				step.setBearbeitungszeitpunkt(myDate);
-				step.setBearbeitungsende(myDate);
+				step.setProcessingTime(myDate);
+				step.setProcessingEnd(myDate);
 			}
-
 		}
 
 		if (!io.getBatches().isEmpty()) {
-			this.prozessKopie.getBatchesInitialized().addAll(io.getBatches());
+			processService.getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
 		}
 		try {
-			ProzessDAO dao = new ProzessDAO();
-			dao.save(this.prozessKopie);
-			dao.refresh(this.prozessKopie);
+			processService.save(this.prozessKopie);
+			processService.refresh(this.prozessKopie);
 		} catch (DAOException e) {
 			e.printStackTrace();
 			myLogger.error("error on save: ", e);
@@ -704,15 +702,15 @@ public class CopyProcess extends ProzesskopieForm {
 		if (this.myRdf == null) {
 			createNewFileformat();
 		}
-		
-		File f = new File(this.prozessKopie.getProcessDataDirectoryIgnoreSwapping());
+
+		File f = new File(processService.getProcessDataDirectoryIgnoreSwapping(this.prozessKopie));
 		if (!f.exists() && !f.mkdir()) {
 			Helper.setFehlerMeldung("Could not create process directory");
 			myLogger.error("Could not create process directory");
 			return this.prozessKopie;
 		}
-		
-		this.prozessKopie.writeMetadataFile(this.myRdf);
+
+		processService.writeMetadataFile(this.myRdf, this.prozessKopie);
 
 		// }
 
@@ -721,7 +719,7 @@ public class CopyProcess extends ProzesskopieForm {
 			Helper.setFehlerMeldung("historyNotUpdated");
 		} else {
 			try {
-				new ProzessDAO().save(this.prozessKopie);
+				processService.save(this.prozessKopie);
 			} catch (DAOException e) {
 				e.printStackTrace();
 				myLogger.error("error on save: ", e);
@@ -729,7 +727,7 @@ public class CopyProcess extends ProzesskopieForm {
 			}
 		}
 
-		this.prozessKopie.readMetadataFile();
+		processService.readMetadataFile(this.prozessKopie);
 
 		/* damit die Sortierung stimmt nochmal einlesen */
 		Helper.getHibernateSession().refresh(this.prozessKopie);
@@ -738,11 +736,11 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/**
-	 * alle Kollektionen eines übergebenen DocStructs entfernen ================================================================
+	 * alle Kollektionen eines übergebenen DocStructs entfernen.
 	 */
 	private void removeCollections(DocStruct colStruct) {
 		try {
-			MetadataType mdt = UghHelper.getMetadataType(this.prozessKopie.getRegelsatz().getPreferences(),
+			MetadataType mdt = UghHelper.getMetadataType(rulesetService.getPreferences(this.prozessKopie.getRuleset()),
 					"singleDigCollection");
 			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
 			if (myCollections.size() > 0) {
@@ -759,12 +757,10 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 	}
 
-	/* =============================================================== */
-
 	@Override
 	public void createNewFileformat() {
 
-		Prefs myPrefs = this.prozessKopie.getRegelsatz().getPreferences();
+		Prefs myPrefs = rulesetService.getPreferences(this.prozessKopie.getRuleset());
 
 		Fileformat ff;
 		try {
@@ -780,74 +776,73 @@ public class CopyProcess extends ProzesskopieForm {
 
 	private void addProperties(ImportObject io) {
 		/*
-		 * -------------------------------- Vorlageneigenschaften initialisieren --------------------------------
+		 * Vorlageneigenschaften initialisieren
 		 */
-
-		Vorlage vor;
-		if (this.prozessKopie.getVorlagenSize() > 0) {
-			vor = this.prozessKopie.getVorlagenList().get(0);
+		Template vor;
+		if (processService.getTemplatesSize(this.prozessKopie) > 0) {
+			vor = this.prozessKopie.getTemplates().get(0);
 		} else {
-			vor = new Vorlage();
-			vor.setProzess(this.prozessKopie);
-			Set<Vorlage> vorlagen = new HashSet<Vorlage>();
+			vor = new Template();
+			vor.setProcess(this.prozessKopie);
+			List<Template> vorlagen = new ArrayList<>();
 			vorlagen.add(vor);
-			this.prozessKopie.setVorlagen(vorlagen);
+			this.prozessKopie.setTemplates(vorlagen);
 		}
 
 		/*
-		 * -------------------------------- Werkstückeigenschaften initialisieren --------------------------------
+		 * Werkstückeigenschaften initialisieren
 		 */
-		Werkstueck werk;
-		if (this.prozessKopie.getWerkstueckeSize() > 0) {
-			werk = this.prozessKopie.getWerkstueckeList().get(0);
+		Workpiece werk;
+		if (processService.getWorkpiecesSize(this.prozessKopie) > 0) {
+			werk = this.prozessKopie.getWorkpieces().get(0);
 		} else {
-			werk = new Werkstueck();
-			werk.setProzess(this.prozessKopie);
-			Set<Werkstueck> werkstuecke = new HashSet<Werkstueck>();
+			werk = new Workpiece();
+			werk.setProcess(this.prozessKopie);
+			List<Workpiece> werkstuecke = new ArrayList<>();
 			werkstuecke.add(werk);
-			this.prozessKopie.setWerkstuecke(werkstuecke);
+			this.prozessKopie.setWorkpieces(werkstuecke);
 		}
 
 		/*
-		 * -------------------------------- jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen --------------------------------
+		 * jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen
 		 */
 		if (io == null) {
 			for (AdditionalField field : this.additionalFields) {
 				if (field.getShowDependingOnDoctype()) {
 					if (field.getFrom().equals("werk")) {
-						BeanHelper.EigenschaftHinzufuegen(werk, field.getTitel(), field.getWert());
+						BeanHelper.addProperty(werk, field.getTitle(), field.getValue());
 					}
 					if (field.getFrom().equals("vorlage")) {
-						BeanHelper.EigenschaftHinzufuegen(vor, field.getTitel(), field.getWert());
+						BeanHelper.addProperty(vor, field.getTitle(), field.getValue());
 					}
 					if (field.getFrom().equals("prozess")) {
-						BeanHelper.EigenschaftHinzufuegen(this.prozessKopie, field.getTitel(), field.getWert());
+						BeanHelper.addProperty(this.prozessKopie, field.getTitle(), field.getValue());
 					}
 				}
 			}
 			/* Doctype */
-			BeanHelper.EigenschaftHinzufuegen(werk, "DocType", this.docType);
+			BeanHelper.addProperty(werk, "DocType", this.docType);
 			/* Tiffheader */
-			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+			BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+			BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
 		} else {
-			BeanHelper.EigenschaftHinzufuegen(werk, "DocType", this.docType);
+			BeanHelper.addProperty(werk, "DocType", this.docType);
 			/* Tiffheader */
-			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-			BeanHelper.EigenschaftHinzufuegen(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+			BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+			BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
 
-			for (Prozesseigenschaft pe : io.getProcessProperties()) {
+			for (ProcessProperty pe : io.getProcessProperties()) {
 				addProperty(this.prozessKopie, pe);
 			}
-			for (Werkstueckeigenschaft we : io.getWorkProperties()) {
+			for (WorkpieceProperty we : io.getWorkProperties()) {
 				addProperty(werk, we);
 			}
 
-			for (Vorlageeigenschaft ve : io.getTemplateProperties()) {
+			for (TemplateProperty ve : io.getTemplateProperties()) {
 				addProperty(vor, ve);
 			}
-			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "Template", prozessVorlage.getTitel());
-			BeanHelper.EigenschaftHinzufuegen(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+			BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
+			BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
 		}
 	}
 
@@ -862,12 +857,12 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	@Override
-	public Prozess getProzessVorlage() {
+	public Process getProzessVorlage() {
 		return this.prozessVorlage;
 	}
 
 	@Override
-	public void setProzessVorlage(Prozess prozessVorlage) {
+	public void setProzessVorlage(Process prozessVorlage) {
 		this.prozessVorlage = prozessVorlage;
 	}
 
@@ -886,9 +881,9 @@ public class CopyProcess extends ProzesskopieForm {
 		return this.additionalFields;
 	}
 
-	/*
-	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice
-	 * 
+	/**
+	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice.
+	 *
 	 * @author Wulf
 	 */
 	@Override
@@ -897,9 +892,10 @@ public class CopyProcess extends ProzesskopieForm {
 
 	}
 
-	/*
-	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use this choice
-	 * 
+	/**
+	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use
+	 * this choice.
+	 *
 	 * @author Wulf
 	 */
 	@Override
@@ -917,7 +913,6 @@ public class CopyProcess extends ProzesskopieForm {
 		return this.possibleDigitalCollection;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	private void initializePossibleDigitalCollections() {
 		this.possibleDigitalCollection = new ArrayList<String>();
@@ -956,12 +951,13 @@ public class CopyProcess extends ProzesskopieForm {
 					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
 						Element projektname = iterator.next();
 						// all all collections to list
-						if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProjekt().getTitel())) {
+						if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
 							List<Element> myCols = projekt.getChildren("DigitalCollection");
 							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
 								Element col = it2.next();
 								
-								if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+								if (col.getAttribute("default") != null
+										&& col.getAttributeValue("default").equalsIgnoreCase("true")) {
 									digitalCollections.add(col.getText());
 								}
 							
@@ -984,7 +980,7 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 
 		// if only one collection is possible take it directly
-	
+
 		if (isSingleChoiceCollection()) {
 			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
 		}
@@ -1050,12 +1046,12 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	@Override
-	public Prozess getProzessKopie() {
+	public Process getProzessKopie() {
 		return this.prozessKopie;
 	}
 
 	@Override
-	public void setProzessKopie(Prozess prozessKopie) {
+	public void setProzessKopie(Process prozessKopie) {
 		this.prozessKopie = prozessKopie;
 	}
 
@@ -1090,12 +1086,11 @@ public class CopyProcess extends ProzesskopieForm {
 	}
 
 	/*
-	 * ##################################################### ##################################################### ## ## Helper ##
-	 * ##################################################### ####################################################
+	 * Helper
 	 */
 
 	/**
-	 * Prozesstitel und andere Details generieren ================================================================
+	 * Prozesstitel und andere Details generieren.
 	 */
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -1104,7 +1099,7 @@ public class CopyProcess extends ProzesskopieForm {
 		String titeldefinition = "";
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
+			cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
@@ -1133,7 +1128,9 @@ public class CopyProcess extends ProzesskopieForm {
 			}
  
             /* wenn beides angegeben wurde */
-            if (!isdoctype.equals("") && !isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType) && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
+            if (!isdoctype.equals("") && !isnotdoctype.equals("")
+					&& StringUtils.containsIgnoreCase(isdoctype, this.docType)
+					&& !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
                 titeldefinition = titel;
                 break;
             }
@@ -1168,14 +1165,15 @@ public class CopyProcess extends ProzesskopieForm {
 					/*
 					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
 					 */
-					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
-							&& (myField.getWert() == null || myField.getWert().equals(""))) {
-						myField.setWert(this.atstsl);
+					if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
+							&& myField.getShowDependingOnDoctype()
+							&& (myField.getValue() == null || myField.getValue().equals(""))) {
+						myField.setValue(this.atstsl);
 					}
 
 					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
-						newTitle += calcProcessTitleCheck(myField.getTitel(), myField.getWert());
+					if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype() && myField.getValue() != null) {
+						newTitle += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
 					}
 				}
 			}
@@ -1184,17 +1182,15 @@ public class CopyProcess extends ProzesskopieForm {
 		if (newTitle.endsWith("_")) {
 			newTitle = newTitle.substring(0, newTitle.length() - 1);
 		}
-		this.prozessKopie.setTitel(newTitle);
+		this.prozessKopie.setTitle(newTitle);
 		CalcTiffheader();
 	}
-
-	/* =============================================================== */
 
 	private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
 		String rueckgabe = inFeldWert;
 
 		/*
-		 * -------------------------------- Bandnummer --------------------------------
+		 * Bandnummer
 		 */
 		if (inFeldName.equals("Bandnummer")) {
 			try {
@@ -1212,34 +1208,33 @@ public class CopyProcess extends ProzesskopieForm {
 		return rueckgabe;
 	}
 
-	/* =============================================================== */
-
 	@Override
 	public void CalcTiffheader() {
 		String tif_definition = "";
 		ConfigProjects cp = null;
 		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProjekt().getTitel());
+			cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
 		} catch (IOException e) {
 			Helper.setFehlerMeldung("IOException", e.getMessage());
 			return;
 		}
-		
-		tif_definition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
+
+		tif_definition = cp.getParamString("tifheader."
+				+ this.docType.toLowerCase(), "blabla");
 
 		/*
-		 * -------------------------------- evtuelle Ersetzungen --------------------------------
+		 * evtuelle Ersetzungen
 		 */
 		tif_definition = tif_definition.replaceAll("\\[\\[", "<");
 		tif_definition = tif_definition.replaceAll("\\]\\]", ">");
 
 		/*
-		 * -------------------------------- Documentname ist im allgemeinen = Prozesstitel --------------------------------
+		 * Documentname ist im allgemeinen = Prozesstitel
 		 */
-		this.tifHeader_documentname = this.prozessKopie.getTitel();
+		this.tifHeader_documentname = this.prozessKopie.getTitle();
 		this.tifHeader_imagedescription = "";
 		/*
-		 * -------------------------------- Imagedescription --------------------------------
+		 * Imagedescription
 		 */
 		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
 		/* jetzt den Tiffheader parsen */
@@ -1251,7 +1246,7 @@ public class CopyProcess extends ProzesskopieForm {
 			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
 				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
 			} else if (myString.equals("$Doctype")) {
-			
+
 				this.tifHeader_imagedescription += this.docType;
 			} else {
 				/* andernfalls den string als Feldnamen auswerten */
@@ -1259,16 +1254,19 @@ public class CopyProcess extends ProzesskopieForm {
 					AdditionalField myField = it2.next();
 
 					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
+					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
+					 * nicht vorhanden
 					 */
-					if ((myField.getTitel().equals("ATS") || myField.getTitel().equals("TSL")) && myField.getShowDependingOnDoctype()
-							&& (myField.getWert() == null || myField.getWert().equals(""))) {
-						myField.setWert(this.atstsl);
+					if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
+							&& myField.getShowDependingOnDoctype()
+							&& (myField.getValue() == null || myField.getValue().equals(""))) {
+						myField.setValue(this.atstsl);
 					}
 
 					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitel().equals(myString) && myField.getShowDependingOnDoctype() && myField.getWert() != null) {
-						this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitel(), myField.getWert());
+					if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
+							&& myField.getValue() != null) {
+						this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
 					}
 				}
 			}
@@ -1276,67 +1274,67 @@ public class CopyProcess extends ProzesskopieForm {
 		}
 	}
 
-	private void addProperty(Vorlage inVorlage, Vorlageeigenschaft property) {
+	private void addProperty(Template inVorlage, TemplateProperty property) {
 		if (property.getContainer() == 0) {
-			for (Vorlageeigenschaft ve : inVorlage.getEigenschaftenList()) {
-				if (ve.getTitel().equals(property.getTitel()) && ve.getContainer() > 0) {
-					ve.setWert(property.getWert());
+			for (TemplateProperty ve : inVorlage.getProperties()) {
+				if (ve.getTitle().equals(property.getTitle()) && ve.getContainer() > 0) {
+					ve.setValue(property.getValue());
 					return;
 				}
 			}
 		}
-		Vorlageeigenschaft eig = new Vorlageeigenschaft();
-		eig.setTitel(property.getTitel());
-		eig.setWert(property.getWert());
-		eig.setAuswahl(property.getAuswahl());
+		TemplateProperty eig = new TemplateProperty();
+		eig.setTitle(property.getTitle());
+		eig.setValue(property.getValue());
+		eig.setChoice(property.getChoice());
 		eig.setContainer(property.getContainer());
 		eig.setType(property.getType());
-		eig.setVorlage(inVorlage);
-		Set<Vorlageeigenschaft> eigenschaften = inVorlage.getEigenschaften();
+		eig.setTemplate(inVorlage);
+		List<TemplateProperty> eigenschaften = inVorlage.getProperties();
 		if (eigenschaften != null) {
 			eigenschaften.add(eig);
 		}
 	}
 
-	private void addProperty(Prozess inProcess, Prozesseigenschaft property) {
+	private void addProperty(Process inProcess, ProcessProperty property) {
 		if (property.getContainer() == 0) {
-			for (Prozesseigenschaft pe : inProcess.getEigenschaftenList()) {
-				if (pe.getTitel().equals(property.getTitel()) && pe.getContainer() > 0) {
-					pe.setWert(property.getWert());
+			for (ProcessProperty pe : inProcess.getProperties()) {
+				if (pe.getTitle().equals(property.getTitle()) && pe.getContainer() > 0) {
+					pe.setValue(property.getValue());
 					return;
 				}
 			}
 		}
-		Prozesseigenschaft eig = new Prozesseigenschaft();
-		eig.setTitel(property.getTitel());
-		eig.setWert(property.getWert());
-		eig.setAuswahl(property.getAuswahl());
+		ProcessProperty eig = new ProcessProperty();
+		eig.setTitle(property.getTitle());
+		eig.setValue(property.getValue());
+		eig.setChoice(property.getChoice());
 		eig.setContainer(property.getContainer());
 		eig.setType(property.getType());
-		eig.setProzess(inProcess);
-		Set<Prozesseigenschaft> eigenschaften = inProcess.getEigenschaftenInitialized();
+		eig.setProcess(inProcess);
+		List<ProcessProperty> eigenschaften = processService.getPropertiesInitialized(inProcess);
 		if (eigenschaften != null) {
 			eigenschaften.add(eig);
 		}
 	}
 
-	private void addProperty(Werkstueck inWerk, Werkstueckeigenschaft property) {
+	private void addProperty(Workpiece inWerk, WorkpieceProperty property) {
 		if (property.getContainer() == 0) {
-			for (Werkstueckeigenschaft we : inWerk.getEigenschaftenList()) {
-				if (we.getTitel().equals(property.getTitel()) && we.getContainer() > 0) {
-					we.setWert(property.getWert());
+			for (WorkpieceProperty we : inWerk.getProperties()) {
+				if (we.getTitle().equals(property.getTitle()) && we.getContainer() > 0) {
+					we.setValue(property.getValue());
 					return;
 				}
 			}
 		}
-		Werkstueckeigenschaft eig = new Werkstueckeigenschaft();
-		eig.setTitel(property.getTitel());
-		eig.setWert(property.getWert());
-		eig.setAuswahl(property.getAuswahl());
+		WorkpieceProperty eig = new WorkpieceProperty();
+		eig.setTitle(property.getTitle());
+		eig.setValue(property.getValue());
+		eig.setChoice(property.getChoice());
 		eig.setContainer(property.getContainer());
 		eig.setType(property.getType());
-		eig.setWerkstueck(inWerk);
-		Set<Werkstueckeigenschaft> eigenschaften = inWerk.getEigenschaften();
+		eig.setWorkpiece(inWerk);
+		List<WorkpieceProperty> eigenschaften = inWerk.getProperties();
 		if (eigenschaften != null) {
 			eigenschaften.add(eig);
 		}

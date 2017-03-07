@@ -11,6 +11,9 @@
 
 package de.sub.goobi.importer;
 
+import org.kitodo.data.database.exceptions.SwapException;
+import de.sub.goobi.helper.exceptions.WrongImportFileException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +23,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.services.ProcessService;
+
+import org.kitodo.services.RulesetService;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -32,10 +40,6 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
-import de.sub.goobi.beans.Prozess;
-import de.sub.goobi.helper.exceptions.DAOException;
-import de.sub.goobi.helper.exceptions.SwapException;
-import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt
@@ -48,17 +52,15 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 public class ImportRussland {
    private static final Logger myLogger = Logger.getLogger(ImportRussland.class);
    private DocStruct logicalTopstruct;
-   private Prozess prozess;
-
-
+   private Process prozess;
+   private ProcessService processService = new ProcessService();
+   private RulesetService rulesetService = new RulesetService();
 
    /**
-    * Allgemeiner Konstruktor ()
+    * Allgemeiner Konstruktor ().
     */
    public ImportRussland() {
    }
-
-
 
    /**
     * @param reader
@@ -75,13 +77,13 @@ public class ImportRussland {
     * @throws SwapException
     * @throws WriteException
     */
-   protected void Parsen(BufferedReader reader, Prozess inProzess) throws IOException,
+   protected void Parsen(BufferedReader reader, Process inProzess) throws IOException,
          WrongImportFileException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException,
          MetadataTypeNotAllowedException, ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
 
-      /* --------------------------------
+      /*
        * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess gehört
-       * --------------------------------*/
+       */
       this.prozess = inProzess;
       String prozessID = String.valueOf(inProzess.getId().intValue());
       String line = reader.readLine();
@@ -97,10 +99,10 @@ public class ImportRussland {
                + prozessID + "' <> '" + line + "')");
 	}
 
-      /* --------------------------------
+      /*
        * xml-Datei einlesen und Hauptelement ermitteln
-       * --------------------------------*/
-      Fileformat gdzfile = inProzess.readMetadataFile();
+       */
+      Fileformat gdzfile = processService.readMetadataFile(inProzess);
       DigitalDocument mydocument;
       mydocument = gdzfile.getDigitalDocument();
       this.logicalTopstruct = mydocument.getLogicalDocStruct();
@@ -110,9 +112,9 @@ public class ImportRussland {
       //         return;
       //      }
 
-      /* --------------------------------
+      /*
        * alle Zeilen durchlaufen
-       * --------------------------------*/
+       */
       List<String> listeDaten = new ArrayList<String>();
       while ((line = reader.readLine()) != null) {
          //         myLogger.info(line);
@@ -132,14 +134,12 @@ public class ImportRussland {
          }
       }
 
-      /* --------------------------------
+      /*
        * Datei abschliessend wieder speichern
-       * --------------------------------*/
-      inProzess.writeMetadataFile(gdzfile);
+       */
+      processService.writeMetadataFile(gdzfile, inProzess);
       myLogger.debug("ParsenRussland() - Ende");
    }
-
-
 
    private void AbsatzAuswerten(List<String> inListe) throws ugh.exceptions.MetadataTypeNotAllowedException,
          WrongImportFileException {
@@ -161,8 +161,6 @@ public class ImportRussland {
                + detail + "'), möglicherweise sind an einer falschen Stelle Zeilenumbrüche eingefügt worden.");
 	}
    }
-
-
 
    private void ZeitschriftDetails(List<String> inListe) throws MetadataTypeNotAllowedException {
       /* zunächst alle Details durchlaufen und der Zeitschrift hinzufügenl  */
@@ -240,11 +238,11 @@ public class ImportRussland {
 //      if (zblID.equals("0843.11050"))
 //         myLogger.warn("gesuchte ID");
 
-      /* --------------------------------
+      /*
        * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben ZBL-ID finden
-       * --------------------------------*/
-      MetadataType mdt_id = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLIdentifier");
-      MetadataType mdt_tempId = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName("ZBLTempID");
+       */
+      MetadataType mdt_id = rulesetService.getPreferences(this.prozess.getRuleset()).getMetadataTypeByName("ZBLIdentifier");
+      MetadataType mdt_tempId = rulesetService.getPreferences(this.prozess.getRuleset()).getMetadataTypeByName("ZBLTempID");
            DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
       //		myLogger.info(band.getType().getName());
       List<DocStruct> listHefte = band.getAllChildren();
@@ -378,14 +376,14 @@ public class ImportRussland {
 
    private void MetadatumHinzufuegen(DocStruct inStruct, String inMdtName, String inDetail)
          throws MetadataTypeNotAllowedException {
-      MetadataType mdt = this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName(inMdtName);
+      MetadataType mdt = rulesetService.getPreferences(this.prozess.getRuleset()).getMetadataTypeByName(inMdtName);
       Metadata md = new Metadata(mdt);
       try {
          md.setValue(inDetail.substring(4).trim());
 
-         /* --------------------------------
+         /*
           * prüfen, ob das Metadatum schon existiert, wenn nein, neu anlegen
-          * --------------------------------*/
+          */
 
          //         LinkedList list = inStruct.getAllChildren();
          //         if (list != null) {
@@ -406,7 +404,7 @@ public class ImportRussland {
 
    private void PersonHinzufuegen(DocStruct inStruct, String inRole, String inDetail)
          throws MetadataTypeNotAllowedException, WrongImportFileException {
-      Person p = new Person(this.prozess.getRegelsatz().getPreferences().getMetadataTypeByName(inRole));
+      Person p = new Person(rulesetService.getPreferences(this.prozess.getRuleset()).getMetadataTypeByName(inRole));
       String pName = inDetail.substring(4).trim();
       if (pName.length() == 0) {
 		return;

@@ -11,17 +11,18 @@
 
 package org.goobi.production.plugin.interfaces;
 
+import org.kitodo.data.database.persistence.apache.StepObject;
+
 import java.util.HashMap;
 
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.StepReturnValue;
 
-import de.sub.goobi.beans.Schritt;
-import de.sub.goobi.persistence.apache.StepObject;
+import org.kitodo.data.database.beans.Task;
 
 public interface IStepPlugin extends IPlugin {
 
-	public void initialize(Schritt step, String returnPath);
+	public void initialize(Task step, String returnPath);
 
 	public void initialize(StepObject stepobject, String returnPath);
 
@@ -33,7 +34,7 @@ public interface IStepPlugin extends IPlugin {
 
 	public HashMap<String, StepReturnValue> validate();
 
-	public Schritt getStep();
+	public Task getStep();
 
 	public PluginGuiType getPluginGuiType();
 
