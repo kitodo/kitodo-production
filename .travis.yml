@@ -4,6 +4,12 @@ language: java
 
 cache:
 
+dist: trusty
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+
 sudo: required
 
 env: DB=mysql
