@@ -35,6 +35,16 @@ public class UserGroupDAO extends BaseDAO {
         return result;
     }
 
+    /**
+     * The function findAll() retrieves all users' groups from the database.
+     *
+     * @return all persisted dockets
+     */
+    @SuppressWarnings("unchecked")
+    public List<UserGroup> findAll() {
+        return retrieveAllObjects(UserGroup.class);
+    }
+
     public UserGroup save(UserGroup userGroup) throws DAOException {
         storeObject(userGroup);
         return (UserGroup) retrieveObject(UserGroup.class, userGroup.getId());

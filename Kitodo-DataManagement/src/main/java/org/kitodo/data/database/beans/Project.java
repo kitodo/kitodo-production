@@ -20,8 +20,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -49,7 +47,7 @@ import org.kitodo.data.database.helper.enums.MetadataFormat;
 // "field" as one might expect.
 @Entity
 @Table(name = "project")
-public class Project implements Serializable, Comparable<Project> {
+public class Project extends BaseBean implements Comparable<Project> {
     private static final long serialVersionUID = -8543713331407761617L;
 
     /**
@@ -59,11 +57,6 @@ public class Project implements Serializable, Comparable<Project> {
      * the second one and so on.
      */
     public static final String ANCHOR_SEPARATOR = "\u00A6";
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "title")
     private String title;
@@ -186,14 +179,6 @@ public class Project implements Serializable, Comparable<Project> {
         this.dmsImportCreateProcessFolder = false;
         this.fileFormatInternal = MetadataFormat.getDefaultFileFormat().getName();
         this.fileFormatDmsExport = MetadataFormat.getDefaultFileFormat().getName();
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     @XmlAttribute(name = "key")

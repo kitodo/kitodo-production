@@ -11,9 +11,10 @@
 
 package org.kitodo.services;
 
+import java.io.IOException;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
 public class UserGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
     }
 

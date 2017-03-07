@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import com.sun.research.ws.wadl.HTTPMethods;
+
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -32,15 +34,26 @@ import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.data.index.Indexer;
+import org.kitodo.data.index.elasticsearch.type.UserType;
 
 public class UserService  {
 
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
     private UserDAO userDao = new UserDAO();
+    private UserType userType = new UserType();
+    private Indexer<User, UserType> indexer = new Indexer<>("kitodo", User.class);
 
-    public User save(User user) throws DAOException {
-        return userDao.save(user);
+    /**
+     * Method saves object to database and insert document to the index of Elastic Search.
+     *
+     * @param user object
+     */
+    public void save(User user) throws DAOException, IOException {
+        userDao.save(user);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(user, userType);
     }
 
     public User find(Integer id) throws DAOException {
@@ -51,8 +64,15 @@ public class UserService  {
         return userDao.findAll();
     }
 
-    public void remove(User user) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param user object
+     */
+    public void remove(User user) throws DAOException, IOException {
         userDao.remove(user);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(user, userType);
     }
 
     public List<User> search(String query) throws DAOException {
@@ -69,6 +89,14 @@ public class UserService  {
 
     public Long count(String query) throws DAOException {
         return userDao.count(query);
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), userType);
     }
 
     /**

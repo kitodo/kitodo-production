@@ -18,6 +18,7 @@ import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -128,6 +129,9 @@ public int add(String sessionId, String type, int count, HashMap pp) throws Goob
       } catch (DAOException e) {
          throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
 				 + Helper.getStacktraceAsString(e));
+      } catch (IOException e) {
+          throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
+                  + Helper.getStacktraceAsString(e));
       }
       return 0;
    }
@@ -307,7 +311,10 @@ public int set(String sessionId, String type, int count, HashMap pp) throws Goob
       } catch (DAOException e) {
          throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
 				 + Helper.getStacktraceAsString(e));
-      }
+        } catch (IOException e) {
+            throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
+                  + Helper.getStacktraceAsString(e));
+        }
       return 0;
    }
 

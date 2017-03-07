@@ -20,8 +20,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -36,13 +34,8 @@ import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
 @Table(name = "user")
-public class User implements Serializable {
+public class User extends BaseBean {
     private static final long serialVersionUID = -7482853955996650586L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "name")
     private String name;
@@ -125,14 +118,6 @@ public class User implements Serializable {
         this.projects = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.properties = new ArrayList<>();
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getLogin() {

@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
@@ -37,7 +39,7 @@ public class XmlArtikelZaehlen {
 	 *
 	 * @param myProcess process object
 	 */
-	public int getNumberOfUghElements(Process myProcess, CountType inType) {
+	public int getNumberOfUghElements(Process myProcess, CountType inType) throws IOException {
 		int rueckgabe = 0;
 
 		/*

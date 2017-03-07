@@ -11,6 +11,7 @@
 
 package de.sub.goobi.helper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -108,7 +109,7 @@ public class BatchProcessHelper {
 		}
 	}
 
-	public void saveCurrentProperty() {
+	public void saveCurrentProperty() throws IOException {
 		List<ProcessProperty> ppList = getContainerProperties();
 		for (ProcessProperty pp : ppList) {
 			this.processProperty = pp;
@@ -143,11 +144,11 @@ public class BatchProcessHelper {
 			} catch (DAOException e) {
 				logger.error(e);
 				Helper.setFehlerMeldung("propertyNotSaved");
-			}
+            }
 		}
 	}
 
-	public void saveCurrentPropertyForAll() {
+	public void saveCurrentPropertyForAll() throws IOException {
 		List<ProcessProperty> ppList = getContainerProperties();
 		boolean error = false;
 		for (ProcessProperty pp : ppList) {
@@ -214,13 +215,13 @@ public class BatchProcessHelper {
 				try {
 					processService.save(process);
 				} catch (DAOException e) {
-					error = true;
-					logger.error(e);
-					List<String> param = new ArrayList<String>();
-					param.add(process.getTitle());
-					String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
-					Helper.setFehlerMeldung(value);
-				}
+                    error = true;
+                    logger.error(e);
+                    List<String> param = new ArrayList<String>();
+                    param.add(process.getTitle());
+                    String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
+                    Helper.setFehlerMeldung(value);
+                }
 			}
 		}
 		if (!error) {
@@ -319,7 +320,7 @@ public class BatchProcessHelper {
 		return answer;
 	}
 
-	public String duplicateContainerForSingle() {
+	public String duplicateContainerForSingle() throws IOException {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
 		// search for all properties in container
@@ -354,7 +355,7 @@ public class BatchProcessHelper {
 	}
 
 	// TODO wird nur für currentStep ausgeführt
-	public String duplicateContainerForAll() {
+	public String duplicateContainerForAll() throws IOException {
 		Integer currentContainer = this.processProperty.getContainer();
 		List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
 		// search for all properties in container

@@ -158,7 +158,11 @@ public class ProjekteForm extends BasisForm {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
 			myLogger.error(e);
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+            myLogger.error(e);
+            return "";
+        }
 	}
 
 	public String Apply() {
@@ -172,7 +176,11 @@ public class ProjekteForm extends BasisForm {
 			Helper.setFehlerMeldung("could not save", e.getMessage());
 			myLogger.error(e.getMessage());
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+            myLogger.error(e);
+            return "";
+        }
 	}
 
 	public String Loeschen() {
@@ -180,13 +188,16 @@ public class ProjekteForm extends BasisForm {
 			Helper.setFehlerMeldung("userAssignedError");
 			return "";
 		} else {
-		try {
-			projectService.remove(this.myProjekt);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("could not delete", e.getMessage());
-			myLogger.error(e.getMessage());
-			return "";
-		}
+            try {
+                projectService.remove(this.myProjekt);
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung("could not delete", e.getMessage());
+                myLogger.error(e.getMessage());
+                return "";
+            } catch (IOException e) {
+                Helper.setFehlerMeldung("could not delete from index", e.getMessage());
+                myLogger.error(e);
+            }
 		}
 		return "ProjekteAlle";
 	}

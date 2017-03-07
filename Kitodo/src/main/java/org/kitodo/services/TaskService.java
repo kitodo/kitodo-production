@@ -11,8 +11,11 @@
 
 package org.kitodo.services;
 
+import com.sun.research.ws.wadl.HTTPMethods;
+
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
@@ -28,15 +31,26 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.data.index.Indexer;
+import org.kitodo.data.index.elasticsearch.type.TaskType;
 
 public class TaskService {
 
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
 
     private TaskDAO taskDao = new TaskDAO();
+    private TaskType taskType = new TaskType();
+    private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
 
-    public void save(Task task) throws DAOException {
+    /**
+     * Method saves object to database and insert document to the index of Elastic Search.
+     *
+     * @param task object
+     */
+    public void save(Task task) throws DAOException, IOException {
         taskDao.save(task);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(task, taskType);
     }
 
     public Task find(Integer id) throws DAOException {
@@ -47,12 +61,26 @@ public class TaskService {
         return taskDao.findAll();
     }
 
-    public void remove(Task task) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param task object
+     */
+    public void remove(Task task) throws DAOException, IOException {
         taskDao.remove(task);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(task, taskType);
     }
 
-    public void remove(Integer id) throws DAOException {
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param id of object
+     */
+    public void remove(Integer id) throws DAOException, IOException {
         taskDao.remove(id);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
     public List<Task> search(String query) throws DAOException {
         return taskDao.search(query);
@@ -60,6 +88,14 @@ public class TaskService {
 
     public Long count(String query) throws DAOException {
         return taskDao.count(query);
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), taskType);
     }
 
     /**

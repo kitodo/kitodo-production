@@ -264,6 +264,8 @@ public class AktuelleSchritteForm extends BasisForm {
 					} catch (DAOException e) {
 						Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
 						myLogger.error("step couldn't get saved", e);
+                    } catch (IOException e) {
+                        myLogger.error("process couldn't get inserted", e);
 					} finally {
 						this.flagWait = false;
 					}
@@ -365,11 +367,12 @@ public class AktuelleSchritteForm extends BasisForm {
 
 			try {
 				this.processService.save(s.getProcess());
-
 			} catch (DAOException e) {
 				Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-				myLogger.error("step couldn't get saved", e);
-			}
+				myLogger.error("task couldn't get saved", e);
+            } catch (IOException e) {
+                myLogger.error("task couldn't get inserted", e);
+            }
 		}
 
 		this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
@@ -439,8 +442,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
 			this.processService.save(this.mySchritt.getProcess());
-		} catch (DAOException e) {
-		}
+        } catch (DAOException | IOException e) {
+            myLogger.error("task couldn't get saved/inserted", e);
+        }
 		// calcHomeImages();
 		return "AktuelleSchritteAlle";
 	}
@@ -606,8 +610,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			 * den Prozess aktualisieren, so dass der Sortierungshelper gespeichert wird
 			 */
 			this.processService.save(this.mySchritt.getProcess());
-		} catch (DAOException e) {
-		}
+		} catch (DAOException | IOException e) {
+            myLogger.error("task couldn't get saved/inserted", e);
+        }
 
 		this.problemMessage = "";
 		this.myProblemID = 0;
@@ -689,7 +694,8 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.mySchritt.getProcess().getProperties().add(pe);
 
 			this.processService.save(this.mySchritt.getProcess());
-		} catch (DAOException e) {
+		} catch (DAOException | IOException e) {
+            myLogger.error("task couldn't get saved/inserted", e);
 		}
 
 		this.solutionMessage = "";
@@ -784,7 +790,9 @@ public class AktuelleSchritteForm extends BasisForm {
 					this.processService.save(proz);
 				} catch (DAOException e) {
 					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
-				}
+                } catch (IOException e) {
+                    Helper.setMeldung("errorElasticSearch" + proz.getTitle());
+                }
 				this.myDav.DownloadToHome(proz, step.getId(), false);
 			}
 		}
@@ -812,7 +820,9 @@ public class AktuelleSchritteForm extends BasisForm {
 					this.processService.save(proz);
 				} catch (DAOException e) {
 					Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
-				}
+				} catch (IOException e) {
+                    Helper.setMeldung("errorElasticSearch" + proz.getTitle());
+                }
 				this.myDav.DownloadToHome(proz, step.getId(), false);
 			}
 		}
@@ -1105,7 +1115,7 @@ public class AktuelleSchritteForm extends BasisForm {
 			this.addToWikiField = "";
 			try {
 				this.processService.save(this.mySchritt.getProcess());
-			} catch (DAOException e) {
+			} catch (DAOException | IOException e) {
 				myLogger.error(e);
 			}
 		}
@@ -1188,7 +1198,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			} catch (DAOException e) {
 				myLogger.error(e);
 				Helper.setFehlerMeldung("propertiesNotSaved");
-			}
+            } catch (IOException e) {
+                myLogger.error(e);
+            }
 		}
 	}
 
@@ -1229,7 +1241,9 @@ public class AktuelleSchritteForm extends BasisForm {
 			} catch (DAOException e) {
 				myLogger.error(e);
 				Helper.setFehlerMeldung("propertyNotSaved");
-			}
+            } catch (IOException e) {
+                myLogger.error(e);
+            }
 		}
 		loadProcessProperties();
 	}
@@ -1273,7 +1287,9 @@ public class AktuelleSchritteForm extends BasisForm {
 		} catch (DAOException e) {
 			myLogger.error(e);
 			Helper.setFehlerMeldung("propertiesNotDeleted");
-		}
+        } catch (IOException e) {
+            myLogger.error(e);
+        }
 		// saveWithoutValidation();
 		loadProcessProperties();
 	}
@@ -1374,7 +1390,9 @@ public class AktuelleSchritteForm extends BasisForm {
 		} catch (DAOException e) {
 			myLogger.error(e);
 			Helper.setFehlerMeldung("propertiesNotSaved");
-		}
+        } catch (IOException e) {
+            myLogger.error(e);
+        }
 		loadProcessProperties();
 		return "";
 	}

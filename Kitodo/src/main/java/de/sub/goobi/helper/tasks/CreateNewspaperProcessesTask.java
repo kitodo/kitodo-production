@@ -14,6 +14,7 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -411,7 +412,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 *             if the current session can't be retrieved or an exception is
 	 *             thrown while performing the rollback
 	 */
-	private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle) throws DAOException {
+	private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle)
+			throws DAOException, IOException {
 		if (createBatches != null) {
 			int lastIndex = issues.size() - 1;
 			int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
@@ -438,7 +440,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 *             if the current session can't be retrieved or an exception is
 	 *             thrown while performing the rollback
 	 */
-	private void flushLogisticsBatch(String processTitle) throws DAOException {
+	private void flushLogisticsBatch(String processTitle) throws DAOException, IOException {
 		if (batchService.size(logisticsBatch) > 0) {
 			logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
 			batchService.save(logisticsBatch);
@@ -467,7 +469,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 	 *             if the current session can't be retrieved or an exception is
 	 *             thrown while performing the rollback
 	 */
-	private void saveFullBatch(String theProcessTitle) throws DAOException {
+	private void saveFullBatch(String theProcessTitle) throws DAOException, IOException {
 		fullBatch.setTitle(firstGroupFrom(theProcessTitle));
 		batchService.save(fullBatch);
 	}

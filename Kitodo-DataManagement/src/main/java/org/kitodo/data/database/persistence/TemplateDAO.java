@@ -34,6 +34,16 @@ public class TemplateDAO extends BaseDAO {
         return result;
     }
 
+    /**
+     * The function findAll() retrieves all templates from the database.
+     *
+     * @return all persisted dockets
+     */
+    @SuppressWarnings("unchecked")
+    public List<Template> findAll() {
+        return retrieveAllObjects(Template.class);
+    }
+
     public Template save(Template template) throws DAOException {
         storeObject(template);
         return (Template) retrieveObject(Template.class, template.getId());

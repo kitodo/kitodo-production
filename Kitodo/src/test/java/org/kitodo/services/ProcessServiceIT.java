@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import de.sub.goobi.helper.FilesystemHelper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +40,7 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 public class ProcessServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
     }
 

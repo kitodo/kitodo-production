@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import java.io.IOException;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +29,7 @@ import static org.junit.Assert.*;
 public class LdapGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertLdapGroups();
     }
 

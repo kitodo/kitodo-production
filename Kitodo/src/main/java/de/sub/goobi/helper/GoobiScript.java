@@ -13,16 +13,16 @@ package de.sub.goobi.helper;
 
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 import de.sub.goobi.helper.tasks.TaskManager;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -39,12 +39,15 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.services.ProcessService;
 import org.kitodo.services.RulesetService;
 import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
 import org.kitodo.services.UserGroupService;
+import org.kitodo.services.UserService;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -74,7 +77,7 @@ public class GoobiScript {
     /**
      * Starten des Scripts.
      */
-    public void execute(List<Process> inProzesse, String inScript) {
+    public void execute(List<Process> inProzesse, String inScript) throws IOException {
         this.myParameters = new HashMap<String, String>();
         /*
          * alle Suchparameter zerlegen und erfassen
@@ -217,6 +220,8 @@ public class GoobiScript {
                     Helper.setMeldung("Process " + title + " deleted.");
                 } catch (DAOException e) {
                     Helper.setFehlerMeldung("could not delete process " + p.getTitle(), e);
+                } catch (IOException e) {
+                    Helper.setFehlerMeldung("could not delete document for process " + p.getTitle(), e);
                 }
             }
         }
@@ -421,6 +426,11 @@ public class GoobiScript {
 							proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
                     logger.error("Error on save while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
 							+ " : " + s2.getTitle(), e);
+                } catch (IOException e) {
+                    Helper.setFehlerMeldung("goobiScriptfield", "Error on insert while swapping steps in process: ",
+                            proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
+                    logger.error("Error on insert while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
+                            + " : " + s2.getTitle(), e);
                 }
 
                 Helper.setMeldung("goobiScriptfield", "Swapped steps in: ", proz.getTitle());
@@ -458,6 +468,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Removed step from process: ",
 								proz.getTitle());
@@ -507,6 +522,10 @@ public class GoobiScript {
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitle(), e);
                 logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+            } catch (IOException e) {
+                Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                        + proz.getTitle(), e);
+                logger.error("goobiScriptfield" + "Error while inserting to index process: " + proz.getTitle(), e);
             }
             Helper.setMeldung("goobiScriptfield", "Added step to process: ", proz.getTitle());
         }
@@ -553,6 +572,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Added script to step: ", proz.getTitle());
                         break;
@@ -596,6 +620,11 @@ public class GoobiScript {
 									+ proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
 									+ proz.getTitle(), e);
+                        } catch (IOException e) {
+                            Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
+                            logger.error("goobiScriptfield" + "Error while inserting to index process: "
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Added module to step: ", proz.getTitle());
                         break;
@@ -609,7 +638,7 @@ public class GoobiScript {
     /**
      * Flag von Schritten setzen.
      */
-    private void setTaskProperty(List<Process> inProzesse) {
+    private void setTaskProperty(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -694,7 +723,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Status setzen.
      */
-    private void setStepStatus(List<Process> inProzesse) {
+    private void setStepStatus(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -741,7 +770,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Reihenfolge setzen.
      */
-    private void setStepNumber(List<Process> inProzesse) {
+    private void setStepNumber(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -787,7 +816,7 @@ public class GoobiScript {
     /**
      * Benutzer zu Schritt hinzufügen.
      */
-    private void adduser(List<Process> inProzesse) {
+    private void adduser(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */
@@ -848,7 +877,7 @@ public class GoobiScript {
     /**
      * Benutzergruppe zu Schritt hinzufügen.
      */
-    private void addusergroup(List<Process> inProzesse) {
+    private void addusergroup(List<Process> inProzesse) throws IOException {
         /*
          * Validierung der Actionparameter
          */

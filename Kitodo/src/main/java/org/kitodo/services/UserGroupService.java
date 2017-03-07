@@ -11,25 +11,49 @@
 
 package org.kitodo.services;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.sun.research.ws.wadl.HTTPMethods;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupDAO;
+import org.kitodo.data.index.Indexer;
+import org.kitodo.data.index.elasticsearch.type.UserGroupType;
 
 public class UserGroupService {
     private UserGroupDAO userGroupDao = new UserGroupDAO();
+    private UserGroupType userGroupType = new UserGroupType();
+    private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>("kitodo", UserGroup.class);
 
     public UserGroup find(Integer id) throws DAOException {
         return userGroupDao.find(id);
     }
 
-    public UserGroup save(UserGroup userGroup) throws DAOException {
-        return userGroupDao.save(userGroup);
+    public List<UserGroup> findAll() throws DAOException {
+        return userGroupDao.findAll();
     }
 
-    public void remove(UserGroup userGroup) throws DAOException {
+    /**
+     * Method saves object to database and insert document to the index of Elastic Search.
+     *
+     * @param userGroup object
+     */
+    public void save(UserGroup userGroup) throws DAOException, IOException {
+        userGroupDao.save(userGroup);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(userGroup, userGroupType);
+    }
+
+    /**
+     * Method removes object from database and document from the index of Elastic Search.
+     *
+     * @param userGroup object
+     */
+    public void remove(UserGroup userGroup) throws DAOException, IOException {
         userGroupDao.remove(userGroup);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(userGroup, userGroupType);
     }
 
     public List<UserGroup> search(String query) throws DAOException {
@@ -38,6 +62,14 @@ public class UserGroupService {
 
     public Long count(String query) throws DAOException {
         return userGroupDao.count(query);
+    }
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), userGroupType);
     }
 
     /**

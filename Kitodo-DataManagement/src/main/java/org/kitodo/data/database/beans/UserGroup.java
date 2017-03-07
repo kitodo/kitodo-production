@@ -18,8 +18,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -34,13 +32,8 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "userGroup")
-public class UserGroup implements Serializable, Comparable<UserGroup> {
+public class UserGroup extends BaseBean implements Comparable<UserGroup> {
     private static final long serialVersionUID = -5924845694417474352L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "title")
     private String title;
@@ -60,14 +53,6 @@ public class UserGroup implements Serializable, Comparable<UserGroup> {
     public UserGroup() {
         this.tasks = new ArrayList<>();
         this.users = new ArrayList<>();
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {

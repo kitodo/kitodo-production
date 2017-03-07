@@ -155,7 +155,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
 			logger.error(e);
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
+            logger.error(e);
+            return "";
+        }
 	}
 
 	private boolean LoginValide(String inLogin) {
@@ -206,7 +210,11 @@ public class BenutzerverwaltungForm extends BasisForm {
 			Helper.setFehlerMeldung("Error, could not save", e.getMessage());
 			logger.error(e);
 			return "";
-		}
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
+            logger.error(e);
+            return "";
+        }
 		return "BenutzerAlle";
 	}
 

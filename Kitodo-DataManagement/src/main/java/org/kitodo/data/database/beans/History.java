@@ -17,8 +17,6 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,13 +31,8 @@ import org.kitodo.data.database.helper.enums.HistoryType;
  */
 @Entity
 @Table(name = "history")
-public class History implements Serializable {
+public class History extends BaseBean {
     private static final long serialVersionUID = 991946177515032238L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
 
     @Column(name = "date")
     private Date date;
@@ -83,14 +76,6 @@ public class History implements Serializable {
         stringValue = inStringValue;
         type = inHistoryEventType.getValue();
         this.process = process;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Date getDate() {
