@@ -137,14 +137,21 @@
         </htm:td>
         <htm:td rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
 
-            <h:form id="htmleditorform">
-                <h:inputText id="myTextArea" value="#{ProzessverwaltungForm.wikiField}" style="width: 50%" />
-            </h:form>
-
-            <h:form id="addToWikiForm">
-                <h:inputText id="addToTextArea" value="#{ProzessverwaltungForm.addToWikiField}" style="width: 60%" />
-                <h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{ProzessverwaltungForm.addToWikiField}" />
-            </h:form>
+            <htm:table>
+                <htm:tr>
+                    <htm:td style="border: 1px solid lightgray;">
+                        <h:outputText escape="false" value="#{ProzessverwaltungForm.wikiField}" />
+                    </htm:td>
+                </htm:tr>
+                <htm:tr>
+                    <htm:td>
+                        <h:form id="addToWikiForm">
+                            <h:inputText id="addToTextArea" value="#{ProzessverwaltungForm.addToWikiField}" style="width: 60%" />
+                            <h:commandButton value="#{msgs.nachrichtHinzufuegen}" action="#{ProzessverwaltungForm.addToWikiField}" />
+                        </h:form>
+                    </htm:td>
+                </htm:tr>
+            </htm:table>
 
         </htm:td>
     </htm:tr>
@@ -239,30 +246,3 @@
     </htm:table>
 </h:form>
 <%-- // Box für die Bearbeitung der Details --%>
-
-<h:outputText value="<script src=\"" escape="false" />
-<h:outputText value="#{HelperForm.servletPathWithHostAsUrl}/js/tiny_mce/tiny_mce.js" />
-<h:outputText value="\" type=\"text/javascript\">" escape="false"/>
-<h:outputText value="</script>" escape="false" />
-
-<script type="text/javascript">
-    tinyMCE
-            .init({
-                mode : "exact",
-                elements : "htmleditorform:myTextArea",
-                theme : "advanced",
-                width : "100%",
-                height : "200px",
-                plugins : "safari,pagebreak,style,table,save,advhr,emotions,iespell,inlinepopups,insertdatetime,preview,print,contextmenu,paste,fullscreen,noneditable,visualchars,nonbreaking",
-                readonly : 1,
-
-                // Theme options
-                theme_advanced_buttons1 : "save,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,formatselect,fontsizeselect",
-                theme_advanced_buttons2 : "",
-                theme_advanced_buttons3 : "",
-                theme_advanced_toolbar_location : "top",
-                theme_advanced_toolbar_align : "left",
-                theme_advanced_statusbar_location : "bottom",
-                theme_advanced_resizing : true
-            });
-</script>
