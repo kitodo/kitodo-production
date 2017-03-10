@@ -204,16 +204,12 @@
 
                                 <%-- uses goobi_opac.xml --%>
 
-                                <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacKatalog}" style="display:inline; margin-left:7px">
+                                <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacKatalog}" style="display:inline; margin-left:7px" onchange="submit();">
                                     <si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
                                 </h:selectOneMenu>
                                 <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px" />
                                 <h:selectOneMenu id="feldauswahl" value="#{Metadaten.opacSuchfeld}" style="display:inline; margin-left:10px">
-                                    <f:selectItem itemLabel="PPN" itemValue="12" />
-                                    <f:selectItem itemLabel="Barcode" itemValue="8535" />
-                                    <f:selectItem itemLabel="Barcode 8200" itemValue="8200" />
-                                    <f:selectItem itemLabel="ISBN" itemValue="7" />
-                                    <f:selectItem itemLabel="ISSN" itemValue="8" />
+                                    <f:selectItems value="#{Metadaten.searchFields}" />
                                 </h:selectOneMenu>
 
 
