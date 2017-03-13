@@ -3389,6 +3389,13 @@ public class Metadaten {
      * @return A map containing the search fields for the currently selected OPAC
      */
     public HashMap<String, String> getSearchFields() {
+        if (opacKatalog == null || opacKatalog.isEmpty()) {
+            ProzesskopieForm pkf = new ProzesskopieForm();
+            List<String> allOpacCatalogues = pkf.getAllOpacCatalogues();
+            if (!allOpacCatalogues.isEmpty()) {
+                opacKatalog = allOpacCatalogues.get(0);
+            }
+        }
         return ProzesskopieForm.getSearchFieldsForCatalogue(opacKatalog);
     }
 
