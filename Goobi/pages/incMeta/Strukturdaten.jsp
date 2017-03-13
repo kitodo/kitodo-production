@@ -204,8 +204,9 @@
 
                                 <%-- uses goobi_opac.xml --%>
 
-                                <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacKatalog}" style="display:inline; margin-left:7px" onchange="submit();">
+                                <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacKatalog}" style="display:inline; margin-left:7px">
                                     <si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+                                    <a4j:support event="onchange" reRender="feldauswahl" />
                                 </h:selectOneMenu>
                                 <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px" />
                                 <h:selectOneMenu id="feldauswahl" value="#{Metadaten.opacSuchfeld}" style="display:inline; margin-left:10px">
