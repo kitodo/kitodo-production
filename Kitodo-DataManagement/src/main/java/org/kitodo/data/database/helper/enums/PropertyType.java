@@ -92,6 +92,8 @@ public enum PropertyType {
     }
 
     /**
+     * Set id.
+     *
      * @param id the id to set
      */
     public void setId(int id) {
@@ -99,12 +101,20 @@ public enum PropertyType {
     }
 
     /**
+     * Get id.
+     *
      * @return the id
      */
     public int getId() {
         return id;
     }
 
+    /**
+     * Get property type by id.
+     *
+     * @param id of property type
+     * @return property type
+     */
     public static PropertyType getById(int id) {
         for (PropertyType p : PropertyType.values()) {
             if (p.getId() == (id)) {

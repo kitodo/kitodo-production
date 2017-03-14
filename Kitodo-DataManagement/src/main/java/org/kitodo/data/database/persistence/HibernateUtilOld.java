@@ -237,7 +237,11 @@ public class HibernateUtilOld {
         return interceptor;
     }
 
-    // nicht sicher ob so korrekt implementiert
+    /**
+     * nicht sicher ob so korrekt implementiert.
+     *
+     * @return open session
+     */
     public static boolean hasOpenSession() {
         Session s = threadSession.get();
         if (s == null) {

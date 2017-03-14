@@ -43,13 +43,12 @@ public final class Util {
     }
 
     /**
-       Utility method to create a <code>Date</code> class
-       from <code>dateString</code>.
-
-       @param dateString
-       @return Date
-       @throws RuntimeException is dateString is invalid
-    */
+     * Utility method to create a <code>Date</code> class from <code>dateString</code>.
+     *
+     * @param dateString date as String
+     * @return Date
+     * @throws RuntimeException is dateString is invalid
+     */
     public static Date parseDate(String dateString) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MMM-dd");
@@ -60,10 +59,10 @@ public final class Util {
     }
 
     /**
-       Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
-
-       @return ResourceBundle
-    */
+     * Returns the resource bundle specified by <code>RESOURCE_BUNDLE</code>.
+     *
+     * @return ResourceBundle
+     */
     private static ResourceBundle getResourceBundle() {
         if (bundle == null) {
             bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH,

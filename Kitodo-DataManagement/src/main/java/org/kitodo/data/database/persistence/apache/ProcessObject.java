@@ -189,7 +189,8 @@ public class ProcessObject {
         this.wikiField = wikiField;
     }
 
-    public Fileformat readMetadataFile(String metadataFile, Prefs prefs) throws IOException, PreferencesException, ReadException {
+    public Fileformat readMetadataFile(String metadataFile, Prefs prefs)
+            throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadataHelper.getMetaFileType(metadataFile);
         Fileformat ff = null;
