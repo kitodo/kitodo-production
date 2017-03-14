@@ -13,9 +13,9 @@ package org.kitodo.data.index.elasticsearch;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.commons.io.IOUtils;
@@ -100,7 +100,7 @@ public class RestClientImplementation implements ClientInterface {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final StringBuilder output = new StringBuilder();
 
-        for (HashMap.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
+        for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
             restClient.performRequestAsync(
                     "PUT",
                     "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
