@@ -37,6 +37,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <parent.basedir>${basedir}/../</parent.basedir>
         <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
+        <phase.prop>install</phase.prop>
     </properties>
 
     <dependencies>
@@ -188,8 +189,8 @@
                         <version>4.0.3</version>
                         <configuration>
                             <!-- local configuration file -->
-                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>${parent.basedir}/Kitodo/src/main/resources/db/config/flyway.properties</configFile>
+                            <configFile>${parent.basedir}/config-local/flyway.properties</configFile>
+                            <!--<configFile>${parent.basedir}/Kitodo/src/main/resources/db/config/flyway.properties</configFile>-->
                         </configuration>
                         <dependencies>
                             <dependency>
@@ -200,6 +201,7 @@
                         </dependencies>
                         <executions>
                             <execution>
+                                <phase>${phase.prop}</phase>
                                 <goals>
                                     <goal>baseline</goal>
                                     <goal>migrate</goal>
