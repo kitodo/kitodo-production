@@ -82,6 +82,7 @@ public class TaskService {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
+
     public List<Task> search(String query) throws DAOException {
         return taskDao.search(query);
     }

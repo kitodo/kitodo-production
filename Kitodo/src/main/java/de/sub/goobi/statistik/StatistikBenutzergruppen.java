@@ -24,27 +24,27 @@ import org.kitodo.services.ProcessService;
 
 public class StatistikBenutzergruppen {
 
-	public static Dataset getDiagramm(List<Process> inProzesse) {
-		ProcessService processService = new ProcessService();
-		DefaultPieDataset dataset = new DefaultPieDataset();
-		for (Process proz : inProzesse) {
-			Task step = processService.getCurrentTask(proz);
-			/* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
-			if (step != null) {
-				/* von dem Schritt alle verantwortlichen Benutzergruppen ermitteln und im Diagramm erfassen */
-				for (Iterator<UserGroup> iter2 = step.getUserGroups().iterator(); iter2.hasNext();) {
-					UserGroup group = iter2.next();
-					if (dataset.getIndex(group.getTitle()) != -1) {
-						dataset
-								.setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
-					} else {
-						dataset.setValue(group.getTitle(), 1);
-					}
-				}
+    public static Dataset getDiagramm(List<Process> inProzesse) {
+        ProcessService processService = new ProcessService();
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        for (Process proz : inProzesse) {
+            Task step = processService.getCurrentTask(proz);
+            /* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
+            if (step != null) {
+                /* von dem Schritt alle verantwortlichen Benutzergruppen ermitteln und im Diagramm erfassen */
+                for (Iterator<UserGroup> iter2 = step.getUserGroups().iterator(); iter2.hasNext();) {
+                    UserGroup group = iter2.next();
+                    if (dataset.getIndex(group.getTitle()) != -1) {
+                        dataset
+                                .setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
+                    } else {
+                        dataset.setValue(group.getTitle(), 1);
+                    }
+                }
 
-			}
-		}
-		return dataset;
-	}
+            }
+        }
+        return dataset;
+    }
 
 }

@@ -22,25 +22,25 @@ import org.kitodo.services.ProcessService;
 
 public class StatistikStatus {
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Dataset getDiagramm(List inProzesse) {
-		ProcessService processService = new ProcessService();
-		DefaultPieDataset dataset = new DefaultPieDataset();
-		for (Process proz : (List<Process>) inProzesse) {
-			Task step = processService.getCurrentTask(proz);
-			/* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
-			if (step != null) {
-				/* prüfen, ob der Schritt schon erfasst wurde, wenn ja hochzählen */
-				String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step
-					.getTitle());
-				if (dataset.getIndex(kurztitel) != -1) {
-					dataset.setValue(kurztitel, dataset.getValue(kurztitel).intValue() + 1);
-				} else {
-					dataset.setValue(kurztitel, 1);
-				}
-			}
-		}
-		return dataset;
-	}
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static Dataset getDiagramm(List inProzesse) {
+        ProcessService processService = new ProcessService();
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        for (Process proz : (List<Process>) inProzesse) {
+            Task step = processService.getCurrentTask(proz);
+            /* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
+            if (step != null) {
+                /* prüfen, ob der Schritt schon erfasst wurde, wenn ja hochzählen */
+                String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step
+                    .getTitle());
+                if (dataset.getIndex(kurztitel) != -1) {
+                    dataset.setValue(kurztitel, dataset.getValue(kurztitel).intValue() + 1);
+                } else {
+                    dataset.setValue(kurztitel, 1);
+                }
+            }
+        }
+        return dataset;
+    }
 
 }

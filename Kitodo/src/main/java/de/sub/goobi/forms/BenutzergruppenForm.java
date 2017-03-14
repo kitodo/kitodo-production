@@ -16,7 +16,6 @@ import de.sub.goobi.helper.Page;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -30,83 +29,98 @@ import org.kitodo.data.database.persistence.SimpleDAO;
 import org.kitodo.services.UserGroupService;
 
 public class BenutzergruppenForm extends BasisForm {
-	private static final long serialVersionUID = 8051160917458068675L;
-	private UserGroup myBenutzergruppe = new UserGroup();
-	private UserGroupService userGroupService = new UserGroupService();
+    private static final long serialVersionUID = 8051160917458068675L;
+    private UserGroup myBenutzergruppe = new UserGroup();
+    private UserGroupService userGroupService = new UserGroupService();
 
-	public String Neu() {
-		this.myBenutzergruppe = new UserGroup();
-		return "BenutzergruppenBearbeiten";
-	}
+    public String Neu() {
+        this.myBenutzergruppe = new UserGroup();
+        return "BenutzergruppenBearbeiten";
+    }
 
-	public String Speichern() {
-		try {
-			this.userGroupService.save(this.myBenutzergruppe);
-			return "BenutzergruppenAlle";
-		} catch (DAOException e) {
+    /**
+     * Save user group.
+     *
+     * @return page or empty String
+     */
+    public String Speichern() {
+        try {
+            this.userGroupService.save(this.myBenutzergruppe);
+            return "BenutzergruppenAlle";
+        } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             return "";
         }
-	}
+    }
 
-	public String Loeschen() {
-		try {
-			new SimpleDAO().refreshObject(this.myBenutzergruppe);
-			if (this.myBenutzergruppe.getUsers().size() > 0) {
-				for (User b : this.myBenutzergruppe.getUsers()) {
-					b.getUserGroups().remove(this.myBenutzergruppe);
-				}
-				this.myBenutzergruppe.setUsers(new ArrayList<User>());
-				this.userGroupService.save(this.myBenutzergruppe);
-			}
-			if (this.myBenutzergruppe.getTasks().size() > 0) {
-				Helper.setFehlerMeldung("userGroupAssignedError");
-				return "";
-			}
-			this.userGroupService.remove(this.myBenutzergruppe);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
-			return "";
+    /**
+     * Remove user group.
+     *
+     * @return page or empty String
+     */
+    public String Loeschen() {
+        try {
+            new SimpleDAO().refreshObject(this.myBenutzergruppe);
+            if (this.myBenutzergruppe.getUsers().size() > 0) {
+                for (User b : this.myBenutzergruppe.getUsers()) {
+                    b.getUserGroups().remove(this.myBenutzergruppe);
+                }
+                this.myBenutzergruppe.setUsers(new ArrayList<User>());
+                this.userGroupService.save(this.myBenutzergruppe);
+            }
+            if (this.myBenutzergruppe.getTasks().size() > 0) {
+                Helper.setFehlerMeldung("userGroupAssignedError");
+                return "";
+            }
+            this.userGroupService.remove(this.myBenutzergruppe);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
+            return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("Error, could not delete from index", e.getMessage());
             return "";
         }
-		return "BenutzergruppenAlle";
-	}
+        return "BenutzergruppenAlle";
+    }
 
-	public String FilterKein() {
-		try {
-			Session session = Helper.getHibernateSession();
-			session.clear();
-			Criteria crit = session.createCriteria(UserGroup.class);
-			crit.addOrder(Order.asc("title"));
-			this.page = new Page(crit, 0);
-		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-			return "";
-		}
-		return "BenutzergruppenAlle";
-	}
+    /**
+     * Display all user groups with any filtering.
+     *
+     * @return page or empty String
+     */
+    public String FilterKein() {
+        try {
+            Session session = Helper.getHibernateSession();
+            session.clear();
+            Criteria crit = session.createCriteria(UserGroup.class);
+            crit.addOrder(Order.asc("title"));
+            this.page = new Page(crit, 0);
+        } catch (HibernateException he) {
+            Helper.setFehlerMeldung("Error, could not read", he.getMessage());
+            return "";
+        }
+        return "BenutzergruppenAlle";
+    }
 
-	public String FilterKeinMitZurueck() {
-		FilterKein();
-		return this.zurueck;
-	}
+    public String FilterKeinMitZurueck() {
+        FilterKein();
+        return this.zurueck;
+    }
 
-	/*
- 	 * Getter und Setter 
-	 */
+    /*
+     * Getter und Setter
+     */
 
-	public UserGroup getMyBenutzergruppe() {
-		return this.myBenutzergruppe;
-	}
+    public UserGroup getMyBenutzergruppe() {
+        return this.myBenutzergruppe;
+    }
 
-	public void setMyBenutzergruppe(UserGroup myBenutzergruppe) {
-		Helper.getHibernateSession().clear();
-		this.myBenutzergruppe = myBenutzergruppe;
-	}
+    public void setMyBenutzergruppe(UserGroup myBenutzergruppe) {
+        Helper.getHibernateSession().clear();
+        this.myBenutzergruppe = myBenutzergruppe;
+    }
 
 }

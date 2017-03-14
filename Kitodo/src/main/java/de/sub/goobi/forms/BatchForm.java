@@ -55,259 +55,292 @@ import org.kitodo.services.ProcessService;
 
 public class BatchForm extends BasisForm {
 
-	private static final long serialVersionUID = 8234897225425856549L;
+    private static final long serialVersionUID = 8234897225425856549L;
 
-	private static final Logger logger = Logger.getLogger(BatchForm.class);
+    private static final Logger logger = Logger.getLogger(BatchForm.class);
 
-	private List<Process> currentProcesses;
-	private List<Process> selectedProcesses;
-	private List<Batch> currentBatches;
-	private List<String> selectedBatches;
-	private String batchfilter;
-	private String processfilter;
-	private IEvaluableFilter myFilteredDataSource;
+    private List<Process> currentProcesses;
+    private List<Process> selectedProcesses;
+    private List<Batch> currentBatches;
+    private List<String> selectedBatches;
+    private String batchfilter;
+    private String processfilter;
+    private IEvaluableFilter myFilteredDataSource;
 
-	private BatchService batchService = new BatchService();
-	private ProcessService processService = new ProcessService();
-	private String modusBearbeiten = "";
+    private BatchService batchService = new BatchService();
+    private ProcessService processService = new ProcessService();
+    private String modusBearbeiten = "";
 
-	private String batchTitle;
+    private String batchTitle;
 
-	public List<Process> getCurrentProcesses() {
-		return this.currentProcesses;
-	}
+    public List<Process> getCurrentProcesses() {
+        return this.currentProcesses;
+    }
 
-	public void setCurrentProcesses(List<Process> currentProcesses) {
-		this.currentProcesses = currentProcesses;
-	}
+    public void setCurrentProcesses(List<Process> currentProcesses) {
+        this.currentProcesses = currentProcesses;
+    }
 
-	public void loadBatchData() throws DAOException {
-		if (selectedProcesses == null || selectedProcesses.size() == 0) {
-			this.currentBatches = batchService.findAll();
-			this.selectedBatches = new ArrayList<String>();
-		} else {
-			selectedBatches = new ArrayList<String>();
-			List<Batch> batchesToSelect = new ArrayList<>();
-			for (Process process : selectedProcesses) {
-				batchesToSelect.addAll(processService.getBatchesInitialized(process));
-			}
-			for (Batch batch : batchesToSelect) {
-				selectedBatches.add(batchService.getIdString(batch));
-			}
-		}
-	}
+    /**
+     * Load Batch data.
+     */
+    public void loadBatchData() throws DAOException {
+        if (selectedProcesses == null || selectedProcesses.size() == 0) {
+            this.currentBatches = batchService.findAll();
+            this.selectedBatches = new ArrayList<String>();
+        } else {
+            selectedBatches = new ArrayList<String>();
+            List<Batch> batchesToSelect = new ArrayList<>();
+            for (Process process : selectedProcesses) {
+                batchesToSelect.addAll(processService.getBatchesInitialized(process));
+            }
+            for (Batch batch : batchesToSelect) {
+                selectedBatches.add(batchService.getIdString(batch));
+            }
+        }
+    }
 
-	public void loadProcessData() {
-		List<Process> processes = new ArrayList<>();
-		try {
-			for (String b : selectedBatches) {
-				processes.addAll(batchService.find(Integer.parseInt(b)).getProcesses());
-			}
-			currentProcesses = new ArrayList<Process>(processes);
-		} catch (Exception e) { // NumberFormatException, DAOException
-			logger.error(e);
-			Helper.setFehlerMeldung("fehlerBeimEinlesen");
-			return;
-		}
-	}
+    /**
+     * Load Process data.
+     */
+    public void loadProcessData() {
+        List<Process> processes = new ArrayList<>();
+        try {
+            for (String b : selectedBatches) {
+                processes.addAll(batchService.find(Integer.parseInt(b)).getProcesses());
+            }
+            currentProcesses = new ArrayList<Process>(processes);
+        } catch (Exception e) { // NumberFormatException, DAOException
+            logger.error(e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen");
+            return;
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public void filterProcesses() {
+    /**
+     * Filter processes.
+     */
+    @SuppressWarnings("unchecked")
+    public void filterProcesses() {
 
-		if (this.processfilter == null) {
-			this.processfilter = "";
-		}
-		this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
-		Criteria crit = this.myFilteredDataSource.getCriteria();
-		crit.addOrder(Order.desc("creationDate"));
-		crit.add(Restrictions.eq("template", Boolean.FALSE));
-		int batchMaxSize = ConfigMain.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
-		if (batchMaxSize > 0) {
-			crit.setMaxResults(batchMaxSize);
-		}
-		try {
-			this.currentProcesses = crit.list();
-		} catch (HibernateException e) {
-			this.currentProcesses = new ArrayList<Process>();
-		}
-	}
+        if (this.processfilter == null) {
+            this.processfilter = "";
+        }
+        this.myFilteredDataSource = new UserDefinedFilter(this.processfilter);
+        Criteria crit = this.myFilteredDataSource.getCriteria();
+        crit.addOrder(Order.desc("creationDate"));
+        crit.add(Restrictions.eq("template", Boolean.FALSE));
+        int batchMaxSize = ConfigMain.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
+        if (batchMaxSize > 0) {
+            crit.setMaxResults(batchMaxSize);
+        }
+        try {
+            this.currentProcesses = crit.list();
+        } catch (HibernateException e) {
+            this.currentProcesses = new ArrayList<Process>();
+        }
+    }
 
-	public void filterBatches() throws DAOException {
-		currentBatches = new ArrayList<Batch>();
-		for (Batch batch : batchService.findAll()) {
-			if (batchService.contains(batch, batchfilter)) {
-				currentBatches.add(batch);
-			}
-		}
-	}
+    /**
+     * Filter batches.
+     */
+    public void filterBatches() throws DAOException {
+        currentBatches = new ArrayList<Batch>();
+        for (Batch batch : batchService.findAll()) {
+            if (batchService.contains(batch, batchfilter)) {
+                currentBatches.add(batch);
+            }
+        }
+    }
 
-	public List<SelectItem> getCurrentProcessesAsSelectItems() {
-		List<SelectItem> answer = new ArrayList<SelectItem>();
-		for (Process p : this.currentProcesses) {
-			answer.add(new SelectItem(p, p.getTitle()));
-		}
-		return answer;
-	}
+    /**
+     * Get current processes as select items.
+     *
+     * @return list of select items
+     */
+    public List<SelectItem> getCurrentProcessesAsSelectItems() {
+        List<SelectItem> answer = new ArrayList<SelectItem>();
+        for (Process p : this.currentProcesses) {
+            answer.add(new SelectItem(p, p.getTitle()));
+        }
+        return answer;
+    }
 
-	public String getBatchfilter() {
-		return this.batchfilter;
-	}
+    public String getBatchfilter() {
+        return this.batchfilter;
+    }
 
-	public void setBatchfilter(String batchfilter) {
-		this.batchfilter = batchfilter;
-	}
+    public void setBatchfilter(String batchfilter) {
+        this.batchfilter = batchfilter;
+    }
 
-	public String getBatchName() {
-		return batchTitle;
-	}
+    public String getBatchName() {
+        return batchTitle;
+    }
 
-	public void setBatchName(String batchName) {
-		batchTitle = batchName;
-	}
+    public void setBatchName(String batchName) {
+        batchTitle = batchName;
+    }
 
-	public String getProcessfilter() {
-		return this.processfilter;
-	}
+    public String getProcessfilter() {
+        return this.processfilter;
+    }
 
-	public void setProcessfilter(String processfilter) {
-		this.processfilter = processfilter;
-	}
+    public void setProcessfilter(String processfilter) {
+        this.processfilter = processfilter;
+    }
 
-	public List<Batch> getCurrentBatches() {
-		return this.currentBatches;
-	}
+    public List<Batch> getCurrentBatches() {
+        return this.currentBatches;
+    }
 
-	public void setCurrentBatches(List<Batch> currentBatches) {
-		this.currentBatches = currentBatches;
-	}
+    public void setCurrentBatches(List<Batch> currentBatches) {
+        this.currentBatches = currentBatches;
+    }
 
-	public List<Process> getSelectedProcesses() {
-		return this.selectedProcesses;
-	}
+    public List<Process> getSelectedProcesses() {
+        return this.selectedProcesses;
+    }
 
-	public void setSelectedProcesses(List<Process> selectedProcesses) {
-		this.selectedProcesses = selectedProcesses;
-	}
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
+        this.selectedProcesses = selectedProcesses;
+    }
 
-	public List<String> getSelectedBatches() {
-		return this.selectedBatches;
-	}
+    public List<String> getSelectedBatches() {
+        return this.selectedBatches;
+    }
 
-	public void setSelectedBatches(List<String> selectedBatches) {
-		this.selectedBatches = selectedBatches;
-	}
+    public void setSelectedBatches(List<String> selectedBatches) {
+        this.selectedBatches = selectedBatches;
+    }
 
-	public String FilterAlleStart() throws DAOException {
-		filterBatches();
-		filterProcesses();
-		return "BatchesAll";
-	}
+    /**
+     * Filter all start.
+     * @return page - all batches
+     */
+    public String FilterAlleStart() throws DAOException {
+        filterBatches();
+        filterProcesses();
+        return "BatchesAll";
+    }
 
-	public String downloadDocket() {
-		logger.debug("generate docket for process list");
-		String rootpath = ConfigMain.getParameter("xsltFolder");
-		File xsltfile = new File(rootpath, "docket_multipage.xsl");
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		List<Process> docket = Collections.emptyList();
-		if (this.selectedBatches.size() == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-		} else if (this.selectedBatches.size() == 1) {
-			try {
-				docket = batchService.find(Integer.valueOf(selectedBatches.get(0))).getProcesses();
-			} catch (DAOException e) {
-				logger.error(e);
-				Helper.setFehlerMeldung("fehlerBeimEinlesen");
-				return "";
-			}
-		} else {
-			Helper.setFehlerMeldung("tooManyBatchesSelected");
-		}
-		if (docket.size() > 0) {
-			if (!facesContext.getResponseComplete()) {
-				HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-				String fileName = "batch_docket" + ".pdf";
-				ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-				String contentType = servletContext.getMimeType(fileName);
-				response.setContentType(contentType);
-				response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+    /**
+     * Download docket.
+     *
+     * @return String
+     */
+    public String downloadDocket() {
+        logger.debug("generate docket for process list");
+        String rootpath = ConfigMain.getParameter("xsltFolder");
+        File xsltfile = new File(rootpath, "docket_multipage.xsl");
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        List<Process> docket = Collections.emptyList();
+        if (this.selectedBatches.size() == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+        } else if (this.selectedBatches.size() == 1) {
+            try {
+                docket = batchService.find(Integer.valueOf(selectedBatches.get(0))).getProcesses();
+            } catch (DAOException e) {
+                logger.error(e);
+                Helper.setFehlerMeldung("fehlerBeimEinlesen");
+                return "";
+            }
+        } else {
+            Helper.setFehlerMeldung("tooManyBatchesSelected");
+        }
+        if (docket.size() > 0) {
+            if (!facesContext.getResponseComplete()) {
+                HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+                String fileName = "batch_docket" + ".pdf";
+                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+                String contentType = servletContext.getMimeType(fileName);
+                response.setContentType(contentType);
+                response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
 
-				try {
-					ServletOutputStream out = response.getOutputStream();
-					ExportDocket ern = new ExportDocket();
-					ern.startExport(docket, out, xsltfile.getAbsolutePath());
-					out.flush();
-				} catch (IOException e) {
-					logger.error("IOException while exporting run note", e);
-				}
+                try {
+                    ServletOutputStream out = response.getOutputStream();
+                    ExportDocket ern = new ExportDocket();
+                    ern.startExport(docket, out, xsltfile.getAbsolutePath());
+                    out.flush();
+                } catch (IOException e) {
+                    logger.error("IOException while exporting run note", e);
+                }
 
-				facesContext.responseComplete();
-			}
-		}
-		return "";
-	}
+                facesContext.responseComplete();
+            }
+        }
+        return "";
+    }
 
-	/**
-	 * The method deleteBatch() is called if the user clicks the action link to
-	 * delete batches. It runs the deletion of the batches.
-	 */
-	public void deleteBatch() {
-		int selectedBatchesSize = this.selectedBatches.size();
-		if (selectedBatchesSize == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-			return;
-		}
-		List<Integer> ids = new ArrayList<Integer>(selectedBatchesSize);
-		for (String entry : this.selectedBatches) {
-			ids.add(Integer.parseInt(entry));
-		}
-		try {
-			batchService.removeAll(ids);
-			FilterAlleStart();
-		} catch (DAOException e) {
-			logger.error(e);
-			Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-		}
-	}
+    /**
+     * The method deleteBatch() is called if the user clicks the action link to
+     * delete batches. It runs the deletion of the batches.
+     */
+    public void deleteBatch() {
+        int selectedBatchesSize = this.selectedBatches.size();
+        if (selectedBatchesSize == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+            return;
+        }
+        List<Integer> ids = new ArrayList<Integer>(selectedBatchesSize);
+        for (String entry : this.selectedBatches) {
+            ids.add(Integer.parseInt(entry));
+        }
+        try {
+            batchService.removeAll(ids);
+            FilterAlleStart();
+        } catch (DAOException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
+        }
+    }
 
-	public void addProcessesToBatch() {
-		if (this.selectedBatches.size() == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-			return;
-		}
-		if (this.selectedProcesses.size() == 0) {
-			Helper.setFehlerMeldung("noProcessSelected");
-			return;
-		}
-		try {
-			for (String entry : this.selectedBatches) {
-				Batch batch = batchService.find(Integer.parseInt(entry));
-				batchService.addAll(batch, this.selectedProcesses);
-				batchService.save(batch);
-				if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
-					for (Process p : this.selectedProcesses) {
-						processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
-					}
-					this.processService.saveList(this.selectedProcesses);
-				}
-			}
-		} catch (DAOException e) {
-			logger.error(e);
-			Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
+    /**
+     * Add processes to Batch.
+     */
+    public void addProcessesToBatch() {
+        if (this.selectedBatches.size() == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+            return;
+        }
+        if (this.selectedProcesses.size() == 0) {
+            Helper.setFehlerMeldung("noProcessSelected");
+            return;
+        }
+        try {
+            for (String entry : this.selectedBatches) {
+                Batch batch = batchService.find(Integer.parseInt(entry));
+                batchService.addAll(batch, this.selectedProcesses);
+                batchService.save(batch);
+                if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
+                    for (Process p : this.selectedProcesses) {
+                        processService.addToWikiField(Helper.getTranslation("addToBatch",
+                                Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
+                    }
+                    this.processService.saveList(this.selectedProcesses);
+                }
+            }
+        } catch (DAOException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
         } catch (IOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
         }
-	}
+    }
 
-	public void removeProcessesFromBatch() throws DAOException, IOException {
-		if (this.selectedBatches.size() == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-			return;
-		}
-		if (this.selectedProcesses.size() == 0) {
-			Helper.setFehlerMeldung("noProcessSelected");
-			return;
-		}
+    /**
+     * Remove processes from Batch.
+     */
+    public void removeProcessesFromBatch() throws DAOException, IOException {
+        if (this.selectedBatches.size() == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+            return;
+        }
+        if (this.selectedProcesses.size() == 0) {
+            Helper.setFehlerMeldung("noProcessSelected");
+            return;
+        }
 
         for (String entry : this.selectedBatches) {
             Batch batch = batchService.find(Integer.parseInt(entry));
@@ -325,46 +358,53 @@ public class BatchForm extends BasisForm {
         FilterAlleStart();
     }
 
-	public void renameBatch() {
-		if (this.selectedBatches.size() == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-			return;
-		} else if (this.selectedBatches.size() > 1) {
-			Helper.setFehlerMeldung("tooManyBatchesSelected");
-			return;
-		} else {
-			try {
-				Integer selected = Integer.valueOf(selectedBatches.get(0));
-				for (Batch batch : currentBatches) {
-					if (selected.equals(batch.getId())) {
-						batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
-						batchService.save(batch);
-						return;
-					}
-				}
-			} catch (DAOException e) {
-				Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
-				logger.error(e);
-			} catch (IOException e ) {
-				Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
-				logger.error(e);
-			}
-		}
-	}
+    /**
+     * Rename Batch.
+     */
+    public void renameBatch() {
+        if (this.selectedBatches.size() == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+            return;
+        } else if (this.selectedBatches.size() > 1) {
+            Helper.setFehlerMeldung("tooManyBatchesSelected");
+            return;
+        } else {
+            try {
+                Integer selected = Integer.valueOf(selectedBatches.get(0));
+                for (Batch batch : currentBatches) {
+                    if (selected.equals(batch.getId())) {
+                        batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
+                        batchService.save(batch);
+                        return;
+                    }
+                }
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
+                logger.error(e);
+            } catch (IOException e ) {
+                Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+                logger.error(e);
+            }
+        }
+    }
 
-	public void createNewBatch() throws DAOException, IOException {
-		if (selectedProcesses.size() > 0) {
-			Batch batch = null;
-			if(batchTitle != null && batchTitle.trim().length() > 0){
-				batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
-			}else{
-				batch = new Batch(Type.LOGISTIC, selectedProcesses);
-			}
+    /**
+     * Create new Batch.
+     */
+    public void createNewBatch() throws DAOException, IOException {
+        if (selectedProcesses.size() > 0) {
+            Batch batch = null;
+            if (batchTitle != null && batchTitle.trim().length() > 0) {
+                batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
+            } else {
+                batch = new Batch(Type.LOGISTIC, selectedProcesses);
+            }
 
-			batchService.save(batch);
+            batchService.save(batch);
             if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : selectedProcesses) {
-                    processService.addToWikiField(Helper.getTranslation("addToBatch", Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
+                    processService.addToWikiField(Helper.getTranslation("addToBatch",
+                            Arrays.asList(new String[] { batchService.getLabel(batch) })), p);
                 }
                 this.processService.saveList(selectedProcesses);
             }
@@ -372,142 +412,148 @@ public class BatchForm extends BasisForm {
         FilterAlleStart();
     }
 
-	/*
-	 * properties
-	 */
-	private BatchProcessHelper batchHelper;
+    /*
+     * properties
+     */
+    private BatchProcessHelper batchHelper;
 
-	public String editProperties() {
-		if (this.selectedBatches.size() == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-			return "";
-		} else if (this.selectedBatches.size() > 1) {
-			Helper.setFehlerMeldung("tooManyBatchesSelected");
-			return "";
-		} else {
-			if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("") && !this.selectedBatches.get(0).equals("null")) {
-				Batch batch;
-				try {
-					batch = batchService.find(Integer.valueOf(selectedBatches.get(0)));
-					this.batchHelper = new BatchProcessHelper(batch);
-					return "BatchProperties";
-				} catch (DAOException e) {
-					logger.error(e);
-					Helper.setFehlerMeldung("fehlerBeimEinlesen");
-					return "";
-				}
-			} else {
-				Helper.setFehlerMeldung("noBatchSelected");
-				return "";
-			}
-		}
-	}
+    /**
+     * Edit properties.
+     *
+     * @return page
+     */
+    public String editProperties() {
+        if (this.selectedBatches.size() == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+            return "";
+        } else if (this.selectedBatches.size() > 1) {
+            Helper.setFehlerMeldung("tooManyBatchesSelected");
+            return "";
+        } else {
+            if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("")
+                    && !this.selectedBatches.get(0).equals("null")) {
+                Batch batch;
+                try {
+                    batch = batchService.find(Integer.valueOf(selectedBatches.get(0)));
+                    this.batchHelper = new BatchProcessHelper(batch);
+                    return "BatchProperties";
+                } catch (DAOException e) {
+                    logger.error(e);
+                    Helper.setFehlerMeldung("fehlerBeimEinlesen");
+                    return "";
+                }
+            } else {
+                Helper.setFehlerMeldung("noBatchSelected");
+                return "";
+            }
+        }
+    }
 
-	public BatchProcessHelper getBatchHelper() {
-		return this.batchHelper;
-	}
+    public BatchProcessHelper getBatchHelper() {
+        return this.batchHelper;
+    }
 
-	public void setBatchHelper(BatchProcessHelper batchHelper) {
-		this.batchHelper = batchHelper;
-	}
+    public void setBatchHelper(BatchProcessHelper batchHelper) {
+        this.batchHelper = batchHelper;
+    }
 
-	public String getModusBearbeiten() {
-		return this.modusBearbeiten;
-	}
+    public String getModusBearbeiten() {
+        return this.modusBearbeiten;
+    }
 
-	public void setModusBearbeiten(String modusBearbeiten) {
-		this.modusBearbeiten = modusBearbeiten;
-	}
+    public void setModusBearbeiten(String modusBearbeiten) {
+        this.modusBearbeiten = modusBearbeiten;
+    }
 
-	/**
-	 * Creates a batch export task to export the selected batch. The type of
-	 * export task depends on the batch type. If asynchronous tasks have been
-	 * created, the user will be redirected to the task manager page where it
-	 * can observe the task progressing.
-	 * 
-	 * @return the next page to show as named in a &lt;from-outcome&gt; element
-	 *         in faces_config.xml
-	 */
-	public String exportBatch() {
-		if (this.selectedBatches.size() == 0) {
-			Helper.setFehlerMeldung("noBatchSelected");
-			return "";
-		}
-		for (String batchID : selectedBatches) {
-			try {
-				Batch batch = batchService.find(Integer.valueOf(batchID));
-				switch (batch.getType()) {
-				case LOGISTIC:
-					for (Process prozess : batch.getProcesses()) {
-						Hibernate.initialize(prozess.getProject());
-						Hibernate.initialize(prozess.getProject().getProjectFileGroups());
-						Hibernate.initialize(prozess.getRuleset());
-						ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
-								true));
-						dms.startExport(prozess);
-					}
-					return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
-				case NEWSPAPER:
-					TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-					return "taskmanager";
-				case SERIAL:
-					TaskManager.addTask(new ExportSerialBatchTask(batch));
-					return "taskmanager";
-				default:
-					throw new UnreachableCodeException("Complete switch statement");
-				}
-			} catch (Exception e) {
-				logger.error(e);
-				Helper.setFehlerMeldung("fehlerBeimEinlesen");
-				return "";
-			}
-		}
-		Helper.setFehlerMeldung("noBatchSelected");
-		return "";
-	}
+    /**
+     * Creates a batch export task to export the selected batch. The type of
+     * export task depends on the batch type. If asynchronous tasks have been
+     * created, the user will be redirected to the task manager page where it
+     * can observe the task progressing.
+     *
+     * @return the next page to show as named in a &lt;from-outcome&gt; element
+     *         in faces_config.xml
+     */
+    public String exportBatch() {
+        if (this.selectedBatches.size() == 0) {
+            Helper.setFehlerMeldung("noBatchSelected");
+            return "";
+        }
+        for (String batchID : selectedBatches) {
+            try {
+                Batch batch = batchService.find(Integer.valueOf(batchID));
+                switch (batch.getType()) {
+                    case LOGISTIC:
+                        for (Process prozess : batch.getProcesses()) {
+                            Hibernate.initialize(prozess.getProject());
+                            Hibernate.initialize(prozess.getProject().getProjectFileGroups());
+                            Hibernate.initialize(prozess.getRuleset());
+                            ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
+                                    true));
+                            dms.startExport(prozess);
+                        }
+                        return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+                    case NEWSPAPER:
+                        TaskManager.addTask(new ExportNewspaperBatchTask(batch));
+                        return "taskmanager";
+                    case SERIAL:
+                        TaskManager.addTask(new ExportSerialBatchTask(batch));
+                        return "taskmanager";
+                    default:
+                        throw new UnreachableCodeException("Complete switch statement");
+                }
+            } catch (Exception e) {
+                logger.error(e);
+                Helper.setFehlerMeldung("fehlerBeimEinlesen");
+                return "";
+            }
+        }
+        Helper.setFehlerMeldung("noBatchSelected");
+        return "";
+    }
 
-	/**
-	 * Sets the type of all currently selected batches to LOGISTIC.
-	 */
-	public void setLogistic() {
-		setType(Type.LOGISTIC);
-	}
+    /**
+     * Sets the type of all currently selected batches to LOGISTIC.
+     */
+    public void setLogistic() {
+        setType(Type.LOGISTIC);
+    }
 
-	/**
-	 * Sets the type of all currently selected batches to NEWSPAPER.
-	 */
-	public void setNewspaper() {
-		setType(Type.NEWSPAPER);
-	}
+    /**
+     * Sets the type of all currently selected batches to NEWSPAPER.
+     */
+    public void setNewspaper() {
+        setType(Type.NEWSPAPER);
+    }
 
-	/**
-	 * Sets the type of all currently selected batches to SERIAL.
-	 */
-	public void setSerial() {
-		setType(Type.SERIAL);
-	}
+    /**
+     * Sets the type of all currently selected batches to SERIAL.
+     */
+    public void setSerial() {
+        setType(Type.SERIAL);
+    }
 
-	/**
-	 * Sets the type of all currently selected batches to the named one,
-	 * overriding a previously set type, if any.
-	 * 
-	 * @param type
-	 *            type to set
-	 */
-	private void setType(Type type) {
-		try {
-			for (Batch batch : currentBatches) {
-				if (selectedBatches.contains(batch.getId().toString())) {
-					batch.setType(type);
-					batchService.save(batch);
-				}
-			}
-		} catch (DAOException e) {
-			logger.error(e);
-			Helper.setFehlerMeldung("fehlerBeimEinlesen");
+    /**
+     * Sets the type of all currently selected batches to the named one,
+     * overriding a previously set type, if any.
+     *
+     * @param type
+     *            type to set
+     */
+    private void setType(Type type) {
+        try {
+            for (Batch batch : currentBatches) {
+                if (selectedBatches.contains(batch.getId().toString())) {
+                    batch.setType(type);
+                    batchService.save(batch);
+                }
+            }
+        } catch (DAOException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen");
         } catch (IOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("errorElasticSearch");
         }
-	}
+    }
 }

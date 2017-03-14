@@ -19,84 +19,99 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
 public class RefreshObject {
-	private static final Logger logger = Logger.getLogger(RefreshObject.class);
+    private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
-	public static void refreshProcess(int processID) {
-		if(logger.isDebugEnabled()){
-			logger.debug("refreshing process with id " + processID);
-		}
-		try {
-			Session session = HibernateUtilOld.getSessionFactory().openSession();
-			if (session != null) {
-				if(logger.isDebugEnabled()){
-					logger.debug("session is connected: " + session.isConnected());
-					logger.debug("session is open: " + session.isOpen());
-				}
-			} else {
-				logger.debug("session is null");
-			}
-			if ((session == null) || (!session.isOpen()) || (!session.isConnected())) {
-				logger.debug("found no open session, don't refresh the process");
-				if (session != null) {
-					session.close();
-					logger.debug("closed session");
-				}
-				return;
-			}
+	/**
+	 * Refresh process.
+     *
+	 * @param processID int
+	 */
+    public static void refreshProcess(int processID) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("refreshing process with id " + processID);
+        }
+        try {
+            Session session = HibernateUtilOld.getSessionFactory().openSession();
+            if (session != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("session is connected: " + session.isConnected());
+                    logger.debug("session is open: " + session.isOpen());
+                }
+            } else {
+                logger.debug("session is null");
+            }
+            if ((session == null) || (!session.isOpen()) || (!session.isConnected())) {
+                logger.debug("found no open session, don't refresh the process");
+                if (session != null) {
+                    session.close();
+                    logger.debug("closed session");
+                }
+                return;
+            }
 
-			logger.debug("created a new session");
-			Process o = (Process) session.get(Process.class, Integer.valueOf(processID));
-			logger.debug("loaded process");
-			session.refresh(o);
-			logger.debug("refreshed process");
-			session.close();
-			logger.debug("closed session");
-		} catch (Throwable e) {
-			logger.error("cannot refresh process with id " + processID);
-		}
-	}
+            logger.debug("created a new session");
+            Process o = (Process) session.get(Process.class, Integer.valueOf(processID));
+            logger.debug("loaded process");
+            session.refresh(o);
+            logger.debug("refreshed process");
+            session.close();
+            logger.debug("closed session");
+        } catch (Throwable e) {
+            logger.error("cannot refresh process with id " + processID);
+        }
+    }
 
-	public static void refreshProcess_GUI(int processID) {
-		if(logger.isDebugEnabled()){
-			logger.debug("refreshing process with id " + processID);
-		}
-		Session session = null;
-		boolean needsClose = false;
-		try {
-			session = Helper.getHibernateSession();
-			if (session == null || !session.isOpen() || !session.isConnected()) {
-				logger.debug("session is closed, creating a new session");
-				HibernateUtilOld.rebuildSessionFactory();
-				session = HibernateUtilOld.getSessionFactory().openSession();
-				needsClose = true;
-			}
-			Process o = (Process) session.get(Process.class, processID);
-			logger.debug("loaded process");
-			session.refresh(o);
-			logger.debug("refreshed process");
-			if (needsClose) {
-				session.close();
-				logger.debug("closed session");
-			}
-		} catch (Throwable e) {
-			logger.error("cannot refresh process with id " + processID);
-			if (needsClose) {
-				session.close();
-			}
-		}
-	}
+    /**
+     * Refresh process - GUI.
+     *
+     * @param processID int
+     */
+    public static void refreshProcess_GUI(int processID) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("refreshing process with id " + processID);
+        }
+        Session session = null;
+        boolean needsClose = false;
+        try {
+            session = Helper.getHibernateSession();
+            if (session == null || !session.isOpen() || !session.isConnected()) {
+                logger.debug("session is closed, creating a new session");
+                HibernateUtilOld.rebuildSessionFactory();
+                session = HibernateUtilOld.getSessionFactory().openSession();
+                needsClose = true;
+            }
+            Process o = (Process) session.get(Process.class, processID);
+            logger.debug("loaded process");
+            session.refresh(o);
+            logger.debug("refreshed process");
+            if (needsClose) {
+                session.close();
+                logger.debug("closed session");
+            }
+        } catch (Throwable e) {
+            logger.error("cannot refresh process with id " + processID);
+            if (needsClose) {
+                session.close();
+            }
+        }
+    }
 
-	public static void refreshStep(int stepID) {
-		try {
+    /**
+     * Stop refresh.
+     *
+     * @param stepID task id
+     */
+    public static void refreshStep(int stepID) {
+        try {
 
-			Session session = HibernateUtilOld.getSessionFactory().openSession();
-			Task o = (Task) session.get(Task.class, stepID);
-			session.refresh(o);
-			session.close();
-		} catch (Exception e) {
-			logger.error("cannot refresh step with id " + stepID);
-		}
+            Session session = HibernateUtilOld.getSessionFactory().openSession();
+            Task o = (Task) session.get(Task.class, stepID);
+            session.refresh(o);
+            session.close();
+        } catch (Exception e) {
+            logger.error("cannot refresh step with id " + stepID);
+        }
 
-	}
+    }
 
 }

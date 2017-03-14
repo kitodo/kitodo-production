@@ -34,205 +34,210 @@ import org.kitodo.services.TaskService;
 import org.kitodo.services.UserService;
 
 public class StatistikForm {
-	private ProcessService processService = new ProcessService();
-	private TaskService taskService = new TaskService();
-	private UserService userService = new UserService();
-	private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
-	Calendar cal = new GregorianCalendar();
-	int n = 200;
+    private ProcessService processService = new ProcessService();
+    private TaskService taskService = new TaskService();
+    private UserService userService = new UserService();
+    private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
+    Calendar cal = new GregorianCalendar();
+    int n = 200;
 
-	/**
-	 * @return Anzahl aller Literatureinträge
-	 * @throws DAOException
-	 */
-	public Integer getAnzahlLiteraturGesamt() {
-		return Integer.valueOf(0);
-	}
+    /**
+	 * Get amount list literature together.
+	 *
+     * @return Anzahl aller Literatureinträge Integer
+     */
+    public Integer getAnzahlLiteraturGesamt() {
+        return Integer.valueOf(0);
+    }
 
-	/**
-	 * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment.
-	 * Since user accounts are not hard deleted from the database when the delete button is pressed a where clause
-	 * is used in the SQL statement to exclude the deleted accounts from the sum.
-	 * 
-	 * @return the count of valid user accounts
-	 * @throws DAOException
-	 *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
-	 */
+    /**
+     * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment.
+     * Since user accounts are not hard deleted from the database when the delete button is pressed a where clause
+     * is used in the SQL statement to exclude the deleted accounts from the sum.
+     *
+     * @return the count of valid user accounts
+     */
 
-	public Long getAnzahlBenutzer() {
-		try {
-			return userService.count("from User where visible is null");
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
-			return null;
-		}
-	}
+    public Long getAnzahlBenutzer() {
+        try {
+            return userService.count("from User where visible is null");
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+            return null;
+        }
+    }
 
-	/**
-	 * @return Anzahl der Benutzer
-	 * @throws DAOException
-	 */
-	public Long getAnzahlBenutzergruppen() {
-		try {
-			return userService.count("from UserGroup");
-		} catch (DAOException e) {
-			Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
-			return null;
-		}
-	}
+    /**
+     * Get amount of user groups.
+     *
+     * @return Anzahl der Benutzer
+     */
+    public Long getAnzahlBenutzergruppen() {
+        try {
+            return userService.count("from UserGroup");
+        } catch (DAOException e) {
+            Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
+            return null;
+        }
+    }
 
-	/**
-	 * @return Anzahl der Benutzer
-	 * @throws DAOException
-	 */
-	public Long getAnzahlProzesse() {
-		try {
-			return processService.count("from Process");
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
-			return null;
-		}
-	}
+    /**
+     * Get amount of users.
+     *
+     * @return Anzahl der Benutzer
+     */
+    public Long getAnzahlProzesse() {
+        try {
+            return processService.count("from Process");
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+            return null;
+        }
+    }
 
-	/**
-	 * @return Anzahl der Benutzer
-	 * @throws DAOException
-	 */
-	public Long getAnzahlSchritte() {
-		try {
-			return taskService.count("from Task");
-		} catch (DAOException e) {
-			myLogger.error("Hibernate error", e);
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
-			return Long.valueOf(-1);
-		}
-	}
+    /**
+     * Get amount of tasks.
+     *
+     * @return Anzahl der Benutzer
+     */
+    public Long getAnzahlSchritte() {
+        try {
+            return taskService.count("from Task");
+        } catch (DAOException e) {
+            myLogger.error("Hibernate error", e);
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
+            return Long.valueOf(-1);
+        }
+    }
 
-	/**
-	 * @return Anzahl der Benutzer
-	 * @throws DAOException
-	 */
-	public Long getAnzahlVorlagen() {
-		Session session = Helper.getHibernateSession();
-		return (Long) session.createQuery("select count(*) " + "from Template").uniqueResult();
-	}
+    /**
+     * Get amount of templates.
+     *
+     * @return Anzahl der Benutzer
+     */
+    public Long getAnzahlVorlagen() {
+        Session session = Helper.getHibernateSession();
+        return (Long) session.createQuery("select count(*) " + "from Template").uniqueResult();
+    }
 
-	/**
-	 * @return Anzahl der Benutzer
-	 * @throws DAOException
-	 */
-	public Long getAnzahlWerkstuecke() {
-		Session session = Helper.getHibernateSession();
-		return (Long) session.createQuery("select count(*) " + "from Workpiece").uniqueResult();
-	}
+    /**
+     * Get amount of workpieces.
+     *
+     * @return Anzahl der Benutzer
+     */
+    public Long getAnzahlWerkstuecke() {
+        Session session = Helper.getHibernateSession();
+        return (Long) session.createQuery("select count(*) " + "from Workpiece").uniqueResult();
+    }
 
-	/**
-	 * @return Dummy-Rückgabe
-	 * @throws DAOException
-	 */
-	public int getDummy() {
-		this.n++;
-		return new Random().nextInt(this.n);
-	}
+    /**
+     * Get dummy.
+     *
+     * @return Dummy-Rückgabe
+     */
+    public int getDummy() {
+        this.n++;
+        return new Random().nextInt(this.n);
+    }
 
-	public int getAnzahlAktuelleSchritte() {
-		return getAnzahlAktuelleSchritte(false, false);
-	}
+    public int getAnzahlAktuelleSchritte() {
+        return getAnzahlAktuelleSchritte(false, false);
+    }
 
-	public int getAnzahlAktuelleSchritteOffen() {
-		return getAnzahlAktuelleSchritte(true, false);
-	}
+    @SuppressWarnings("unchecked")
+    private int getAnzahlAktuelleSchritte(boolean inOffen, boolean inBearbeitet) {
+        /* aktuellen Benutzer ermitteln */
+        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (login.getMyBenutzer() == null) {
+            return 0;
+        }
 
-	public int getAnzahlAktuelleSchritteBearbeitung() {
-		return getAnzahlAktuelleSchritte(false, true);
-	}
+        try {
+            Session session = Helper.getHibernateSession();
+            Criteria crit = session.createCriteria(Task.class);
 
-	@SuppressWarnings("unchecked")
-	private int getAnzahlAktuelleSchritte(boolean inOffen, boolean inBearbeitet) {
-		/* aktuellen Benutzer ermitteln */
-		LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-		if (login.getMyBenutzer() == null) {
-			return 0;
-		}
+            /* Liste der IDs */
+            List<Integer> trefferListe = new ArrayList<Integer>();
 
-		try {
-			Session session = Helper.getHibernateSession();
-			Criteria crit = session.createCriteria(Task.class);
+            /*
+             * die Treffer der Benutzergruppen
+             */
+            Criteria critGruppen = session.createCriteria(Task.class);
+            if (!inOffen && !inBearbeitet) {
+                critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+                        Restrictions.like("processingStatus", Integer.valueOf(2))));
+            }
+            if (inOffen) {
+                critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
+            }
+            if (inBearbeitet) {
+                critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
+            }
 
-			/* Liste der IDs */
-			List<Integer> trefferListe = new ArrayList<Integer>();
+            /* nur Prozesse, die keine Vorlagen sind */
+            critGruppen.createCriteria("process", "proz");
+            critGruppen.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
-			/*
-			 * die Treffer der Benutzergruppen
-			 */
-			Criteria critGruppen = session.createCriteria(Task.class);
-			if (!inOffen && !inBearbeitet) {
-				critGruppen.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
-						Restrictions.like("processingStatus", Integer.valueOf(2))));
-			}
-			if (inOffen) {
-				critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
-			}
-			if (inBearbeitet) {
-				critGruppen.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
-			}
+            /* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
+            critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
+            critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
 
-			/* nur Prozesse, die keine Vorlagen sind */
-			critGruppen.createCriteria("process", "proz");
-			critGruppen.add(Restrictions.eq("proz.template", Boolean.FALSE));
+            /* die Treffer sammeln */
+            for (Iterator<Task> iter = critGruppen.list().iterator(); iter.hasNext();) {
+                Task step = iter.next();
+                trefferListe.add(step.getId());
+            }
 
-			/* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
-			critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
-			critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
+            /*
+             * Treffer der Benutzer
+             */
+            Criteria critBenutzer = session.createCriteria(Task.class);
+            if (!inOffen && !inBearbeitet) {
+                critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+                        Restrictions.like("processingStatus", Integer.valueOf(2))));
+            }
+            if (inOffen) {
+                critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
+            }
+            if (inBearbeitet) {
+                critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
+            }
 
-			/* die Treffer sammeln */
-			for (Iterator<Task> iter = critGruppen.list().iterator(); iter.hasNext();) {
-				Task step = iter.next();
-				trefferListe.add(step.getId());
-			}
+            /* nur Prozesse, die keine Vorlagen sind */
+            critBenutzer.createCriteria("process", "proz");
+            critBenutzer.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
-			/*
-			 * Treffer der Benutzer
-			 */
-			Criteria critBenutzer = session.createCriteria(Task.class);
-			if (!inOffen && !inBearbeitet) {
-				critBenutzer.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
-						Restrictions.like("processingStatus", Integer.valueOf(2))));
-			}
-			if (inOffen) {
-				critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(1)));
-			}
-			if (inBearbeitet) {
-				critBenutzer.add(Restrictions.eq("processingStatus", Integer.valueOf(2)));
-			}
+            /* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
+            critBenutzer.createCriteria("user", "nutzer");
+            critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
 
-			/* nur Prozesse, die keine Vorlagen sind */
-			critBenutzer.createCriteria("process", "proz");
-			critBenutzer.add(Restrictions.eq("proz.template", Boolean.FALSE));
+            /* die Treffer sammeln */
+            for (Iterator<Task> iter = critBenutzer.list().iterator(); iter.hasNext();) {
+                Task step = iter.next();
+                trefferListe.add(step.getId());
+            }
 
-			/* nur Schritte, wo der aktuelle Benutzer eingetragen ist */
-			critBenutzer.createCriteria("user", "nutzer");
-			critBenutzer.add(Restrictions.eq("nutzer.id", login.getMyBenutzer().getId()));
+            /*
+             * nun nur die Treffer übernehmen, die in der Liste sind
+             */
+            crit.add(Restrictions.in("id", trefferListe));
+            return crit.list().size();
 
-			/* die Treffer sammeln */
-			for (Iterator<Task> iter = critBenutzer.list().iterator(); iter.hasNext();) {
-				Task step = iter.next();
-				trefferListe.add(step.getId());
-			}
+        } catch (HibernateException he) {
+            Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
+            return 0;
+        }
+    }
 
-			/*
-			 * nun nur die Treffer übernehmen, die in der Liste sind
-			 */
-			crit.add(Restrictions.in("id", trefferListe));
-			return crit.list().size();
+    public int getAnzahlAktuelleSchritteOffen() {
+        return getAnzahlAktuelleSchritte(true, false);
+    }
 
-		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-			return 0;
-		}
-	}
+    public int getAnzahlAktuelleSchritteBearbeitung() {
+        return getAnzahlAktuelleSchritte(false, true);
+    }
 
-	public boolean getShowStatistics() {
-		return ConfigMain.getBooleanParameter("showStatisticsOnStartPage", true);
-	}
+    public boolean getShowStatistics() {
+        return ConfigMain.getBooleanParameter("showStatisticsOnStartPage", true);
+    }
 }

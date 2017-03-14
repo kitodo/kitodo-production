@@ -28,6 +28,12 @@ import org.kitodo.data.database.beans.Task;
 public class PropertyParser {
     private static final Logger logger = Logger.getLogger(PropertyParser.class);
 
+    /**
+     * Get properties for task.
+     *
+     * @param mySchritt Task object
+     * @return list of ProcessProperty objects
+     */
     public static ArrayList<ProcessProperty> getPropertiesForStep(Task mySchritt) {
         Hibernate.initialize(mySchritt.getProcess());
         Hibernate.initialize(mySchritt.getProcess().getProject());
@@ -82,7 +88,7 @@ public class PropertyParser {
                         pp.setDuplicationAllowed(duplicate);
                         pp.setCurrentStepAccessCondition(AccessCondition.getAccessConditionByName(access));
                     }
-					
+
                     pp.getShowStepConditions().add(ssc);
                 }
 
@@ -95,7 +101,7 @@ public class PropertyParser {
                     } else {
                         pp.setShowProcessGroupAccessCondition(AccessCondition.WRITE);
                     }
-					
+
                     // validation expression
                     pp.setValidation(config.getString("property(" + i + ").validation"));
                     // type
@@ -130,7 +136,7 @@ public class PropertyParser {
                             pp.setValue(pe.getValue());
                             pp.setContainer(pe.getContainer());
                         } else {
-							// clone pp
+                            // clone pp
                             ProcessProperty pnew = pp.getClone(pe.getContainer());
                             pnew.setProzesseigenschaft(pe);
                             pnew.setValue(pe.getValue());
@@ -144,6 +150,12 @@ public class PropertyParser {
         return properties;
     }
 
+    /**
+     * Get properties for process.
+     *
+     * @param process object
+     * @return ProcessProperty object
+     */
     public static ArrayList<ProcessProperty> getPropertiesForProcess(Process process) {
         Hibernate.initialize(process.getProject());
         String projectTitle = process.getProject().getTitle();
@@ -209,7 +221,7 @@ public class PropertyParser {
 
             }
         } // add existing 'eigenschaften' to properties from config, so we have all properties from config and some
-		// of them with already existing 'eigenschaften'
+        // of them with already existing 'eigenschaften'
         List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
         List<org.kitodo.data.database.beans.ProcessProperty> plist = process.getProperties();
         for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
@@ -264,7 +276,7 @@ public class PropertyParser {
 
             }
         }
-		if (logger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             logger.debug("all properties are " + properties.size());
         }
 

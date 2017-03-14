@@ -23,62 +23,61 @@ import org.quartz.JobExecutionException;
  * @version 21.10.2009
  */
 public abstract class AbstractGoobiJob implements Job, IGoobiJob {
-	private static final Logger logger = Logger.getLogger(AbstractGoobiJob.class);
-	private static Boolean isRunning = false;
+    private static final Logger logger = Logger.getLogger(AbstractGoobiJob.class);
+    private static Boolean isRunning = false;
 
-	protected AbstractGoobiJob() {
-	}
+    protected AbstractGoobiJob() {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.goobi.production.flow.jobs.IGoobiJob#execute(org.quartz.JobExecutionContext)
-	 */
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		if (getIsRunning() == false) {
-			if(logger.isTraceEnabled()){
-				logger.trace("Start scheduled Job: " + getJobName());
-			}
-			if (isRunning == false) {
-				logger.trace("start history updating for all processes");
-				setIsRunning(true);
-				execute();
-				setIsRunning(false);
-			}
-			if(logger.isTraceEnabled()){
-				logger.trace("End scheduled Job: " + getJobName());
-			}
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.goobi.production.flow.jobs.IGoobiJob#execute(org.quartz.JobExecutionContext)
+     */
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        if (getIsRunning() == false) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Start scheduled Job: " + getJobName());
+            }
+            if (isRunning == false) {
+                logger.trace("start history updating for all processes");
+                setIsRunning(true);
+                execute();
+                setIsRunning(false);
+            }
+            if (logger.isTraceEnabled()) {
+                logger.trace("End scheduled Job: " + getJobName());
+            }
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.goobi.production.flow.jobs.IGoobiJob#setIsRunning(java.lang.Boolean)
-	 */
-	@Override
-	public void setIsRunning(Boolean inisRunning) {
-		isRunning = inisRunning;
-	}
+    /* (non-Javadoc)
+     * @see org.goobi.production.flow.jobs.IGoobiJob#execute()
+     */
+    @Override
+    public void execute() {
+    }
 
-	/* (non-Javadoc)
-	 * @see org.goobi.production.flow.jobs.IGoobiJob#getIsRunning()
-	 */
-	@Override
-	public Boolean getIsRunning() {
-		return isRunning;
-	}
+    /* (non-Javadoc)
+     * @see org.goobi.production.flow.jobs.IGoobiJob#setIsRunning(java.lang.Boolean)
+     */
+    @Override
+    public void setIsRunning(Boolean inisRunning) {
+        isRunning = inisRunning;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.goobi.production.flow.jobs.IGoobiJob#getJobName()
-	 */
-	@Override
-	public String getJobName() {
-		return "";
-	}
+    /* (non-Javadoc)
+     * @see org.goobi.production.flow.jobs.IGoobiJob#getIsRunning()
+     */
+    @Override
+    public Boolean getIsRunning() {
+        return isRunning;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.goobi.production.flow.jobs.IGoobiJob#execute()
-	 */
-	@Override
-	public void execute() {
-	}
-
+    /* (non-Javadoc)
+     * @see org.goobi.production.flow.jobs.IGoobiJob#getJobName()
+     */
+    @Override
+    public String getJobName() {
+        return "";
+    }
 }

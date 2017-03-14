@@ -19,64 +19,62 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 /**
- * A data copier is a class that can be parameterised to copy data in goobi
- * processes depending on rules.
+ * A data copier is a class that can be parametrised to copy data in goobi processes depending on rules.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class DataCopier {
-	
-	private static final Logger LOG = Logger.getLogger(DataCopier.class);
 
-	/**
-	 * Holds the rules this data copier can apply to a set of working data.
-	 */
-	private final List<DataCopyrule> rules;
+    private static final Logger LOG = Logger.getLogger(DataCopier.class);
 
-	/**
-	 * Creates a new DataCopier.
-	 * 
-	 * @param program
-	 *            a semicolon-separated list of expressions defining rules to
-	 *            apply to the metadata
-	 * @throws ConfigurationException
-	 *             may be thrown if the program is syntactically wrong
-	 */
-	public DataCopier(String program) throws ConfigurationException {
-		List<String> commands = Arrays.asList(program.split(";"));
-		rules = new ArrayList<DataCopyrule>(commands.size());
-		for (String command : commands) {
-			rules.add(DataCopyrule.createFor(command));
-		}
-	}
+    /**
+     * Holds the rules this data copier can apply to a set of working data.
+     */
+    private final List<DataCopyrule> rules;
 
-	/**
-	 * Applies the rules defined by the “program” passed to the constructor onto
-	 * a given dataset.
-	 * 
-	 * @param data
-	 *            a data object to work on
-	 */
-	public void process(CopierData data) {
-		for (DataCopyrule rule : rules) {
-			try {
-				rule.apply(data);
-			} catch (RuntimeException notApplicable) {
-				if (LOG.isInfoEnabled()) {
-					LOG.info("Rule not applicable for \"" + data.getProcessTitle() + "\", skipped: " + rule);
-				}
-			}
-		}
-	}
+    /**
+     * Creates a new DataCopier.
+     *
+     * @param program
+     *            a semicolon-separated list of expressions defining rules to
+     *            apply to the metadata
+     * @throws ConfigurationException
+     *             may be thrown if the program is syntactically wrong
+     */
+    public DataCopier(String program) throws ConfigurationException {
+        List<String> commands = Arrays.asList(program.split(";"));
+        rules = new ArrayList<>(commands.size());
+        for (String command : commands) {
+            rules.add(DataCopyrule.createFor(command));
+        }
+    }
 
-	/**
-	 * Returns a string that textually represents this data copier.
-	 * 
-	 * @return a string representation of this data copier.
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return rules.toString();
-	}
+    /**
+     * Applies the rules defined by the “program” passed to the constructor onto a given dataset.
+     *
+     * @param data
+     *            a data object to work on
+     */
+    public void process(CopierData data) {
+        for (DataCopyrule rule : rules) {
+            try {
+                rule.apply(data);
+            } catch (RuntimeException notApplicable) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Rule not applicable for \"" + data.getProcessTitle() + "\", skipped: " + rule);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns a string that textually represents this data copier.
+     *
+     * @return a string representation of this data copier.
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return rules.toString();
+    }
 }

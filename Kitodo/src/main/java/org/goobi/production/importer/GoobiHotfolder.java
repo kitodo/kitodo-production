@@ -11,7 +11,7 @@
 
 package org.goobi.production.importer;
 
-import org.goobi.io.SafeFile;
+import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,250 +24,287 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
-import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 
-import de.sub.goobi.helper.Helper;
+import org.goobi.io.SafeFile;
+import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 
 public class GoobiHotfolder implements IGoobiHotfolder {
 
-	/** Logger for this class. */
-	private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
+    /** Logger for this class. */
+    private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
 
-	private String name;
-	private SafeFile folder;
-	private Integer template;
-	private String updateStrategy;
-	private String collection;
+    private String name;
+    private SafeFile folder;
+    private Integer template;
+    private String updateStrategy;
+    private String collection;
 
-	public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
-		this.setName(name);
-		this.folder = folder;
-		this.setTemplate(template);
-		this.setUpdateStrategy(updateStrategy);
-		this.setCollection(collection);
-	}
+    /**
+     * Constructor.
+     *
+     * @param name String
+     * @param folder SafeFile
+     * @param template Integer
+     * @param updateStrategy String
+     * @param collection String
+     */
+    public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
+        this.setName(name);
+        this.folder = folder;
+        this.setTemplate(template);
+        this.setUpdateStrategy(updateStrategy);
+        this.setCollection(collection);
+    }
 
-	/**
-	 *
-	 * @return a list with all xml files in GoobiHotfolder
-	 */
+    /**
+     * Get current files.
+     *
+     * @return a list with all xml files in GoobiHotfolder
+     */
+    @Override
+    public List<java.io.File> getCurrentFiles() {
+        return this.folder.getCurrentFiles();
+    }
 
-	@Override
-	public List<java.io.File> getCurrentFiles() {
-		return this.folder.getCurrentFiles();
-	}
+    /**
+     *Get files by name.
+     *
+     * @param name String
+     * @return a list with all filenames containing the name in GoobiHotfolder
+     */
 
-	/**
-	 *
-	 * @param name
-	 * @return a list with all filenames containing the name in GoobiHotfolder
-	 */
+    @Override
+    public List<String> getFilesByName(String name) {
+        List<String> files = Arrays.asList(this.folder.list());
+        List<String> answer = new ArrayList<String>();
+        for (String file : files) {
+            if (file.contains(name) && !file.contains("anchor")) {
+                answer.add(file);
+            }
+        }
+        return answer;
+    }
 
-	@Override
-	public List<String> getFilesByName(String name) {
-		List<String> files = Arrays.asList(this.folder.list());
-		List<String> answer = new ArrayList<String>();
-		for (String file : files) {
-			if (file.contains(name) && !file.contains("anchor")) {
-				answer.add(file);
-			}
-		}
-		return answer;
-	}
+    /**
+     * Get file names by filter.
+     *
+     * @param filter FilenameFilter object
+     * @return a list with all filenames matching the filter
+     */
+    @Override
+    public List<String> getFileNamesByFilter(FilenameFilter filter) {
+        return Arrays.asList(this.folder.list(filter));
+    }
 
-	/**
-	 *
-	 * @param filter
-	 * @return a list with all filenames matching the filter
-	 */
+    /**
+     * Get files by filter.
+     *
+     * @param filter FilenameFilter object
+     * @return a list with all file matching the filter
+     */
+    @Override
+    public List<File> getFilesByFilter(FilenameFilter filter) {
+        return this.folder.getFilesByFilter(filter);
+    }
 
-	@Override
-	public List<String> getFileNamesByFilter(FilenameFilter filter) {
-		return Arrays.asList(this.folder.list(filter));
-	}
+    @Override
+    public String getFolderAsString() {
+        return this.folder.getAbsolutePath() + File.separator;
+    }
 
-	/**
-	 *
-	 * @param filter
-	 * @return a list with all file matching the filter
-	 */
+    @Override
+    public File getFolderAsFile() {
+        return new File(this.folder.getPath());
+    }
 
-	@Override
-	public List<File> getFilesByFilter(FilenameFilter filter) {
-		return this.folder.getFilesByFilter(filter);
-	}
+    @Override
+    public URI getFolderAsUri() {
+        return this.folder.toURI();
+    }
 
-	@Override
-	public String getFolderAsString() {
-		return this.folder.getAbsolutePath() + File.separator;
-	}
+    /**
+     * true if file is xml file and no anchor file.
+     */
+    public static final FilenameFilter filter = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            if (!name.contains("anchor") && !name.endsWith("_") && name.endsWith(".xml")) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    };
 
-	@Override
-	public File getFolderAsFile() {
-		return new File(this.folder.getPath());
-	}
+    /**
+     * Get instances.
+     *
+     * @return list of GoobiHotfolder objects
+     */
+    public static List<GoobiHotfolder> getInstances() {
+        logger.trace("config 1");
+        List<GoobiHotfolder> answer = new ArrayList<GoobiHotfolder>();
+        logger.trace("config 2");
 
-	@Override
-	public URI getFolderAsUri() {
-		return this.folder.toURI();
-	}
+        try {
+            XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory()
+                    + "goobi_hotfolder.xml");
 
-	/**
-	 * true if file is xml file and no anchor file
-	 */
+            logger.trace("config 3");
 
-	public static final FilenameFilter filter = new FilenameFilter() {
-		@Override
-		public boolean accept(File dir, String name) {
-			if (!name.contains("anchor") && !name.endsWith("_") && name.endsWith(".xml")) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	};
+            config.setListDelimiter('&');
 
-	public static List<GoobiHotfolder> getInstances() {
-		logger.trace("config 1");
-		List<GoobiHotfolder> answer = new ArrayList<GoobiHotfolder>();
-		logger.trace("config 2");
+            logger.trace("config 4");
+            config.setReloadingStrategy(new FileChangedReloadingStrategy());
+            logger.trace("config 5");
 
-		try {
-			 XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_hotfolder.xml");
+            int count = config.getMaxIndex("hotfolder");
+            logger.trace("config 6");
 
-			logger.trace("config 3");
+            for (int i = 0; i <= count; i++) {
 
-			config.setListDelimiter('&');
+                logger.trace("config 7");
+                String name = config.getString("hotfolder(" + i + ")[@name]");
+                logger.trace("config 8");
+                SafeFile folder = new SafeFile(config.getString("hotfolder(" + i + ")[@folder]"));
+                logger.trace("config 9");
+                Integer template = config.getInt("hotfolder(" + i + ")[@template]");
+                logger.trace("config 10");
 
-			logger.trace("config 4");
-			config.setReloadingStrategy(new FileChangedReloadingStrategy());
-			logger.trace("config 5");
+                String updateStrategy = config.getString("hotfolder(" + i + ")[@updateStrategy]");
+                logger.trace("config 11");
+                String collection = config.getString("hotfolder(" + i + ")[@collection]");
+                logger.trace("config 12");
+                if (name == null || name.equals("") || template == null) {
+                    logger.trace("config 13");
+                    break;
+                }
+                logger.trace("config 14");
+                if (updateStrategy == null || updateStrategy.equals("")) {
+                    logger.trace("config 15");
+                    updateStrategy = "ignore";
+                }
+                if (collection.equals("")) {
+                    logger.trace("config 16");
+                    collection = null;
+                }
+                logger.trace("config 17");
+                answer.add(new GoobiHotfolder(name, folder, template, updateStrategy, collection));
+            }
+            logger.trace("config 18");
 
-			int count = config.getMaxIndex("hotfolder");
-			logger.trace("config 6");
+        } catch (Exception e) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("config 19" + e.getMessage());
+            }
+            return new ArrayList<GoobiHotfolder>();
+        }
+        logger.trace("config 20");
+        return answer;
+    }
 
-			for (int i = 0; i <= count; i++) {
+    /**
+     * Set name.
+     *
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-				logger.trace("config 7");
-				String name = config.getString("hotfolder(" + i + ")[@name]");
-				logger.trace("config 8");
-				SafeFile folder = new SafeFile(config.getString("hotfolder(" + i + ")[@folder]"));
-				logger.trace("config 9");
-				Integer template = config.getInt("hotfolder(" + i + ")[@template]");
-				logger.trace("config 10");
+    /**
+     * Get name.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
+    }
 
-				String updateStrategy = config.getString("hotfolder(" + i + ")[@updateStrategy]");
-				logger.trace("config 11");
-				String collection = config.getString("hotfolder(" + i + ")[@collection]");
-				logger.trace("config 12");
-				if (name == null || name.equals("") || template == null) {
-					logger.trace("config 13");
-					break;
-				}
-				logger.trace("config 14");
-				if (updateStrategy == null || updateStrategy.equals("")) {
-					logger.trace("config 15");
-					updateStrategy = "ignore";
-				}
-				if (collection.equals("")) {
-					logger.trace("config 16");
-					collection = null;
-				}
-				logger.trace("config 17");
-				answer.add(new GoobiHotfolder(name, folder, template, updateStrategy, collection));
-			}
-			logger.trace("config 18");
+    /**
+     * Set template.
+     *
+     * @param template
+     *            the template to set
+     */
+    public void setTemplate(Integer template) {
+        this.template = template;
+    }
 
-		} catch (Exception e) {
-			if(logger.isTraceEnabled()){
-				logger.trace("config 19" + e.getMessage());
-			}
-			return new ArrayList<GoobiHotfolder>();
-		}
-		logger.trace("config 20");
-		return answer;
-	}
+    /**
+     * Get template.
+     *
+     * @return the template
+     */
+    public Integer getTemplate() {
+        return this.template;
+    }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Set update strategy.
+     *
+     * @param updateStrategy
+     *            the updateStrategy to set
+     */
+    public void setUpdateStrategy(String updateStrategy) {
+        this.updateStrategy = updateStrategy;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Get update strategy.
+     *
+     * @return the updateStrategy
+     */
+    public String getUpdateStrategy() {
+        return this.updateStrategy;
+    }
 
-	/**
-	 * @param template
-	 *            the template to set
-	 */
-	public void setTemplate(Integer template) {
-		this.template = template;
-	}
+    /**
+     * Set collection.
+     *
+     * @param collection
+     *            the collection to set
+     */
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
 
-	/**
-	 * @return the template
-	 */
-	public Integer getTemplate() {
-		return this.template;
-	}
+    /**
+     * Get collection.
+     *
+     * @return the collection
+     */
+    public String getCollection() {
+        return this.collection;
+    }
 
-	/**
-	 * @param updateStrategy
-	 *            the updateStrategy to set
-	 */
-	public void setUpdateStrategy(String updateStrategy) {
-		this.updateStrategy = updateStrategy;
-	}
+    public SafeFile getLockFile() {
+        return new SafeFile(this.folder, ".lock");
 
-	/**
-	 * @return the updateStrategy
-	 */
-	public String getUpdateStrategy() {
-		return this.updateStrategy;
-	}
+    }
 
-	/**
-	 * @param collection
-	 *            the collection to set
-	 */
-	public void setCollection(String collection) {
-		this.collection = collection;
-	}
+    public boolean isLocked() {
+        return getLockFile().exists();
+    }
 
-	/**
-	 * @return the collection
-	 */
-	public String getCollection() {
-		return this.collection;
-	}
+    /**
+     * Lock.
+     */
+    public void lock() throws IOException {
+        SafeFile f = getLockFile();
+        if (!f.exists()) {
+            f.createNewFile();
+        }
+    }
 
-	public SafeFile getLockFile() {
-		return new SafeFile(this.folder, ".lock");
-
-	}
-
-	public boolean isLocked() {
-		return getLockFile().exists();
-	}
-
-	public void lock() throws IOException {
-		SafeFile f = getLockFile();
-		if (!f.exists()) {
-			f.createNewFile();
-		}
-	}
-
-	public void unlock() throws IOException {
-		SafeFile f = getLockFile();
-		if (f.exists()) {
-			f.forceDelete();
-		}
-	}
+    /**
+     * Unlock.
+     */
+    public void unlock() throws IOException {
+        SafeFile f = getLockFile();
+        if (f.exists()) {
+            f.forceDelete();
+        }
+    }
 }

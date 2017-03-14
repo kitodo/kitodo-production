@@ -19,7 +19,6 @@ import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
-import org.kitodo.data.database.exceptions.SwapException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
@@ -47,8 +46,21 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.helper.enums.TaskEditType;
+import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.services.ProcessService;
 import org.kitodo.services.RulesetService;
 import org.kitodo.services.TaskService;
+
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -61,1076 +73,1078 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsMods;
 
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
-import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
-
 public class CopyProcess extends ProzesskopieForm {
 
-	private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
-	private Fileformat myRdf;
-	private String opacSuchfeld = "12";
-	private String opacSuchbegriff;
-	private String opacKatalog;
-	private Process prozessVorlage = new Process();
-	private Process prozessKopie = new Process();
-	private ProcessService processService = new ProcessService();
-	private RulesetService rulesetService = new RulesetService();
-	private TaskService taskService = new TaskService();
-	/* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
-	private boolean useOpac;
-	private boolean useTemplates;
-	public String metadataFile;
-
-	private HashMap<String, Boolean> standardFields;
-	private List<AdditionalField> additionalFields;
-	private List<String> digitalCollections;
-	private String tifHeader_imagedescription = "";
-	private String tifHeader_documentname = "";
-
-	private String naviFirstPage;
-	private Integer auswahl;
-	private String docType;
-	// TODO: check use of atstsl. Why is it never modified?
-	private static final String atstsl = "";
-	private List<String> possibleDigitalCollection;
-
-	public final static String DIRECTORY_SUFFIX = "_tif";
-
-	public String prepare(ImportObject io) {
-		if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
-			return "";
-		}
-
-		clearValues();
-		Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
-		try {
-			this.myRdf = new MetsMods(myPrefs);
-			this.myRdf.read(this.metadataFile);
-		} catch (PreferencesException e) {
-			myLogger.error(e);
-		} catch (ReadException e) {
-			myLogger.error(e);
-		}
-		;
-		this.prozessKopie = new Process();
-		this.prozessKopie.setTitle("");
-		this.prozessKopie.setTemplate(false);
-		this.prozessKopie.setInChoiceListShown(false);
-		this.prozessKopie.setProject(this.prozessVorlage.getProject());
-		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-		this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
-		this.digitalCollections = new ArrayList<String>();
-
-		/*
-		 * Kopie der Prozessvorlage anlegen
-		 */
-		BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
-
-		return this.naviFirstPage;
-	}
-
-	@Override
-	public String prepare() {
-		if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
-			for (Task s : this.prozessVorlage.getTasks()) {
-				if (taskService.getUserGroupsSize(s) == 0 && taskService.getUsersSize(s) == 0) {
-					Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
-				}
-			}
-			return "";
-		}
-
-		clearValues();
-		Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
-		try {
-			this.myRdf = new MetsMods(myPrefs);
-			this.myRdf.read(this.metadataFile);
-		} catch (PreferencesException e) {
-			myLogger.error(e);
-		} catch (ReadException e) {
-			myLogger.error(e);
-		}
-		;
-		this.prozessKopie = new Process();
-		this.prozessKopie.setTitle("");
-		this.prozessKopie.setTemplate(false);
-		this.prozessKopie.setInChoiceListShown(false);
-		this.prozessKopie.setProject(this.prozessVorlage.getProject());
-		this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-		this.digitalCollections = new ArrayList<String>();
-
-		/*
-		 * Kopie der Prozessvorlage anlegen
-		 */
-		BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-		BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
-
-		initializePossibleDigitalCollections();
-
-		return this.naviFirstPage;
-	}
-
-	private void readProjectConfigs() {
-		/*
-		 * projektabhängig die richtigen Felder in der Gui anzeigen 
-		 */
-		ConfigProjects cp = null;
-		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("IOException", e.getMessage());
-			return;
-		}
-
-		this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
-				.getTitle());
-		this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
-		this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-		this.naviFirstPage = "ProzessverwaltungKopie1";
-		if (this.opacKatalog.equals("")) {
-			this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
-		}
-
-		/*
-		 * die auszublendenden Standard-Felder ermitteln
-		 */
-		for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
-			this.standardFields.put(t, false);
-		}
-
-		/*
-		 * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
-		 */
-		int count = cp.getParamList("createNewProcess.itemlist.item").size();
-		for (int i = 0; i < count; i++) {
-			AdditionalField fa = new AdditionalField(this);
-			fa.setFrom(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@from]"));
-			fa.setTitle(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
-			fa.setRequired(cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@required]"));
-			fa.setIsdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isdoctype]"));
-			fa.setIsnotdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isnotdoctype]"));
-
-			// attributes added 30.3.09
-			String test = (cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initStart]"));
-			fa.setInitStart(test);
-
-			fa.setInitEnd(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initEnd]"));
-
-			/*
-			 * Bindung an ein Metadatum eines Docstructs
-			 */
-			if (cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@ughbinding]")) {
-				fa.setUghbinding(true);
-				fa.setDocstruct(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@docstruct]"));
-				fa.setMetadata(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@metadata]"));
-			}
-
-			/*
-			 * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
-			 */
-			int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
-			/* Children durchlaufen und SelectItems erzeugen */
-			if (selectItemCount > 0) {
-				fa.setSelectList(new ArrayList<SelectItem>());
-			}
-			for (int j = 0; j < selectItemCount; j++) {
-				String svalue = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")[@label]");
-				String sid = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")");
-				fa.getSelectList().add(new SelectItem(sid, svalue, null));
-			}
-			this.additionalFields.add(fa);
-		}
-	}
-
-	public String OpacAuswerten(ImportObject io) {
-		clearValues();
-		readProjectConfigs();
-		try {
-			Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
-			/* den Opac abfragen und ein RDF draus bauen lassen */
-			this.myRdf = new MetsMods(myPrefs);
-			this.myRdf.read(this.metadataFile);
-		
-			this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-		
-			fillFieldsFromMetadataFile(this.myRdf);
-
-			fillFieldsFromConfig();
-
-		} catch (Exception e) {
-			Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
-			e.printStackTrace();
-		}
-		return "";
-	}
-
-	/**
-	 * OpacAnfrage
-	 */
-	@Override
-	public String OpacAuswerten() {
-		clearValues();
-		readProjectConfigs();
-		try {
-			Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
-			/* den Opac abfragen und ein RDF draus bauen lassen */
-			this.myRdf = new MetsMods(myPrefs);
-			this.myRdf.read(this.metadataFile);
-			
-			this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
-			
-			fillFieldsFromMetadataFile(this.myRdf);
-
-			fillFieldsFromConfig();
-
-		} catch (Exception e) {
-			Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
-			e.printStackTrace();
-		}
-		return "";
-	}
-
-	/**
-	 * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen.
-	 *
-	 * @throws PreferencesException
-	 */
-	private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
-		if (myRdf != null) {
-
-			for (AdditionalField field : this.additionalFields) {
-				if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-					/* welches Docstruct */
-
-					DocStruct myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
-					if (field.getDocstruct().equals("firstchild")) {
-						try {
-							myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-						} catch (RuntimeException e) {
-						}
-					}
-					if (field.getDocstruct().equals("boundbook")) {
-						myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
-					}
-					/* welches Metadatum */
-					try {
-						if (field.getMetadata().equals("ListOfCreators")) {
-							/* bei Autoren die Namen zusammenstellen */
-							String myautoren = "";
-							if (myTempStruct.getAllPersons() != null) {
-								for (Person p : myTempStruct.getAllPersons()) {
-									myautoren += p.getLastname();
-									if (StringUtils.isNotBlank(p.getFirstname())) {
-										myautoren += ", " + p.getFirstname();
-									}
-									myautoren += "; ";
-								}
-								if (myautoren.endsWith("; ")) {
-									myautoren = myautoren.substring(0, myautoren.length() - 2);
-								}
-							}
-							field.setValue(myautoren);
-						} else {
-							/* bei normalen Feldern die Inhalte auswerten */
-							MetadataType mdt = UghHelper.getMetadataType(rulesetService
-									.getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
-							Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
-							if (md != null) {
-								field.setValue(md.getValue());
-							}
-						}
-					} catch (UghHelperException e) {
-						Helper.setFehlerMeldung(e.getMessage(), "");
-					}
-				} // end if ughbinding
-			}// end for
-		} // end if myrdf==null
-	}
-
-	private void fillFieldsFromConfig() {
-		for (AdditionalField field : this.additionalFields) {
-			if (!field.isUghbinding() && field.getShowDependingOnDoctype()) {
-				if (field.getSelectList() != null && field.getSelectList().size() > 0) {
-					field.setValue((String) field.getSelectList().get(0).getValue());
-				}
-
-			}
-		}
-		CalcTiffheader();
-
-	}
-
-	/**
-	 * alle Konfigurationseigenschaften und Felder zurücksetzen.
-	 */
-	private void clearValues() {
-		if (this.opacKatalog == null) {
-			this.opacKatalog = "";
-		}
-		this.standardFields = new HashMap<String, Boolean>();
-		this.standardFields.put("collections", true);
-		this.standardFields.put("doctype", true);
-		this.standardFields.put("regelsatz", true);
-		this.additionalFields = new ArrayList<AdditionalField>();
-		this.tifHeader_documentname = "";
-		this.tifHeader_imagedescription = "";
-	}
-
-	/**
-	 * Auswahl des Prozesses auswerten.
-	 *
-	 * @throws DAOException
-	 * @throws NamingException
-	 * @throws SQLException
-	 */
-	@Override
-	public String TemplateAuswahlAuswerten() throws DAOException {
-		/* den ausgewählten Prozess laden */
-		Process tempProzess = processService.find(this.auswahl);
-		if (processService.getWorkpiecesSize(tempProzess) > 0) {
-			/* erstes Werkstück durchlaufen */
-			Workpiece werk = tempProzess.getWorkpieces().get(0);
-			for (WorkpieceProperty eig : werk.getProperties()) {
-				for (AdditionalField field : this.additionalFields) {
-					if (field.getTitle().equals(eig.getTitle())) {
-						field.setValue(eig.getValue());
-					}
-				}
-			}
-		}
-
-		if (processService.getTemplatesSize(tempProzess) > 0) {
-			/* erste Vorlage durchlaufen */
-			Template vor = tempProzess.getTemplates().get(0);
-			for (TemplateProperty eig : vor.getProperties()) {
-				for (AdditionalField field : this.additionalFields) {
-					if (field.getTitle().equals(eig.getTitle())) {
-						field.setValue(eig.getValue());
-					}
-				}
-			}
-		}
-
-		try {
-			this.myRdf = processService.readMetadataAsTemplateFile(tempProzess);
-		} catch (Exception e) {
-			Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
-		}
-
-		/* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
-		try {
-			DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
-			removeCollections(colStruct);
-			colStruct = colStruct.getAllChildren().get(0);
-			removeCollections(colStruct);
-		} catch (PreferencesException e) {
-			Helper.setFehlerMeldung("Fehler beim Anlegen des Vorgangs", e);
-			myLogger.error("Fehler beim Anlegen des Vorgangs", e);
-		} catch (RuntimeException e) {
-			/*
-			 * das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden
-			 */
-		}
-
-		return "";
-	}
-
-	/**
-	 * Validierung der Eingaben.
-	 *
-	 * @return sind Fehler bei den Eingaben vorhanden?
-	 */
-	private boolean isContentValid() {
-		/*
-		 * Vorbedingungen prüfen
-		 */
-		boolean valide = true;
-
-		/*
-		 * grundsätzlich den Vorgangstitel prüfen
-		 */
-		/* kein Titel */
-		if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-					+ Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-		}
-
-		String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
-		if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-			valide = false;
-			Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-		}
-
-		/* prüfen, ob der Prozesstitel schon verwendet wurde */
-		if (this.prozessKopie.getTitle() != null) {
-			long anzahl = 0;
-			try {
-				anzahl = processService.count("from Process where title='" + this.prozessKopie.getTitle() + "'");
-			} catch (DAOException e) {
-				Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
-				valide = false;
-			}
-			if (anzahl > 0) {
-				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ")
-						+ Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
-			}
-		}
-
-		/*
-		 * Prüfung der standard-Eingaben, die angegeben werden müssen
-		 */
-		/* keine Collektion ausgewählt */
-		if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
-			valide = false;
-			Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-					+ Helper.getTranslation("ProcessCreationErrorNoCollection"));
-		}
-
-		/*
-		 * Prüfung der additional-Eingaben, die angegeben werden müssen
-		 */
-		for (AdditionalField field : this.additionalFields) {
-			if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
-					&& (StringUtils.isBlank(field.getValue()))) {
-				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle()
-						+ " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
-			}
-		}
-		return valide;
-	}
-
-	@Override
-	public String GoToSeite1() {
-		return this.naviFirstPage;
-	}
-
-	@Override
-	public String GoToSeite2() {
-		if (!isContentValid()) {
-			return this.naviFirstPage;
-		} else {
-			return "ProzessverwaltungKopie2";
-		}
-	}
-
-	public boolean testTitle() {
-		boolean valide = true;
-
-		if (ConfigMain.getBooleanParameter("MassImportUniqueTitle", true)) {
-			/*
-			 * grundsätzlich den Vorgangstitel prüfen
-			 */
-			/* kein Titel */
-			if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-				valide = false;
-				Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-						+ Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-			}
-
-			String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
-			if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-				valide = false;
-				Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-			}
-
-			/* prüfen, ob der Prozesstitel schon verwendet wurde */
-			if (this.prozessKopie.getTitle() != null) {
-				long anzahl = 0;
-				try {
-					anzahl = processService.count("from Prozess where titel='" + this.prozessKopie.getTitle()
-							+ "'");
-				} catch (DAOException e) {
-					Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
-					valide = false;
-				}
-				if (anzahl > 0) {
-					valide = false;
-					Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
-							+ Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
-				}
-			}
-		}
-		return valide;
-	}
-
-	/**
-	 * Anlegen des Prozesses und Speichern der Metadaten.
-	 *
-	 * @throws DAOException
-	 * @throws SwapException
-	 * @throws WriteException
-	 */
-
-	public Process NeuenProzessAnlegen2()
-			throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-			WriteException {
-		Helper.getHibernateSession().evict(this.prozessKopie);
-
-		this.prozessKopie.setId(null);
-
-		addProperties(null);
-
-		for (Task step : this.prozessKopie.getTasks()) {
-			/*
-			 * always save date and user for each step
-			 */
-			step.setProcessingTime(this.prozessKopie.getCreationDate());
-			step.setEditTypeEnum(TaskEditType.AUTOMATIC);
-			LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-			if (loginForm != null) {
-				step.setProcessingUser(loginForm.getMyBenutzer());
-			}
-
-			/*
-			 * only if its done, set edit start and end date
-			 */
-			if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
-				step.setProcessingBegin(this.prozessKopie.getCreationDate());
-				// this concerns steps, which are set as done right on creation bearbeitungsbeginn is
-				// set to creation timestamp of process because the creation of it is basically begin
-				// of work
-				Date myDate = new Date();
-				step.setProcessingTime(myDate);
-				step.setProcessingEnd(myDate);
-			}
-		}
-
-		try {
-			processService.save(this.prozessKopie);
-			processService.refresh(this.prozessKopie);
-		} catch (DAOException e) {
-			e.printStackTrace();
-			myLogger.error("error on save: ", e);
-			return this.prozessKopie;
-		}
-
-		/*
-		 * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
-		 */
-		if (this.myRdf == null) {
-			createNewFileformat();
-		}
-
-		processService.writeMetadataFile(this.myRdf, this.prozessKopie);
-
-		// Adding process to history
-		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
-			Helper.setFehlerMeldung("historyNotUpdated");
-		} else {
-			try {
-				processService.save(this.prozessKopie);
-			} catch (DAOException e) {
-				e.printStackTrace();
-				myLogger.error("error on save: ", e);
-				return this.prozessKopie;
-			}
-		}
-
-		processService.readMetadataFile(this.prozessKopie);
-
-		/* damit die Sortierung stimmt nochmal einlesen */
-		Helper.getHibernateSession().refresh(this.prozessKopie);
-		return this.prozessKopie;
-
-	}
-
-	public Process createProcess(ImportObject io)
-			throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
-			DAOException, WriteException {
-		Helper.getHibernateSession().evict(this.prozessKopie);
-
-		this.prozessKopie.setId(null);
-		addProperties(io);
-
-		for (Task step : this.prozessKopie.getTasks()) {
-			/*
-			 * always save date and user for each step
-			 */
-			step.setProcessingTime(this.prozessKopie.getCreationDate());
-			step.setEditTypeEnum(TaskEditType.AUTOMATIC);
-			LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-			if (loginForm != null) {
-				step.setProcessingUser(loginForm.getMyBenutzer());
-			}
-
-			/*
-			 * only if its done, set edit start and end date
-			 */
-			if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
-				step.setProcessingBegin(this.prozessKopie.getCreationDate());
-				// this concerns steps, which are set as done right on creation
-				// bearbeitungsbeginn is set to creation timestamp of process
-				// because the creation of it is basically begin of work
-				Date myDate = new Date();
-				step.setProcessingTime(myDate);
-				step.setProcessingEnd(myDate);
-			}
-		}
-
-		if (!io.getBatches().isEmpty()) {
-			processService.getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
-		}
-		try {
-			processService.save(this.prozessKopie);
-			processService.refresh(this.prozessKopie);
-		} catch (DAOException e) {
-			e.printStackTrace();
-			myLogger.error("error on save: ", e);
-			return this.prozessKopie;
-		}
-
-		/*
-		 * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
-		 */
-		if (this.myRdf == null) {
-			createNewFileformat();
-		}
-
-		File f = new File(processService.getProcessDataDirectoryIgnoreSwapping(this.prozessKopie));
-		if (!f.exists() && !f.mkdir()) {
-			Helper.setFehlerMeldung("Could not create process directory");
-			myLogger.error("Could not create process directory");
-			return this.prozessKopie;
-		}
-
-		processService.writeMetadataFile(this.myRdf, this.prozessKopie);
-
-		// }
-
-		// Adding process to history
-		if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
-			Helper.setFehlerMeldung("historyNotUpdated");
-		} else {
-			try {
-				processService.save(this.prozessKopie);
-			} catch (DAOException e) {
-				e.printStackTrace();
-				myLogger.error("error on save: ", e);
-				return this.prozessKopie;
-			}
-		}
-
-		processService.readMetadataFile(this.prozessKopie);
-
-		/* damit die Sortierung stimmt nochmal einlesen */
-		Helper.getHibernateSession().refresh(this.prozessKopie);
-		return this.prozessKopie;
-
-	}
-
-	/**
-	 * alle Kollektionen eines übergebenen DocStructs entfernen.
-	 */
-	private void removeCollections(DocStruct colStruct) {
-		try {
-			MetadataType mdt = UghHelper.getMetadataType(rulesetService.getPreferences(this.prozessKopie.getRuleset()),
-					"singleDigCollection");
-			ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
-			if (myCollections.size() > 0) {
-				for (Metadata md : myCollections) {
-					colStruct.removeMetadata(md);
-				}
-			}
-		} catch (UghHelperException e) {
-			Helper.setFehlerMeldung(e.getMessage(), "");
-			e.printStackTrace();
-		} catch (DocStructHasNoTypeException e) {
-			Helper.setFehlerMeldung(e.getMessage(), "");
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void createNewFileformat() {
-
-		Prefs myPrefs = rulesetService.getPreferences(this.prozessKopie.getRuleset());
-
-		Fileformat ff;
-		try {
-			ff = new MetsMods(myPrefs);
-			ff.read(this.metadataFile);
-		} catch (PreferencesException e) {
-			myLogger.error(e);
-		} catch (ReadException e) {
-			myLogger.error(e);
-		}
-
-	}
-
-	private void addProperties(ImportObject io) {
-		/*
-		 * Vorlageneigenschaften initialisieren
-		 */
-		Template vor;
-		if (processService.getTemplatesSize(this.prozessKopie) > 0) {
-			vor = this.prozessKopie.getTemplates().get(0);
-		} else {
-			vor = new Template();
-			vor.setProcess(this.prozessKopie);
-			List<Template> vorlagen = new ArrayList<>();
-			vorlagen.add(vor);
-			this.prozessKopie.setTemplates(vorlagen);
-		}
-
-		/*
-		 * Werkstückeigenschaften initialisieren
-		 */
-		Workpiece werk;
-		if (processService.getWorkpiecesSize(this.prozessKopie) > 0) {
-			werk = this.prozessKopie.getWorkpieces().get(0);
-		} else {
-			werk = new Workpiece();
-			werk.setProcess(this.prozessKopie);
-			List<Workpiece> werkstuecke = new ArrayList<>();
-			werkstuecke.add(werk);
-			this.prozessKopie.setWorkpieces(werkstuecke);
-		}
-
-		/*
-		 * jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen
-		 */
-		if (io == null) {
-			for (AdditionalField field : this.additionalFields) {
-				if (field.getShowDependingOnDoctype()) {
-					if (field.getFrom().equals("werk")) {
-						BeanHelper.addProperty(werk, field.getTitle(), field.getValue());
-					}
-					if (field.getFrom().equals("vorlage")) {
-						BeanHelper.addProperty(vor, field.getTitle(), field.getValue());
-					}
-					if (field.getFrom().equals("prozess")) {
-						BeanHelper.addProperty(this.prozessKopie, field.getTitle(), field.getValue());
-					}
-				}
-			}
-			/* Doctype */
-			BeanHelper.addProperty(werk, "DocType", this.docType);
-			/* Tiffheader */
-			BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-			BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
-		} else {
-			BeanHelper.addProperty(werk, "DocType", this.docType);
-			/* Tiffheader */
-			BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-			BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
-
-			for (ProcessProperty pe : io.getProcessProperties()) {
-				addProperty(this.prozessKopie, pe);
-			}
-			for (WorkpieceProperty we : io.getWorkProperties()) {
-				addProperty(werk, we);
-			}
-
-			for (TemplateProperty ve : io.getTemplateProperties()) {
-				addProperty(vor, ve);
-			}
-			BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
-			BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
-		}
-	}
-
-	@Override
-	public String getDocType() {
-		return this.docType;
-	}
-
-	@Override
-	public void setDocType(String docType) {
-		this.docType = docType;
-	}
-
-	@Override
-	public Process getProzessVorlage() {
-		return this.prozessVorlage;
-	}
-
-	@Override
-	public void setProzessVorlage(Process prozessVorlage) {
-		this.prozessVorlage = prozessVorlage;
-	}
-
-	@Override
-	public Integer getAuswahl() {
-		return this.auswahl;
-	}
-
-	@Override
-	public void setAuswahl(Integer auswahl) {
-		this.auswahl = auswahl;
-	}
-
-	@Override
-	public List<AdditionalField> getAdditionalFields() {
-		return this.additionalFields;
-	}
-
-	/**
-	 * this is needed for GUI, render multiple select only if this is false if this is true use the only choice.
-	 *
-	 * @author Wulf
-	 */
-	@Override
-	public boolean isSingleChoiceCollection() {
-		return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
-
-	}
-
-	/**
-	 * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use
-	 * this choice.
-	 *
-	 * @author Wulf
-	 */
-	@Override
-	public String getDigitalCollectionIfSingleChoice() {
-		List<String> pdc = getPossibleDigitalCollections();
-		if (pdc.size() == 1) {
-			return pdc.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public List<String> getPossibleDigitalCollections() {
-		return this.possibleDigitalCollection;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void initializePossibleDigitalCollections() {
-		this.possibleDigitalCollection = new ArrayList<String>();
-		ArrayList<String> defaultCollections = new ArrayList<String>();
-		String filename = new Helper().getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
-		if (!(new File(filename).exists())) {
-			Helper.setFehlerMeldung("File not found: ", filename);
-			return;
-		}
-		this.digitalCollections = new ArrayList<String>();
-		try {
-			/* Datei einlesen und Root ermitteln */
-			SAXBuilder builder = new SAXBuilder();
-			Document doc = builder.build(new File(filename));
-			Element root = doc.getRootElement();
-			/* alle Projekte durchlaufen */
-			List<Element> projekte = root.getChildren();
-			for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
-				Element projekt = iter.next();
-
-				// collect default collections
-				if (projekt.getName().equals("default")) {
-					List<Element> myCols = projekt.getChildren("DigitalCollection");
-					for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-						Element col = it2.next();
-						
-						if (col.getAttribute("default") != null && col.getAttributeValue("default").equalsIgnoreCase("true")) {
-							digitalCollections.add(col.getText());
-						}
-					
-						defaultCollections.add(col.getText());
-					}
-				} else {
-					// run through the projects
-					List<Element> projektnamen = projekt.getChildren("name");
-					for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
-						Element projektname = iterator.next();
-						// all all collections to list
-						if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
-							List<Element> myCols = projekt.getChildren("DigitalCollection");
-							for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-								Element col = it2.next();
-								
-								if (col.getAttribute("default") != null
-										&& col.getAttributeValue("default").equalsIgnoreCase("true")) {
-									digitalCollections.add(col.getText());
-								}
-							
-								this.possibleDigitalCollection.add(col.getText());
-							}
-						}
-					}
-				}
-			}
-		} catch (JDOMException e1) {
-			myLogger.error("error while parsing digital collections", e1);
-			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-		} catch (IOException e1) {
-			myLogger.error("error while parsing digital collections", e1);
-			Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-		}
-
-		if (this.possibleDigitalCollection.size() == 0) {
-			this.possibleDigitalCollection = defaultCollections;
-		}
-
-		// if only one collection is possible take it directly
-
-		if (isSingleChoiceCollection()) {
-			this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
-		}
-	}
-
-
-	@Override
-	public List<String> getAllOpacCatalogues() {
-		return ConfigOpac.getAllCatalogueTitles();
-	}
-
-	@Override
-	public List<ConfigOpacDoctype> getAllDoctypes() {
-		return ConfigOpac.getAllDoctypes();
-	}
-
-	/*
-	 * changed, so that on first request list gets set if there is only one choice
-	 */
-	@Override
-	public List<String> getDigitalCollections() {
-		return this.digitalCollections;
-	}
-
-	@Override
-	public void setDigitalCollections(List<String> digitalCollections) {
-		this.digitalCollections = digitalCollections;
-	}
-
-	@Override
-	public HashMap<String, Boolean> getStandardFields() {
-		return this.standardFields;
-	}
-
-	@Override
-	public boolean isUseOpac() {
-		return this.useOpac;
-	}
-
-	@Override
-	public boolean isUseTemplates() {
-		return this.useTemplates;
-	}
-
-	@Override
-	public String getTifHeader_documentname() {
-		return this.tifHeader_documentname;
-	}
-
-	@Override
-	public void setTifHeader_documentname(String tifHeader_documentname) {
-		this.tifHeader_documentname = tifHeader_documentname;
-	}
-
-	@Override
-	public String getTifHeader_imagedescription() {
-		return this.tifHeader_imagedescription;
-	}
-
-	@Override
-	public void setTifHeader_imagedescription(String tifHeader_imagedescription) {
-		this.tifHeader_imagedescription = tifHeader_imagedescription;
-	}
-
-	@Override
-	public Process getProzessKopie() {
-		return this.prozessKopie;
-	}
-
-	@Override
-	public void setProzessKopie(Process prozessKopie) {
-		this.prozessKopie = prozessKopie;
-	}
-
-	@Override
-	public String getOpacSuchfeld() {
-		return this.opacSuchfeld;
-	}
-
-	@Override
-	public void setOpacSuchfeld(String opacSuchfeld) {
-		this.opacSuchfeld = opacSuchfeld;
-	}
-
-	@Override
-	public String getOpacKatalog() {
-		return this.opacKatalog;
-	}
-
-	@Override
-	public void setOpacKatalog(String opacKatalog) {
-		this.opacKatalog = opacKatalog;
-	}
-
-	@Override
-	public String getOpacSuchbegriff() {
-		return this.opacSuchbegriff;
-	}
-
-	@Override
-	public void setOpacSuchbegriff(String opacSuchbegriff) {
-		this.opacSuchbegriff = opacSuchbegriff;
-	}
-
-	/*
-	 * Helper
-	 */
-
-	/**
-	 * Prozesstitel und andere Details generieren.
-	 */
-	@Override
-	@SuppressWarnings("rawtypes")
-	public void CalcProzesstitel() {
-		String newTitle = "";
-		String titeldefinition = "";
-		ConfigProjects cp = null;
-		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("IOException", e.getMessage());
-			return;
-		}
-
-		int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
-		for (int i = 0; i < count; i++) {
-			String titel = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")");
-			String isdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isdoctype]");
-			String isnotdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isnotdoctype]");
-
-			if (titel == null) {
-				titel = "";
-			}
-			if (isdoctype == null) {
-				isdoctype = "";
-			}
-			if (isnotdoctype == null) {
-				isnotdoctype = "";
-			}
-
-			/* wenn nix angegeben wurde, dann anzeigen */
-			if (isdoctype.equals("") && isnotdoctype.equals("")) {
-				titeldefinition = titel;
-				break;
-			}
+    private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
+    private Fileformat myRdf;
+    private String opacSuchfeld = "12";
+    private String opacSuchbegriff;
+    private String opacKatalog;
+    private Process prozessVorlage = new Process();
+    private Process prozessKopie = new Process();
+    private ProcessService processService = new ProcessService();
+    private RulesetService rulesetService = new RulesetService();
+    private TaskService taskService = new TaskService();
+    /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
+    private boolean useOpac;
+    private boolean useTemplates;
+    public String metadataFile;
+
+    private HashMap<String, Boolean> standardFields;
+    private List<AdditionalField> additionalFields;
+    private List<String> digitalCollections;
+    private String tifHeader_imagedescription = "";
+    private String tifHeader_documentname = "";
+
+    private String naviFirstPage;
+    private Integer auswahl;
+    private String docType;
+    // TODO: check use of atstsl. Why is it never modified?
+    private static final String atstsl = "";
+    private List<String> possibleDigitalCollection;
+
+    public static final String DIRECTORY_SUFFIX = "_tif";
+
+    /**
+     * Prepare import object.
+     *
+     * @param io import object
+     * @return page or empty String
+     */
+    public String prepare(ImportObject io) {
+        if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
+            return "";
+        }
+
+        clearValues();
+        Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+        try {
+            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf.read(this.metadataFile);
+        } catch (PreferencesException e) {
+            myLogger.error(e);
+        } catch (ReadException e) {
+            myLogger.error(e);
+        }
+        ;
+        this.prozessKopie = new Process();
+        this.prozessKopie.setTitle("");
+        this.prozessKopie.setTemplate(false);
+        this.prozessKopie.setInChoiceListShown(false);
+        this.prozessKopie.setProject(this.prozessVorlage.getProject());
+        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
+        this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
+        this.digitalCollections = new ArrayList<String>();
+
+        /*
+         * Kopie der Prozessvorlage anlegen
+         */
+        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
+
+        return this.naviFirstPage;
+    }
+
+    @Override
+    public String prepare() {
+        if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
+            for (Task s : this.prozessVorlage.getTasks()) {
+                if (taskService.getUserGroupsSize(s) == 0 && taskService.getUsersSize(s) == 0) {
+                    Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
+                }
+            }
+            return "";
+        }
+
+        clearValues();
+        Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+        try {
+            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf.read(this.metadataFile);
+        } catch (PreferencesException e) {
+            myLogger.error(e);
+        } catch (ReadException e) {
+            myLogger.error(e);
+        }
+        ;
+        this.prozessKopie = new Process();
+        this.prozessKopie.setTitle("");
+        this.prozessKopie.setTemplate(false);
+        this.prozessKopie.setInChoiceListShown(false);
+        this.prozessKopie.setProject(this.prozessVorlage.getProject());
+        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
+        this.digitalCollections = new ArrayList<String>();
+
+        /*
+         * Kopie der Prozessvorlage anlegen
+         */
+        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
+
+        initializePossibleDigitalCollections();
+
+        return this.naviFirstPage;
+    }
+
+    private void readProjectConfigs() {
+        /*
+         * projektabhängig die richtigen Felder in der Gui anzeigen
+         */
+        ConfigProjects cp = null;
+        try {
+            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("IOException", e.getMessage());
+            return;
+        }
+
+        this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
+                .getTitle());
+        this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
+        this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
+        this.naviFirstPage = "ProzessverwaltungKopie1";
+        if (this.opacKatalog.equals("")) {
+            this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
+        }
+
+        /*
+         * die auszublendenden Standard-Felder ermitteln
+         */
+        for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
+            this.standardFields.put(t, false);
+        }
+
+        /*
+         * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
+         */
+        int count = cp.getParamList("createNewProcess.itemlist.item").size();
+        for (int i = 0; i < count; i++) {
+            AdditionalField fa = new AdditionalField(this);
+            fa.setFrom(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@from]"));
+            fa.setTitle(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
+            fa.setRequired(cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@required]"));
+            fa.setIsdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isdoctype]"));
+            fa.setIsnotdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isnotdoctype]"));
+
+            // attributes added 30.3.09
+            String test = (cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initStart]"));
+            fa.setInitStart(test);
+
+            fa.setInitEnd(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initEnd]"));
+
+            /*
+             * Bindung an ein Metadatum eines Docstructs
+             */
+            if (cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@ughbinding]")) {
+                fa.setUghbinding(true);
+                fa.setDocstruct(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@docstruct]"));
+                fa.setMetadata(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@metadata]"));
+            }
+
+            /*
+             * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
+             */
+            int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
+            /* Children durchlaufen und SelectItems erzeugen */
+            if (selectItemCount > 0) {
+                fa.setSelectList(new ArrayList<SelectItem>());
+            }
+            for (int j = 0; j < selectItemCount; j++) {
+                String svalue = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select("
+                        + j + ")[@label]");
+                String sid = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")");
+                fa.getSelectList().add(new SelectItem(sid, svalue, null));
+            }
+            this.additionalFields.add(fa);
+        }
+    }
+
+    /**
+     * OPAC evaluation.
+     * @param io import object
+     * @return empty String
+     */
+    public String OpacAuswerten(ImportObject io) {
+        clearValues();
+        readProjectConfigs();
+        try {
+            Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+            /* den Opac abfragen und ein RDF draus bauen lassen */
+            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf.read(this.metadataFile);
+
+            this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
+
+            fillFieldsFromMetadataFile(this.myRdf);
+
+            fillFieldsFromConfig();
+
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * OpacAnfrage.
+     */
+    @Override
+    public String OpacAuswerten() {
+        clearValues();
+        readProjectConfigs();
+        try {
+            Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+            /* den Opac abfragen und ein RDF draus bauen lassen */
+            this.myRdf = new MetsMods(myPrefs);
+            this.myRdf.read(this.metadataFile);
+
+            this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
+
+            fillFieldsFromMetadataFile(this.myRdf);
+
+            fillFieldsFromConfig();
+
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    /**
+     * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen.
+     */
+    private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
+        if (myRdf != null) {
+
+            for (AdditionalField field : this.additionalFields) {
+                if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
+                    /* welches Docstruct */
+
+                    DocStruct myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct();
+                    if (field.getDocstruct().equals("firstchild")) {
+                        try {
+                            myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+                        } catch (RuntimeException e) {
+                        }
+                    }
+                    if (field.getDocstruct().equals("boundbook")) {
+                        myTempStruct = myRdf.getDigitalDocument().getPhysicalDocStruct();
+                    }
+                    /* welches Metadatum */
+                    try {
+                        if (field.getMetadata().equals("ListOfCreators")) {
+                            /* bei Autoren die Namen zusammenstellen */
+                            String myautoren = "";
+                            if (myTempStruct.getAllPersons() != null) {
+                                for (Person p : myTempStruct.getAllPersons()) {
+                                    myautoren += p.getLastname();
+                                    if (StringUtils.isNotBlank(p.getFirstname())) {
+                                        myautoren += ", " + p.getFirstname();
+                                    }
+                                    myautoren += "; ";
+                                }
+                                if (myautoren.endsWith("; ")) {
+                                    myautoren = myautoren.substring(0, myautoren.length() - 2);
+                                }
+                            }
+                            field.setValue(myautoren);
+                        } else {
+                            /* bei normalen Feldern die Inhalte auswerten */
+                            MetadataType mdt = UghHelper.getMetadataType(rulesetService
+                                    .getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
+                            Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
+                            if (md != null) {
+                                field.setValue(md.getValue());
+                            }
+                        }
+                    } catch (UghHelperException e) {
+                        Helper.setFehlerMeldung(e.getMessage(), "");
+                    }
+                } // end if ughbinding
+            } // end for
+        } // end if myrdf==null
+    }
+
+    private void fillFieldsFromConfig() {
+        for (AdditionalField field : this.additionalFields) {
+            if (!field.isUghbinding() && field.getShowDependingOnDoctype()) {
+                if (field.getSelectList() != null && field.getSelectList().size() > 0) {
+                    field.setValue((String) field.getSelectList().get(0).getValue());
+                }
+
+            }
+        }
+        CalcTiffheader();
+
+    }
+
+    /**
+     * alle Konfigurationseigenschaften und Felder zurücksetzen.
+     */
+    private void clearValues() {
+        if (this.opacKatalog == null) {
+            this.opacKatalog = "";
+        }
+        this.standardFields = new HashMap<String, Boolean>();
+        this.standardFields.put("collections", true);
+        this.standardFields.put("doctype", true);
+        this.standardFields.put("regelsatz", true);
+        this.additionalFields = new ArrayList<AdditionalField>();
+        this.tifHeader_documentname = "";
+        this.tifHeader_imagedescription = "";
+    }
+
+    /**
+     * Auswahl des Prozesses auswerten.
+     */
+    @Override
+    public String TemplateAuswahlAuswerten() throws DAOException {
+        /* den ausgewählten Prozess laden */
+        Process tempProzess = processService.find(this.auswahl);
+        if (processService.getWorkpiecesSize(tempProzess) > 0) {
+            /* erstes Werkstück durchlaufen */
+            Workpiece werk = tempProzess.getWorkpieces().get(0);
+            for (WorkpieceProperty eig : werk.getProperties()) {
+                for (AdditionalField field : this.additionalFields) {
+                    if (field.getTitle().equals(eig.getTitle())) {
+                        field.setValue(eig.getValue());
+                    }
+                }
+            }
+        }
+
+        if (processService.getTemplatesSize(tempProzess) > 0) {
+            /* erste Vorlage durchlaufen */
+            Template vor = tempProzess.getTemplates().get(0);
+            for (TemplateProperty eig : vor.getProperties()) {
+                for (AdditionalField field : this.additionalFields) {
+                    if (field.getTitle().equals(eig.getTitle())) {
+                        field.setValue(eig.getValue());
+                    }
+                }
+            }
+        }
+
+        try {
+            this.myRdf = processService.readMetadataAsTemplateFile(tempProzess);
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
+        }
+
+        /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
+        try {
+            DocStruct colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
+            removeCollections(colStruct);
+            colStruct = colStruct.getAllChildren().get(0);
+            removeCollections(colStruct);
+        } catch (PreferencesException e) {
+            Helper.setFehlerMeldung("Fehler beim Anlegen des Vorgangs", e);
+            myLogger.error("Fehler beim Anlegen des Vorgangs", e);
+        } catch (RuntimeException e) {
+            /*
+             * das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden
+             */
+        }
+
+        return "";
+    }
+
+    /**
+     * Validierung der Eingaben.
+     *
+     * @return sind Fehler bei den Eingaben vorhanden?
+     */
+    private boolean isContentValid() {
+        /*
+         * Vorbedingungen prüfen
+         */
+        boolean valide = true;
+
+        /*
+         * grundsätzlich den Vorgangstitel prüfen
+         */
+        /* kein Titel */
+        if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
+            valide = false;
+            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+                    + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+        }
+
+        String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
+            valide = false;
+            Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
+        }
+
+        /* prüfen, ob der Prozesstitel schon verwendet wurde */
+        if (this.prozessKopie.getTitle() != null) {
+            long anzahl = 0;
+            try {
+                anzahl = processService.count("from Process where title='" + this.prozessKopie.getTitle() + "'");
+            } catch (DAOException e) {
+                Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+                valide = false;
+            }
+            if (anzahl > 0) {
+                valide = false;
+                Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten: ")
+                        + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
+            }
+        }
+
+        /*
+         * Prüfung der standard-Eingaben, die angegeben werden müssen
+         */
+        /* keine Collektion ausgewählt */
+        if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
+            valide = false;
+            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+                    + Helper.getTranslation("ProcessCreationErrorNoCollection"));
+        }
+
+        /*
+         * Prüfung der additional-Eingaben, die angegeben werden müssen
+         */
+        for (AdditionalField field : this.additionalFields) {
+            if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
+                    && (StringUtils.isBlank(field.getValue()))) {
+                valide = false;
+                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle()
+                        + " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
+            }
+        }
+        return valide;
+    }
+
+    @Override
+    public String GoToSeite1() {
+        return this.naviFirstPage;
+    }
+
+    @Override
+    public String GoToSeite2() {
+        if (!isContentValid()) {
+            return this.naviFirstPage;
+        } else {
+            return "ProzessverwaltungKopie2";
+        }
+    }
+
+    /**
+     * Test title.
+     *
+     * @return boolean
+     */
+    public boolean testTitle() {
+        boolean valide = true;
+
+        if (ConfigMain.getBooleanParameter("MassImportUniqueTitle", true)) {
+            /*
+             * grundsätzlich den Vorgangstitel prüfen
+             */
+            /* kein Titel */
+            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
+                valide = false;
+                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+            }
+
+            String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
+                valide = false;
+                Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
+            }
+
+            /* prüfen, ob der Prozesstitel schon verwendet wurde */
+            if (this.prozessKopie.getTitle() != null) {
+                long anzahl = 0;
+                try {
+                    anzahl = processService.count("from Prozess where titel='" + this.prozessKopie.getTitle()
+                            + "'");
+                } catch (DAOException e) {
+                    Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+                    valide = false;
+                }
+                if (anzahl > 0) {
+                    valide = false;
+                    Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
+                            + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
+                }
+            }
+        }
+        return valide;
+    }
+
+    /**
+     * Anlegen des Prozesses und Speichern der Metadaten.
+     */
+
+    public Process NeuenProzessAnlegen2()
+            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
+            WriteException {
+        Helper.getHibernateSession().evict(this.prozessKopie);
+
+        this.prozessKopie.setId(null);
+
+        addProperties(null);
+
+        for (Task step : this.prozessKopie.getTasks()) {
+            /*
+             * always save date and user for each step
+             */
+            step.setProcessingTime(this.prozessKopie.getCreationDate());
+            step.setEditTypeEnum(TaskEditType.AUTOMATIC);
+            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            if (loginForm != null) {
+                step.setProcessingUser(loginForm.getMyBenutzer());
+            }
+
+            /*
+             * only if its done, set edit start and end date
+             */
+            if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
+                step.setProcessingBegin(this.prozessKopie.getCreationDate());
+                // this concerns steps, which are set as done right on creation bearbeitungsbeginn is
+                // set to creation timestamp of process because the creation of it is basically begin
+                // of work
+                Date myDate = new Date();
+                step.setProcessingTime(myDate);
+                step.setProcessingEnd(myDate);
+            }
+        }
+
+        try {
+            processService.save(this.prozessKopie);
+            processService.refresh(this.prozessKopie);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            myLogger.error("error on save: ", e);
+            return this.prozessKopie;
+        }
+
+        /*
+         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
+         */
+        if (this.myRdf == null) {
+            createNewFileformat();
+        }
+
+        processService.writeMetadataFile(this.myRdf, this.prozessKopie);
+
+        // Adding process to history
+        if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
+            Helper.setFehlerMeldung("historyNotUpdated");
+        } else {
+            try {
+                processService.save(this.prozessKopie);
+            } catch (DAOException e) {
+                e.printStackTrace();
+                myLogger.error("error on save: ", e);
+                return this.prozessKopie;
+            }
+        }
+
+        processService.readMetadataFile(this.prozessKopie);
+
+        /* damit die Sortierung stimmt nochmal einlesen */
+        Helper.getHibernateSession().refresh(this.prozessKopie);
+        return this.prozessKopie;
+
+    }
+
+    /**
+     * Create Process.
+     *
+     * @param io import object
+     * @return Process object
+     */
+    public Process createProcess(ImportObject io)
+            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
+            DAOException, WriteException {
+        Helper.getHibernateSession().evict(this.prozessKopie);
+
+        this.prozessKopie.setId(null);
+        addProperties(io);
+
+        for (Task step : this.prozessKopie.getTasks()) {
+            /*
+             * always save date and user for each step
+             */
+            step.setProcessingTime(this.prozessKopie.getCreationDate());
+            step.setEditTypeEnum(TaskEditType.AUTOMATIC);
+            LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            if (loginForm != null) {
+                step.setProcessingUser(loginForm.getMyBenutzer());
+            }
+
+            /*
+             * only if its done, set edit start and end date
+             */
+            if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
+                step.setProcessingBegin(this.prozessKopie.getCreationDate());
+                // this concerns steps, which are set as done right on creation
+                // bearbeitungsbeginn is set to creation timestamp of process
+                // because the creation of it is basically begin of work
+                Date myDate = new Date();
+                step.setProcessingTime(myDate);
+                step.setProcessingEnd(myDate);
+            }
+        }
+
+        if (!io.getBatches().isEmpty()) {
+            processService.getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
+        }
+        try {
+            processService.save(this.prozessKopie);
+            processService.refresh(this.prozessKopie);
+        } catch (DAOException e) {
+            e.printStackTrace();
+            myLogger.error("error on save: ", e);
+            return this.prozessKopie;
+        }
+
+        /*
+         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
+         */
+        if (this.myRdf == null) {
+            createNewFileformat();
+        }
+
+        File f = new File(processService.getProcessDataDirectoryIgnoreSwapping(this.prozessKopie));
+        if (!f.exists() && !f.mkdir()) {
+            Helper.setFehlerMeldung("Could not create process directory");
+            myLogger.error("Could not create process directory");
+            return this.prozessKopie;
+        }
+
+        processService.writeMetadataFile(this.myRdf, this.prozessKopie);
+
+        // }
+
+        // Adding process to history
+        if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
+            Helper.setFehlerMeldung("historyNotUpdated");
+        } else {
+            try {
+                processService.save(this.prozessKopie);
+            } catch (DAOException e) {
+                e.printStackTrace();
+                myLogger.error("error on save: ", e);
+                return this.prozessKopie;
+            }
+        }
+
+        processService.readMetadataFile(this.prozessKopie);
+
+        /* damit die Sortierung stimmt nochmal einlesen */
+        Helper.getHibernateSession().refresh(this.prozessKopie);
+        return this.prozessKopie;
+
+    }
+
+    /**
+     * alle Kollektionen eines übergebenen DocStructs entfernen.
+     */
+    private void removeCollections(DocStruct colStruct) {
+        try {
+            MetadataType mdt = UghHelper.getMetadataType(rulesetService.getPreferences(this.prozessKopie.getRuleset()),
+                    "singleDigCollection");
+            ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
+            if (myCollections.size() > 0) {
+                for (Metadata md : myCollections) {
+                    colStruct.removeMetadata(md);
+                }
+            }
+        } catch (UghHelperException e) {
+            Helper.setFehlerMeldung(e.getMessage(), "");
+            e.printStackTrace();
+        } catch (DocStructHasNoTypeException e) {
+            Helper.setFehlerMeldung(e.getMessage(), "");
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createNewFileformat() {
+
+        Prefs myPrefs = rulesetService.getPreferences(this.prozessKopie.getRuleset());
+
+        Fileformat ff;
+        try {
+            ff = new MetsMods(myPrefs);
+            ff.read(this.metadataFile);
+        } catch (PreferencesException e) {
+            myLogger.error(e);
+        } catch (ReadException e) {
+            myLogger.error(e);
+        }
+
+    }
+
+    private void addProperties(ImportObject io) {
+        /*
+         * Vorlageneigenschaften initialisieren
+         */
+        Template vor;
+        if (processService.getTemplatesSize(this.prozessKopie) > 0) {
+            vor = this.prozessKopie.getTemplates().get(0);
+        } else {
+            vor = new Template();
+            vor.setProcess(this.prozessKopie);
+            List<Template> vorlagen = new ArrayList<>();
+            vorlagen.add(vor);
+            this.prozessKopie.setTemplates(vorlagen);
+        }
+
+        /*
+         * Werkstückeigenschaften initialisieren
+         */
+        Workpiece werk;
+        if (processService.getWorkpiecesSize(this.prozessKopie) > 0) {
+            werk = this.prozessKopie.getWorkpieces().get(0);
+        } else {
+            werk = new Workpiece();
+            werk.setProcess(this.prozessKopie);
+            List<Workpiece> werkstuecke = new ArrayList<>();
+            werkstuecke.add(werk);
+            this.prozessKopie.setWorkpieces(werkstuecke);
+        }
+
+        /*
+         * jetzt alle zusätzlichen Felder durchlaufen und die Werte hinzufügen
+         */
+        if (io == null) {
+            for (AdditionalField field : this.additionalFields) {
+                if (field.getShowDependingOnDoctype()) {
+                    if (field.getFrom().equals("werk")) {
+                        BeanHelper.addProperty(werk, field.getTitle(), field.getValue());
+                    }
+                    if (field.getFrom().equals("vorlage")) {
+                        BeanHelper.addProperty(vor, field.getTitle(), field.getValue());
+                    }
+                    if (field.getFrom().equals("prozess")) {
+                        BeanHelper.addProperty(this.prozessKopie, field.getTitle(), field.getValue());
+                    }
+                }
+            }
+            /* Doctype */
+            BeanHelper.addProperty(werk, "DocType", this.docType);
+            /* Tiffheader */
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+        } else {
+            BeanHelper.addProperty(werk, "DocType", this.docType);
+            /* Tiffheader */
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
+            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+
+            for (ProcessProperty pe : io.getProcessProperties()) {
+                addProperty(this.prozessKopie, pe);
+            }
+            for (WorkpieceProperty we : io.getWorkProperties()) {
+                addProperty(werk, we);
+            }
+
+            for (TemplateProperty ve : io.getTemplateProperties()) {
+                addProperty(vor, ve);
+            }
+            BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
+            BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+        }
+    }
+
+    @Override
+    public String getDocType() {
+        return this.docType;
+    }
+
+    @Override
+    public void setDocType(String docType) {
+        this.docType = docType;
+    }
+
+    @Override
+    public Process getProzessVorlage() {
+        return this.prozessVorlage;
+    }
+
+    @Override
+    public void setProzessVorlage(Process prozessVorlage) {
+        this.prozessVorlage = prozessVorlage;
+    }
+
+    @Override
+    public Integer getAuswahl() {
+        return this.auswahl;
+    }
+
+    @Override
+    public void setAuswahl(Integer auswahl) {
+        this.auswahl = auswahl;
+    }
+
+    @Override
+    public List<AdditionalField> getAdditionalFields() {
+        return this.additionalFields;
+    }
+
+    /**
+     * this is needed for GUI, render multiple select only if this is false if this is true use the only choice.
+     *
+     * @author Wulf
+     */
+    @Override
+    public boolean isSingleChoiceCollection() {
+        return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
+
+    }
+
+    /**
+     * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use
+     * this choice.
+     *
+     * @author Wulf
+     */
+    @Override
+    public String getDigitalCollectionIfSingleChoice() {
+        List<String> pdc = getPossibleDigitalCollections();
+        if (pdc.size() == 1) {
+            return pdc.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<String> getPossibleDigitalCollections() {
+        return this.possibleDigitalCollection;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initializePossibleDigitalCollections() {
+        this.possibleDigitalCollection = new ArrayList<String>();
+        ArrayList<String> defaultCollections = new ArrayList<String>();
+        String filename = new Helper().getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
+        if (!(new File(filename).exists())) {
+            Helper.setFehlerMeldung("File not found: ", filename);
+            return;
+        }
+        this.digitalCollections = new ArrayList<String>();
+        try {
+            /* Datei einlesen und Root ermitteln */
+            SAXBuilder builder = new SAXBuilder();
+            Document doc = builder.build(new File(filename));
+            Element root = doc.getRootElement();
+            /* alle Projekte durchlaufen */
+            List<Element> projekte = root.getChildren();
+            for (Iterator<Element> iter = projekte.iterator(); iter.hasNext();) {
+                Element projekt = iter.next();
+
+                // collect default collections
+                if (projekt.getName().equals("default")) {
+                    List<Element> myCols = projekt.getChildren("DigitalCollection");
+                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+                        Element col = it2.next();
+
+                        if (col.getAttribute("default") != null && col.getAttributeValue("default")
+                                .equalsIgnoreCase("true")) {
+                            digitalCollections.add(col.getText());
+                        }
+
+                        defaultCollections.add(col.getText());
+                    }
+                } else {
+                    // run through the projects
+                    List<Element> projektnamen = projekt.getChildren("name");
+                    for (Iterator<Element> iterator = projektnamen.iterator(); iterator.hasNext();) {
+                        Element projektname = iterator.next();
+                        // all all collections to list
+                        if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
+                            List<Element> myCols = projekt.getChildren("DigitalCollection");
+                            for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
+                                Element col = it2.next();
+
+                                if (col.getAttribute("default") != null
+                                        && col.getAttributeValue("default").equalsIgnoreCase("true")) {
+                                    digitalCollections.add(col.getText());
+                                }
+
+                                this.possibleDigitalCollection.add(col.getText());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (JDOMException e1) {
+            myLogger.error("error while parsing digital collections", e1);
+            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+        } catch (IOException e1) {
+            myLogger.error("error while parsing digital collections", e1);
+            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+        }
+
+        if (this.possibleDigitalCollection.size() == 0) {
+            this.possibleDigitalCollection = defaultCollections;
+        }
+
+        // if only one collection is possible take it directly
+
+        if (isSingleChoiceCollection()) {
+            this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
+        }
+    }
+
+
+    @Override
+    public List<String> getAllOpacCatalogues() {
+        return ConfigOpac.getAllCatalogueTitles();
+    }
+
+    @Override
+    public List<ConfigOpacDoctype> getAllDoctypes() {
+        return ConfigOpac.getAllDoctypes();
+    }
+
+    /*
+     * changed, so that on first request list gets set if there is only one choice
+     */
+    @Override
+    public List<String> getDigitalCollections() {
+        return this.digitalCollections;
+    }
+
+    @Override
+    public void setDigitalCollections(List<String> digitalCollections) {
+        this.digitalCollections = digitalCollections;
+    }
+
+    @Override
+    public HashMap<String, Boolean> getStandardFields() {
+        return this.standardFields;
+    }
+
+    @Override
+    public boolean isUseOpac() {
+        return this.useOpac;
+    }
+
+    @Override
+    public boolean isUseTemplates() {
+        return this.useTemplates;
+    }
+
+    @Override
+    public String getTifHeader_documentname() {
+        return this.tifHeader_documentname;
+    }
+
+    @Override
+    public void setTifHeader_documentname(String tifHeader_documentname) {
+        this.tifHeader_documentname = tifHeader_documentname;
+    }
+
+    @Override
+    public String getTifHeader_imagedescription() {
+        return this.tifHeader_imagedescription;
+    }
+
+    @Override
+    public void setTifHeader_imagedescription(String tifHeader_imagedescription) {
+        this.tifHeader_imagedescription = tifHeader_imagedescription;
+    }
+
+    @Override
+    public Process getProzessKopie() {
+        return this.prozessKopie;
+    }
+
+    @Override
+    public void setProzessKopie(Process prozessKopie) {
+        this.prozessKopie = prozessKopie;
+    }
+
+    @Override
+    public String getOpacSuchfeld() {
+        return this.opacSuchfeld;
+    }
+
+    @Override
+    public void setOpacSuchfeld(String opacSuchfeld) {
+        this.opacSuchfeld = opacSuchfeld;
+    }
+
+    @Override
+    public String getOpacKatalog() {
+        return this.opacKatalog;
+    }
+
+    @Override
+    public void setOpacKatalog(String opacKatalog) {
+        this.opacKatalog = opacKatalog;
+    }
+
+    @Override
+    public String getOpacSuchbegriff() {
+        return this.opacSuchbegriff;
+    }
+
+    @Override
+    public void setOpacSuchbegriff(String opacSuchbegriff) {
+        this.opacSuchbegriff = opacSuchbegriff;
+    }
+
+    /*
+     * Helper
+     */
+
+    /**
+     * Prozesstitel und andere Details generieren.
+     */
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void CalcProzesstitel() {
+        String newTitle = "";
+        String titeldefinition = "";
+        ConfigProjects cp = null;
+        try {
+            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("IOException", e.getMessage());
+            return;
+        }
+
+        int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
+        for (int i = 0; i < count; i++) {
+            String titel = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")");
+            String isdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isdoctype]");
+            String isnotdoctype = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isnotdoctype]");
+
+            if (titel == null) {
+                titel = "";
+            }
+            if (isdoctype == null) {
+                isdoctype = "";
+            }
+            if (isnotdoctype == null) {
+                isnotdoctype = "";
+            }
+
+            /* wenn nix angegeben wurde, dann anzeigen */
+            if (isdoctype.equals("") && isnotdoctype.equals("")) {
+                titeldefinition = titel;
+                break;
+            }
  
             /* wenn beides angegeben wurde */
             if (!isdoctype.equals("") && !isnotdoctype.equals("")
-					&& StringUtils.containsIgnoreCase(isdoctype, this.docType)
-					&& !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
+                    && StringUtils.containsIgnoreCase(isdoctype, this.docType)
+                    && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
                 titeldefinition = titel;
                 break;
             }
@@ -1145,198 +1159,201 @@ public class CopyProcess extends ProzesskopieForm {
                 titeldefinition = titel;
                 break;
             }
-		}
+        }
 
-		StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
-		/* jetzt den Bandtitel parsen */
-		while (tokenizer.hasMoreTokens()) {
-			String myString = tokenizer.nextToken();
-			// System.out.println(myString);
-			/*
-			 * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
-			 */
-			if (myString.startsWith("'") && myString.endsWith("'")) {
-				newTitle += myString.substring(1, myString.length() - 1);
-			} else {
-				/* andernfalls den string als Feldnamen auswerten */
-				for (Iterator it2 = this.additionalFields.iterator(); it2.hasNext();) {
-					AdditionalField myField = (AdditionalField) it2.next();
+        StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
+        /* jetzt den Bandtitel parsen */
+        while (tokenizer.hasMoreTokens()) {
+            String myString = tokenizer.nextToken();
+            // System.out.println(myString);
+            /*
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
+             */
+            if (myString.startsWith("'") && myString.endsWith("'")) {
+                newTitle += myString.substring(1, myString.length() - 1);
+            } else {
+                /* andernfalls den string als Feldnamen auswerten */
+                for (Iterator it2 = this.additionalFields.iterator(); it2.hasNext();) {
+                    AdditionalField myField = (AdditionalField) it2.next();
 
-					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch nicht vorhanden
-					 */
-					if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
-							&& myField.getShowDependingOnDoctype()
-							&& (myField.getValue() == null || myField.getValue().equals(""))) {
-						myField.setValue(this.atstsl);
-					}
+                    /*
+                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
+                     * nicht vorhanden
+                     */
+                    if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
+                            && myField.getShowDependingOnDoctype()
+                            && (myField.getValue() == null || myField.getValue().equals(""))) {
+                        myField.setValue(this.atstsl);
+                    }
 
-					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype() && myField.getValue() != null) {
-						newTitle += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
-					}
-				}
-			}
-		}
+                    /* den Inhalt zum Titel hinzufügen */
+                    if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
+                            && myField.getValue() != null) {
+                        newTitle += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
+                    }
+                }
+            }
+        }
 
-		if (newTitle.endsWith("_")) {
-			newTitle = newTitle.substring(0, newTitle.length() - 1);
-		}
-		this.prozessKopie.setTitle(newTitle);
-		CalcTiffheader();
-	}
+        if (newTitle.endsWith("_")) {
+            newTitle = newTitle.substring(0, newTitle.length() - 1);
+        }
+        this.prozessKopie.setTitle(newTitle);
+        CalcTiffheader();
+    }
 
-	private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
-		String rueckgabe = inFeldWert;
+    private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
+        String rueckgabe = inFeldWert;
 
-		/*
-		 * Bandnummer
-		 */
-		if (inFeldName.equals("Bandnummer")) {
-			try {
-				int bandint = Integer.parseInt(inFeldWert);
-				java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
-				rueckgabe = df.format(bandint);
-			} catch (NumberFormatException e) {
-				Helper.setFehlerMeldung("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl");
-			}
-			if (rueckgabe != null && rueckgabe.length() < 4) {
-				rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
-			}
-		}
+        /*
+         * Bandnummer
+         */
+        if (inFeldName.equals("Bandnummer")) {
+            try {
+                int bandint = Integer.parseInt(inFeldWert);
+                java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
+                rueckgabe = df.format(bandint);
+            } catch (NumberFormatException e) {
+                Helper.setFehlerMeldung("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl");
+            }
+            if (rueckgabe != null && rueckgabe.length() < 4) {
+                rueckgabe = "0000".substring(rueckgabe.length()) + rueckgabe;
+            }
+        }
 
-		return rueckgabe;
-	}
+        return rueckgabe;
+    }
 
-	@Override
-	public void CalcTiffheader() {
-		String tif_definition = "";
-		ConfigProjects cp = null;
-		try {
-			cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
-		} catch (IOException e) {
-			Helper.setFehlerMeldung("IOException", e.getMessage());
-			return;
-		}
+    @Override
+    public void CalcTiffheader() {
+        String tif_definition = "";
+        ConfigProjects cp = null;
+        try {
+            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("IOException", e.getMessage());
+            return;
+        }
 
-		tif_definition = cp.getParamString("tifheader."
-				+ this.docType.toLowerCase(), "blabla");
+        tif_definition = cp.getParamString("tifheader."
+                + this.docType.toLowerCase(), "blabla");
 
-		/*
-		 * evtuelle Ersetzungen
-		 */
-		tif_definition = tif_definition.replaceAll("\\[\\[", "<");
-		tif_definition = tif_definition.replaceAll("\\]\\]", ">");
+        /*
+         * evtuelle Ersetzungen
+         */
+        tif_definition = tif_definition.replaceAll("\\[\\[", "<");
+        tif_definition = tif_definition.replaceAll("\\]\\]", ">");
 
-		/*
-		 * Documentname ist im allgemeinen = Prozesstitel
-		 */
-		this.tifHeader_documentname = this.prozessKopie.getTitle();
-		this.tifHeader_imagedescription = "";
-		/*
-		 * Imagedescription
-		 */
-		StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
-		/* jetzt den Tiffheader parsen */
-		while (tokenizer.hasMoreTokens()) {
-			String myString = tokenizer.nextToken();
-			/*
-			 * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
-			 */
-			if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-				this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
-			} else if (myString.equals("$Doctype")) {
+        /*
+         * Documentname ist im allgemeinen = Prozesstitel
+         */
+        this.tifHeader_documentname = this.prozessKopie.getTitle();
+        this.tifHeader_imagedescription = "";
+        /*
+         * Imagedescription
+         */
+        StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
+        /* jetzt den Tiffheader parsen */
+        while (tokenizer.hasMoreTokens()) {
+            String myString = tokenizer.nextToken();
+            /*
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
+             */
+            if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
+                this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
+            } else if (myString.equals("$Doctype")) {
 
-				this.tifHeader_imagedescription += this.docType;
-			} else {
-				/* andernfalls den string als Feldnamen auswerten */
-				for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
-					AdditionalField myField = it2.next();
+                this.tifHeader_imagedescription += this.docType;
+            } else {
+                /* andernfalls den string als Feldnamen auswerten */
+                for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
+                    AdditionalField myField = it2.next();
 
-					/*
-					 * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
-					 * nicht vorhanden
-					 */
-					if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
-							&& myField.getShowDependingOnDoctype()
-							&& (myField.getValue() == null || myField.getValue().equals(""))) {
-						myField.setValue(this.atstsl);
-					}
+                    /*
+                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
+                     * nicht vorhanden
+                     */
+                    if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
+                            && myField.getShowDependingOnDoctype()
+                            && (myField.getValue() == null || myField.getValue().equals(""))) {
+                        myField.setValue(this.atstsl);
+                    }
 
-					/* den Inhalt zum Titel hinzufügen */
-					if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
-							&& myField.getValue() != null) {
-						this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
-					}
-				}
-			}
-			// }
-		}
-	}
+                    /* den Inhalt zum Titel hinzufügen */
+                    if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
+                            && myField.getValue() != null) {
+                        this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitle(),
+                                myField.getValue());
+                    }
+                }
+            }
+            // }
+        }
+    }
 
-	private void addProperty(Template inVorlage, TemplateProperty property) {
-		if (property.getContainer() == 0) {
-			for (TemplateProperty ve : inVorlage.getProperties()) {
-				if (ve.getTitle().equals(property.getTitle()) && ve.getContainer() > 0) {
-					ve.setValue(property.getValue());
-					return;
-				}
-			}
-		}
-		TemplateProperty eig = new TemplateProperty();
-		eig.setTitle(property.getTitle());
-		eig.setValue(property.getValue());
-		eig.setChoice(property.getChoice());
-		eig.setContainer(property.getContainer());
-		eig.setType(property.getType());
-		eig.setTemplate(inVorlage);
-		List<TemplateProperty> eigenschaften = inVorlage.getProperties();
-		if (eigenschaften != null) {
-			eigenschaften.add(eig);
-		}
-	}
+    private void addProperty(Template inVorlage, TemplateProperty property) {
+        if (property.getContainer() == 0) {
+            for (TemplateProperty ve : inVorlage.getProperties()) {
+                if (ve.getTitle().equals(property.getTitle()) && ve.getContainer() > 0) {
+                    ve.setValue(property.getValue());
+                    return;
+                }
+            }
+        }
+        TemplateProperty eig = new TemplateProperty();
+        eig.setTitle(property.getTitle());
+        eig.setValue(property.getValue());
+        eig.setChoice(property.getChoice());
+        eig.setContainer(property.getContainer());
+        eig.setType(property.getType());
+        eig.setTemplate(inVorlage);
+        List<TemplateProperty> eigenschaften = inVorlage.getProperties();
+        if (eigenschaften != null) {
+            eigenschaften.add(eig);
+        }
+    }
 
-	private void addProperty(Process inProcess, ProcessProperty property) {
-		if (property.getContainer() == 0) {
-			for (ProcessProperty pe : inProcess.getProperties()) {
-				if (pe.getTitle().equals(property.getTitle()) && pe.getContainer() > 0) {
-					pe.setValue(property.getValue());
-					return;
-				}
-			}
-		}
-		ProcessProperty eig = new ProcessProperty();
-		eig.setTitle(property.getTitle());
-		eig.setValue(property.getValue());
-		eig.setChoice(property.getChoice());
-		eig.setContainer(property.getContainer());
-		eig.setType(property.getType());
-		eig.setProcess(inProcess);
-		List<ProcessProperty> eigenschaften = processService.getPropertiesInitialized(inProcess);
-		if (eigenschaften != null) {
-			eigenschaften.add(eig);
-		}
-	}
+    private void addProperty(Process inProcess, ProcessProperty property) {
+        if (property.getContainer() == 0) {
+            for (ProcessProperty pe : inProcess.getProperties()) {
+                if (pe.getTitle().equals(property.getTitle()) && pe.getContainer() > 0) {
+                    pe.setValue(property.getValue());
+                    return;
+                }
+            }
+        }
+        ProcessProperty eig = new ProcessProperty();
+        eig.setTitle(property.getTitle());
+        eig.setValue(property.getValue());
+        eig.setChoice(property.getChoice());
+        eig.setContainer(property.getContainer());
+        eig.setType(property.getType());
+        eig.setProcess(inProcess);
+        List<ProcessProperty> eigenschaften = processService.getPropertiesInitialized(inProcess);
+        if (eigenschaften != null) {
+            eigenschaften.add(eig);
+        }
+    }
 
-	private void addProperty(Workpiece inWerk, WorkpieceProperty property) {
-		if (property.getContainer() == 0) {
-			for (WorkpieceProperty we : inWerk.getProperties()) {
-				if (we.getTitle().equals(property.getTitle()) && we.getContainer() > 0) {
-					we.setValue(property.getValue());
-					return;
-				}
-			}
-		}
-		WorkpieceProperty eig = new WorkpieceProperty();
-		eig.setTitle(property.getTitle());
-		eig.setValue(property.getValue());
-		eig.setChoice(property.getChoice());
-		eig.setContainer(property.getContainer());
-		eig.setType(property.getType());
-		eig.setWorkpiece(inWerk);
-		List<WorkpieceProperty> eigenschaften = inWerk.getProperties();
-		if (eigenschaften != null) {
-			eigenschaften.add(eig);
-		}
-	}
+    private void addProperty(Workpiece inWerk, WorkpieceProperty property) {
+        if (property.getContainer() == 0) {
+            for (WorkpieceProperty we : inWerk.getProperties()) {
+                if (we.getTitle().equals(property.getTitle()) && we.getContainer() > 0) {
+                    we.setValue(property.getValue());
+                    return;
+                }
+            }
+        }
+        WorkpieceProperty eig = new WorkpieceProperty();
+        eig.setTitle(property.getTitle());
+        eig.setValue(property.getValue());
+        eig.setChoice(property.getChoice());
+        eig.setContainer(property.getContainer());
+        eig.setType(property.getType());
+        eig.setWorkpiece(inWerk);
+        List<WorkpieceProperty> eigenschaften = inWerk.getProperties();
+        if (eigenschaften != null) {
+            eigenschaften.add(eig);
+        }
+    }
 }

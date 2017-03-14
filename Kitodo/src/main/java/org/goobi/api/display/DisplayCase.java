@@ -19,98 +19,98 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 
 import org.kitodo.data.database.beans.Process;
 
-
 public class DisplayCase {
-	private DisplayType displayType = null;
-	private ArrayList<Item> itemList = new ArrayList<Item>();
-	private ConfigDispayRules configDisplay;
-	private Process myProcess;
-	private String metaName;
-	private BindState myBindState;
-	
-	/**
-	 * gets items with current bind state.
-	 * 
-	 * @param inProcess
-	 * @param metaType
-	 */
-	
-	public DisplayCase(Process inProcess, String metaType ){
-		metaName = metaType;
-		myProcess = inProcess;
-		myBindState = Modes.getBindState();
-		try {
-			configDisplay = ConfigDispayRules.getInstance();
-			if (configDisplay != null) {
-			displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(), myBindState.getTitle(), metaName);
-			itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(), myBindState.getTitle(), metaName, displayType);
-			} else {
-				// no ruleset file
-				displayType = DisplayType.getByTitle("textarea");
-				itemList.add(new Item(metaName, "", false));
-			}
-		} catch (Exception e) {
-			// incorrect ruleset file
-			displayType = DisplayType.getByTitle("textarea");
-			itemList.add(new Item(metaName, "", false));
-		}
-			
-	}
+    private DisplayType displayType = null;
+    private ArrayList<Item> itemList = new ArrayList<Item>();
+    private ConfigDispayRules configDisplay;
+    private Process myProcess;
+    private String metaName;
+    private BindState myBindState;
 
-	/**
-	 * gets items with given bind state
-	 * 
-	 * @param inProcess
-	 * @param bind
-	 * @param metaType
-	 */
-	
-	public DisplayCase(Process inProcess, String bind, String metaType ){
-		metaName = metaType;
-		myProcess = inProcess;
-		myBindState = Modes.getBindState();
-		try {
-			configDisplay = ConfigDispayRules.getInstance();
-			if (configDisplay != null) {
-				displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(), bind, metaName);
-				itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(), bind, metaName, displayType);
-			} else {
-				// no ruleset file
-				displayType = DisplayType.getByTitle("textarea");
-				itemList.add(new Item(metaName, "", false));
-			}
-		} catch (Exception e) {
-			// incorrect ruleset file
-			displayType = DisplayType.getByTitle("textarea");
-			itemList.add(new Item(metaName, "", false));
-		}
-		
-	}
-	
-	/**
-	 * 
-	 * @return current DisplayType
-	 */
-	
-	public DisplayType getDisplayType() {
-		return displayType;
-	}
+    /**
+     * gets items with current bind state.
+     *
+     * @param inProcess input process object
+     * @param metaType String
+     */
 
-	/**
-	 * 
-	 * @param itemList ArrayList with items for metadatum
-	 */
-	
-	public void setItemList(ArrayList<Item> itemList) {
-		this.itemList = itemList;
-	}
+    public DisplayCase(Process inProcess, String metaType ) {
+        metaName = metaType;
+        myProcess = inProcess;
+        myBindState = Modes.getBindState();
+        try {
+            configDisplay = ConfigDispayRules.getInstance();
+            if (configDisplay != null) {
+                displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(),
+					myBindState.getTitle(), metaName);
+                itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(),
+                    myBindState.getTitle(), metaName, displayType);
+            } else {
+                // no ruleset file
+                displayType = DisplayType.getByTitle("textarea");
+                itemList.add(new Item(metaName, "", false));
+            }
+        } catch (Exception e) {
+            // incorrect ruleset file
+            displayType = DisplayType.getByTitle("textarea");
+            itemList.add(new Item(metaName, "", false));
+        }
+    }
 
-	/**
-	 * 
-	 * @return ArrayList with items for metadatum
-	 */
+    /**
+     * gets items with given bind state.
+     *
+     * @param inProcess input process object
+     * @param bind String
+     * @param metaType String
+     */
+    public DisplayCase(Process inProcess, String bind, String metaType ) {
+        metaName = metaType;
+        myProcess = inProcess;
+        myBindState = Modes.getBindState();
+        try {
+            configDisplay = ConfigDispayRules.getInstance();
+            if (configDisplay != null) {
+                displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(), bind, metaName);
+                itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(), bind, metaName,
+                        displayType);
+            } else {
+                // no ruleset file
+                displayType = DisplayType.getByTitle("textarea");
+                itemList.add(new Item(metaName, "", false));
+            }
+        } catch (Exception e) {
+            // incorrect ruleset file
+            displayType = DisplayType.getByTitle("textarea");
+            itemList.add(new Item(metaName, "", false));
+        }
+    }
 
-	public ArrayList<Item> getItemList() {
-		return itemList;
-	}	
+    /**
+     * Get display type.
+     *
+     * @return current DisplayType
+     */
+    public DisplayType getDisplayType() {
+        return displayType;
+    }
+
+    /**
+     * Set item list.
+     *
+     * @param itemList ArrayList with items for metadata
+     */
+    public void setItemList(ArrayList<Item> itemList) {
+        this.itemList = itemList;
+    }
+
+    /**
+     * Get item list.
+     *
+     * @return ArrayList with items for metadata
+     */
+
+    public ArrayList<Item> getItemList() {
+        return itemList;
+    }
 }

@@ -34,228 +34,233 @@ import org.hibernate.type.StandardBasicTypes;
 import org.kitodo.data.database.beans.Process;
 
 /**
- * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data about the productivity of the
- * selected processes, which are passed into this class via implemetations of the IDataSource interface.
- * 
- * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of the selected {@link Process}es is
- * evaluated.
+ * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data
+ * about the productivity of the selected processes, which are passed into this class via implementations of
+ * the IDataSource interface.
+ *
+ * <p>According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of
+ * the selected {@link Process}es is valuated.</p>
  * 
  * @author Wulf Riebensahm
  * @author Robert Sehr
  */
 public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe {
 
-	// default value time filter is open
-	Date timeFilterFrom;
-	Date timeFilterTo;
+    // default value time filter is open
+    Date timeFilterFrom;
+    Date timeFilterTo;
 
-	// default values set to days and volumesAndPages
-	TimeUnit timeGrouping = TimeUnit.days;
-	private CalculationUnit cu = CalculationUnit.volumesAndPages;
+    // default values set to days and volumesAndPages
+    TimeUnit timeGrouping = TimeUnit.days;
+    private CalculationUnit cu = CalculationUnit.volumesAndPages;
 
-	/**
-	 * IDataSource needs here to be an implementation of hibernate.IEvaluableFilter, which is a hibernate based extension of IDataSource
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
-	 ****************************************************************************/
-	@Override
-	public List<DataTable> getDataTables(IDataSource dataSource) {
+    /**
+     * IDataSource needs here to be an implementation of hibernate.IEvaluableFilter, which is a hibernate based
+     * extension of IDataSource
+     *
+     * <p>(non-Javadoc)</p>
+     *
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * org.goobi.production.flow.statistics.IDataSource)
+     */
+    @Override
+    public List<DataTable> getDataTables(IDataSource dataSource) {
 
-		// contains an intger representing "reihenfolge" in schritte, as defined for this request
-		// if not defined it will trigger a fall back on a different way of retrieving the statistical data
-		Integer exactStepDone = null;
-		String stepname = null;
-		List<DataTable> allTables = new ArrayList<DataTable>();
+        // contains an intger representing "reihenfolge" in schritte, as defined for this request
+        // if not defined it will trigger a fall back on a different way of retrieving the statistical data
+        Integer exactStepDone = null;
+        String stepname = null;
+        List<DataTable> allTables = new ArrayList<DataTable>();
 
-		IEvaluableFilter originalFilter;
+        IEvaluableFilter originalFilter;
 
-		if (dataSource instanceof IEvaluableFilter) {
-			originalFilter = (IEvaluableFilter) dataSource;
-		} else {
-			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-		}
+        if (dataSource instanceof IEvaluableFilter) {
+            originalFilter = (IEvaluableFilter) dataSource;
+        } else {
+            throw new UnsupportedOperationException(
+                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+        }
 
-		// gathering some information from the filter passed by dataSource
-		// exactStepDone is very important ...
+        // gathering some information from the filter passed by dataSource exactStepDone is very important ...
 
-		try {
-			exactStepDone = originalFilter.stepDone();
-		} catch (UnsupportedOperationException e1) {
-		}
-		try {
-			stepname = originalFilter.stepDoneName();
-		} catch (UnsupportedOperationException e1) {
-		}
+        try {
+            exactStepDone = originalFilter.stepDone();
+        } catch (UnsupportedOperationException e1) {
+        }
+        try {
+            stepname = originalFilter.stepDoneName();
+        } catch (UnsupportedOperationException e1) {
+        }
 
-		// we have to build a query from scratch by reading the ID's
-		List<Integer> IDlist = null;
-		try {
-			IDlist = originalFilter.getIDList();
-		} catch (UnsupportedOperationException e) {
-		}
-		if (IDlist == null || IDlist.size() == 0) {
-			return null;
-		}
-		String natSQL = "";
-		// adding time restrictions
-		if (stepname == null) {
-			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL(exactStepDone);
-		} else {
-			natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL(stepname);
-		}
-		Session session = Helper.getHibernateSession();
+        // we have to build a query from scratch by reading the ID's
+        List<Integer> IDlist = null;
+        try {
+            IDlist = originalFilter.getIDList();
+        } catch (UnsupportedOperationException e) {
+        }
+        if (IDlist == null || IDlist.size() == 0) {
+            return null;
+        }
+        String natSQL = "";
+        // adding time restrictions
+        if (stepname == null) {
+            natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist)
+                    .getSQL(exactStepDone);
+        } else {
+            natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist)
+                    .getSQL(stepname);
+        }
+        Session session = Helper.getHibernateSession();
 
-		SQLQuery query = session.createSQLQuery(natSQL);
+        SQLQuery query = session.createSQLQuery(natSQL);
 
-		// needs to be there otherwise an exception is thrown
-		query.addScalar("volumes", StandardBasicTypes.INTEGER);
-		query.addScalar("pages", StandardBasicTypes.INTEGER);
-		query.addScalar("intervall", StandardBasicTypes.STRING);
+        // needs to be there otherwise an exception is thrown
+        query.addScalar("volumes", StandardBasicTypes.INTEGER);
+        query.addScalar("pages", StandardBasicTypes.INTEGER);
+        query.addScalar("intervall", StandardBasicTypes.STRING);
 
-		@SuppressWarnings("rawtypes")
-		List list = query.list();
+        @SuppressWarnings("rawtypes")
+        List list = query.list();
 
-		StringBuilder title = new StringBuilder(StatisticsMode.PRODUCTION.getTitle());
-		 title.append(" (");
-		 title.append(this.cu.getTitle());
-		 if (stepname == null || stepname.equals("")) {
-		 title.append(")");
-		 } else {
-			 title.append(", " + stepname + " )");
-		 }
+        StringBuilder title = new StringBuilder(StatisticsMode.PRODUCTION.getTitle());
+        title.append(" (");
+        title.append(this.cu.getTitle());
+        if (stepname == null || stepname.equals("")) {
+            title.append(")");
+        } else {
+            title.append(", " + stepname + " )");
+        }
 
-		// building table for the Table
-		DataTable dtbl = new DataTable(title.toString());
-		// building a second table for the chart
-		DataTable dtblChart = new DataTable(title.toString());
-		// 
-		DataRow dataRowChart;
-		DataRow dataRow;
+        // building table for the Table
+        DataTable dtbl = new DataTable(title.toString());
+        // building a second table for the chart
+        DataTable dtblChart = new DataTable(title.toString());
+        //
+        DataRow dataRowChart;
+        DataRow dataRow;
 
-		// each data row comes out as an Array of Objects
-		// the only way to extract the data is by knowing
-		// in which order they come out
-		for (Object obj : list) {
-			dataRowChart = new DataRow(null);
-			dataRow = new DataRow(null);
-			Object[] objArr = (Object[]) obj;
-			try {
+        // each data row comes out as an Array of Objects
+        // the only way to extract the data is by knowing
+        // in which order they come out
+        for (Object obj : list) {
+            dataRowChart = new DataRow(null);
+            dataRow = new DataRow(null);
+            Object[] objArr = (Object[]) obj;
+            try {
 
-				// getting localized time group unit
+                // getting localized time group unit
 
-				// String identifier = timeGrouping.getTitle();
-				// setting row name with localized time group and the date/time extraction based on the group
+                // String identifier = timeGrouping.getTitle();
+                // setting row name with localized time group and the date/time extraction based on the group
 
-				dataRowChart.setName(new Converter(objArr[2]).getString() + "");
-				dataRow.setName(new Converter(objArr[2]).getString() + "");
-				// dataRow.setName(new Converter(objArr[2]).getString());
+                dataRowChart.setName(new Converter(objArr[2]).getString() + "");
+                dataRow.setName(new Converter(objArr[2]).getString() + "");
+                // dataRow.setName(new Converter(objArr[2]).getString());
 
-				// building up row depending on requested output having different fields
-				switch (this.cu) {
+                // building up row depending on requested output having different fields
+                switch (this.cu) {
 
-				case volumesAndPages: {
-					dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-					dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)", (new Converter(objArr[1]).getDouble()) / 100);
+                    case volumesAndPages: {
+                        dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
+                                (new Converter(objArr[0]).getDouble()));
+                        dataRowChart.addValue(CalculationUnit.pages.getTitle() + " (*100)",
+                                (new Converter(objArr[1]).getDouble()) / 100);
+                        dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+                        dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+                    }
+                        break;
+                    case volumes: {
+                        dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0])
+                                .getDouble()));
+                        dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+                    }
+                        break;
+                    case pages: {
+                        dataRowChart.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+                        dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+                    }
+                        break;
 
-					dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-					dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+                }
 
-				}
-					break;
+                // fall back, if conversion triggers an exception
+            } catch (Exception e) {
+                dataRowChart.addValue(e.getMessage(), 0.0);
+                dataRow.addValue(e.getMessage(), 0.0);
+            }
 
-				case volumes: {
-					dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
-					dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
+            // finally adding dataRow to DataTable and fetching next row
+            // adding the extra table
+            dtblChart.addDataRow(dataRowChart);
+            dtbl.addDataRow(dataRow);
+        }
 
-				}
-					break;
+        // a list of DataTables is expected as return Object, even if there is only one
+        // Data Table as it is here in this implementation
+        dtblChart.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
+        dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
 
-				case pages: {
+        dtblChart.setShowableInTable(false);
+        dtbl.setShowableInChart(false);
 
-					dataRowChart.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
-					dataRow.addValue(CalculationUnit.pages.getTitle(), (new Converter(objArr[1]).getDouble()));
+        allTables.add(dtblChart);
+        allTables.add(dtbl);
+        return allTables;
 
-				}
-					break;
+    }
 
-				}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#
+     * setTimeFrame(java.util.Date, java.util.Date)
+     */
+    @Override
+    public void setTimeFrame(Date timeFrom, Date timeTo) {
+        this.timeFilterFrom = timeFrom;
+        this.timeFilterTo = timeTo;
+    }
 
-				// fall back, if conversion triggers an exception
-			} catch (Exception e) {
-				dataRowChart.addValue(e.getMessage(), 0.0);
-				dataRow.addValue(e.getMessage(), 0.0);
-			}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+     */
+    @Override
+    public void setTimeUnit(TimeUnit timeGrouping) {
+        this.timeGrouping = timeGrouping;
+    }
 
-			// finally adding dataRow to DataTable and fetching next row
-			// adding the extra table
-			dtblChart.addDataRow(dataRowChart);
-			dtbl.addDataRow(dataRow);
-		}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+     */
+    @Override
+    public void setCalculationUnit(CalculationUnit cu) {
+        this.cu = cu;
+    }
 
-		// a list of DataTables is expected as return Object, even if there is only one
-		// Data Table as it is here in this implementation
-		dtblChart.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
-		dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+     */
+    @Override
+    public Boolean isRendererInverted(IRenderer inRenderer) {
+        return inRenderer instanceof ChartRenderer;
+    }
 
-		dtblChart.setShowableInTable(false);
-		dtbl.setShowableInChart(false);
-
-		allTables.add(dtblChart);
-		allTables.add(dtbl);
-		return allTables;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
-	 */
-	@Override
-	public void setTimeFrame(Date timeFrom, Date timeTo) {
-		this.timeFilterFrom = timeFrom;
-		this.timeFilterTo = timeTo;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
-	 */
-	@Override
-	public void setTimeUnit(TimeUnit timeGrouping) {
-		this.timeGrouping = timeGrouping;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
-	 */
-	@Override
-	public void setCalculationUnit(CalculationUnit cu) {
-		this.cu = cu;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
-	 */
-	@Override
-	public Boolean isRendererInverted(IRenderer inRenderer) {
-		return inRenderer instanceof ChartRenderer;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
-	 */
-	@Override
-	public String getNumberFormatPattern() {
-		return "#";
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
+     */
+    @Override
+    public String getNumberFormatPattern() {
+        return "#";
+    }
 }

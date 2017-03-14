@@ -24,192 +24,184 @@ import org.kitodo.data.database.beans.Process;
  */
 @Deprecated
 public abstract class LongRunningTask extends EmptyTask {
-	/**
-	 * No-argument constructor. Creates an empty long running task. Must be made
-	 * explicit because a constructor taking an argument is present.
-	 * 
-	 * @deprecated New task implementations should directly implement EmptyTask.
-	 */
-	@Deprecated
-	public LongRunningTask() {
-		super((String) null);
-	}
+    /**
+     * No-argument constructor. Creates an empty long running task. Must be made explicit
+     * because a constructor taking an argument is present.
+     *
+     * @deprecated New task implementations should directly implement EmptyTask.
+     */
+    @Deprecated
+    public LongRunningTask() {
+        super((String) null);
+    }
 
-	/**
-	 * The clone constructor creates a new instance of this object. This is
-	 * necessary for Threads that have terminated in order to render to run them
-	 * again possible.
-	 * 
-	 * @param master
-	 *            copy master to create a clone of
-	 */
-	public LongRunningTask(LongRunningTask master) {
-		super(master);
-		initialize(master.process);
-	}
+    /**
+     * The clone constructor creates a new instance of this object. This is necessary for Threads
+     * that have terminated in order to render to run them again possible.
+     *
+     * @param master
+     *            copy master to create a clone of
+     */
+    public LongRunningTask(LongRunningTask master) {
+        super(master);
+        initialize(master.process);
+    }
 
-	protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
+    protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
 
-	private Process process;
-	private boolean isSingleThread = true;
+    private Process process;
+    private boolean isSingleThread = true;
 
-	public void initialize(Process inputProcess) {
-		this.process = inputProcess;
-	}
+    public void initialize(Process inputProcess) {
+        this.process = inputProcess;
+    }
 
-	/**
-	 * The method setShowMessages() can be used to set a flag whether this long
-	 * running task is executing asynchronously or not, in the latter case it
-	 * shall show messages to the user using
-	 * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
-	 * 
-	 * @param show
-	 *            whether to show messages to the user
-	 */
-	public void setShowMessages(boolean show) {
-		isSingleThread = !show;
-	}
+    /**
+     * The method setShowMessages() can be used to set a flag whether this long running task is
+	 * executing asynchronously or not, in the latter case it shall show messages to the user using
+     * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
+     *
+     * @param show
+     *            whether to show messages to the user
+     */
+    public void setShowMessages(boolean show) {
+        isSingleThread = !show;
+    }
 
-	/**
-	 * @deprecated Replaced by {@link Thread#interrupt()}.
-	 */
-	@Deprecated
-	public void cancel() {
-		this.interrupt();
-	}
+    /**
+     * @deprecated Replaced by {@link Thread#interrupt()}.
+     */
+    @Deprecated
+    public void cancel() {
+        this.interrupt();
+    }
 
-	/**
-	 * Calls the clone constructor to create a not yet executed instance of this
-	 * thread object. This is necessary for threads that have terminated in
-	 * order to render possible to restart them.
-	 * 
-	 * @return a not-yet-executed replacement of this thread
-	 * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
-	 */
-	@Override
-	public abstract EmptyTask replace();
+    /**
+     * Calls the clone constructor to create a not yet executed instance of this thread object.
+     * This is necessary for threads that have terminated in order to render possible to restart them.
+     *
+     * @return a not-yet-executed replacement of this thread
+     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     */
+    @Override
+    public abstract EmptyTask replace();
 
-	/**
-	 * The method stopped() had been used to record that the thread has stopped.
-	 * 
-	 * @deprecated The method stopped() has become redundant due to newer
-	 *             development. The thread state is now directly derived from
-	 *             {@link Thread#getState()} which is reliable in determining
-	 *             whether the thread has died, independent of whether it ever
-	 *             managed to call stopped() or died before.
-	 */
-	@Deprecated
-	protected void stopped() {
-	}
+    /**
+     * The method stopped() had been used to record that the thread has stopped.
+     *
+     * @deprecated The method stopped() has become redundant due to newer development.
+     *      The thread state is now directly derived from {@link Thread#getState()}
+     *      which is reliable in determining  whether the thread has died,
+     *      independent of whether it ever managed to call stopped() or died before.
+     */
+    @Deprecated
+    protected void stopped() {
+    }
 
-	/**
-	 * Returns the display name of the task to show to the user.
-	 * 
-	 * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
-	 */
-	@Override
-	public abstract String getDisplayName();
+    /**
+     * Returns the display name of the task to show to the user.
+     *
+     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     */
+    @Override
+    public abstract String getDisplayName();
 
-	/**
-	 * Process-Getter.
-	 */
-	public Process getProcess() {
-		return this.process;
-	}
+    /**
+     * Process-Getter.
+     */
+    public Process getProcess() {
+        return this.process;
+    }
 
-	/**
-	 * Status des Tasks in Angabe von Prozent.
-	 *
-	 * @deprecated Replaced by {@link EmptyTask#getProgress()}.
-	 */
-	@Deprecated
-	public int getStatusProgress() {
-		if (super.getException() != null) {
-			return -1;
-		}
-		return super.getProgress();
-	}
+    /**
+     * Status des Tasks in Angabe von Prozent.
+     *
+     * @deprecated Replaced by {@link EmptyTask#getProgress()}.
+     */
+    @Deprecated
+    public int getStatusProgress() {
+        if (super.getException() != null) {
+            return -1;
+        }
+        return super.getProgress();
+    }
 
-	/**
-	 * Meldung über den aktuellen Task
-	 * ================================================================
-	 * 
-	 * @deprecated Replaced by {@link EmptyTask#getTaskState()}.
-	 */
-	@Deprecated
-	public String getStatusMessage() {
-		return super.getTaskState().toString().toLowerCase();
-	}
+    /**
+     * Meldung über den aktuellen Task.
+     *
+     * @deprecated Replaced by {@link EmptyTask#getTaskState()}.
+     */
+    @Deprecated
+    public String getStatusMessage() {
+        return super.getTaskState().toString().toLowerCase();
+    }
 
-	/**
-	 * Titel des aktuellen Task
-	 * ================================================================
-	 * 
-	 * @deprecated Replaced by {@link Thread#getName()}.
-	 */
-	@Deprecated
-	public String getTitle() {
-		return super.getName();
-	}
+    /**
+     * Titel des aktuellen Task.
+     *
+     * @deprecated Replaced by {@link Thread#getName()}.
+     */
+    @Deprecated
+    public String getTitle() {
+        return super.getName();
+    }
 
-	/**
-	 * Setter für Fortschritt nur für vererbte Klassen
-	 * ================================================================
-	 * 
-	 * @deprecated Replaced by {@link EmptyTask#setProgress(int)}.
-	 */
-	@Deprecated
-	protected void setStatusProgress(int statusProgress) {
-		super.setProgress(statusProgress);
-	}
+    /**
+     * Setter für Fortschritt nur für vererbte Klassen.
+     *
+     * @deprecated Replaced by {@link EmptyTask#setProgress(int)}.
+     */
+    @Deprecated
+    protected void setStatusProgress(int statusProgress) {
+        super.setProgress(statusProgress);
+    }
 
-	/**
-	 * @deprecated Replaced by {@link EmptyTask#setProgress(double)}.
-	 */
-	@Deprecated
-	protected void setStatusProgress(double statusProgress) {
-		super.setProgress(statusProgress);
-	}
+    /**
+     * @deprecated Replaced by {@link EmptyTask#setProgress(double)}.
+     */
+    @Deprecated
+    protected void setStatusProgress(double statusProgress) {
+        super.setProgress(statusProgress);
+    }
 
-	/**
-	 * Setter für Statusmeldung nur für vererbte Klassen
-	 * ================================================================
-	 * 
-	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
-	 */
-	@Deprecated
-	protected void setStatusMessage(String statusMessage) {
-		super.setWorkDetail(statusMessage);
-		if (!this.isSingleThread) {
-			Helper.setMeldung(statusMessage);
-			logger.debug(statusMessage);
-		}
-	}
+    /**
+     * Setter für Statusmeldung nur für vererbte Klassen.
+     *
+     * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
+     */
+    @Deprecated
+    protected void setStatusMessage(String statusMessage) {
+        super.setWorkDetail(statusMessage);
+        if (!this.isSingleThread) {
+            Helper.setMeldung(statusMessage);
+            logger.debug(statusMessage);
+        }
+    }
 
-	/**
-	 * Setter für Titel nur für vererbte Klassen.
-	 *
-	 * @deprecated Replaced by {@link EmptyTask#EmptyTask(String)}.
-	 */
-	@Deprecated
-	protected void setTitle(String title) {
-		super.setNameDetail(title);
-	}
+    /**
+     * Setter für Titel nur für vererbte Klassen.
+     *
+     * @deprecated Replaced by {@link EmptyTask#EmptyTask(String)}.
+     */
+    @Deprecated
+    protected void setTitle(String title) {
+        super.setNameDetail(title);
+    }
 
-	/**
-	 * Setter für Prozess nur für vererbte Klassen.
-	 */
-	protected void setProcess(Process process) {
-		this.process = process;
-		setNameDetail(process.getTitle());
-	}
+    /**
+     * Setter für Prozess nur für vererbte Klassen.
+     */
+    protected void setProcess(Process process) {
+        this.process = process;
+        setNameDetail(process.getTitle());
+    }
 
-	/**
-	 * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
-	 */
-	@Deprecated
-	public void setLongMessage(String inlongMessage) {
-		super.setWorkDetail(inlongMessage);
-	}
+    /**
+     * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
+     */
+    @Deprecated
+    public void setLongMessage(String inlongMessage) {
+        super.setWorkDetail(inlongMessage);
+    }
 
 }

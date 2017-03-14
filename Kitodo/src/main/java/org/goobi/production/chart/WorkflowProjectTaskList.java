@@ -27,53 +27,54 @@ import org.kitodo.services.ProjectService;
  */
 public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 
-	@Override
-	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
-		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
-		calculate(inProject, myTaskList, countImages, inMax);
-		return myTaskList;
-	}
+    @Override
+    public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
+        List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
+        calculate(inProject, myTaskList, countImages, inMax);
+        return myTaskList;
+    }
 
-	private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
-		ProjectService projectService = new ProjectService();
-		List<StepInformation> workFlow = projectService.getWorkFlow(inProject);
-		Integer usedMax = 0;
+    private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages,
+											   Integer inMax) {
+        ProjectService projectService = new ProjectService();
+        List<StepInformation> workFlow = projectService.getWorkFlow(inProject);
+        Integer usedMax = 0;
 
-		for (StepInformation step : workFlow) {
-			ProjectTask pt = null;
+        for (StepInformation step : workFlow) {
+            ProjectTask pt = null;
 
-			// get workflow contains steps with the following structure
-			// stepTitle,stepOrder,stepCount,stepImageCount,totalProcessCount,totalImageCount
-			String title = step.getTitle();
-			if (title.length() > 40) {
-				title = title.substring(0, 40) + "...";
-			}
+            // get workflow contains steps with the following structure
+            // stepTitle,stepOrder,stepCount,stepImageCount,totalProcessCount,totalImageCount
+            String title = step.getTitle();
+            if (title.length() > 40) {
+                title = title.substring(0, 40) + "...";
+            }
 
-			String stepsCompleted = String.valueOf(step.getNumberOfStepsDone());
-			String imagesCompleted = String.valueOf(step.getNumberOfImagesDone());
+            String stepsCompleted = String.valueOf(step.getNumberOfStepsDone());
+            String imagesCompleted = String.valueOf(step.getNumberOfImagesDone());
 
-			if (countImages) {
-				usedMax = step.getNumberOfTotalImages();
-				if (usedMax > inMax) {
-					//TODO notify calling object, that the inMax is not set right
-				} else {
-					usedMax = inMax;
-				}
+            if (countImages) {
+                usedMax = step.getNumberOfTotalImages();
+                if (usedMax > inMax) {
+                    //TODO notify calling object, that the inMax is not set right
+                } else {
+                    usedMax = inMax;
+                }
 
-				pt = new ProjectTask(title, Integer.parseInt(imagesCompleted), usedMax);
-			} else {
-				usedMax = step.getNumberOfTotalSteps();
-				if (usedMax > inMax) {
-					//TODO notify calling object, that the inMax is not set right
-				} else {
-					usedMax = inMax;
-				}
+                pt = new ProjectTask(title, Integer.parseInt(imagesCompleted), usedMax);
+            } else {
+                usedMax = step.getNumberOfTotalSteps();
+                if (usedMax > inMax) {
+                    //TODO notify calling object, that the inMax is not set right
+                } else {
+                    usedMax = inMax;
+                }
 
-				pt = new ProjectTask(title, Integer.parseInt(stepsCompleted), usedMax);
-			}
-			myTaskList.add(pt);
+                pt = new ProjectTask(title, Integer.parseInt(stepsCompleted), usedMax);
+            }
+            myTaskList.add(pt);
 
-		}
-	}
+        }
+    }
 
 }

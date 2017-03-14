@@ -11,20 +11,18 @@
 
 package de.sub.goobi.helper.exceptions;
 
-import java.util.ArrayList;
-import java.util.Date;
-
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
- * This class provides the tools it takes to generate a configurable Error
- * message for Errors which are unexpected An example for the area in
- * GoobiProperties.config is given after the class declaration in the source
- * code.
+ * This class provides the tools it takes to generate a configurable Error message for Errors which are unexpected
+ * An example for the area in GoobiProperties.config is given after the class declaration in the source code.
  *
- * Besides building up the information in the constructor the other important
- * method is getLocalizedMessage(), which provides the build up message in html
+ * <p>Besides building up the information in the constructor the other important
+ * method is getLocalizedMessage(), which provides the build up message in html.</p>
  *
  * @author Wulf
  * @version 12/10/2009
@@ -40,197 +38,198 @@ import de.sub.goobi.helper.Helper;
  */
 public class GUIExceptionWrapper extends Exception {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
+    private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
 
+    private String userSeenErrorMessage = "";
 
-	private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
+    private String additionalMessage = "";
 
-	private String userSeenErrorMessage = "";
+    private String err_linkText = "";
 
-	private String additionalMessage = "";
+    private String err_emailBody = "";
+    private String err_emailMessage = "";
+    private String err_subjectLine = "";
 
-	private String err_linkText = "";
+    private ArrayList<String> emailAddresses = new ArrayList<String>();
 
-	private String err_emailBody = "";
-	private String err_emailMessage = "";
-	private String err_subjectLine = "";
+    private String internalErrorMsg = "";
 
-	private ArrayList<String> emailAddresses = new ArrayList<String>();
+    // private constructor to avoid wrong construction
+    @SuppressWarnings("unused")
+    private GUIExceptionWrapper() {
+    }
 
-	private String internalErrorMsg = "";
+    @SuppressWarnings("unused")
+    private GUIExceptionWrapper(String message) {
+    }
 
-	// private constructor to avoid wrong construction
-	@SuppressWarnings("unused")
-	private GUIExceptionWrapper() {
-	}
+    public GUIExceptionWrapper(Throwable cause) {
+        super.initCause(cause);
+    }
 
-	@SuppressWarnings("unused")
-	private GUIExceptionWrapper(String message) {
-	}
+    /**
+     * Exception Class catching unhandled exceptions to wrap it for GUI.
+     *
+     * @param message additional info, like which class called this constructor
+     * @param cause   last Exception cought with this wrapper
+     */
+    public GUIExceptionWrapper(String message, Throwable cause) {
+        this(cause);
+        this.additionalMessage = message + "<br/>";
+        init();
+    }
 
-	public GUIExceptionWrapper(Throwable cause) {
-		super.initCause(cause);
-	}
+    private void init() {
 
-	/**
-	 * Exception Class catching unhandled exceptions to wrap it for GUI
-	 *
-	 * @param message additional info, like which class called this constructor
-	 * @param cause   last Exception cought with this wrapper
-	 */
-	public GUIExceptionWrapper(String message, Throwable cause) {
-		this(cause);
-		this.additionalMessage = message + "<br/>";
-		init();
-	}
+        try {
+            if (ConfigMain.getBooleanParameter("err_userHandling")) {
+                this.err_linkText = Helper.getTranslation("err_linkText");
+                this.err_linkText = this.err_linkText.replace("{0}",
+                        ConfigMain.getParameter("err_linkToPage", "./Main.jsf"));
 
-	private void init() {
+                if (ConfigMain.getBooleanParameter("err_emailEnabled")) {
 
-		try {
-			if (ConfigMain.getBooleanParameter("err_userHandling")) {
-				this.err_linkText = Helper.getTranslation("err_linkText");
-				this.err_linkText = this.err_linkText.replace("{0}",
-						ConfigMain.getParameter("err_linkToPage", "./Main.jsf"));
+                    this.err_emailMessage = Helper.getTranslation("err_emailMessage");
+                    this.err_subjectLine = Helper.getTranslation("err_subjectLine");
+                    this.err_emailBody = Helper.getTranslation("err_emailBody");
 
-				if (ConfigMain.getBooleanParameter("err_emailEnabled")) {
+                    Integer emailCounter = Integer.valueOf(0);
+                    String email = "";
 
-					this.err_emailMessage = Helper.getTranslation("err_emailMessage");
-					this.err_subjectLine = Helper.getTranslation("err_subjectLine");
-					this.err_emailBody = Helper.getTranslation("err_emailBody");
+                    // indefinite emails can be added
+                    while (!email.equals("end")) {
+                        emailCounter++;
+                        email = ConfigMain.getParameter("err_emailAddress" + emailCounter.toString(), "end");
+                        if (!email.equals("end")) {
+                            this.emailAddresses.add(email);
+                        }
+                    }
 
-					Integer emailCounter = Integer.valueOf(0);
-					String email = "";
+                } else {
+                    // no email service enabled, build standard message
+                    this.err_emailMessage = Helper.getTranslation("err_noMailService");
 
-					// indefinite emails can be added
-					while (!email.equals("end")) {
-						emailCounter++;
-						email = ConfigMain.getParameter("err_emailAddress" + emailCounter.toString(), "end");
-						if (!email.equals("end")) {
-							this.emailAddresses.add(email);
-						}
-					}
+                }
+            } else {
+                this.internalErrorMsg = this.internalErrorMsg + "Feature turned off:<br/><br/>";
+                this.userSeenErrorMessage = this.fallBackErrorMessage;
+            }
 
-				} else {
-					// no email service enabled, build standard message
-					this.err_emailMessage = Helper.getTranslation("err_noMailService");
+        } catch (Exception e) {
+            this.internalErrorMsg = this.internalErrorMsg + "Error on loading Config items:<br/>" + e.getMessage()
+                    + "<br/><br/>";
+            this.userSeenErrorMessage = this.fallBackErrorMessage;
 
-				}
-			} else {
-				this.internalErrorMsg = this.internalErrorMsg + "Feature turned off:<br/><br/>";
-				this.userSeenErrorMessage = this.fallBackErrorMessage;
-			}
+        } finally {
+        }
+    }
 
-		} catch (Exception e) {
-			this.internalErrorMsg = this.internalErrorMsg + "Error on loading Config items:<br/>" + e.getMessage() + "<br/><br/>";
-			this.userSeenErrorMessage = this.fallBackErrorMessage;
+    /**
+     * this method overwrites supers method of the same name. It provides the output of collected error data
+     * and shapes it into html format for display in browsers.
+     */
+    @Override
+    public String getLocalizedMessage() {
 
-		} finally {
-		}
-	}
+        final String lineFeed = "\r\n";
+        final String htmlLineFeed = "<br/>";
 
-	/**
-	 * this method overwrites supers method of the same name. It provides the output of collected error data and shapes it into html format for display in browsers
-	 */
-	@Override
-	public String getLocalizedMessage() {
+        final String mailtoLinkHrefMailTo = "mailto:";
+        final String mailtoLinkSubject = "?subject=";
+        final String mailtoLinkBody = "&body=";
 
-		final String lineFeed = "\r\n";
-		final String htmlLineFeed = "<br/>";
+        if (this.userSeenErrorMessage.length() > 0) {
+            return this.additionalMessage + this.userSeenErrorMessage;
+        }
 
-		final String mailtoLinkHrefMailTo = "mailto:";
-		final String mailtoLinkSubject = "?subject=";
-		final String mailtoLinkBody = "&body=";
+        // according to config the message to the user consists of two parts
+        // the part, which may contain a href web link and the part, which
+        // allows a mailto: link triggered email from the user to
+        // admin/developers
+        String linkPart = "";
+        String emailPart = "";
 
-		if (this.userSeenErrorMessage.length() > 0) {
-			return this.additionalMessage + this.userSeenErrorMessage;
-		}
+        linkPart = this.err_linkText + lineFeed;
 
-		// according to config the message to the user consists of two parts
-		// the part, which may contain a href web link and the part, which
-		// allows a mailto: link triggered email from the user to
-		// admin/developers
-		String linkPart = "";
-		String emailPart = "";
+        // only elaborate email part if
+        if (this.emailAddresses.size() > 0) {
+            emailPart = this.err_emailMessage.replace("{0}",
+                    mailtoLinkHrefMailTo + getAddresses()
+                            + mailtoLinkSubject + this.err_subjectLine
+                            + mailtoLinkBody +  this.err_emailBody
+                            + htmlLineFeed + htmlLineFeed
+                            + htmlLineFeed + getContextInfo()
+                            + htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
-		linkPart = this.err_linkText + lineFeed;
+        } else {
+            // if no address a general text will be provided by this class
+            emailPart = Helper.getTranslation("err_noMailService");
+        }
 
-		// only elaborate email part if
-		if (this.emailAddresses.size() > 0) {
-			emailPart = this.err_emailMessage.replace("{0}",
-					mailtoLinkHrefMailTo + getAddresses() +
-					mailtoLinkSubject + this.err_subjectLine +
-					mailtoLinkBody +  this.err_emailBody +
-					htmlLineFeed + htmlLineFeed +
-					htmlLineFeed + getContextInfo() +
-					htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
+        this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed
+                + emailPart;
 
-		} else {
-			// if no address a general text will be provided by this class
-			emailPart = Helper.getTranslation("err_noMailService");
-		}
+        return this.userSeenErrorMessage;
+    }
 
-		this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed
-				+ emailPart;
+    /**
+     * Get address.
+     *
+     * @return collected addresses as a string to be used after &lt;a href="mailto:"&gt;
+     */
+    private String getAddresses() {
+        StringBuffer addresses = new StringBuffer();
+        for (String emailAddy : this.emailAddresses) {
+            addresses = addresses.append(emailAddy).append(",%20");
+        }
+        return addresses.toString();
+    }
 
-		return this.userSeenErrorMessage;
-	}
+    /**
+     * Get stack trace.
+     *
+     * @param stackTrace StackTraceElement object
+     * @return stack trace as String
+     */
+    private String getStackTrace(StackTraceElement[] stackTrace) {
+        String stackTraceReturn = "";
+        String tempTraceReturn = "";
+        Integer counter = 0;
+        for (StackTraceElement itStackTrace : stackTrace) {
+            // only taking those elements from the stack trace, which contain goobi and the top level element
+            if (counter ++ == 1 || itStackTrace.toString().toLowerCase().contains("goobi")) {
+                stackTraceReturn = stackTraceReturn +  "<br/>" + itStackTrace.toString();
+                tempTraceReturn = "";
+            } else {
+                if (tempTraceReturn.length() < 1) {
+                    stackTraceReturn = stackTraceReturn + "<br/> ---- skipping non goobi class(es) .";
+                } else {
+                    stackTraceReturn = stackTraceReturn + " .";
+                }
+                tempTraceReturn = "<br/>" + itStackTrace.toString();
+            }
 
-	/**
-	 *
-	 * @return collected addresses as a string to be used after <a href="mailto:"
-	 */
-	private String getAddresses() {
-		StringBuffer addresses = new StringBuffer();
-		for (String emailAddy : this.emailAddresses) {
-			addresses = addresses.append(emailAddy).append(",%20");
-		}
-		return addresses.toString();
-	}
+            if (stackTraceReturn.length() > 1000) {
+                return stackTraceReturn + tempTraceReturn
+                        + "<br/><br/>	---- truncated rest of stack trace to avoid overflow ---- ";
+            }
+        }
+        return stackTraceReturn + tempTraceReturn + "<br/><br/>	---- bottom of stack trace ---- ";
+    }
 
-	/**
-	 *
-	 * @param stackTrace
-	 * @return stack trace as String
-	 */
-	private String getStackTrace(StackTraceElement[] stackTrace) {
-		String stackTraceReturn = "";
-		String tempTraceReturn = "";
-		Integer counter = 0;
-		for (StackTraceElement itStackTrace : stackTrace) {
-			// only taking those elements from the stack trace, which contain goobi and the top level element
-			if (counter++==1 || itStackTrace.toString().toLowerCase().contains("goobi")){
-				stackTraceReturn = stackTraceReturn +  "<br/>" + itStackTrace.toString();
-				tempTraceReturn = "";
-			}else{
-				if (tempTraceReturn.length()<1){
-					stackTraceReturn = stackTraceReturn + "<br/> ---- skipping non goobi class(es) .";
-				}else{
-					stackTraceReturn = stackTraceReturn + " .";
-				}
-				tempTraceReturn = "<br/>" + itStackTrace.toString();
-			}
-
-			if (stackTraceReturn.length()>1000) {
-				return stackTraceReturn + tempTraceReturn + "<br/><br/>	---- truncated rest of stack trace to avoid overflow ---- ";
-			}
-		}
-		return stackTraceReturn + tempTraceReturn + "<br/><br/>	---- bottom of stack trace ---- ";
-	}
-
-	/**
-	 *
-	 * @return the Class of the initial Exception if possible
-	 */
-	private String getContextInfo(){
-		String getContextInfo = "";
-		getContextInfo = getContextInfo + "ThrowingClass=" + this.additionalMessage;
-		getContextInfo = getContextInfo + "Time=" + new Date().toString() + "<br/>";
-		getContextInfo = getContextInfo + "Cause=" + super.getCause() + "<br/>";
-		return getContextInfo;
-	}
+    /**
+     * Get context info.
+     *
+     * @return the Class of the initial Exception if possible
+     */
+    private String getContextInfo() {
+        String getContextInfo = "";
+        getContextInfo = getContextInfo + "ThrowingClass=" + this.additionalMessage;
+        getContextInfo = getContextInfo + "Time=" + new Date().toString() + "<br/>";
+        getContextInfo = getContextInfo + "Cause=" + super.getCause() + "<br/>";
+        return getContextInfo;
+    }
 
 }

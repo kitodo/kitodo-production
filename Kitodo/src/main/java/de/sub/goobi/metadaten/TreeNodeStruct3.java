@@ -19,125 +19,119 @@ import de.sub.goobi.helper.TreeNode;
 
 public class TreeNodeStruct3 extends TreeNode {
 
-	private DocStruct struct;
-	private String firstImage;
-	private String lastImage;
-	private String zblNummer;
-	private String mainTitle;
-	private String ppnDigital;
-	private String identifier;
-	private String zblSeiten;
-	private boolean einfuegenErlaubt;
+    private DocStruct struct;
+    private String firstImage;
+    private String lastImage;
+    private String zblNummer;
+    private String mainTitle;
+    private String ppnDigital;
+    private String identifier;
+    private String zblSeiten;
+    private boolean einfuegenErlaubt;
 
-	/**
-	 * Konstruktoren
-	 */
-	public TreeNodeStruct3() {
-	}
+    /**
+     * Konstruktoren
+     */
+    public TreeNodeStruct3() {
+    }
 
-	/* =============================================================== */
+    public TreeNodeStruct3(boolean expanded, String label, String id) {
+        this.expanded = expanded;
+        this.label = label;
+        this.id = id;
+        //TODO: Use generics
+        this.children = new ArrayList<TreeNode>();
+    }
 
-	public TreeNodeStruct3(boolean expanded, String label, String id) {
-		this.expanded = expanded;
-		this.label = label;
-		this.id = id;
-		//TODO: Use generics
-		this.children = new ArrayList<TreeNode>();
-	}
+    public TreeNodeStruct3(String label, DocStruct struct) {
+        this.label = label;
+        this.struct = struct;
+    }
 
-	/* =============================================================== */
+    public String getIdentifier() {
+        return this.identifier;
+    }
 
-	public TreeNodeStruct3(String label, DocStruct struct) {
-		this.label = label;
-		this.struct = struct;
-	}
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
 
-	/* =============================================================== */
+    public String getMainTitle() {
 
-	public String getIdentifier() {
-		return this.identifier;
-	}
+        int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);
+        if (maxSize > 0 && this.mainTitle!=null && this.mainTitle.length() > maxSize){
+            return this.mainTitle.substring(0, maxSize -1);
+        }
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
+        return this.mainTitle;
+    }
 
-	public String getMainTitle() {
-		
-		int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);
-		if (maxSize > 0 && this.mainTitle!=null && this.mainTitle.length() > maxSize){
-			return this.mainTitle.substring(0, maxSize -1);
-		}
-		
-		return this.mainTitle;
-	}
+    public void setMainTitle(String mainTitle) {
+        this.mainTitle = mainTitle;
+    }
 
-	public void setMainTitle(String mainTitle) {
-		this.mainTitle = mainTitle;
-	}
-	
-	public String getPpnDigital() {
-		return this.ppnDigital;
-	}
+    public String getPpnDigital() {
+        return this.ppnDigital;
+    }
 
-	public void setPpnDigital(String ppnDigital) {
-		this.ppnDigital = ppnDigital;
-	}
+    public void setPpnDigital(String ppnDigital) {
+        this.ppnDigital = ppnDigital;
+    }
 
-	public String getFirstImage() {
-		return this.firstImage;
-	}
+    public String getFirstImage() {
+        return this.firstImage;
+    }
 
-	public void setFirstImage(String firstImage) {
-		this.firstImage = firstImage;
-	}
+    public void setFirstImage(String firstImage) {
+        this.firstImage = firstImage;
+    }
 
-	public String getLastImage() {
-		return this.lastImage;
-	}
+    public String getLastImage() {
+        return this.lastImage;
+    }
 
-	public void setLastImage(String lastImage) {
-		this.lastImage = lastImage;
-	}
+    public void setLastImage(String lastImage) {
+        this.lastImage = lastImage;
+    }
 
-	public DocStruct getStruct() {
-		return this.struct;
-	}
+    public DocStruct getStruct() {
+        return this.struct;
+    }
 
-	public void setStruct(DocStruct struct) {
-		this.struct = struct;
-	}
+    public void setStruct(DocStruct struct) {
+        this.struct = struct;
+    }
 
-	public String getZblNummer() {
-		return this.zblNummer;
-	}
+    public String getZblNummer() {
+        return this.zblNummer;
+    }
 
-	public void setZblNummer(String zblNummer) {
-		this.zblNummer = zblNummer;
-	}
+    public void setZblNummer(String zblNummer) {
+        this.zblNummer = zblNummer;
+    }
 
-	public String getDescription() {
-		return this.label;
-	}
+    public String getDescription() {
+        return this.label;
+    }
 
-	public void setDescription(String description) {
-		this.label = description;
-	}
+    public void setDescription(String description) {
+        this.label = description;
+    }
 
-	public boolean isEinfuegenErlaubt() {
-		return this.einfuegenErlaubt;
-	}
+    public boolean isEinfuegenErlaubt() {
+        return this.einfuegenErlaubt;
+    }
 
-	public void setEinfuegenErlaubt(boolean einfuegenErlaubt) {
-		this.einfuegenErlaubt = einfuegenErlaubt;
-	}
+    public void setEinfuegenErlaubt(boolean einfuegenErlaubt) {
+        this.einfuegenErlaubt = einfuegenErlaubt;
+    }
 
-	public String getZblSeiten() {
-		return this.zblSeiten;
-	}
+    public String getZblSeiten() {
+        return this.zblSeiten;
+    }
 
-	public void setZblSeiten(String zblSeiten) {
-		this.zblSeiten = zblSeiten;
-	}
+    public void setZblSeiten(String zblSeiten) {
+        this.zblSeiten = zblSeiten;
+    }
 
 }

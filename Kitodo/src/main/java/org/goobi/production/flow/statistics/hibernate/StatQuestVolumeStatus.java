@@ -38,80 +38,87 @@ import org.kitodo.data.database.beans.Task;
  */
 public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
-	 */
-	@Override
-	public List<DataTable> getDataTables(IDataSource dataSource) {
+    /*
+     * (non-Javadoc)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * org.goobi.production.flow.statistics.IDataSource)
+     */
+    @Override
+    public List<DataTable> getDataTables(IDataSource dataSource) {
 
-		IEvaluableFilter originalFilter;
+        IEvaluableFilter originalFilter;
 
-		if (dataSource instanceof IEvaluableFilter) {
-			originalFilter = (IEvaluableFilter) dataSource;
-		} else {
-			throw new UnsupportedOperationException("This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-		}
+        if (dataSource instanceof IEvaluableFilter) {
+            originalFilter = (IEvaluableFilter) dataSource;
+        } else {
+            throw new UnsupportedOperationException(
+                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+        }
 
-		Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
-		crit.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)), Restrictions.like("processingStatus", Integer.valueOf(2))));
+        Criteria crit = Helper.getHibernateSession().createCriteria(Task.class);
+        crit.add(Restrictions.or(Restrictions.eq("processingStatus", Integer.valueOf(1)),
+                Restrictions.like("processingStatus", Integer.valueOf(2))));
 
-		if (originalFilter instanceof UserDefinedFilter) {
-			crit.createCriteria("process", "proz");
-			crit.add(Restrictions.in("proz.id", originalFilter.getIDList()));
-		}
-		StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());
+        if (originalFilter instanceof UserDefinedFilter) {
+            crit.createCriteria("process", "proz");
+            crit.add(Restrictions.in("proz.id", originalFilter.getIDList()));
+        }
+        StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());
 
-		DataTable dtbl = new DataTable(title.toString());
-		dtbl.setShowableInPieChart(true);
-		DataRow dRow = new DataRow(Helper.getTranslation("count"));
+        DataTable dtbl = new DataTable(title.toString());
+        dtbl.setShowableInPieChart(true);
+        DataRow dRow = new DataRow(Helper.getTranslation("count"));
 
-		for (Object obj : crit.list()) {
-			Task step = (Task) obj;
-			String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step.getTitle());
-			dRow.addValue(kurztitel, dRow.getValue(kurztitel) + 1);
-		}
+        for (Object obj : crit.list()) {
+            Task step = (Task) obj;
+            String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step
+                    .getTitle());
+            dRow.addValue(kurztitel, dRow.getValue(kurztitel) + 1);
+        }
 
-		dtbl.addDataRow(dRow);
-		List<DataTable> allTables = new ArrayList<DataTable>();
+        dtbl.addDataRow(dRow);
+        List<DataTable> allTables = new ArrayList<DataTable>();
 
-		dtbl.setUnitLabel(Helper.getTranslation("arbeitsschritt"));
-		allTables.add(dtbl);
-		return allTables;
-	}
+        dtbl.setUnitLabel(Helper.getTranslation("arbeitsschritt"));
+        allTables.add(dtbl);
+        return allTables;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
-	 */
-	@Override
-	public Boolean isRendererInverted(IRenderer inRenderer) {
-		return inRenderer instanceof HtmlTableRenderer;
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
+     * de.intranda.commons.chart.renderer.IRenderer)
+     */
+    @Override
+    public Boolean isRendererInverted(IRenderer inRenderer) {
+        return inRenderer instanceof HtmlTableRenderer;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
-	 */
-	@Override
-	public void setCalculationUnit(CalculationUnit cu) {
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+     * org.goobi.production.flow.statistics.enums.CalculationUnit)
+     */
+    @Override
+    public void setCalculationUnit(CalculationUnit cu) {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
-	 */
-	@Override
-	public void setTimeUnit(TimeUnit timeUnit) {
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+     * org.goobi.production.flow.statistics.enums.TimeUnit)
+     */
+    @Override
+    public void setTimeUnit(TimeUnit timeUnit) {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
-	 */
-	@Override
-	public String getNumberFormatPattern() {
-		return "#";
-	}
+    /*
+     * (non-Javadoc)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
+     */
+    @Override
+    public String getNumberFormatPattern() {
+        return "#";
+    }
 
 }

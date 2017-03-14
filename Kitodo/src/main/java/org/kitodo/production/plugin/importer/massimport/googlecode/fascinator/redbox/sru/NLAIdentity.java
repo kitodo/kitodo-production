@@ -11,39 +11,38 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru;
 
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * <p>A basic wrapper for handling EAC-CPF formatted identities that return for
- * the National Library of Australia. This is neither a complete EAC-CPF handling
- * class, nor a complete implementation of NLA identities. It is just a utility
- * for access the things ReDBox/Mint cares about in common node.</p>
- * 
+ * <p>A basic wrapper for handling EAC-CPF formatted identities that return for the National Library of Australia.
+ * This is neither a complete EAC-CPF handling class, nor a complete implementation of NLA identities.
+ * It is just a utility for access the things ReDBox/Mint cares about in common node.</p>
+ *
  * @author Greg Pendlebury
  */
 public class NLAIdentity {
-    /** Logging **/
+    /** Logging. **/
     private static Logger log = LoggerFactory.getLogger(NLAIdentity.class);
 
-    /** DOM4J Node for this person **/
+    /** DOM4J Node for this person. **/
     private Node eac;
 
-    /** Properties we extract **/
+    /** Properties we extract. **/
     private String nlaId;
     private String displayName;
     private String firstName;
@@ -53,7 +52,7 @@ public class NLAIdentity {
 
     /**
      * <p>Default Constructor. Extract some basic information.</p>
-     * 
+     *
      * @param node searchResponse A parsed DOM4J Document
      * @throws SRUException If any of the XML structure does not look like expected
      */
@@ -168,13 +167,15 @@ public class NLAIdentity {
             String title = null;
 
             // First name
-            Node firstNameNode = name.selectSingleNode("eac:part[(@localType=\"forename\") or (@localType=\"givenname\")]");
+            Node firstNameNode = name.selectSingleNode("eac:part[(@localType=\"forename\") "
+                    + "or (@localType=\"givenname\")]");
             if (firstNameNode != null) {
                 thisFirstName = firstNameNode.getText();
             }
 
             // Surname
-            Node surnameNode = name.selectSingleNode("eac:part[(@localType=\"surname\") or (@localType=\"familyname\")]");
+            Node surnameNode = name.selectSingleNode("eac:part[(@localType=\"surname\") "
+                    + "or (@localType=\"familyname\")]");
             if (surnameNode != null) {
                 thisSurname = surnameNode.getText();
             }
@@ -212,7 +213,7 @@ public class NLAIdentity {
                     String type = element.attributeValue("localType");
                     // Build a display value for this part
                     if (type != null) {
-                        value += " ("+type+")";
+                        value += " (" + type + ")";
                     }
                     // And add to the display name
                     if (thisDisplay == null) {
@@ -232,7 +233,7 @@ public class NLAIdentity {
 
     /**
      * <p>Getter for the NLA Identifier in use by this Identity.</p>
-     * 
+     *
      * @return String The ID from the NLA for this Identity
      */
     public String getId() {
@@ -241,7 +242,7 @@ public class NLAIdentity {
 
     /**
      * <p>Getter for our best estimation on a display name for this Identity.</p>
-     * 
+     *
      * @return String The display name for this Identity
      */
     public String getDisplayName() {
@@ -250,7 +251,7 @@ public class NLAIdentity {
 
     /**
      * <p>Getter for the first name for this Identity.</p>
-     * 
+     *
      * @return String The first name for this Identity
      */
     public String getFirstName() {
@@ -259,7 +260,7 @@ public class NLAIdentity {
 
     /**
      * <p>Getter for the surname for this Identity.</p>
-     * 
+     *
      * @return String The surname for this Identity
      */
     public String getSurame() {
@@ -268,7 +269,7 @@ public class NLAIdentity {
 
     /**
      * <p>Getter for the institution for this Identity.</p>
-     * 
+     *
      * @return String The institution for this Identity
      */
     public String getInstitution() {
@@ -285,8 +286,8 @@ public class NLAIdentity {
      *   <li>'surname'</li>
      *   <li>'institution'</li>
      * </ul>
-     * 
-     * @return List<Map<String, String>> A List Object containing identities
+     *
+     * @return List&lt;Map&lt;String, String&gt;&gt; A List Object containing identities
      */
     public List<Map<String, String>> getKnownIdentities() {
         return knownIds;
@@ -295,17 +296,16 @@ public class NLAIdentity {
     /**
      * <p>Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
      * Individual Nodes that fail to process will be skipped.</p>
-     * 
+     *
      * @param nodes A List of Nodes to process
-     * @return List<NLAIdentity> A List of processed Identities
+     * @return List&lt;NLAIdentity&gt; A List of processed Identities
      */
     public static List<NLAIdentity> convertNodesToIdentities(List<Node> nodes) {
         try {
             return convertNodesToIdentities(nodes, false);
         } catch (SRUException ex) {
-            // Will never executre because 'false' is set above,
-            // but trapping this here allows users to call this method
-            // with greater ease, since they wan't need to trap.
+            // Will never execute because 'false' is set above, but trapping this here allows users
+            // to call this method with greater ease, since they wan't need to trap.
             return null;
         }
     }
@@ -313,10 +313,10 @@ public class NLAIdentity {
     /**
      * <p>Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
      * Must indicate whether or not errors should cause processing to halt.</p>
-     * 
+     *
      * @param nodes A List of Nodes to process
      * @param haltOnErrors Flag if a single Node failing to process should halt execution.
-     * @return List<NLAIdentity> A List of processed Identities
+     * @return List&lt;NLAIdentity&gt; A List of processed Identities
      * @throws SRUException If 'haltOnErrors' is set to TRUE and a Node fails to process.
      */
     public static List<NLAIdentity> convertNodesToIdentities(List<Node> nodes,
@@ -331,9 +331,8 @@ public class NLAIdentity {
             try {
                 NLAIdentity newId = new NLAIdentity(node);
                 response.add(newId);
-
             // Only halt if requested
-            } catch(SRUException ex) {
+            } catch (SRUException ex) {
                 log.error("Unable to process identity: ", ex);
                 if (haltOnErrors) {
                     throw ex;

@@ -22,38 +22,37 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
 
-
 public class DocketConverter implements Converter {
-   public static final String CONVERTER_ID = "DocketConverter";
-   private static final Logger logger = Logger.getLogger(DocketConverter.class);
-   
-   @Override
-public Object getAsObject(FacesContext context, UIComponent component, String value)
-         throws ConverterException {
-      if (value == null || value.length() == 0) {
-         return null;
-      } else {
-         try {
-				return new DocketDAO().find(Integer.valueOf(value));
-			} catch (DAOException | NumberFormatException e) {
-				logger.error(e);
-				return "0";
-			}
-      }
-   }
+    public static final String CONVERTER_ID = "DocketConverter";
+    private static final Logger logger = Logger.getLogger(DocketConverter.class);
 
-   @Override
-public String getAsString(FacesContext context, UIComponent component, Object value)
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value)
          throws ConverterException {
-      if (value == null) {
-         return null;
-      } else if (value instanceof Docket) {
-         return String.valueOf(((Docket) value).getId().intValue());
-      } else if (value instanceof String) {
-         return (String) value;
-      } else {
-         throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Docket' sein!");
-      }
-   }
+        if (value == null || value.length() == 0) {
+            return null;
+        } else {
+            try {
+                return new DocketDAO().find(Integer.valueOf(value));
+            } catch (DAOException | NumberFormatException e) {
+                logger.error(e);
+                return "0";
+            }
+        }
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value)
+         throws ConverterException {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Docket) {
+            return String.valueOf(((Docket) value).getId().intValue());
+        } else if (value instanceof String) {
+            return (String) value;
+        } else {
+            throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Docket' sein!");
+        }
+    }
 
 }

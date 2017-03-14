@@ -67,12 +67,12 @@ import ugh.exceptions.WriteException;
 public class GoobiScript {
     HashMap<String, String> myParameters;
     private static final Logger logger = Logger.getLogger(GoobiScript.class);
-	private ProcessService processService = new ProcessService();
-	private RulesetService rulesetService = new RulesetService();
-	private TaskService taskService = new TaskService();
-	private UserService userService = new UserService();
-	private UserGroupService userGroupService = new UserGroupService();
-    public final static String DIRECTORY_SUFFIX = "_tif";
+    private ProcessService processService = new ProcessService();
+    private RulesetService rulesetService = new RulesetService();
+    private TaskService taskService = new TaskService();
+    private UserService userService = new UserService();
+    private UserGroupService userGroupService = new UserGroupService();
+    public static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
      * Starten des Scripts.
@@ -87,7 +87,7 @@ public class GoobiScript {
             String tok = tokenizer.nextToken();
             if (tok.indexOf(":") == -1) {
                 Helper.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ",
-						tok);
+                        tok);
             } else {
                 String myKey = tok.substring(0, tok.indexOf(":"));
                 String myValue = tok.substring(tok.indexOf(":") + 1);
@@ -102,7 +102,9 @@ public class GoobiScript {
             Helper.setFehlerMeldung(
                     "goobiScriptfield",
                     "missing action",
-                    " - possible: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
+                    " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
+                            + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
+                            + "action:importFromFileSystem'");
             return;
         }
 
@@ -146,7 +148,8 @@ public class GoobiScript {
         } else if (this.myParameters.get("action").equals("exportDms")) {
             exportDms(inProzesse, this.myParameters.get("exportImages"), true);
         } else if (this.myParameters.get("action").equals("export")) {
-            exportDms(inProzesse, this.myParameters.get("exportImages"), Boolean.valueOf(this.myParameters.get("exportOcr")));
+            exportDms(inProzesse, this.myParameters.get("exportImages"),
+                    Boolean.valueOf(this.myParameters.get("exportOcr")));
         } else if (this.myParameters.get("action").equals("doit")) {
             exportDms(inProzesse, "false", false);
         } else if (this.myParameters.get("action").equals("doit2")) {
@@ -171,7 +174,9 @@ public class GoobiScript {
             Helper.setFehlerMeldung(
                     "goobiScriptfield",
                     "Unknown action",
-                    " - use: 'action:swapsteps, action:adduser, action:addusergroup, action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, action:importFromFileSystem'");
+                    " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
+                            + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
+                            + "action:importFromFileSystem'");
             return;
         }
 
@@ -260,26 +265,26 @@ public class GoobiScript {
     }
 
     /**
-     * Prozesse auslagern,
+     * Prozesse auslagern.
      */
     private void swapOutProzesses(List<Process> inProzesse) {
         for (Process p : inProzesse) {
             ProcessSwapOutTask task = new ProcessSwapOutTask();
             task.initialize(p);
-			TaskManager.addTask(task);
-			task.start();
+            TaskManager.addTask(task);
+            task.start();
         }
     }
 
     /**
-     * Prozesse wieder einlagern,
+     * Prozesse wieder einlagern.
      */
     private void swapInProzesses(List<Process> inProzesse) {
         for (Process p : inProzesse) {
             ProcessSwapInTask task = new ProcessSwapInTask();
             task.initialize(p);
-			TaskManager.addTask(task);
-			task.start();
+            TaskManager.addTask(task);
+            task.start();
         }
     }
 
@@ -297,7 +302,8 @@ public class GoobiScript {
 
         SafeFile sourceFolder = new SafeFile(this.myParameters.get("sourcefolder"));
         if (!sourceFolder.isDirectory()) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
+            Helper.setFehlerMeldung("goobiScriptfield", "Directory " + this.myParameters.get("sourcefolder")
+                    + " does not exisist");
             return;
         }
         try {
@@ -305,22 +311,22 @@ public class GoobiScript {
                 SafeFile imagesFolder = new SafeFile(processService.getImagesOrigDirectory(false, p));
                 if (imagesFolder.list().length > 0) {
                     Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitle()
-							+ " [" + p.getId().intValue()
+                            + " [" + p.getId().intValue()
                             + "] has already data in image folder");
                 } else {
                     SafeFile sourceFolderProzess = new SafeFile(sourceFolder, p.getTitle());
                     if (!sourceFolder.isDirectory()) {
                         Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process "
-								+ p.getTitle() + " [" + p.getId().intValue()
+                                + p.getTitle() + " [" + p.getId().intValue()
                                 + "] is not existing");
                     } else {
-                    	sourceFolderProzess.copyDir(imagesFolder);
+                        sourceFolderProzess.copyDir(imagesFolder);
                         Helper.setMeldung("goobiScriptfield", "", "The directory for process " + p.getTitle()
-								+ " [" + p.getId().intValue()
+                                + " [" + p.getId().intValue()
                                 + "] is copied");
                     }
                     Helper.setMeldung("goobiScriptfield", "", "The process " + p.getTitle() + " ["
-							+ p.getId().intValue() + "] is copied");
+                            + p.getId().intValue() + "] is copied");
                 }
             }
         } catch (Exception e) {
@@ -343,7 +349,7 @@ public class GoobiScript {
 
         try {
             List<Ruleset> rulesets = rulesetService.search("from Ruleset where title='"
-					+ this.myParameters.get("ruleset") + "'");
+                    + this.myParameters.get("ruleset") + "'");
             if (rulesets == null || rulesets.size() == 0) {
                 Helper.setFehlerMeldung("goobiScriptfield", "Could not find ruleset: ", "ruleset");
                 return;
@@ -389,7 +395,8 @@ public class GoobiScript {
             reihenfolge1 = Integer.parseInt(this.myParameters.get("swap1nr"));
             reihenfolge2 = Integer.parseInt(this.myParameters.get("swap2nr"));
         } catch (NumberFormatException e1) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ", this.myParameters.get("swap1nr") + " - "
+            Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ",
+                    this.myParameters.get("swap1nr") + " - "
                     + this.myParameters.get("swap2nr"));
             return;
         }
@@ -423,9 +430,9 @@ public class GoobiScript {
                     taskService.save(s2);
                 } catch (DAOException e) {
                     Helper.setFehlerMeldung("goobiScriptfield", "Error on save while swapping steps in process: ",
-							proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
+                            proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
                     logger.error("Error on save while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
-							+ " : " + s2.getTitle(), e);
+                            + " : " + s2.getTitle(), e);
                 } catch (IOException e) {
                     Helper.setFehlerMeldung("goobiScriptfield", "Error on insert while swapping steps in process: ",
                             proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
@@ -465,9 +472,9 @@ public class GoobiScript {
                             processService.save(proz);
                         } catch (DAOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                         } catch (IOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
                                     + proz.getTitle(), e);
@@ -475,7 +482,7 @@ public class GoobiScript {
                                     + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Removed step from process: ",
-								proz.getTitle());
+                                proz.getTitle());
                         break;
                     }
                 }
@@ -518,7 +525,7 @@ public class GoobiScript {
             }
             proz.getTasks().add(s);
             try {
-               processService.save(proz);
+                processService.save(proz);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitle(), e);
                 logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
@@ -569,9 +576,9 @@ public class GoobiScript {
                             processService.save(proz);
                         } catch (DAOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                         } catch (IOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
                                     + proz.getTitle(), e);
@@ -617,9 +624,9 @@ public class GoobiScript {
                             processService.save(proz);
                         } catch (DAOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                         } catch (IOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while inserting to index process: "
                                     + proz.getTitle(), e);
@@ -660,15 +667,18 @@ public class GoobiScript {
         String property = this.myParameters.get("property");
         String value = this.myParameters.get("value");
 
-        if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages") && !property.equals("validate")
+        if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages")
+                && !property.equals("validate")
                 && !property.equals("exportdms") && !property.equals("batch") && !property.equals("automatic")) {
             Helper.setFehlerMeldung("goobiScriptfield", "",
-                    "wrong parameter 'property'; possible values: metadata, readimages, writeimages, validate, exportdms");
+                    "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
+                            + "validate, exportdms");
             return;
         }
 
         if (!value.equals("true") && !value.equals("false")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "wrong parameter 'value'; possible values: true, false");
+            Helper.setFehlerMeldung("goobiScriptfield", "wrong parameter 'value'; possible "
+                    + "values: true, false");
             return;
         }
 
@@ -707,9 +717,9 @@ public class GoobiScript {
                             processService.save(proz);
                         } catch (DAOException e) {
                             Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                             logger.error("goobiScriptfield" + "Error while saving process: "
-									+ proz.getTitle(), e);
+                                    + proz.getTitle(), e);
                         }
                         Helper.setMeldung("goobiScriptfield", "Error while saving process: ", proz.getTitle());
                         break;
@@ -739,7 +749,8 @@ public class GoobiScript {
 
         if (!this.myParameters.get("status").equals("0") && !this.myParameters.get("status").equals("1")
                 && !this.myParameters.get("status").equals("2") && !this.myParameters.get("status").equals("3")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Wrong status parameter: status ", "(possible: 0=closed, 1=open, 2=in work, 3=finished");
+            Helper.setFehlerMeldung("goobiScriptfield", "Wrong status parameter: status ",
+                    "(possible: 0=closed, 1=open, 2=in work, 3=finished");
             return;
         }
 
@@ -755,9 +766,9 @@ public class GoobiScript {
                         taskService.save(s);
                     } catch (DAOException e) {
                         Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: "
-								+ proz.getTitle(), e);
+                                + proz.getTitle(), e);
                         logger.error("goobiScriptfield" + "Error while saving process: "
-								+ proz.getTitle(), e);
+                                + proz.getTitle(), e);
                     }
                     Helper.setMeldung("goobiScriptfield", "stepstatus set in process: ", proz.getTitle());
                     break;
@@ -801,9 +812,9 @@ public class GoobiScript {
                         taskService.save(s);
                     } catch (DAOException e) {
                         Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: "
-								+ proz.getTitle(), e);
+                                + proz.getTitle(), e);
                         logger.error("goobiScriptfield" + "Error while saving process: "
-								+ proz.getTitle(), e);
+                                + proz.getTitle(), e);
                     }
                     Helper.setMeldung("goobiScriptfield", "step order changed in process: ", proz.getTitle());
                     break;
@@ -832,7 +843,7 @@ public class GoobiScript {
         User myUser = null;
         try {
             List<User> treffer = userService.search("from User where login='"
-					+ this.myParameters.get("username") + "'");
+                    + this.myParameters.get("username") + "'");
             if (treffer != null && treffer.size() > 0) {
                 myUser = treffer.get(0);
             } else {
@@ -940,7 +951,7 @@ public class GoobiScript {
         for (Process proz : inProzesse) {
             try {
                 SafeFile tiffheaderfile = new SafeFile(processService.getImagesDirectory(proz)
-						+ "tiffwriter.conf");
+                        + "tiffwriter.conf");
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();
                 }
@@ -960,7 +971,8 @@ public class GoobiScript {
             try {
                 Fileformat myRdf = processService.readMetadataFile(proz);
                 MetadataType mdt = UghHelper.getMetadataType(proz, "pathimagefiles");
-                List<? extends ugh.dl.Metadata> alleImagepfade = myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadataByType(mdt);
+                List<? extends ugh.dl.Metadata> alleImagepfade = myRdf.getDigitalDocument().getPhysicalDocStruct()
+                        .getAllMetadataByType(mdt);
                 if (alleImagepfade.size() > 0) {
                     for (Metadata md : alleImagepfade) {
                         myRdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
@@ -969,10 +981,10 @@ public class GoobiScript {
                 Metadata newmd = new Metadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newmd.setValue("file:/" + processService.getImagesDirectory(proz) + proz.getTitle()
-							+ DIRECTORY_SUFFIX);
+                            + DIRECTORY_SUFFIX);
                 } else {
                     newmd.setValue("file://" + processService.getImagesDirectory(proz) + proz.getTitle()
-							+ DIRECTORY_SUFFIX);
+                            + DIRECTORY_SUFFIX);
                 }
                 myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
                 processService.writeMetadataFile(myRdf, proz);
@@ -995,16 +1007,16 @@ public class GoobiScript {
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
-		boolean withoutImages = exportImages != null && exportImages.equals("false");
+        boolean withoutImages = exportImages != null && exportImages.equals("false");
         for (Process prozess : processes) {
             try {
-				Hibernate.initialize(prozess.getProject());
-				Hibernate.initialize(prozess.getProject().getProjectFileGroups());
-				Hibernate.initialize(prozess.getRuleset());
-				ExportDms dms = new ExportDms(!withoutImages);
-				if (withoutImages) {
-					dms.setExportFullText(exportFulltext);
-				}
+                Hibernate.initialize(prozess.getProject());
+                Hibernate.initialize(prozess.getProject().getProjectFileGroups());
+                Hibernate.initialize(prozess.getRuleset());
+                ExportDms dms = new ExportDms(!withoutImages);
+                if (withoutImages) {
+                    dms.setExportFullText(exportFulltext);
+                }
                 dms.startExport(prozess);
             } catch (DocStructHasNoTypeException e) {
                 logger.error("DocStructHasNoTypeException", e);

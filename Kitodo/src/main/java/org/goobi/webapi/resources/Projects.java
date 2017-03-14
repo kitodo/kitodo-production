@@ -34,34 +34,38 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 
 /**
- * The CatalogueConfiguration class provides the Jersey API URL pattern
- * ${SERVLET_CONTEXT}/rest/projects which returns the major data from the
- * project configuration in XML or JSON format.
+ * The CatalogueConfiguration class provides the Jersey API URL pattern ${SERVLET_CONTEXT}/rest/projects
+ * which returns the major data from the project configuration in XML or JSON format.
  * 
- * @author Matthias Ronge <matthias.ronge@zeutschel.de>
+ * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @Path("/projects")
 public class Projects {
 
-	@GET
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
-		Map<Project, Set<Process>> data = new HashMap<Project, Set<Process>>();
+    /**
+     * Get all projects with their respective templates.
+     *
+     * @return ProjectsRootNode object
+     */
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
+        Map<Project, Set<Process>> data = new HashMap<Project, Set<Process>>();
 
-		Criteria query = Helper.getHibernateSession().createCriteria(Process.class);
-		@SuppressWarnings("unchecked")
-		List<Process> processTemplates = query.add(Restrictions.eq("template", Boolean.TRUE)).list();
-		for (Process processTemplate : processTemplates) {
-			Project project = processTemplate.getProject();
-			Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<Process>();
-			templates.add(processTemplate);
-			data.put(project, templates);
-		}
-		List<Project> result = new ArrayList<Project>();
-		for (Project project : data.keySet()) {
-			project.template = new ArrayList<Process>(data.get(project));
-			result.add(project);
-		}
-		return new ProjectsRootNode(result);
-	}
+        Criteria query = Helper.getHibernateSession().createCriteria(Process.class);
+        @SuppressWarnings("unchecked")
+        List<Process> processTemplates = query.add(Restrictions.eq("template", Boolean.TRUE)).list();
+        for (Process processTemplate : processTemplates) {
+            Project project = processTemplate.getProject();
+            Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<Process>();
+            templates.add(processTemplate);
+            data.put(project, templates);
+        }
+        List<Project> result = new ArrayList<Project>();
+        for (Project project : data.keySet()) {
+            project.template = new ArrayList<Process>(data.get(project));
+            result.add(project);
+        }
+        return new ProjectsRootNode(result);
+    }
 }

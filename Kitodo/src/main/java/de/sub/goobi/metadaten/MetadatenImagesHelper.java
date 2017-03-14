@@ -14,7 +14,6 @@ package de.sub.goobi.metadaten;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import org.kitodo.data.database.exceptions.SwapException;
 
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
@@ -45,6 +44,7 @@ import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
 
 import org.kitodo.services.ProcessService;
 import ugh.dl.ContentFile;
@@ -78,25 +78,17 @@ public class MetadatenImagesHelper {
      * Markus baut eine Seitenstruktur aus den vorhandenen Images --- Steps - ---- Validation of images compare existing
      * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are
 	 * less add new pages to physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct.
-     *
-     * @throws TypeNotAllowedForParentException
-     * @throws TypeNotAllowedForParentException
-     * @throws InterruptedException
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws IOException
-     * @throws DAOException
-     * @throws SwapException
      */
     public void createPagination(Process process, String directory)
-			throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+			throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
+            DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
-		DocStruct log = this.mydocument.getLogicalDocStruct();
-		while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
+        DocStruct log = this.mydocument.getLogicalDocStruct();
+        while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
 				&& log.getAllChildren().size() > 0) {
-			log = log.getAllChildren().get(0);
-		}
+            log = log.getAllChildren().get(0);
+        }
 
         /*
          * der physische Baum wird nur angelegt, wenn er noch nicht existierte
@@ -204,7 +196,6 @@ public class MetadatenImagesHelper {
                 }
             }
         }
-
         // case 2: no page docs but images (some images are added)
         else if (pageElementsWithoutImages.isEmpty() && !imagesWithoutPageElements.isEmpty()) {
             int currentPhysicalOrder = assignedImages.size();
@@ -348,21 +339,18 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * scale given image file to png using internal embedded content server
-     *
-     * @throws ImageManagerException
-     * @throws IOException
-     * @throws ImageManipulatorException
+     * scale given image file to png using internal embedded content server.
      */
-    public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation) throws ImageManagerException, IOException,
+    public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation)
+            throws ImageManagerException, IOException,
             ImageManipulatorException {
         logger.trace("start scaleFile");
         int tmpSize = inSize / 3;
         if (tmpSize < 1) {
             tmpSize = 1;
         }
-        if(logger.isTraceEnabled()){
-        	logger.trace("tmpSize: " + tmpSize);
+        if (logger.isTraceEnabled()) {
+            logger.trace("tmpSize: " + tmpSize);
         }
         if (ConfigMain.getParameter("goobiContentServerUrl", "").equals("")) {
             logger.trace("api");
@@ -379,9 +367,10 @@ public class MetadatenImagesHelper {
             outputFileStream.close();
             logger.trace("close stream");
         } else {
-            String cs = ConfigMain.getParameter("goobiContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation + "&format=jpg";
+            String cs = ConfigMain.getParameter("goobiContentServerUrl") + inFileName + "&scale="
+                    + tmpSize + "&rotate=" + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
-            if(logger.isTraceEnabled()){
+            if (logger.isTraceEnabled()) {
             	logger.trace("url: " + cs);
             }
             URL csUrl = new URL(cs);
@@ -394,7 +383,7 @@ public class MetadatenImagesHelper {
             if (statusCode != HttpStatus.SC_OK) {
                 return;
             }
-            if(logger.isTraceEnabled()){
+            if (logger.isTraceEnabled()) {
             	logger.trace("statusCode: " + statusCode);
             }
             InputStream inStream = method.getResponseBodyAsStream();
@@ -422,13 +411,11 @@ public class MetadatenImagesHelper {
 
     // Add a method to validate the image files
 
-	/**
+    /**
      * Die Images eines Prozesses auf Vollständigkeit prüfen.
-     *
-     * @throws DAOException
-     * @throws SwapException
      */
-    public boolean checkIfImagesValid(String title, String folder) throws IOException, InterruptedException, SwapException, DAOException {
+    public boolean checkIfImagesValid(String title, String folder)
+            throws IOException, InterruptedException, SwapException, DAOException {
         boolean isValid = true;
         this.myLastImage = 0;
 
@@ -463,7 +450,8 @@ public class MetadatenImagesHelper {
                     }
                 } catch (NumberFormatException e1) {
                     isValid = false;
-                    Helper.setFehlerMeldung("[" + title + "] Filename of image wrong - not an 8-digit-number: " + curFile);
+                    Helper.setFehlerMeldung("[" + title + "] Filename of image wrong - not an 8-digit-number: "
+                            + curFile);
                 }
                 return isValid;
             }
@@ -499,10 +487,10 @@ public class MetadatenImagesHelper {
     }
 
     /**
+     * Get image files.
      *
      * @param myProcess current process
      * @return sorted list with strings representing images of process
-     * @throws InvalidImagesException
      */
 
     public ArrayList<String> getImageFiles(Process myProcess) throws InvalidImagesException {
@@ -530,39 +518,13 @@ public class MetadatenImagesHelper {
         }
     }
 
-    public List<String> getDataFiles(Process myProcess) throws InvalidImagesException {
-        File dir;
-        try {
-            dir = new File(processService.getImagesTifDirectory(true, myProcess));
-        } catch (Exception e) {
-            throw new InvalidImagesException(e);
-        }
-        /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.dataFilter);
-        ArrayList<String> dataList = new ArrayList<String>();
-        if (dateien != null && dateien.length > 0) {
-            for (int i = 0; i < dateien.length; i++) {
-                String s = dateien[i];
-                dataList.add(s);
-            }
-            /* alle Dateien durchlaufen */
-            if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
-            }
-            return dataList;
-        } else {
-            return null;
-        }
-    }
-
     /**
+     * Get image files.
      *
      * @param myProcess current process
      * @param directory current folder
      * @return sorted list with strings representing images of process
-     * @throws InvalidImagesException
      */
-
     public List<String> getImageFiles(Process myProcess, String directory) throws InvalidImagesException {
         File dir;
         try {
@@ -610,6 +572,12 @@ public class MetadatenImagesHelper {
         }
     }
 
+    /**
+     * Get image files.
+     *
+     * @param physical DocStruct object
+     * @return list of Strings
+     */
     public List<String> getImageFiles(DocStruct physical) {
         List<String> orderedFileList = new ArrayList<String>();
         List<DocStruct> pages = physical.getAllChildren();
@@ -624,6 +592,37 @@ public class MetadatenImagesHelper {
             }
         }
         return orderedFileList;
+    }
+
+    /**
+     * Get data files.
+     *
+     * @param myProcess Process object
+     * @return list of Strings
+     */
+    public List<String> getDataFiles(Process myProcess) throws InvalidImagesException {
+        File dir;
+        try {
+            dir = new File(processService.getImagesTifDirectory(true, myProcess));
+        } catch (Exception e) {
+            throw new InvalidImagesException(e);
+        }
+        /* Verzeichnis einlesen */
+        String[] dateien = dir.list(Helper.dataFilter);
+        ArrayList<String> dataList = new ArrayList<String>();
+        if (dateien != null && dateien.length > 0) {
+            for (int i = 0; i < dateien.length; i++) {
+                String s = dateien[i];
+                dataList.add(s);
+            }
+            /* alle Dateien durchlaufen */
+            if (dataList.size() != 0) {
+                Collections.sort(dataList, new GoobiImageFileComparator());
+            }
+            return dataList;
+        } else {
+            return null;
+        }
     }
 
 }

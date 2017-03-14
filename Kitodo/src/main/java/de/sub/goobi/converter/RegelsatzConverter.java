@@ -24,38 +24,38 @@ import org.kitodo.services.RulesetService;
 
 
 public class RegelsatzConverter implements Converter {
-   public static final String CONVERTER_ID = "RegelsatzConverter";
-   private static final Logger logger = Logger.getLogger(RegelsatzConverter.class);
-   
-   @Override
-	public Object getAsObject(FacesContext context, UIComponent component, String value)
-		   throws ConverterException {
-   		RulesetService rulesetService = new RulesetService();
+    public static final String CONVERTER_ID = "RegelsatzConverter";
+    private static final Logger logger = Logger.getLogger(RegelsatzConverter.class);
 
-      if (value == null) {
-         return null;
-      } else {
-         try {
-				return rulesetService.find(Integer.valueOf(value));
-			} catch (DAOException | NumberFormatException e) {
-				logger.error(e);
-				return "0";
-			}
-      }
-   }
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value)
+           throws ConverterException {
+        RulesetService rulesetService = new RulesetService();
 
-   @Override
-	public String getAsString(FacesContext context, UIComponent component, Object value)
-			 throws ConverterException {
-		  if (value == null) {
-			 return null;
-		  } else if (value instanceof Ruleset) {
-			 return String.valueOf(((Ruleset) value).getId().intValue());
-		  } else if (value instanceof String) {
-			 return (String) value;
-		  } else {
-			 throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Regelsatz' sein!");
-		  }
+        if (value == null) {
+            return null;
+        } else {
+            try {
+                return rulesetService.find(Integer.valueOf(value));
+            } catch (DAOException | NumberFormatException e) {
+                logger.error(e);
+                return "0";
+            }
+        }
+    }
+
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value)
+             throws ConverterException {
+        if (value == null) {
+            return null;
+        } else if (value instanceof Ruleset) {
+            return String.valueOf(((Ruleset) value).getId().intValue());
+        } else if (value instanceof String) {
+            return (String) value;
+        } else {
+            throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Regelsatz' sein!");
+        }
     }
 
 }

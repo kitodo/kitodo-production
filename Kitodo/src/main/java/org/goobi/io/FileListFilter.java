@@ -16,17 +16,22 @@ import java.io.FilenameFilter;
 
 public class FileListFilter implements FilenameFilter {
 
-	private String name;
+    private String name;
 
-	public FileListFilter(String name) {
-		if (name == null) {
-			throw new IllegalArgumentException("No filter name given.");
-		}
-		this.name = name;
-	}
+	/**
+	 * Filter file list.
+     *
+	 * @param name String
+	 */
+    public FileListFilter(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("No filter name given.");
+        }
+        this.name = name;
+    }
 
-	@Override
-	public boolean accept(File directory, String filename) {
-		return filename.matches(name);
-	}
+    @Override
+    public boolean accept(File directory, String filename) {
+        return filename.matches(name);
+    }
 }
