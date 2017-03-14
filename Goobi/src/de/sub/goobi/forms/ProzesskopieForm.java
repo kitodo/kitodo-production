@@ -1510,10 +1510,20 @@ public class ProzesskopieForm {
      * @return A map containing the search fields for the currently selected OPAC
      */
     public HashMap<String, String> getSearchFields() {
+        return getSearchFieldsForCatalogue(opacKatalog);
+    }
+
+    /**
+     * @see @link{getSearchFields}
+     *
+     * @param catalogue Name of catalog to get search fields
+     * @return
+     */
+    public static HashMap<String, String> getSearchFieldsForCatalogue(String catalogue) {
         HashMap<String, String> searchFields = new HashMap<String, String>();
         for (CataloguePlugin plugin : PluginLoader.getPlugins(CataloguePlugin.class)) {
-            if (plugin.supportsCatalogue(opacKatalog)) {
-                searchFields = plugin.getSearchFields(opacKatalog);
+            if (plugin.supportsCatalogue(catalogue)) {
+                searchFields = plugin.getSearchFields(catalogue);
                 break;
             }
         }

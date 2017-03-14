@@ -11,6 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.forms.ProzesskopieForm;
 import org.goobi.io.SafeFile;
 
 import java.io.*;
@@ -3381,4 +3382,21 @@ public class Metadaten {
         }
         return result;
     }
+
+    /**
+     * @see @link{de.sub.goobi.forms.ProzesskopieForm.getSearchFields}
+     *
+     * @return A map containing the search fields for the currently selected OPAC
+     */
+    public HashMap<String, String> getSearchFields() {
+        if (opacKatalog == null || opacKatalog.isEmpty()) {
+            ProzesskopieForm pkf = new ProzesskopieForm();
+            List<String> allOpacCatalogues = pkf.getAllOpacCatalogues();
+            if (!allOpacCatalogues.isEmpty()) {
+                opacKatalog = allOpacCatalogues.get(0);
+            }
+        }
+        return ProzesskopieForm.getSearchFieldsForCatalogue(opacKatalog);
+    }
+
 }
