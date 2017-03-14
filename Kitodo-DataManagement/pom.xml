@@ -189,8 +189,8 @@
                         <version>4.0.3</version>
                         <configuration>
                             <!-- local configuration file -->
-                            <configFile>${parent.basedir}/config-local/flyway.properties</configFile>
-                            <!--<configFile>${parent.basedir}/Kitodo/src/main/resources/db/config/flyway.properties</configFile>-->
+                            <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
+                            <configFile>src/main/resources/db/config/flyway.properties</configFile>
                         </configuration>
                         <dependencies>
                             <dependency>
