@@ -13,7 +13,6 @@ package org.kitodo.data.index.elasticsearch;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
@@ -154,7 +153,7 @@ public class RestClientImplementation implements ClientInterface {
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest(
                 "POST",
-                "/" + this.getIndex() + "/" + this.getType() +  "/_delete_by_query",
+                "/" + this.getIndex() + "/" + this.getType() +  "/_delete_by_query?conflicts=proceed",
                 Collections.<String, String>emptyMap(),
                 entity);
         return indexResponse.toString();
