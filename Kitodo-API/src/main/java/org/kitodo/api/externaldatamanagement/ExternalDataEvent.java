@@ -27,23 +27,23 @@ public class ExternalDataEvent extends EventObject {
      * @param source The source.
      * @param identifier The identifier.
      */
-    public ExternalDataEvent(Object eventInitiator, Source source, String identifier){
+    public ExternalDataEvent(Object eventInitiator, Source source, String identifier) {
         super(eventInitiator);
-        this.source=source;
-        this.identifier=identifier;
+        this.source = source;
+        this.identifier = identifier;
     }
 
     /** Gets the source.
      * @return The source.
      */
-    public Source getSource(){
+    public Source getSource() {
         return source;
     }
 
     /** Gets the identifier.
      * @return The identifier.
      */
-    public String getIdentifier(){
+    public String getIdentifier() {
         return identifier;
     }
 }

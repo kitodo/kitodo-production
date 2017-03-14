@@ -11,10 +11,10 @@
 
 package org.kitodo.api.validation.filestructure;
 
-import org.kitodo.api.validation.ValidationResult;
-
 import java.io.File;
 import java.net.URL;
+
+import org.kitodo.api.validation.ValidationResult;
 
 public interface FileStructureValidationInterface {
 

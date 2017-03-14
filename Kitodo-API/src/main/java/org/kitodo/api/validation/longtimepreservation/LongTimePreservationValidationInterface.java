@@ -11,10 +11,10 @@
 
 package org.kitodo.api.validation.longtimepreservation;
 
+import java.nio.file.Path;
+
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
-
-import java.nio.file.Path;
 
 public interface LongTimePreservationValidationInterface extends ValidationInterface {
 
