@@ -16,8 +16,8 @@
 --
 
 ALTER TABLE process
-  CHANGE IsTemplate template TINYINT(1),
-  CHANGE isChoiceListShown choiceListShown TINYINT(1);
+  CHANGE isTemplate template TINYINT(1),
+  CHANGE isChoiceListShown inChoiceListShown TINYINT(1);
 
 ALTER TABLE processProperty
   CHANGE isObligatory obligatory TINYINT(1);
