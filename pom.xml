@@ -28,6 +28,10 @@
     <name>Kitodo Production</name>
     <url>https://github.com/kitodo/kitodo-production</url>
 
+    <properties>
+        <phase.prop>none</phase.prop>
+    </properties>
+
     <repositories>
         <!-- Let's first add the default Maven central repo,
              otherwise Maven will not use Maven Central as first download option -->
@@ -166,7 +170,7 @@
                         <configuration>
                             <!-- local configuration file -->
                             <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>Kitodo/src/main/resources/db/config/flyway.properties</configFile>
+                            <configFile>Kitodo-DataManagement/src/main/resources/db/config/flyway.properties</configFile>
                         </configuration>
                         <dependencies>
                             <dependency>
@@ -177,6 +181,7 @@
                         </dependencies>
                         <executions>
                             <execution>
+                                <phase>${phase.prop}</phase>
                                 <goals>
                                     <goal>baseline</goal>
                                     <goal>migrate</goal>
