@@ -95,7 +95,7 @@ INSERT INTO `projectfilegroup` (`id`, `name`, `path`, `mimeType`, `suffix`, `pro
 /*!40000 ALTER TABLE `projectfilegroup` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `process` DISABLE KEYS */;
-INSERT INTO `process` (`id`, `title`, `outputName`, `template`, `swappedOut`, `choiceListShown`, `sortHelperStatus`, `sortHelperImages`, `sortHelperArticles`, `creationDate`, `project_id`, `ruleset_id`, `sortHelperDocstructs`, `sortHelperMetadata`, `wikiField`, `docket_id`) VALUES
+INSERT INTO `process` (`id`, `title`, `outputName`, `template`, `swappedOut`, `inChoiceListShown`, `sortHelperStatus`, `sortHelperImages`, `sortHelperArticles`, `creationDate`, `project_id`, `ruleset_id`, `sortHelperDocstructs`, `sortHelperMetadata`, `wikiField`, `docket_id`) VALUES
 (1, 'Example_Workflow', NULL, b'1', b'0', b'0', '000014086', 0, 0, '2016-10-01 16:49:48', 1, 1, 0, 0, NULL, 1);
 /*!40000 ALTER TABLE `process` ENABLE KEYS */;
 
