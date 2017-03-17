@@ -41,7 +41,7 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.ProjectManager;
 import org.kitodo.data.database.persistence.apache.ProjectObject;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -61,6 +61,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     private boolean exportFullText = true;
     private FolderInformation fi;
     private ProjectObject project;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The field task holds an optional task instance. Its progress and its errors will be passed to
@@ -91,8 +92,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     public boolean startExport(ProcessObject process)
             throws DAOException, IOException, PreferencesException, WriteException, SwapException,
             TypeNotAllowedForParentException, InterruptedException {
-        RulesetService rulesetService = new RulesetService();
-        this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));;
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
+                .getRuleset(process.getRulesetId()));;
 
         this.project = ProjectManager.getProjectById(process.getProjectId());
 
@@ -235,7 +236,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             if (task != null) {
                 task.setWorkDetail(atsPpnBand + ".xml");
             }
-            if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS) {
+            if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat
+                    .METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
                 writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
             } else {
@@ -244,7 +246,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             }
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
-            if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
+            if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat
+                    .METS_AND_RDF) {
                 writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 

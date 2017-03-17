@@ -37,23 +37,23 @@ import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Die Klasse Multipage dient zur Erzeugung von mehrseitigen Tiffs
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 12.04.2005
  */
 
 public class Multipage {
-    private ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger myLogger = Logger.getLogger(Multipage.class);
     Helper help = new Helper();
 
     private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
         /* alle tifs durchlaufen */
-        String pfad = processService.getImagesDirectory(process);
+        String pfad = serviceManager.getProcessService().getImagesDirectory(process);
         File dir = new File(pfad);
 
         String[] dateien = dir.list(Helper.imageNameFilter);

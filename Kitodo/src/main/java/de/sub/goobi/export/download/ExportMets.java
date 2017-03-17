@@ -42,9 +42,7 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -61,9 +59,7 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
     protected Helper help = new Helper();
     protected Prefs myPrefs;
 
@@ -81,7 +77,7 @@ public class ExportMets {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         String userHome = "";
         if (login != null) {
-            userHome = userService.getHomeDirectory(login.getMyBenutzer());
+            userHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
         }
         return startExport(myProcess, userHome);
     }
@@ -100,9 +96,9 @@ public class ExportMets {
         /*
          * Read Document
          */
-        this.myPrefs = rulesetService.getPreferences(myProcess.getRuleset());
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
         String atsPpnBand = myProcess.getTitle();
-        Fileformat gdzfile = processService.readMetadataFile(myProcess);
+        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
 
         String rules = ConfigMain.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
@@ -163,7 +159,7 @@ public class ExportMets {
 
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
-        String imageFolderPath = processService.getImagesDirectory(myProcess);
+        String imageFolderPath = serviceManager.getProcessService().getImagesDirectory(myProcess);
         SafeFile imageFolder = new SafeFile(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
@@ -239,7 +235,8 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    SafeFile folder = new SafeFile(processService.getMethodFromName(pfg.getFolder(), myProcess));
+                    SafeFile folder = new SafeFile(serviceManager.getProcessService()
+                            .getMethodFromName(pfg.getFolder(), myProcess));
                     if (folder.exists() && folder.list().length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
