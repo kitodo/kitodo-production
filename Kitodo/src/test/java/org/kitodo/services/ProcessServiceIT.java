@@ -313,13 +313,12 @@ public class ProcessServiceIT {
         assertEquals("Task doesn't match to given task!", expected, actual);
     }
 
-    @Ignore("fix the method")
     @Test
     public void shouldGetCreationDateAsString() throws Exception {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        String expected = "Jan 20, 2017 12:00:00 AM";
+        String expected = "2017-01-20";
         String actual = processService.getCreationDateAsString(process);
         assertEquals("Creation date doesn't match to given plain text!", expected, actual);
     }
