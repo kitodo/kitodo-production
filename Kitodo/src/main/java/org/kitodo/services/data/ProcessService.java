@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.services;
+package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.config.ConfigMain;

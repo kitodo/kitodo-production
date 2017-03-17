@@ -9,53 +9,53 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.services;
+package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.TemplateDAO;
+import org.kitodo.data.database.persistence.WorkpieceDAO;
 import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.TemplateType;
+import org.kitodo.data.index.elasticsearch.type.WorkpieceType;
 
-public class TemplateService {
+public class WorkpieceService {
 
-    private TemplateDAO templateDao = new TemplateDAO();
-    private TemplateType templateType = new TemplateType();
-    private Indexer<Template, TemplateType> indexer = new Indexer<>("kitodo", Template.class);
+    private WorkpieceDAO workpieceDao = new WorkpieceDAO();
+    private WorkpieceType workpieceType = new WorkpieceType();
+    private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>("kitodo", Workpiece.class);
 
     /**
      * Method saves object to database and insert document to the index of Elastic Search.
      *
-     * @param template object
+     * @param workpiece object
      */
-    public void save(Template template) throws DAOException, IOException {
-        templateDao.save(template);
+    public void save(Workpiece workpiece) throws DAOException, IOException {
+        workpieceDao.save(workpiece);
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(template, templateType);
+        indexer.performSingleRequest(workpiece, workpieceType);
     }
 
-    public Template find(Integer id) throws DAOException {
-        return templateDao.find(id);
+    public Workpiece find(Integer id) throws DAOException {
+        return workpieceDao.find(id);
     }
 
-    public List<Template> findAll() throws DAOException {
-        return templateDao.findAll();
+    public List<Workpiece> findAll() throws DAOException {
+        return workpieceDao.findAll();
     }
 
     /**
      * Method removes object from database and document from the index of Elastic Search.
      *
-     * @param template object
+     * @param workpiece object
      */
-    public void remove(Template template) throws DAOException, IOException {
-        templateDao.remove(template);
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(template, templateType);
+    public void remove(Workpiece workpiece) throws DAOException, IOException {
+        workpieceDao.remove(workpiece);
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(workpiece, workpieceType);
     }
 
     /**
@@ -64,7 +64,7 @@ public class TemplateService {
      * @param id of object
      */
     public void remove(Integer id) throws DAOException, IOException {
-        templateDao.remove(id);
+        workpieceDao.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
     }
@@ -74,20 +74,20 @@ public class TemplateService {
      */
     public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        indexer.performMultipleRequests(findAll(), templateType);
+        indexer.performMultipleRequests(findAll(), workpieceType);
     }
 
     /**
      * Get size of properties list.
      *
-     * @param template object
-     * @return size of properties list
+     * @param workpiece object
+     * @return properties list size
      */
-    public int getPropertiesSize(Template template) {
-        if (template.getProperties() == null) {
+    public int getPropertiesSize(Workpiece workpiece) {
+        if (workpiece.getProperties() == null) {
             return 0;
         } else {
-            return template.getProperties().size();
+            return workpiece.getProperties().size();
         }
     }
 }

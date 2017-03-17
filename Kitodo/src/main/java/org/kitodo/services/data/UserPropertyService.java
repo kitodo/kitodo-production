@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.services;
+package org.kitodo.services.data;
 
 import java.util.List;
 

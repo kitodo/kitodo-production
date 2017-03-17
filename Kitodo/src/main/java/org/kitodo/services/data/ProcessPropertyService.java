@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.services;
+package org.kitodo.services.data;
 
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.exceptions.DAOException;
