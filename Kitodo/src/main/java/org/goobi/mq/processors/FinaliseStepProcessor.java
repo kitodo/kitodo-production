@@ -22,19 +22,16 @@ import org.goobi.mq.MapMessageObjectReader;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
 
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.TaskService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * This is a web service interface to close steps. You have to provide the step id as “id”; you can add
  * a field “message” which will be added to the wiki field.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FinaliseStepProcessor extends ActiveMQProcessor {
-
-    private ProcessService processService = new ProcessService();
-    private TaskService taskService = new TaskService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The default constructor looks up the queue name to use in goobi_config.properties.
@@ -59,12 +56,13 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     protected void process(MapMessageObjectReader ticket) throws Exception {
         AktuelleSchritteForm dialog = new AktuelleSchritteForm();
         Integer stepID = ticket.getMandatoryInteger("id");
-        dialog.setMySchritt(taskService.find(stepID));
+        dialog.setMySchritt(serviceManager.getTaskService().find(stepID));
         if (ticket.hasField("properties")) {
             updateProperties(dialog, ticket.getMapOfStringToString("properties"));
         }
         if (ticket.hasField("message")) {
-            processService.addToWikiField(ticket.getString("message"), dialog.getMySchritt().getProcess());
+            serviceManager.getProcessService().addToWikiField(ticket.getString("message"),
+                    dialog.getMySchritt().getProcess());
         }
         dialog.SchrittDurchBenutzerAbschliessen();
     }
