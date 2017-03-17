@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Namenraum Process.Data
@@ -57,19 +57,18 @@ public class ExtendedDataImpl extends DataImpl {
     private static final String isProcess = "PROCESS";
     private static final String isWorkpiece = "WORKPIECE";
     private static final String isTemplate = "TEMPLATE";
-
-    private ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-    * Diese Methode wird benötigt um Metadaten zu schreiben.
-    *
-    * @param sessionId String
-    * @param type String
-    * @param count int
-    * @param pp HashMap
-    * @return Status (Fehler)
-    * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
-    */
+     * Diese Methode wird benötigt um Metadaten zu schreiben.
+     *
+     * @param sessionId String
+     * @param type String
+     * @param count int
+     * @param pp HashMap
+     * @return Status (Fehler)
+     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
+     */
     @Override
     public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
         super.add(sessionId, type, count, pp);
@@ -83,14 +82,14 @@ public class ExtendedDataImpl extends DataImpl {
         * Prozesseigenschaft
         */
         if (type.equals("") || type.equals(isProcess)) {
-            if (processService.getPropertiesInitialized(p) == null) {
+            if (serviceManager.getProcessService().getPropertiesInitialized(p) == null) {
                 p.setProperties(new ArrayList<ProcessProperty>());
             }
             ProcessProperty pe = new ProcessProperty();
             pe.setProcess(p);
             pe.setTitle(gpp.getName());
             pe.setValue(gpp.getValue());
-            processService.getPropertiesInitialized(p).add(pe);
+            serviceManager.getProcessService().getPropertiesInitialized(p).add(pe);
         }
 
         /*
@@ -98,7 +97,7 @@ public class ExtendedDataImpl extends DataImpl {
         */
         if (type.equals(isWorkpiece)) {
             /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
-            if (processService.getWorkpiecesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
             Workpiece w = p.getWorkpieces().get(count);
@@ -117,7 +116,7 @@ public class ExtendedDataImpl extends DataImpl {
         */
         if (type.equals(isTemplate)) {
             /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
-            if (processService.getTemplatesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
             Template v = p.getTemplates().get(count);
@@ -132,26 +131,26 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         try {
-            processService.save(p);
+            serviceManager.getProcessService().save(p);
         } catch (DAOException e) {
             throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (IOException e) {
             throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                  + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         }
         return 0;
     }
 
     /**
-    * Diese Methode wird benötigt um feste Eigenschaften von Metadaten auszulesen.
-    *
-    * @param sessionId String
-    * @param type String
-    * @param count int
-    * @return Liste von Namen – Wert Paaren
-    * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
-    */
+     * Diese Methode wird benötigt um feste Eigenschaften von Metadaten auszulesen.
+     *
+     * @param sessionId String
+     * @param type String
+     * @param count int
+     * @return Liste von Namen – Wert Paaren
+     * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
+     */
     @Override
     public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
         super.getData(sessionId, type, count);
@@ -175,7 +174,7 @@ public class ExtendedDataImpl extends DataImpl {
         */
         if (type.equals(isWorkpiece)) {
             /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
-            if (processService.getWorkpiecesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
             Workpiece w = p.getWorkpieces().get(count);
@@ -187,7 +186,7 @@ public class ExtendedDataImpl extends DataImpl {
         */
         if (type.equals(isTemplate)) {
             /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
-            if (processService.getTemplatesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
             Template v = p.getTemplates().get(count);
@@ -198,17 +197,17 @@ public class ExtendedDataImpl extends DataImpl {
     }
 
     /**
-    * Diese Methode wird benötigt um Eigenschaften von Metadaten auszulesen.
+     * Diese Methode wird benötigt um Eigenschaften von Metadaten auszulesen.
      *
-    * @param sessionId String
-    * @param type String
-    * @param count int
-    * @return Liste von Namen – Wert Paaren
-    * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
-    */
+     * @param sessionId String
+     * @param type String
+     * @param count int
+     * @return Liste von Namen – Wert Paaren
+     * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
+     */
     @Override
     public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
-         throws GoobiException {
+            throws GoobiException {
         super.getProperties(sessionId, type, count);
         ArrayList<GoobiProcessProperty> gpps = new ArrayList<GoobiProcessProperty>();
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
@@ -231,7 +230,7 @@ public class ExtendedDataImpl extends DataImpl {
         */
         if (type.equals(isWorkpiece)) {
             /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
-            if (processService.getWorkpiecesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
             Workpiece w = p.getWorkpieces().get(count);
@@ -250,7 +249,7 @@ public class ExtendedDataImpl extends DataImpl {
         */
         if (type.equals(isTemplate)) {
             /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
-            if (processService.getTemplatesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
             Template v = p.getTemplates().get(count);
@@ -267,15 +266,15 @@ public class ExtendedDataImpl extends DataImpl {
     }
 
     /**
-    * Diese Methode wird benötigt um Metadaten zu schreiben.
-    *
-    * @param sessionId String
-    * @param type String
-    * @param count int
-    * @param pp HashMap
-    * @return Status (Fehler)
-    * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
-    */
+     * Diese Methode wird benötigt um Metadaten zu schreiben.
+     *
+     * @param sessionId String
+     * @param type String
+     * @param count int
+     * @param pp HashMap
+     * @return Status (Fehler)
+     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
+     */
     @Override
     public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
         super.set(sessionId, type, count, pp);
@@ -292,7 +291,7 @@ public class ExtendedDataImpl extends DataImpl {
         * Werkstückeigenschaft
         */
         if (type.equals(isWorkpiece)) {
-            if (processService.getWorkpiecesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
             Workpiece w = p.getWorkpieces().get(count);
@@ -303,7 +302,7 @@ public class ExtendedDataImpl extends DataImpl {
         * Scanvorlageneigenschaft
         */
         if (type.equals(isTemplate)) {
-            if (processService.getTemplatesSize(p) - 1 < count) {
+            if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
             Template v = p.getTemplates().get(count);
@@ -313,7 +312,7 @@ public class ExtendedDataImpl extends DataImpl {
 
         try {
             //TODO: Use generics
-            List hits = processService.search(myquery);
+            List hits = serviceManager.getProcessService().search(myquery);
             if (hits.size() > 0) {
                 if (type.equals("") || type.equals(isProcess)) {
                     ProcessProperty pe = (ProcessProperty) hits.get(0);
@@ -327,17 +326,17 @@ public class ExtendedDataImpl extends DataImpl {
                     TemplateProperty ve = (TemplateProperty) hits.get(0);
                     ve.setValue(gpp.getValue());
                 }
-                processService.save(p);
+                serviceManager.getProcessService().save(p);
             } else {
                 throw new GoobiException(1500, "Property " + gpp.getName() + " with id " + gpp.getId()
-                  + " does not exist");
+                        + " does not exist");
             }
         } catch (DAOException e) {
             throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (IOException e) {
             throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                  + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         }
         return 0;
     }
