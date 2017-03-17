@@ -48,4 +48,72 @@ public class ServiceManager {
     private UserService userService = new UserService();
     private WorkpiecePropertyService workpiecePropertyService = new WorkpiecePropertyService();
     private WorkpieceService workpieceService = new WorkpieceService();
+
+    public BatchService getBatchService() {
+        return batchService;
+    }
+
+    public DocketService getDocketService() {
+        return docketService;
+    }
+
+    public HistoryService getHistoryService() {
+        return historyService;
+    }
+
+    public LdapGroupService getLdapGroupService() {
+        return ldapGroupService;
+    }
+
+    public ProcessPropertyService getProcessPropertyService() {
+        return processPropertyService;
+    }
+
+    public ProcessService getProcessService() {
+        return processService;
+    }
+
+    public ProjectFileGroupService getProjectFileGroupService() {
+        return projectFileGroupService;
+    }
+
+    public ProjectService getProjectService() {
+        return projectService;
+    }
+
+    public RulesetService getRulesetService() {
+        return rulesetService;
+    }
+
+    public TaskService getTaskService() {
+        return taskService;
+    }
+
+    public TemplatePropertyService getTemplatePropertyService() {
+        return templatePropertyService;
+    }
+
+    public TemplateService getTemplateService() {
+        return templateService;
+    }
+
+    public UserGroupService getUserGroupService() {
+        return userGroupService;
+    }
+
+    public UserPropertyService getUserPropertyService() {
+        return userPropertyService;
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public WorkpiecePropertyService getWorkpiecePropertyService() {
+        return workpiecePropertyService;
+    }
+
+    public WorkpieceService getWorkpieceService() {
+        return workpieceService;
+    }
 }
