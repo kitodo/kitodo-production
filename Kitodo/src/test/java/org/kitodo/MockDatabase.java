@@ -25,7 +25,7 @@ import org.kitodo.data.database.helper.enums.HistoryType;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.services.*;
+import org.kitodo.services.ServiceManager;
 
 import static org.kitodo.data.database.beans.Batch.Type.*;
 
@@ -34,10 +34,11 @@ import static org.kitodo.data.database.beans.Batch.Type.*;
  */
 public class MockDatabase {
 
+    private static final ServiceManager serviceManager = new ServiceManager();
+
     public static void insertProcessesFull() throws DAOException, IOException {
-        BatchService batchService = new BatchService();
-        if(batchService.find(1) == null) {
-            System.out.println(batchService.find(1));
+        if(serviceManager.getBatchService().find(1) == null) {
+            System.out.println(serviceManager.getBatchService().find(1));
             insertBatches();
             insertDockets();
             insertRulesets();
@@ -58,77 +59,62 @@ public class MockDatabase {
     }
 
     private static void insertBatches() throws DAOException, IOException {
-        BatchService batchService = new BatchService();
-
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
         firstBatch.setType(LOGISTIC);
-        batchService.save(firstBatch);
+        serviceManager.getBatchService().save(firstBatch);
 
         Batch secondBatch = new Batch();
         secondBatch.setTitle("Second batch");
         secondBatch.setType(LOGISTIC);
-        batchService.save(secondBatch);
+        serviceManager.getBatchService().save(secondBatch);
 
         Batch thirdBatch = new Batch();
         thirdBatch.setTitle("Third batch");
         thirdBatch.setType(NEWSPAPER);
-        batchService.save(thirdBatch);
+        serviceManager.getBatchService().save(thirdBatch);
 
         Batch fourthBatch = new Batch();
         fourthBatch.setType(SERIAL);
-        batchService.save(fourthBatch);
+        serviceManager.getBatchService().save(fourthBatch);
     }
 
     public static void insertDockets() throws DAOException, IOException {
-        DocketService docketService = new DocketService();
-
         Docket firstDocket = new Docket();
         firstDocket.setName("default");
         firstDocket.setFile("docket.xsl");
-        docketService.save(firstDocket);
+        serviceManager.getDocketService().save(firstDocket);
 
         Docket secondDocket = new Docket();
         secondDocket.setName("second");
         secondDocket.setFile("docket.xsl");
-        docketService.save(secondDocket);
+        serviceManager.getDocketService().save(secondDocket);
     }
 
     private static void insertHistory() throws DAOException, IOException {
-        HistoryService historyService = new HistoryService();
-        ProcessService processService = new ProcessService();
-
         History firstHistory = new History();
-        Process firstProcess = processService.find(1);
+        Process firstProcess = serviceManager.getProcessService().find(1);
         firstHistory.setNumericValue(2.0);
         firstHistory.setStringValue("History");
         firstHistory.setHistoryType(HistoryType.color);
         LocalDate localDate = new LocalDate(2017,1,14);
         firstHistory.setDate(localDate.toDate());
         firstHistory.setProcess(firstProcess);
-        historyService.save(firstHistory);
+        serviceManager.getHistoryService().save(firstHistory);
         firstProcess.getHistory().add(firstHistory);
-        processService.save(firstProcess);
+        serviceManager.getProcessService().save(firstProcess);
     }
 
     public static void insertLdapGroups() throws DAOException {
-        LdapGroupService ldapGroupService = new LdapGroupService();
-
         LdapGroup firstLdapGroup = new LdapGroup();
         firstLdapGroup.setTitle("LG");
         firstLdapGroup.setHomeDirectory("..//test_directory/");
         firstLdapGroup.setDescription("Test LDAP group");
         firstLdapGroup.setDisplayName("Name");
-        ldapGroupService.save(firstLdapGroup);
+        serviceManager.getLdapGroupService().save(firstLdapGroup);
     }
 
     private static void insertProcesses() throws DAOException, IOException {
-        BatchService batchService = new BatchService();
-        DocketService docketService = new DocketService();
-        ProcessService processService = new ProcessService();
-        ProjectService projectService = new ProjectService();
-        RulesetService rulesetService = new RulesetService();
-
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
         firstProcess.setOutputName("Test");
@@ -137,8 +123,8 @@ public class MockDatabase {
         firstProcess.setCreationDate(localDate.toDate());
 
         List<Batch> batches = new ArrayList<>();
-        Batch firstBatch = batchService.find(1);
-        Batch secondBatch = batchService.find(3);
+        Batch firstBatch = serviceManager.getBatchService().find(1);
+        Batch secondBatch = serviceManager.getBatchService().find(3);
         List<Process> processes = new ArrayList<>();
         processes.add(firstProcess);
         firstBatch.setProcesses(processes);
@@ -147,10 +133,10 @@ public class MockDatabase {
         batches.add(secondBatch);
         firstProcess.setBatches(batches);
 
-        firstProcess.setDocket(docketService.find(1));
-        firstProcess.setProject(projectService.find(1));
-        firstProcess.setRuleset(rulesetService.find(1));
-        processService.save(firstProcess);
+        firstProcess.setDocket(serviceManager.getDocketService().find(1));
+        firstProcess.setProject(serviceManager.getProjectService().find(1));
+        firstProcess.setRuleset(serviceManager.getRulesetService().find(1));
+        serviceManager.getProcessService().save(firstProcess);
 
         Process secondProcess = new Process();
         secondProcess.setTitle("Second process");
@@ -158,10 +144,10 @@ public class MockDatabase {
         secondProcess.setWikiField("field");
         localDate = new LocalDate(2017,1,20);
         secondProcess.setCreationDate(localDate.toDate());
-        secondProcess.setDocket(docketService.find(1));
-        secondProcess.setProject(projectService.find(1));
-        secondProcess.setRuleset(rulesetService.find(1));
-        processService.save(secondProcess);
+        secondProcess.setDocket(serviceManager.getDocketService().find(1));
+        secondProcess.setProject(serviceManager.getProjectService().find(1));
+        secondProcess.setRuleset(serviceManager.getRulesetService().find(1));
+        serviceManager.getProcessService().save(secondProcess);
 
         Process thirdProcess = new Process();
         thirdProcess.setTitle("Second process");
@@ -169,18 +155,15 @@ public class MockDatabase {
         thirdProcess.setWikiField("problem");
         localDate = new LocalDate(2017,2,10);
         thirdProcess.setCreationDate(localDate.toDate());
-        thirdProcess.setDocket(docketService.find(1));
-        thirdProcess.setProject(projectService.find(1));
-        thirdProcess.setRuleset(rulesetService.find(1));
-        processService.save(thirdProcess);
+        thirdProcess.setDocket(serviceManager.getDocketService().find(1));
+        thirdProcess.setProject(serviceManager.getProjectService().find(1));
+        thirdProcess.setRuleset(serviceManager.getRulesetService().find(1));
+        serviceManager.getProcessService().save(thirdProcess);
     }
 
     private static void insertProcessProperties() throws DAOException, IOException {
-        ProcessService processService = new ProcessService();
-        ProcessPropertyService processPropertyService = new ProcessPropertyService();
-
         ProcessProperty firstProcessProperty = new ProcessProperty();
-        Process process = processService.find(1);
+        Process process = serviceManager.getProcessService().find(1);
         firstProcessProperty.setTitle("First Property");
         firstProcessProperty.setValue("first value");
         firstProcessProperty.setObligatory(true);
@@ -190,7 +173,7 @@ public class MockDatabase {
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.setContainer(1);
         firstProcessProperty.setProcess(process);
-        processPropertyService.save(firstProcessProperty);
+        serviceManager.getProcessPropertyService().save(firstProcessProperty);
 
         ProcessProperty secondProcessProperty = new ProcessProperty();
         secondProcessProperty.setTitle("secondProperty");
@@ -202,19 +185,16 @@ public class MockDatabase {
         secondProcessProperty.setCreationDate(localDate.toDate());
         secondProcessProperty.setContainer(2);
         secondProcessProperty.setProcess(process);
-        processPropertyService.save(secondProcessProperty);
+        serviceManager.getProcessPropertyService().save(secondProcessProperty);
 
         process.getProperties().add(firstProcessProperty);
         process.getProperties().add(secondProcessProperty);
-        processService.save(process);
+        serviceManager.getProcessService().save(process);
     }
 
     private static void insertProjects() throws DAOException, IOException {
-        ProjectService projectService = new ProjectService();
-        UserService userService = new UserService();
-
-        User firstUser = userService.find(1);
-        User secondUser = userService.find(2);
+        User firstUser = serviceManager.getUserService().find(1);
+        User secondUser = serviceManager.getUserService().find(2);
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
@@ -227,7 +207,7 @@ public class MockDatabase {
         firstProject.setNumberOfVolumes(2);
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        projectService.save(firstProject);
+        serviceManager.getProjectService().save(firstProject);
 
         Project secondProject = new Project();
         secondProject.setTitle("Second project");
@@ -239,13 +219,13 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
-        projectService.save(secondProject);
+        serviceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
-        userService.save(firstUser);
-        userService.save(secondUser);
+        serviceManager.getUserService().save(firstUser);
+        serviceManager.getUserService().save(secondUser);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Archived project");
@@ -256,14 +236,11 @@ public class MockDatabase {
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
         thirdProject.setProjectIsArchived(true);
-        projectService.save(thirdProject);
+        serviceManager.getProjectService().save(thirdProject);
     }
 
     private static void insertProjectFileGroups() throws DAOException, IOException {
-        ProjectService projectService = new ProjectService();
-        ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
-
-        Project project = projectService.find(1);
+        Project project = serviceManager.getProjectService().find(1);
 
         ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
         firstProjectFileGroup.setName("MAX");
@@ -272,7 +249,7 @@ public class MockDatabase {
         firstProjectFileGroup.setSuffix("jpg");
         firstProjectFileGroup.setPreviewImage(false);
         firstProjectFileGroup.setProject(project);
-        projectFileGroupService.save(firstProjectFileGroup);
+        serviceManager.getProjectFileGroupService().save(firstProjectFileGroup);
 
         ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
         secondProjectFileGroup.setName("DEFAULT");
@@ -281,7 +258,7 @@ public class MockDatabase {
         secondProjectFileGroup.setSuffix("jpg");
         secondProjectFileGroup.setPreviewImage(false);
         secondProjectFileGroup.setProject(project);
-        projectFileGroupService.save(secondProjectFileGroup);
+        serviceManager.getProjectFileGroupService().save(secondProjectFileGroup);
 
         ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
         thirdProjectFileGroup.setName("THUMBS");
@@ -290,7 +267,7 @@ public class MockDatabase {
         thirdProjectFileGroup.setSuffix("jpg");
         thirdProjectFileGroup.setPreviewImage(false);
         thirdProjectFileGroup.setProject(project);
-        projectFileGroupService.save(thirdProjectFileGroup);
+        serviceManager.getProjectFileGroupService().save(thirdProjectFileGroup);
 
         ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
         fourthProjectFileGroup.setName("FULLTEXT");
@@ -299,7 +276,7 @@ public class MockDatabase {
         fourthProjectFileGroup.setSuffix("xml");
         fourthProjectFileGroup.setPreviewImage(false);
         fourthProjectFileGroup.setProject(project);
-        projectFileGroupService.save(fourthProjectFileGroup);
+        serviceManager.getProjectFileGroupService().save(fourthProjectFileGroup);
 
         ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
         fifthProjectFileGroup.setName("DOWNLOAD");
@@ -308,7 +285,7 @@ public class MockDatabase {
         fifthProjectFileGroup.setSuffix("pdf");
         fifthProjectFileGroup.setPreviewImage(false);
         fifthProjectFileGroup.setProject(project);
-        projectFileGroupService.save(fifthProjectFileGroup);
+        serviceManager.getProjectFileGroupService().save(fifthProjectFileGroup);
 
         project.getProjectFileGroups().add(fifthProjectFileGroup);
         project.getProjectFileGroups().add(fifthProjectFileGroup);
@@ -316,34 +293,27 @@ public class MockDatabase {
         project.getProjectFileGroups().add(fifthProjectFileGroup);
         project.getProjectFileGroups().add(fifthProjectFileGroup);
 
-        projectService.save(project);
+        serviceManager.getProjectService().save(project);
     }
 
     public static void insertRulesets() throws DAOException, IOException {
-        RulesetService rulesetService = new RulesetService();
-
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("SLUBDD");
         firstRuleset.setFile("ruleset_slubdd.xml");
         firstRuleset.setOrderMetadataByRuleset(false);
-        rulesetService.save(firstRuleset);
+        serviceManager.getRulesetService().save(firstRuleset);
 
         Ruleset secondRuleset = new Ruleset();
         secondRuleset.setTitle("SLUBHH");
         secondRuleset.setFile("ruleset_slubhh.xml");
         secondRuleset.setOrderMetadataByRuleset(false);
-        rulesetService.save(secondRuleset);
+        serviceManager.getRulesetService().save(secondRuleset);
     }
 
     private static void insertTasks() throws DAOException, IOException {
-        ProcessService processService = new ProcessService();
-        TaskService taskService = new TaskService();
-        UserService userService = new UserService();
-        UserGroupService userGroupService = new UserGroupService();
-
         Task firstTask = new Task();
-        Process firstProcess = processService.find(1);
-        UserGroup userGroup = userGroupService.find(1);
+        Process firstProcess = serviceManager.getProcessService().find(1);
+        UserGroup userGroup = serviceManager.getUserGroupService().find(1);
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
@@ -354,24 +324,24 @@ public class MockDatabase {
         firstTask.setProcessingTime(localDate.toDate());
         localDate = new LocalDate(2016,12,24);
         firstTask.setProcessingEnd(localDate.toDate());
-        User firstUser = userService.find(1);
+        User firstUser = serviceManager.getUserService().find(1);
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
         firstTask.setProcess(firstProcess);
-        firstTask.setUsers(userService.findAll());
+        firstTask.setUsers(serviceManager.getUserService().findAll());
         firstTask.getUserGroups().add(userGroup);
         firstProcess.getTasks().add(firstTask);
-        processService.save(firstProcess);
+        serviceManager.getProcessService().save(firstProcess);
         firstUser.getProcessingTasks().add(firstTask);
-        userService.save(firstUser);
+        serviceManager.getUserService().save(firstUser);
 
-        Process secondProcess = processService.find(2);
-        User blockedUser = userService.find(3);
-        User secondUser = userService.find(2);
+        Process secondProcess = serviceManager.getProcessService().find(2);
+        User blockedUser = serviceManager.getUserService().find(3);
+        User secondUser = serviceManager.getUserService().find(2);
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
-        secondTask = taskService.setCorrectionStep(secondTask);
+        secondTask = serviceManager.getTaskService().setCorrectionStep(secondTask);
         secondTask.setOrdering(2);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016,9,25);
@@ -407,54 +377,48 @@ public class MockDatabase {
         localDate = new LocalDate(2017,1,29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        fourthTask.setProcessingUser(userService.find(2));
+        fourthTask.setProcessingUser(serviceManager.getUserService().find(2));
         fourthTask.setProcess(secondProcess);
-        fourthTask.setUsers(userService.findAll());
+        fourthTask.setUsers(serviceManager.getUserService().findAll());
 
         secondProcess.getTasks().add(secondTask);
         secondProcess.getTasks().add(thirdTask);
         secondProcess.getTasks().add(fourthTask);
         System.out.println("tasks2 " + secondProcess.getTasks().size());
-        processService.save(secondProcess);
+        serviceManager.getProcessService().save(secondProcess);
 
         blockedUser.getProcessingTasks().add(secondTask);
         blockedUser.getTasks().add(secondTask);
         secondUser.getTasks().add(secondTask);
         secondUser.getTasks().add(thirdTask);
-        userService.save(blockedUser);
-        userService.save(secondUser);
+        serviceManager.getUserService().save(blockedUser);
+        serviceManager.getUserService().save(secondUser);
 
         userGroup.getTasks().add(firstTask);
         userGroup.getTasks().add(secondTask);
-        userGroupService.save(userGroup);
+        serviceManager.getUserGroupService().save(userGroup);
     }
 
     private static void insertTemplates() throws DAOException, IOException {
-        ProcessService processService = new ProcessService();
-        TemplateService templateService = new TemplateService();
-
-        Process process = processService.find(1);
+        Process process = serviceManager.getProcessService().find(1);
 
         Template firstTemplate = new Template();
         firstTemplate.setProcess(process);
         firstTemplate.setOrigin("test");
-        templateService.save(firstTemplate);
+        serviceManager.getTemplateService().save(firstTemplate);
 
         Template secondTemplate = new Template();
         secondTemplate.setProcess(process);
         secondTemplate.setOrigin("addition");
-        templateService.save(secondTemplate);
+        serviceManager.getTemplateService().save(secondTemplate);
 
         process.getTemplates().add(firstTemplate);
         process.getTemplates().add(secondTemplate);
-        processService.save(process);
+        serviceManager.getProcessService().save(process);
     }
 
     private static void insertTemplateProperties() throws DAOException, IOException {
-        TemplateService templateService = new TemplateService();
-        TemplatePropertyService templatePropertyService = new TemplatePropertyService();
-
-        Template template = templateService.find(1);
+        Template template = serviceManager.getTemplateService().find(1);
 
         TemplateProperty firstTemplateProperty = new TemplateProperty();
         firstTemplateProperty.setTitle("first title");
@@ -466,7 +430,7 @@ public class MockDatabase {
         firstTemplateProperty.setCreationDate(localDate.toDate());
         firstTemplateProperty.setContainer(1);
         firstTemplateProperty.setTemplate(template);
-        templatePropertyService.save(firstTemplateProperty);
+        serviceManager.getTemplatePropertyService().save(firstTemplateProperty);
 
         TemplateProperty secondTemplateProperty = new TemplateProperty();
         secondTemplateProperty.setTitle("template");
@@ -478,17 +442,14 @@ public class MockDatabase {
         secondTemplateProperty.setCreationDate(localDate.toDate());
         secondTemplateProperty.setContainer(2);
         secondTemplateProperty.setTemplate(template);
-        templatePropertyService.save(secondTemplateProperty);
+        serviceManager.getTemplatePropertyService().save(secondTemplateProperty);
 
         template.getProperties().add(firstTemplateProperty);
         template.getProperties().add(secondTemplateProperty);
-        templateService.save(template);
+        serviceManager.getTemplateService().save(template);
     }
 
     private static void insertUsers() throws DAOException, IOException {
-        LdapGroupService ldapGroupService = new LdapGroupService();
-        UserService userService = new UserService();
-
         User firstUser = new User();
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
@@ -497,7 +458,7 @@ public class MockDatabase {
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setTableSize(20);
         firstUser.setCss("/css/fancy.css");
-        userService.save(firstUser);
+        serviceManager.getUserService().save(firstUser);
 
         User secondUser = new User();
         secondUser.setName("Adam");
@@ -505,8 +466,8 @@ public class MockDatabase {
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setSessionTimeout(9000);
-        secondUser.setLdapGroup(ldapGroupService.find(1));
-        userService.save(secondUser);
+        secondUser.setLdapGroup(serviceManager.getLdapGroupService().find(1));
+        serviceManager.getUserService().save(secondUser);
 
         User thirdUser = new User();
         thirdUser.setName("Anna");
@@ -514,40 +475,34 @@ public class MockDatabase {
         thirdUser.setLogin("dora");
         thirdUser.setLdapLogin("doraLDP");
         thirdUser.setActive(false);
-        userService.save(thirdUser);
+        serviceManager.getUserService().save(thirdUser);
     }
 
     private static void insertUserGroups() throws DAOException, IOException {
-        UserService userService = new UserService();
-        UserGroupService userGroupService = new UserGroupService();
-
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
         firstUserGroup.setPermission(1);
         List<User> users = new ArrayList<>();
-        User user = userService.find(1);
+        User user = serviceManager.getUserService().find(1);
         List<UserGroup> userGroups = new ArrayList<>();
         userGroups.add(firstUserGroup);
         user.setUserGroups(userGroups);
-        users.add(userService.find(1));
+        users.add(serviceManager.getUserService().find(1));
         firstUserGroup.setUsers(users);
-        userGroupService.save(firstUserGroup);
+        serviceManager.getUserGroupService().save(firstUserGroup);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");
         secondUserGroup.setPermission(2);
-        userGroupService.save(secondUserGroup);
+        serviceManager.getUserGroupService().save(secondUserGroup);
 
         UserGroup thirdUserGroup = new UserGroup();
         thirdUserGroup.setTitle("Without permission");
-        userGroupService.save(thirdUserGroup);
+        serviceManager.getUserGroupService().save(thirdUserGroup);
     }
 
     public static void insertUserProperties() throws DAOException, IOException {
-        UserService userService = new UserService();
-        UserPropertyService userPropertyService = new UserPropertyService();
-
-        User user = userService.find(1);
+        User user = serviceManager.getUserService().find(1);
 
         UserProperty firstUserProperty = new UserProperty();
         firstUserProperty.setTitle("First Property");
@@ -559,7 +514,7 @@ public class MockDatabase {
         firstUserProperty.setCreationDate(localDate.toDate());
         firstUserProperty.setContainer(1);
         firstUserProperty.setUser(user);
-        userPropertyService.save(firstUserProperty);
+        serviceManager.getUserPropertyService().save(firstUserProperty);
 
         UserProperty secondUserProperty = new UserProperty();
         secondUserProperty.setTitle("secondProperty");
@@ -571,37 +526,31 @@ public class MockDatabase {
         secondUserProperty.setCreationDate(localDate.toDate());
         secondUserProperty.setContainer(2);
         secondUserProperty.setUser(user);
-        userPropertyService.save(secondUserProperty);
+        serviceManager.getUserPropertyService().save(secondUserProperty);
 
         user.getProperties().add(firstUserProperty);
         user.getProperties().add(secondUserProperty);
-        userService.save(user);
+        serviceManager.getUserService().save(user);
     }
 
     private static void insertWorkpieces() throws DAOException, IOException {
-        ProcessService processService = new ProcessService();
-        WorkpieceService workpieceService = new WorkpieceService();
-
-        Process process = processService.find(1);
+        Process process = serviceManager.getProcessService().find(1);
 
         Workpiece firstWorkpiece = new Workpiece();
         firstWorkpiece.setProcess(process);
-        workpieceService.save(firstWorkpiece);
+        serviceManager.getWorkpieceService().save(firstWorkpiece);
 
         Workpiece secondWorkpiece = new Workpiece();
         secondWorkpiece.setProcess(process);
-        workpieceService.save(secondWorkpiece);
+        serviceManager.getWorkpieceService().save(secondWorkpiece);
 
         process.getWorkpieces().add(firstWorkpiece);
         process.getWorkpieces().add(secondWorkpiece);
-        processService.save(process);
+        serviceManager.getProcessService().save(process);
     }
 
     private static void insertWorkpieceProperties() throws DAOException, IOException {
-        WorkpieceService workpieceService = new WorkpieceService();
-        WorkpiecePropertyService workpiecePropertyService = new WorkpiecePropertyService();
-
-        Workpiece workpiece = workpieceService.find(1);
+        Workpiece workpiece = serviceManager.getWorkpieceService().find(1);
 
         WorkpieceProperty firstWorkpieceProperty = new WorkpieceProperty();
         firstWorkpieceProperty.setTitle("First Property");
@@ -613,7 +562,7 @@ public class MockDatabase {
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
         firstWorkpieceProperty.setContainer(1);
         firstWorkpieceProperty.setWorkpiece(workpiece);
-        workpiecePropertyService.save(firstWorkpieceProperty);
+        serviceManager.getWorkpiecePropertyService().save(firstWorkpieceProperty);
 
         WorkpieceProperty secondWorkpieceProperty = new WorkpieceProperty();
         secondWorkpieceProperty.setTitle("workpiece");
@@ -625,11 +574,11 @@ public class MockDatabase {
         secondWorkpieceProperty.setCreationDate(localDate.toDate());
         secondWorkpieceProperty.setContainer(2);
         secondWorkpieceProperty.setWorkpiece(workpiece);
-        workpiecePropertyService.save(secondWorkpieceProperty);
+        serviceManager.getWorkpiecePropertyService().save(secondWorkpieceProperty);
 
         workpiece.getProperties().add(firstWorkpieceProperty);
         workpiece.getProperties().add(secondWorkpieceProperty);
-        workpieceService.save(workpiece);
+        serviceManager.getWorkpieceService().save(workpiece);
     }
 
     //TODO: find out why this method doesn't clean database after every test's class
