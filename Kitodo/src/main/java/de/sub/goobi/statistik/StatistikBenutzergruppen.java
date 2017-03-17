@@ -20,15 +20,21 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class StatistikBenutzergruppen {
+    private static final ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Get diagram.
+     *
+     * @param inProzesse list of Process objects
+     * @return Dataset object
+     */
     public static Dataset getDiagramm(List<Process> inProzesse) {
-        ProcessService processService = new ProcessService();
         DefaultPieDataset dataset = new DefaultPieDataset();
         for (Process proz : inProzesse) {
-            Task step = processService.getCurrentTask(proz);
+            Task step = serviceManager.getProcessService().getCurrentTask(proz);
             /* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
             if (step != null) {
                 /* von dem Schritt alle verantwortlichen Benutzergruppen ermitteln und im Diagramm erfassen */
