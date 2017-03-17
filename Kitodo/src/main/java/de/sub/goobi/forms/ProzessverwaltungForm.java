@@ -99,11 +99,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.ProjectService;
-import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * ProzessverwaltungForm class.
@@ -126,10 +122,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private UserGroup myBenutzergruppe;
     private Workpiece myWerkstueck;
     private WorkpieceProperty myWerkstueckEigenschaft;
-    private ProcessService processService = new ProcessService();
-    private ProjectService projectService = new ProjectService();
-    private TaskService taskService = new TaskService();
-    private UserService userService = new UserService();
     private String modusAnzeige = "aktuell";
     private String modusBearbeiten = "";
     private String goobiScript;
@@ -144,9 +136,8 @@ public class ProzessverwaltungForm extends BasisForm {
     private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
     private Integer container;
     private String addToWikiField = "";
-
     private boolean showStatistics = false;
-
+    private final ServiceManager serviceManager = new ServiceManager();
     private static String DONEDIRECTORYNAME = "fertig/";
 
     /**
@@ -267,7 +258,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     try {
                         {
                             // renaming image directories
-                            String imageDirectory = processService.getImagesDirectory(myProzess);
+                            String imageDirectory = serviceManager.getProcessService().getImagesDirectory(myProzess);
                             SafeFile dir = new SafeFile(imageDirectory);
                             if (dir.isDirectory()) {
                                 SafeFile[] subdirs = dir.listFiles();
@@ -281,7 +272,7 @@ public class ProzessverwaltungForm extends BasisForm {
                         }
                         {
                             // renaming ocr directories
-                            String ocrDirectory = processService.getOcrDirectory(myProzess);
+                            String ocrDirectory = serviceManager.getProcessService().getOcrDirectory(myProzess);
                             SafeFile dir = new SafeFile(ocrDirectory);
                             if (dir.isDirectory()) {
                                 SafeFile[] subdirs = dir.listFiles();
@@ -298,7 +289,7 @@ public class ProzessverwaltungForm extends BasisForm {
                             String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
                             for (String processDir : processDirs) {
 
-                                String processDirAbsolut = FilenameUtils.concat(processService
+                                String processDirAbsolut = FilenameUtils.concat(serviceManager.getProcessService()
                                         .getProcessDataDirectory(myProzess), processDir.replace("(processtitle)",
                                         myProzess.getTitle()));
 
@@ -329,7 +320,7 @@ public class ProzessverwaltungForm extends BasisForm {
             }
 
             try {
-                processService.save(this.myProzess);
+                serviceManager.getProcessService().save(this.myProzess);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
             } catch (IOException e) {
@@ -349,7 +340,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String Loeschen() {
         deleteMetadataDirectory();
         try {
-            processService.remove(this.myProzess);
+            serviceManager.getProcessService().remove(this.myProzess);
         } catch (DAOException | IOException e) {
             Helper.setFehlerMeldung("could not delete ", e);
             return "";
@@ -369,11 +360,11 @@ public class ProzessverwaltungForm extends BasisForm {
     public String ContentLoeschen() {
         // deleteMetadataDirectory();
         try {
-            SafeFile ocr = new SafeFile(processService.getOcrDirectory(this.myProzess));
+            SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
                 ocr.deleteDir();
             }
-            SafeFile images = new SafeFile(processService.getImagesDirectory(this.myProzess));
+            SafeFile images = new SafeFile(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
             if (images.exists()) {
                 images.deleteDir();
             }
@@ -391,8 +382,8 @@ public class ProzessverwaltungForm extends BasisForm {
             deleteSymlinksFromUserHomes();
         }
         try {
-            new SafeFile(processService.getProcessDataDirectory(this.myProzess)).deleteDir();
-            SafeFile ocr = new SafeFile(processService.getOcrDirectory(this.myProzess));
+            new SafeFile(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess)).deleteDir();
+            SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
                 ocr.deleteDir();
             }
@@ -576,8 +567,8 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String ProzessEigenschaftLoeschen() {
         try {
-            processService.getPropertiesInitialized(myProzess).remove(myProzessEigenschaft);
-            processService.save(myProzess);
+            serviceManager.getProcessService().getPropertiesInitialized(myProzess).remove(myProzessEigenschaft);
+            serviceManager.getProcessService().save(myProzess);
         } catch (DAOException | IOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
         }
@@ -590,7 +581,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String VorlageEigenschaftLoeschen() {
         try {
             myVorlage.getProperties().remove(myVorlageEigenschaft);
-            processService.save(myProzess);
+            serviceManager.getProcessService().save(myProzess);
         } catch (DAOException | IOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
         }
@@ -603,7 +594,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String WerkstueckEigenschaftLoeschen() {
         try {
             myWerkstueck.getProperties().remove(myWerkstueckEigenschaft);
-            processService.save(myProzess);
+            serviceManager.getProcessService().save(myProzess);
         } catch (DAOException | IOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
         }
@@ -634,7 +625,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String ProzessEigenschaftUebernehmen() {
-        processService.getPropertiesInitialized(myProzess).add(myProzessEigenschaft);
+        serviceManager.getProcessService().getPropertiesInitialized(myProzess).add(myProzessEigenschaft);
         myProzessEigenschaft.setProcess(myProzess);
         Speichern();
         return "";
@@ -966,13 +957,14 @@ public class ProzessverwaltungForm extends BasisForm {
          * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen
          * Homeverzeichnis abgelegt wurde, ansonsten Download
          */
-        if (!processService.isImageFolderInUse(this.myProzess)) {
+        if (!serviceManager.getProcessService().isImageFolderInUse(this.myProzess)) {
             WebDav myDav = new WebDav();
             myDav.DownloadToHome(this.myProzess, 0, false);
         } else {
             Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
                             + this.myProzess.getTitle() + " " + Helper.getTranslation("isInUse"),
-                    userService.getFullName(processService.getImageFolderInUseUser(this.myProzess)));
+                    serviceManager.getUserService().getFullName(serviceManager.getProcessService()
+                            .getImageFolderInUseUser(this.myProzess)));
             WebDav myDav = new WebDav();
             myDav.DownloadToHome(this.myProzess, 0, true);
         }
@@ -989,12 +981,12 @@ public class ProzessverwaltungForm extends BasisForm {
              * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen
              * Homeverzeichnis abgelegt wurde, ansonsten Download
              */
-            if (!processService.isImageFolderInUse(proz)) {
+            if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                 myDav.DownloadToHome(proz, 0, false);
             } else {
                 Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
-                        + proz.getTitle() + " " + Helper.getTranslation("isInUse"), userService
-                        .getFullName(processService.getImageFolderInUseUser(proz)));
+                        + proz.getTitle() + " " + Helper.getTranslation("isInUse"), serviceManager.getUserService()
+                        .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
                 myDav.DownloadToHome(proz, 0, true);
             }
         }
@@ -1009,12 +1001,13 @@ public class ProzessverwaltungForm extends BasisForm {
         WebDav myDav = new WebDav();
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
-                if (!processService.isImageFolderInUse(proz)) {
+                if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                     myDav.DownloadToHome(proz, 0, false);
                 } else {
                     Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
                                     + proz.getTitle() + " " + Helper.getTranslation("isInUse"),
-                            userService.getFullName(processService.getImageFolderInUseUser(proz)));
+                            serviceManager.getUserService().getFullName(serviceManager.getProcessService()
+                                    .getImageFolderInUseUser(proz)));
                     myDav.DownloadToHome(proz, 0, true);
                 }
             }
@@ -1029,12 +1022,12 @@ public class ProzessverwaltungForm extends BasisForm {
     public void DownloadToHomeHits() {
         WebDav myDav = new WebDav();
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
-            if (!processService.isImageFolderInUse(proz)) {
+            if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                 myDav.DownloadToHome(proz, 0, false);
             } else {
                 Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
-                        + proz.getTitle() + " " + Helper.getTranslation("isInUse"), userService
-                        .getFullName(processService.getImageFolderInUseUser(proz)));
+                        + proz.getTitle() + " " + Helper.getTranslation("isInUse"), serviceManager.getUserService()
+                        .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
                 myDav.DownloadToHome(proz, 0, true);
             }
         }
@@ -1118,11 +1111,11 @@ public class ProzessverwaltungForm extends BasisForm {
                 if (ben != null) {
                     mySchritt.setProcessingUser(ben);
                 }
-                step = taskService.setProcessingStatusDown(step);
+                step = serviceManager.getTaskService().setProcessingStatusDown(step);
                 break;
             }
         }
-        processService.save(proz);
+        serviceManager.getProcessService().save(proz);
     }
 
     /**
@@ -1162,7 +1155,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void SchrittStatusUp() {
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.DONE) {
-            this.mySchritt = taskService.setProcessingStatusUp(this.mySchritt);
+            this.mySchritt = serviceManager.getTaskService().setProcessingStatusUp(this.mySchritt);
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
             StepObject so = StepManager.getStepById(this.mySchritt.getId());
             if (this.mySchritt.getProcessingStatusEnum() == TaskStatus.DONE) {
@@ -1191,7 +1184,7 @@ public class ProzessverwaltungForm extends BasisForm {
         if (ben != null) {
             mySchritt.setProcessingUser(ben);
         }
-        this.mySchritt = taskService.setProcessingStatusDown(this.mySchritt);
+        this.mySchritt = serviceManager.getTaskService().setProcessingStatusDown(this.mySchritt);
         Speichern();
         deleteSymlinksFromUserHomes();
         return "";
@@ -1399,7 +1392,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public void setProjektAuswahl(Integer inProjektAuswahl) {
         if (inProjektAuswahl.intValue() != 0) {
             try {
-                this.myProzess.setProject(projectService.find(inProjektAuswahl));
+                this.myProzess.setProject(serviceManager.getProjectService().find(inProjektAuswahl));
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Projekt kann nicht zugewiesen werden", "");
                 logger.error(e);
@@ -1414,7 +1407,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public List<SelectItem> getProjektAuswahlListe() throws DAOException {
         List<SelectItem> myProjekte = new ArrayList<SelectItem>();
-        List<Project> temp = projectService.search("from Project ORDER BY title");
+        List<Project> temp = serviceManager.getProjectService().search("from Project ORDER BY title");
         for (Project proj : temp) {
             myProjekte.add(new SelectItem(proj.getId(), proj.getTitle(), null));
         }
@@ -1805,8 +1798,8 @@ public class ProzessverwaltungForm extends BasisForm {
         ExportXmlLog xmlExport = new ExportXmlLog();
         try {
             LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-            String ziel = userService.getHomeDirectory(login.getMyBenutzer()) + this.myProzess.getTitle()
-                    + "_log.xml";
+            String ziel = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer())
+                    + this.myProzess.getTitle() + "_log.xml";
             xmlExport.startExport(this.myProzess, ziel);
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not write logfile to home directory: ", e);
@@ -1879,7 +1872,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     public String downloadDocket() {
-        return processService.downloadDocket(this.myProzess);
+        return serviceManager.getProcessService().downloadDocket(this.myProzess);
     }
 
     public void setMyCurrentTable(StatisticsRenderingElement myCurrentTable) {
@@ -2066,12 +2059,12 @@ public class ProzessverwaltungForm extends BasisForm {
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-            String message = this.addToWikiField + " (" + userService.getFullName(user) + ")";
+            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.myProzess.setWikiField(WikiFieldHelper.getWikiMessage(this.myProzess, this.myProzess.getWikiField(),
                     "user", message));
             this.addToWikiField = "";
             try {
-                processService.save(myProzess);
+                serviceManager.getProcessService().save(myProzess);
             } catch (DAOException | IOException e) {
                 logger.error(e);
             }
@@ -2092,7 +2085,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     private void loadProcessProperties() {
         try {
-            this.myProzess = processService.find(this.myProzess.getId());
+            this.myProzess = serviceManager.getProcessService().find(this.myProzess.getId());
         } catch (Exception e) {
             if (logger.isEnabledFor(Level.WARN)) {
                 logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
@@ -2106,7 +2099,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(myProzess);
                 pt.setProzesseigenschaft(pe);
-                processService.getPropertiesInitialized(myProzess).add(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(myProzess).add(pe);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -2142,23 +2135,25 @@ public class ProzessverwaltungForm extends BasisForm {
                     org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                     pe.setProcess(this.myProzess);
                     p.setProzesseigenschaft(pe);
-                    processService.getPropertiesInitialized(this.myProzess).add(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(pe);
                 }
                 p.transfer();
-                if (!processService.getPropertiesInitialized(this.myProzess).contains(p.getProzesseigenschaft())) {
-                    processService.getPropertiesInitialized(this.myProzess).add(p.getProzesseigenschaft());
+                if (!serviceManager.getProcessService().getPropertiesInitialized(this.myProzess)
+                        .contains(p.getProzesseigenschaft())) {
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess)
+                            .add(p.getProzesseigenschaft());
                 }
             }
 
             List<org.kitodo.data.database.beans.ProcessProperty> props = this.myProzess.getProperties();
             for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
                 if (pe.getTitle() == null) {
-                    processService.getPropertiesInitialized(this.myProzess).remove(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
                 }
             }
 
             try {
-                processService.save(this.myProzess);
+                serviceManager.getProcessService().save(this.myProzess);
                 Helper.setMeldung("Properties saved");
             } catch (DAOException e) {
                 logger.error(e);
@@ -2187,14 +2182,14 @@ public class ProzessverwaltungForm extends BasisForm {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(this.myProzess);
                 this.processProperty.setProzesseigenschaft(pe);
-                processService.getPropertiesInitialized(this.myProzess).add(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(pe);
             }
             this.processProperty.transfer();
 
             List<org.kitodo.data.database.beans.ProcessProperty> props = this.myProzess.getProperties();
             for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
                 if (pe.getTitle() == null) {
-                    processService.getPropertiesInitialized(this.myProzess).remove(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
                 }
             }
             //null exception
@@ -2204,7 +2199,7 @@ public class ProzessverwaltungForm extends BasisForm {
                         .add(this.processProperty.getProzesseigenschaft());
             }
             try {
-                processService.save(this.myProzess);
+                serviceManager.getProcessService().save(this.myProzess);
                 Helper.setMeldung("propertiesSaved");
             } catch (DAOException e) {
                 logger.error(e);
@@ -2266,18 +2261,19 @@ public class ProzessverwaltungForm extends BasisForm {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processPropertyList.remove(pp);
-            processService.getPropertiesInitialized(this.myProzess).remove(pp.getProzesseigenschaft());
+            serviceManager.getProcessService().getPropertiesInitialized(this.myProzess)
+                    .remove(pp.getProzesseigenschaft());
 
         }
 
         List<org.kitodo.data.database.beans.ProcessProperty> props = this.myProzess.getProperties();
         for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
             if (pe.getTitle() == null) {
-                processService.getPropertiesInitialized(this.myProzess).remove(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
             }
         }
         try {
-            processService.save(this.myProzess);
+            serviceManager.getProcessService().save(this.myProzess);
         } catch (DAOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("propertiesNotDeleted");
@@ -2370,13 +2366,13 @@ public class ProzessverwaltungForm extends BasisForm {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(this.myProzess);
                 this.processProperty.setProzesseigenschaft(pe);
-                processService.getPropertiesInitialized(this.myProzess).add(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(pe);
             }
             this.processProperty.transfer();
 
         }
         try {
-            processService.save(this.myProzess);
+            serviceManager.getProcessService().save(this.myProzess);
             Helper.setMeldung("propertySaved");
         } catch (DAOException e) {
             logger.error(e);

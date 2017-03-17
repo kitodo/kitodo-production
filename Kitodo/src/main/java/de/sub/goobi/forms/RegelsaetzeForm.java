@@ -27,12 +27,12 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 public class RegelsaetzeForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Ruleset myRegelsatz = new Ruleset();
-    private RulesetService rulesetService = new RulesetService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(RegelsaetzeForm.class);
 
     public String Neu() {
@@ -48,7 +48,7 @@ public class RegelsaetzeForm extends BasisForm {
     public String Speichern() {
         try {
             if (hasValidRulesetFilePath(myRegelsatz, ConfigMain.getParameter("RegelsaetzeVerzeichnis"))) {
-                rulesetService.save(myRegelsatz);
+                serviceManager.getRulesetService().save(myRegelsatz);
                 return "RegelsaetzeAlle";
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
@@ -80,7 +80,7 @@ public class RegelsaetzeForm extends BasisForm {
                 Helper.setFehlerMeldung("RulesetInUse");
                 return "";
             } else {
-                rulesetService.remove(myRegelsatz);
+                serviceManager.getRulesetService().remove(myRegelsatz);
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());

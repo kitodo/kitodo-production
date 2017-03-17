@@ -44,7 +44,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.encryption.DesEncrypter;
-import org.kitodo.services.*;
+import org.kitodo.services.ServiceManager;
 
 import org.quartz.SchedulerException;
 
@@ -62,18 +62,7 @@ public class AdministrationForm implements Serializable {
     private String passwort;
     private boolean istPasswortRichtig = false;
     private boolean rusFullExport = false;
-    private BatchService batchService = new BatchService();
-    private DocketService docketService = new DocketService();
-    private HistoryService historyService = new HistoryService();
-    private ProcessService processService = new ProcessService();
-    private ProjectService projectService = new ProjectService();
-    private RulesetService rulesetService = new RulesetService();
-    private TaskService taskService = new TaskService();
-    private TemplateService templateService = new TemplateService();
-    private UserService userService = new UserService();
-    private UserGroupService userGroupService = new UserGroupService();
-    private WorkpieceService workpieceService = new WorkpieceService();
-
+    private final ServiceManager serviceManager = new ServiceManager();
     public static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
@@ -134,9 +123,9 @@ public class AdministrationForm implements Serializable {
      * Run process.
      */
     public void ProzesseDurchlaufen() throws DAOException, IOException {
-        List<Process> auftraege = processService.search("from Process");
+        List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
-            processService.save(auf);
+            serviceManager.getProcessService().save(auf);
         }
         Helper.setMeldung(null, "", "Elements successful counted");
     }
@@ -146,39 +135,38 @@ public class AdministrationForm implements Serializable {
      */
     public void AnzahlenErmitteln() throws DAOException, IOException, InterruptedException, SwapException {
         XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
-        List<Process> auftraege = processService.search("from Process");
+        List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
 
             try {
                 auf.setSortHelperDocstructs(zaehlen.getNumberOfUghElements(auf, CountType.DOCSTRUCT));
                 auf.setSortHelperMetadata(zaehlen.getNumberOfUghElements(auf, CountType.METADATA));
                 auf.setSortHelperImages(FileUtils.getNumberOfFiles(new SafeFile(
-                        processService.getImagesOrigDirectory(true, auf))));
-                processService.save(auf);
+                        serviceManager.getProcessService().getImagesOrigDirectory(true, auf))));
+                serviceManager.getProcessService().save(auf);
             } catch (RuntimeException e) {
                 myLogger.error("Fehler bei Band: " + auf.getTitle(), e);
             }
 
-            processService.save(auf);
+            serviceManager.getProcessService().save(auf);
         }
         Helper.setMeldung(null, "", "Elements successful counted");
     }
-
-    //TODO: Remove this
 
     /**
      * //TODO: Remove this.
      */
     public void SiciKorr() throws DAOException, IOException {
-        UserGroup gruppe = userGroupService.find(15);
+        UserGroup gruppe = serviceManager.getUserGroupService().find(15);
         List<UserGroup> neueGruppen = new ArrayList<>();
         neueGruppen.add(gruppe);
 
         //TODO: Try to avoid SQL
-        List<Task> schritte = taskService.search("from Task where title='Automatische Generierung der SICI'");
+        List<Task> schritte = serviceManager.getTaskService()
+                .search("from Task where title='Automatische Generierung der SICI'");
         for (Task auf : schritte) {
             auf.setUserGroups(neueGruppen);
-            taskService.save(auf);
+            serviceManager.getTaskService().save(auf);
         }
         Helper.setMeldung(null, "", "Sici erfolgreich korrigiert");
     }
@@ -187,14 +175,14 @@ public class AdministrationForm implements Serializable {
      * Set standard ruleset.
      */
     public void StandardRegelsatzSetzen() throws DAOException, IOException {
-        Ruleset mk = rulesetService.find(1);
+        Ruleset mk = serviceManager.getRulesetService().find(1);
 
-        List<Process> auftraege = processService.search("from Process");
+        List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         int i = 0;
         for (Process auf : auftraege) {
 
             auf.setRuleset(mk);
-            processService.save(auf);
+            serviceManager.getProcessService().save(auf);
             myLogger.debug(auf.getId() + " - " + i++ + "von" + auftraege.size());
         }
         Helper.setMeldung(null, "", "Standard-ruleset successful set");
@@ -206,11 +194,11 @@ public class AdministrationForm implements Serializable {
     public void PasswoerterVerschluesseln() {
         try {
             DesEncrypter encrypter = new DesEncrypter();
-            List<User> myBenutzer = userService.search("from User");
+            List<User> myBenutzer = serviceManager.getUserService().search("from User");
             for (User ben : myBenutzer) {
                 String passencrypted = encrypter.encrypt(ben.getPassword());
                 ben.setPassword(passencrypted);
-                userService.save(ben);
+                serviceManager.getUserService().save(ben);
             }
             Helper.setMeldung(null, "", "passwords successful ciphered");
         } catch (Exception e) {
@@ -222,7 +210,7 @@ public class AdministrationForm implements Serializable {
      * Set up process' date.
      */
     public void ProzesseDatumSetzen() throws DAOException, IOException {
-        List<Process> auftraege = processService.search("from Process");
+        List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
 
             for (Task s  : auf.getTasks()) {
@@ -231,7 +219,7 @@ public class AdministrationForm implements Serializable {
                     break;
                 }
             }
-            processService.save(auf);
+            serviceManager.getProcessService().save(auf);
         }
         Helper.setMeldung(null, "", "created date");
     }
@@ -248,16 +236,16 @@ public class AdministrationForm implements Serializable {
 
         /* alle Prozesse durchlaufen */
         for (Process p : auftraege) {
-            if (processService.getBlockedUsers(p) != null) {
+            if (serviceManager.getProcessService().getBlockedUsers(p) != null) {
                 Helper.setFehlerMeldung("metadata locked: ", p.getTitle());
             } else {
                 if (myLogger.isDebugEnabled()) {
                     myLogger.debug("Process: " + p.getTitle());
                 }
-                Prefs myPrefs = rulesetService.getPreferences(p.getRuleset());
+                Prefs myPrefs = serviceManager.getRulesetService().getPreferences(p.getRuleset());
                 Fileformat gdzfile;
                 try {
-                    gdzfile = processService.readMetadataFile(p);
+                    gdzfile = serviceManager.getProcessService().readMetadataFile(p);
 
                     MetadataType mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
                     List<? extends Metadata> alleMetadaten = gdzfile.getDigitalDocument().getPhysicalDocStruct()
@@ -267,13 +255,13 @@ public class AdministrationForm implements Serializable {
                         myLogger.debug(md.getValue());
 
                         if (SystemUtils.IS_OS_WINDOWS) {
-                            md.setValue("file:/" + processService.getImagesDirectory(p) + p.getTitle().trim()
-                                    + DIRECTORY_SUFFIX);
+                            md.setValue("file:/" + serviceManager.getProcessService().getImagesDirectory(p)
+                                    + p.getTitle().trim() + DIRECTORY_SUFFIX);
                         } else {
-                            md.setValue("file://" + processService.getImagesDirectory(p) + p.getTitle().trim()
-                                    + DIRECTORY_SUFFIX);
+                            md.setValue("file://" + serviceManager.getProcessService().getImagesDirectory(p)
+                                    + p.getTitle().trim() + DIRECTORY_SUFFIX);
                         }
-                        processService.writeMetadataFile(gdzfile, p);
+                        serviceManager.getProcessService().writeMetadataFile(gdzfile, p);
                         Helper.setMeldung(null, "", "Image path set: " + p.getTitle()
                                 + ": ./" + p.getTitle() + DIRECTORY_SUFFIX);
                     } else {
@@ -325,7 +313,7 @@ public class AdministrationForm implements Serializable {
 
         /* alle Prozesse durchlaufen */
         for (Process p : auftraege) {
-            if (processService.getBlockedUsers(p) != null) {
+            if (serviceManager.getProcessService().getBlockedUsers(p) != null) {
                 Helper.setFehlerMeldung("metadata locked: ", p.getTitle());
             } else {
                 String myBandnr = p.getTitle();
@@ -333,9 +321,9 @@ public class AdministrationForm implements Serializable {
                 while (tokenizer.hasMoreTokens()) {
                     myBandnr = "_" + tokenizer.nextToken();
                 }
-                Prefs myPrefs = rulesetService.getPreferences(p.getRuleset());
+                Prefs myPrefs = serviceManager.getRulesetService().getPreferences(p.getRuleset());
                 try {
-                    Fileformat gdzfile = processService.readMetadataFile(p);
+                    Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(p);
                     DocStruct dsTop = gdzfile.getDigitalDocument().getLogicalDocStruct();
                     DocStruct dsFirst = null;
                     if (dsTop.getAllChildren() != null && dsTop.getAllChildren().size() > 0) {
@@ -381,6 +369,7 @@ public class AdministrationForm implements Serializable {
                         myCollections = new ArrayList<Metadata>(dsTop.getAllMetadataByType(coltype));
                         if (myCollections.size() > 0) {
                             for (Metadata md : myCollections) {
+
                                 if (myKollektionenTitel.contains(md.getValue())) {
                                     dsTop.removeMetadata(md);
                                 } else {
@@ -394,7 +383,7 @@ public class AdministrationForm implements Serializable {
                         myCollections = new ArrayList<Metadata>(dsFirst.getAllMetadataByType(coltype));
                         if (myCollections.size() > 0) {
                             for (Metadata md : myCollections) {
-                                //Metadata md = (Metadata) it.next();
+                                // Metadata md = (Metadata) it.next();
                                 if (myKollektionenTitel.contains(md.getValue())) {
                                     dsFirst.removeMetadata(md);
                                 } else {
@@ -404,7 +393,7 @@ public class AdministrationForm implements Serializable {
                         }
                     }
 
-                    processService.writeMetadataFile(gdzfile, p);
+                    serviceManager.getProcessService().writeMetadataFile(gdzfile, p);
 
                 } catch (ReadException e) {
                     Helper.setFehlerMeldung("", "ReadException: " + p.getTitle() + " - "
@@ -442,8 +431,7 @@ public class AdministrationForm implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
-        ProcessService processService = new ProcessService();
-        RulesetService rulesetService = new RulesetService();
+        ServiceManager serviceManager = new ServiceManager();
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);
         crit.add(Restrictions.eq("template", Boolean.FALSE));
@@ -451,12 +439,12 @@ public class AdministrationForm implements Serializable {
         /* alle Prozesse durchlaufen */
         List<Process> pl = crit.list();
         for (Process p : pl) {
-            if (processService.getBlockedUsers(p) != null) {
+            if (serviceManager.getProcessService().getBlockedUsers(p) != null) {
                 Helper.setFehlerMeldung("metadata locked: " + p.getTitle());
             } else {
-                Prefs myPrefs = rulesetService.getPreferences(p.getRuleset());
+                Prefs myPrefs = serviceManager.getRulesetService().getPreferences(p.getRuleset());
                 try {
-                    Fileformat gdzfile = processService.readMetadataFile(p);
+                    Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(p);
                     DocStruct dsTop = gdzfile.getDigitalDocument().getLogicalDocStruct();
                     MetadataType mdtPpnDigital = UghHelper.getMetadataType(myPrefs, "CatalogIDSource");
 
@@ -468,7 +456,7 @@ public class AdministrationForm implements Serializable {
                                 Metadata md = it.next();
                                 if (!md.getValue().startsWith("PPN")) {
                                     md.setValue("PPN" + md.getValue());
-                                    processService.writeMetadataFile(gdzfile, p);
+                                    serviceManager.getProcessService().writeMetadataFile(gdzfile, p);
                                 }
                             }
                         }
@@ -518,7 +506,7 @@ public class AdministrationForm implements Serializable {
         /* alle Prozesse durchlaufen */
         for (Iterator<Process> iter = crit.list().iterator(); iter.hasNext();) {
             Process p = iter.next();
-            if (processService.getBlockedUsers(p) != null) {
+            if (serviceManager.getProcessService().getBlockedUsers(p) != null) {
                 Helper.setFehlerMeldung("metadata locked: ", p.getTitle());
             } else {
                 String ppn = BeanHelper.determineWorkpieceProperty(p, "PPN digital").replace("PPN ", "")
@@ -526,9 +514,9 @@ public class AdministrationForm implements Serializable {
                 String jahr = BeanHelper.determineScanTemplateProperty(p, "Bandnummer");
                 String ppnAufBandebene = "PPN" + ppn + "_" + jahr;
 
-                Prefs myPrefs = rulesetService.getPreferences(p.getRuleset());
+                Prefs myPrefs = serviceManager.getRulesetService().getPreferences(p.getRuleset());
                 try {
-                    Fileformat gdzfile = processService.readMetadataFile(p);
+                    Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(p);
                     DocStruct dsTop = gdzfile.getDigitalDocument().getLogicalDocStruct();
                     DocStruct dsFirst = null;
                     if (dsTop.getAllChildren() != null && dsTop.getAllChildren().size() > 0) {
@@ -579,7 +567,7 @@ public class AdministrationForm implements Serializable {
                         }
                     }
 
-                    processService.writeMetadataFile(gdzfile, p);
+                    serviceManager.getProcessService().writeMetadataFile(gdzfile, p);
 
                 } catch (ReadException e) {
                     Helper.setFehlerMeldung("", "ReadException: " + p.getTitle() + " - "
@@ -625,17 +613,17 @@ public class AdministrationForm implements Serializable {
      * Get all data stored in database and insert it to ElasticSearch index.
      */
     public void addTypesToIndex() throws DAOException, InterruptedException, IOException {
-        batchService.addAllObjectsToIndex();
-        docketService.addAllObjectsToIndex();
-        historyService.addAllObjectsToIndex();
-        processService.addAllObjectsToIndex();
-        projectService.addAllObjectsToIndex();
-        rulesetService.addAllObjectsToIndex();
-        taskService.addAllObjectsToIndex();
-        templateService.addAllObjectsToIndex();
-        userService.addAllObjectsToIndex();
-        userGroupService.addAllObjectsToIndex();
-        workpieceService.addAllObjectsToIndex();
+        serviceManager.getBatchService().addAllObjectsToIndex();
+        serviceManager.getDocketService().addAllObjectsToIndex();
+        serviceManager.getHistoryService().addAllObjectsToIndex();
+        serviceManager.getProcessService().addAllObjectsToIndex();
+        serviceManager.getProjectService().addAllObjectsToIndex();
+        serviceManager.getRulesetService().addAllObjectsToIndex();
+        serviceManager.getTaskService().addAllObjectsToIndex();
+        serviceManager.getTemplateService().addAllObjectsToIndex();
+        serviceManager.getUserService().addAllObjectsToIndex();
+        serviceManager.getUserGroupService().addAllObjectsToIndex();
+        serviceManager.getWorkpieceService().addAllObjectsToIndex();
     }
 
 }

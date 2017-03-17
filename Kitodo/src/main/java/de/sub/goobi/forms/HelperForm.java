@@ -35,15 +35,13 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.services.DocketService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * @author Wulf Riebensahm
  */
 public class HelperForm {
-	private DocketService docketService = new DocketService();
-	private RulesetService rulesetService = new RulesetService();
+	private final ServiceManager serviceManager = new ServiceManager();
 
 	public static final String MAIN_JSF_PATH = "/newpages";
 	public static final String IMAGE_PATH = "/newpages/images";
@@ -125,7 +123,7 @@ public class HelperForm {
 
 	public List<SelectItem> getRegelsaetze() throws DAOException {
 		List<SelectItem> myPrefs = new ArrayList<SelectItem>();
-		List<Ruleset> temp = rulesetService.search("from Ruleset ORDER BY title");
+		List<Ruleset> temp = serviceManager.getRulesetService().search("from Ruleset ORDER BY title");
 		for (Iterator<Ruleset> iter = temp.iterator(); iter.hasNext();) {
 			Ruleset an = iter.next();
 			myPrefs.add(new SelectItem(an, an.getTitle(), null));
@@ -136,7 +134,7 @@ public class HelperForm {
 	public List<SelectItem> getDockets() {
 		List<SelectItem> answer = new ArrayList<SelectItem>();
 		try {
-			List<Docket> temp = docketService.search("from Docket ORDER BY name");
+			List<Docket> temp = serviceManager.getDocketService().search("from Docket ORDER BY name");
 			for (Docket d : temp) {
 				answer.add(new SelectItem(d, d.getName(), null));
 			}

@@ -48,7 +48,7 @@ import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class ModuleServerForm {
     private Boolean running = false;
@@ -56,9 +56,9 @@ public class ModuleServerForm {
     private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();
     private ModuleDesc myModule;
     Helper help = new Helper();
-    static ProcessService processService = new ProcessService();
     Timer messageTimer;
     private static final Logger logger = Logger.getLogger(ModuleServerForm.class);
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * initialize all modules.
@@ -390,7 +390,7 @@ public class ModuleServerForm {
     public static Process getProcessFromShortSession(String sessionId) throws GoobiException {
         String prozessidStr = getProcessIDFromShortSession(sessionId);
         try {
-            Process tempProz = processService.find(Integer.parseInt(prozessidStr));
+            Process tempProz = serviceManager.getProcessService().find(Integer.parseInt(prozessidStr));
             Helper.getHibernateSession().flush();
             Helper.getHibernateSession().clear();
             if (tempProz != null && tempProz.getId() != null) {

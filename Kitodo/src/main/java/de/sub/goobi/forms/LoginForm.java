@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class LoginForm {
     private String login;
@@ -40,7 +40,7 @@ public class LoginForm {
     private String passwortAendernAlt;
     private String passwortAendernNeu1;
     private String passwortAendernNeu2;
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Log out.
@@ -77,7 +77,7 @@ public class LoginForm {
             /* prüfen, ob schon ein Benutzer mit dem Login existiert */
             List<User> treffer;
             try {
-                treffer = userService.search("from User where login = :username", "username",
+                treffer = serviceManager.getUserService().search("from User where login = :username", "username",
                         this.login);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not read database", e.getMessage());
@@ -93,7 +93,7 @@ public class LoginForm {
                     return "";
                 }
                 /* wenn passwort auch richtig ist, den benutzer übernehmen */
-                if (userService.isPasswordCorrect(b, this.password)) {
+                if (serviceManager.getUserService().isPasswordCorrect(b, this.password)) {
                     /* jetzt prüfen, ob dieser Benutzer schon in einer anderen Session eingeloggt ist */
                     SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
                     HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
@@ -167,7 +167,7 @@ public class LoginForm {
         this.myBenutzer = null;
         Integer LoginID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            this.myBenutzer = userService.find(LoginID);
+            this.myBenutzer = serviceManager.getUserService().find(LoginID);
             /* in der Session den Login speichern */
             SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
             temp.sessionBenutzerAktualisieren((HttpSession) FacesContext.getCurrentInstance().getExternalContext()
@@ -203,9 +203,9 @@ public class LoginForm {
                 /* wenn alles korrekt, dann jetzt speichern */
                 Ldap myLdap = new Ldap();
                 myLdap.changeUserPassword(this.myBenutzer, this.passwortAendernAlt, this.passwortAendernNeu1);
-                User temp = userService.find(this.myBenutzer.getId());
+                User temp = serviceManager.getUserService().find(this.myBenutzer.getId());
                 temp.setPasswordDecrypted(this.passwortAendernNeu1);
-                userService.save(temp);
+                serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
 
                 Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
@@ -225,11 +225,11 @@ public class LoginForm {
      */
     public String BenutzerkonfigurationSpeichern() {
         try {
-            User temp = userService.find(this.myBenutzer.getId());
+            User temp = serviceManager.getUserService().find(this.myBenutzer.getId());
             temp.setTableSize(this.myBenutzer.getTableSize());
             temp.setMetadataLanguage(this.myBenutzer.getMetadataLanguage());
             temp.setConfigProductionDateShow(this.myBenutzer.isConfigProductionDateShow());
-            userService.save(temp);
+            serviceManager.getUserService().save(temp);
             this.myBenutzer = temp;
             Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
         } catch (DAOException e) {
@@ -348,24 +348,22 @@ public class LoginForm {
     }
 
     /**
-     * The function getUserHomeDir() returns the home directory of the currently
-     * logged in user, if any, or the empty string otherwise.
+     * The function getUserHomeDir() returns the home directory of the currently logged in user,
+     * if any, or the empty string otherwise.
      *
      * @return the home directory of the current user
      * @throws InterruptedException
-     *             If the thread running the script is interrupted by another
-     *             thread while it is waiting, then the wait is ended and an
-     *             InterruptedException is thrown.
+     *             If the thread running the script is interrupted by another thread while it is waiting,
+     *             then the wait is ended and an InterruptedException is thrown.
      * @throws IOException if an I/O error occurs.
      */
     public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
         String result = "";
-        UserService userService = new UserService();
+        ServiceManager serviceManager = new ServiceManager();
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (loginForm != null) {
-            result = userService.getHomeDirectory(loginForm.getMyBenutzer());
+            result = serviceManager.getUserService().getHomeDirectory(loginForm.getMyBenutzer());
         }
         return result;
     }
-
 }

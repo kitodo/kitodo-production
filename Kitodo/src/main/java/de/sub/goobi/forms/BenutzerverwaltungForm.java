@@ -46,19 +46,13 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.LdapGroupService;
-import org.kitodo.services.ProjectService;
-import org.kitodo.services.UserGroupService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class BenutzerverwaltungForm extends BasisForm {
     private static final long serialVersionUID = -3635859455444639614L;
     private User myClass = new User();
-    private LdapGroupService ldapGroupService = new LdapGroupService();
-    private ProjectService projectService = new ProjectService();
-    private UserService userService = new UserService();
-    private UserGroupService userGroupService = new UserGroupService();
     private boolean hideInactiveUsers = true;
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
 
     /**
@@ -157,8 +151,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         Integer blub = this.myClass.getId();
         try {
             /* prüfen, ob schon ein anderer Benutzer mit gleichem Login existiert */
-            if (this.userService.count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
-                this.userService.save(this.myClass);
+            if (this.serviceManager.getUserService().count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
+                this.serviceManager.getUserService().save(this.myClass);
                 return "BenutzerAlle";
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
@@ -192,9 +186,9 @@ public class BenutzerverwaltungForm extends BasisForm {
                 + File.separator + "goobi_loginBlacklist.txt";
         /* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
         try (
-            FileInputStream fis = new FileInputStream(filename);
-            InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-            BufferedReader in = new BufferedReader(isr);
+                FileInputStream fis = new FileInputStream(filename);
+                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                BufferedReader in = new BufferedReader(isr);
         ) {
             String str;
             while ((str = in.readLine()) != null) {
@@ -219,7 +213,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String Loeschen() {
         try {
-            userService.remove(myClass);
+            serviceManager.getUserService().remove(myClass);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
@@ -259,7 +253,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String ZuGruppeHinzufuegen() {
         Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            UserGroup usergroup = userGroupService.find(gruppenID);
+            UserGroup usergroup = serviceManager.getUserGroupService().find(gruppenID);
             for (UserGroup b : this.myClass.getUserGroups()) {
                 if (b.equals(usergroup)) {
                     return "";
@@ -299,7 +293,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String ZuProjektHinzufuegen() {
         Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            Project project = projectService.find(projektID);
+            Project project = serviceManager.getProjectService().find(projektID);
             for (Project p : this.myClass.getProjects()) {
                 if (p.equals(project)) {
                     return "";
@@ -330,7 +324,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         Helper.getHibernateSession().flush();
         Helper.getHibernateSession().clear();
         try {
-            this.myClass = userService.find(inMyClass.getId());
+            this.myClass = serviceManager.getUserService().find(inMyClass.getId());
         } catch (DAOException e) {
             this.myClass = inMyClass;
         }
@@ -353,7 +347,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     public void setLdapGruppeAuswahl(Integer inAuswahl) {
         if (inAuswahl.intValue() != 0) {
             try {
-                this.myClass.setLdapGroup(ldapGroupService.find(inAuswahl));
+                this.myClass.setLdapGroup(serviceManager.getLdapGroupService().find(inAuswahl));
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Error on writing to database", "");
                 logger.error(e);
@@ -366,7 +360,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public List<SelectItem> getLdapGruppeAuswahlListe() throws DAOException {
         List<SelectItem> myLdapGruppen = new ArrayList<SelectItem>();
-        List<LdapGroup> temp = ldapGroupService.search("from LdapGroup ORDER BY title");
+        List<LdapGroup> temp = serviceManager.getLdapGroupService().search("from LdapGroup ORDER BY title");
         for (LdapGroup gru : temp) {
             myLdapGruppen.add(new SelectItem(gru.getId(), gru.getTitle(), null));
         }

@@ -61,7 +61,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProjectService;
+import org.kitodo.services.ServiceManager;
 
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
@@ -69,7 +69,7 @@ public class ProjekteForm extends BasisForm {
 
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
-    private final ProjectService projectService = new ProjectService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting filegroups
     // it needs the execution of commit fileGroups to make these changes permanent
@@ -148,15 +148,15 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-	 * Save.
+     * Save.
      *
-	 * @return page or empty String
-	 */
+     * @return page or empty String
+     */
     public String Speichern() {
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         try {
-            projectService.save(this.myProjekt);
+            serviceManager.getProjectService().save(this.myProjekt);
             return "ProjekteAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
@@ -179,7 +179,7 @@ public class ProjekteForm extends BasisForm {
         myLogger.trace("Apply wird aufgerufen...");
         this.commitFileGroups();
         try {
-            projectService.save(this.myProjekt);
+            serviceManager.getProjectService().save(this.myProjekt);
             return "";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
@@ -203,7 +203,7 @@ public class ProjekteForm extends BasisForm {
             return "";
         } else {
             try {
-                projectService.remove(this.myProjekt);
+                serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not delete", e.getMessage());
                 myLogger.error(e.getMessage());
@@ -587,7 +587,8 @@ public class ProjekteForm extends BasisForm {
     public StatQuestProjectProgressData getProjectProgressInterface() {
         synchronized (this.projectProgressData) {
             try {
-                this.projectProgressData.setCommonWorkflow(projectService.getWorkFlow(this.myProjekt));
+                this.projectProgressData.setCommonWorkflow(serviceManager.getProjectService()
+                        .getWorkFlow(this.myProjekt));
                 this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
                 this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
                 this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),

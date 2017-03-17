@@ -27,12 +27,12 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
-import org.kitodo.services.DocketService;
+import org.kitodo.services.ServiceManager;
 
 public class DocketForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();
-    private DocketService docketService = new DocketService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(DocketForm.class);
 
     public String Neu() {
@@ -48,7 +48,7 @@ public class DocketForm extends BasisForm {
     public String Speichern() {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigMain.getParameter("xsltFolder"))) {
-                this.docketService.save(myDocket);
+                this.serviceManager.getDocketService().save(myDocket);
                 return "DocketList";
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
@@ -81,7 +81,7 @@ public class DocketForm extends BasisForm {
                 Helper.setFehlerMeldung("DocketInUse");
                 return "";
             } else {
-                this.docketService.remove(this.myDocket);
+                this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
@@ -101,6 +101,11 @@ public class DocketForm extends BasisForm {
         return false;
     }
 
+    /**
+     * No filter.
+     *
+     * @return page or empty String
+     */
     public String FilterKein() {
         try {
             // HibernateUtil.clearSession();

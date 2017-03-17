@@ -29,23 +29,19 @@ import org.hibernate.criterion.Restrictions;
 
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class StatistikForm {
-    private ProcessService processService = new ProcessService();
-    private TaskService taskService = new TaskService();
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
     Calendar cal = new GregorianCalendar();
     int n = 200;
 
     /**
-	 * Get amount list literature together.
-	 *
-     * @return Anzahl aller Literatureinträge Integer
-     */
+     * Get amount list literature together.
+     *
+	 * @return Anzahl aller Literatureinträge Integer
+	 */
     public Integer getAnzahlLiteraturGesamt() {
         return Integer.valueOf(0);
     }
@@ -56,11 +52,13 @@ public class StatistikForm {
      * is used in the SQL statement to exclude the deleted accounts from the sum.
      *
      * @return the count of valid user accounts
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
      */
 
     public Long getAnzahlBenutzer() {
         try {
-            return userService.count("from User where visible is null");
+            return serviceManager.getUserService().count("from User where visible is null");
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
@@ -74,7 +72,7 @@ public class StatistikForm {
      */
     public Long getAnzahlBenutzergruppen() {
         try {
-            return userService.count("from UserGroup");
+            return serviceManager.getUserService().count("from UserGroup");
         } catch (DAOException e) {
             Helper.setMeldung(null, "fehlerBeimEinlesen", e.getMessage());
             return null;
@@ -82,13 +80,13 @@ public class StatistikForm {
     }
 
     /**
-     * Get amount of users.
+     * Get amount of processes.
      *
-     * @return Anzahl der Benutzer
+     * @return amount of processes
      */
     public Long getAnzahlProzesse() {
         try {
-            return processService.count("from Process");
+            return serviceManager.getProcessService().count("from Process");
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
             return null;
@@ -98,11 +96,11 @@ public class StatistikForm {
     /**
      * Get amount of tasks.
      *
-     * @return Anzahl der Benutzer
+     * @return amount of tasks
      */
     public Long getAnzahlSchritte() {
         try {
-            return taskService.count("from Task");
+            return serviceManager.getTaskService().count("from Task");
         } catch (DAOException e) {
             myLogger.error("Hibernate error", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
@@ -113,7 +111,7 @@ public class StatistikForm {
     /**
      * Get amount of templates.
      *
-     * @return Anzahl der Benutzer
+     * @return amount of templates
      */
     public Long getAnzahlVorlagen() {
         Session session = Helper.getHibernateSession();
@@ -123,7 +121,7 @@ public class StatistikForm {
     /**
      * Get amount of workpieces.
      *
-     * @return Anzahl der Benutzer
+     * @return amount of workpieces
      */
     public Long getAnzahlWerkstuecke() {
         Session session = Helper.getHibernateSession();

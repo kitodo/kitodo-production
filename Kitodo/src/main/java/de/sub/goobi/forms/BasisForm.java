@@ -19,17 +19,16 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class BasisForm implements Serializable {
-    private UserService userService = new UserService();
     private static final Logger logger = Logger.getLogger(BasisForm.class);
     private static final long serialVersionUID = 2950419497162710096L;
+    private final ServiceManager serviceManager = new ServiceManager();
     protected Page page;
     protected String zurueck = "";
     protected String filter = "";
     protected User user;
-
     protected String sortierung = "prozessAsc";
 
     public Page getPage() {
@@ -80,9 +79,9 @@ public class BasisForm implements Serializable {
         if (this.filter == null || this.filter.length() == 0) {
             return;
         }
-        userService.addFilter(this.user.getId(), this.filter);
+        serviceManager.getUserService().addFilter(this.user.getId(), this.filter);
         //try {
-        //  new BenutzerDAO().save(this.user);
+        //	new BenutzerDAO().save(this.user);
         //} catch (DAOException e) {
         //	logger.error(e);
         //}
@@ -95,7 +94,7 @@ public class BasisForm implements Serializable {
         if (this.filter == null || this.filter.length() == 0) {
             return;
         }
-        userService.removeFilter(this.user.getId(), this.filter);
+        serviceManager.getUserService().removeFilter(this.user.getId(), this.filter);
         //try {
         //	new BenutzerDAO().save(this.user);
         //} catch (DAOException e) {
