@@ -126,7 +126,17 @@ public class TaskService {
     }
 
     /**
-     * Convert Date start date to String.
+     * Convert date of processing begin to formatted String.
+     *
+     * @param task object
+     * @return formatted date string
+     */
+    public String getProcessingBeginAsFormattedString(Task task) {
+        return Helper.getDateAsFormattedString(task.getProcessingBegin());
+    }
+
+    /**
+     * Convert date of processing end to formatted String.
      *
      * @param task object
      * @return formatted date string
@@ -136,7 +146,7 @@ public class TaskService {
     }
 
     /**
-     * Convert Date end date to String.
+     * Convert date of processing day to formatted String.
      *
      * @param task object
      * @return formatted date string
