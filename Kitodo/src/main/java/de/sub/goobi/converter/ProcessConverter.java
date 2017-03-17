@@ -20,10 +20,11 @@ import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
-
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.ProcessService;
 
 public class ProcessConverter implements Converter {
+    private final ServiceManager serviceManager = new ServiceManager();
    public static final String CONVERTER_ID = "ProcessConverter";
    private static final Logger logger = Logger.getLogger(ProcessConverter.class);
    
@@ -34,8 +35,7 @@ public class ProcessConverter implements Converter {
          return null;
       } else {
          try {
-         	ProcessService processService = new ProcessService();
-              return processService.find(Integer.valueOf(value));
+              return serviceManager.getProcessService().find(Integer.valueOf(value));
 			} catch (NumberFormatException e) {
 				logger.error(e);
 				return "0";
@@ -52,7 +52,7 @@ public class ProcessConverter implements Converter {
      * @return a new ProzessDAO
      */
     public ProcessService getProzessService() {
-        return new ProcessService();
+        return serviceManager.getProcessService();
     }
 
     @Override
