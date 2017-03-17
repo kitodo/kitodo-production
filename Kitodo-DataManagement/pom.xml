@@ -212,30 +212,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>formatter</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>net.revelc.code</groupId>
-                        <artifactId>formatter-maven-plugin</artifactId>
-                        <version>0.5.2</version>
-                        <configuration>
-                            <configFile>${parent.basedir}/config/code-formatter.xml</configFile>
-                            <directories>
-                                <directory>${project.build.sourceDirectory}/</directory>
-                                <!--<directory>${project.build.testSourceDirectory}/</directory>-->
-                            </directories>
-                            <encoding>UTF-8</encoding>
-                            <lineEnding>LF</lineEnding>
-                        </configuration>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
 </project>
