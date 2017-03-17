@@ -9,25 +9,24 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.services;
+package org.kitodo.services.data;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
- * Tests for DocketService class.
+ * Tests for WorkpieceService class.
  */
-public class DocketServiceIT {
+public class WorkpieceServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException, IOException {
@@ -40,19 +39,20 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldFindDocket() throws Exception {
-        DocketService docketService = new DocketService();
+    public void shouldFindWorkpiece() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
 
-        Docket docket = docketService.find(1);
-        boolean condition = docket.getName().equals("default") && docket.getFile().equals("docket.xsl");
-        assertTrue("Docket was not found in database!", condition);
+        Workpiece workpiece = workpieceService.find(1);
+        boolean condition = workpiece.getProperties().size() == 2;
+        assertTrue("Workpiece was not found in database!", condition);
     }
 
     @Test
-    public void shouldFindAllDockets() throws Exception {
-        DocketService docketService = new DocketService();
+    public void shouldGetPropertiesSize() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
 
-        List<Docket> dockets = docketService.findAll();
-        assertEquals("Not all dockets were found in database!", 2, dockets.size());
+        Workpiece workpiece = workpieceService.find(1);
+        int actual = workpieceService.getPropertiesSize(workpiece);
+        assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);
     }
 }

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.services;
+package org.kitodo.services.data;
 
 import java.io.IOException;
 
@@ -18,15 +18,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 
 import static org.junit.Assert.*;
 
 /**
- * Tests for WorkpieceService class.
+ * Tests for TemplateService class.
  */
-public class WorkpieceServiceIT {
+public class TemplateServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws DAOException, IOException {
@@ -39,20 +39,19 @@ public class WorkpieceServiceIT {
     }
 
     @Test
-    public void shouldFindWorkpiece() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
+    public void shouldFindTemplate() throws Exception {
+        TemplateService templateService = new TemplateService();
 
-        Workpiece workpiece = workpieceService.find(1);
-        boolean condition = workpiece.getProperties().size() == 2;
-        assertTrue("Workpiece was not found in database!", condition);
+        Template template = templateService.find(1);
+        assertTrue("Template was not found in database!", template.getOrigin().equals("test"));
     }
 
     @Test
     public void shouldGetPropertiesSize() throws Exception {
-        WorkpieceService workpieceService = new WorkpieceService();
+        TemplateService templateService = new TemplateService();
 
-        Workpiece workpiece = workpieceService.find(1);
-        int actual = workpieceService.getPropertiesSize(workpiece);
-        assertEquals("Workpiece's properties size is not equal to given value!", 2, actual);
+        Template template = templateService.find(1);
+        int actual = templateService.getPropertiesSize(template);
+        assertEquals("Template's properties size is not equal to given value!", 2, actual);
     }
 }
