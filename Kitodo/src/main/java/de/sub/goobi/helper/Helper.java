@@ -29,6 +29,7 @@ import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,7 +63,7 @@ public class Helper implements Serializable, Observer {
 
     /**
      * Always treat de-serialization as a full-blown constructor, by validating the final state of
-	 * the de-serialized object.
+     * the de-serialized object.
      */
     private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
@@ -282,15 +283,15 @@ public class Helper implements Serializable, Observer {
     /**
      * Get date as formatted String.
      *
-     * @param inDate Date object
+     * @param date Date object
      * @return String
      */
-    public static String getDateAsFormattedString(Date inDate) {
-        if (inDate == null) {
+    public static String getDateAsFormattedString(Date date) {
+        if (date == null) {
             return "-";
         } else {
-            return DateFormat.getDateInstance().format(inDate) + " "
-                    + DateFormat.getTimeInstance(DateFormat.MEDIUM).format(inDate);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return dateFormat.format(date);
         }
     }
 
@@ -581,4 +582,5 @@ public class Helper implements Serializable, Observer {
     public static String getLastMessage() {
         return compoundMessage;
     }
+
 }
