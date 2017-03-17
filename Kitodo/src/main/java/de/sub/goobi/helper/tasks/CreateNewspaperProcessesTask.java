@@ -36,8 +36,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.BatchService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -50,17 +49,15 @@ import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
  * The class CreateNewspaperProcessesTask is a LongRunningTask to create processes from a course of appearance.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateNewspaperProcessesTask extends EmptyTask {
-
-    private BatchService batchService = new BatchService();
-    private RulesetService rulesetService = new RulesetService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The field batchLabel is set in addToBatches() on the first function call which finds it to be null,
-	 * and is used and set back to null in flushLogisticsBatch() to create the batches’ specific part of the
+     * and is used and set back to null in flushLogisticsBatch() to create the batches’ specific part of the
      * identifier (put in parentheses behind the shared part).
      */
     private String batchLabel;
@@ -294,7 +291,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 
         // initialise
-        Prefs ruleset = rulesetService.getPreferences(newProcess.getProzessKopie().getRuleset());
+        Prefs ruleset = serviceManager.getRulesetService().getPreferences(newProcess.getProzessKopie().getRuleset());
         DigitalDocument document;
         try {
             document = newProcess.getFileformat().getDigitalDocument();
@@ -373,12 +370,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                         + key
                         + " in "
                         + (level.getType() != null ? "DocStrctType " + level.getType().getName()
-                                : "anonymous DocStrctType")
+                        : "anonymous DocStrctType")
                         + ": "
                         + e.getClass()
-                                .getSimpleName()
-                                .replace("NullPointerException",
-                                        "No metadata types are associated with that DocStructType."), e);
+                        .getSimpleName()
+                        .replace("NullPointerException",
+                                "No metadata types are associated with that DocStructType."), e);
             }
         }
     }
@@ -409,10 +406,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             if (batchLabel == null) {
                 batchLabel = createBatches.format(issues.get(lastIndex).getDate());
             }
-            batchService.add(logisticsBatch, process);
+            serviceManager.getBatchService().add(logisticsBatch, process);
             currentBreakMark = breakMark;
         }
-        batchService.add(fullBatch, process);
+        serviceManager.getBatchService().add(fullBatch, process);
     }
 
     /**
@@ -426,9 +423,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             thrown while performing the rollback
      */
     private void flushLogisticsBatch(String processTitle) throws DAOException, IOException {
-        if (batchService.size(logisticsBatch) > 0) {
+        if (serviceManager.getBatchService().size(logisticsBatch) > 0) {
             logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
-            batchService.save(logisticsBatch);
+            serviceManager.getBatchService().save(logisticsBatch);
             logisticsBatch = new Batch(Type.LOGISTIC);
         }
         currentBreakMark = null;
@@ -456,7 +453,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      */
     private void saveFullBatch(String theProcessTitle) throws DAOException, IOException {
         fullBatch.setTitle(firstGroupFrom(theProcessTitle));
-        batchService.save(fullBatch);
+        serviceManager.getBatchService().save(fullBatch);
     }
 
     /**

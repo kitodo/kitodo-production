@@ -28,9 +28,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.BatchService;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -48,12 +46,12 @@ import ugh.fileformats.mets.MetsModsImportExport;
  *
  * <p>Requires the {@code MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE} metadata type ("MetsPointerURL") to be
  * available for adding to the first level child of the logical document structure hierarchy (typically "Volume").</p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ExportSerialBatchTask extends EmptyTask {
 
-    private BatchService batchService = new BatchService();
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The batch to export.
@@ -218,10 +216,7 @@ public class ExportSerialBatchTask extends EmptyTask {
     private static DigitalDocument buildExportDocument(Process process, Iterable<String> allPointers)
             throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException,
             MetadataTypeNotAllowedException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-
-        ProcessService processService = new ProcessService();
-        RulesetService rulesetService = new RulesetService();
-        DigitalDocument result = processService.readMetadataFile(process).getDigitalDocument();
+        DigitalDocument result = serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument();
         DocStruct root = result.getLogicalDocStruct();
         String type = "Volume";
         try {
@@ -229,7 +224,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         } catch (NullPointerException e) {
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
-        Prefs ruleset = rulesetService.getPreferences(process.getRuleset());
+        Prefs ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
                 root.createChild(type, result, ruleset).addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE,

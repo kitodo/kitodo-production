@@ -1,3 +1,4 @@
+
 /*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
@@ -18,7 +19,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
@@ -28,26 +29,25 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 
 public class UghHelper {
     private static final Logger myLogger = Logger.getLogger(UghHelper.class);
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * MetadataType aus Preferences eines Prozesses ermitteln.
      *
-     * @param inProzess
-     * @param inName
+     * @param inProzess Process object
+     * @param inName String
      * @return MetadataType
-     * @throws UghHelperException
      */
     public static MetadataType getMetadataType(Process inProzess, String inName) throws UghHelperException {
-        RulesetService rulesetService = new RulesetService();
-        Prefs myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
+        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         return getMetadataType(myPrefs, inName);
     }
 
     /**
-     * MetadataType aus Preferences ermitteln
+     * MetadataType aus Preferences ermitteln.
      *
-     * @param inPrefs
-     * @param inName
+     * @param inPrefs Prefs object
+     * @param inName String
      * @return MetadataType
      */
     public static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
@@ -59,10 +59,10 @@ public class UghHelper {
     }
 
     /**
-     * Metadata eines Docstructs ermitteln
+     * Metadata eines Docstructs ermitteln.
      *
-     * @param inStruct
-     * @param inMetadataType
+     * @param inStruct DocStruct object
+     * @param inMetadataType MetadataType object
      * @return Metadata
      */
     public static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {

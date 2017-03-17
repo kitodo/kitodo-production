@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -27,7 +27,7 @@ import ugh.dl.Person;
 import ugh.exceptions.PreferencesException;
 
 public class XmlArtikelZaehlen {
-    private ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);
 
     public enum CountType {
@@ -47,7 +47,7 @@ public class XmlArtikelZaehlen {
          */
         Fileformat gdzfile;
         try {
-            gdzfile = processService.readMetadataFile(myProcess);
+            gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
         } catch (Exception e) {
             Helper.setFehlerMeldung("xml error", e.getMessage());
             return -1;
@@ -73,7 +73,7 @@ public class XmlArtikelZaehlen {
          */
         myProcess.setSortHelperArticles(Integer.valueOf(rueckgabe));
         try {
-            processService.save(myProcess);
+            serviceManager.getProcessService().save(myProcess);
         } catch (DAOException e) {
             logger.error(e);
         }
@@ -85,8 +85,8 @@ public class XmlArtikelZaehlen {
     /**
      * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band hat, rekursiv durchlaufen.
      *
-     * @param inStruct
-     * @param inType
+     * @param inStruct DocStruct object
+     * @param inType CountType object
      */
     public int getNumberOfUghElements(DocStruct inStruct, CountType inType) {
         int rueckgabe = 0;

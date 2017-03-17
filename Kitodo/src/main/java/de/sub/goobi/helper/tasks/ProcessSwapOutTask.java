@@ -28,11 +28,10 @@ import org.jdom.output.XMLOutputter;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapOutTask extends LongRunningTask {
-
-    private ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
@@ -113,8 +112,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
     }
 
     /**
-    * Aufruf als Thread.
-    */
+     * Aufruf als Thread.
+     */
     @Override
     public void run() {
         setStatusProgress(5);
@@ -141,7 +140,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
         try {
-            processDirectory = processService.getProcessDataDirectoryIgnoreSwapping(getProcess());
+            processDirectory = serviceManager.getProcessService().getProcessDataDirectoryIgnoreSwapping(getProcess());
             //TODO: Don't catch Exception (the super class)
         } catch (Exception e) {
             logger.warn("Exception:", e);
@@ -212,9 +211,9 @@ public class ProcessSwapOutTask extends LongRunningTask {
         /* in Prozess speichern */
         try {
             setStatusMessage("saving process");
-            Process myProzess = processService.find(getProcess().getId());
+            Process myProzess = serviceManager.getProcessService().find(getProcess().getId());
             myProzess.setSwappedOutGui(true);
-            processService.save(myProzess);
+            serviceManager.getProcessService().save(myProzess);
         } catch (DAOException e) {
             setStatusMessage("DAOException while saving process: " + e.getMessage());
             logger.warn("DAOException:", e);

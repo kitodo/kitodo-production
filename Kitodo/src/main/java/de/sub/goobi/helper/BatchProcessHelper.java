@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
@@ -27,12 +26,12 @@ import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class BatchProcessHelper {
 
     private final List<Process> processes;
-    private final ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(BatchProcessHelper.class);
     private Process currentProcess;
     private List<ProcessProperty> processPropertyList;
@@ -137,7 +136,7 @@ public class BatchProcessHelper {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(this.currentProcess);
                 this.processProperty.setProzesseigenschaft(pe);
-                processService.getPropertiesInitialized(this.currentProcess).add(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(this.currentProcess).add(pe);
             }
             this.processProperty.transfer();
 
@@ -145,16 +144,18 @@ public class BatchProcessHelper {
             List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
             for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
                 if (pe.getTitle() == null) {
-                    processService.getPropertiesInitialized(p).remove(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
                 }
             }
-            if (!processService.getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess())
+            if (!serviceManager.getProcessService().getPropertiesInitialized(this.processProperty
+                    .getProzesseigenschaft().getProcess())
                     .contains(this.processProperty.getProzesseigenschaft())) {
-                processService.getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess())
+                serviceManager.getProcessService().getPropertiesInitialized(this.processProperty
+                        .getProzesseigenschaft().getProcess())
                         .add(this.processProperty.getProzesseigenschaft());
             }
             try {
-                processService.save(this.currentProcess);
+                serviceManager.getProcessService().save(this.currentProcess);
                 Helper.setMeldung("propertySaved");
             } catch (DAOException e) {
                 logger.error(e);
@@ -182,7 +183,7 @@ public class BatchProcessHelper {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(this.currentProcess);
                 this.processProperty.setProzesseigenschaft(pe);
-                processService.getPropertiesInitialized(this.currentProcess).add(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(this.currentProcess).add(pe);
             }
             this.processProperty.transfer();
 
@@ -214,13 +215,13 @@ public class BatchProcessHelper {
                             p.setContainer(pe.getContainer());
                             p.setType(pe.getType());
                             p.setProcess(process);
-                            processService.getPropertiesInitialized(process).add(p);
+                            serviceManager.getProcessService().getPropertiesInitialized(process).add(p);
                         }
                     }
                 } else {
-                    if (!processService.getPropertiesInitialized(process).contains(this.processProperty
-                            .getProzesseigenschaft())) {
-                        processService.getPropertiesInitialized(process).add(this.processProperty
+                    if (!serviceManager.getProcessService().getPropertiesInitialized(process)
+                            .contains(this.processProperty.getProzesseigenschaft())) {
+                        serviceManager.getProcessService().getPropertiesInitialized(process).add(this.processProperty
                                 .getProzesseigenschaft());
                     }
                 }
@@ -228,12 +229,12 @@ public class BatchProcessHelper {
                 List<org.kitodo.data.database.beans.ProcessProperty> props = process.getProperties();
                 for (org.kitodo.data.database.beans.ProcessProperty peig : props) {
                     if (peig.getTitle() == null) {
-                        processService.getPropertiesInitialized(process).remove(peig);
+                        serviceManager.getProcessService().getPropertiesInitialized(process).remove(peig);
                     }
                 }
 
                 try {
-                    processService.save(process);
+                    serviceManager.getProcessService().save(process);
                 } catch (DAOException e) {
                     error = true;
                     logger.error(e);
@@ -250,7 +251,7 @@ public class BatchProcessHelper {
     }
 
     private void loadProcessProperties(Process process) {
-        processService.refresh(this.currentProcess);
+        serviceManager.getProcessService().refresh(this.currentProcess);
         this.containers = new TreeMap<Integer, PropertyListObject>();
         this.processPropertyList = PropertyParser.getPropertiesForProcess(this.currentProcess);
 
@@ -259,7 +260,7 @@ public class BatchProcessHelper {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(process);
                 pt.setProzesseigenschaft(pe);
-                processService.getPropertiesInitialized(process).add(pe);
+                serviceManager.getProcessService().getPropertiesInitialized(process).add(pe);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
