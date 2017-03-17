@@ -25,7 +25,6 @@ import javax.faces.context.FacesContext;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
 
 public class MockitoTest {
 
