@@ -55,23 +55,17 @@ import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.services.BatchService;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * This class provides xml logfile generation. After the generation the file will be written to user home directory
  *
  * @author Robert Sehr
  * @author Steffen Hankiewicz
- * 
+ *
  */
 public class ExportXmlLog implements IProcessDataExport {
-    private BatchService batchService = new BatchService();
-    private ProcessService processService = new ProcessService();
-    private TaskService taskService = new TaskService();
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(ExportXmlLog.class);
 
     /**
@@ -221,15 +215,15 @@ public class ExportXmlLog implements IProcessDataExport {
         processElements.add(comment);
 
         StringBuilder batches = new StringBuilder();
-        for (Batch batch : processService.getBatchesInitialized(process)) {
+        for (Batch batch : serviceManager.getProcessService().getBatchesInitialized(process)) {
             if (batch.getType() != null) {
-                batches.append(batchService.getTypeTranslated(batch));
+                batches.append(serviceManager.getBatchService().getTypeTranslated(batch));
                 batches.append(": ");
             }
             if (batches.length() != 0) {
                 batches.append(", ");
             }
-            batches.append(batchService.getLabel(batch));
+            batches.append(serviceManager.getBatchService().getLabel(batch));
         }
         if (batches.length() != 0) {
             Element batch = new Element("batch", xmlns);
@@ -271,7 +265,7 @@ public class ExportXmlLog implements IProcessDataExport {
             stepElement.addContent(steptitle);
 
             Element state = new Element("processingstatus", xmlns);
-            state.setText(taskService.getProcessingStatusAsString(s));
+            state.setText(serviceManager.getTaskService().getProcessingStatusAsString(s));
             stepElement.addContent(state);
 
             Element begin = new Element("time", xmlns);
@@ -281,12 +275,12 @@ public class ExportXmlLog implements IProcessDataExport {
 
             Element end = new Element("time", xmlns);
             end.setAttribute("type", "end time");
-            end.setText(String.valueOf(taskService.getProcessingEndAsFormattedString(s)));
+            end.setText(String.valueOf(serviceManager.getTaskService().getProcessingEndAsFormattedString(s)));
             stepElement.addContent(end);
 
             if (isNonOpenStateAndHasRegularUser(s)) {
                 Element user = new Element("user", xmlns);
-                user.setText(userService.getFullName(s.getProcessingUser()));
+                user.setText(serviceManager.getUserService().getFullName(s.getProcessingUser()));
                 stepElement.addContent(user);
             }
             Element editType = new Element("edittype", xmlns);
@@ -381,10 +375,11 @@ public class ExportXmlLog implements IProcessDataExport {
         ArrayList<Element> metadataElements = new ArrayList<Element>();
 
         try {
-            String filename = processService.getMetadataFilePath(process);
+            String filename = serviceManager.getProcessService().getMetadataFilePath(process);
             Document metsDoc = new SAXBuilder().build(filename);
             Document anchorDoc = null;
-            String anchorfilename = processService.getMetadataFilePath(process).replace("meta.xml", "meta_anchor.xml");
+            String anchorfilename = serviceManager.getProcessService().getMetadataFilePath(process)
+                    .replace("meta.xml", "meta_anchor.xml");
             File anchorFile = new File(anchorfilename);
             if (anchorFile.exists() && anchorFile.canRead()) {
                 anchorDoc = new SAXBuilder().build(anchorfilename);
@@ -571,7 +566,7 @@ public class ExportXmlLog implements IProcessDataExport {
         return (!TaskStatus.OPEN.equals(s.getProcessingStatusEnum()))
                 && (s.getProcessingUser() != null)
                 && (s.getProcessingUser().getId() != 0)
-                && (userService.getFullName(s.getProcessingUser()) != null);
+                && (serviceManager.getUserService().getFullName(s.getProcessingUser()) != null);
     }
 
 }

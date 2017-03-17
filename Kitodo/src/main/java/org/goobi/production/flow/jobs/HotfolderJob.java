@@ -33,7 +33,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -48,7 +48,7 @@ import ugh.exceptions.WriteException;
 public class HotfolderJob extends AbstractGoobiJob {
     private static final Logger logger = Logger.getLogger(HotfolderJob.class);
 
-    private ProcessService processService = new ProcessService();
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /*
      * (non-Javadoc)
@@ -90,8 +90,8 @@ public class HotfolderJob extends AbstractGoobiJob {
                             if (size == getSize(list)) {
                                 hotfolder.lock();
                                 logger.trace("9");
-                                Process template = processService.find(hotfolder.getTemplate());
-                                processService.refresh(template);
+                                Process template = serviceManager.getProcessService().find(hotfolder.getTemplate());
+                                serviceManager.getProcessService().refresh(template);
                                 logger.trace("10");
                                 List<String> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
                                 logger.trace("11");
@@ -181,7 +181,6 @@ public class HotfolderJob extends AbstractGoobiJob {
      */
     public static int generateProcess(String processTitle, Process vorlage, SafeFile dir, String digitalCollection,
                                       String updateStrategy) {
-        ProcessService processService = new ProcessService();
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -266,7 +265,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                             }
                             for (String file : imageDir) {
                                 SafeFile image = new SafeFile(images, file);
-                                SafeFile dest = new SafeFile(processService
+                                SafeFile dest = new SafeFile(serviceManager.getProcessService()
                                         .getImagesOrigDirectory(false, p) + image.getName());
                                 image.moveFile(dest);
                             }
@@ -279,7 +278,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 + processTitle.substring(0, processTitle.length() - 4) + "_txt" + File.separator);
                         if (fulltext.isDirectory()) {
 
-                            fulltext.moveDirectory(processService.getTxtDirectory(p));
+                            fulltext.moveDirectory(serviceManager.getProcessService().getTxtDirectory(p));
                         }
 
                         // copy source files
@@ -287,7 +286,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         SafeFile sourceDir = new SafeFile(dir.getAbsoluteFile() + File.separator
                                 + processTitle.substring(0, processTitle.length() - 4) + "_src" + File.separator);
                         if (sourceDir.isDirectory()) {
-                            sourceDir.moveDirectory(processService.getImportDirectory(p));
+                            sourceDir.moveDirectory(serviceManager.getProcessService().getImportDirectory(p));
                         }
 
                         try {
@@ -438,11 +437,10 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return boolean
      */
     public static boolean testTitle(String titel) {
-        ProcessService processService = new ProcessService();
         if (titel != null) {
             long anzahl = 0;
             try {
-                anzahl = processService.count("from Process where title='" + titel + "'");
+                anzahl = serviceManager.getProcessService().count("from Process where title='" + titel + "'");
             } catch (DAOException e) {
                 return false;
             }

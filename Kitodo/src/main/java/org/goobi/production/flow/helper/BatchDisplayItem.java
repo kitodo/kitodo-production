@@ -17,16 +17,16 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.services.TaskService;
+import org.kitodo.services.ServiceManager;
 
 public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
 
     private String stepTitle = "";
     private Integer stepOrder = null;
     private TaskStatus stepStatus = TaskStatus.DONE;
-    private TaskService taskService = new TaskService();
     private HashMap<String, String> scripts = new HashMap<String, String>();
     private boolean exportDMS = false;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor.
@@ -37,7 +37,7 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
         this.stepTitle = s.getTitle();
         this.stepOrder = s.getOrdering();
         this.stepStatus = s.getProcessingStatusEnum();
-        this.scripts.putAll(taskService.getAllScripts(s));
+        this.scripts.putAll(serviceManager.getTaskService().getAllScripts(s));
         this.exportDMS = s.isTypeExportDMS();
     }
 

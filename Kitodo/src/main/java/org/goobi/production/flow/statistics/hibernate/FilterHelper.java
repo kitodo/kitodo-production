@@ -38,7 +38,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * class provides methods used by implementations of IEvaluableFilter.
@@ -47,20 +47,19 @@ import org.kitodo.services.UserService;
  *
  */
 public class FilterHelper {
-
     private static final Logger logger = Logger.getLogger(FilterHelper.class);
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * limit query to project (formerly part of ProzessverwaltungForm).
      */
     protected static void limitToUserAccessRights(Conjunction con) {
-        UserService userService = new UserService();
         /* restriction to specific projects if not with admin rights */
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         User aktuellerNutzer = null;
         try {
             if (loginForm != null && loginForm.getMyBenutzer() != null) {
-                aktuellerNutzer = userService.find(loginForm.getMyBenutzer().getId());
+                aktuellerNutzer = serviceManager.getUserService().find(loginForm.getMyBenutzer().getId());
             }
         } catch (DAOException e) {
             logger.warn("DAOException", e);
@@ -315,7 +314,7 @@ public class FilterHelper {
                     Restrictions.eq(prefix + "processingStatus", inStatus.getValue())));
         } else {
             con.add(Restrictions.not(Restrictions.and(Restrictions.ge(prefix + "ordering",
-					FilterHelper.getStepStart(parameters)),
+                    FilterHelper.getStepStart(parameters)),
                     Restrictions.eq(prefix + "processingStatus", inStatus.getValue()))));
         }
     }
@@ -508,7 +507,7 @@ public class FilterHelper {
      * @return String used to pass on error messages about errors in the filter expression
      */
     public static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
-            Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly, boolean clearSession) {
+                                         Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly, boolean clearSession) {
 
         if (ConfigMain.getBooleanParameter("DatabaseAutomaticRefreshList", true) && clearSession) {
             session.clear();
