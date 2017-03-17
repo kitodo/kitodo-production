@@ -58,8 +58,7 @@ import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -84,7 +83,7 @@ import ugh.exceptions.WriteException;
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
  * der Schrittdetails
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
  */
@@ -103,8 +102,6 @@ public class Metadaten {
     private MetaPerson curPerson;
     private DigitalDocument mydocument;
     private Process myProzess;
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
     private Prefs myPrefs;
     private String myBenutzerID;
     private String tempTyp;
@@ -173,8 +170,8 @@ public class Metadaten {
     private final ReentrantLock xmlReadingLock = new ReentrantLock();
     private FileManipulation fileManipulation = null;
     private boolean addMetadataGroupMode = false;
-
     private RenderableMetadataGroup newMetadataGroup;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Konstruktor.
@@ -671,7 +668,7 @@ public class Metadaten {
         Modes.setBindState(BindState.edit);
         try {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
-            this.myProzess = processService.find(id);
+            this.myProzess = serviceManager.getProcessService().find(id);
         } catch (NumberFormatException e1) {
             Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
             return Helper.getRequestParameter("zurueck");
@@ -724,7 +721,7 @@ public class Metadaten {
             throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
             WriteException {
         currentRepresentativePage = "";
-        this.myPrefs = rulesetService.getPreferences(this.myProzess.getRuleset());
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(this.myProzess.getRuleset());
         this.modusAnsicht = "Metadaten";
         this.modusHinzufuegen = false;
         this.modusHinzufuegenPerson = false;
@@ -739,7 +736,7 @@ public class Metadaten {
         /*
          * Dokument einlesen
          */
-        this.gdzfile = processService.readMetadataFile(this.myProzess);
+        this.gdzfile = serviceManager.getProcessService().readMetadataFile(this.myProzess);
         this.mydocument = this.gdzfile.getDigitalDocument();
         this.mydocument.addAllContentFiles();
         this.metahelper = new MetadatenHelper(this.myPrefs, this.mydocument);
@@ -779,7 +776,7 @@ public class Metadaten {
                         Integer value = Integer.valueOf(md.getValue());
                         currentRepresentativePage = String.valueOf(value - 1);
                     } catch (Exception e) {
-                        
+
                     }
                 }
             }
@@ -822,8 +819,8 @@ public class Metadaten {
                 CountType.METADATA));
         try {
             this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(
-                    new SafeFile(processService.getImagesOrigDirectory(true, this.myProzess))));
-            processService.save(this.myProzess);
+                    new SafeFile(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess))));
+            serviceManager.getProcessService().save(this.myProzess);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
             myLogger.error(e);
@@ -870,7 +867,7 @@ public class Metadaten {
     private boolean storeMetadata() {
         boolean result = true;
         try {
-            processService.writeMetadataFile(this.gdzfile, this.myProzess);
+            serviceManager.getProcessService().writeMetadataFile(this.gdzfile, this.myProzess);
         } catch (Exception e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
             myLogger.error(e);
@@ -1377,8 +1374,8 @@ public class Metadaten {
             for (Metadata meineSeite : mySeitenDocStructMetadaten) {
                 this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
                 this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
-                    MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
-                            + meineSeite.getValue());
+                        MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
+                                + meineSeite.getValue());
             }
             zaehler++;
         }
@@ -1458,7 +1455,7 @@ public class Metadaten {
             this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.myProzess);
             this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler),
                     MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber")
-                    .trim() + ": " + meineSeite.getValue());
+                            .trim() + ": " + meineSeite.getValue());
         }
     }
 
@@ -1673,7 +1670,7 @@ public class Metadaten {
      */
     public void readAllTifFolders() throws IOException, InterruptedException, SwapException, DAOException {
         this.allTifFolders = new ArrayList<String>();
-        SafeFile dir = new SafeFile(processService.getImagesDirectory(this.myProzess));
+        SafeFile dir = new SafeFile(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
         // TODO: Remove this, we have several implementions of this, use an existing one.
@@ -1700,7 +1697,7 @@ public class Metadaten {
         }
 
         if (!this.allTifFolders.contains(this.currentTifFolder)) {
-            this.currentTifFolder = new SafeFile(processService.getImagesTifDirectory(
+            this.currentTifFolder = new SafeFile(serviceManager.getProcessService().getImagesTifDirectory(
                     true, this.myProzess)).getName();
         }
     }
@@ -1826,18 +1823,18 @@ public class Metadaten {
 
                     /* das neue Bild zuweisen */
                     try {
-                        String tiffconverterpfad = processService.getImagesDirectory(this.myProzess)
-                                    + this.currentTifFolder + File.separator + this.myBild;
+                        String tiffconverterpfad = serviceManager.getProcessService().getImagesDirectory(this.myProzess)
+                                + this.currentTifFolder + File.separator + this.myBild;
                         if (myLogger.isTraceEnabled()) {
                             myLogger.trace("tiffconverterpfad: " + tiffconverterpfad);
                         }
                         if (!new SafeFile(tiffconverterpfad).exists()) {
-                            tiffconverterpfad = processService.getImagesTifDirectory(true, this.myProzess)
-                                    + this.myBild;
+                            tiffconverterpfad = serviceManager.getProcessService()
+                                    .getImagesTifDirectory(true, this.myProzess) + this.myBild;
                             Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image "
                                     + this.myBild + " does not exist in folder " + this.currentTifFolder
-                                    + ", using image from " + new SafeFile(processService.getImagesTifDirectory(
-                                            true, this.myProzess)).getName());
+                                    + ", using image from " + new SafeFile(serviceManager.getProcessService()
+                                    .getImagesTifDirectory(true, this.myProzess)).getName());
                         }
                         this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession,
                                 this.myBildGroesse, this.myImageRotation);
@@ -1858,7 +1855,7 @@ public class Metadaten {
         boolean exists = false;
         try {
             if (this.currentTifFolder != null && this.myBild != null) {
-                exists = (new SafeFile(processService.getImagesDirectory(this.myProzess)
+                exists = (new SafeFile(serviceManager.getProcessService().getImagesDirectory(this.myProzess)
                         + this.currentTifFolder + File.separator + this.myBild)).exists();
             }
         } catch (Exception e) {
@@ -3076,7 +3073,7 @@ public class Metadaten {
     public void reOrderPagination() {
         String imageDirectory = "";
         try {
-            imageDirectory = processService.getImagesDirectory(myProzess);
+            imageDirectory = serviceManager.getProcessService().getImagesDirectory(myProzess);
         } catch (SwapException e) {
             myLogger.error(e);
         } catch (DAOException e) {
@@ -3105,7 +3102,7 @@ public class Metadaten {
             }
 
             try {
-                SafeFile ocr = new SafeFile(processService.getOcrDirectory(myProzess));
+                SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(myProzess));
                 if (ocr.exists()) {
                     SafeFile[] allOcrFolder = ocr.listFiles();
                     for (SafeFile folder : allOcrFolder) {
@@ -3139,7 +3136,7 @@ public class Metadaten {
                         .setImageName(sortedName.toURI().toString());
             }
             try {
-                SafeFile ocr = new SafeFile(processService.getOcrDirectory(myProzess));
+                SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(myProzess));
                 if (ocr.exists()) {
                     SafeFile[] allOcrFolder = ocr.listFiles();
                     for (SafeFile folder : allOcrFolder) {
@@ -3171,7 +3168,7 @@ public class Metadaten {
             // TODO check what happens with .tar.gz
             String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
             for (String folder : allTifFolders) {
-                SafeFile[] filesInFolder = new SafeFile(processService.getImagesDirectory(myProzess)
+                SafeFile[] filesInFolder = new SafeFile(serviceManager.getProcessService().getImagesDirectory(myProzess)
                         + folder).listFiles();
                 for (SafeFile currentFile : filesInFolder) {
                     String filename = currentFile.getName();
@@ -3182,7 +3179,7 @@ public class Metadaten {
                 }
             }
 
-            SafeFile ocr = new SafeFile(processService.getOcrDirectory(myProzess));
+            SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(myProzess));
             if (ocr.exists()) {
                 SafeFile[] folder = ocr.listFiles();
                 for (SafeFile dir : folder) {

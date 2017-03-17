@@ -45,8 +45,8 @@ import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.services.ServiceManager;
 
-import org.kitodo.services.ProcessService;
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -67,7 +67,7 @@ public class MetadatenImagesHelper {
     private final Prefs myPrefs;
     private final DigitalDocument mydocument;
     private int myLastImage = 0;
-    private ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
         this.myPrefs = inPrefs;
@@ -77,16 +77,16 @@ public class MetadatenImagesHelper {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images --- Steps - ---- Validation of images compare existing
      * number images with existing number of page DocStructs if it is the same don't do anything if DocStructs are
-	 * less add new pages to physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct.
+     * less add new pages to physicalDocStruct if images are less delete pages from the end of pyhsicalDocStruct.
      */
     public void createPagination(Process process, String directory)
-			throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
+            throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
             DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
         DocStruct log = this.mydocument.getLogicalDocStruct();
         while (log.getType().getAnchorClass() != null && log.getAllChildren() != null
-				&& log.getAllChildren().size() > 0) {
+                && log.getAllChildren().size() > 0) {
             log = log.getAllChildren().get(0);
         }
 
@@ -104,9 +104,11 @@ public class MetadatenImagesHelper {
             try {
                 Metadata mdForPath = new Metadata(MDTypeForPath);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    mdForPath.setValue("file:/" + processService.getImagesTifDirectory(false, process));
+                    mdForPath.setValue("file:/" + serviceManager.getProcessService()
+                            .getImagesTifDirectory(false, process));
                 } else {
-                    mdForPath.setValue("file://" + processService.getImagesTifDirectory(false, process));
+                    mdForPath.setValue("file://" + serviceManager.getProcessService()
+                            .getImagesTifDirectory(false, process));
                 }
                 physicaldocstruct.addMetadata(mdForPath);
             } catch (MetadataTypeNotAllowedException e1) {
@@ -116,9 +118,11 @@ public class MetadatenImagesHelper {
         }
 
         if (directory == null) {
-            checkIfImagesValid(process.getTitle(), processService.getImagesTifDirectory(true, process));
+            checkIfImagesValid(process.getTitle(), serviceManager.getProcessService()
+                    .getImagesTifDirectory(true, process));
         } else {
-            checkIfImagesValid(process.getTitle(), processService.getImagesDirectory(process) + directory);
+            checkIfImagesValid(process.getTitle(), serviceManager.getProcessService()
+                    .getImagesDirectory(process) + directory);
         }
 
         /*
@@ -148,11 +152,11 @@ public class MetadatenImagesHelper {
                 if (page.getImageName() != null) {
                     File imageFile = null;
                     if (directory == null) {
-                        imageFile = new File(processService.getImagesTifDirectory(true, process),
-								page.getImageName());
+                        imageFile = new File(serviceManager.getProcessService().getImagesTifDirectory(true, process),
+                                page.getImageName());
                     } else {
-                        imageFile = new File(processService.getImagesDirectory(process) + directory,
-								page.getImageName());
+                        imageFile = new File(serviceManager.getProcessService().getImagesDirectory(process) + directory,
+                                page.getImageName());
                     }
                     if (imageFile.exists()) {
                         assignedImages.put(page.getImageName(), page);
@@ -229,11 +233,11 @@ public class MetadatenImagesHelper {
                     // image name
                     ContentFile cf = new ContentFile();
                     if (SystemUtils.IS_OS_WINDOWS) {
-                        cf.setLocation("file:/" + processService.getImagesTifDirectory(false, process)
-								+ newImage);
+                        cf.setLocation("file:/" + serviceManager.getProcessService()
+                                .getImagesTifDirectory(false, process) + newImage);
                     } else {
-                        cf.setLocation("file://" + processService.getImagesTifDirectory(false, process)
-								+ newImage);
+                        cf.setLocation("file://" + serviceManager.getProcessService()
+                                .getImagesTifDirectory(false, process) + newImage);
                     }
                     dsPage.addContentFile(cf);
 
@@ -254,11 +258,11 @@ public class MetadatenImagesHelper {
                     imagesWithoutPageElements.remove(0);
                     ContentFile cf = new ContentFile();
                     if (SystemUtils.IS_OS_WINDOWS) {
-                        cf.setLocation("file:/" + processService.getImagesTifDirectory(false, process)
-								+ newImageName);
+                        cf.setLocation("file:/" + serviceManager.getProcessService()
+                                .getImagesTifDirectory(false, process) + newImageName);
                     } else {
-                        cf.setLocation("file://" + processService.getImagesTifDirectory(false, process)
-								+ newImageName);
+                        cf.setLocation("file://" + serviceManager.getProcessService()
+                                .getImagesTifDirectory(false, process) + newImageName);
                     }
                     page.addContentFile(cf);
                 } else {
@@ -304,11 +308,11 @@ public class MetadatenImagesHelper {
                         // image name
                         ContentFile cf = new ContentFile();
                         if (SystemUtils.IS_OS_WINDOWS) {
-                            cf.setLocation("file:/" + processService.getImagesTifDirectory(false, process)
-									+ newImage);
+                            cf.setLocation("file:/" + serviceManager.getProcessService()
+                                    .getImagesTifDirectory(false, process) + newImage);
                         } else {
-                            cf.setLocation("file://" + processService.getImagesTifDirectory(false, process)
-									+ newImage);
+                            cf.setLocation("file://" + serviceManager.getProcessService()
+                                    .getImagesTifDirectory(false, process) + newImage);
                         }
                         dsPage.addContentFile(cf);
 
@@ -371,7 +375,7 @@ public class MetadatenImagesHelper {
                     + tmpSize + "&rotate=" + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
             if (logger.isTraceEnabled()) {
-            	logger.trace("url: " + cs);
+                logger.trace("url: " + cs);
             }
             URL csUrl = new URL(cs);
             HttpClient httpclient = new HttpClient();
@@ -384,13 +388,13 @@ public class MetadatenImagesHelper {
                 return;
             }
             if (logger.isTraceEnabled()) {
-            	logger.trace("statusCode: " + statusCode);
+                logger.trace("statusCode: " + statusCode);
             }
             InputStream inStream = method.getResponseBodyAsStream();
             logger.trace("inStream");
             try (
-                BufferedInputStream bis = new BufferedInputStream(inStream);
-                FileOutputStream fos = new FileOutputStream(outFileName);
+                    BufferedInputStream bis = new BufferedInputStream(inStream);
+                    FileOutputStream fos = new FileOutputStream(outFileName);
             ) {
                 logger.trace("BufferedInputStream");
                 logger.trace("FileOutputStream");
@@ -443,7 +447,7 @@ public class MetadatenImagesHelper {
                         int curFileNumber = Integer.parseInt(curFile.substring(0, curFile.indexOf(".")));
                         if (curFileNumber != counter + myDiff) {
                             Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
-									+ " but found File " + curFile);
+                                    + " but found File " + curFile);
                             myDiff = curFileNumber - counter;
                             isValid = false;
                         }
@@ -496,7 +500,7 @@ public class MetadatenImagesHelper {
     public ArrayList<String> getImageFiles(Process myProcess) throws InvalidImagesException {
         File dir;
         try {
-            dir = new File(processService.getImagesTifDirectory(true, myProcess));
+            dir = new File(serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
@@ -528,7 +532,7 @@ public class MetadatenImagesHelper {
     public List<String> getImageFiles(Process myProcess, String directory) throws InvalidImagesException {
         File dir;
         try {
-            dir = new File(processService.getImagesDirectory(myProcess) + directory);
+            dir = new File(serviceManager.getProcessService().getImagesDirectory(myProcess) + directory);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
@@ -603,7 +607,7 @@ public class MetadatenImagesHelper {
     public List<String> getDataFiles(Process myProcess) throws InvalidImagesException {
         File dir;
         try {
-            dir = new File(processService.getImagesTifDirectory(true, myProcess));
+            dir = new File(serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
