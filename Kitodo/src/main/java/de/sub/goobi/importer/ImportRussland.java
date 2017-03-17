@@ -25,9 +25,8 @@ import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
-import org.kitodo.services.RulesetService;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -52,12 +51,11 @@ public class ImportRussland {
     private static final Logger myLogger = Logger.getLogger(ImportRussland.class);
     private DocStruct logicalTopstruct;
     private Process prozess;
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-    * Allgemeiner Konstruktor ().
-    */
+     * Allgemeiner Konstruktor ().
+     */
     public ImportRussland() {
     }
 
@@ -68,9 +66,9 @@ public class ImportRussland {
      * @param inProzess Process object
      */
     protected void Parsen(BufferedReader reader, Process inProzess)
-           throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
-           TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
-           PreferencesException, SwapException, DAOException, WriteException {
+            throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+            TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
+            PreferencesException, SwapException, DAOException, WriteException {
 
         /*
         * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess gehört
@@ -93,7 +91,7 @@ public class ImportRussland {
         /*
         * xml-Datei einlesen und Hauptelement ermitteln
         */
-        Fileformat gdzfile = processService.readMetadataFile(inProzess);
+        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(inProzess);
         DigitalDocument mydocument;
         mydocument = gdzfile.getDigitalDocument();
         this.logicalTopstruct = mydocument.getLogicalDocStruct();
@@ -127,7 +125,7 @@ public class ImportRussland {
         /*
         * Datei abschliessend wieder speichern
         */
-        processService.writeMetadataFile(gdzfile, inProzess);
+        serviceManager.getProcessService().writeMetadataFile(gdzfile, inProzess);
         myLogger.debug("ParsenRussland() - Ende");
     }
 
@@ -225,9 +223,9 @@ public class ImportRussland {
         /*
         * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der selben ZBL-ID finden
         */
-        MetadataType mdt_id = rulesetService.getPreferences(this.prozess.getRuleset())
+        MetadataType mdt_id = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
                 .getMetadataTypeByName("ZBLIdentifier");
-        MetadataType mdt_tempId = rulesetService.getPreferences(this.prozess.getRuleset())
+        MetadataType mdt_tempId = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
                 .getMetadataTypeByName("ZBLTempID");
         DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
         // myLogger.info(band.getType().getName());
@@ -301,12 +299,12 @@ public class ImportRussland {
 
                 if (!iter.hasNext() && !artikelGefunden) {
                     throw new WrongImportFileException(
-                         "Parsingfehler: Artikel mit der ZBL-ID wurde nicht gefunden ('" + zblID + "')");
+                            "Parsingfehler: Artikel mit der ZBL-ID wurde nicht gefunden ('" + zblID + "')");
                 }
             }
         } else {
             throw new WrongImportFileException(
-               "Parsingfehler: Es sind bisher keine Artikel angelegt worden, zu denen Daten ergänzt werden könnten");
+                    "Parsingfehler: Es sind bisher keine Artikel angelegt worden, zu denen Daten ergänzt werden könnten");
         }
     }
 
@@ -356,7 +354,8 @@ public class ImportRussland {
 
     private void MetadatumHinzufuegen(DocStruct inStruct, String inMdtName, String inDetail)
             throws MetadataTypeNotAllowedException {
-        MetadataType mdt = rulesetService.getPreferences(this.prozess.getRuleset()).getMetadataTypeByName(inMdtName);
+        MetadataType mdt = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+                .getMetadataTypeByName(inMdtName);
         Metadata md = new Metadata(mdt);
         try {
             md.setValue(inDetail.substring(4).trim());
@@ -383,7 +382,8 @@ public class ImportRussland {
 
     private void PersonHinzufuegen(DocStruct inStruct, String inRole, String inDetail)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
-        Person p = new Person(rulesetService.getPreferences(this.prozess.getRuleset()).getMetadataTypeByName(inRole));
+        Person p = new Person(serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+                .getMetadataTypeByName(inRole));
         String pName = inDetail.substring(4).trim();
         if (pName.length() == 0) {
             return;
