@@ -10,7 +10,10 @@
  */
 
 package de.sub.goobi.export.download;
-import org.kitodo.data.database.exceptions.SwapException;
+
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageEncoder;
+import com.sun.media.jai.codec.TIFFEncodeParam;
 
 import de.sub.goobi.helper.Helper;
 
@@ -31,12 +34,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageEncoder;
-import com.sun.media.jai.codec.TIFFEncodeParam;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ProcessService;
 
 /**
@@ -47,93 +47,98 @@ import org.kitodo.services.ProcessService;
  */
 
 public class Multipage {
-	private ProcessService processService = new ProcessService();
-	private static final Logger myLogger = Logger.getLogger(Multipage.class);
-	Helper help = new Helper();
+    private ProcessService processService = new ProcessService();
+    private static final Logger myLogger = Logger.getLogger(Multipage.class);
+    Helper help = new Helper();
 
-	private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
-		/* alle tifs durchlaufen */
-		String pfad = processService.getImagesDirectory(process);
-		File dir = new File(pfad);
-	
-		String[] dateien = dir.list(Helper.imageNameFilter);
+    private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
+        /* alle tifs durchlaufen */
+        String pfad = processService.getImagesDirectory(process);
+        File dir = new File(pfad);
 
-		/* keine Tifs vorhanden, also raus */
-		if (dateien == null) {
-			myLogger.debug("Verzeichnis ist leer");
-			return;
-		}
+        String[] dateien = dir.list(Helper.imageNameFilter);
 
-		/* alle Bilder in ein Array übernehmen */
-		RenderedImage image[] = new PlanarImage[dateien.length];
-		for (int i = 0; i < dateien.length; i++) {
-			if(myLogger.isDebugEnabled()){
-				myLogger.debug(pfad + dateien[i]);
-			}
-			image[i] = JAI.create("fileload", pfad + dateien[i]);
-		}
-		myLogger.debug("Bilder durchlaufen");
+        /* keine Tifs vorhanden, also raus */
+        if (dateien == null) {
+            myLogger.debug("Verzeichnis ist leer");
+            return;
+        }
 
-		/*
-		 * alle Bilder als Multipage erzeugen
-		 */
-		OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + process.getId()
-				+ File.separator + "multipage.tiff");
-		TIFFEncodeParam param = new TIFFEncodeParam();
-		param.setCompression(4);
-		ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
-		Vector<RenderedImage> vector = new Vector<RenderedImage>();
-		for (int i = 1; i < image.length; i++) {
-			vector.add(image[i]);
-		}
-		param.setExtraImages(vector.iterator());
-		encoder.encode(image[0]);
-		out.close();
-		myLogger.debug("fertig");
-	}
+        /* alle Bilder in ein Array übernehmen */
+        RenderedImage image[] = new PlanarImage[dateien.length];
+        for (int i = 0; i < dateien.length; i++) {
+            if (myLogger.isDebugEnabled()) {
+                myLogger.debug(pfad + dateien[i]);
+            }
+            image[i] = JAI.create("fileload", pfad + dateien[i]);
+        }
+        myLogger.debug("Bilder durchlaufen");
 
-	public void ExportStart(Process process)
-			throws IOException, InterruptedException, SwapException, DAOException {
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		if (!facesContext.getResponseComplete()) {
-			HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+        /*
+         * alle Bilder als Multipage erzeugen
+         */
+        OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + process.getId()
+                + File.separator + "multipage.tiff");
+        TIFFEncodeParam param = new TIFFEncodeParam();
+        param.setCompression(4);
+        ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
+        Vector<RenderedImage> vector = new Vector<RenderedImage>();
+        for (int i = 1; i < image.length; i++) {
+            vector.add(image[i]);
+        }
+        param.setExtraImages(vector.iterator());
+        encoder.encode(image[0]);
+        out.close();
+        myLogger.debug("fertig");
+    }
 
-			String fileName = process.getTitle() + ".tif";
+    /**
+     * Start export.
+     *
+     * @param process object
+     */
+    public void ExportStart(Process process)
+            throws IOException, InterruptedException, SwapException, DAOException {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (!facesContext.getResponseComplete()) {
+            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
-			ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-			String contentType = servletContext.getMimeType(fileName);
-			response.setContentType(contentType);
-			response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-			ServletOutputStream out = response.getOutputStream();
+            String fileName = process.getTitle() + ".tif";
 
-			/*
-			 * die txt-Datei direkt in den Stream schreiben lassen
-			 */
-			String filename = this.help.getGoobiDataDirectory() + process.getId() + File.separator
-					+ "multipage.tiff";
-			if (!(new File(filename)).exists()) {
-				create(process);
-			}
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(filename);
-				byte[] buf = new byte[4 * 1024]; // 4K buffer //how about 4096?
-				int bytesRead;
-				while ((bytesRead = fis.read(buf)) != -1) {
-					out.write(buf, 0, bytesRead);
-				}
-			} finally {
-				if (fis != null) {
-					fis.close();
-				}
-			}
+            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+            String contentType = servletContext.getMimeType(fileName);
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+            ServletOutputStream out = response.getOutputStream();
 
-			/*
-			 * den Stream zurückgeben
-			 */
-			out.flush();
-			facesContext.responseComplete();
-		}
-	}
+            /*
+             * die txt-Datei direkt in den Stream schreiben lassen
+             */
+            String filename = this.help.getGoobiDataDirectory() + process.getId() + File.separator
+                    + "multipage.tiff";
+            if (!(new File(filename)).exists()) {
+                create(process);
+            }
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(filename);
+                byte[] buf = new byte[4 * 1024]; // 4K buffer //how about 4096?
+                int bytesRead;
+                while ((bytesRead = fis.read(buf)) != -1) {
+                    out.write(buf, 0, bytesRead);
+                }
+            } finally {
+                if (fis != null) {
+                    fis.close();
+                }
+            }
+
+            /*
+             * den Stream zurückgeben
+             */
+            out.flush();
+            facesContext.responseComplete();
+        }
+    }
 
 }

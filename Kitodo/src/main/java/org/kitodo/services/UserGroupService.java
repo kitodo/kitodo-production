@@ -11,10 +11,11 @@
 
 package org.kitodo.services;
 
+import com.sun.research.ws.wadl.HTTPMethods;
+
 import java.io.IOException;
 import java.util.List;
 
-import com.sun.research.ws.wadl.HTTPMethods;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupDAO;

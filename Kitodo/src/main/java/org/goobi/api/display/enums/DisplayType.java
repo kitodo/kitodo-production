@@ -13,33 +13,39 @@ package org.goobi.api.display.enums;
 
 public enum DisplayType {
 
-	
-	input("0","input"),select("1","select"),select1("2","select1"),textarea("3","textarea"), readonly("4", "readonly"); 
-	
-	private String id;
-	private String title;
+    input("0","input"),select("1","select"),select1("2","select1"),textarea("3","textarea"),
+    readonly("4", "readonly");
 
-	private DisplayType(String myId, String myTitle) {
-		this.id = myId;
-		this.title = myTitle;
-	}
+    private String id;
+    private String title;
 
-	public String getId() {
-		return this.id;
-	}
-	
-	public String getTitle() {
-		return this.title;
-	}
-	
-	public static DisplayType getByTitle(String inTitle){
-		if (inTitle != null) {
-			for (DisplayType type : DisplayType.values()) {
-				if (type.getTitle().equals(inTitle)) {
-					return type;
-				}
-			}
-		} 
-		return textarea; // textarea is default
-	}
+    DisplayType(String myId, String myTitle) {
+        this.id = myId;
+        this.title = myTitle;
+    }
+
+    public String getId() {
+        return this.id;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Get display type by title.
+     *
+     * @param inTitle input title
+     * @return DisplayType object
+     */
+    public static DisplayType getByTitle(String inTitle) {
+        if (inTitle != null) {
+            for (DisplayType type : DisplayType.values()) {
+                if (type.getTitle().equals(inTitle)) {
+                    return type;
+                }
+            }
+        }
+        return textarea; // textarea is default
+    }
 }

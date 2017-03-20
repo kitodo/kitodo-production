@@ -30,75 +30,81 @@ import org.kitodo.data.database.beans.Project;
 @XmlType(propOrder = { "required", "from", "option", "ughbinding", "docstruct" })
 public class Field {
 
-	@XmlAttribute
-	private String key;
-	@XmlElement
-	private boolean required;
-	@XmlElement
-	private List<Label> option;
-	@XmlElement(name="source")
-	private String from;
-	@XmlElement
-	private Boolean ughbinding;
-	@XmlElement(name="insertionLevel")
-	private String docstruct;
+    @XmlAttribute
+    private String key;
+    @XmlElement
+    private boolean required;
+    @XmlElement
+    private List<Label> option;
+    @XmlElement(name = "source")
+    private String from;
+    @XmlElement
+    private Boolean ughbinding;
+    @XmlElement(name = "insertionLevel")
+    private String docstruct;
 
-	public static List<Field> getFieldConfigForProject(Project project) throws IOException {
-		List<Field> fields = new ArrayList<>();
+    /**
+	 * Get field config for project.
+     *
+	 * @param project object
+	 * @return list of fields
+	 */
+    public static List<Field> getFieldConfigForProject(Project project) throws IOException {
+        List<Field> fields = new ArrayList<>();
 
-		ConfigProjects projectConfig = new ConfigProjects(project.getTitle());
-		Integer numFields = projectConfig.getParamList("createNewProcess.itemlist.item").size();
+        ConfigProjects projectConfig = new ConfigProjects(project.getTitle());
+        Integer numFields = projectConfig.getParamList("createNewProcess.itemlist.item").size();
 
-		for (Integer field = 0; field < numFields; field++) {
-			Field fieldConfig = new Field();
-			String fieldRef = "createNewProcess.itemlist.item(" + field + ")";
-			fieldConfig.key = projectConfig.getParamString(fieldRef);
+        for (Integer field = 0; field < numFields; field++) {
+            Field fieldConfig = new Field();
+            String fieldRef = "createNewProcess.itemlist.item(" + field + ")";
+            fieldConfig.key = projectConfig.getParamString(fieldRef);
 
-			fieldConfig.from = projectConfig.getParamString(fieldRef + "[@from]");
-			if (projectConfig.getParamBoolean(fieldRef + "[@ughbinding]")) {
-				fieldConfig.ughbinding = Boolean.TRUE;
-				fieldConfig.docstruct = projectConfig.getParamString(fieldRef + "[@docstruct]");
-			} else {
-				fieldConfig.ughbinding = Boolean.FALSE;
-			}
-			Integer selectEntries = projectConfig.getParamList(fieldRef + ".select").size();
-			if (selectEntries > 0) {
-				Map<String, String> selectConfig = new HashMap<String, String>();
-				for (Integer selectEntry = 0; selectEntry < selectEntries; selectEntry++) {
-					String key = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")");
-					String value = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")[@label]");
-					selectConfig.put(key, value);
-				}
-				fieldConfig.option = Label.toListOfLabels(selectConfig, KeyAttribute.LABEL);
-			}
-			fieldConfig.required = projectConfig.getParamBoolean(fieldRef + "[@required]");
-			fields.add(fieldConfig);
-		}
-		return fields;
-	}
+            fieldConfig.from = projectConfig.getParamString(fieldRef + "[@from]");
+            if (projectConfig.getParamBoolean(fieldRef + "[@ughbinding]")) {
+                fieldConfig.ughbinding = Boolean.TRUE;
+                fieldConfig.docstruct = projectConfig.getParamString(fieldRef + "[@docstruct]");
+            } else {
+                fieldConfig.ughbinding = Boolean.FALSE;
+            }
+            Integer selectEntries = projectConfig.getParamList(fieldRef + ".select").size();
+            if (selectEntries > 0) {
+                Map<String, String> selectConfig = new HashMap<String, String>();
+                for (Integer selectEntry = 0; selectEntry < selectEntries; selectEntry++) {
+                    String key = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")");
+                    String value = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")[@label]");
+                    selectConfig.put(key, value);
+                }
+                fieldConfig.option = Label.toListOfLabels(selectConfig, KeyAttribute.LABEL);
+            }
+            fieldConfig.required = projectConfig.getParamBoolean(fieldRef + "[@required]");
+            fields.add(fieldConfig);
+        }
+        return fields;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 
-	public void setOption(List<Label> option) {
-		this.option = option;
-	}
+    public void setOption(List<Label> option) {
+        this.option = option;
+    }
 
-	public void setFrom(String from) {
-		this.from = from;
-	}
+    public void setFrom(String from) {
+        this.from = from;
+    }
 
-	public void setUghbinding(Boolean ughbinding) {
-		this.ughbinding = ughbinding;
-	}
+    public void setUghbinding(Boolean ughbinding) {
+        this.ughbinding = ughbinding;
+    }
 
-	public void setDocstruct(String docstruct) {
-		this.docstruct = docstruct;
-	}
+    public void setDocstruct(String docstruct) {
+        this.docstruct = docstruct;
+    }
 
 }

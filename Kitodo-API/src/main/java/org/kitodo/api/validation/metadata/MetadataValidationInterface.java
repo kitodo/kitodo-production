@@ -11,11 +11,11 @@
 
 package org.kitodo.api.validation.metadata;
 
-import org.kitodo.api.validation.ValidationInterface;
-import org.kitodo.api.validation.ValidationResult;
-
 import java.io.File;
 import java.nio.file.Path;
+
+import org.kitodo.api.validation.ValidationInterface;
+import org.kitodo.api.validation.ValidationResult;
 
 public interface MetadataValidationInterface extends ValidationInterface {
 

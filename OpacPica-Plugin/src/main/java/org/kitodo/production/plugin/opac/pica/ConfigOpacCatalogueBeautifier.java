@@ -19,20 +19,20 @@ import java.util.ArrayList;
  * gesetzt werden, wenn bestimmte Werte in dem opac-Ergebnis auftreten.
  */
 class ConfigOpacCatalogueBeautifier {
-	private final ConfigOpacCatalogueBeautifierElement tagElementToChange;
-	private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
+    private final ConfigOpacCatalogueBeautifierElement tagElementToChange;
+    private final ArrayList<ConfigOpacCatalogueBeautifierElement> tagElementsToProof;
 
-	ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
-			ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
-		this.tagElementToChange = inChangeElement;
-		this.tagElementsToProof = inProofElements;
-	}
+    ConfigOpacCatalogueBeautifier(ConfigOpacCatalogueBeautifierElement inChangeElement,
+            ArrayList<ConfigOpacCatalogueBeautifierElement> inProofElements) {
+        this.tagElementToChange = inChangeElement;
+        this.tagElementsToProof = inProofElements;
+    }
 
-	ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
-		return this.tagElementToChange;
-	}
+    ConfigOpacCatalogueBeautifierElement getTagElementToChange() {
+        return this.tagElementToChange;
+    }
 
-	ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
-		return this.tagElementsToProof;
-	}
+    ArrayList<ConfigOpacCatalogueBeautifierElement> getTagElementsToProof() {
+        return this.tagElementsToProof;
+    }
 }

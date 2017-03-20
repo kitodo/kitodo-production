@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public interface DocketInterface {
 
     /**
-     * Generates a docket from given data,
+     * Generates a docket from given data.
      *
      * @param docketData    - the data shown in the docket
      * @param pathToXslFile - the path to the schema xsl file

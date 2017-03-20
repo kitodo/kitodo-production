@@ -11,6 +11,8 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.util.ArrayList;
 
 import javax.faces.model.SelectItem;
@@ -21,114 +23,132 @@ import ugh.dl.DocStruct;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
 import ugh.dl.Prefs;
-import de.sub.goobi.config.ConfigMain;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt 
- * mit dessen Eigenschaften und erlaubt die Bearbeitung 
- * der Schrittdetails
- * 
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
+ * der Schrittdetails.
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
 public class MetaPerson {
-   private Person p;
-   private int identifier;
-   private final Prefs myPrefs;
-   private final DocStruct myDocStruct;
-   private final MetadatenHelper mdh;
+    private Person p;
+    private int identifier;
+    private final Prefs myPrefs;
+    private final DocStruct myDocStruct;
+    private final MetadatenHelper mdh;
 
-   
+    /**
+     * Allgemeiner Konstruktor().
+     */
+    public MetaPerson(Person p, int inID, Prefs inPrefs, DocStruct inStruct) {
+        this.myPrefs = inPrefs;
+        this.p = p;
+        this.identifier = inID;
+        this.myDocStruct = inStruct;
+        this.mdh = new MetadatenHelper(inPrefs, null);
+    }
 
-   /**
-    * Allgemeiner Konstruktor ()
-    */
-   public MetaPerson(Person p, int inID, Prefs inPrefs, DocStruct inStruct) {
-      this.myPrefs = inPrefs;
-      this.p = p;
-      this.identifier = inID;
-      this.myDocStruct = inStruct;
-      this.mdh = new MetadatenHelper(inPrefs, null);
-   }
+    public int getIdentifier() {
+        return this.identifier;
+    }
 
-   /*#####################################################
-    #####################################################
-    ##																															 
-    ##																Getter und Setter									
-    ##                                                   															    
-    #####################################################
-    ####################################################*/
+    public void setIdentifier(int identifier) {
+        this.identifier = identifier;
+    }
 
-   public int getIdentifier() {
-      return this.identifier;
-   }
+    public Person getP() {
+        return this.p;
+    }
 
-   public void setIdentifier(int identifier) {
-      this.identifier = identifier;
-   }
+    public void setP(Person p) {
+        this.p = p;
+    }
 
-   public Person getP() {
-      return this.p;
-   }
+    /**
+     * Get first name.
+     *
+     * @return String
+     */
+    public String getVorname() {
+        if (this.p.getFirstname() == null) {
+            return "";
+        }
+        return this.p.getFirstname();
+    }
 
-   public void setP(Person p) {
-      this.p = p;
-   }
+    /**
+     * Set first name.
+     *
+     * @param inVorname String
+     */
+    public void setVorname(String inVorname) {
+        if (inVorname == null) {
+            inVorname = "";
+        }
+        this.p.setFirstname(inVorname);
+        this.p.setDisplayname(getNachname() + ", " + getVorname());
+    }
 
-   public String getVorname() {
-	   if (this.p.getFirstname()==null) {
-		   return "";
-	   }
-      return this.p.getFirstname();
-   }
+    /**
+     * Get surname.
+     *
+     * @return String
+     */
+    public String getNachname() {
+        if (this.p.getLastname() == null) {
+            return "";
+        }
+        return this.p.getLastname();
+    }
 
-   public void setVorname(String inVorname) {
-	   if (inVorname == null) {
-		   inVorname = "";
-	   }
-      this.p.setFirstname(inVorname);
-      this.p.setDisplayname(getNachname() + ", " + getVorname());
-   }
+    /**
+     * Set surname.
+     *
+     * @param inNachname String
+     */
+    public void setNachname(String inNachname) {
+        if (inNachname == null) {
+            inNachname = "";
+        }
+        this.p.setLastname(inNachname);
+        this.p.setDisplayname(getNachname() + ", " + getVorname());
+    }
 
-   public String getNachname() {
-	   if (this.p.getLastname()==null) {
-		   return "";
-	   }
-      return this.p.getLastname();
-   }
+    /**
+     * Get record.
+     *
+     * @return String
+     */
+    public String getRecord() {
+        String authorityValue = this.p.getAuthorityValue();
+        if (authorityValue == null || authorityValue.isEmpty()) {
+            authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+        }
+        return authorityValue;
+    }
 
-   public void setNachname(String inNachname) {
-	   if (inNachname == null) {
-		   inNachname = "";
-	   }
-      this.p.setLastname(inNachname);
-      this.p.setDisplayname(getNachname() + ", " + getVorname());
-   }
+    public void setRecord(String record) {
+        String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
+        this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
+    }
 
-	public String getRecord() {
-		String authorityValue = this.p.getAuthorityValue();
-		if (authorityValue == null || authorityValue.isEmpty())
-			authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
-		return authorityValue;
-	}
+    public String getRolle() {
+        return this.p.getRole();
+    }
 
-	public void setRecord(String record) {
-		String[] authorityFile = Metadaten.parseAuthorityFileArgs(record);
-		this.p.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
-	}
+    /**
+     * Set role.
+     *
+     * @param inRolle String
+     */
+    public void setRolle(String inRolle) {
+        this.p.setRole(inRolle);
+        MetadataType mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
+        this.p.setType(mdt);
+    }
 
-   public String getRolle() {
-      return this.p.getRole();
-   }
-
-   public void setRolle(String inRolle) {
-      this.p.setRole(inRolle);
-      MetadataType mdt = this.myPrefs.getMetadataTypeByName(this.p.getRole());
-      this.p.setType(mdt);
-
-   }
-
-   public ArrayList<SelectItem> getAddableRollen() {
-      return this.mdh.getAddablePersonRoles(this.myDocStruct, this.p.getRole());
-   }
+    public ArrayList<SelectItem> getAddableRollen() {
+        return this.mdh.getAddablePersonRoles(this.myDocStruct, this.p.getRole());
+    }
 }

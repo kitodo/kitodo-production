@@ -12,22 +12,29 @@
 package org.goobi.webapi.resources;
 
 import com.sun.jersey.api.NotFoundException;
-import org.goobi.webapi.beans.GoobiProcess;
-import org.goobi.webapi.beans.GoobiProcessStep;
-import org.goobi.webapi.beans.IdentifierPPN;
-import org.goobi.webapi.dao.GoobiProcessDAO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.goobi.webapi.beans.GoobiProcess;
+import org.goobi.webapi.beans.GoobiProcessStep;
+import org.goobi.webapi.beans.IdentifierPPN;
+import org.goobi.webapi.dao.GoobiProcessDAO;
 
 @Path("/processes")
 public class Processes {
 
+    /**
+     * Get Processes.
+     *
+     * @return list of GoobiProcess objects
+     */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public List<GoobiProcess> getProcesses() {
@@ -38,6 +45,12 @@ public class Processes {
         return processes;
     }
 
+    /**
+     * Get Process.
+     *
+     * @param ippn IdentifierPPN object
+     * @return GoobiProcess object
+     */
     @GET
     @Path("{ppnIdentifier}")
     public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
@@ -51,6 +64,12 @@ public class Processes {
         return process;
     }
 
+    /**
+     * Get process tasks.
+     *
+     * @param ippn IdentifierPPN object
+     * @return GoobiProcessStep object
+     */
     @GET
     @Path("{ppnIdentifier}/steps")
     public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
@@ -60,7 +79,6 @@ public class Processes {
         if (resultList.isEmpty()) {
             throw new NotFoundException("No such process.");
         }
-
         return resultList;
     }
 

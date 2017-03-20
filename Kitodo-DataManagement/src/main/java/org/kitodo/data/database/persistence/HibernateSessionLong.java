@@ -53,6 +53,8 @@ public class HibernateSessionLong {
     }
 
     /**
+     * Get Session Factory.
+     *
      * @return the hibernate session factory
      */
     @SuppressWarnings("deprecation")

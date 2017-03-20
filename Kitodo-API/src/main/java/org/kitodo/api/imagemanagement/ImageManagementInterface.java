@@ -11,7 +11,7 @@
 
 package org.kitodo.api.imagemanagement;
 
-import java.awt.*;
+import java.awt.Image;
 import java.nio.file.Path;
 
 public interface ImageManagementInterface {

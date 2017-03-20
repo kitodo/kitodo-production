@@ -18,11 +18,11 @@ public class OCRResult {
 
     /** The process id. */
     private Integer processId;
-    /** The result, if OCR was successfull */
+    /** The result, if OCR was successful. */
     private boolean success;
-    /** A result message */
+    /** A result message. */
     private String message;
-    /** The generated OCD Files */
+    /** The generated OCD Files. */
     private ArrayList<File> outputFiles;
 
     /** Gets the processId.

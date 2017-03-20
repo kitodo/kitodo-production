@@ -11,6 +11,8 @@
 
 package org.goobi.mq;
 
+import de.sub.goobi.helper.enums.ReportLevel;
+
 import javax.jms.MapMessage;
 
 import org.apache.log4j.Level;
@@ -19,59 +21,75 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
-import de.sub.goobi.helper.enums.ReportLevel;
-
 public class WebServiceResult {
-	private static final Logger logger = Logger.getLogger(ActiveMQDirector.class);
-	
-	private String queueName;
-	private String id;
-	private ReportLevel level;
-	private String message = null;
-	
-	public WebServiceResult(String queueName, String id, ReportLevel level,
-			String message){
-		this.queueName = queueName;
-		this.id = id;
-		this.level = level;
-		this.message = message;
-	}
-	
-	public WebServiceResult(String queueName, String id, ReportLevel level){
-		this.queueName = queueName;
-		this.id = id;
-		this.level = level;
-	}
-	
-	public void send() {
-		if (ActiveMQDirector.getResultsTopic() == null) {
+    private static final Logger logger = Logger.getLogger(ActiveMQDirector.class);
 
-			// If reporting to ActiveMQ is disabled, write log message
-			logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
-					"Processing message \"" + id + '@' + queueName
-							+ "\" reports " + level.toLowerCase() + "."
-							+ (message != null ? " (" + message + ")" : ""));
-		} else {
-			try {
-				MapMessage report = ActiveMQDirector.getSession().createMapMessage();
+    private String queueName;
+    private String id;
+    private ReportLevel level;
+    private String message = null;
 
-				DateTime now = new DateTime();
-				DateTimeFormatter iso8601formatter = ISODateTimeFormat.dateTime();
-				report.setString("timestamp", iso8601formatter.print(now));
-				report.setString("queue", queueName);
-				report.setString("id", id);
-				report.setString("level", level.toLowerCase());
-				if (message != null)
-					report.setString("message", message);
+    /**
+     * Constructor.
+     *
+     * @param queueName String
+     * @param id String
+     * @param level String
+     * @param message String
+     */
+    public WebServiceResult(String queueName, String id, ReportLevel level, String message) {
+        this.queueName = queueName;
+        this.id = id;
+        this.level = level;
+        this.message = message;
+    }
 
-				ActiveMQDirector.getResultsTopic().send(report);
+    /**
+     * Constructor.
+     *
+     * @param queueName String
+     * @param id String
+     * @param level ReportLevel object
+     */
+    public WebServiceResult(String queueName, String id, ReportLevel level) {
+        this.queueName = queueName;
+        this.id = id;
+        this.level = level;
+    }
 
-			} catch (Exception exce) {
-				logger.fatal("Error sending report  for \"" + id + '@'
-						+ queueName + "\" (" + level.toLowerCase()
-						+ (message != null ? ": " + message : "")
-						+ "): Giving up.", exce);
-			}
-		}
-	}
+    /**
+     * Send.
+     */
+    public void send() {
+        if (ActiveMQDirector.getResultsTopic() == null) {
+
+            // If reporting to ActiveMQ is disabled, write log message
+            logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
+                    "Processing message \"" + id + '@' + queueName
+                            + "\" reports " + level.toLowerCase() + "."
+                            + (message != null ? " (" + message + ")" : ""));
+        } else {
+            try {
+                MapMessage report = ActiveMQDirector.getSession().createMapMessage();
+
+                DateTime now = new DateTime();
+                DateTimeFormatter iso8601formatter = ISODateTimeFormat.dateTime();
+                report.setString("timestamp", iso8601formatter.print(now));
+                report.setString("queue", queueName);
+                report.setString("id", id);
+                report.setString("level", level.toLowerCase());
+                if (message != null) {
+                    report.setString("message", message);
+                }
+
+                ActiveMQDirector.getResultsTopic().send(report);
+
+            } catch (Exception exce) {
+                logger.fatal("Error sending report  for \"" + id + '@'
+                        + queueName + "\" (" + level.toLowerCase()
+                        + (message != null ? ": " + message : "")
+                        + "): Giving up.", exce);
+            }
+        }
+    }
 }

@@ -25,90 +25,90 @@ import org.kitodo.data.database.beans.WorkpieceProperty;
 
 public class ImportObject {
 
-	// TODO must end with ".xml" in current implementation
-	private String processTitle = "";
-	private final Collection<Batch> batches = new LinkedList<Batch>();
-	
-	private String metsFilename = "";
-	private String importFileName = "";
+    // TODO must end with ".xml" in current implementation
+    private String processTitle = "";
+    private final Collection<Batch> batches = new LinkedList<Batch>();
 
-	// error handling
-	private ImportReturnValue importReturnValue = ImportReturnValue.ExportFinished;
-	private String errorMessage ="";
-	
-	// additional information
-	private List<ProcessProperty> processProperties = new ArrayList<>();
-	private List<WorkpieceProperty> workProperties = new ArrayList<>();
-	private List<TemplateProperty> templateProperties = new ArrayList<>();
+    private String metsFilename = "";
+    private String importFileName = "";
 
-	public ImportObject() {
-	}
+    // error handling
+    private ImportReturnValue importReturnValue = ImportReturnValue.ExportFinished;
+    private String errorMessage = "";
 
-	public String getProcessTitle() {
-		return this.processTitle;
-	}
+    // additional information
+    private List<ProcessProperty> processProperties = new ArrayList<>();
+    private List<WorkpieceProperty> workProperties = new ArrayList<>();
+    private List<TemplateProperty> templateProperties = new ArrayList<>();
 
-	public void setProcessTitle(String processTitle) {
-		this.processTitle = processTitle;
-	}
+    public ImportObject() {
+    }
 
-	public String getMetsFilename() {
-		return this.metsFilename;
-	}
+    public String getProcessTitle() {
+        return this.processTitle;
+    }
 
-	public void setMetsFilename(String metsFilename) {
-		this.metsFilename = metsFilename;
-	}
+    public void setProcessTitle(String processTitle) {
+        this.processTitle = processTitle;
+    }
 
-	public ImportReturnValue getImportReturnValue() {
-		return this.importReturnValue;
-	}
+    public String getMetsFilename() {
+        return this.metsFilename;
+    }
 
-	public void setImportReturnValue(ImportReturnValue importReturnValue) {
-		this.importReturnValue = importReturnValue;
-	}
+    public void setMetsFilename(String metsFilename) {
+        this.metsFilename = metsFilename;
+    }
 
-	public String getErrorMessage() {
-		return this.errorMessage;
-	}
+    public ImportReturnValue getImportReturnValue() {
+        return this.importReturnValue;
+    }
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+    public void setImportReturnValue(ImportReturnValue importReturnValue) {
+        this.importReturnValue = importReturnValue;
+    }
 
-	public List<ProcessProperty> getProcessProperties() {
-		return this.processProperties;
-	}
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
 
-	public void setProcessProperties(List<ProcessProperty> processProperties) {
-		this.processProperties = processProperties;
-	}
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
-	public List<WorkpieceProperty> getWorkProperties() {
-		return this.workProperties;
-	}
+    public List<ProcessProperty> getProcessProperties() {
+        return this.processProperties;
+    }
 
-	public void setWorkProperties(List<WorkpieceProperty> workProperties) {
-		this.workProperties = workProperties;
-	}
+    public void setProcessProperties(List<ProcessProperty> processProperties) {
+        this.processProperties = processProperties;
+    }
 
-	public List<TemplateProperty> getTemplateProperties() {
-		return this.templateProperties;
-	}
+    public List<WorkpieceProperty> getWorkProperties() {
+        return this.workProperties;
+    }
 
-	public void setTemplateProperties(List<TemplateProperty> templateProperties) {
-		this.templateProperties = templateProperties;
-	}
+    public void setWorkProperties(List<WorkpieceProperty> workProperties) {
+        this.workProperties = workProperties;
+    }
 
-	public Collection<Batch> getBatches() {
-		return batches;
-	}
+    public List<TemplateProperty> getTemplateProperties() {
+        return this.templateProperties;
+    }
 
-	public String getImportFileName() {
+    public void setTemplateProperties(List<TemplateProperty> templateProperties) {
+        this.templateProperties = templateProperties;
+    }
+
+    public Collection<Batch> getBatches() {
+        return batches;
+    }
+
+    public String getImportFileName() {
         return importFileName;
     }
 
-	public void setImportFileName(String importFileName) {
+    public void setImportFileName(String importFileName) {
         this.importFileName = importFileName;
     }
 }

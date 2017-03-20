@@ -12,36 +12,36 @@
 package org.kitodo.production.plugin.opac.pica;
 
 class ConfigOpacCatalogueBeautifierElement {
-	private final String tag;
-	private final String subtag;
-	private final String value;
-	private final String mode;
+    private final String tag;
+    private final String subtag;
+    private final String value;
+    private final String mode;
 
-	ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value, String mode) {
-		this.tag = tag;
-		this.subtag = subtag;
-		this.value = value;
-		this.mode = mode;
-	}
+    ConfigOpacCatalogueBeautifierElement(String tag, String subtag, String value, String mode) {
+        this.tag = tag;
+        this.subtag = subtag;
+        this.value = value;
+        this.mode = mode;
+    }
 
-	String getTag() {
-		return tag;
-	}
+    String getTag() {
+        return tag;
+    }
 
-	String getSubtag() {
-		return subtag;
-	}
+    String getSubtag() {
+        return subtag;
+    }
 
-	String getValue() {
-		return value;
-	}
+    String getValue() {
+        return value;
+    }
 
-	String getMode() {
-		return mode;
-	}
+    String getMode() {
+        return mode;
+    }
 
-	@Override
-	public String toString() {
-		return tag + " - " + subtag + " : " + value;
-	}
+    @Override
+    public String toString() {
+        return tag + " - " + subtag + " : " + value;
+    }
 }

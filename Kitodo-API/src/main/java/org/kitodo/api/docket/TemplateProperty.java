@@ -13,7 +13,7 @@ package org.kitodo.api.docket;
 
 public class TemplateProperty extends Property {
 
-    /** The templateId */
+    /** The templateId. */
     private Integer templateId;
 
     /** Gets the templateId.

@@ -582,25 +582,21 @@
     </build>
     <profiles>
         <profile>
-            <id>formatter</id>
+            <id>all-tests</id>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>net.revelc.code</groupId>
-                        <artifactId>formatter-maven-plugin</artifactId>
-                        <version>0.5.2</version>
-                        <configuration>
-                            <configFile>${parent.basedir}/config/code-formatter.xml</configFile>
-                            <directories>
-                                <directory>${project.build.sourceDirectory}/</directory>
-                                <!--<directory>${project.build.testSourceDirectory}/</directory>-->
-                            </directories>
-                            <encoding>UTF-8</encoding>
-                            <lineEnding>LF</lineEnding>
-                        </configuration>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.19.1</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

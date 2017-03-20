@@ -38,7 +38,8 @@ import org.kitodo.data.database.persistence.HibernateUtilOld;
 public class Helper implements Serializable {
 
     /**
-     * Always treat de-serialization as a full-blown constructor, by validating the final state of the de-serialized object.
+     * Always treat de-serialization as a full-blown constructor, by validating the final state of
+     * the de-serialized object.
      */
     private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
@@ -63,7 +64,7 @@ public class Helper implements Serializable {
     private static String compoundMessage;
 
     /**
-     * Ermitteln eines bestimmten Parameters des Requests
+     * Ermitteln eines bestimmten Parameters des Requests.
      *
      * @return Parameter als String
      */
@@ -79,20 +80,39 @@ public class Helper implements Serializable {
         return myParameter;
     }
 
+    /**
+     * Get stack trace as String.
+     *
+     * @param inException input exception
+     * @return stack traces as string
+     */
     public static String getStacktraceAsString(Exception inException) {
         StringWriter sw = new StringWriter();
         inException.printStackTrace(new PrintWriter(sw));
         return sw.toString();
     }
 
+    /**
+     * Get Date as formatted String.
+     *
+     * @param inDate input date
+     * @return date as formatted string
+     */
     public static String getDateAsFormattedString(Date inDate) {
         if (inDate == null) {
             return "-";
         } else {
-            return DateFormat.getDateInstance().format(inDate) + " " + DateFormat.getTimeInstance(DateFormat.MEDIUM).format(inDate);
+            return DateFormat.getDateInstance().format(inDate) + " "
+                    + DateFormat.getTimeInstance(DateFormat.MEDIUM).format(inDate);
         }
     }
 
+    /**
+     * Get managed bean value.
+     *
+     * @param expr String
+     * @return managed bean
+     */
     public static Object getManagedBeanValue(String expr) {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context == null) {
@@ -104,7 +124,7 @@ public class Helper implements Serializable {
                 ValueBinding vb = application.createValueBinding(expr);
                 if (vb != null) {
                     try {
-                    value = vb.getValue(context);
+                        value = vb.getValue(context);
                     } catch (PropertyNotFoundException e) {
                         myLogger.error(e);
                     } catch (EvaluationException e) {
@@ -134,6 +154,11 @@ public class Helper implements Serializable {
         }
     }
 
+    /**
+     * Get Hibernate Session.
+     *
+     * @return Hibernate Session
+     */
     public static Session getHibernateSession() {
         Session sess;
         try {

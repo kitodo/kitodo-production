@@ -19,76 +19,86 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.TaskService;
 
-public class BatchDisplayItem implements Comparable<BatchDisplayItem>{
+public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
 
-	private String stepTitle = "";
-	private Integer stepOrder = null;
-	private TaskStatus stepStatus = TaskStatus.DONE;
-	private TaskService taskService = new TaskService();
-	private HashMap<String, String> scripts = new HashMap<String, String>();
-	private boolean exportDMS = false;
+    private String stepTitle = "";
+    private Integer stepOrder = null;
+    private TaskStatus stepStatus = TaskStatus.DONE;
+    private TaskService taskService = new TaskService();
+    private HashMap<String, String> scripts = new HashMap<String, String>();
+    private boolean exportDMS = false;
 
-	public BatchDisplayItem(Task s) {
-		this.stepTitle = s.getTitle();
-		this.stepOrder = s.getOrdering();
-		this.stepStatus = s.getProcessingStatusEnum();
-		this.scripts.putAll(taskService.getAllScripts(s));
-		this.exportDMS = s.isTypeExportDMS();
-	}
+    /**
+     * Constructor.
+     *
+     * @param s task
+     */
+    public BatchDisplayItem(Task s) {
+        this.stepTitle = s.getTitle();
+        this.stepOrder = s.getOrdering();
+        this.stepStatus = s.getProcessingStatusEnum();
+        this.scripts.putAll(taskService.getAllScripts(s));
+        this.exportDMS = s.isTypeExportDMS();
+    }
 
-	public String getStepTitle() {
-		return this.stepTitle;
-	}
+    public String getStepTitle() {
+        return this.stepTitle;
+    }
 
-	public void setStepTitle(String stepTitle) {
-		this.stepTitle = stepTitle;
-	}
+    public void setStepTitle(String stepTitle) {
+        this.stepTitle = stepTitle;
+    }
 
-	public Integer getStepOrder() {
-		return this.stepOrder;
-	}
+    public Integer getStepOrder() {
+        return this.stepOrder;
+    }
 
-	public void setStepOrder(Integer stepOrder) {
-		this.stepOrder = stepOrder;
-	}
+    public void setStepOrder(Integer stepOrder) {
+        this.stepOrder = stepOrder;
+    }
 
-	public TaskStatus getStepStatus() {
-		return this.stepStatus;
-	}
+    public TaskStatus getStepStatus() {
+        return this.stepStatus;
+    }
 
-	public void setStepStatus(TaskStatus stepStatus) {
-		this.stepStatus = stepStatus;
-	}
+    public void setStepStatus(TaskStatus stepStatus) {
+        this.stepStatus = stepStatus;
+    }
 
-	@Override
-	public int compareTo(BatchDisplayItem o) {
-	
-		return this.getStepOrder().compareTo(o.getStepOrder());
-	}
+    @Override
+    public int compareTo(BatchDisplayItem o) {
 
-	public HashMap<String, String> getScripts() {
-		return this.scripts;
-	}
+        return this.getStepOrder().compareTo(o.getStepOrder());
+    }
 
-	public void setScripts(HashMap<String, String> scripts) {
-		this.scripts = scripts;
-	}
-	
-	public int getScriptSize() {
-		return this.scripts.size();
-	}
-	
-	public List<String> getScriptnames() {
-		List<String> answer = new ArrayList<String>();
-		answer.addAll(this.scripts.keySet());		
-		return answer;
-	}
+    public HashMap<String, String> getScripts() {
+        return this.scripts;
+    }
 
-	public boolean getExportDMS() {
-		return this.exportDMS;
-	}
+    public void setScripts(HashMap<String, String> scripts) {
+        this.scripts = scripts;
+    }
 
-	public void setExportDMS(boolean exportDMS) {
-		this.exportDMS = exportDMS;
-	}
+    public int getScriptSize() {
+        return this.scripts.size();
+    }
+
+    /**
+     * Get script names.
+     *
+     * @return list of script names
+     */
+    public List<String> getScriptnames() {
+        List<String> answer = new ArrayList<>();
+        answer.addAll(this.scripts.keySet());
+        return answer;
+    }
+
+    public boolean getExportDMS() {
+        return this.exportDMS;
+    }
+
+    public void setExportDMS(boolean exportDMS) {
+        this.exportDMS = exportDMS;
+    }
 }

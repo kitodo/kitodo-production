@@ -24,64 +24,79 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.LdapGroupService;
 
 public class LdapGruppenForm extends BasisForm {
-	private static final long serialVersionUID = -5644561256582235244L;
-	private LdapGroup myLdapGruppe = new LdapGroup();
-	private LdapGroupService ldapGroupService = new LdapGroupService();
+    private static final long serialVersionUID = -5644561256582235244L;
+    private LdapGroup myLdapGruppe = new LdapGroup();
+    private LdapGroupService ldapGroupService = new LdapGroupService();
 
-	public String Neu() {
-		this.myLdapGruppe = new LdapGroup();
-		return "LdapGruppenBearbeiten";
-	}
+    public String Neu() {
+        this.myLdapGruppe = new LdapGroup();
+        return "LdapGruppenBearbeiten";
+    }
 
-	public String Speichern() {
-		try {
-			this.ldapGroupService.save(this.myLdapGruppe);
-			return "LdapGruppenAlle";
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Could not save", e.getMessage());
-			return "";
-		}
-	}
+    /**
+     * Save.
+     *
+     * @return page or empty String
+     */
+    public String Speichern() {
+        try {
+            this.ldapGroupService.save(this.myLdapGruppe);
+            return "LdapGruppenAlle";
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Could not save", e.getMessage());
+            return "";
+        }
+    }
 
-	public String Loeschen() {
-		try {
-			this.ldapGroupService.remove(this.myLdapGruppe);
-		} catch (DAOException e) {
-			Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
-			return "";
-		}
-		return "LdapGruppenAlle";
-	}
+    /**
+     * Remove.
+     *
+     * @return page or empty String
+     */
+    public String Loeschen() {
+        try {
+            this.ldapGroupService.remove(this.myLdapGruppe);
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
+            return "";
+        }
+        return "LdapGruppenAlle";
+    }
 
-	public String FilterKein() {
-		try {
-			Session session = Helper.getHibernateSession();
-				session.clear();
-			Criteria crit = session.createCriteria(LdapGroup.class);
-			crit.addOrder(Order.asc("title"));
-			this.page = new Page(crit, 0);
-		} catch (HibernateException he) {
-			Helper.setFehlerMeldung("Error on reading database", he.getMessage());
-			return "";
-		}
-		return "LdapGruppenAlle";
-	}
+    /**
+     * No filter.
+     *
+     * @return page or empty String
+     */
+    public String FilterKein() {
+        try {
+            Session session = Helper.getHibernateSession();
+            session.clear();
+            Criteria crit = session.createCriteria(LdapGroup.class);
+            crit.addOrder(Order.asc("title"));
+            this.page = new Page(crit, 0);
+        } catch (HibernateException he) {
+            Helper.setFehlerMeldung("Error on reading database", he.getMessage());
+            return "";
+        }
+        return "LdapGruppenAlle";
+    }
 
-	public String FilterKeinMitZurueck() {
-		FilterKein();
-		return this.zurueck;
-	}
+    public String FilterKeinMitZurueck() {
+        FilterKein();
+        return this.zurueck;
+    }
 
-	/*
-	 * Getter und Setter     
-	 */
+    /*
+     * Getter und Setter
+     */
 
-	public LdapGroup getMyLdapGruppe() {
-		return this.myLdapGruppe;
-	}
+    public LdapGroup getMyLdapGruppe() {
+        return this.myLdapGruppe;
+    }
 
-	public void setMyLdapGruppe(LdapGroup myLdapGruppe) {
-		this.myLdapGruppe = myLdapGruppe;
-	}
+    public void setMyLdapGruppe(LdapGroup myLdapGruppe) {
+        this.myLdapGruppe = myLdapGruppe;
+    }
 
 }

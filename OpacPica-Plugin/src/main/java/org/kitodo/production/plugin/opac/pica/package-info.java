@@ -20,7 +20,7 @@
  *   String  getTitle()</pre>
  * 
  * and in {@link org.goobi.production.plugin.CataloguePlugin.CataloguePlugin}:
- * 
+ *
  * <pre>   Object  find(String, long)
  *   Map     getHit(Object, long, long)
  *   long    getNumberOfHits(Object, long)

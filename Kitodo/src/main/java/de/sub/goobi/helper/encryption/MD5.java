@@ -31,21 +31,20 @@ import java.security.*;
  * @version 0.1.1<br>
  *
  */
-public class MD5
-{
+public class MD5 {
     private String text = null;
     private String hash = null;
 
     /**
-     * <u>Konstruktor mit &Uuml;bergabe der zu verifizierenden Zeichenkette</u>
-     * @param text
+     * <u>Konstruktor mit &Uuml;bergabe der zu verifizierenden Zeichenkette.</u>
+     * @param text String
      */
     public MD5(String text) {
         this.text = text;
     }
 
     /**
-     * <u>Zur&uuml;ckgabe des MD5-Hashes, bei Initialisierter Membervariable 'text'</u>
+     * <u>Zur&uuml;ckgabe des MD5-Hashes, bei Initialisierter Membervariable 'text'.</u>
      * @return MD5 hash string for member variable 'text'
      */
     public String getMD5() {
@@ -57,8 +56,8 @@ public class MD5
     }
 
     /**
-     * <u>Zur&uuml;ckgabe des MD5-Hashes</u>
-     * @param text
+     * <u>Zur&uuml;ckgabe des MD5-Hashes.</u>
+     * @param text String
      * @return MD5 hash string
      */
     public String getMD5(String text) {
@@ -67,7 +66,7 @@ public class MD5
     }
 
     /**
-     * <u>MD5-Hash erzeugen</u>
+     * <u>MD5-Hash erzeugen.</u>
      * @return MD5 hash string
      */
     private String makeMD5() {
@@ -78,7 +77,7 @@ public class MD5
             md = MessageDigest.getInstance("MD5");   // getting a 'MD5-Instance'
             encryptMsg = md.digest(text.getBytes(StandardCharsets.UTF_8)); // solving the MD5-Hash
         } catch (NoSuchAlgorithmException e) {
-        	throw new RuntimeException(e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         }
 
         String swap = "";       // swap-string for the result
@@ -90,17 +89,17 @@ public class MD5
             byteStr = Integer.toHexString(encryptMsg[i]); // swap-string for current hex-value of byte
 
             switch (byteStr.length()) {
-            case 1:     // if hex-number length is 1, add a '0' before
-                swap = "0" + Integer.toHexString(encryptMsg[i]);
-                break;
+                case 1:     // if hex-number length is 1, add a '0' before
+                    swap = "0" + Integer.toHexString(encryptMsg[i]);
+                    break;
 
-            case 2:     // correct hex-letter
-                swap = Integer.toHexString(encryptMsg[i]);
-                break;
+                case 2:     // correct hex-letter
+                    swap = Integer.toHexString(encryptMsg[i]);
+                    break;
 
-            case 8:     // get the correct substring
-                swap = (Integer.toHexString(encryptMsg[i])).substring(6, 8);
-                break;
+                case 8:     // get the correct substring
+                    swap = (Integer.toHexString(encryptMsg[i])).substring(6, 8);
+                    break;
             }
             strBuf.append(swap); // appending swap to get complete hash-key
         }

@@ -13,32 +13,32 @@ package org.kitodo.production.plugin.opac.pica;
 
 class Catalogue {
 
-	private String cbs = "";
+    private String cbs = "";
 
-	private final String dataBase;
-	private final String serverAddress;
-	private final int port;
+    private final String dataBase;
+    private final String serverAddress;
+    private final int port;
 
-	Catalogue(ConfigOpacCatalogue coc) {
-		this.serverAddress = coc.getAddress();
-		this.port = coc.getPort();
-		this.dataBase = coc.getDatabase();
-		this.cbs = coc.getCbs();
-	}
+    Catalogue(ConfigOpacCatalogue coc) {
+        this.serverAddress = coc.getAddress();
+        this.port = coc.getPort();
+        this.dataBase = coc.getDatabase();
+        this.cbs = coc.getCbs();
+    }
 
-	String getDataBase() {
-		return dataBase;
-	}
+    String getDataBase() {
+        return dataBase;
+    }
 
-	int getPort() {
-		return port;
-	}
+    int getPort() {
+        return port;
+    }
 
-	String getServerAddress() {
-		return serverAddress;
-	}
+    String getServerAddress() {
+        return serverAddress;
+    }
 
-	String getCbs() {
-		return cbs;
-	}
+    String getCbs() {
+        return cbs;
+    }
 }

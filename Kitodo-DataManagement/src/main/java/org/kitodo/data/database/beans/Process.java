@@ -495,10 +495,10 @@ public class Process extends BaseBean {
         double inProcessing = 0;
         double closed = 0;
 
-        open = (steps.get("open") * 100) /
-                (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
-        inProcessing = (steps.get("inProcessing") * 100) /
-                (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+        open = (steps.get("open") * 100)
+                / (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+        inProcessing = (steps.get("inProcessing") * 100)
+                / (double) (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
         closed = 100 - open - inProcessing;
 
         java.text.DecimalFormat df = new java.text.DecimalFormat("#000");

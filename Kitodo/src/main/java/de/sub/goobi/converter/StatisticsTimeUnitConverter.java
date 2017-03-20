@@ -25,30 +25,30 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
  * @version 21.05.2009
  */
 public class StatisticsTimeUnitConverter implements Converter {
-	public static final String CONVERTER_ID = "StatisticsTimeUnitConverter";
+    public static final String CONVERTER_ID = "StatisticsTimeUnitConverter";
 
-	/**
-	 * Convert String to TimeUnit
-	 */
-	@Override
-	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
-		if (value == null) {
-			return TimeUnit.days;
-		} else {
-			return TimeUnit.getById(value);
-		}
-	}
+    /**
+     * Convert String to TimeUnit
+     */
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
+        if (value == null) {
+            return TimeUnit.days;
+        } else {
+            return TimeUnit.getById(value);
+        }
+    }
 
-	/**
-	 * Convert TimeUnit to String.
-	 */
-	@Override
-	public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
-		if (value == null || !(value instanceof TimeUnit)) {
-			return TimeUnit.days.getId();
-		} else {
-			return ((TimeUnit) value).getId();
-		}
-	}
+    /**
+     * Convert TimeUnit to String.
+     */
+    @Override
+    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
+        if (value == null || !(value instanceof TimeUnit)) {
+            return TimeUnit.days.getId();
+        } else {
+            return ((TimeUnit) value).getId();
+        }
+    }
 
 }

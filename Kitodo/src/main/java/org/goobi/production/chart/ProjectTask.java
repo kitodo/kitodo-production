@@ -14,47 +14,53 @@ package org.goobi.production.chart;
 import java.io.Serializable;
 
 public class ProjectTask implements IProjectTask, Serializable {
-	private static final long serialVersionUID = 1L;
-	private String taskTitle;
-	private Integer taskStepsCompleted;
-	private Integer taskStepsMax;
+    private static final long serialVersionUID = 1L;
+    private String taskTitle;
+    private Integer taskStepsCompleted;
+    private Integer taskStepsMax;
 
-	
-	public ProjectTask(String title, Integer stepsCompleted, Integer stepsMax) {
-		taskTitle = title;
-		taskStepsCompleted = stepsCompleted;
-		taskStepsMax = stepsMax;
-		checkSizes();
-	}
+    /**
+     * Constructor.
+     *
+     * @param title String
+     * @param stepsCompleted Integer
+     * @param stepsMax Integer
+     */
+    public ProjectTask(String title, Integer stepsCompleted, Integer stepsMax) {
+        taskTitle = title;
+        taskStepsCompleted = stepsCompleted;
+        taskStepsMax = stepsMax;
+        checkSizes();
+    }
 
-	@Override
-	public String getTitle() {
-		return taskTitle;
-	}
+    @Override
+    public String getTitle() {
+        return taskTitle;
+    }
 
-	@Override
-	public Integer getStepsCompleted() {
-		return taskStepsCompleted;
-	}
+    @Override
+    public Integer getStepsCompleted() {
+        return taskStepsCompleted;
+    }
 
-	@Override
-	public Integer getStepsMax() {
-		return taskStepsMax;
-	}
+    @Override
+    public Integer getStepsMax() {
+        return taskStepsMax;
+    }
 
-	@Override
-	public void setStepsCompleted(Integer stepsCompleted) {
-		taskStepsCompleted = stepsCompleted;
-	}
+    @Override
+    public void setStepsCompleted(Integer stepsCompleted) {
+        taskStepsCompleted = stepsCompleted;
+    }
 
-	@Override
-	public void setStepsMax(Integer stepsMax) {
-		taskStepsMax = stepsMax;
-	}
+    @Override
+    public void setStepsMax(Integer stepsMax) {
+        taskStepsMax = stepsMax;
+    }
 
-	private void checkSizes() {
-		if (taskStepsCompleted > taskStepsMax) {
-			taskStepsMax = taskStepsCompleted;
-		}
-	}
+    private void checkSizes() {
+        if (taskStepsCompleted > taskStepsMax) {
+            taskStepsMax = taskStepsCompleted;
+        }
+    }
 }

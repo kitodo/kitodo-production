@@ -22,74 +22,84 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.services.UserService;
 
 public class BasisForm implements Serializable {
-	private UserService userService = new UserService();
-	private static final Logger logger = Logger
-	.getLogger(BasisForm.class);
-	private static final long serialVersionUID = 2950419497162710096L;
-	protected Page page;
-	protected String zurueck = "";
-	protected String filter = "";
-	protected User user;
+    private UserService userService = new UserService();
+    private static final Logger logger = Logger.getLogger(BasisForm.class);
+    private static final long serialVersionUID = 2950419497162710096L;
+    protected Page page;
+    protected String zurueck = "";
+    protected String filter = "";
+    protected User user;
 
-	protected String sortierung = "prozessAsc";
+    protected String sortierung = "prozessAsc";
 
-	public Page getPage() {
-		return this.page;
-	}
+    public Page getPage() {
+        return this.page;
+    }
 
-	public String getZurueck() {
-		return this.zurueck;
-	}
+    public String getZurueck() {
+        return this.zurueck;
+    }
 
-	public void setZurueck(String zurueck) {
-		this.zurueck = zurueck;
-	}
-	
-	public User getUser() {
-		if(this.user == null) {
-			LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-			this.user = login.getMyBenutzer();
-		}
-		return this.user;
-	}
-	
-	public String getFilter() {
-		return this.filter;
-	}
+    public void setZurueck(String zurueck) {
+        this.zurueck = zurueck;
+    }
 
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
+    /**
+     * Get User.
+     *
+     * @return User
+     */
+    public User getUser() {
+        if (this.user == null) {
+            LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            this.user = login.getMyBenutzer();
+        }
+        return this.user;
+    }
 
-	public String getSortierung() {
-		return this.sortierung;
-	}
+    public String getFilter() {
+        return this.filter;
+    }
 
-	public void setSortierung(String sortierung) {
-		this.sortierung = sortierung;
-	}
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
 
-	public void addFilterToUser(){
-		if (this.filter == null || this.filter.length() == 0){
-			return;
-		}
-		userService.addFilter(this.user.getId(), this.filter);
-//		try {
-//			new BenutzerDAO().save(this.user);
-//		} catch (DAOException e) {
-//			logger.error(e);
-//		}
-	}
+    public String getSortierung() {
+        return this.sortierung;
+    }
 
-	public void removeFilterFromUser(){
-		if (this.filter == null || this.filter.length() == 0){
-			return;
-		}
-		userService.removeFilter(this.user.getId(), this.filter);
-//		try {
-//			new BenutzerDAO().save(this.user);
-//		} catch (DAOException e) {
-//			logger.error(e);
-//		}		
-	}
+    public void setSortierung(String sortierung) {
+        this.sortierung = sortierung;
+    }
+
+    /**
+     * Add filter to user.
+     */
+    public void addFilterToUser() {
+        if (this.filter == null || this.filter.length() == 0) {
+            return;
+        }
+        userService.addFilter(this.user.getId(), this.filter);
+        //try {
+        //  new BenutzerDAO().save(this.user);
+        //} catch (DAOException e) {
+        //	logger.error(e);
+        //}
+    }
+
+    /**
+     * Remove filter from user.
+     */
+    public void removeFilterFromUser() {
+        if (this.filter == null || this.filter.length() == 0) {
+            return;
+        }
+        userService.removeFilter(this.user.getId(), this.filter);
+        //try {
+        //	new BenutzerDAO().save(this.user);
+        //} catch (DAOException e) {
+        //	logger.error(e);
+        //}
+    }
 }

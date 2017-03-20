@@ -13,85 +13,87 @@ package org.goobi.production.enums;
 
 public enum ImportFormat {
 
-	
-	
-	PICA("1", "pica"), 
-	MARC21("2", "marc21"), 
-	MARCXML ("3", "marcxml"),
-	DC ("4","dc");
-	
-	
-	private String value;
-	private String title;
-	
-	private ImportFormat(String inValue, String inTitle) {
-		setValue(inValue);
-		setTitle(inTitle);
-	}
-	
-	
-	
-	
-	public static ImportFormat getTypeFromValue(String editType) {
-		if (editType != null) {
-			for (ImportFormat ss : values()) {
-				if (ss.getValue().equals(editType)) {
-					return ss;
-				}
-			}
-		}
-		return PICA;
-	}
+    PICA("1", "pica"),
+    MARC21("2", "marc21"),
+    MARCXML("3", "marcxml"),
+    DC("4","dc");
 
+    private String value;
+    private String title;
 
-	public static ImportFormat getTypeFromTitle(String editType) {
-		if (editType != null) {
-			for (ImportFormat ss : values()) {
-				if (ss.getTitle().equals(editType)) {
-					return ss;
-				}
-			}
-		}
-		return PICA;
-	}
-	
+    ImportFormat(String inValue, String inTitle) {
+        setValue(inValue);
+        setTitle(inTitle);
+    }
 
+    /**
+     * Get type from value.
+     *
+     * @param editType String
+     * @return ImportFormat
+     */
+    public static ImportFormat getTypeFromValue(String editType) {
+        if (editType != null) {
+            for (ImportFormat ss : values()) {
+                if (ss.getValue().equals(editType)) {
+                    return ss;
+                }
+            }
+        }
+        return PICA;
+    }
 
-	/**
-	 * @param value the value to set
-	 */
-	public void setValue(String value) {
-		this.value = value;
-	}
+    /**
+     * Get type from title.
+     *
+     * @param editType String
+     * @return ImportFormat
+     */
+    public static ImportFormat getTypeFromTitle(String editType) {
+        if (editType != null) {
+            for (ImportFormat ss : values()) {
+                if (ss.getTitle().equals(editType)) {
+                    return ss;
+                }
+            }
+        }
+        return PICA;
+    }
 
+    /**
+     * Set value.
+     *
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
 
+    /**
+     * Get value.
+     *
+     * @return the value
+     */
+    public String getValue() {
+        return this.value;
+    }
 
+    /**
+     * Set title.
+     *
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	/**
-	 * @return the value
-	 */
-	public String getValue() {
-		return this.value;
-	}
+    /**
+     * Get title.
+     *
+     * @return the title
+     */
+    public String getTitle() {
+        return this.title;
+    }
 
-
-
-
-	/**
-	 * @param title the title to set
-	 */
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-
-
-
-	/**
-	 * @return the title
-	 */
-	public String getTitle() {
-		return this.title;
-	}
-	
 }

@@ -12,20 +12,20 @@
 package de.sub.goobi.helper.exceptions;
 
 public class ImportPluginException extends Exception {
-	private static final long serialVersionUID = -6443010347859488741L;
+    private static final long serialVersionUID = -6443010347859488741L;
 
-	public ImportPluginException() {
-	}
+    public ImportPluginException() {
+    }
 
-	public ImportPluginException(String message) {
-		super(message);
-	}
+    public ImportPluginException(String message) {
+        super(message);
+    }
 
-	public ImportPluginException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ImportPluginException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ImportPluginException(Throwable cause) {
-		super(cause);
-	}
+    public ImportPluginException(Throwable cause) {
+        super(cause);
+    }
 }

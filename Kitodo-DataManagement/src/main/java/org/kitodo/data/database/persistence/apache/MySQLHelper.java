@@ -41,6 +41,11 @@ public class MySQLHelper {
         this.cm = new ConnectionManager(config);
     }
 
+    /**
+     * Get Connection.
+     *
+     * @return connection
+     */
     public Connection getConnection() throws SQLException {
 
         Connection connection = this.cm.getDataSource().getConnection();
@@ -88,6 +93,12 @@ public class MySQLHelper {
         return helper;
     }
 
+    /**
+     * Get tasks for process.
+     *
+     * @param processId id of process
+     * @return tasks for process
+     */
     public static List<StepObject> getStepsForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
 
@@ -97,7 +108,9 @@ public class MySQLHelper {
         try {
             Object[] params = { processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<StepObject> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectListHandler, params);
+            List<StepObject> ret = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToStepObjectListHandler, params
+            );
             // (connection, stmt, MySQLUtils.resultSetToStepObjectListHandler);
             return ret;
         } finally {
@@ -105,6 +118,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get process' properties for given id of process.
+     *
+     * @param processId id of process
+     * @return process' properties
+     */
     public static List<Property> getProcessPropertiesForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -113,13 +132,21 @@ public class MySQLHelper {
         try {
             Object[] params = { processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessPropertyListHandler, params);
+            List<Property> answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToProcessPropertyListHandler, params
+            );
             return answer;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get template's properties for given id of process.
+     *
+     * @param processId id of process
+     * @return template's properties for process
+     */
     public static List<Property> getTemplatePropertiesForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -128,13 +155,21 @@ public class MySQLHelper {
         try {
             Object[] params = { processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToTemplatePropertyListHandler, params);
+            List<Property> answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToTemplatePropertyListHandler, params
+            );
             return answer;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get product's properties for process.
+     *
+     * @param processId id of process
+     * @return product's properties for process
+     */
     public static List<Property> getProductPropertiesForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -143,13 +178,21 @@ public class MySQLHelper {
         try {
             Object[] params = { processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<Property> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProductPropertyListHandler, params);
+            List<Property> answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToProductPropertyListHandler, params
+            );
             return answer;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get process' object for id.
+     *
+     * @param processId id of process
+     * @return process' object
+     */
     public static ProcessObject getProcessObjectForId(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -157,7 +200,9 @@ public class MySQLHelper {
         try {
             Object[] params = { processId };
             logger.debug(sql.toString() + ", " + processId);
-            ProcessObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessHandler, params);
+            ProcessObject answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToProcessHandler, params
+            );
             return answer;
         } finally {
             closeConnection(connection);
@@ -165,6 +210,12 @@ public class MySQLHelper {
 
     }
 
+    /**
+     * Get ruleset for id.
+     *
+     * @param rulesetId id of ruleset
+     * @return ruleset
+     */
     public static Ruleset getRulesetForId(int rulesetId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -172,13 +223,21 @@ public class MySQLHelper {
         try {
             Object[] params = { rulesetId };
             logger.debug(sql.toString() + ", " + rulesetId);
-            Ruleset ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler, params);
+            Ruleset ret = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler, params
+            );
             return ret;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get task by task id.
+     *
+     * @param stepId id of task
+     * @return task
+     */
     public static StepObject getStepByStepId(int stepId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -189,13 +248,21 @@ public class MySQLHelper {
         try {
             Object[] params = { stepId };
             logger.debug(sql.toString() + ", " + stepId);
-            StepObject ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectHandler, params);
+            StepObject ret = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToStepObjectHandler, params
+            );
             return ret;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get scripts for task.
+     *
+     * @param stepId id of task
+     * @return list of scripts
+     */
     public static List<String> getScriptsForStep(int stepId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -203,13 +270,21 @@ public class MySQLHelper {
         try {
             Object[] params = { stepId };
             logger.debug(sql.toString() + ", " + stepId);
-            List<String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptsHandler, params);
+            List<String> ret = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToScriptsHandler, params
+            );
             return ret;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get script's map for task.
+     *
+     * @param stepId id of task
+     * @return map of script
+     */
     public static Map<String, String> getScriptMapForStep(int stepId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -217,18 +292,25 @@ public class MySQLHelper {
         try {
             Object[] params = { stepId };
             logger.debug(sql.toString() + ", " + stepId);
-            Map<String, String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptMapHandler, params);
+            Map<String, String> ret = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToScriptMapHandler, params
+            );
             return ret;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Update task.
+     *
+     * @param step task object
+     * @return int
+     */
     public int updateStep(StepObject step) throws SQLException {
         int ret = -1;
         Connection connection = helper.getConnection();
         try {
-
             QueryRunner run = new QueryRunner();
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE task SET title = ? , ");
@@ -270,6 +352,15 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Add history.
+     *
+     * @param date date
+     * @param order order
+     * @param value String
+     * @param type type
+     * @param processId id of process
+     */
     public void addHistory(Date date, double order, String value, int type, int processId) throws SQLException {
         Connection connection = helper.getConnection();
         Timestamp datetime = new Timestamp(date.getTime());
@@ -289,6 +380,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Update process' status.
+     *
+     * @param value String
+     * @param processId id of process
+     */
     public void updateProcessStatus(String value, int processId) throws SQLException {
         Connection connection = helper.getConnection();
         try {
@@ -303,6 +400,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Update Images.
+     *
+     * @param numberOfFiles amount of image files to update
+     * @param processId id of process
+     */
     public void updateImages(Integer numberOfFiles, int processId) throws SQLException {
         Connection connection = helper.getConnection();
         try {
@@ -317,6 +420,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Update process log.
+     *
+     * @param logValue String
+     * @param processId id of process
+     */
     public void updateProcessLog(String logValue, int processId) throws SQLException {
         Connection connection = helper.getConnection();
         try {
@@ -331,6 +440,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get project's object by id.
+     *
+     * @param projectId id of project
+     * @return project object
+     */
     public static ProjectObject getProjectObjectById(int projectId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -338,13 +453,21 @@ public class MySQLHelper {
         try {
             Object[] param = { projectId };
             logger.debug(sql.toString() + ", " + Arrays.toString(param));
-            ProjectObject answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectHandler, param);
+            ProjectObject answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToProjectHandler, param
+            );
             return answer;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Get file groups' for project's id.
+     *
+     * @param projectId id of project
+     * @return list of project's file groups
+     */
     public static List<ProjectFileGroup> getFilegroupsForProjectId(int projectId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -353,8 +476,9 @@ public class MySQLHelper {
         try {
             Object[] param = { projectId };
             logger.debug(sql.toString() + ", " + Arrays.toString(param));
-            List<ProjectFileGroup> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectFilegroupListHandler,
-                    param);
+            List<ProjectFileGroup> answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToProjectFilegroupListHandler, param
+            );
             return answer;
 
         } finally {
@@ -362,6 +486,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get filter for user.
+     *
+     * @param userId id of user
+     * @return list of filters
+     */
     public static List<String> getFilterForUser(int userId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
@@ -369,13 +499,21 @@ public class MySQLHelper {
         try {
             Object[] param = { userId };
             logger.debug(sql.toString() + ", " + Arrays.toString(param));
-            List<String> answer = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToFilterListtHandler, param);
+            List<String> answer = new QueryRunner().query(
+                    connection, sql.toString(), MySQLUtils.resultSetToFilterListtHandler, param
+            );
             return answer;
         } finally {
             closeConnection(connection);
         }
     }
 
+    /**
+     * Add filter to user.
+     *
+     * @param userId id of user
+     * @param filterstring String
+     */
     public static void addFilterToUser(int userId, String filterstring) throws SQLException {
         Connection connection = helper.getConnection();
         Timestamp datetime = new Timestamp(new Date().getTime());
@@ -393,6 +531,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Remove filter from user.
+     *
+     * @param userId id of user
+     * @param filterstring String
+     */
     public static void removeFilterFromUser(int userId, String filterstring) throws SQLException {
         Connection connection = helper.getConnection();
         try {
@@ -408,6 +552,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get step ids.
+     *
+     * @param query String
+     * @return list of ids
+     */
     public static List<Integer> getStepIds(String query) throws SQLException {
         Connection connection = helper.getConnection();
         try {
@@ -417,6 +567,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get count of processes with ruleset.
+     *
+     * @param rulesetId id of ruleset
+     * @return amount of processes with ruleset
+     */
     public static int getCountOfProcessesWithRuleset(int rulesetId) throws SQLException {
         Connection connection = helper.getConnection();
 
@@ -429,6 +585,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get count of processes with docket.
+     *
+     * @param docketId id of docket
+     * @return amount of processes with docket
+     */
     public static int getCountOfProcessesWithDocket(int docketId) throws SQLException {
         Connection connection = helper.getConnection();
         String query = "SELECT count(id) FROM process WHERE docket_id = ?";
@@ -440,6 +602,12 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Get count of processes with title.
+     *
+     * @param title String
+     * @return amount of processes with title
+     */
     public static int getCountOfProcessesWithTitle(String title) throws SQLException {
         Connection connection = helper.getConnection();
         String query = "SELECT count(id) FROM process WHERE title = ?";
@@ -451,6 +619,11 @@ public class MySQLHelper {
         }
     }
 
+    /**
+     * Main method.
+     *
+     * @param args arguments
+     */
     public static void main(String[] args) throws SQLException {
         MySQLHelper helper = MySQLHelper.getInstance();
         int start = 10000;
