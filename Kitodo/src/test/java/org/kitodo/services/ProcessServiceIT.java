@@ -318,7 +318,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        String expected = "2017-01-20";
+        String expected = "2017-01-20 00:00:00";
         String actual = processService.getCreationDateAsString(process);
         assertEquals("Creation date doesn't match to given plain text!", expected, actual);
     }

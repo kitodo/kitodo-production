@@ -63,7 +63,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         Task task = taskService.find(1);
-        String expected = "2016-10-20";
+        String expected = "2016-10-20 00:00:00";
         String actual = taskService.getProcessingBeginAsFormattedString(task);
         assertEquals("Processing time date is incorrect!", expected, actual);
     }
@@ -73,7 +73,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         Task task = taskService.find(1);
-        String expected = "2016-12-24";
+        String expected = "2016-12-24 00:00:00";
         String actual = taskService.getProcessingTimeAsFormattedString(task);
         assertEquals("Processing time date is incorrect!", expected, actual);
 
@@ -88,7 +88,7 @@ public class TaskServiceIT {
         TaskService taskService = new TaskService();
 
         Task task = taskService.find(1);
-        String expected = "2016-12-24";
+        String expected = "2016-12-24 00:00:00";
         String actual = taskService.getProcessingEndAsFormattedString(task);
         assertEquals("Processing end date is incorrect!", expected, actual);
     }
