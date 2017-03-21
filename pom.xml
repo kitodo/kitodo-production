@@ -30,6 +30,7 @@
 
     <properties>
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
+        <parent.basedir>${basedir}</parent.basedir>
         <phase.prop>none</phase.prop>
     </properties>
 
@@ -169,7 +170,7 @@
                         <configuration>
                             <!-- local configuration file -->
                             <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
-                            <configFile>Kitodo-DataManagement/src/main/resources/db/config/flyway.properties</configFile>
+                            <configFile>${basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties</configFile>
                         </configuration>
                         <dependencies>
                             <dependency>
