@@ -35,9 +35,6 @@ import org.kitodo.data.index.Indexer;
 import org.kitodo.data.index.elasticsearch.type.TaskType;
 
 public class TaskService {
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
-
     private TaskDAO taskDao = new TaskDAO();
     private TaskType taskType = new TaskType();
     private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
@@ -97,32 +94,6 @@ public class TaskService {
     public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), taskType);
-    }
-
-    /**
-     * Convert Date start date to String.
-     *
-     * @param task object
-     * @return formatted date string
-     */
-    public String getStartDate(Task task) {
-        if (task.getProcessingBegin() != null) {
-            return this.formatter.format(task.getProcessingBegin());
-        }
-        return "";
-    }
-
-    /**
-     * Convert Date end date to String.
-     *
-     * @param task object
-     * @return formatted date string
-     */
-    public String getEndDate(Task task) {
-        if (task.getProcessingEnd() != null) {
-            return this.formatter.format(task.getProcessingEnd());
-        }
-        return "";
     }
 
     /**

@@ -59,26 +59,6 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldGetStartDate() throws Exception {
-        TaskService taskService = new TaskService();
-
-        Task task = taskService.find(1);
-        String expected = "20160020";
-        String actual = taskService.getStartDate(task);
-        assertEquals("Start date is incorrect!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetEndDate() throws Exception {
-        TaskService taskService = new TaskService();
-
-        Task task = taskService.find(1);
-        String expected = "20160024";
-        String actual = taskService.getEndDate(task);
-        assertEquals("End date is incorrect!", expected, actual);
-    }
-
-    @Test
     public void shouldGetProcessingBeginAsFormattedString() throws Exception {
         TaskService taskService = new TaskService();
 
