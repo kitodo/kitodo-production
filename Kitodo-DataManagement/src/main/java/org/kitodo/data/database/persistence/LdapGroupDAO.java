@@ -27,9 +27,11 @@ public class LdapGroupDAO extends BaseDAO {
     /**
      * Find LDAP group object by id.
      *
-     * @param id of LDAP group
+     * @param id
+     *            of LDAP group
      * @return LDAP group
-     * @throws DAOException hibernate
+     * @throws DAOException
+     *             hibernate
      */
     public LdapGroup find(Integer id) throws DAOException {
         LdapGroup result = (LdapGroup) retrieveObject(LdapGroup.class, id);
@@ -42,8 +44,10 @@ public class LdapGroupDAO extends BaseDAO {
     /**
      * Remove LDAP group.
      *
-     * @param ldapGroup object
-     * @throws DAOException hibernate
+     * @param ldapGroup
+     *            object
+     * @throws DAOException
+     *             hibernate
      */
     public void remove(LdapGroup ldapGroup) throws DAOException {
         if (ldapGroup.getId() != null) {

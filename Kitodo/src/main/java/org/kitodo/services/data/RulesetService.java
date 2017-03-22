@@ -37,9 +37,11 @@ public class RulesetService {
     private Indexer<Ruleset, RulesetType> indexer = new Indexer<>("kitodo", Ruleset.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param ruleset object
+     * @param ruleset
+     *            object
      */
     public void save(Ruleset ruleset) throws DAOException, IOException {
         rulesetDao.save(ruleset);
@@ -60,9 +62,11 @@ public class RulesetService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param ruleset object
+     * @param ruleset
+     *            object
      */
     public void remove(Ruleset ruleset) throws DAOException, IOException {
         rulesetDao.remove(ruleset);
@@ -71,9 +75,11 @@ public class RulesetService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         rulesetDao.remove(id);
@@ -92,14 +98,14 @@ public class RulesetService {
     /**
      * Get preferences.
      *
-     * @param ruleset object
+     * @param ruleset
+     *            object
      * @return preferences
      */
     public Prefs getPreferences(Ruleset ruleset) {
         Prefs myPreferences = new Prefs();
         try {
-            myPreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis")
-                    + ruleset.getFile());
+            myPreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
         } catch (PreferencesException e) {
             logger.error(e);
         }

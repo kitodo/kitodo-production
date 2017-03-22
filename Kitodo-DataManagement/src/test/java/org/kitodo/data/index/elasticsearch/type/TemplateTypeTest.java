@@ -70,7 +70,7 @@ public class TemplateTypeTest {
     }
 
     @Test
-    //problem with ordering of objects
+    // problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         TemplateType templateType = new TemplateType();
         JSONParser parser = new JSONParser();

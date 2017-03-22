@@ -36,9 +36,12 @@ public class SearchResultGeneration {
     /**
      * Constructor.
      *
-     * @param filter String
-     * @param showClosedProcesses boolean
-     * @param showArchivedProjects boolean
+     * @param filter
+     *            String
+     * @param showClosedProcesses
+     *            boolean
+     * @param showArchivedProjects
+     *            boolean
      */
     public SearchResultGeneration(String filter, boolean showClosedProcesses, boolean showArchivedProjects) {
         this.filter = filter;

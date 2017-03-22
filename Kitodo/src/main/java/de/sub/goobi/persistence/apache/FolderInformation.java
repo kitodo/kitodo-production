@@ -42,11 +42,12 @@ public class FolderInformation {
     }
 
     /**
-	 * Get images tif directory.
+     * Get images tif directory.
      *
-	 * @param useFallBack boolean
-	 * @return String
-	 */
+     * @param useFallBack
+     *            boolean
+     * @return String
+     */
     public String getImagesTifDirectory(boolean useFallBack) {
         SafeFile dir = new SafeFile(getImagesDirectory());
         DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -133,7 +134,8 @@ public class FolderInformation {
     /**
      * Get images orig directory.
      *
-     * @param useFallBack boolean
+     * @param useFallBack
+     *            boolean
      * @return String
      */
     public String getImagesOrigDirectory(boolean useFallBack) {
@@ -276,7 +278,8 @@ public class FolderInformation {
     /**
      * Get folder for process.
      *
-     * @param useFallBack boolean
+     * @param useFallBack
+     *            boolean
      * @return Map of paths
      */
     public Map<String, String> getFolderForProcess(boolean useFallBack) {
@@ -306,8 +309,8 @@ public class FolderInformation {
             sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
         }
         if (ocrBasisPath.endsWith(File.separator)) {
-            ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length())
-                    .replace("\\", "/");
+            ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
+                    "/");
         }
         if (ocrPlaintextPath.endsWith(File.separator)) {
             ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
@@ -343,7 +346,8 @@ public class FolderInformation {
     /**
      * Get method for name.
      *
-     * @param methodName String
+     * @param methodName
+     *            String
      * @return String
      */
     public String getMethodFromName(String methodName) {

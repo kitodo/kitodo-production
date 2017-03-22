@@ -44,8 +44,10 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     /**
      * Perform request depending on given parameters of HTTPMethods.
      *
-     * @param baseBean bean object which will be added or deleted from index
-     * @param baseType type on which will be called method createDocument()
+     * @param baseBean
+     *            bean object which will be added or deleted from index
+     * @param baseType
+     *            type on which will be called method createDocument()
      * @return response from the server
      */
     @SuppressWarnings("unchecked")
@@ -75,7 +77,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * Perform delete request depending on given id of the bean.
      *
      * @param beanId
-     * response from the server
+     *            response from the server
      */
     public String performSingleRequest(Integer beanId) throws IOException {
         RestClientImplementation restClient = new RestClientImplementation();
@@ -100,7 +102,8 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * This function is called directly by the administrator of the system.
      *
      * @return response from the server
-     * @throws InterruptedException add description
+     * @throws InterruptedException
+     *             add description
      */
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
@@ -138,7 +141,8 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     /**
      * Set name of the index.
      *
-     * @param index name
+     * @param index
+     *            name
      */
     public void setIndex(String index) {
         this.index = index;
@@ -156,7 +160,9 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     /**
      * Set up type of method which will be used during performing request.
      *
-     * @param method Determines if we want to add (update) or delete document - true add, false delete
+     * @param method
+     *            Determines if we want to add (update) or delete document -
+     *            true add, false delete
      */
     public void setMethod(HTTPMethods method) {
         this.method = method;
@@ -172,10 +178,10 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     }
 
     /**
-     * Set up type name.
-     * It could be private if it would for generic type (T)
+     * Set up type name. It could be private if it would for generic type (T)
      *
-     * @param beanClass beans' class
+     * @param beanClass
+     *            beans' class
      */
     public void setType(Class<?> beanClass) {
         Table table = beanClass.getAnnotation(Table.class);

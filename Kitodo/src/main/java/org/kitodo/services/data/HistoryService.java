@@ -32,9 +32,11 @@ public class HistoryService {
     private Indexer<History, HistoryType> indexer = new Indexer<>("kitodo", History.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param history object
+     * @param history
+     *            object
      */
     public void save(History history) throws DAOException, IOException {
         historyDao.save(history);
@@ -51,9 +53,11 @@ public class HistoryService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param history object
+     * @param history
+     *            object
      */
     public void remove(History history) throws DAOException, IOException {
         historyDao.remove(history);
@@ -62,9 +66,11 @@ public class HistoryService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         historyDao.remove(id);

@@ -38,7 +38,8 @@ import org.xml.sax.SAXException;
 public class XMLUtils {
 
     /**
-     * The method documentToByteArray() converts an org.w3c.dom.Document to a ByteArray for Downloading
+     * The method documentToByteArray() converts an org.w3c.dom.Document to a
+     * ByteArray for Downloading
      *
      * @param data
      *            The document to convert
@@ -46,8 +47,9 @@ public class XMLUtils {
      *            No of spaces to use for indenting. Use “null” to disable
      * @return the XML data as byte[]
      * @throws TransformerException
-     *             when it is not possible to create a Transformer instance or  if an unrecoverable error occurs
-	 *             during the course of the transformation
+     *             when it is not possible to create a Transformer instance or
+     *             if an unrecoverable error occurs during the course of the
+     *             transformation
      */
     public static byte[] documentToByteArray(Document data, Integer indent) throws TransformerException {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -62,7 +64,8 @@ public class XMLUtils {
     }
 
     /**
-     * The function getFirstChildWithTagName() returns the first child node from a node, identified by its node name.
+     * The function getFirstChildWithTagName() returns the first child node from
+     * a node, identified by its node name.
      *
      * @param data
      *            Document or Element whose children shall be examined
@@ -85,7 +88,8 @@ public class XMLUtils {
     }
 
     /**
-     * The function load() is a convenience method load a DOM Document object from an input stream.
+     * The function load() is a convenience method load a DOM Document object
+     * from an input stream.
      *
      * @param data
      *            InputStream to read from
@@ -95,8 +99,10 @@ public class XMLUtils {
      * @throws IOException
      *             if any IO errors occur
      * @throws RuntimeException
-     *             if a DocumentBuilder cannot be created which satisfies the configuration requested—which never
-     *             happens because we use the default configuration here and that is definitely supported
+     *             if a DocumentBuilder cannot be created which satisfies the
+     *             configuration requested—which never happens because we use
+     *             the default configuration here and that is definitely
+     *             supported
      */
     public static Document load(InputStream data) throws SAXException, IOException {
         try {
@@ -107,12 +113,15 @@ public class XMLUtils {
     }
 
     /**
-     * The function newDocument() is a convenience method to obtain a new instance of a DOM Document object.
+     * The function newDocument() is a convenience method to obtain a new
+     * instance of a DOM Document object.
      *
      * @return A new DOM Document
      * @throws RuntimeException
-     *             if a DocumentBuilder cannot be created which satisfies the configuration requested—which
-     *             never happens because we use the default configuration here and that is definitely supported
+     *             if a DocumentBuilder cannot be created which satisfies the
+     *             configuration requested—which never happens because we use
+     *             the default configuration here and that is definitely
+     *             supported
      */
     public static Document newDocument() {
         try {

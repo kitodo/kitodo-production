@@ -44,7 +44,8 @@ public class ProjectType extends BaseType<Project> {
         orderedProjectMap.put("endDate", endDate);
         String numberOfPages = project.getNumberOfPages() != null ? project.getNumberOfPages().toString() : "null";
         orderedProjectMap.put("numberOfPages", numberOfPages);
-        String numberOfVolumes = project.getNumberOfVolumes() != null ? project.getNumberOfVolumes().toString() : "null";
+        String numberOfVolumes = project.getNumberOfVolumes() != null ? project.getNumberOfVolumes().toString()
+                : "null";
         orderedProjectMap.put("numberOfVolumes", numberOfVolumes);
         String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : "null";
         orderedProjectMap.put("archived", archived);

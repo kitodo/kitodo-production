@@ -16,15 +16,20 @@ public class TemplateProperty extends Property {
     /** The templateId. */
     private Integer templateId;
 
-    /** Gets the templateId.
+    /**
+     * Gets the templateId.
+     * 
      * @return The templateId.
      */
     public Integer getTemplateId() {
         return templateId;
     }
 
-    /** Sets the templateId.
-     * @param templateId The templateId.
+    /**
+     * Sets the templateId.
+     * 
+     * @param templateId
+     *            The templateId.
      */
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;

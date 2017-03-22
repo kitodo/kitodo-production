@@ -44,8 +44,9 @@ class UGHUtils {
     private static final Logger myLogger = Logger.getLogger(UGHUtils.class);
 
     /**
-     * The function addMetadatum() adds the meta data element given in terms of type identifier String and value
-	 * String to the given document structure element, using the given rule set.
+     * The function addMetadatum() adds the meta data element given in terms of
+     * type identifier String and value String to the given document structure
+     * element, using the given rule set.
      *
      * @param inStruct
      *            structure element to add the meta data element to
@@ -74,8 +75,9 @@ class UGHUtils {
     }
 
     /**
-     * The function addMetadatum() adds meta data elements of the type whose identifier String is given for
-     * all value Strings to the given document structure element, using the given rule set.
+     * The function addMetadatum() adds meta data elements of the type whose
+     * identifier String is given for all value Strings to the given document
+     * structure element, using the given rule set.
      *
      * @param inStruct
      *            structure element to add the meta data elements to
@@ -86,17 +88,19 @@ class UGHUtils {
      * @param inValues
      *            values of the meta data elements to add
      */
-    private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType, Iterable<String> inValues) {
+    private static void addMetadatum(DocStruct inStruct, Prefs inPrefs, String inMetadataType,
+            Iterable<String> inValues) {
         for (String inValue : inValues) {
             addMetadatum(inStruct, inPrefs, inMetadataType, inValue);
         }
     }
 
     /**
-     * The function replaceMetadatum() removes all meta data elements whose type is equal to the type identified
-     * by the given String from a document structure element and adds a new meta data element with the given meta
-     * data element given in terms of type identifier String and value String to the given document structure element,
-     * using the given rule set.
+     * The function replaceMetadatum() removes all meta data elements whose type
+     * is equal to the type identified by the given String from a document
+     * structure element and adds a new meta data element with the given meta
+     * data element given in terms of type identifier String and value String to
+     * the given document structure element, using the given rule set.
      *
      * @param inStruct
      *            structure element to replace the meta data elements in
@@ -125,10 +129,11 @@ class UGHUtils {
     }
 
     /**
-     * The function replaceMetadatum() removes all meta data elements whose type is equal to the type identified
-     * by the given String from a document structure element and adds new meta data elements of the type whose
-     * identifier String is given for all value Strings to the given document structure element,
-     * using the given rule set.
+     * The function replaceMetadatum() removes all meta data elements whose type
+     * is equal to the type identified by the given String from a document
+     * structure element and adds new meta data elements of the type whose
+     * identifier String is given for all value Strings to the given document
+     * structure element, using the given rule set.
      *
      * @param inStruct
      *            structure element to replace the meta data elements in
@@ -157,8 +162,9 @@ class UGHUtils {
     }
 
     /**
-     * The function convertLanguage() uses one of the mapping files “goobi_opacLanguages.txt” to replace
-     * the passed-in value by a configurable replacement. The mapping file is expected to be a plain text
+     * The function convertLanguage() uses one of the mapping files
+     * “goobi_opacLanguages.txt” to replace the passed-in value by a
+     * configurable replacement. The mapping file is expected to be a plain text
      * file, encoded as UTF-8, where each line defines a replacement pair as:
      * replacement—white space (U+0020) character—value to be replaced. If no
      * replacement is found, if the value to replace contains white space
@@ -187,10 +193,11 @@ class UGHUtils {
     }
 
     /**
-     * The function convertLanguages() uses the function {@link #convertLanguage(String)} to replace
-     * the passed-in values by a configurable replacement. If no replacement is found, if the value to
-     * replace contains white space characters, or if an error occurs (i.e. the mapping file cannot be read),
-     * the value passed-in is returned.
+     * The function convertLanguages() uses the function
+     * {@link #convertLanguage(String)} to replace the passed-in values by a
+     * configurable replacement. If no replacement is found, if the value to
+     * replace contains white space characters, or if an error occurs (i.e. the
+     * mapping file cannot be read), the value passed-in is returned.
      *
      * @param inLanguages
      *            values to replace
@@ -205,8 +212,9 @@ class UGHUtils {
     }
 
     /**
-     * The function open() opens a file. In a user session context, the file is taken from the web application’s
-     * deployment directory (…/WEB-INF/classes), if not, it is taken from the CONFIG_DIR specified in
+     * The function open() opens a file. In a user session context, the file is
+     * taken from the web application’s deployment directory
+     * (…/WEB-INF/classes), if not, it is taken from the CONFIG_DIR specified in
      * the CONFIG_FILE.
      *
      * TODO: Community needs to decide: Is this behaviour really what we want?

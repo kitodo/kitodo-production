@@ -43,17 +43,12 @@ import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 /**
- * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin implementation.
- * It provides the public methods
- *    void    configure(Map) [*]
- *    Object  find(String, long)
- *    String  getDescription() [*]
- *    Map     getHit(Object, long, long)
- *    long    getNumberOfHits(Object, long)
- *    String  getTitle() [*]
- *    void    setPreferences(Prefs)
- *    boolean supportsCatalogue(String)
- *    void    useCatalogue(String)
+ * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
+ * implementation. It provides the public methods void configure(Map) [*] Object
+ * find(String, long) String getDescription() [*] Map getHit(Object, long, long)
+ * long getNumberOfHits(Object, long) String getTitle() [*] void
+ * setPreferences(Prefs) boolean supportsCatalogue(String) void
+ * useCatalogue(String)
  *
  * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
  * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
@@ -68,16 +63,19 @@ import ugh.fileformats.opac.PicaPlus;
 @PluginImplementation
 public class PicaPlugin implements Plugin {
     /**
-     * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in languages mapping file.
-     * This is a text file with lines in form replacement—space—stringToReplace used to replace the value from PICA+
-     * field “010@” subfield “a” (the replacement will be saved in DocStruct “DocLanguage”)
-     * The file is optional. To use this functionality, the file must be located in {@link #configDir}.
+     * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
+     * languages mapping file. This is a text file with lines in form
+     * replacement—space—stringToReplace used to replace the value from PICA+
+     * field “010@” subfield “a” (the replacement will be saved in DocStruct
+     * “DocLanguage”) The file is optional. To use this functionality, the file
+     * must be located in {@link #configDir}.
      */
     static final String LANGUAGES_MAPPING_FILE = "goobi_opacLanguages.txt";
 
     /**
      * The constant OPAC_CONFIGURATION_FILE holds the name of the PICA plug-in
-     * main configuration file. Required. The file must be located in {@link #configDir}.
+     * main configuration file. Required. The file must be located in
+     * {@link #configDir}.
      */
     static final String OPAC_CONFIGURATION_FILE = "goobi_opac.xml";
 
@@ -117,11 +115,12 @@ public class PicaPlugin implements Plugin {
     private GetOpac client;
 
     /**
-     * The method configure() accepts a Map with configuration parameters. Two entries, "configDir" and "tempDir",
-     * are expected.
+     * The method configure() accepts a Map with configuration parameters. Two
+     * entries, "configDir" and "tempDir", are expected.
      *
-     * configDir must point to a directory on the local file system where the plug-in can read individual
-     * configuration files from. The configuration file, "goobi_opac.xml" is expected in that directory.
+     * configDir must point to a directory on the local file system where the
+     * plug-in can read individual configuration files from. The configuration
+     * file, "goobi_opac.xml" is expected in that directory.
      *
      * @param configuration
      *            a Map with configuration parameters
@@ -188,8 +187,9 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function getHit() returns the hit with the given index from the given search result as a Map&lt;String,
-     * Object&gt;. The map contains the full hit as "fileformat", the docType as "type" and some bibliographic
+     * The function getHit() returns the hit with the given index from the given
+     * search result as a Map&lt;String, Object&gt;. The map contains the full
+     * hit as "fileformat", the docType as "type" and some bibliographic
      * metadata for Production to be able to show a short hit display as
      * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
      *
@@ -216,7 +216,8 @@ public class PicaPlugin implements Plugin {
         Fileformat ff;
         try {
             /*
-             * Opac abfragen und erhaltenes Dom-Dokument in JDom-Dokument umwandeln
+             * Opac abfragen und erhaltenes Dom-Dokument in JDom-Dokument
+             * umwandeln
              */
             Node myHitlist = client.retrievePicaNode(myQuery, (int) index, (int) index + 1, timeout);
             /* Opac-Beautifier aufrufen */
@@ -234,7 +235,8 @@ public class PicaPlugin implements Plugin {
             }
 
             /*
-             * wenn der Treffer ein Volume eines Multivolume-Bandes ist, dann das Sammelwerk überordnen
+             * wenn der Treffer ein Volume eines Multivolume-Bandes ist, dann
+             * das Sammelwerk überordnen
              */
             // if (isMultivolume()) {
             if (cod.isMultiVolume()) {
@@ -272,7 +274,8 @@ public class PicaPlugin implements Plugin {
             }
 
             /*
-             * wenn der Treffer ein Volume eines Periodical-Bandes ist, dann die Serie überordnen
+             * wenn der Treffer ein Volume eines Periodical-Bandes ist, dann die
+             * Serie überordnen
              */
             if (cod.isPeriodical()) {
                 /* Sammelband-PPN ermitteln */
@@ -332,7 +335,7 @@ public class PicaPlugin implements Plugin {
                          */
                         if (myFirstHitParent.getChildren() != null) {
                             for (@SuppressWarnings("unchecked")
-                                Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
+                            Iterator<Element> iter = myFirstHitParent.getChildren().iterator(); iter.hasNext();) {
                                 Element ele = iter.next();
                                 if (getElementFromChildren(myFirstHit, ele.getAttributeValue("tag")) == null) {
                                     @SuppressWarnings("unchecked")
@@ -405,7 +408,8 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * Die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork: 021A-9) ermitteln.
+     * Die PPN des übergeordneten Bandes (MultiVolume: 036D-9 und ContainedWork:
+     * 021A-9) ermitteln.
      *
      * @param inHit
      * @return PPN
@@ -430,7 +434,8 @@ public class PicaPlugin implements Plugin {
             String feldname = myElement.getAttributeValue("tag");
             // System.out.println(feldname);
             /*
-             * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
+             * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
+             * Attribut zurückgeben
              */
             if (feldname.equals(inTagName)) {
                 return myElement;
@@ -440,8 +445,9 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * Rekursives Kopieren von Elementen, weil das Einfügen eines Elements an einen anderen Knoten mit
-     * dem Fehler abbricht, dass das einzufügende Element bereits einen Parent hat.
+     * Rekursives Kopieren von Elementen, weil das Einfügen eines Elements an
+     * einen anderen Knoten mit dem Fehler abbricht, dass das einzufügende
+     * Element bereits einen Parent hat.
      */
     @SuppressWarnings("unchecked")
     private static Element getCopyFromJdomElement(Element inHit) {
@@ -636,9 +642,10 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function getElementFieldValue() returns the values of the last grandchild element of the first
-     * child element from a given JDOM Element whose “code” attribute equals the given attribute name
-     * and whose parents’ “tag” attribute equals the given field name—or an empty String if there
+     * The function getElementFieldValue() returns the values of the last
+     * grandchild element of the first child element from a given JDOM Element
+     * whose “code” attribute equals the given attribute name and whose parents’
+     * “tag” attribute equals the given field name—or an empty String if there
      * is no such grandchild element.
      *
      * @param myFirstHit
@@ -657,7 +664,8 @@ public class PicaPlugin implements Plugin {
             Element myElement = iter2.next();
             String feldname = myElement.getAttributeValue("tag");
             /*
-             * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
+             * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
+             * Attribut zurückgeben
              */
             if (feldname.equals(inFieldName)) {
                 return getFieldValue(myElement, inAttributeName);
@@ -682,13 +690,15 @@ public class PicaPlugin implements Plugin {
      *         whose parents’ tag attribute equals, too
      */
     @SuppressWarnings("unchecked")
-    private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName, String inAttributeName) {
+    private static Iterable<String> getElementFieldValues(Element myFirstHit, String inFieldName,
+            String inAttributeName) {
         LinkedList<String> result = new LinkedList<>();
         for (Iterator<Element> iter2 = myFirstHit.getChildren().iterator(); iter2.hasNext();) {
             Element myElement = iter2.next();
             String feldname = myElement.getAttributeValue("tag");
             /*
-             * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden Attribut zurückgeben
+             * wenn es das gesuchte Feld ist, dann den Wert mit dem passenden
+             * Attribut zurückgeben
              */
             if (feldname.equals(inFieldName)) {
                 result.addAll(getFieldValues(myElement, inAttributeName));
@@ -870,7 +880,8 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function getNumberOfHits() returns the number of hits from a given search result.
+     * The function getNumberOfHits() returns the number of hits from a given
+     * search result.
      *
      * @param searchResult
      *            the reference to the search whose number of hits shall be
@@ -890,7 +901,8 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function getTempDir() provides a reference to the file system directory where temporary files are written in.
+     * The function getTempDir() provides a reference to the file system
+     * directory where temporary files are written in.
      *
      * @return the file system directory where to write temporary files
      */
@@ -899,8 +911,8 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function getDescription() returns a human-readable name for the plug-in in English.
-     * The parameter language is ignored.
+     * The function getDescription() returns a human-readable name for the
+     * plug-in in English. The parameter language is ignored.
      *
      * @param language
      *            desired language of the human-readable name (support is
@@ -913,7 +925,8 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function setPreferences is called by Production to set the UGH preferences to be used.
+     * The function setPreferences is called by Production to set the UGH
+     * preferences to be used.
      *
      * @param preferences
      *            the UGH preferences
@@ -924,8 +937,9 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function supportsCatalogue() investigates whether the plug-in is able to access a catalogue identified
-     * by the given String. (This depends on the configuration.)
+     * The function supportsCatalogue() investigates whether the plug-in is able
+     * to access a catalogue identified by the given String. (This depends on
+     * the configuration.)
      *
      * @param catalogue
      *            a String indentifying the catalogue

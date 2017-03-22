@@ -65,7 +65,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
     /**
      * loops included means that all step open all stepdone are considered loops
-     * not included means that only min(date) or max(date) - depending on option in.
+     * not included means that only min(date) or max(date) - depending on option
+     * in.
      *
      * @see HistoryType
      *
@@ -164,8 +165,6 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
         Double remainingOutput = this.requiredDailyOutput * this.timeGrouping.getDayFactor() * count;
         Double remainingAverageOutput = remainingOutput / count;
 
-
-
         // the way this is calculated is by subtracting each value from the
         // total remaining output
         // and calculating the averageOutput based on the remaining output and
@@ -177,7 +176,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
                 remainingOutput = remainingOutput - doneValue;
             }
             count--;
-            Date breakOffDate = new DateTime(this.timeFilterFrom).plusDays((int) (i * this.timeGrouping.getDayFactor())).toDate();
+            Date breakOffDate = new DateTime(this.timeFilterFrom).plusDays((int) (i * this.timeGrouping.getDayFactor()))
+                    .toDate();
             if (breakOffDate.before(new Date())) {
                 remainingAverageOutput = remainingOutput / count;
             }
@@ -263,8 +263,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit
      * (org.goobi.production.flow.statistics.enums.CalculationUnit)
      */
     @Override
@@ -288,9 +288,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted
-     * (de.intranda.commons.chart.renderer.IRenderer)
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * isRendererInverted (de.intranda.commons.chart.renderer.IRenderer)
      */
     @Override
     public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -317,8 +316,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     private DataTable getAllSteps(HistoryType requestedType) {
 
         // adding time restrictions
-        String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist).getSQL(requestedType, null, true,
-                this.flagIncludeLoops);
+        String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping,
+                this.myIDlist).getSQL(requestedType, null, true, this.flagIncludeLoops);
 
         return buildDataTableFromSQL(natSQL);
     }
@@ -492,8 +491,8 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
 
     /**
      *
-     * @return DataTable generated from the selected step names and the
-     *         selected reference curve
+     * @return DataTable generated from the selected step names and the selected
+     *         reference curve
      */
     public DataTable getSelectedTable() {
         getDataTable();

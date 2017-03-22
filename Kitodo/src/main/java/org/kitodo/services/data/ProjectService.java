@@ -38,9 +38,11 @@ public class ProjectService {
     private Indexer<Project, ProjectType> indexer = new Indexer<>("kitodo", Project.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param project object
+     * @param project
+     *            object
      */
     public void save(Project project) throws DAOException, IOException {
         projectDao.save(project);
@@ -57,9 +59,11 @@ public class ProjectService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param project object
+     * @param project
+     *            object
      */
     public void remove(Project project) throws DAOException, IOException {
         projectDao.remove(project);
@@ -68,9 +72,11 @@ public class ProjectService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         projectDao.remove(id);

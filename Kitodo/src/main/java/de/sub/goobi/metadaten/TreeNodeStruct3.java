@@ -40,7 +40,7 @@ public class TreeNodeStruct3 extends TreeNode {
         this.expanded = expanded;
         this.label = label;
         this.id = id;
-        //TODO: Use generics
+        // TODO: Use generics
         this.children = new ArrayList<TreeNode>();
     }
 
@@ -60,8 +60,8 @@ public class TreeNodeStruct3 extends TreeNode {
     public String getMainTitle() {
 
         int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);
-        if (maxSize > 0 && this.mainTitle!=null && this.mainTitle.length() > maxSize){
-            return this.mainTitle.substring(0, maxSize -1);
+        if (maxSize > 0 && this.mainTitle != null && this.mainTitle.length() > maxSize) {
+            return this.mainTitle.substring(0, maxSize - 1);
         }
 
         return this.mainTitle;

@@ -29,8 +29,11 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
     protected AbstractGoobiJob() {
     }
 
-    /* (non-Javadoc)
-     * @see org.goobi.production.flow.jobs.IGoobiJob#execute(org.quartz.JobExecutionContext)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.goobi.production.flow.jobs.IGoobiJob#execute(org.quartz.
+     * JobExecutionContext)
      */
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -50,22 +53,29 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.goobi.production.flow.jobs.IGoobiJob#execute()
      */
     @Override
     public void execute() {
     }
 
-    /* (non-Javadoc)
-     * @see org.goobi.production.flow.jobs.IGoobiJob#setIsRunning(java.lang.Boolean)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.goobi.production.flow.jobs.IGoobiJob#setIsRunning(java.lang.Boolean)
      */
     @Override
     public void setIsRunning(Boolean inisRunning) {
         isRunning = inisRunning;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.goobi.production.flow.jobs.IGoobiJob#getIsRunning()
      */
     @Override
@@ -73,7 +83,9 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
         return isRunning;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.goobi.production.flow.jobs.IGoobiJob#getJobName()
      */
     @Override

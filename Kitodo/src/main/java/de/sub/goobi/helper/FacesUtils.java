@@ -20,10 +20,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 
 /**
- * The class FacesUtils contains an omnium-gatherum of functions that perform recurring tasks related
- * to JavaServer Faces.
+ * The class FacesUtils contains an omnium-gatherum of functions that perform
+ * recurring tasks related to JavaServer Faces.
  *
- * TODO: Most of the static functions currently located in “Helper.java” do belong here.
+ * TODO: Most of the static functions currently located in “Helper.java” do
+ * belong here.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */

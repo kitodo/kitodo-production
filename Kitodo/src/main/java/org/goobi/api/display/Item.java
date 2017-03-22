@@ -19,11 +19,14 @@ public class Item {
     /**
      * Creates a new item with given params.
      *
-     * @param label label of the item
-     * @param value value of the item
-     * @param selected indicates whether an item is preselected or not
+     * @param label
+     *            label of the item
+     * @param value
+     *            value of the item
+     * @param selected
+     *            indicates whether an item is preselected or not
      */
-    public Item(String label, String value, Boolean selected ) {
+    public Item(String label, String value, Boolean selected) {
         setLabel(label);
         setValue(value);
         setIsSelected(selected);
@@ -31,8 +34,9 @@ public class Item {
 
     /**
      * Set label.
-	 *
-     * @param myLabel sets label for the item
+     *
+     * @param myLabel
+     *            sets label for the item
      */
     public void setLabel(String myLabel) {
         this.myLabel = myLabel;
@@ -50,7 +54,8 @@ public class Item {
     /**
      * Set value.
      *
-     * @param myValue sets value for the item
+     * @param myValue
+     *            sets value for the item
      */
     public void setValue(String myValue) {
         this.myValue = myValue;
@@ -68,7 +73,8 @@ public class Item {
     /**
      * Set is selected.
      *
-     * @param isSelected sets Boolean that indicates whether item is preselected or not
+     * @param isSelected
+     *            sets Boolean that indicates whether item is preselected or not
      */
     public void setIsSelected(Boolean isSelected) {
         this.isSelected = isSelected;

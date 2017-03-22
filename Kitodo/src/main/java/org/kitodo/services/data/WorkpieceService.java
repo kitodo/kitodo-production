@@ -29,9 +29,11 @@ public class WorkpieceService {
     private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>("kitodo", Workpiece.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param workpiece object
+     * @param workpiece
+     *            object
      */
     public void save(Workpiece workpiece) throws DAOException, IOException {
         workpieceDao.save(workpiece);
@@ -48,9 +50,11 @@ public class WorkpieceService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param workpiece object
+     * @param workpiece
+     *            object
      */
     public void remove(Workpiece workpiece) throws DAOException, IOException {
         workpieceDao.remove(workpiece);
@@ -59,9 +63,11 @@ public class WorkpieceService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         workpieceDao.remove(id);
@@ -80,7 +86,8 @@ public class WorkpieceService {
     /**
      * Get size of properties list.
      *
-     * @param workpiece object
+     * @param workpiece
+     *            object
      * @return properties list size
      */
     public int getPropertiesSize(Workpiece workpiece) {

@@ -70,8 +70,7 @@ public class Import {
         return "";
     }
 
-    private void Einlesen()
-            throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+    private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
             PreferencesException, SwapException, DAOException, WriteException {
         myLogger.debug("Einlesen() - Start");
@@ -79,7 +78,8 @@ public class Import {
         try {
 
             /*
-             * prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
+             * prüfen ob es ein russischer oder ein zbl-Import ist und
+             * entsprechende Routine aufrufen
              */
 
             /* russischer Import */

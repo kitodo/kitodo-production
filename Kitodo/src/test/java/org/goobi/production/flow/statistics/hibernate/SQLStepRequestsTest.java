@@ -24,44 +24,44 @@ import org.kitodo.data.database.helper.enums.HistoryType;
 
 public class SQLStepRequestsTest {
 
-	static SQLStepRequests request;
-	static HistoryType typeSelection;
+    static SQLStepRequests request;
+    static HistoryType typeSelection;
 
-	@BeforeClass
-	public static void setUp() {
-		Calendar cal1 = Calendar.getInstance();
-		Calendar cal2 = Calendar.getInstance();
-		cal1.set(2009, 01, 01);
-		cal2.set(2009, 03, 31);
-		request = new SQLStepRequests(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
-		typeSelection = HistoryType.storageDifference;
-	}
+    @BeforeClass
+    public static void setUp() {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.set(2009, 01, 01);
+        cal2.set(2009, 03, 31);
+        request = new SQLStepRequests(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
+        typeSelection = HistoryType.storageDifference;
+    }
 
-	@Test
-	public final void testGetSQL() {
+    @Test
+    public final void testGetSQL() {
 
-		String answer = request.getSQL(typeSelection, 1, true, true);
-		assertNotNull(answer);
+        String answer = request.getSQL(typeSelection, 1, true, true);
+        assertNotNull(answer);
 
-	}
+    }
 
-	@Test
-	public final void testGetSQLWithoutParam() {
-		boolean exception = false;
-		try {
-			@SuppressWarnings("unused")
-			String answer = request.getSQL();
-			fail("Es wurde eine Exception erwartet.");
-		} catch (UnsupportedOperationException e) {
-			exception = true;
-		}
-		assertTrue(exception);
-	}
+    @Test
+    public final void testGetSQLWithoutParam() {
+        boolean exception = false;
+        try {
+            @SuppressWarnings("unused")
+            String answer = request.getSQL();
+            fail("Es wurde eine Exception erwartet.");
+        } catch (UnsupportedOperationException e) {
+            exception = true;
+        }
+        assertTrue(exception);
+    }
 
-	@Test
-	public final void testSQLMaxStepOrder() {
-		String answer = request.SQLMaxStepOrder(typeSelection);
-		assertNotNull(answer);
-	}
+    @Test
+    public final void testSQLMaxStepOrder() {
+        String answer = request.SQLMaxStepOrder(typeSelection);
+        assertNotNull(answer);
+    }
 
 }

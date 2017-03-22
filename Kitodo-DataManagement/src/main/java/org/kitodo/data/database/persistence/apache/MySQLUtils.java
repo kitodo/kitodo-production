@@ -23,7 +23,7 @@ import org.apache.commons.dbutils.ResultSetHandler;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Ruleset;
 
-//TODO: fix it!
+// TODO: fix it!
 public class MySQLUtils {
 
     public static final ResultSetHandler<List<StepObject>> resultSetToStepObjectListHandler = new ResultSetHandler<List<StepObject>>() {
@@ -152,8 +152,8 @@ public class MySQLUtils {
                 int sortHelperMetadata = rs.getInt("sortHelperMetadata");
                 String wikiField = rs.getString("wikiField");
                 return new ProcessObject(processId, title, outputName, template, swappedOut, inChoiceListShown,
-                        sortHelperStatus, sortHelperImages, sortHelperArticles, creationDate, projectId,
-                        rulesetId, sortHelperDocstructs, sortHelperMetadata, wikiField);
+                        sortHelperStatus, sortHelperImages, sortHelperArticles, creationDate, projectId, rulesetId,
+                        sortHelperDocstructs, sortHelperMetadata, wikiField);
             }
             return null;
         }
@@ -288,11 +288,13 @@ public class MySQLUtils {
                 int numberOfVolumes = rs.getInt("numberOfVolumes");
                 boolean projectIsArchived = rs.getBoolean("projectIsArchived");
 
-                ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut, dmsImportRootPath, dmsImportImagesPath,
-                        dmsImportSuccessPath, dmsImportErrorPath, dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport,
-                        metsRightsOwner, metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation, metsPointerPath,
-                        metsPointerPathAnchor, metsDigiprovReferenceAnchor, metsDigiprovPresentationAnchor, metsPurl, metsContentIDs,
-                        metsRightsOwnerMail, startDate, endDate, numberOfPages, numberOfVolumes, projectIsArchived);
+                ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut,
+                        dmsImportRootPath, dmsImportImagesPath, dmsImportSuccessPath, dmsImportErrorPath,
+                        dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport, metsRightsOwner,
+                        metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation,
+                        metsPointerPath, metsPointerPathAnchor, metsDigiprovReferenceAnchor,
+                        metsDigiprovPresentationAnchor, metsPurl, metsContentIDs, metsRightsOwnerMail, startDate,
+                        endDate, numberOfPages, numberOfVolumes, projectIsArchived);
                 return po;
             }
             return null;

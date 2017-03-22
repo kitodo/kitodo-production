@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.kitodo.data.database.beans.Project;
 
 /**
- * The ProjectsRootNode class is necessary to control the XML root element’s name to be ‘projects’.
- * Simply annotating the org.kitodo.data.database.beans. Project class with @XmlRootElement(name = "project")
- * results in a wrapping element named &lt;projekts&gt; who’s name is still derived from the classes’ name,
- * not from the ‘name’ property set in the annotation and cannot be changed otherwise.
+ * The ProjectsRootNode class is necessary to control the XML root element’s
+ * name to be ‘projects’. Simply annotating the org.kitodo.data.database.beans.
+ * Project class with @XmlRootElement(name = "project") results in a wrapping
+ * element named &lt;projekts&gt; who’s name is still derived from the classes’
+ * name, not from the ‘name’ property set in the annotation and cannot be
+ * changed otherwise.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */

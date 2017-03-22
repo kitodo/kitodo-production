@@ -25,14 +25,11 @@ public class CopyFile {
     private static final int BUFFER_SIZE = 4 * 1024;
 
     private static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
-        //TODO use a better checksumming algorithm like SHA-1
+        // TODO use a better checksumming algorithm like SHA-1
         CRC32 checksum = new CRC32();
         checksum.reset();
 
-        try (
-            InputStream in = srcFile.createFileInputStream();
-            OutputStream out = destFile.createFileOutputStream();
-        ) {
+        try (InputStream in = srcFile.createFileInputStream(); OutputStream out = destFile.createFileOutputStream();) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = in.read(buffer)) >= 0) {
@@ -59,8 +56,10 @@ public class CopyFile {
     /**
      * Start copying of file.
      *
-     * @param srcFile source file
-     * @param destFile destination file
+     * @param srcFile
+     *            source file
+     * @param destFile
+     *            destination file
      * @return Long
      */
     public static Long start(SafeFile srcFile, SafeFile destFile) throws IOException {

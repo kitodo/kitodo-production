@@ -20,7 +20,6 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 public class ProjectManager {
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
-
     public static ProjectObject getProjectById(int projectId) {
         try {
             return MySQLHelper.getProjectObjectById(projectId);
@@ -29,7 +28,6 @@ public class ProjectManager {
         }
         return null;
     }
-
 
     public static List<ProjectFileGroup> getFilegroupsForProjectId(int projectId) {
         try {

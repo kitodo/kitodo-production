@@ -35,8 +35,10 @@ import org.hibernate.Hibernate;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
-// This annotation is to instruct the Jersey API not to generate arbitrary XML elements. Further XML elements can be
-// added as needed by annotating with @XmlElement, but their respective names should be wisely chosen according to
+// This annotation is to instruct the Jersey API not to generate arbitrary XML
+// elements. Further XML elements can be
+// added as needed by annotating with @XmlElement, but their respective names
+// should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
@@ -163,9 +165,10 @@ public class Process extends BaseBean {
     }
 
     /**
-     * Here different Getters and Setters for the same value (swappedOut), because Hibernate does not like
-     * bit-fields with null values (that's why Boolean) and MyFaces seams not to like Boolean (that's why boolean
-     * for the GUI).
+     * Here different Getters and Setters for the same value (swappedOut),
+     * because Hibernate does not like bit-fields with null values (that's why
+     * Boolean) and MyFaces seams not to like Boolean (that's why boolean for
+     * the GUI).
      */
     public Boolean isSwappedOutHibernate() {
         return this.swappedOut;
@@ -370,16 +373,18 @@ public class Process extends BaseBean {
         this.selected = selected;
     }
 
-    //Here will be methods which should be in ProcessService but are used by jsp files
+    // Here will be methods which should be in ProcessService but are used by
+    // jsp files
 
     public User getBlockedUsers() {
         User result = null;
-        //too much dependencies on kitodo core
+        // too much dependencies on kitodo core
         return result;
     }
 
     /**
-     * Check whether the operation contains steps that are not assigned to a user or user group.
+     * Check whether the operation contains steps that are not assigned to a
+     * user or user group.
      */
     public boolean getContainsUnreachableSteps() {
         if (this.getTasks().size() == 0) {
@@ -434,8 +439,8 @@ public class Process extends BaseBean {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as readable text
-     * as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -483,7 +488,8 @@ public class Process extends BaseBean {
     /**
      * Old getFortschritt().
      *
-     * @param process object
+     * @param process
+     *            object
      * @return string
      */
     public String getProgress(Process process) {
@@ -506,12 +512,11 @@ public class Process extends BaseBean {
     /**
      * Old getFortschritt1().
      *
-     * @return return  progress for open steps
+     * @return return progress for open steps
      */
     public int getProgressOpen() {
         HashMap<String, Integer> steps = calculationForProgress(this);
-        return (steps.get("open") * 100)
-                / (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+        return (steps.get("open") * 100) / (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
     }
 
     /**
@@ -547,7 +552,8 @@ public class Process extends BaseBean {
     }
 
     /**
-     * Check if there is one task in edit mode, where the user has the rights to write to image folder.
+     * Check if there is one task in edit mode, where the user has the rights to
+     * write to image folder.
      */
     public boolean isImageFolderInUse() {
         for (Task task : this.getTasks()) {
@@ -572,6 +578,7 @@ public class Process extends BaseBean {
 
     /**
      * Check if Tif directory exists.
+     * 
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean getTifDirectoryExists() {

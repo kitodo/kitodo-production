@@ -39,7 +39,7 @@ public interface Metadatum {
     public abstract void setMd(Metadata md);
 
     /**
-     * new functions for use of display configuration  whithin xml files.
+     * new functions for use of display configuration whithin xml files.
      *
      */
     public abstract String getOutputType();

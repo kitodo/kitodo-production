@@ -19,7 +19,8 @@ import javax.faces.convert.ConverterException;
 import org.goobi.production.flow.statistics.enums.ResultOutput;
 
 /**
- * StatisticOutputConverter for statistics ResultOutput as select-items in jsf-guis.
+ * StatisticOutputConverter for statistics ResultOutput as select-items in
+ * jsf-guis.
  * 
  * @author Steffen Hankiewicz
  * @version 21.05.2009

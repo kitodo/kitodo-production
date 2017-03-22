@@ -67,7 +67,8 @@ class ConfigOpac {
                 }
                 String opacType = getConfig().getString("catalogue(" + i + ").config[@opacType]", "PICA");
 
-                // Opac-Beautifier einlesen und in Liste zu jedem Catalogue packen
+                // Opac-Beautifier einlesen und in Liste zu jedem Catalogue
+                // packen
 
                 ArrayList<ConfigOpacCatalogueBeautifier> beautyList = new ArrayList<ConfigOpacCatalogueBeautifier>();
                 for (int j = 0; j <= getConfig().getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
@@ -75,18 +76,19 @@ class ConfigOpac {
                     String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
                     ConfigOpacCatalogueBeautifierElement oteChange = new ConfigOpacCatalogueBeautifierElement(
                             getConfig().getString(tempJ + "[@tag]"), getConfig().getString(tempJ + "[@subtag]"),
-                            getConfig().getString(tempJ + "[@value]").replaceAll("\u2423", " "), getConfig().getString(
-                                    tempJ + "[@mode]", "replace"));
+                            getConfig().getString(tempJ + "[@value]").replaceAll("\u2423", " "),
+                            getConfig().getString(tempJ + "[@mode]", "replace"));
 
-                    // Elemente, die bestimmte Werte haben müssen, als Prüfung, ob das zu ändernde Element
+                    // Elemente, die bestimmte Werte haben müssen, als Prüfung,
+                    // ob das zu ändernde Element
                     // geändert werden soll
                     ArrayList<ConfigOpacCatalogueBeautifierElement> proofElements = new ArrayList<>();
                     for (int k = 0; k <= getConfig().getMaxIndex(tempJ + ".condition"); k++) {
                         String tempK = tempJ + ".condition(" + k + ")";
                         ConfigOpacCatalogueBeautifierElement oteProof = new ConfigOpacCatalogueBeautifierElement(
                                 getConfig().getString(tempK + "[@tag]"), getConfig().getString(tempK + "[@subtag]"),
-                                getConfig().getString(tempK + "[@value]").replaceAll("\u2423", " "), getConfig()
-                                        .getString(tempK + "[@mode]", "matches"));
+                                getConfig().getString(tempK + "[@value]").replaceAll("\u2423", " "),
+                                getConfig().getString(tempK + "[@mode]", "matches"));
                         proofElements.add(oteProof);
                     }
                     beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
@@ -149,7 +151,8 @@ class ConfigOpac {
             }
         }
 
-        // falls der Katalog kein spezielles Mapping für den Doctype hat, jetzt in den Doctypes suchen
+        // falls der Katalog kein spezielles Mapping für den Doctype hat, jetzt
+        // in den Doctypes suchen
 
         for (String title : getAllDoctypeTitles()) {
             ConfigOpacDoctype tempType = getDoctypeByName(title);

@@ -15,11 +15,12 @@ public enum AccessCondition {
     READ, WRITE, WRITEREQUIRED;
 
     /**
-	 * Get access condition by name.
+     * Get access condition by name.
      *
-	 * @param inName input name
-	 * @return access condition
-	 */
+     * @param inName
+     *            input name
+     * @return access condition
+     */
     public static AccessCondition getAccessConditionByName(String inName) {
         if (inName.equalsIgnoreCase("write")) {
             return WRITE;

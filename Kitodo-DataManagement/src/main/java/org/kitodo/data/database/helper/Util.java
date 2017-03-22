@@ -25,29 +25,34 @@ import java.util.ResourceBundle;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 
-//TODO: check in how many places this util is used... right now found: HibernateUtil, Helper
+// TODO: check in how many places this util is used... right now found:
+// HibernateUtil, Helper
 public final class Util {
 
     private Util() {
     }
 
     /**
-       Returns an HQL query from the resource bundle.
-
-       @param key the resource key
-       @return String
-    */
+     * Returns an HQL query from the resource bundle.
+     * 
+     * @param key
+     *            the resource key
+     * @return String
+     */
     public static String getQuery(String key) {
         ResourceBundle bundle = getResourceBundle();
         return bundle.getString(key);
     }
 
     /**
-     * Utility method to create a <code>Date</code> class from <code>dateString</code>.
+     * Utility method to create a <code>Date</code> class from
+     * <code>dateString</code>.
      *
-     * @param dateString date as String
+     * @param dateString
+     *            date as String
      * @return Date
-     * @throws RuntimeException is dateString is invalid
+     * @throws RuntimeException
+     *             is dateString is invalid
      */
     public static Date parseDate(String dateString) {
         try {
@@ -66,8 +71,7 @@ public final class Util {
     private static ResourceBundle getResourceBundle() {
         if (bundle == null) {
             bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, Locale.ENGLISH,
-                                              Thread.currentThread()
-                                              .getContextClassLoader());
+                    Thread.currentThread().getContextClassLoader());
         }
         return bundle;
     }

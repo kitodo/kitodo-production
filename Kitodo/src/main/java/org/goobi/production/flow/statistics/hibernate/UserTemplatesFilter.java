@@ -30,17 +30,15 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
     private static final long serialVersionUID = -4062754600698521285L;
     private boolean clearSession = false;
 
-    public UserTemplatesFilter (boolean clearSession) {
+    public UserTemplatesFilter(boolean clearSession) {
         this.clearSession = clearSession;
     }
-
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
-     * ()
+     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getCriteria ()
      */
     @Override
     public Criteria getCriteria() {
@@ -60,7 +58,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public String getName() {
-        throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'getName()'. This Filter is static");
+        throw new UnsupportedOperationException(
+                this.getClass().getName() + " does not implement the method 'getName()'. This Filter is static");
     }
 
     /*
@@ -72,7 +71,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public void setFilter(String Filter) {
-        throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'setFilter()'. This Filter is static");
+        throw new UnsupportedOperationException(
+                this.getClass().getName() + " does not implement the method 'setFilter()'. This Filter is static");
     }
 
     /*
@@ -84,7 +84,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'setName()'. This Filter is static");
+        throw new UnsupportedOperationException(
+                this.getClass().getName() + " does not implement the method 'setName()'. This Filter is static");
 
     }
 
@@ -97,7 +98,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public void setSQL(String sqlString) {
-        throw new UnsupportedOperationException(this.getClass().getName() + " does not implement the method 'setSQL()'. This Filter is static");
+        throw new UnsupportedOperationException(
+                this.getClass().getName() + " does not implement the method 'setSQL()'. This Filter is static");
     }
 
     /*
@@ -130,19 +132,20 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public List<Integer> getIDList() {
-        throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " does not support getIDList()");
+        throw new UnsupportedOperationException(
+                "The filter " + this.getClass().getName() + " does not support getIDList()");
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
-     * ()
+     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getObservable ()
      */
     @Override
     public Observable getObservable() {
-        throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " is not observable at this point");
+        throw new UnsupportedOperationException(
+                "The filter " + this.getClass().getName() + " is not observable at this point");
     }
 
     /*
@@ -154,12 +157,14 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public Integer stepDone() {
-        throw new UnsupportedOperationException("The filter " + this.getClass().getName() + " does not support stepDone()");
+        throw new UnsupportedOperationException(
+                "The filter " + this.getClass().getName() + " does not support stepDone()");
     }
 
     @Override
     public String stepDoneName() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDoneName() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement stepDoneName() ");
     }
 
 }

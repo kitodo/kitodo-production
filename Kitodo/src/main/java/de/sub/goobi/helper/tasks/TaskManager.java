@@ -25,24 +25,27 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The class TaskManager serves to handle the execution of threads. It can be user controlled by
- * the “Long running task manager”, backed by {@link de.sub.goobi.forms.LongRunningTasksForm}.
+ * The class TaskManager serves to handle the execution of threads. It can be
+ * user controlled by the “Long running task manager”, backed by
+ * {@link de.sub.goobi.forms.LongRunningTasksForm}.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class TaskManager {
 
     /**
-     * The field singletonInstance holds the singleton instance of the TaskManager.
-     * Tough the method signatures of TaskManager are static, it is implemented as
-     * singleton internally. All accesses to the instance must be done by calling
-     * the synchronized function singleton() or concurrency issues may arise.
+     * The field singletonInstance holds the singleton instance of the
+     * TaskManager. Tough the method signatures of TaskManager are static, it is
+     * implemented as singleton internally. All accesses to the instance must be
+     * done by calling the synchronized function singleton() or concurrency
+     * issues may arise.
      */
     private static TaskManager singletonInstance;
 
     /**
-     * The field taskSitter holds a scheduled executor to repeatedly run the TaskSitter task
-     * which will remove old threads and start new ones as configured to do.
+     * The field taskSitter holds a scheduled executor to repeatedly run the
+     * TaskSitter task which will remove old threads and start new ones as
+     * configured to do.
      */
     private final ScheduledExecutorService taskSitter;
 
@@ -52,8 +55,9 @@ public class TaskManager {
     final LinkedList<EmptyTask> taskList = new LinkedList<EmptyTask>();
 
     /**
-     * TaskManager is a singleton so its constructor is private. It will be called once and
-     * just once by the synchronized function singleton() and set up a housekeeping thread.
+     * TaskManager is a singleton so its constructor is private. It will be
+     * called once and just once by the synchronized function singleton() and
+     * set up a housekeeping thread.
      */
     private TaskManager() {
         taskSitter = Executors.newSingleThreadScheduledExecutor();
@@ -72,12 +76,16 @@ public class TaskManager {
     }
 
     /**
-     * The procedure addTaskIfMissing() will add a task to the task list if it has not yet been added
-     * right after the last task that is currently executing. If this fails for some reason
-     * (i.e. the list got concurrently modified) it will be added in the end.
+     * The procedure addTaskIfMissing() will add a task to the task list if it
+     * has not yet been added right after the last task that is currently
+     * executing. If this fails for some reason (i.e. the list got concurrently
+     * modified) it will be added in the end.
      *
-     * <p>This is a fallback method that is called by the overloaded start() method of AbstractTask.
-     * Do not use it. Use TaskManager.addTask() to properly add the tasks you created.</p>
+     * <p>
+     * This is a fallback method that is called by the overloaded start() method
+     * of AbstractTask. Do not use it. Use TaskManager.addTask() to properly add
+     * the tasks you created.
+     * </p>
      *
      * @param task
      *            task to add
@@ -95,11 +103,13 @@ public class TaskManager {
     }
 
     /**
-     * The function getTaskList() returns a copy of the task list usable for displaying.
-     * The result object cannot be used to modify the list. Use removeAllFinishedTasks()
-     * to clean up the list or stopAndDeleteAllTasks()  if you wish to do so.
-     * To get rid of one specific task, call abstractTask.interrupt(Behaviour.DELETE_IMMEDIATELY)
-     * which will cause it to be removed by the TaskSitter as soon as it has terminated successfully.
+     * The function getTaskList() returns a copy of the task list usable for
+     * displaying. The result object cannot be used to modify the list. Use
+     * removeAllFinishedTasks() to clean up the list or stopAndDeleteAllTasks()
+     * if you wish to do so. To get rid of one specific task, call
+     * abstractTask.interrupt(Behaviour.DELETE_IMMEDIATELY) which will cause it
+     * to be removed by the TaskSitter as soon as it has terminated
+     * successfully.
      *
      * @return a copy of the task list
      */
@@ -108,7 +118,8 @@ public class TaskManager {
     }
 
     /**
-     * The function lastIndexOf() returns the index of the last task in the task list that is in the given TaskState.
+     * The function lastIndexOf() returns the index of the last task in the task
+     * list that is in the given TaskState.
      *
      * @param state
      *            state of tasks to look for
@@ -145,12 +156,12 @@ public class TaskManager {
             } catch (ConcurrentModificationException listModifiedByAnotherThreadWhileIterating) {
                 redo = true;
             }
-        }
-        while (redo);
+        } while (redo);
     }
 
     /**
-     * The function runEarlier() can be called to move a task by one forwards on the queue.
+     * The function runEarlier() can be called to move a task by one forwards on
+     * the queue.
      *
      * @param task
      *            task to move forwards
@@ -164,7 +175,8 @@ public class TaskManager {
     }
 
     /**
-     * The function runLater() can be called to move a task by one backwards on the queue.
+     * The function runLater() can be called to move a task by one backwards on
+     * the queue.
      *
      * @param task
      *            task to move backwards
@@ -178,7 +190,8 @@ public class TaskManager {
     }
 
     /**
-     * The synchronized function singleton() must be used to obtain singleton access to the TaskManager instance.
+     * The synchronized function singleton() must be used to obtain singleton
+     * access to the TaskManager instance.
      *
      * @return the singleton TaskManager instance
      */
@@ -190,8 +203,9 @@ public class TaskManager {
     }
 
     /**
-     * The function shutdownNow() will be called by the TaskSitter to gracefully exit the task manager
-     * as well as its managed threads during container shutdown.
+     * The function shutdownNow() will be called by the TaskSitter to gracefully
+     * exit the task manager as well as its managed threads during container
+     * shutdown.
      */
     static void shutdownNow() {
         stopAndDeleteAllTasks();
@@ -199,8 +213,9 @@ public class TaskManager {
     }
 
     /**
-     * The function stopAndDeleteAllTasks() can be called to both request interrupt and immediate deletion
-     * for all threads that are alive and at the same time remove all threads that aren’t alive anyhow.
+     * The function stopAndDeleteAllTasks() can be called to both request
+     * interrupt and immediate deletion for all threads that are alive and at
+     * the same time remove all threads that aren’t alive anyhow.
      */
     public static void stopAndDeleteAllTasks() {
         boolean redo;
@@ -219,7 +234,6 @@ public class TaskManager {
             } catch (ConcurrentModificationException listModifiedByAnotherThreadWhileIterating) {
                 redo = true;
             }
-        }
-        while (redo);
+        } while (redo);
     }
 }

@@ -21,10 +21,14 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 /**
- * Creates backup for files in a given directory that match a regular expression.
+ * Creates backup for files in a given directory that match a regular
+ * expression.
  *
- * <p>All backup files are named by the original file with a number appended. The bigger the number, the older
- * the backup. A specified maximum number of backup files are generated:</p>
+ * <p>
+ * All backup files are named by the original file with a number appended. The
+ * bigger the number, the older the backup. A specified maximum number of backup
+ * files are generated:
+ * </p>
  * 
  * <pre>
  * file.xml	// would be the original
@@ -45,7 +49,9 @@ public class BackupFileRotation {
     /**
      * Start the configured backup.
      *
-     * <p>If the maximum backup count is less then 1, nothing happens.</p>
+     * <p>
+     * If the maximum backup count is less then 1, nothing happens.
+     * </p>
      *
      * @throws IOException
      *             if a file system operation fails
@@ -61,8 +67,8 @@ public class BackupFileRotation {
 
         if (metaFiles.length < 1) {
             if (myLogger.isInfoEnabled()) {
-                myLogger.info("No files matching format '" + format + "' in directory " + processDataDirectory
-                        + " found.");
+                myLogger.info(
+                        "No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
             }
             return;
         }
@@ -73,7 +79,8 @@ public class BackupFileRotation {
     }
 
     /**
-     * Set the number of backup files to create for each individual original file.
+     * Set the number of backup files to create for each individual original
+     * file.
      *
      * @param numberOfBackups
      *            Maximum number of backup files
@@ -83,7 +90,8 @@ public class BackupFileRotation {
     }
 
     /**
-     * Set file name matching pattern for original files to create backup files for.
+     * Set file name matching pattern for original files to create backup files
+     * for.
      *
      * @param format
      *            Java regular expression string.
@@ -93,7 +101,8 @@ public class BackupFileRotation {
     }
 
     /**
-     * Set the directory to find the original files and to place the backup files.
+     * Set the directory to find the original files and to place the backup
+     * files.
      *
      * @param processDataDirectory
      *            A platform specific filesystem path

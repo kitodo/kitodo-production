@@ -19,17 +19,19 @@ package org.kitodo.data.database.helper.enums;
  */
 public enum TaskEditType {
     /**
-     * Default type is unknown for all steps, which still don't have a specific type.
+     * Default type is unknown for all steps, which still don't have a specific
+     * type.
      */
     UNNOWKN(0, "unbekannt"),
 
     /**
      * Manual single workflow for regular workflow handling.
-     * */
+     */
     MANUAL_SINGLE(1, "manuellSingleWorkflow"),
 
     /**
-     * Manual multi workflow for lots of data like image processing with pages of steps.
+     * Manual multi workflow for lots of data like image processing with pages
+     * of steps.
      */
     MANUAL_MULTI(2, "manuellMultiWorkflow"),
 
@@ -70,14 +72,15 @@ public enum TaskEditType {
      */
     public String getTitle() {
         return this.title;
-        //return Helper.getTranslation(this.title);
+        // return Helper.getTranslation(this.title);
     }
 
     /**
-     * Retrieve editType by integer value, necessary for database handlings, where only integer is saved
-     * but not type safe.
+     * Retrieve editType by integer value, necessary for database handlings,
+     * where only integer is saved but not type safe.
      *
-     * @param editType as integer value
+     * @param editType
+     *            as integer value
      * @return {@link TaskEditType} for given integer
      */
     public static TaskEditType getTypeFromValue(Integer editType) {

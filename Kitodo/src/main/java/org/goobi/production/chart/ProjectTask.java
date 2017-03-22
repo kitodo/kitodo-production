@@ -22,9 +22,12 @@ public class ProjectTask implements IProjectTask, Serializable {
     /**
      * Constructor.
      *
-     * @param title String
-     * @param stepsCompleted Integer
-     * @param stepsMax Integer
+     * @param title
+     *            String
+     * @param stepsCompleted
+     *            Integer
+     * @param stepsMax
+     *            Integer
      */
     public ProjectTask(String title, Integer stepsCompleted, Integer stepsMax) {
         taskTitle = title;

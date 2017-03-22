@@ -19,8 +19,9 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * The class Block is a bean class that represents an interval of time in the course of appearance of
- * a newspaper within which it wasn’t suspended. A Block instance handles one or more Issue objects.
+ * The class Block is a bean class that represents an interval of time in the
+ * course of appearance of a newspaper within which it wasn’t suspended. A Block
+ * instance handles one or more Issue objects.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -31,31 +32,39 @@ public class Block {
     private final Course course;
 
     /**
-     * The field variant may hold a variant identifier that can be used to distinguish different blocks during
-     * the buildup of a course of appearance from individual issues.
+     * The field variant may hold a variant identifier that can be used to
+     * distinguish different blocks during the buildup of a course of appearance
+     * from individual issues.
      *
-     * <p>Given a newspaper appeared three times a week for a period of time, and then changed to being published
-     * six times a week without changing its heading, and this change shall be represented by different blocks, the
-     * variant identifier can be used to distinguish the blocks. Otherwise, both time ranges would be represented
-     * in one combined block, what would be factual correct but would result in a multitude of exceptions, which
-     * could be undesired.</p>
+     * <p>
+     * Given a newspaper appeared three times a week for a period of time, and
+     * then changed to being published six times a week without changing its
+     * heading, and this change shall be represented by different blocks, the
+     * variant identifier can be used to distinguish the blocks. Otherwise, both
+     * time ranges would be represented in one combined block, what would be
+     * factual correct but would result in a multitude of exceptions, which
+     * could be undesired.
+     * </p>
      */
     private final String variant;
 
     /**
-     * The field firstAppearance holds the date representing the first day of the period of time represented
-     * by this block. The date is treated as inclusive.
+     * The field firstAppearance holds the date representing the first day of
+     * the period of time represented by this block. The date is treated as
+     * inclusive.
      */
     private LocalDate firstAppearance;
 
     /**
-     * The field lastAppearance holds the date representing the last day of the period of time represented
-     * by this block. The date is treated as inclusive.
+     * The field lastAppearance holds the date representing the last day of the
+     * period of time represented by this block. The date is treated as
+     * inclusive.
      */
     private LocalDate lastAppearance;
 
     /**
-     * The field issues holds the issues that have appeared during the period of time represented by this block.
+     * The field issues holds the issues that have appeared during the period of
+     * time represented by this block.
      */
     private List<Issue> issues;
 
@@ -90,7 +99,8 @@ public class Block {
     }
 
     /**
-     * The function addIssue() adds an Issue to this block if it is not already present.
+     * The function addIssue() adds an Issue to this block if it is not already
+     * present.
      *
      * @param issue
      *            Issue to add
@@ -102,10 +112,12 @@ public class Block {
     }
 
     /**
-     * When a course of appearance has been loaded from a file or the processes list has already been generated,
-     * it already contains issues which must be deleted in the case that an issue is added to or removed from
-     * the course of appearance which is producing issues in the selected time range. If the time range cannot
-     * be evaluated because either of the variables is null, we go the safe way and delete, too.
+     * When a course of appearance has been loaded from a file or the processes
+     * list has already been generated, it already contains issues which must be
+     * deleted in the case that an issue is added to or removed from the course
+     * of appearance which is producing issues in the selected time range. If
+     * the time range cannot be evaluated because either of the variables is
+     * null, we go the safe way and delete, too.
      *
      * @param issue
      *            issue to add or delete
@@ -115,7 +127,8 @@ public class Block {
             if (issue.countIndividualIssues(firstAppearance, lastAppearance) > 0) {
                 course.clearProcesses();
             }
-        } catch (RuntimeException e) { // if firstAppearance or lastAppearance is null
+        } catch (RuntimeException e) { // if firstAppearance or lastAppearance
+                                       // is null
             course.clearProcesses();
         }
     }
@@ -140,8 +153,9 @@ public class Block {
     }
 
     /**
-     * The function countIndividualIssues() determines how many stampings of issues physically appeared without
-     * generating a list of IndividualIssue objects.
+     * The function countIndividualIssues() determines how many stampings of
+     * issues physically appeared without generating a list of IndividualIssue
+     * objects.
      *
      * @return the count of issues
      */
@@ -161,7 +175,8 @@ public class Block {
     }
 
     /**
-     * The function getIssues() returns the list of issues contained in this Block.
+     * The function getIssues() returns the list of issues contained in this
+     * Block.
      *
      * @return the list of issues from this Block
      */
@@ -170,8 +185,9 @@ public class Block {
     }
 
     /**
-     * The function getIndividualIssues() generates a list of IndividualIssue objects for a given day,
-     * each of them representing a stamping of one physically appeared issue.
+     * The function getIndividualIssues() generates a list of IndividualIssue
+     * objects for a given day, each of them representing a stamping of one
+     * physically appeared issue.
      *
      * @param date
      *            date to generate issues for
@@ -192,8 +208,8 @@ public class Block {
     }
 
     /**
-     * The function getIssue() returns an issue from the Block by the issue’s heading, or null if
-     * the block doesn’t contain an issue with that heading.
+     * The function getIssue() returns an issue from the Block by the issue’s
+     * heading, or null if the block doesn’t contain an issue with that heading.
      *
      * @param heading
      *            Heading of the issue to look for
@@ -209,7 +225,8 @@ public class Block {
     }
 
     /**
-     * The function getFirstAppearance() returns the date the regularity of this block begins with.
+     * The function getFirstAppearance() returns the date the regularity of this
+     * block begins with.
      *
      * @return the date of first appearance
      */
@@ -218,7 +235,8 @@ public class Block {
     }
 
     /**
-     * The function getLastAppearance() returns the date the regularity of this block ends with.
+     * The function getLastAppearance() returns the date the regularity of this
+     * block ends with.
      *
      * @return the date of last appearance
      */
@@ -227,7 +245,8 @@ public class Block {
     }
 
     /**
-     * The function isEmpty() returns whether the block is in an empty state or not.
+     * The function isEmpty() returns whether the block is in an empty state or
+     * not.
      *
      * @return whether the block is dataless
      */
@@ -236,8 +255,8 @@ public class Block {
     }
 
     /**
-     * Can be used to find out whether the given variant string equals the variant assigned to this block
-     * in a NullPointerException-safe way.
+     * Can be used to find out whether the given variant string equals the
+     * variant assigned to this block in a NullPointerException-safe way.
      *
      * @param variant
      *            variant to compare against
@@ -248,8 +267,9 @@ public class Block {
     }
 
     /**
-     * The function isMatch() returns whether a given LocalDate comes within the limits of this block.
-     * Defaults to false if either the argument or one of the fields to compare against is null.
+     * The function isMatch() returns whether a given LocalDate comes within the
+     * limits of this block. Defaults to false if either the argument or one of
+     * the fields to compare against is null.
      *
      * @param date
      *            a LocalDate to examine
@@ -264,10 +284,11 @@ public class Block {
     }
 
     /**
-     * The method recalculateRegularityOfIssues() recalculates for each Issue the daysOfWeek of its regular
-     * appearance within the interval of time of the Block. This is especially sensible to detect the underlying
-     * regularity after lots of issues whose existence is known have been added one by one as additions to
-     * the underlying issue(s).
+     * The method recalculateRegularityOfIssues() recalculates for each Issue
+     * the daysOfWeek of its regular appearance within the interval of time of
+     * the Block. This is especially sensible to detect the underlying
+     * regularity after lots of issues whose existence is known have been added
+     * one by one as additions to the underlying issue(s).
      */
     public void recalculateRegularityOfIssues() {
         for (Issue issue : issues) {
@@ -276,7 +297,8 @@ public class Block {
     }
 
     /**
-     * The function removeIssue() removes the specified Issue from this Block if it is present.
+     * The function removeIssue() removes the specified Issue from this Block if
+     * it is present.
      *
      * @param issue
      *            Issue to be removed from the set
@@ -288,7 +310,8 @@ public class Block {
     }
 
     /**
-     * The method setFirstAppearance() sets a LocalDate as day of first appearance for this Block.
+     * The method setFirstAppearance() sets a LocalDate as day of first
+     * appearance for this Block.
      *
      * @param firstAppearance
      *            date of first appearance
@@ -310,7 +333,8 @@ public class Block {
     }
 
     /**
-     * The method setLastAppearance() sets a LocalDate as day of last appearance for this Block.
+     * The method setLastAppearance() sets a LocalDate as day of last appearance
+     * for this Block.
      *
      * @param lastAppearance
      *            date of last appearance
@@ -332,8 +356,8 @@ public class Block {
     }
 
     /**
-     * The method setPublicationPeriod() sets two LocalDate instances as days of first and last appearance for
-     * this Block.
+     * The method setPublicationPeriod() sets two LocalDate instances as days of
+     * first and last appearance for this Block.
      *
      * @param firstAppearance
      *            date of first appearance
@@ -367,10 +391,12 @@ public class Block {
     }
 
     /**
-     * The method checkForOverlaps() tests an not yet set time range for this block whether it doesn’t overlap
-     * with other titles in this course and can be set. (Because this method is called prior to setting
-     * a new value as a field value, it doesn’t take the values from the classes’ fields even though it isn’t static.)
-     * If the given dates would cause an overlapping, an IllegalArgumentException will be thrown.
+     * The method checkForOverlaps() tests an not yet set time range for this
+     * block whether it doesn’t overlap with other titles in this course and can
+     * be set. (Because this method is called prior to setting a new value as a
+     * field value, it doesn’t take the values from the classes’ fields even
+     * though it isn’t static.) If the given dates would cause an overlapping,
+     * an IllegalArgumentException will be thrown.
      *
      * @param from
      *            date of first appearance to check
@@ -381,18 +407,19 @@ public class Block {
      */
     private void prohibitOverlaps(LocalDate from, LocalDate until) {
         for (Block block : course) {
-            if (!block.equals(this)
-                    && (block.getFirstAppearance().isBefore(until) && !block.getLastAppearance().isBefore(from)
+            if (!block.equals(this) && (block.getFirstAppearance().isBefore(until)
+                    && !block.getLastAppearance().isBefore(from)
                     || (block.getLastAppearance().isAfter(from) && !block.getFirstAppearance().isAfter(until)))) {
-                throw new IllegalArgumentException('(' + block.variant + ") " + block.firstAppearance + " - "
-                        + block.lastAppearance);
+                throw new IllegalArgumentException(
+                        '(' + block.variant + ") " + block.firstAppearance + " - " + block.lastAppearance);
             }
         }
     }
 
     /**
-     * The function toString() provides returns a string that contains a concise but informative representation
-     * of this block that is easy for a person to read.
+     * The function toString() provides returns a string that contains a concise
+     * but informative representation of this block that is easy for a person to
+     * read.
      *
      * @return a string representation of the block
      * @see java.lang.Object#toString()
@@ -421,8 +448,8 @@ public class Block {
     }
 
     /**
-     * The function toString() provides returns a string that contains a textual representation of this block that
-     * is easy for a person to read.
+     * The function toString() provides returns a string that contains a textual
+     * representation of this block that is easy for a person to read.
      *
      * @param dateConverter
      *            a DateTimeFormatter for formatting the local dates
@@ -441,11 +468,15 @@ public class Block {
     }
 
     /**
-     * Returns a hash code for the object which depends on the content of its variables. Whenever Block objects are
-     * held in HashSet objects, a hashCode() is essentially necessary.
+     * Returns a hash code for the object which depends on the content of its
+     * variables. Whenever Block objects are held in HashSet objects, a
+     * hashCode() is essentially necessary.
      *
-     * <p>The method was generated by Eclipse using right-click → Source → Generate hashCode() and equals()….
-     * If you will ever change the classes’ fields, just re-generate it.</p>
+     * <p>
+     * The method was generated by Eclipse using right-click → Source → Generate
+     * hashCode() and equals()…. If you will ever change the classes’ fields,
+     * just re-generate it.
+     * </p>
      *
      * @see java.lang.Object#hashCode()
      */
@@ -461,10 +492,14 @@ public class Block {
     }
 
     /**
-     * Returns whether two individual issues are equal; the decision depends on the content of its variables.
+     * Returns whether two individual issues are equal; the decision depends on
+     * the content of its variables.
      *
-     * <p> The method was generated by Eclipse using right-click → Source → Generate hashCode() and equals()….
-     * If you will ever change the classes’ fields, just re-generate it.</p>
+     * <p>
+     * The method was generated by Eclipse using right-click → Source → Generate
+     * hashCode() and equals()…. If you will ever change the classes’ fields,
+     * just re-generate it.
+     * </p>
      *
      * @see java.lang.Object#equals(java.lang.Object)
      */

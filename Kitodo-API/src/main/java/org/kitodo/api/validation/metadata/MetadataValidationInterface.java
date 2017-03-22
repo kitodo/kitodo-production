@@ -22,11 +22,12 @@ public interface MetadataValidationInterface extends ValidationInterface {
     /**
      * Validates if a mets file is confirm to a rulesetFile
      *
-     * @param metadataFile The metadata file which should be validated.
-     * @param rulesetFilePath The path to the ruleset file to validate against.
+     * @param metadataFile
+     *            The metadata file which should be validated.
+     * @param rulesetFilePath
+     *            The path to the ruleset file to validate against.
      * @return A validation result.
      */
     ValidationResult validate(File metadataFile, Path rulesetFilePath);
-
 
 }

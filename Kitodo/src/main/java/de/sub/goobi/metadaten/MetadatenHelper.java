@@ -63,8 +63,10 @@ public class MetadatenHelper implements Comparator<Object> {
     /**
      * Change current document structure.
      *
-     * @param inOldDocstruct DocStruct object
-     * @param inNewType String
+     * @param inOldDocstruct
+     *            DocStruct object
+     * @param inNewType
+     *            String
      * @return DocStruct object
      */
     public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
@@ -94,8 +96,7 @@ public class MetadatenHelper implements Comparator<Object> {
                             newDocstruct.addMetadata(old);
                         } catch (Exception e) {
                             Helper.setFehlerMeldung("Metadata " + old.getType().getName()
-                                    + " is not allowed in new element "
-                                    + newDocstruct.getType().getName());
+                                    + " is not allowed in new element " + newDocstruct.getType().getName());
                             return inOldDocstruct;
                         }
                     } else {
@@ -169,7 +170,8 @@ public class MetadatenHelper implements Comparator<Object> {
             }
         }
         /*
-         * neues Docstruct zum Parent hinzufügen und an die gleiche Stelle schieben, wie den Vorg?nger
+         * neues Docstruct zum Parent hinzufügen und an die gleiche Stelle
+         * schieben, wie den Vorg?nger
          */
         inOldDocstruct.getParent().addChild(newDocstruct);
         int i = 1;
@@ -193,7 +195,8 @@ public class MetadatenHelper implements Comparator<Object> {
     /**
      * Move around the document structure tree.
      *
-     * @param inStruct DocStruct object
+     * @param inStruct
+     *            DocStruct object
      */
     public void KnotenUp(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
@@ -210,8 +213,8 @@ public class MetadatenHelper implements Comparator<Object> {
         /* alle Elemente des Parents durchlaufen */
         for (DocStruct tempDS : parent.getAllChildren()) {
             /*
-             * wenn das folgende Element das zu verschiebende ist dabei die Exception auffangen,
-             * falls es kein nächstes Kind gibt
+             * wenn das folgende Element das zu verschiebende ist dabei die
+             * Exception auffangen, falls es kein nächstes Kind gibt
              */
             try {
                 if (parent.getNextChild(tempDS) == inStruct) {
@@ -221,8 +224,8 @@ public class MetadatenHelper implements Comparator<Object> {
             }
 
             /*
-             * nachdem der Vorg?nger gefunden wurde, werden alle anderen Elemente aus der Child-Liste entfernt
-             * und separat gesammelt
+             * nachdem der Vorg?nger gefunden wurde, werden alle anderen
+             * Elemente aus der Child-Liste entfernt und separat gesammelt
              */
             if (alleDS != null && tempDS != inStruct) {
                 alleDS.add(tempDS);
@@ -246,7 +249,8 @@ public class MetadatenHelper implements Comparator<Object> {
     /**
      * Move around the document structure tree.
      *
-     * @param inStruct DocStruct object
+     * @param inStruct
+     *            DocStruct object
      */
     public void KnotenDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
@@ -312,8 +316,7 @@ public class MetadatenHelper implements Comparator<Object> {
             if (dst != null) {
                 newTypes.add(dst);
             } else {
-                Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType "
-                        + tempTitel + " nicht definiert");
+                Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
                 myLogger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
                         + " nicht definiert");
             }
@@ -340,8 +343,8 @@ public class MetadatenHelper implements Comparator<Object> {
         Iterator<DocStructType> it = newTypes.iterator();
         while (it.hasNext()) {
             DocStructType dst = it.next();
-            String label = dst.getNameByLanguage((String) Helper
-                    .getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+            String label = dst
+                    .getNameByLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
             if (label == null) {
                 label = dst.getName();
             }
@@ -352,7 +355,8 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     /**
-     * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv aufrufen.
+     * alle unbenutzen Metadaten des Docstruct löschen, Unterelemente rekursiv
+     * aufrufen.
      */
     public void deleteAllUnusedElements(DocStruct inStruct) {
         inStruct.deleteUnusedPersonsAndMetadata();
@@ -425,11 +429,12 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     /**
-     * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden DefaultDisplay-Metadaten ergänzen.
+     * vom übergebenen DocStruct alle Metadaten ermitteln und um die fehlenden
+     * DefaultDisplay-Metadaten ergänzen.
      */
     @SuppressWarnings("deprecation")
     public List<? extends Metadata> getMetadataInclDefaultDisplay(DocStruct inStruct, String inLanguage,
-                                                                  boolean inIsPerson, Process inProzess) {
+            boolean inIsPerson, Process inProzess) {
         List<MetadataType> displayMetadataTypes = inStruct.getDisplayMetadataTypes();
         /* sofern Default-Metadaten vorhanden sind, diese ggf. ergänzen */
         if (displayMetadataTypes != null) {
@@ -457,7 +462,8 @@ public class MetadatenHelper implements Comparator<Object> {
         }
 
         /*
-         * wenn keine Sortierung nach Regelsatz erfolgen soll, hier alphabetisch sortieren
+         * wenn keine Sortierung nach Regelsatz erfolgen soll, hier alphabetisch
+         * sortieren
          */
         if (inIsPerson) {
             List<Person> persons = inStruct.getAllPersons();
@@ -510,10 +516,8 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        try (
-            InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-            BufferedReader bufRead = new BufferedReader(input);
-        ) {
+        try (InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                BufferedReader bufRead = new BufferedReader(input);) {
             char[] buffer = new char[200];
             while ((bufRead.read(buffer)) >= 0) {
                 String temp = new String(buffer).toLowerCase();
@@ -533,12 +537,13 @@ public class MetadatenHelper implements Comparator<Object> {
     /**
      * Get Metadata type language.
      *
-     * @param inMdt MetadataType object
+     * @param inMdt
+     *            MetadataType object
      * @return localized Title of metadata type
      */
     public String getMetadatatypeLanguage(MetadataType inMdt) {
-        String label = inMdt.getLanguage((String) Helper
-                .getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
+        String label = inMdt
+                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         if (label == null) {
             label = inMdt.getName();
         }
@@ -602,11 +607,14 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     /**
-     * Alle Rollen ermitteln, die für das übergebene Strukturelement erlaubt sind.
+     * Alle Rollen ermitteln, die für das übergebene Strukturelement erlaubt
+     * sind.
      *
-     * @param myDocStruct DocStruct object
+     * @param myDocStruct
+     *            DocStruct object
      * @param inRoleName
-     *            der aktuellen Person, damit diese ggf. in die Liste mit übernommen wird
+     *            der aktuellen Person, damit diese ggf. in die Liste mit
+     *            übernommen wird
      */
     public ArrayList<SelectItem> getAddablePersonRoles(DocStruct myDocStruct, String inRoleName) {
         ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
@@ -630,7 +638,8 @@ public class MetadatenHelper implements Comparator<Object> {
             }
         }
         /*
-         * alle Metadatentypen, die keine Person sind, oder mit einem Unterstrich anfangen rausnehmen
+         * alle Metadatentypen, die keine Person sind, oder mit einem
+         * Unterstrich anfangen rausnehmen
          */
         for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
             if (!mdt.getIsPerson()) {
@@ -650,7 +659,6 @@ public class MetadatenHelper implements Comparator<Object> {
         }
         return myList;
     }
-
 
     @Override
     public int compare(Object o1, Object o2) {

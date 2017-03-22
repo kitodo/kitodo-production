@@ -23,7 +23,8 @@ import org.goobi.production.flow.statistics.hibernate.StatQuestUsergroups;
 import org.goobi.production.flow.statistics.hibernate.StatQuestVolumeStatus;
 
 /**
- * Enum for all statistic modes, for backward compatibility we will contain old datasets of previous chartings.
+ * Enum for all statistic modes, for backward compatibility we will contain old
+ * datasets of previous chartings.
  *
  * @author Steffen Hankiewicz
  * @author Wulf Riebensahm
@@ -31,15 +32,14 @@ import org.goobi.production.flow.statistics.hibernate.StatQuestVolumeStatus;
  */
 public enum StatisticsMode {
 
-    SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false),
-    PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false,false, false),
-    STATUS_VOLUMES("statusOfVolumes", StatQuestVolumeStatus.class, false, false, false),
-    USERGROUPS("statusForUsers", StatQuestUsergroups.class, false, false, false),
+    SIMPLE_RUNTIME_STEPS("runtimeOfSteps", null, false, true, false), PROJECTS("projectAssociation",
+            StatQuestProjectAssociations.class, false, false, false), STATUS_VOLUMES("statusOfVolumes",
+                    StatQuestVolumeStatus.class, false, false,
+                    false), USERGROUPS("statusForUsers", StatQuestUsergroups.class, false, false, false),
     // the following statistcs are the new statistics from june 2009
-    THROUGHPUT("productionThroughput", StatQuestThroughput.class, true, false, true),
-    CORRECTIONS("errorTracking", StatQuestCorrections.class, false,	false, true),
-    STORAGE("storageCalculator", StatQuestStorage.class, false, false, true),
-    PRODUCTION("productionStatistics", StatQuestProduction.class, false, false, true);
+    THROUGHPUT("productionThroughput", StatQuestThroughput.class, true, false, true), CORRECTIONS("errorTracking",
+            StatQuestCorrections.class, false, false, true), STORAGE("storageCalculator", StatQuestStorage.class, false,
+                    false, true), PRODUCTION("productionStatistics", StatQuestProduction.class, false, false, true);
 
     private IStatisticalQuestion question;
     private String title;
@@ -50,8 +50,8 @@ public enum StatisticsMode {
     /**
      * private constructor.
      */
-    private StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion,
-                           Boolean renderIncludeLoops, Boolean isSimpleStatistic, Boolean restrictDate) {
+    private StatisticsMode(String inTitle, Class<? extends IStatisticalQuestion> inQuestion, Boolean renderIncludeLoops,
+            Boolean isSimpleStatistic, Boolean restrictDate) {
         title = inTitle;
         if (inQuestion != null) {
             try {
@@ -86,7 +86,8 @@ public enum StatisticsMode {
     }
 
     /**
-     * return localized title of statistic view from standard-jsf-messages-files.
+     * return localized title of statistic view from
+     * standard-jsf-messages-files.
      *
      * @return title of statistic question mode
      */
@@ -110,8 +111,8 @@ public enum StatisticsMode {
      */
     public static StatisticsMode getByClassName(Class<? extends IStatisticalQuestion> inQuestion) {
         for (StatisticsMode sm : values()) {
-            if (sm.getStatisticalQuestion() != null && sm.getStatisticalQuestion().getClass().getName()
-                    .equals(inQuestion.getName())) {
+            if (sm.getStatisticalQuestion() != null
+                    && sm.getStatisticalQuestion().getClass().getName().equals(inQuestion.getName())) {
                 return sm;
             }
         }

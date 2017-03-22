@@ -49,7 +49,8 @@ public class StatisticsRenderingElement implements Serializable {
     /**
      * Create render.
      *
-     * @param inShowAverage Boolean
+     * @param inShowAverage
+     *            Boolean
      */
     public void createRenderer(Boolean inShowAverage) {
         /*

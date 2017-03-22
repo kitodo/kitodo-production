@@ -25,8 +25,8 @@ import ugh.dl.Person;
 import ugh.dl.Prefs;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
- * der Schrittdetails.
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
+ * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
@@ -80,7 +80,8 @@ public class MetaPerson {
     /**
      * Set first name.
      *
-     * @param inVorname String
+     * @param inVorname
+     *            String
      */
     public void setVorname(String inVorname) {
         if (inVorname == null) {
@@ -105,7 +106,8 @@ public class MetaPerson {
     /**
      * Set surname.
      *
-     * @param inNachname String
+     * @param inNachname
+     *            String
      */
     public void setNachname(String inNachname) {
         if (inNachname == null) {
@@ -140,7 +142,8 @@ public class MetaPerson {
     /**
      * Set role.
      *
-     * @param inRolle String
+     * @param inRolle
+     *            String
      */
     public void setRolle(String inRolle) {
         this.p.setRole(inRolle);

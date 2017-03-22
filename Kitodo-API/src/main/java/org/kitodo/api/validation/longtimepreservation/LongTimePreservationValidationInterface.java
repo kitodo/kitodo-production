@@ -21,8 +21,10 @@ public interface LongTimePreservationValidationInterface extends ValidationInter
     /**
      * Validates an image for longTimePreservation.
      *
-     * @param imageFilePath The path to the image, which should be validated.
-     * @param fileType The fileType of the image at the given path.
+     * @param imageFilePath
+     *            The path to the image, which should be validated.
+     * @param fileType
+     *            The fileType of the image at the given path.
      * @return A validation result.
      */
     ValidationResult validate(Path imageFilePath, FileType fileType);

@@ -23,9 +23,12 @@ public class DocketDAO extends BaseDAO {
     /**
      * Find docket object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public Docket find(Integer id) throws DAOException {
         Docket result = (Docket) retrieveObject(Docket.class, id);
@@ -53,9 +56,11 @@ public class DocketDAO extends BaseDAO {
     /**
      * The function remove() removes a docket from database.
      *
-     * @param docket to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param docket
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Docket docket) throws DAOException {
         if (docket.getId() != null) {

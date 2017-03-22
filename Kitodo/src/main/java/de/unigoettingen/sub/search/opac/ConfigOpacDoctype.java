@@ -87,10 +87,10 @@ public class ConfigOpacDoctype {
     }
 
     /**
-	 * Get localized label.
+     * Get localized label.
      *
-	 * @return String
-	 */
+     * @return String
+     */
     public String getLocalizedLabel() {
         String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         if (currentLocale != null && !currentLocale.equals("")) {

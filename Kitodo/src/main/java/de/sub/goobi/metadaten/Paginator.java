@@ -9,7 +9,6 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-
 package de.sub.goobi.metadaten;
 
 import java.util.ArrayList;
@@ -95,10 +94,11 @@ public class Paginator {
     private void assertValidPaginationStartValue() {
         // arabic numbers
         if (paginationType == Paginator.Type.ARABIC) {
-            /* coverity[USELESS_CALL]
-             * Integer.parseInt() throws NumberFormatException if
-             * paginationStartValue cannot be parsed to an `int`, and this is
-             * what we want here. */
+            /*
+             * coverity[USELESS_CALL] Integer.parseInt() throws
+             * NumberFormatException if paginationStartValue cannot be parsed to
+             * an `int`, and this is what we want here.
+             */
             Integer.parseInt(paginationStartValue);
         }
         // roman numbers
@@ -131,7 +131,7 @@ public class Paginator {
 
         sequence = cloneEachInSequence(sequence);
 
-        if (paginationType == Paginator.Type.UNCOUNTED || paginationType == Paginator.Type.FREETEXT ) {
+        if (paginationType == Paginator.Type.UNCOUNTED || paginationType == Paginator.Type.FREETEXT) {
             return sequence;
         }
 
@@ -278,7 +278,8 @@ public class Paginator {
      * Give a list of page numbers to select pages to actually paginate.
      *
      * @param selectedPages
-     *            Array numbers, each pointing to a given page set via <code>setPagesToPaginate</code>
+     *            Array numbers, each pointing to a given page set via
+     *            <code>setPagesToPaginate</code>
      * @return This object for fluent interfacing.
      */
     public Paginator setPageSelection(int[] selectedPages) {
@@ -335,7 +336,8 @@ public class Paginator {
     }
 
     /**
-     * Set start value of pagination. Counting up starts here depending on the pagination mode set.
+     * Set start value of pagination. Counting up starts here depending on the
+     * pagination mode set.
      *
      * @param paginationStartValue
      *            May contain arabic or roman number.
@@ -359,7 +361,8 @@ public class Paginator {
     }
 
     /**
-     * Enable or disable fictitious pagination using square bracktes around numbers.
+     * Enable or disable fictitious pagination using square bracktes around
+     * numbers.
      *
      * @param b
      *            True, fictitious pagination. False, regular pagination.

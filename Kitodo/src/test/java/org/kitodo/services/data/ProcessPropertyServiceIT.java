@@ -36,7 +36,7 @@ public class ProcessPropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -44,7 +44,8 @@ public class ProcessPropertyServiceIT {
         ProcessPropertyService processPropertyService = new ProcessPropertyService();
 
         ProcessProperty processProperty = processPropertyService.find(1);
-        boolean condition = processProperty.getTitle().equals("First Property") && processProperty.getValue().equals("first value");
+        boolean condition = processProperty.getTitle().equals("First Property")
+                && processProperty.getValue().equals("first value");
         assertTrue("Process property was not found in database!", condition);
     }
 

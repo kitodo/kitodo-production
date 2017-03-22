@@ -36,7 +36,7 @@ public class Processes {
      * @return list of GoobiProcess objects
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public List<GoobiProcess> getProcesses() {
         List<GoobiProcess> processes = new ArrayList<GoobiProcess>();
 
@@ -48,7 +48,8 @@ public class Processes {
     /**
      * Get Process.
      *
-     * @param ippn IdentifierPPN object
+     * @param ippn
+     *            IdentifierPPN object
      * @return GoobiProcess object
      */
     @GET
@@ -67,7 +68,8 @@ public class Processes {
     /**
      * Get process tasks.
      *
-     * @param ippn IdentifierPPN object
+     * @param ippn
+     *            IdentifierPPN object
      * @return GoobiProcessStep object
      */
     @GET

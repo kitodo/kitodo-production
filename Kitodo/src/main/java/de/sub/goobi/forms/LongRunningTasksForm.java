@@ -48,9 +48,9 @@ public class LongRunningTasksForm {
     }
 
     /**
-     * The method addDemoTask() in executed if the user clicks the link to
-     * "add a sample task" in the task manager. This is—if for anything at
-     * all—useful for debugging or demonstration purposes only.
+     * The method addDemoTask() in executed if the user clicks the link to "add
+     * a sample task" in the task manager. This is—if for anything at all—useful
+     * for debugging or demonstration purposes only.
      */
     public void addDemoTask() {
         task = new EmptyTask("#".concat(Long.toString(++demoTaskNo)));
@@ -89,10 +89,10 @@ public class LongRunningTasksForm {
     /**
      * The function isDemoTasksLinkShowing() returns true, if the boolean
      * parameter <code>taskManager.showSampleTask</code> is set to true in the
-     * global configuration file. Depending on this an option to
-     * "add a sample task" in been shown in the task manager. This is—if for
-     * anything at all—useful for debugging or demonstration purposes only.
-     * Defaults to false.
+     * global configuration file. Depending on this an option to "add a sample
+     * task" in been shown in the task manager. This is—if for anything at
+     * all—useful for debugging or demonstration purposes only. Defaults to
+     * false.
      *
      * @return whether <code>taskManager.showSampleTask</code> is set true in
      *         the configuration

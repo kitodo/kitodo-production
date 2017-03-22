@@ -24,7 +24,8 @@ import java.util.Scanner;
 import org.apache.log4j.Logger;
 
 /**
- * The class ShellScript is intended to run shell scripts (or other system commands).
+ * The class ShellScript is intended to run shell scripts (or other system
+ * commands).
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -117,19 +118,27 @@ public class ShellScript {
     }
 
     /**
-     * The function run() will execute the system command. First, the call sequence is created,
-     * including the parameters passed to run(). Then, the underlying OS is contacted to run the command.
-     * Afterwards, the results are being processed and stored.
+     * The function run() will execute the system command. First, the call
+     * sequence is created, including the parameters passed to run(). Then, the
+     * underlying OS is contacted to run the command. Afterwards, the results
+     * are being processed and stored.
      *
-     * <p>On interrupt request, the function will continue waiting for the script and then set interrupted state
-     * again to allow the executing thread to exit gracefully where defined.</p>
+     * <p>
+     * On interrupt request, the function will continue waiting for the script
+     * and then set interrupted state again to allow the executing thread to
+     * exit gracefully where defined.
+     * </p>
      *
-     * <p>The behaviour is slightly different from the legacy callShell2() command, as it returns
-     * the error level as reported from the system process. Use this to get the old behaviour:</p>
+     * <p>
+     * The behaviour is slightly different from the legacy callShell2() command,
+     * as it returns the error level as reported from the system process. Use
+     * this to get the old behaviour:
+     * </p>
      *
      * <pre>
-     *   Integer err = scr.run(args);
-     *   if (scr.getStdErr().size() &gt; 0) err = ShellScript.ERRORLEVEL_ERROR;
+     * Integer err = scr.run(args);
+     * if (scr.getStdErr().size() &gt; 0)
+     *     err = ShellScript.ERRORLEVEL_ERROR;
      * </pre>
      *
      * @param args
@@ -147,8 +156,7 @@ public class ShellScript {
         }
         Process process = null;
         try {
-            String[] callSequence = commandLine.toArray(new String[commandLine
-                    .size()]);
+            String[] callSequence = commandLine.toArray(new String[commandLine.size()]);
             process = new ProcessBuilder(callSequence).start();
             outputChannel = inputStreamToLinkedList(process.getInputStream());
             errorChannel = inputStreamToLinkedList(process.getErrorStream());
@@ -171,8 +179,7 @@ public class ShellScript {
                 Thread.interrupted();
                 interrupt = true;
             }
-        }
-        while (interrupted);
+        } while (interrupted);
         if (interrupt) {
             Thread.currentThread().interrupt();
         }
@@ -187,8 +194,7 @@ public class ShellScript {
      *            Stream to convert
      * @return A linked list holding the single lines.
      */
-    public static LinkedList<String> inputStreamToLinkedList(
-            InputStream myInputStream) {
+    public static LinkedList<String> inputStreamToLinkedList(InputStream myInputStream) {
         LinkedList<String> result = new LinkedList<String>();
         Scanner inputLines = null;
         try {
@@ -237,8 +243,7 @@ public class ShellScript {
      * @throws IOException
      *             If an I/O error happens
      */
-    public static int legacyCallShell2(String nonSpacesafeScriptingCommand)
-            throws IOException, InterruptedException {
+    public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException, InterruptedException {
         String[] tokenisedCommand = nonSpacesafeScriptingCommand.split("\\s");
         ShellScript s;
         int err = ShellScript.ERRORLEVEL_ERROR;
@@ -260,9 +265,7 @@ public class ShellScript {
             }
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException in callShell2()", e);
-            Helper.setFehlerMeldung(
-                    "Couldn't find script file in callShell2(), error",
-                    e.getMessage());
+            Helper.setFehlerMeldung("Couldn't find script file in callShell2(), error", e.getMessage());
         }
         return err;
     }

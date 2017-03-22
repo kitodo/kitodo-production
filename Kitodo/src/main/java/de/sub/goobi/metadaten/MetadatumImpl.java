@@ -30,8 +30,8 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt
- * die Bearbeitung der Schrittdetails
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
+ * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
@@ -55,8 +55,8 @@ public class MetadatumImpl implements Metadatum {
         this.myPrefs = inPrefs;
         this.myProcess = inProcess;
         for (BindState state : BindState.values()) {
-            this.myValues.put(state.getTitle(), new DisplayCase(this.myProcess, state.getTitle(),
-                    this.md.getType().getName()));
+            this.myValues.put(state.getTitle(),
+                    new DisplayCase(this.myProcess, state.getTitle(), this.md.getType().getName()));
         }
     }
 
@@ -82,8 +82,8 @@ public class MetadatumImpl implements Metadatum {
 
     @Override
     public String getTyp() {
-        String label = this.md.getType().getLanguage((String) Helper.getManagedBeanValue(
-                "#{LoginForm.myBenutzer.metadataLanguage}"));
+        String label = this.md.getType()
+                .getLanguage((String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}"));
         if (label == null) {
             label = this.md.getType().getName();
         }

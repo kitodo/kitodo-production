@@ -24,7 +24,7 @@ class Query {
     private int queryTermNumber = 0;
 
     private static final String AND = "*";
-    private static final String OR = "%2B"; //URL-encoded +
+    private static final String OR = "%2B"; // URL-encoded +
     private static final String NOT = "-";
 
     private static final String FIRST_OPERATOR = "SRCH";
@@ -38,7 +38,8 @@ class Query {
     }
 
     /**
-     * Query constructor. Constructs a query from a String. For the query semantics, see
+     * Query constructor. Constructs a query from a String. For the query
+     * semantics, see
      * {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}.
      *
      * @param queryString
@@ -56,7 +57,7 @@ class Query {
         for (int index = 0; index < queryString.length(); index++) {
             int codePoint = queryString.codePointAt(index);
             switch (state) {
-            	case 0:
+                case 0:
                     switch (codePoint) {
                         case ' ':
                             continue;
@@ -148,10 +149,10 @@ class Query {
         }
     }
 
-    //operation must be Query.AND, .OR, .NOT
+    // operation must be Query.AND, .OR, .NOT
     private void addQuery(String operation, String query, String fieldNumber) {
 
-        //ignore boolean operation for first term
+        // ignore boolean operation for first term
         if (this.queryTermNumber == 0) {
             this.queryUrl = OPERATOR + this.queryTermNumber + "=" + FIRST_OPERATOR;
         } else {

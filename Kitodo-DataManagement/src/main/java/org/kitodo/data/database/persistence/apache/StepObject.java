@@ -35,10 +35,9 @@ public class StepObject {
     private String validationPlugin;
 
     public StepObject(int id, String title, int ordering, int processingStatus, Date processingTime,
-                      Date processingBegin, Date processingEnd, int processingUser, Integer editType,
-                      boolean typeExport, boolean typeAutomatic, int processId, boolean readAccess,
-                      boolean writeAccess, boolean metadataAccess, boolean typeFinishImmediately, String stepPlugin,
-                      String validationPlugin) {
+            Date processingBegin, Date processingEnd, int processingUser, Integer editType, boolean typeExport,
+            boolean typeAutomatic, int processId, boolean readAccess, boolean writeAccess, boolean metadataAccess,
+            boolean typeFinishImmediately, String stepPlugin, String validationPlugin) {
         super();
         this.id = id;
         this.title = title;

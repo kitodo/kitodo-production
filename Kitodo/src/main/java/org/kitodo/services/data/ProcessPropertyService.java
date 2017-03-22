@@ -38,7 +38,7 @@ public class ProcessPropertyService {
     }
 
     public String getNormalizedTitle(ProcessProperty processProperty) {
-        //why trim after replace spaces to _, it should have reversed order
+        // why trim after replace spaces to _, it should have reversed order
         return processProperty.getTitle().replace(" ", "_").trim();
     }
 

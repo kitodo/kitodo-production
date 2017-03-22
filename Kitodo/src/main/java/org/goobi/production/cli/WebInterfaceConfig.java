@@ -24,8 +24,10 @@ public class WebInterfaceConfig {
     /**
      * Get credentials.
      *
-     * @param requestIp String
-     * @param requestPassword String
+     * @param requestIp
+     *            String
+     * @param requestPassword
+     *            String
      * @return list of Strings
      */
     public static List<String> getCredentials(String requestIp, String requestPassword) {

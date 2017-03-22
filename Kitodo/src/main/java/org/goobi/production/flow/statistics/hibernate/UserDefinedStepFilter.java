@@ -48,7 +48,6 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
         this.clearSession = clearSession;
     }
 
-
     /*
      * setting basic filter modes
      */
@@ -61,9 +60,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
-     * ()
+     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getCriteria ()
      */
     @Override
     public Criteria getCriteria() {
@@ -96,13 +94,15 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
         PaginatingCriteria crit = new PaginatingCriteria(Task.class, session);
 
         /*
-         * combine all parameters together this part was exported to FilterHelper so that other Filters could access it
+         * combine all parameters together this part was exported to
+         * FilterHelper so that other Filters could access it
          */
 
         // following was moved to Filter Helper
         // limitToUserAssignedSteps(crit);
 
-        String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly, userAssignedStepsOnly, clearSession);
+        String message = FilterHelper.criteriaBuilder(session, myFilter, crit, null, null, stepOpenOnly,
+                userAssignedStepsOnly, clearSession);
 
         if (message.length() > 0) {
             myObservable.setMessage(message);
@@ -120,7 +120,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public List<Integer> getIDList() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getIDList() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement getIDList() ");
     }
 
     /*
@@ -131,15 +132,15 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public String getName() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getName() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement getName() ");
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
-     * ()
+     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getObservable ()
      */
     @Override
     public Observable getObservable() {
@@ -185,7 +186,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public void setName(String name) {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setName() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement setName() ");
     }
 
     /*
@@ -197,7 +199,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public void setSQL(String sqlString) {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement setSQL() ");
     }
 
     /*
@@ -209,7 +212,8 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public Integer stepDone() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDone() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement stepDone() ");
     }
 
     /*
@@ -219,20 +223,21 @@ public class UserDefinedStepFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public List<Object> getSourceData() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement getSourceData() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement getSourceData() ");
     }
 
     @Override
     public UserDefinedStepFilter clone() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement clone() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement clone() ");
 
     }
 
     @Override
     public String stepDoneName() {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement stepDoneName() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement stepDoneName() ");
     }
-
-
 
 }

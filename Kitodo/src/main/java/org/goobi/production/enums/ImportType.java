@@ -12,7 +12,7 @@
 package org.goobi.production.enums;
 
 public enum ImportType {
-    Record("1","record"), ID("2", "id"), FILE("3","file"), FOLDER("4", "folder");
+    Record("1", "record"), ID("2", "id"), FILE("3", "file"), FOLDER("4", "folder");
 
     private String id;
     private String title;
@@ -23,9 +23,10 @@ public enum ImportType {
     }
 
     /**
-	 * Set id.
+     * Set id.
      *
-     * @param id the id to set
+     * @param id
+     *            the id to set
      */
     public void setId(String id) {
         this.id = id;
@@ -43,7 +44,8 @@ public enum ImportType {
     /**
      * Set title.
      *
-     * @param title the title to set
+     * @param title
+     *            the title to set
      */
     public void setTitle(String title) {
         this.title = title;
@@ -61,7 +63,8 @@ public enum ImportType {
     /**
      * Get by title.
      *
-     * @param title String
+     * @param title
+     *            String
      * @return ImportType object
      */
     public static ImportType getByTitle(String title) {
@@ -72,6 +75,5 @@ public enum ImportType {
         }
         return null;
     }
-
 
 }

@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the GPL3-License.txt file that was
- * distributed with this source code.
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
  */
 
 package org.kitodo.api.ocr;
@@ -23,14 +23,18 @@ public class FileProperty {
 
     /**
      * Gets the inputFilePath.
+     * 
      * @return The inputFilePath.
      */
     public Path getInputFilePath() {
         return inputFilePath;
     }
 
-    /** Sets the inputFilePath.
-     * @param inputFilePath The inputFilePath.
+    /**
+     * Sets the inputFilePath.
+     * 
+     * @param inputFilePath
+     *            The inputFilePath.
      */
     public void setInputFilePath(Path inputFilePath) {
         this.inputFilePath = inputFilePath;
@@ -38,14 +42,18 @@ public class FileProperty {
 
     /**
      * Gets the outputFileName.
+     * 
      * @return The outputFileName.
      */
     public String getOutputFileName() {
         return outputFileName;
     }
 
-    /** Sets the outputFileName.
-     * @param outputFileName The outputFileName.
+    /**
+     * Sets the outputFileName.
+     * 
+     * @param outputFileName
+     *            The outputFileName.
      */
     public void setOutputFileName(String outputFileName) {
         this.outputFileName = outputFileName;

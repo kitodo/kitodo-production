@@ -36,7 +36,7 @@ public class HistoryServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test

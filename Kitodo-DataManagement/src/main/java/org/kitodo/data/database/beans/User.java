@@ -83,17 +83,9 @@ public class User extends BaseBean {
     private LdapGroup ldapGroup;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_x_userGroup",
-            joinColumns = {
-                    @JoinColumn(
-                            name = "user_id",
-                            foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")
-                    ) },
-            inverseJoinColumns = {
-                    @JoinColumn(
-                            name = "userGroup_id",
-                            foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")
-                    ) })
+    @JoinTable(name = "user_x_userGroup", joinColumns = {
+            @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
@@ -299,12 +291,18 @@ public class User extends BaseBean {
     }
 
     /**
-     * The function selfDestruct() removes a user from the environment. Since the user ID may still be referenced
-     * somewhere, the user is not hard deleted from the database, instead the account is set inactive and invisible.
+     * The function selfDestruct() removes a user from the environment. Since
+     * the user ID may still be referenced somewhere, the user is not hard
+     * deleted from the database, instead the account is set inactive and
+     * invisible.
      *
-     * <p>To allow recreation of an account with the same login the login is cleaned - otherwise it would be blocked
-     * eternally by the login existence test performed in the BenutzerverwaltungForm.Speichern() function.
-     * In addition,  all personally identifiable information is removed from the database as well.</p>
+     * <p>
+     * To allow recreation of an account with the same login the login is
+     * cleaned - otherwise it would be blocked eternally by the login existence
+     * test performed in the BenutzerverwaltungForm.Speichern() function. In
+     * addition, all personally identifiable information is removed from the
+     * database as well.
+     * </p>
      */
 
     public User selfDestruct() {
@@ -319,14 +317,16 @@ public class User extends BaseBean {
         return this;
     }
 
-    //Here will be methods which should be in UserService but are used by jsp files
+    // Here will be methods which should be in UserService but are used by jsp
+    // files
 
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
     /**
      * Adds a new filter to list.
      *
-     * @param inputFilter the filter to add
+     * @param inputFilter
+     *            the filter to add
      */
     public void addFilter(String inputFilter) {
         if (getFilters().contains(inputFilter)) {
@@ -343,7 +343,8 @@ public class User extends BaseBean {
     /**
      * Removes filter from list.
      *
-     * @param inputFilter the filter to remove
+     * @param inputFilter
+     *            the filter to remove
      */
     public void removeFilter(String inputFilter) {
         if (!getFilters().contains(inputFilter)) {

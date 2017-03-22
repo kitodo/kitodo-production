@@ -26,8 +26,8 @@ import java.util.Map;
 public class MetadataHelper {
 
     /**
-     * This method is copied from de.sub.goobi.metadaten.MetadatenHelper.
-     * It check whether this is a rdf or mets file.
+     * This method is copied from de.sub.goobi.metadaten.MetadatenHelper. It
+     * check whether this is a rdf or mets file.
      *
      * @return meta file type
      */
@@ -41,10 +41,8 @@ public class MetadataHelper {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        try (
-                InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-                BufferedReader bufRead = new BufferedReader(input);
-        ) {
+        try (InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+                BufferedReader bufRead = new BufferedReader(input);) {
             char[] buffer = new char[200];
             while ((bufRead.read(buffer)) >= 0) {
                 String temp = new String(buffer).toLowerCase();

@@ -23,9 +23,12 @@ public class WorkpiecePropertyDAO extends BaseDAO {
     /**
      * Find workpiece property object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public WorkpieceProperty find(Integer id) throws DAOException {
         WorkpieceProperty result = (WorkpieceProperty) retrieveObject(WorkpieceProperty.class, id);
@@ -36,7 +39,8 @@ public class WorkpiecePropertyDAO extends BaseDAO {
     }
 
     /**
-     * The function findAll() retrieves all workpieces' properties from the database.
+     * The function findAll() retrieves all workpieces' properties from the
+     * database.
      *
      * @return all persisted workpieces' properties
      */
@@ -53,9 +57,11 @@ public class WorkpiecePropertyDAO extends BaseDAO {
     /**
      * The function remove() removes a workpiece property
      *
-     * @param workpieceProperty to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param workpieceProperty
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(WorkpieceProperty workpieceProperty) throws DAOException {
         removeObject(workpieceProperty);

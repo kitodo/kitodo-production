@@ -24,23 +24,24 @@ import org.goobi.io.SafeFile;
 public class FileUtils {
 
     /**
-	 * calculate all files with given file extension at specified directory recursively.
-	 *
-	 * @param inDir
-	 *            the directory to run through
-	 * @return number of files as Integer
-	 */
+     * calculate all files with given file extension at specified directory
+     * recursively.
+     *
+     * @param inDir
+     *            the directory to run through
+     * @return number of files as Integer
+     */
     public static Integer getNumberOfFiles(SafeFile inDir) {
         int anzahl = 0;
         if (inDir.isDirectory()) {
             /*
-			 * die Images zählen
-			 */
+             * die Images zählen
+             */
             anzahl = inDir.list(Helper.imageNameFilter).length;
 
             /*
-			 * die Unterverzeichnisse durchlaufen
-			 */
+             * die Unterverzeichnisse durchlaufen
+             */
             String[] children = inDir.list();
             for (int i = 0; i < children.length; i++) {
                 anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));

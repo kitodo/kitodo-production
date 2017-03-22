@@ -41,11 +41,16 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     /**
      * Constructor.
      *
-     * @param name String
-     * @param folder SafeFile
-     * @param template Integer
-     * @param updateStrategy String
-     * @param collection String
+     * @param name
+     *            String
+     * @param folder
+     *            SafeFile
+     * @param template
+     *            Integer
+     * @param updateStrategy
+     *            String
+     * @param collection
+     *            String
      */
     public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
         this.setName(name);
@@ -66,9 +71,10 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     }
 
     /**
-     *Get files by name.
+     * Get files by name.
      *
-     * @param name String
+     * @param name
+     *            String
      * @return a list with all filenames containing the name in GoobiHotfolder
      */
 
@@ -87,7 +93,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     /**
      * Get file names by filter.
      *
-     * @param filter FilenameFilter object
+     * @param filter
+     *            FilenameFilter object
      * @return a list with all filenames matching the filter
      */
     @Override
@@ -98,7 +105,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     /**
      * Get files by filter.
      *
-     * @param filter FilenameFilter object
+     * @param filter
+     *            FilenameFilter object
      * @return a list with all file matching the filter
      */
     @Override
@@ -146,8 +154,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
         logger.trace("config 2");
 
         try {
-            XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory()
-                    + "goobi_hotfolder.xml");
+            XMLConfiguration config = new XMLConfiguration(
+                    new Helper().getGoobiConfigDirectory() + "goobi_hotfolder.xml");
 
             logger.trace("config 3");
 

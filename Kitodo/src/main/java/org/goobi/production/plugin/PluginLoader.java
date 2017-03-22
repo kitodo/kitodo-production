@@ -46,8 +46,9 @@ public class PluginLoader {
     private static final Logger logger = Logger.getLogger(PluginLoader.class);
 
     /**
-     * The function getCataloguePluginForCatalogue() returns a redirection class to handle
-     * the first plug-in implementation object that positively responds to <code>supportsCatalogue(catalogue)</code>.
+     * The function getCataloguePluginForCatalogue() returns a redirection class
+     * to handle the first plug-in implementation object that positively
+     * responds to <code>supportsCatalogue(catalogue)</code>.
      *
      * @param catalogue
      *            catalogue in question
@@ -94,13 +95,15 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginByTitle() loads all plug-ins implementing the given UnspecificPlugin class type
-     * and returns a redirection class to handle the first plug-in implementation object that responds to
+     * The function getPluginByTitle() loads all plug-ins implementing the given
+     * UnspecificPlugin class type and returns a redirection class to handle the
+     * first plug-in implementation object that responds to
      * <code>getTitle(language)</code> with the given title.
      *
      * <p>
-     * Currently, this method is not referenced from within the Production code, but this may change in future.
-     * The function is provided to show how the old plug-in API can be replaced in future.
+     * Currently, this method is not referenced from within the Production code,
+     * but this may change in future. The function is provided to show how the
+     * old plug-in API can be replaced in future.
      * </p>
      *
      * @param clazz
@@ -126,12 +129,14 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginConfiguration() creates a HashMap that is passed to the plug-ins upon creation
-     * to configure them. The plug-ins may or may not make use of the configuration provided.
+     * The function getPluginConfiguration() creates a HashMap that is passed to
+     * the plug-ins upon creation to configure them. The plug-ins may or may not
+     * make use of the configuration provided.
      *
      * <p>
-     * This is intended to be used for <em>general</em> configuration (probably) suitable for all plug-in types.
-     * Use setters on the plug-ins to set type-specific settings.
+     * This is intended to be used for <em>general</em> configuration (probably)
+     * suitable for all plug-in types. Use setters on the plug-ins to set
+     * type-specific settings.
      * </p>
      *
      * @return a HashMap to configure the plug-ins
@@ -145,8 +150,9 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPlugins() loads all plug-ins implementing the given UnspecificPlugin class type and
-     * returns a Collection of redirection classes, each to handle one plug-in implementation object.
+     * The function getPlugins() loads all plug-ins implementing the given
+     * UnspecificPlugin class type and returns a Collection of redirection
+     * classes, each to handle one plug-in implementation object.
      *
      * @param clazz
      *            UnspecificPlugin class type of the plug-ins to load
@@ -187,7 +193,8 @@ public class PluginLoader {
     }
 
     /**
-     * The function getImportPluginsForType() returns a list of titles of import plug-ins matching the given ImportType.
+     * The function getImportPluginsForType() returns a list of titles of import
+     * plug-ins matching the given ImportType.
      *
      * @param type
      *            ImportType of plug-ins to look for
@@ -206,8 +213,8 @@ public class PluginLoader {
     }
 
     /**
-     * The function getPluginLoader() returns a PluginManagerUtil suitable for loading plug-ins from
-     * the subdirectory defined by the given PluginType.
+     * The function getPluginLoader() returns a PluginManagerUtil suitable for
+     * loading plug-ins from the subdirectory defined by the given PluginType.
      *
      * @param type
      *            plug-in type specifying the plug-in subdirectory to scan

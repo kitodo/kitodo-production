@@ -37,82 +37,83 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class StatQuestProductionTest {
 
-	static StatQuestProduction test;
-	Locale locale = new Locale("GERMAN");
-	IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-	StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
+    static StatQuestProduction test;
+    Locale locale = new Locale("GERMAN");
+    IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+    StatisticsManager testManager = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
 
-	@BeforeClass
-	public static void setUp() {
-	//TODO: HIBERNATE fix
-//		Configuration cfg = HibernateUtil.getConfiguration();
-//		cfg.setProperty("hibernate.connection.url", "jdbc:mysql://localhost/testgoobi");
-//		HibernateUtil.rebuildSessionFactory();
-		test = new StatQuestProduction();
-	}
+    @BeforeClass
+    public static void setUp() {
+        // TODO: HIBERNATE fix
+        // Configuration cfg = HibernateUtil.getConfiguration();
+        // cfg.setProperty("hibernate.connection.url",
+        // "jdbc:mysql://localhost/testgoobi");
+        // HibernateUtil.rebuildSessionFactory();
+        test = new StatQuestProduction();
+    }
 
-	@AfterClass
-	public static void tearDown() {
-		
-	}
+    @AfterClass
+    public static void tearDown() {
 
-	@Ignore("Crashing") 
-	@Test
-	public void testGetDataTables() throws DAOException {
-		IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-		test.setTimeUnit(TimeUnit.days);
-		List<DataTable> tables = test.getDataTables(testFilter);
-		int countTableInTables = 0;
-		while (countTableInTables < tables.size()) {
-			DataTable table = tables.get(countTableInTables);
-			int countRowsInTable = 0;
-			while (countRowsInTable < table.getDataRowsSize()) {
-				List<DataRow> rows = table.getDataRows();
-				ListIterator<DataRow> countRowInRows = rows.listIterator();
-				while (countRowInRows.hasNext()) {
-					DataRow row = countRowInRows.next();
-					int number = row.getNumberValues();
-					int countValuesInRow = 0;
-					while (countValuesInRow < number) {
-						countValuesInRow++;
-						assertNotNull(row);
-					}
-					countRowsInTable++;
-				}
-				countTableInTables++;
-			}
-		}
-	}
+    }
 
-	@Test
-	public void testSetTimeFrame() {
-		Calendar cal1 = Calendar.getInstance();
-		Calendar cal2 = Calendar.getInstance();
-		cal1.set(2008, 01, 01);
-		cal2.set(2008, 03, 31);
-		test.setTimeFrame(cal1.getTime(), cal2.getTime());
-	}
+    @Ignore("Crashing")
+    @Test
+    public void testGetDataTables() throws DAOException {
+        IDataSource testFilter = new UserDefinedFilter("stepdone:5");
+        test.setTimeUnit(TimeUnit.days);
+        List<DataTable> tables = test.getDataTables(testFilter);
+        int countTableInTables = 0;
+        while (countTableInTables < tables.size()) {
+            DataTable table = tables.get(countTableInTables);
+            int countRowsInTable = 0;
+            while (countRowsInTable < table.getDataRowsSize()) {
+                List<DataRow> rows = table.getDataRows();
+                ListIterator<DataRow> countRowInRows = rows.listIterator();
+                while (countRowInRows.hasNext()) {
+                    DataRow row = countRowInRows.next();
+                    int number = row.getNumberValues();
+                    int countValuesInRow = 0;
+                    while (countValuesInRow < number) {
+                        countValuesInRow++;
+                        assertNotNull(row);
+                    }
+                    countRowsInTable++;
+                }
+                countTableInTables++;
+            }
+        }
+    }
 
-	@Test
-	public void testSetTimeUnit() {
-		test.setTimeUnit(TimeUnit.days);
-	}
+    @Test
+    public void testSetTimeFrame() {
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        cal1.set(2008, 01, 01);
+        cal2.set(2008, 03, 31);
+        test.setTimeFrame(cal1.getTime(), cal2.getTime());
+    }
 
-	@Test
-	public void testSetCalculationUnit() {
-		test.setCalculationUnit(CalculationUnit.pages);
-	}
+    @Test
+    public void testSetTimeUnit() {
+        test.setTimeUnit(TimeUnit.days);
+    }
 
-	@Test
-	public void testIsRendererInverted() {
-		IRenderer inRenderer = new ChartRenderer();
-		assertTrue(test.isRendererInverted(inRenderer));
-	}
+    @Test
+    public void testSetCalculationUnit() {
+        test.setCalculationUnit(CalculationUnit.pages);
+    }
 
-	@Test
-	public void testGetNumberFormatPattern() {
-		String answer = null;
-		answer = test.getNumberFormatPattern();
-		assertNotNull(answer);
-	}
+    @Test
+    public void testIsRendererInverted() {
+        IRenderer inRenderer = new ChartRenderer();
+        assertTrue(test.isRendererInverted(inRenderer));
+    }
+
+    @Test
+    public void testGetNumberFormatPattern() {
+        String answer = null;
+        answer = test.getNumberFormatPattern();
+        assertNotNull(answer);
+    }
 }

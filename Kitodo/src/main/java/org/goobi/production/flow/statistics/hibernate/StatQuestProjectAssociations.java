@@ -30,8 +30,8 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 
 /**
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with
+ * predefined Values in data Table
  * 
  * @author Wulf Riebensahm
  */
@@ -39,7 +39,10 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * org.goobi.production.flow.statistics.IDataSource)
      */
     @Override
     public List<DataTable> getDataTables(IDataSource dataSource) {
@@ -60,8 +63,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
         Criteria crit;
 
         if (originalFilter instanceof UserDefinedFilter) {
-            crit = new UserDefinedFilter(originalFilter.getIDList())
-                    .getCriteria();
+            crit = new UserDefinedFilter(originalFilter.getIDList()).getCriteria();
             crit.createCriteria("project", "proj");
         } else {
             crit = originalFilter.clone().getCriteria();
@@ -70,8 +72,7 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
         // use a clone on the filter and apply the projection on the clone
         crit.setProjection(proj);
 
-        StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(
-                this.getClass()).getTitle());
+        StringBuilder title = new StringBuilder(StatisticsMode.getByClassName(this.getClass()).getTitle());
 
         DataTable dtbl = new DataTable(title.toString());
         dtbl.setShowableInPieChart(true);
@@ -79,8 +80,8 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
         for (Object obj : crit.list()) {
             Object[] objArr = (Object[]) obj;
-            dRow.addValue(new Converter(objArr[1]).getString(), new Converter(
-                    new Converter(objArr[0]).getInteger()).getDouble());
+            dRow.addValue(new Converter(objArr[1]).getString(),
+                    new Converter(new Converter(objArr[0]).getInteger()).getDouble());
         }
         dtbl.addDataRow(dRow);
 
@@ -93,7 +94,9 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
      */
     @Override
     public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -102,7 +105,10 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit(org.goobi.production.flow.statistics.enums.
+     * CalculationUnit)
      */
     @Override
     public void setCalculationUnit(CalculationUnit cu) {
@@ -110,7 +116,10 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org
+     * .goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
     public void setTimeUnit(TimeUnit timeUnit) {
@@ -118,7 +127,9 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * getNumberFormatPattern()
      */
     @Override
     public String getNumberFormatPattern() {

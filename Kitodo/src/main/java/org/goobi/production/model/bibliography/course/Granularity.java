@@ -42,16 +42,16 @@ public enum Granularity {
     ISSUES, DAYS, WEEKS, MONTHS, QUARTERS, YEARS;
 
     /**
-     * The function format() converts a given LocalDate to a String representation of the date in
-     * the given granularity. For the 1st January 2000 it will return:
+     * The function format() converts a given LocalDate to a String
+     * representation of the date in the given granularity. For the 1st January
+     * 2000 it will return:
      *
-     *   • for DAYS:     2000-01-01
-     *   • for WEEKS:    1999-W52
-     *   • for MONTHS:   2000-01
-     *   • for QUARTERS: 2000/Q1
-     *   • for YEARS:    2000
+     * • for DAYS: 2000-01-01 • for WEEKS: 1999-W52 • for MONTHS: 2000-01 • for
+     * QUARTERS: 2000/Q1 • for YEARS: 2000
      *
-     * <p>The remaining cases are undefined and will throw NotImplementedException.</p>
+     * <p>
+     * The remaining cases are undefined and will throw NotImplementedException.
+     * </p>
      *
      * @param date
      *            date to format

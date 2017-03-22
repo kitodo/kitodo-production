@@ -24,10 +24,12 @@ import javax.persistence.Transient;
 /**
  * User groups owning different access rights, represented by integer values.
  *
- * <p>1: Administration - can do anything
- * 2: Projectmanagement - may do a lot (but not user management, no user switch, no administrative form)
- * 3: User and process (basically like 4 but can be used for setting additional boundaries later, if so desired)
- * 4: User only: can see current steps</p>
+ * <p>
+ * 1: Administration - can do anything 2: Projectmanagement - may do a lot (but
+ * not user management, no user switch, no administrative form) 3: User and
+ * process (basically like 4 but can be used for setting additional boundaries
+ * later, if so desired) 4: User only: can see current steps
+ * </p>
  */
 @Entity
 @Table(name = "userGroup")
@@ -108,7 +110,6 @@ public class UserGroup extends BaseBean implements Comparable<UserGroup> {
         return this.getTitle().compareTo(o.getTitle());
     }
 
-
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof UserGroup)) {
@@ -123,7 +124,8 @@ public class UserGroup extends BaseBean implements Comparable<UserGroup> {
         return this.getTitle().hashCode();
     }
 
-    //Here will be methods which should be in UserService but are used by jsp files
+    // Here will be methods which should be in UserService but are used by jsp
+    // files
 
     public String getPermissionAsString() {
         if (this.getPermission() == null) {

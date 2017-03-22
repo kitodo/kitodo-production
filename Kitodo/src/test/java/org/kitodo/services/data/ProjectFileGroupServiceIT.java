@@ -36,7 +36,7 @@ public class ProjectFileGroupServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -44,7 +44,8 @@ public class ProjectFileGroupServiceIT {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
         ProjectFileGroup projectFileGroup = projectFileGroupService.find(1);
-        boolean condition = projectFileGroup.getName().equals("MAX") && projectFileGroup.getMimeType().equals("image/jpeg");
+        boolean condition = projectFileGroup.getName().equals("MAX")
+                && projectFileGroup.getMimeType().equals("image/jpeg");
         assertTrue("Project file group was not found in database!", condition);
     }
 

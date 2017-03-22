@@ -45,14 +45,13 @@ public class ProjectObject {
     private boolean projectIsArchived;
 
     public ProjectObject(int id, String title, boolean useDmsImport, int dmsImportTimeOut, String dmsImportRootPath,
-                         String dmsImportImagesPath, String dmsImportSuccessPath, String dmsImportErrorPath,
-                         boolean dmsImportCreateProcessFolder, String fileFormatInternal, String fileFormatDmsExport,
-                         String metsRightsOwner, String metsRightsOwnerLogo, String metsRightsOwnerSite,
-                         String metsDigiprovReference, String metsDigiprovPresentation, String metsPointerPath,
-                         String metsPointerPathAnchor, String metsDigiprovReferenceAnchor,
-                         String metsDigiprovPresentationAnchor, String metsPurl, String metsContentIDs,
-                         String metsRightsOwnerMail, Date startDate, Date endDate, int numberOfPages,
-                         int numberOfVolumes, boolean projectIsArchived) {
+            String dmsImportImagesPath, String dmsImportSuccessPath, String dmsImportErrorPath,
+            boolean dmsImportCreateProcessFolder, String fileFormatInternal, String fileFormatDmsExport,
+            String metsRightsOwner, String metsRightsOwnerLogo, String metsRightsOwnerSite,
+            String metsDigiprovReference, String metsDigiprovPresentation, String metsPointerPath,
+            String metsPointerPathAnchor, String metsDigiprovReferenceAnchor, String metsDigiprovPresentationAnchor,
+            String metsPurl, String metsContentIDs, String metsRightsOwnerMail, Date startDate, Date endDate,
+            int numberOfPages, int numberOfVolumes, boolean projectIsArchived) {
         this.id = id;
         this.title = title;
         this.useDmsImport = useDmsImport;

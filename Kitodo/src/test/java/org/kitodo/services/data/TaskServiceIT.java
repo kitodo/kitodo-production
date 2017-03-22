@@ -37,7 +37,7 @@ public class TaskServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -172,11 +172,13 @@ public class TaskServiceIT {
         Task currentTask = taskService.getCurrent(task);
         List<User> expected = userService.findAll();
         List<User> actual = currentTask.getUsers();
-        //not sure if this getCurrent really changes something, without it also returns all users
-        //additionally this method doesn't work for user (UserService)
-        //System.out.println(task.getUsers() == currentTask.getUsers()); <- true
-        //System.out.println("Normal: " + task.getUsers().size());
-        //System.out.println("Current: " + currentTask.getUsers().size());
+        // not sure if this getCurrent really changes something, without it also
+        // returns all users
+        // additionally this method doesn't work for user (UserService)
+        // System.out.println(task.getUsers() == currentTask.getUsers()); <-
+        // true
+        // System.out.println("Normal: " + task.getUsers().size());
+        // System.out.println("Current: " + currentTask.getUsers().size());
         assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
     }
 }

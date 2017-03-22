@@ -162,10 +162,14 @@ public class ConfigOpac {
      * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
      * <kbd>goobi_opac.xml</kbd>.
      *
-     * <p>The function will return an empty list if there are no such entries for the given catalogue.</p>
+     * <p>
+     * The function will return an empty list if there are no such entries for
+     * the given catalogue.
+     * </p>
      *
      * @param title
-     *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to examine
+     *            Title parameter of the <kbd>&lt;catalogue&gt;</kbd> entry to
+     *            examine
      * @return List
      */
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
@@ -184,8 +188,8 @@ public class ConfigOpac {
     }
 
     /**
-     * Returns all configured catalogue titles from the config file. The Jersey API cannot invoke static methods,
-     * so we need this wrapper method.
+     * Returns all configured catalogue titles from the config file. The Jersey
+     * API cannot invoke static methods, so we need this wrapper method.
      *
      * @return all catalogue titles
      */
@@ -195,8 +199,8 @@ public class ConfigOpac {
     }
 
     /**
-     * Returns all configured media types from the config file. The Jersey API cannot invoke static methods,
-     * so we need this wrapper method.
+     * Returns all configured media types from the config file. The Jersey API
+     * cannot invoke static methods, so we need this wrapper method.
      *
      * @return all media types
      */

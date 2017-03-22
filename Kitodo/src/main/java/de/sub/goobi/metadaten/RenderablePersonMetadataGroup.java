@@ -31,9 +31,9 @@ import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 /**
- * Specialised RenderableMetadataGroup with fixed fields to edit the internal metadata group
- * type &ldquo;person&rdquo;. A person is a fixed data structure in Goobi with the fields normdata record,
- * first name and last name.
+ * Specialised RenderableMetadataGroup with fixed fields to edit the internal
+ * metadata group type &ldquo;person&rdquo;. A person is a fixed data structure
+ * in Goobi with the fields normdata record, first name and last name.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -54,9 +54,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
          * Field constructor. Creates a Field enum constant.
          *
          * @param resourceKey
-         *            key string to look up the translated labels for the field in the messages file
+         *            key string to look up the translated labels for the field
+         *            in the messages file
          * @param isIdentifier
-         *            boolean property telling whether or not the given field is an identifier
+         *            boolean property telling whether or not the given field is
+         *            an identifier
          */
         Field(String resourceKey, boolean isIdentifier) {
             this.isIdentifier = isIdentifier;
@@ -64,7 +66,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
         }
 
         /**
-         * Returns a key string to look up the translated labels for the field in the messages file.
+         * Returns a key string to look up the translated labels for the field
+         * in the messages file.
          *
          * @return key string to look up the labels for the field
          */
@@ -97,9 +100,11 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * @param container
      *            project of the process owning this metadata group
      * @param projectName
-     *            whether the user is about to create the metadata group anew or edit a previously existing one
+     *            whether the user is about to create the metadata group anew or
+     *            edit a previously existing one
      * @throws ConfigurationException
-     *             if one of the sub-fields was configured to display a multi-select metadata
+     *             if one of the sub-fields was configured to display a
+     *             multi-select metadata
      */
     public RenderablePersonMetadataGroup(MetadataType metadataType, MetadataGroup binding,
             RenderableMetadataGroup container, String projectName) throws ConfigurationException {
@@ -136,9 +141,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
     }
 
     /**
-     * Creates a fictitious MetadataType for the given field of the given metadata
-     * type, assuming that the latter is a person. The method is called from the
-     * constructor and thus should not be overloaded.
+     * Creates a fictitious MetadataType for the given field of the given
+     * metadata type, assuming that the latter is a person. The method is called
+     * from the constructor and thus should not be overloaded.
      *
      * @param type
      *            a metadata type which represents a person
@@ -159,23 +164,26 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
     }
 
     /**
-     * Checks whether the configuration is consistent, throws a ConfigurationException otherwise.
+     * Checks whether the configuration is consistent, throws a
+     * ConfigurationException otherwise.
      *
      * @throws ConfigurationException
-     *             if one of the sub-fields was configured to display a multi-select metadata
+     *             if one of the sub-fields was configured to display a
+     *             multi-select metadata
      */
     private final void checkConfiguration() throws ConfigurationException {
         for (Entry<String, RenderableGroupableMetadatum> entry : members.entrySet()) {
             if (!(entry.getValue() instanceof SingleValueRenderableMetadatum)) {
-                throw new ConfigurationException(entry.getKey()
-                        + " is configured to display a multi-select input element,"
-                        + " but the field cannot take multiple values.");
+                throw new ConfigurationException(
+                        entry.getKey() + " is configured to display a multi-select input element,"
+                                + " but the field cannot take multiple values.");
             }
         }
     }
 
     /**
-     * Add the data passed from the metadata element as content to the person record.
+     * Add the data passed from the metadata element as content to the person
+     * record.
      *
      * @param data
      *            data to add

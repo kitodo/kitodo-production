@@ -36,9 +36,11 @@ public class DocketService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param docket object
+     * @param docket
+     *            object
      */
     public void save(Docket docket) throws DAOException, IOException {
         docketDao.save(docket);
@@ -47,9 +49,11 @@ public class DocketService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param docket object
+     * @param docket
+     *            object
      */
     public void remove(Docket docket) throws DAOException, IOException {
         docketDao.remove(docket);

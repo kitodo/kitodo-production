@@ -18,20 +18,23 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
 /**
- * The class Issue represents the regular appearance of one (or the) issue of a newspaper.
+ * The class Issue represents the regular appearance of one (or the) issue of a
+ * newspaper.
  *
  * <p>
- * Newspapers, especially bigger ones, can have several issues that may differ in time of publication
- * (morning issue, evening issue, …), geographic distribution (Edinburgh issue, London issue, …)
- * and/or their days of appearance (weekday issue: Mon—Fri, weekend issue: Sat, sports supplement:
- * Mon, property market: Wed, broadcasting programme: Thu). Furthermore there may be exceptions in either
- * that an issue didn’t appear on a date where, due to the day of week, it usually does (i.e. on holidays)
- * or an issue may have appeared where, due to the day of week, it should not have.
+ * Newspapers, especially bigger ones, can have several issues that may differ
+ * in time of publication (morning issue, evening issue, …), geographic
+ * distribution (Edinburgh issue, London issue, …) and/or their days of
+ * appearance (weekday issue: Mon—Fri, weekend issue: Sat, sports supplement:
+ * Mon, property market: Wed, broadcasting programme: Thu). Furthermore there
+ * may be exceptions in either that an issue didn’t appear on a date where, due
+ * to the day of week, it usually does (i.e. on holidays) or an issue may have
+ * appeared where, due to the day of week, it should not have.
  * </p>
  *
  * <p>
- * Each issue can be modeled by one Issue object each, which are held by a Block object which provides
- * the dates of first and last appearance.
+ * Each issue can be modeled by one Issue object each, which are held by a Block
+ * object which provides the dates of first and last appearance.
  * </p>
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -212,8 +215,9 @@ public class Issue {
     }
 
     /**
-     * Creates a copy of the object. All instance variables will be copied—this is done in
-     * the getter methods—so that modifications to the copied object will not impact to the copy master.
+     * Creates a copy of the object. All instance variables will be copied—this
+     * is done in the getter methods—so that modifications to the copied object
+     * will not impact to the copy master.
      *
      * @param course
      *            course the copy shall belong to
@@ -229,8 +233,9 @@ public class Issue {
     }
 
     /**
-     * The function countIndividualIssues() determines how many stampings of this issue physically appeared
-     * without generating a list of IndividualIssue objects.
+     * The function countIndividualIssues() determines how many stampings of
+     * this issue physically appeared without generating a list of
+     * IndividualIssue objects.
      *
      * @param firstAppearance
      *            first day of the time range to inspect
@@ -298,8 +303,9 @@ public class Issue {
     }
 
     /**
-     * The function isMatch() returns whether the issue appeared on a given LocalDate, taking into
-     * consideration the daysOfWeek of regular appearance, the Set of exclusions and the Set of additions.
+     * The function isMatch() returns whether the issue appeared on a given
+     * LocalDate, taking into consideration the daysOfWeek of regular
+     * appearance, the Set of exclusions and the Set of additions.
      *
      * @param date
      *            a LocalDate to examine
@@ -310,7 +316,8 @@ public class Issue {
     }
 
     /**
-     * The function isMonday() can be used to determine whether the issue regularly appears on Mondays.
+     * The function isMonday() can be used to determine whether the issue
+     * regularly appears on Mondays.
      *
      * @return true, if the issue regularly appears on Mondays.
      */
@@ -319,7 +326,8 @@ public class Issue {
     }
 
     /**
-     * The function isTuesday() can be used to determine whether the issue regularly appears on Tuesdays.
+     * The function isTuesday() can be used to determine whether the issue
+     * regularly appears on Tuesdays.
      *
      * @return true, if the issue regularly appears on Tuesdays.
      */
@@ -328,7 +336,8 @@ public class Issue {
     }
 
     /**
-     * The function isWednesday() can be used to determine whether the issue regularly appears on Wednesdays.
+     * The function isWednesday() can be used to determine whether the issue
+     * regularly appears on Wednesdays.
      *
      * @return true, if the issue regularly appears on Wednesdays.
      */
@@ -337,7 +346,8 @@ public class Issue {
     }
 
     /**
-     * The function isThursday() can be used to determine whether the issue regularly appears on Sundays.
+     * The function isThursday() can be used to determine whether the issue
+     * regularly appears on Sundays.
      *
      * @return true, if the issue regularly appears on Thursdays.
      */
@@ -346,7 +356,8 @@ public class Issue {
     }
 
     /**
-     * The function isFriday() can be used to determine whether the issue regularly appears on Fridays.
+     * The function isFriday() can be used to determine whether the issue
+     * regularly appears on Fridays.
      *
      * @return true, if the issue regularly appears on Fridays.
      */
@@ -355,7 +366,8 @@ public class Issue {
     }
 
     /**
-     * The function isSaturday() can be used to determine whether the issue regularly appears on Saturdays.
+     * The function isSaturday() can be used to determine whether the issue
+     * regularly appears on Saturdays.
      *
      * @return true, if the issue regularly appears on Saturdays.
      */
@@ -364,7 +376,8 @@ public class Issue {
     }
 
     /**
-     * The function isSunday() can be used to determine whether the issue regularly appears on Sundays.
+     * The function isSunday() can be used to determine whether the issue
+     * regularly appears on Sundays.
      *
      * @return true, if the issue regularly appears on Sundays.
      */
@@ -373,9 +386,10 @@ public class Issue {
     }
 
     /**
-     * The method recalculateRegularityOfIssues() recalculates for each Issue the daysOfWeek of its
-     * regular appearance within the given interval of time. This is especially sensible to detect
-     * the underlying regularity after lots of individual issues whose existence is known have been added
+     * The method recalculateRegularityOfIssues() recalculates for each Issue
+     * the daysOfWeek of its regular appearance within the given interval of
+     * time. This is especially sensible to detect the underlying regularity
+     * after lots of individual issues whose existence is known have been added
      * one by one as additions.
      *
      * @param firstAppearance
@@ -531,8 +545,9 @@ public class Issue {
     }
 
     /**
-     * The function toString() provides returns a string that contains a concise but informative
-     * representation of this issue that is easy for a person to read.
+     * The function toString() provides returns a string that contains a concise
+     * but informative representation of this issue that is easy for a person to
+     * read.
      *
      * @return a string representation of the issue
      * @see java.lang.Object#toString()

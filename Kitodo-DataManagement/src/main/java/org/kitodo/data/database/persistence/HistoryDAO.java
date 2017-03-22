@@ -26,9 +26,12 @@ public class HistoryDAO extends BaseDAO {
     /**
      * Find history object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public History find(Integer id) throws DAOException {
         History result = (History) retrieveObject(History.class, id);
@@ -56,9 +59,11 @@ public class HistoryDAO extends BaseDAO {
     /**
      * The function remove() removes a history from database.
      *
-     * @param history to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param history
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(History history) throws DAOException {
         if (history.getId() != null) {
@@ -69,9 +74,11 @@ public class HistoryDAO extends BaseDAO {
     /**
      * The function remove() removes a task from database.
      *
-     * @param id of the task to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param id
+     *            of the task to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
         @SuppressWarnings("unused")

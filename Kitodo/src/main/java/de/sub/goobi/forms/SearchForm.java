@@ -211,8 +211,8 @@ public class SearchForm {
     }
 
     /**
-	 * Constructor.
-	 */
+     * Constructor.
+     */
     public SearchForm() {
         initStepStatus();
         initProjects();
@@ -392,7 +392,7 @@ public class SearchForm {
         String search = "";
         if (!this.processTitle.isEmpty()) {
 
-            search += "\"" + this.processOperand +  this.processTitle + "\" ";
+            search += "\"" + this.processOperand + this.processTitle + "\" ";
         }
         if (!this.idin.isEmpty()) {
             search += "\"" + FilterString.ID + this.idin + "\" ";
@@ -432,10 +432,9 @@ public class SearchForm {
         }
 
         if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
-            search += "\"" + this.stepOperand +  this.status + ":" + this.stepname + "\" ";
+            search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
-        if (!this.stepdonetitle.isEmpty()
-                && !this.stepdoneuser.isEmpty()
+        if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
                 && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
                 && ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
             search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE

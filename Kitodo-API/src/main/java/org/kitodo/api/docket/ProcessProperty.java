@@ -16,15 +16,20 @@ public class ProcessProperty extends Property {
     /** The process id. */
     private Integer processId;
 
-    /** Gets the processId.
+    /**
+     * Gets the processId.
+     * 
      * @return The processId.
      */
     public Integer getProcessId() {
         return processId;
     }
 
-    /** Sets the processId.
-     * @param processId The processId.
+    /**
+     * Sets the processId.
+     * 
+     * @param processId
+     *            The processId.
      */
     public void setProcessId(Integer processId) {
         this.processId = processId;

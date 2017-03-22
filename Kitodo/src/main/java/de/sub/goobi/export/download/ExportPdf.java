@@ -53,9 +53,9 @@ public class ExportPdf extends ExportMets {
 
     @Override
     public boolean startExport(Process myProcess, String inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException,
-            DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
-            ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
+            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
+            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+            DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -112,7 +112,10 @@ public class ExportPdf extends ExportMets {
                  */
 
                 if (new MetadatenVerifizierung().validate(myProcess) && metsTempFile.toURI().toURL() != null) {
-                    /* if no contentserverurl defined use internal goobiContentServerServlet */
+                    /*
+                     * if no contentserverurl defined use internal
+                     * goobiContentServerServlet
+                     */
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
                     }

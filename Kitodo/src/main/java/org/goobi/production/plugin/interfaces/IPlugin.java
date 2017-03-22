@@ -16,9 +16,11 @@ import org.goobi.production.enums.PluginType;
 import net.xeoh.plugins.base.Plugin;
 
 public interface IPlugin extends Plugin {
-	
-	public PluginType getType();
-	public String getTitle();
-	public String getDescription();
-	
+
+    public PluginType getType();
+
+    public String getTitle();
+
+    public String getDescription();
+
 }

@@ -22,9 +22,12 @@ public class WorkpieceDAO extends BaseDAO {
     /**
      * Find workpiece object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public Workpiece find(Integer id) throws DAOException {
         Workpiece result = (Workpiece) retrieveObject(Workpiece.class, id);
@@ -52,9 +55,11 @@ public class WorkpieceDAO extends BaseDAO {
     /**
      * The function remove() removes a workpiece from database.
      *
-     * @param workpiece to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param workpiece
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Workpiece workpiece) throws DAOException {
         if (workpiece.getId() != null) {
@@ -65,9 +70,11 @@ public class WorkpieceDAO extends BaseDAO {
     /**
      * The function remove() removes a workpiece from database.
      *
-     * @param id of the task to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param id
+     *            of the task to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
         @SuppressWarnings("unused")

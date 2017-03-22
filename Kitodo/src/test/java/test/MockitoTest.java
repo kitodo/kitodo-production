@@ -28,20 +28,21 @@ import org.kitodo.data.database.exceptions.DAOException;
 
 public class MockitoTest {
 
-    /*@Test
-    public void testMock() throws DAOException{
-        ProcessService processService = mock(ProcessService.class);
-        Process newProzess = new Process();
-
-        ProcessConverter converter = spy(new ProcessConverter());
-        when(converter.getProzessService()).thenReturn(processService);
-        when(processService.find(any(Integer.class))).thenReturn(newProzess);
-
-        Object nullObject = converter.getAsObject(null,null, null);
-        Assert.assertNull(nullObject);
-        Object object = converter.getAsObject(null, null, "1");
-        Assert.assertEquals(newProzess, object);
-
-    }*/
+    /*
+     * @Test public void testMock() throws DAOException{ ProcessService
+     * processService = mock(ProcessService.class); Process newProzess = new
+     * Process();
+     * 
+     * ProcessConverter converter = spy(new ProcessConverter());
+     * when(converter.getProzessService()).thenReturn(processService);
+     * when(processService.find(any(Integer.class))).thenReturn(newProzess);
+     * 
+     * Object nullObject = converter.getAsObject(null,null, null);
+     * Assert.assertNull(nullObject); Object object =
+     * converter.getAsObject(null, null, "1"); Assert.assertEquals(newProzess,
+     * object);
+     * 
+     * }
+     */
 
 }

@@ -29,9 +29,11 @@ public class TemplateService {
     private Indexer<Template, TemplateType> indexer = new Indexer<>("kitodo", Template.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param template object
+     * @param template
+     *            object
      */
     public void save(Template template) throws DAOException, IOException {
         templateDao.save(template);
@@ -48,9 +50,11 @@ public class TemplateService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param template object
+     * @param template
+     *            object
      */
     public void remove(Template template) throws DAOException, IOException {
         templateDao.remove(template);
@@ -59,9 +63,11 @@ public class TemplateService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         templateDao.remove(id);
@@ -80,7 +86,8 @@ public class TemplateService {
     /**
      * Get size of properties list.
      *
-     * @param template object
+     * @param template
+     *            object
      * @return size of properties list
      */
     public int getPropertiesSize(Template template) {

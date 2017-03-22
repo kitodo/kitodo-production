@@ -36,7 +36,7 @@ public class RulesetServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -62,7 +62,7 @@ public class RulesetServiceIT {
 
         Ruleset ruleset = rulesetService.find(1);
         String actual = rulesetService.getPreferences(ruleset).getVersion();
-        //not sure how to really check if Pref is correct
+        // not sure how to really check if Pref is correct
         System.out.println("Preferences: " + actual);
         assertEquals("Preference is incorrect!", "1.1-20091117", actual);
     }

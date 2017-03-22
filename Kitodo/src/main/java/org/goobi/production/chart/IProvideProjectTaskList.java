@@ -16,7 +16,8 @@ import java.util.List;
 import org.kitodo.data.database.beans.Project;
 
 /**
- * This interface is used to provide a data source for the extended Project Statistics.
+ * This interface is used to provide a data source for the extended Project
+ * Statistics.
  *
  * @author Steffen Hankiewicz
  * @author Wulf Riebensahm
@@ -25,12 +26,12 @@ import org.kitodo.data.database.beans.Project;
 
 public interface IProvideProjectTaskList {
 
-	/**
-	 *
-	 * @param inProject
-	 * @param countImages
-	 * @return List
-	 */
+    /**
+     *
+     * @param inProject
+     * @param countImages
+     * @return List
+     */
 
-	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax);
+    public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax);
 }

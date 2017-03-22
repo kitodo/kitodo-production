@@ -54,8 +54,9 @@ public class LocalMetadataSelector extends MetadataSelector {
     }
 
     /**
-     * Checks if no metadata as named by the path is available at that document structure node, and only in
-	 * this case adds a metadata as named by the path with the value passed to the function.
+     * Checks if no metadata as named by the path is available at that document
+     * structure node, and only in this case adds a metadata as named by the
+     * path with the value passed to the function.
      *
      * @param data
      *            document to work on, required to access the rule set
@@ -64,7 +65,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param value
      *            value to write if no metadatum of this type is available
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(
-     * de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct, java.lang.String)
+     *      de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct,
+     *      java.lang.String)
      */
     @Override
     protected void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value) {
@@ -75,8 +77,9 @@ public class LocalMetadataSelector extends MetadataSelector {
     }
 
     /**
-     * Sets the value of the metadata described by the path to the value passed to the function or creates
-     * a metadata as described by the path, respectively.
+     * Sets the value of the metadata described by the path to the value passed
+     * to the function or creates a metadata as described by the path,
+     * respectively.
      *
      * @param data
      *            document to work on, required to access the rule set
@@ -85,7 +88,8 @@ public class LocalMetadataSelector extends MetadataSelector {
      * @param value
      *            value to write if no metadatum of this type is available
      * @see de.sub.goobi.metadaten.copier.MetadataSelector#createIfPathExistsOnly(
-     * de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct, java.lang.String)
+     *      de.sub.goobi.metadaten.copier.CopierData, ugh.dl.DocStruct,
+     *      java.lang.String)
      */
 
     @Override
@@ -99,7 +103,8 @@ public class LocalMetadataSelector extends MetadataSelector {
     }
 
     /**
-     * Returns all concrete metadata selectors the potentially generic metadata selector expression resolves to.
+     * Returns all concrete metadata selectors the potentially generic metadata
+     * selector expression resolves to.
      *
      * @param node
      *            Node of the logical document structure to work on
@@ -122,8 +127,8 @@ public class LocalMetadataSelector extends MetadataSelector {
     }
 
     /**
-     * Return the value of the metadata named by the path used to construct the  metadata selector,
-     * or null if no such metadata is available here.
+     * Return the value of the metadata named by the path used to construct the
+     * metadata selector, or null if no such metadata is available here.
      *
      * @param node
      *            document structure node to examine
@@ -137,8 +142,8 @@ public class LocalMetadataSelector extends MetadataSelector {
     }
 
     /**
-     * Returns the metadata named by the path used to construct the metadata selector, or null if
-     * no such metadata is available here.
+     * Returns the metadata named by the path used to construct the metadata
+     * selector, or null if no such metadata is available here.
      *
      * @param node
      *            document structure node to examine
@@ -167,8 +172,8 @@ public class LocalMetadataSelector extends MetadataSelector {
     }
 
     /**
-     * Adds a metadata as named by the path with the value passed to the function.
-     * Doesn’t do anything if that isn’t possible.
+     * Adds a metadata as named by the path with the value passed to the
+     * function. Doesn’t do anything if that isn’t possible.
      *
      * @param data
      *            document to work on, required to access the rule set

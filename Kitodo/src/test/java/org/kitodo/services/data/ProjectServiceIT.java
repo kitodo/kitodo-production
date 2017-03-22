@@ -38,7 +38,7 @@ public class ProjectServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ProjectServiceIT {
     public void shouldGetWorkFlow() throws Exception {
         ProjectService projectService = new ProjectService();
 
-        //test passes... but it can mean that something is wrong...
+        // test passes... but it can mean that something is wrong...
         Project project = projectService.find(1);
         List<StepInformation> expected = new ArrayList<>();
         List<StepInformation> actual = projectService.getWorkFlow(project);

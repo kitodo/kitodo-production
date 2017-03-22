@@ -26,7 +26,8 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
 /**
- * A MetadataPathSelector provides methods to retrieve or modify document structure nodes on a document structure node.
+ * A MetadataPathSelector provides methods to retrieve or modify document
+ * structure nodes on a document structure node.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -44,26 +45,29 @@ public class MetadataPathSelector extends MetadataSelector {
     @SuppressWarnings("javadoc")
     private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
     /**
-     * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used to extract
-     * the first metadata path segment.
+     * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
+     * to extract the first metadata path segment.
      */
-    private static final Pattern METADATA_SPLIT_PATH_SCHEME = Pattern.compile("^" + METADATA_PATH_SEPARATOR + "([^"
-            + METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+)");
+    private static final Pattern METADATA_SPLIT_PATH_SCHEME = Pattern
+            .compile("^" + METADATA_PATH_SEPARATOR + "([^" + METADATA_PATH_SEPARATOR + METADATA_SEPARATOR + "]+)");
 
     /**
-     * The constant SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME holds a regular expression used to detect and extract
-     * a quantifier expression at the end of the string.
+     * The constant SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME holds a regular
+     * expression used to detect and extract a quantifier expression at the end
+     * of the string.
      */
     private static final Pattern SEGMENT_WITH_ELEMENT_SELELCTOR_SCHEME = Pattern.compile("(.*?)\\[(.+?)\\]");
 
     /**
-     * DocStructType name of the structure element to look for or create. "*" may be used to look up "any element",
-     * but will not work if an element needs to be constructed at this level.
+     * DocStructType name of the structure element to look for or create. "*"
+     * may be used to look up "any element", but will not work if an element
+     * needs to be constructed at this level.
      */
     private final String docStructType;
 
     /**
-     * Integer of the element referenced, where Integer.MAX_VALUE indicates the "last" element, or null if none.
+     * Integer of the element referenced, where Integer.MAX_VALUE indicates the
+     * "last" element, or null if none.
      */
     private final Object index;
 
@@ -169,7 +173,8 @@ public class MetadataPathSelector extends MetadataSelector {
                 subnode = logicalNode.createChild(docStructType, data.getDigitalDocument(), data.getPreferences());
             } catch (TypeNotAllowedAsChildException e) {
                 // copy rules aren’t related to the rule set but depend on it,
-                // so copy rules that don’t work with the current rule set are ignored
+                // so copy rules that don’t work with the current rule set are
+                // ignored
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Cannot create structural element " + docStructType + " as child of "
                             + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
@@ -182,11 +187,10 @@ public class MetadataPathSelector extends MetadataSelector {
             } catch (Exception e) {
                 // copy rule failed, skip it
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(
-                            "Cannot create structural element " + docStructType + " as child of "
-                                    + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
-                                    + ": Accessing the rule set failed with exception: "
-                                    + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
+                    LOG.debug("Cannot create structural element " + docStructType + " as child of "
+                            + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
+                            + ": Accessing the rule set failed with exception: "
+                            + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
                 }
                 return;
             }
@@ -320,11 +324,11 @@ public class MetadataPathSelector extends MetadataSelector {
         }
 
         if (index == null) {
-            throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for "
-                    + docStructType);
+            throw new RuntimeException(
+                    "Could not resolve metadata path: Path selector is ambiguous for " + docStructType);
         } else if (!(index instanceof Integer)) {
-            throw new RuntimeException("Could not resolve metadata path: In this regard, index \""
-                    + index + "\" is not allowed.");
+            throw new RuntimeException(
+                    "Could not resolve metadata path: In this regard, index \"" + index + "\" is not allowed.");
         } else if (index.equals(Integer.MAX_VALUE)) {
             return children.get(children.size() - 1);
         } else if (children.size() >= ((Integer) index).intValue()) {
@@ -410,7 +414,8 @@ public class MetadataPathSelector extends MetadataSelector {
      * if
      * <ul>
      * <li>the metadata path selector specifies all children, or</li>
-     * <li>the metadata path selector specifies exactly the type of the child.</li>
+     * <li>the metadata path selector specifies exactly the type of the
+     * child.</li>
      * </ul>
      *
      * @param child

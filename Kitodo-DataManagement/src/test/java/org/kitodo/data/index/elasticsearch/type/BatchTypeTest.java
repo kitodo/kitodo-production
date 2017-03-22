@@ -63,7 +63,7 @@ public class BatchTypeTest {
         thirdBatch.setType(Batch.Type.LOGISTIC);
         batches.add(thirdBatch);
 
-       return batches;
+        return batches;
     }
 
     @Test

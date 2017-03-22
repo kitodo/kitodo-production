@@ -16,8 +16,9 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 
 /**
- * The CopyIfMetadataIsAbsentRule defines that a metadata is copied right to left in case that the structure node
- * defined on the left exists but doesn’t yet have a metadata as named. Examples:
+ * The CopyIfMetadataIsAbsentRule defines that a metadata is copied right to
+ * left in case that the structure node defined on the left exists but doesn’t
+ * yet have a metadata as named. Examples:
  *
  * <code>/@CurrentNoSorting ""= /*[0]@CurrentNoSorting</code> − copy the sort
  * number form the first child to the top struct if it doesn’t have a sort
@@ -80,8 +81,8 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
     }
 
     /**
-     * Saves the source object path and creates a selector for it. The source selector can be arbitrary DataSelector,
-     * which may be read-only.
+     * Saves the source object path and creates a selector for it. The source
+     * selector can be arbitrary DataSelector, which may be read-only.
      *
      * @see de.sub.goobi.metadaten.copier.DataCopyrule#setObjects(java.util.List)
      */
@@ -91,8 +92,8 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
     }
 
     /**
-     * Saves the destination object path and creates a selector for it. The destination selector must be
-     * a writable MetadataSelector.
+     * Saves the destination object path and creates a selector for it. The
+     * destination selector must be a writable MetadataSelector.
      *
      * @see de.sub.goobi.metadaten.copier.DataCopyrule#setSubject(java.lang.String)
      */

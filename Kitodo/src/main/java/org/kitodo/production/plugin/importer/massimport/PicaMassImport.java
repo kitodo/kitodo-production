@@ -1,18 +1,18 @@
 /*
  * Copyright by intranda GmbH 2013. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.plugin.importer.massimport;
@@ -101,8 +101,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private String configDir;
     private static final String PPN_PATTERN = "\\d+X?";
 
-    private static final String[] SERIAL_TOTALITY_IDENTIFIER_FIELD = new String[] { "036F", "9" };
-    private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] { "036D", "9" };
+    private static final String[] SERIAL_TOTALITY_IDENTIFIER_FIELD = new String[] {"036F", "9" };
+    private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] {"036D", "9" };
 
     protected String ats;
     protected List<ProcessProperty> processProperties = new ArrayList<ProcessProperty>();
@@ -149,7 +149,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         currentIdentifier = data;
 
         if (logger.isDebugEnabled()) {
-            logger.debug("retrieving pica record for " + currentIdentifier  + " with server address: "
+            logger.debug("retrieving pica record for " + currentIdentifier + " with server address: "
                     + this.getOpacAddress());
         }
         String search = SRUHelper.search(currentIdentifier, this.getOpacAddress());
@@ -360,7 +360,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     }
 
-
     /**
      * If the record contains a volume of a serial publication, then the series
      * data will be prepended to it.
@@ -436,7 +435,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      * @param attributeValue
      *            attribute to locate
      * @return value, or "" if not found
-
+     * 
      */
     @SuppressWarnings("unchecked")
     private static String getSubelementValue(Element inElement, String attributeValue) {
@@ -547,7 +546,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                                 r.setId(String.valueOf(value));
                                 r.setData(String.valueOf(value));
                                 records.add(r);
-                                // logger.debug("found content " + value + " in row " + j + " cell " + i);
+                                // logger.debug("found content " + value + " in
+                                // row " + j + " cell " + i);
 
                             } else if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
                                 String value = cell.getStringCellValue();
@@ -557,7 +557,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                                         if (logger.isDebugEnabled()) {
                                             logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
                                         }
-                                        // found numbers and character 'X' as last sign
+                                        // found numbers and character 'X' as
+                                        // last sign
                                         Record r = new Record();
                                         r.setId(value.trim());
                                         r.setData(value.trim());
@@ -588,7 +589,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                                     r.setId(String.valueOf(value));
                                     r.setData(String.valueOf(value));
                                     records.add(r);
-                                    // logger.debug("found content " + value + " in row " + j + " cell " + i);
+                                    // logger.debug("found content " + value + "
+                                    // in row " + j + " cell " + i);
 
                                 } else if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
                                     String value = cell.getStringCellValue();
@@ -598,7 +600,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                                             if (logger.isDebugEnabled()) {
                                                 logger.debug("matched: " + value + " in row " + (j + 1) + " cell " + i);
                                             }
-                                            // found numbers and character 'X' as last sign
+                                            // found numbers and character 'X'
+                                            // as last sign
                                             Record r = new Record();
                                             r.setId(value.trim());
                                             r.setData(value.trim());
@@ -735,7 +738,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
 
         /*
-         * -------------------------------- bei Zeitschriften Tsl berechnen --------------------------------
+         * -------------------------------- bei Zeitschriften Tsl berechnen
+         * --------------------------------
          */
         // if (gattung.startsWith("ab") || gattung.startsWith("ob")) {
         if (author == null || author.equals("")) {
@@ -779,11 +783,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     /**
      * Set OPAC catalogue.
      *
-     * @param opacCatalogue the opac catalogue
+     * @param opacCatalogue
+     *            the opac catalogue
      */
     @Override
     public void setOpacCatalogue(String opacCatalogue) {
-        this.opacCatalogue = opacCatalogue ;
+        this.opacCatalogue = opacCatalogue;
     }
 
     /**
@@ -798,11 +803,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     /**
      * Set Goobi config directory.
      *
-     * @param configDir the goobi config directory
+     * @param configDir
+     *            the goobi config directory
      */
     @Override
     public void setGoobiConfigDirectory(String configDir) {
-        this.configDir = configDir ;
+        this.configDir = configDir;
     }
 
     /**
@@ -811,7 +817,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      * @return the goobi config directory
      */
     private String getGoobiConfigDirectory() {
-        return configDir ;
+        return configDir;
     }
 
     /**
@@ -823,8 +829,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
         String address = "";
 
-        try (FileInputStream istream = new FileInputStream(FilenameUtils.concat(this.getGoobiConfigDirectory(),
-                "goobi_opac.xml"))) {
+        try (FileInputStream istream = new FileInputStream(
+                FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml"))) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
@@ -834,8 +840,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             XPath xPath = XPathFactory.newInstance().newXPath();
 
-            Node node = (Node) xPath.compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue()
-                    + "']/config").evaluate(xmlDocument, XPathConstants.NODE);
+            Node node = (Node) xPath
+                    .compile("/opacCatalogues/catalogue[@title='" + this.getOpacCatalogue() + "']/config")
+                    .evaluate(xmlDocument, XPathConstants.NODE);
 
             address = node.getAttributes().getNamedItem("address").getNodeValue();
 
@@ -846,7 +853,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             logger.error(e.getMessage(), e);
             throw new ImportPluginException(e);
         } catch (IOException e) {
-            logger.error( e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw new ImportPluginException(e);
         } catch (XPathExpressionException e) {
             logger.error(e.getMessage(), e);

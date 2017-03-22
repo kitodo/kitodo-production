@@ -40,5 +40,5 @@ import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 enum TaskState {
-	CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING
+    CRASHED, FINISHED, NEW, STOPPED, STOPPING, WORKING
 }

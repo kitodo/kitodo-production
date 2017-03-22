@@ -36,7 +36,7 @@ public class WorkpiecePropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -44,7 +44,8 @@ public class WorkpiecePropertyServiceIT {
         WorkpiecePropertyService workpiecePropertyService = new WorkpiecePropertyService();
 
         WorkpieceProperty workpieceProperty = workpiecePropertyService.find(1);
-        boolean condition = workpieceProperty.getTitle().equals("First Property") && workpieceProperty.getValue().equals("first value");
+        boolean condition = workpieceProperty.getTitle().equals("First Property")
+                && workpieceProperty.getValue().equals("first value");
         assertTrue("Workpiece property was not found in database!", condition);
     }
 

@@ -22,17 +22,17 @@ import org.kitodo.data.database.beans.Task;
 
 public class StatistikLaufzeitSchritte {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static Dataset getDiagramm( List inProzesse) {
+    @SuppressWarnings({"unchecked", "rawtypes" })
+    public static Dataset getDiagramm(List inProzesse) {
         DefaultCategoryDataset categoryDataSet = new DefaultCategoryDataset();
         for (Process proz : (List<Process>) inProzesse) {
             for (Task step : proz.getTasks()) {
                 /* wenn Anfangs- und Enddatum vorhanden sind, diese auswerten */
                 if (step.getProcessingBegin() != null && step.getProcessingEnd() != null) {
-                    String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step
-                        .getTitle());
+                    String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..."
+                            : step.getTitle());
                     categoryDataSet.addValue(dateDifference(step.getProcessingBegin(), step.getProcessingEnd()),
-                        kurztitel, proz.getTitle());
+                            kurztitel, proz.getTitle());
                 }
             }
         }

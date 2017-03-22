@@ -19,9 +19,10 @@ import org.apache.http.HttpEntity;
 /**
  * Interface for serving types which are added to the index.
  *
- * <p>Note:
- * MySQL         -> Databases -> Tables -> Columns/Rows
- * ElasticSearch -> Indices   -> Types  -> Documents with Properties</p>
+ * <p>
+ * Note: MySQL -> Databases -> Tables -> Columns/Rows ElasticSearch -> Indices
+ * -> Types -> Documents with Properties
+ * </p>
  */
 public interface TypeInterface<T> {
 

@@ -26,8 +26,7 @@ public class DocketConverter implements Converter {
     private static final Logger logger = Logger.getLogger(DocketConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value)
-         throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
         if (value == null || value.length() == 0) {
             return null;
         } else {
@@ -41,8 +40,7 @@ public class DocketConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value)
-         throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
         if (value == null) {
             return null;
         } else if (value instanceof Docket) {

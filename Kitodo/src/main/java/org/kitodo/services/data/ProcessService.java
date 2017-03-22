@@ -101,9 +101,11 @@ public class ProcessService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param process object
+     * @param process
+     *            object
      */
     public void save(Process process) throws DAOException, IOException {
         processDao.save(process, getProgress(process));
@@ -116,9 +118,11 @@ public class ProcessService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param process object
+     * @param process
+     *            object
      */
     public void remove(Process process) throws DAOException, IOException {
         processDao.remove(process);
@@ -127,9 +131,11 @@ public class ProcessService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         processDao.remove(id);
@@ -160,7 +166,8 @@ public class ProcessService {
     /**
      * Returns the batches of the desired type for a process.
      *
-     * @param type of batches to return
+     * @param type
+     *            of batches to return
      * @return all batches of the desired type
      */
     public List<Batch> getBatchesByType(Process process, Type type) {
@@ -179,9 +186,10 @@ public class ProcessService {
     }
 
     /**
-     * The function getBatchesInitialized() returns the batches for a process and takes care that the object is
-     * initialized from Hibernate already and will not be bothered if the Hibernate session ends.
-     * TODO: check if it is necessary!!
+     * The function getBatchesInitialized() returns the batches for a process
+     * and takes care that the object is initialized from Hibernate already and
+     * will not be bothered if the Hibernate session ends. TODO: check if it is
+     * necessary!!
      *
      * @return the batches field of the process which is loaded
      */
@@ -193,9 +201,10 @@ public class ProcessService {
     }
 
     /**
-     * The function getHistoryInitialized() returns the history events for a process and takes care that the object
-     * is initialized from Hibernate already and will not be bothered if the Hibernate session ends.
-     * TODO: check if it is necessary!!
+     * The function getHistoryInitialized() returns the history events for a
+     * process and takes care that the object is initialized from Hibernate
+     * already and will not be bothered if the Hibernate session ends. TODO:
+     * check if it is necessary!!
      *
      * @return the history field of the process which is loaded
      */
@@ -214,10 +223,11 @@ public class ProcessService {
     }
 
     /**
-     * The function getPropertiesInitialized() returns the descriptive fields (“properties”) for a process and takes
-     * care that the object is initialized from Hibernate already and will not be bothered if the
-     * Hibernate session ends.
-     * TODO: check if it is necessary!! <- e.g. BeanHelper uses it
+     * The function getPropertiesInitialized() returns the descriptive fields
+     * (“properties”) for a process and takes care that the object is
+     * initialized from Hibernate already and will not be bothered if the
+     * Hibernate session ends. TODO: check if it is necessary!! <- e.g.
+     * BeanHelper uses it
      *
      * @return the properties field of the process which is loaded
      */
@@ -259,8 +269,10 @@ public class ProcessService {
     /**
      * Get directory for tig images.
      *
-     * @param useFallBack add description
-     * @param process object
+     * @param useFallBack
+     *            add description
+     * @param process
+     *            object
      * @return tif directory
      */
     public String getImagesTifDirectory(boolean useFallBack, Process process)
@@ -333,6 +345,7 @@ public class ProcessService {
 
     /**
      * Check if Tif directory exists.
+     * 
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean checkIfTifDirectoryExists(Process process) {
@@ -423,7 +436,8 @@ public class ProcessService {
     /**
      * Get images directory.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return path
      */
     public String getImagesDirectory(Process process)
@@ -436,7 +450,8 @@ public class ProcessService {
     /**
      * Get source directory.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return path
      */
     public String getSourceDirectory(Process process)
@@ -465,7 +480,8 @@ public class ProcessService {
     /**
      * Get process data directory.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return path
      */
     public String getProcessDataDirectory(Process process)
@@ -479,8 +495,7 @@ public class ProcessService {
             pst.setShowMessages(true);
             pst.run();
             if (pst.getException() != null) {
-                if (!new SafeFile(path, "images").exists()
-                        && !new SafeFile(path, "meta.xml").exists()) {
+                if (!new SafeFile(path, "images").exists() && !new SafeFile(path, "meta.xml").exists()) {
                     throw new SwapException(pst.getException().getMessage());
                 } else {
                     process.setSwappedOutGui(false);
@@ -524,7 +539,8 @@ public class ProcessService {
     /**
      * Get process data directory ignoring swapping.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return path
      */
     public String getProcessDataDirectoryIgnoreSwapping(Process process)
@@ -536,8 +552,8 @@ public class ProcessService {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated with as readable text
-     * as read-only property "batchID".
+     * The function getBatchID returns the batches the process is associated
+     * with as readable text as read-only property "batchID".
      *
      * @return the batches the process is in
      */
@@ -559,7 +575,8 @@ public class ProcessService {
     /**
      * Get size of tasks' list.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return size
      */
     public int getTasksSize(Process process) {
@@ -573,7 +590,8 @@ public class ProcessService {
     /**
      * Get size of histories' list.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return size
      */
     public int getHistorySize(Process process) {
@@ -587,7 +605,8 @@ public class ProcessService {
     /**
      * Get size of properties' list.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return size
      */
     public int getPropertiesSize(Process process) {
@@ -601,7 +620,8 @@ public class ProcessService {
     /**
      * Get size of workpieces' list.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return size
      */
     public int getWorkpiecesSize(Process process) {
@@ -615,7 +635,8 @@ public class ProcessService {
     /**
      * Get size of templates' list.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return size
      */
     public int getTemplatesSize(Process process) {
@@ -629,7 +650,8 @@ public class ProcessService {
     /**
      * Get current task.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return current task
      */
     public Task getCurrentTask(Process process) {
@@ -676,7 +698,8 @@ public class ProcessService {
     /**
      * Old getFortschritt().
      *
-     * @param process object
+     * @param process
+     *            object
      * @return string
      */
     public String getProgress(Process process) {
@@ -699,19 +722,20 @@ public class ProcessService {
     /**
      * Old getFortschritt1().
      *
-     * @param process object
-     * @return return  progress for open steps
+     * @param process
+     *            object
+     * @return return progress for open steps
      */
     public int getProgressOpen(Process process) {
         HashMap<String, Integer> steps = calculationForProgress(process);
-        return (steps.get("open") * 100)
-                / (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
+        return (steps.get("open") * 100) / (steps.get("open") + steps.get("inProcessing") + steps.get("closed"));
     }
 
     /**
      * Old getFortschritt2().
      *
-     * @param process object
+     * @param process
+     *            object
      * @return progress for processed steps
      */
     public int getProgressInProcessing(Process process) {
@@ -724,7 +748,8 @@ public class ProcessService {
     /**
      * Old getFortschritt3().
      *
-     * @param process object
+     * @param process
+     *            object
      * @return progress for closed steps
      */
     public int getProgressClosed(Process process) {
@@ -760,15 +785,14 @@ public class ProcessService {
     /**
      * Read metadata file.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return filer format
      */
     public Fileformat readMetadataFile(Process process)
-            throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException {
+            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
         if (!checkForMetadataFile(process)) {
-            throw new IOException(Helper.getTranslation("metadataFileNotFound") + " "
-                    + getMetadataFilePath(process));
+            throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + getMetadataFilePath(process));
         }
         Hibernate.initialize(process.getRuleset());
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
@@ -791,8 +815,7 @@ public class ProcessService {
         return ff;
     }
 
-    private Fileformat determineFileFormat(String type, Process process)
-            throws PreferencesException {
+    private Fileformat determineFileFormat(String type, Process process) throws PreferencesException {
         Fileformat fileFormat = null;
         RulesetService rulesetService = new RulesetService();
 
@@ -872,12 +895,13 @@ public class ProcessService {
     /**
      * Write metadata file.
      *
-     * @param gdzfile file format
-     * @param process object
+     * @param gdzfile
+     *            file format
+     * @param process
+     *            object
      */
-    public void writeMetadataFile(Fileformat gdzfile, Process process)
-            throws IOException, InterruptedException, SwapException, DAOException, WriteException,
-            PreferencesException {
+    public void writeMetadataFile(Fileformat gdzfile, Process process) throws IOException, InterruptedException,
+            SwapException, DAOException, WriteException, PreferencesException {
         RulesetService rulesetService = new RulesetService();
         boolean backupCondition;
         boolean writeResult;
@@ -914,22 +938,20 @@ public class ProcessService {
         }
     }
 
-
-    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
-            throws IOException, InterruptedException, SwapException, DAOException, WriteException,
-            PreferencesException {
+    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process) throws IOException,
+            InterruptedException, SwapException, DAOException, WriteException, PreferencesException {
         inFile.write(getTemplateFilePath(process));
     }
 
     /**
      * Read metadata as template file.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return file format
      */
     public Fileformat readMetadataAsTemplateFile(Process process)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
-            DAOException {
+            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
         RulesetService rulesetService = new RulesetService();
         Hibernate.initialize(process.getRuleset());
         if (new SafeFile(getTemplateFilePath(process)).exists()) {
@@ -939,13 +961,14 @@ public class ProcessService {
                 myLogger.debug("current template.xml file type: " + type);
             }
             ff = determineFileFormat(type, process);
-            /*if (type.equals("mets")) {
-                ff = new MetsMods(rulesetService.getPreferences(process.getRuleset()));
-            } else if (type.equals("xstream")) {
-                ff = new XStream(rulesetService.getPreferences(process.getRuleset()));
-            } else {
-                ff = new RDFFile(rulesetService.getPreferences(process.getRuleset()));
-            }*/
+            /*
+             * if (type.equals("mets")) { ff = new
+             * MetsMods(rulesetService.getPreferences(process.getRuleset())); }
+             * else if (type.equals("xstream")) { ff = new
+             * XStream(rulesetService.getPreferences(process.getRuleset())); }
+             * else { ff = new
+             * RDFFile(rulesetService.getPreferences(process.getRuleset())); }
+             */
             ff.read(getTemplateFilePath(process));
             return ff;
         } else {
@@ -954,7 +977,8 @@ public class ProcessService {
     }
 
     /**
-     * Check whether the operation contains steps that are not assigned to a user or user group.
+     * Check whether the operation contains steps that are not assigned to a
+     * user or user group.
      */
     public boolean getContainsUnreachableSteps(Process process) {
         TaskService taskService = new TaskService();
@@ -970,7 +994,8 @@ public class ProcessService {
     }
 
     /**
-     * Check if there is one task in edit mode, where the user has the rights to write to image folder.
+     * Check if there is one task in edit mode, where the user has the rights to
+     * write to image folder.
      */
     public boolean isImageFolderInUse(Process process) {
         for (Task task : process.getTasks()) {
@@ -996,7 +1021,8 @@ public class ProcessService {
     /**
      * Download docket.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return empty string?
      */
     public String downloadDocket(Process process) {
@@ -1041,7 +1067,8 @@ public class ProcessService {
     /**
      * Get first open task for the process.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return first open task
      */
     public Task getFirstOpenStep(Process process) {
@@ -1058,8 +1085,10 @@ public class ProcessService {
     /**
      * Get method from name.
      *
-     * @param methodName string
-     * @param process object
+     * @param methodName
+     *            string
+     * @param process
+     *            object
      * @return method from name
      */
     public String getMethodFromName(String methodName, Process process) {
@@ -1085,16 +1114,20 @@ public class ProcessService {
         return null;
     }
 
-    /*public List<String> getPossibleDigitalCollections(Process process) throws JDOMException, IOException {
-        return DigitalCollections.possibleDigitalCollectionsForProcess(process);
-    }*/
+    /*
+     * public List<String> getPossibleDigitalCollections(Process process) throws
+     * JDOMException, IOException { return
+     * DigitalCollections.possibleDigitalCollectionsForProcess(process); }
+     */
 
     /**
-     * The addMessageToWikiField() method is a helper method which composes the new wiki field using a StringBuilder.
-     * The message is encoded using HTML entities to prevent certain characters from playing merry havoc when the
+     * The addMessageToWikiField() method is a helper method which composes the
+     * new wiki field using a StringBuilder. The message is encoded using HTML
+     * entities to prevent certain characters from playing merry havoc when the
      * message box shall be rendered in a browser later.
      *
-     * @param message the message to append
+     * @param message
+     *            the message to append
      */
     public Process addToWikiField(String message, Process process) {
         StringBuilder composer = new StringBuilder();
@@ -1111,8 +1144,9 @@ public class ProcessService {
     }
 
     /**
-     * The method addToWikiField() adds a message with a given level to the wiki field of the process. Four level
-     * strings will be recognized and result in different colors:
+     * The method addToWikiField() adds a message with a given level to the wiki
+     * field of the process. Four level strings will be recognized and result in
+     * different colors:
      *
      * <dl>
      * <dt><code>debug</code></dt>
@@ -1127,28 +1161,33 @@ public class ProcessService {
      * <dd>blue</dd>
      * <dt>
      *
-     * @param level message colour, one of: "debug", "error", "info", "user" or "warn";
-     *                 any other value defaults to "info"
-     * @param message text
+     * @param level
+     *            message colour, one of: "debug", "error", "info", "user" or
+     *            "warn"; any other value defaults to "info"
+     * @param message
+     *            text
      */
     public String addToWikiField(String level, String message, Process process) {
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), level, message);
     }
 
     /**
-     * The method addToWikiField() adds a message signed by the given user to the wiki field of the process.
+     * The method addToWikiField() adds a message signed by the given user to
+     * the wiki field of the process.
      *
-     * @param user to sign the message with
-     * @param message to print
+     * @param user
+     *            to sign the message with
+     * @param message
+     *            to print
      */
     public void addToWikiField(User user, String message, Process process) {
         String text = message + " (" + user.getSurname() + ")";
-        //addToWikiField("user", process, text);
+        // addToWikiField("user", process, text);
     }
 
     /**
-     * The method createProcessDirs() starts creation of directories configured by parameter processDirs within
-     * goobi_config.properties
+     * The method createProcessDirs() starts creation of directories configured
+     * by parameter processDirs within goobi_config.properties
      */
     public void createProcessDirs(Process process)
             throws SwapException, DAOException, IOException, InterruptedException {
@@ -1163,29 +1202,38 @@ public class ProcessService {
     }
 
     /**
-     * The function getDigitalDocument() returns the digital act of this process.
+     * The function getDigitalDocument() returns the digital act of this
+     * process.
      *
      * @return the digital act of this process
-     * @throws PreferencesException if the no node corresponding to the file format is available in the rule set
-     * 				configured
-     * @throws ReadException if the meta data file cannot be read
-     * @throws SwapException if an error occurs while the process is swapped back in
-     * @throws DAOException if an error occurs while saving the fact that the process has
+     * @throws PreferencesException
+     *             if the no node corresponding to the file format is available
+     *             in the rule set configured
+     * @throws ReadException
+     *             if the meta data file cannot be read
+     * @throws SwapException
+     *             if an error occurs while the process is swapped back in
+     * @throws DAOException
+     *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
-     * @throws IOException if creating the process directory or reading the meta data file fails
-     * @throws InterruptedException if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to finish
+     * @throws IOException
+     *             if creating the process directory or reading the meta data
+     *             file fails
+     * @throws InterruptedException
+     *             if the current thread is interrupted by another thread while
+     *             it is waiting for the shell script to create the directory to
+     *             finish
      */
     public DigitalDocument getDigitalDocument(Process process)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException,
-            InterruptedException {
+            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
         return readMetadataFile(process).getDigitalDocument();
     }
 
     /**
      * Filter for correction / solution messages.
      *
-     * @param lpe List of process properties
+     * @param lpe
+     *            List of process properties
      * @return List of filtered correction / solution messages
      */
     protected List<ProcessProperty> filterForCorrectionSolutionMessages(List<ProcessProperty> lpe) {
@@ -1213,7 +1261,8 @@ public class ProcessService {
     }
 
     /**
-     * Filter and sort after creation date list of process properties for correction and solution messages.
+     * Filter and sort after creation date list of process properties for
+     * correction and solution messages.
      *
      * @return list of ProcessProperty objects
      */

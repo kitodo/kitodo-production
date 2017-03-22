@@ -19,8 +19,10 @@ public interface ImageManagementInterface {
     /**
      * Scales an image at a given path and returns it.
      *
-     * @param imageFilePath The path to the image which should be scaled.
-     * @param percent The percentage for scaling.
+     * @param imageFilePath
+     *            The path to the image which should be scaled.
+     * @param percent
+     *            The percentage for scaling.
      * @return The scaled image.
      */
     Image getScaledWebImage(Path imageFilePath, double percent);
@@ -28,10 +30,14 @@ public interface ImageManagementInterface {
     /**
      * Creates a derivative for an image at a given path.
      *
-     * @param imageFilePath The path to the image.
-     * @param percent The percentage of scaling for the derivative.
-     * @param resultFilePath The path to save the derivative to.
-     * @param resultFileFormat The formate for the derivative.
+     * @param imageFilePath
+     *            The path to the image.
+     * @param percent
+     *            The percentage of scaling for the derivative.
+     * @param resultFilePath
+     *            The path to save the derivative to.
+     * @param resultFileFormat
+     *            The formate for the derivative.
      * @return true, if creation was successfull, false otherwise.
      */
     boolean createDerivative(Path imageFilePath, double percent, Path resultFilePath, ImageFileFormat resultFileFormat);

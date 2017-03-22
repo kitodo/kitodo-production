@@ -20,43 +20,58 @@ public class Property {
     /** The value of the property. */
     private String value;
 
-    /** Gets the id.
+    /**
+     * Gets the id.
+     * 
      * @return The id.
      */
     public Integer getId() {
         return id;
     }
 
-    /** Sets the id.
-     * @param id The id.
+    /**
+     * Sets the id.
+     * 
+     * @param id
+     *            The id.
      */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /** Gets the title.
+    /**
+     * Gets the title.
+     * 
      * @return The title.
      */
     public String getTitle() {
         return title;
     }
 
-    /** Sets the title.
-     * @param title The title.
+    /**
+     * Sets the title.
+     * 
+     * @param title
+     *            The title.
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /** Gets the value.
+    /**
+     * Gets the value.
+     * 
      * @return The value.
      */
     public String getValue() {
         return value;
     }
 
-    /** Sets the value.
-     * @param value The value.
+    /**
+     * Sets the value.
+     * 
+     * @param value
+     *            The value.
      */
     public void setValue(String value) {
         this.value = value;

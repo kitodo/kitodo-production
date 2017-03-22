@@ -76,8 +76,8 @@ public class Multipage {
         /*
          * alle Bilder als Multipage erzeugen
          */
-        OutputStream out = new FileOutputStream(this.help.getGoobiDataDirectory() + process.getId()
-                + File.separator + "multipage.tiff");
+        OutputStream out = new FileOutputStream(
+                this.help.getGoobiDataDirectory() + process.getId() + File.separator + "multipage.tiff");
         TIFFEncodeParam param = new TIFFEncodeParam();
         param.setCompression(4);
         ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
@@ -94,10 +94,10 @@ public class Multipage {
     /**
      * Start export.
      *
-     * @param process object
+     * @param process
+     *            object
      */
-    public void ExportStart(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void ExportStart(Process process) throws IOException, InterruptedException, SwapException, DAOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
@@ -113,8 +113,7 @@ public class Multipage {
             /*
              * die txt-Datei direkt in den Stream schreiben lassen
              */
-            String filename = this.help.getGoobiDataDirectory() + process.getId() + File.separator
-                    + "multipage.tiff";
+            String filename = this.help.getGoobiDataDirectory() + process.getId() + File.separator + "multipage.tiff";
             if (!(new File(filename)).exists()) {
                 create(process);
             }

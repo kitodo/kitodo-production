@@ -30,9 +30,12 @@ public class TreeNode {
     /**
      * Constructor.
      *
-     * @param expanded boolean
-     * @param label String
-     * @param id String
+     * @param expanded
+     *            boolean
+     * @param label
+     *            String
+     * @param id
+     *            String
      */
     public TreeNode(boolean expanded, String label, String id) {
         this.expanded = expanded;
@@ -50,15 +53,14 @@ public class TreeNode {
      *
      * @return list
      */
-    public List<HashMap<String,Object>> getChildrenAsList() {
-        List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
-        getChildrenAsListMitStrichen(myList, 0, this, true,true,
-                new ArrayList<Boolean>());
+    public List<HashMap<String, Object>> getChildrenAsList() {
+        List<HashMap<String, Object>> myList = new ArrayList<HashMap<String, Object>>();
+        getChildrenAsListMitStrichen(myList, 0, this, true, true, new ArrayList<Boolean>());
         return myList;
     }
 
-    @SuppressWarnings({ "unused", "unchecked", "rawtypes" })
-    private List getChildrenAsList(List inList, int niveau,List inStriche,boolean VaterIstLetzter) {
+    @SuppressWarnings({"unused", "unchecked", "rawtypes" })
+    private List getChildrenAsList(List inList, int niveau, List inStriche, boolean VaterIstLetzter) {
         for (Iterator<TreeNode> it = this.children.iterator(); it.hasNext();) {
             TreeNode kind = it.next();
             HashMap map = new HashMap();
@@ -73,7 +75,7 @@ public class TreeNode {
 
             inList.add(map);
             if (kind.expanded && kind.getHasChildren()) {
-                kind.getChildrenAsList(inList, niveau + 1, striche,!it.hasNext());
+                kind.getChildrenAsList(inList, niveau + 1, striche, !it.hasNext());
             }
         }
         return inList;
@@ -84,16 +86,15 @@ public class TreeNode {
      *
      * @return List
      */
-    public List<HashMap<String,Object>> getChildrenAsListAlle() {
-        List<HashMap<String,Object>> myList = new ArrayList<HashMap<String,Object>>();
-        getChildrenAsListAlle(myList, 0, this, true,true, new ArrayList<Boolean>());
+    public List<HashMap<String, Object>> getChildrenAsListAlle() {
+        List<HashMap<String, Object>> myList = new ArrayList<HashMap<String, Object>>();
+        getChildrenAsListAlle(myList, 0, this, true, true, new ArrayList<Boolean>());
         return myList;
     }
 
     private List<HashMap<String, Object>> getChildrenAsListAlle(List<HashMap<String, Object>> inList, int niveau,
-                                                                TreeNode inNode, boolean istLetzter,
-                                                                boolean vaterIstLetzter, List<Boolean> inStriche) {
-        HashMap<String,Object> map = new HashMap<String,Object>();
+            TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("node", inNode);
         map.put("niveau", niveau);
         map.put("islast", istLetzter);
@@ -129,12 +130,10 @@ public class TreeNode {
         }
     }
 
-    private List<HashMap<String, Object>> getChildrenAsListMitStrichen(List<HashMap<String, Object>> inList,
-                                                                       int niveau, TreeNode inNode, boolean istLetzter,
-                                                                       boolean vaterIstLetzter,
-                                                                       List<Boolean> inStriche) {
+    private List<HashMap<String, Object>> getChildrenAsListMitStrichen(List<HashMap<String, Object>> inList, int niveau,
+            TreeNode inNode, boolean istLetzter, boolean vaterIstLetzter, List<Boolean> inStriche) {
 
-        HashMap<String,Object> map = new HashMap<String,Object>();
+        HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("node", inNode);
         map.put("niveau", niveau);
         map.put("islast", istLetzter);
@@ -156,8 +155,8 @@ public class TreeNode {
     }
 
     /*
-    * Getter und Setter
-    */
+     * Getter und Setter
+     */
     public List<TreeNode> getChildren() {
         return this.children;
     }

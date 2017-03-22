@@ -28,10 +28,12 @@ public class GoobiVersion {
         builddate = getValueOrThrowException(mainAttributes, "Implementation-Build-Date");
     }
 
-    private static String getValueOrThrowException(Attributes attributes, String attributeName) throws IllegalArgumentException {
+    private static String getValueOrThrowException(Attributes attributes, String attributeName)
+            throws IllegalArgumentException {
         String result = attributes.getValue(attributeName);
         if (null == result) {
-            throw new IllegalArgumentException("Manifest does not contain " + attributeName + ". The build may be corrupted.");
+            throw new IllegalArgumentException(
+                    "Manifest does not contain " + attributeName + ". The build may be corrupted.");
         }
         return result;
     }

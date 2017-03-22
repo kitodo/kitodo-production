@@ -35,7 +35,7 @@ import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.data.index.Indexer;
 import org.kitodo.data.index.elasticsearch.type.UserType;
 
-public class UserService  {
+public class UserService {
 
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
@@ -44,9 +44,11 @@ public class UserService  {
     private Indexer<User, UserType> indexer = new Indexer<>("kitodo", User.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param user object
+     * @param user
+     *            object
      */
     public void save(User user) throws DAOException, IOException {
         userDao.save(user);
@@ -63,9 +65,11 @@ public class UserService  {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param user object
+     * @param user
+     *            object
      */
     public void remove(User user) throws DAOException, IOException {
         userDao.remove(user);
@@ -151,8 +155,10 @@ public class UserService  {
     /**
      * Convert session timeout to minutes.
      *
-     * @param user object
-     * @param sessionTimeout in minutes
+     * @param user
+     *            object
+     * @param sessionTimeout
+     *            in minutes
      */
     public void setSessionTimeoutInMinutes(User user, Integer sessionTimeout) {
         if (sessionTimeout < 5) {
@@ -177,7 +183,8 @@ public class UserService  {
     /**
      * Get size of user group result.
      *
-     * @param user object
+     * @param user
+     *            object
      * @return size
      */
     public int getUserGroupSize(User user) {
@@ -191,7 +198,8 @@ public class UserService  {
     /**
      * Get size of steps result list.
      *
-     * @param user object
+     * @param user
+     *            object
      * @return result size of steps
      */
     public int getTasksSize(User user) {
@@ -205,7 +213,8 @@ public class UserService  {
     /**
      * Get size of processing steps result list.
      *
-     * @param user object
+     * @param user
+     *            object
      * @return result size of processing steps
      */
     public int getProcessingTasksSize(User user) {
@@ -219,7 +228,8 @@ public class UserService  {
     /**
      * Get size of projects result list.
      *
-     * @param user object
+     * @param user
+     *            object
      * @return result size of projects
      *
      */
@@ -234,7 +244,8 @@ public class UserService  {
     /**
      * Get properties list size.
      *
-     * @param user object
+     * @param user
+     *            object
      * @return properties list size
      */
     public int getPropertiesSize(User user) {
@@ -245,7 +256,7 @@ public class UserService  {
         }
     }
 
-    //TODO: check if this class should be here or in some other place
+    // TODO: check if this class should be here or in some other place
     public boolean isPasswordCorrect(User user, String inputPassword) {
         if (inputPassword == null || inputPassword.length() == 0) {
             return false;
@@ -266,12 +277,15 @@ public class UserService  {
     }
 
     /**
-     * Get user home directory (either from the LDAP or directly from the configuration). If LDAP is used, find home
-     * directory there, otherwise in configuration.
+     * Get user home directory (either from the LDAP or directly from the
+     * configuration). If LDAP is used, find home directory there, otherwise in
+     * configuration.
      *
      * @return path as String
-     * @throws InterruptedException add description
-     * @throws IOException add description
+     * @throws InterruptedException
+     *             add description
+     * @throws IOException
+     *             add description
      */
     public String getHomeDirectory(User user) throws IOException, InterruptedException {
         String result;
@@ -289,7 +303,8 @@ public class UserService  {
         if (!result.endsWith(File.separator)) {
             result += File.separator;
         }
-        // if the directory is not "", but does not yet exist, then create it now
+        // if the directory is not "", but does not yet exist, then create it
+        // now
         FilesystemHelper.createDirectoryForUser(result, user.getLogin());
         return result;
     }
@@ -297,7 +312,8 @@ public class UserService  {
     /**
      * Adds a new filter to list.
      *
-     * @param inputFilter the filter to add
+     * @param inputFilter
+     *            the filter to add
      */
     public void addFilter(int userId, String inputFilter) {
         if (getFilters(userId).contains(inputFilter)) {
@@ -314,7 +330,8 @@ public class UserService  {
     /**
      * Removes filter from list.
      *
-     * @param inputFilter the filter to remove
+     * @param inputFilter
+     *            the filter to remove
      */
     public void removeFilter(int userId, String inputFilter) {
         if (!getFilters(userId).contains(inputFilter)) {
@@ -331,7 +348,8 @@ public class UserService  {
     /**
      * Get list of filters.
      *
-     * @param userId object
+     * @param userId
+     *            object
      * @return List of filters as strings
      */
     public List<String> getFilters(int userId) {

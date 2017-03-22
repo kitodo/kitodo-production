@@ -50,9 +50,10 @@ public class History extends BaseBean {
     private Process process;
 
     /**
-     * This constructor is only public for hibernate usage. If you want to create a new History please use
-     * History(Date date, Number inNumericValue, String inStringValue, HistoryEventType
-     * inHistoryEventType, Process process)
+     * This constructor is only public for hibernate usage. If you want to
+     * create a new History please use History(Date date, Number inNumericValue,
+     * String inStringValue, HistoryEventType inHistoryEventType, Process
+     * process)
      */
     public History() {
 
@@ -61,14 +62,20 @@ public class History extends BaseBean {
     /**
      * Please use only this constructor.
      *
-     * @param date Date of history event
-     * @param inNumericValue value as Number (pages, size,...)
-     * @param inStringValue value as string
-     * @param inHistoryEventType type of History event( {@link HistoryType} )
-     * @param process process of History
+     * @param date
+     *            Date of history event
+     * @param inNumericValue
+     *            value as Number (pages, size,...)
+     * @param inStringValue
+     *            value as string
+     * @param inHistoryEventType
+     *            type of History event( {@link HistoryType} )
+     * @param process
+     *            process of History
      */
 
-    public History(Date date, Number inNumericValue, String inStringValue, HistoryType inHistoryEventType, Process process) {
+    public History(Date date, Number inNumericValue, String inStringValue, HistoryType inHistoryEventType,
+            Process process) {
         super();
         this.date = date;
         numericValue = inNumericValue.doubleValue();
@@ -122,7 +129,8 @@ public class History extends BaseBean {
     /**
      * Setter for type as private method for Hibernate only.
      *
-     * @param type to set
+     * @param type
+     *            to set
      */
     @SuppressWarnings("unused")
     private void setType(Integer type) {

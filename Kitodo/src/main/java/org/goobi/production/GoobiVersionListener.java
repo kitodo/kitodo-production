@@ -24,7 +24,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 /**
- * Listener to set up Goobi versioning information from Manifest on application startup.
+ * Listener to set up Goobi versioning information from Manifest on application
+ * startup.
  */
 public class GoobiVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 

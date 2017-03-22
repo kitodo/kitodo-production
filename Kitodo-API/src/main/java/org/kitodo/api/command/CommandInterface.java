@@ -16,8 +16,10 @@ public interface CommandInterface {
     /**
      * Runs a given command.
      *
-     * @param id The id, to identify the command and it's results.
-     * @param command The command as a String.
+     * @param id
+     *            The id, to identify the command and it's results.
+     * @param command
+     *            The command as a String.
      * @return A commandResult, which contains id and resultmessages.
      */
     CommandResult runCommand(Integer id, String command);

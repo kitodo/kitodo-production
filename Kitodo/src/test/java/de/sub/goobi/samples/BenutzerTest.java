@@ -18,24 +18,23 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.database.beans.User;
 
-@Ignore("Crashing") 
+@Ignore("Crashing")
 public class BenutzerTest {
 
+    @Test
+    public void testLogin1() {
+        User b = new User();
+        b.setLogin("ein Name");
+        System.out.println(b.getPasswordDecrypted());
+    }
 
-   @Test 
-   public void testLogin1() {
-      User b = new User();
-      b.setLogin("ein Name");
-      System.out.println(b.getPasswordDecrypted());
-   }
-
-   @Test
-   @Ignore ("hallo") 
-   public void testLogin2() {
-      User b = new User();
-      b.setLogin("ein Name");
-//      b.setMitMassendownload(true);
-      assertTrue("wert falsch" ,b.isWithMassDownload());
-      assertEquals("ein Name", b.getLogin());
-   }
+    @Test
+    @Ignore("hallo")
+    public void testLogin2() {
+        User b = new User();
+        b.setLogin("ein Name");
+        // b.setMitMassendownload(true);
+        assertTrue("wert falsch", b.isWithMassDownload());
+        assertEquals("ein Name", b.getLogin());
+    }
 }

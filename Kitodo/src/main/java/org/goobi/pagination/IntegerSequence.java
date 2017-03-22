@@ -21,8 +21,10 @@ public class IntegerSequence extends ArrayList<Integer> {
     /**
      * Constructor.
      *
-     * @param start int
-     * @param end int
+     * @param start
+     *            int
+     * @param end
+     *            int
      */
     public IntegerSequence(int start, int end) {
         generateElements(start, end, 1);

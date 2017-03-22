@@ -20,20 +20,20 @@ import org.kitodo.data.database.persistence.apache.StepObject;
 
 public interface IStepPlugin extends IPlugin {
 
-	public void initialize(Task step, String returnPath);
+    public void initialize(Task step, String returnPath);
 
-	public void initialize(StepObject stepobject, String returnPath);
+    public void initialize(StepObject stepobject, String returnPath);
 
-	public boolean execute();
+    public boolean execute();
 
-	public String cancel();
+    public String cancel();
 
-	public String finish();
+    public String finish();
 
-	public HashMap<String, StepReturnValue> validate();
+    public HashMap<String, StepReturnValue> validate();
 
-	public Task getStep();
+    public Task getStep();
 
-	public PluginGuiType getPluginGuiType();
+    public PluginGuiType getPluginGuiType();
 
 }

@@ -18,11 +18,12 @@ public class FileListFilter implements FilenameFilter {
 
     private String name;
 
-	/**
-	 * Filter file list.
+    /**
+     * Filter file list.
      *
-	 * @param name String
-	 */
+     * @param name
+     *            String
+     */
     public FileListFilter(String name) {
         if (name == null) {
             throw new IllegalArgumentException("No filter name given.");

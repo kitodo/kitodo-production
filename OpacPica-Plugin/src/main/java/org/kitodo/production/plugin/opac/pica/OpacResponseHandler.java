@@ -42,9 +42,8 @@ class OpacResponseHandler extends DefaultHandler {
      * SAX parser callback method.
      */
     @Override
-    public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
-            throws SAXException {
-        //Eingefügt am 8.5.2007
+    public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        // Eingefügt am 8.5.2007
         if (localName.equals("RESULT") && atts.getValue("error") != null
                 && atts.getValue("error").equalsIgnoreCase("ILLEGAL")) {
             throw new SAXException(new IllegalArgumentException());
@@ -116,7 +115,7 @@ class OpacResponseHandler extends DefaultHandler {
     }
 
     String getSessionId() throws UnsupportedEncodingException {
-        //TODO HACK
+        // TODO HACK
         String sessionIdUrlencoded = URLEncoder.encode(sessionId, CharEncoding.ISO_8859_1);
         if (!this.cookie.equals("")) {
             sessionIdUrlencoded = sessionIdUrlencoded + "/COOKIE=" + URLEncoder.encode(cookie, CharEncoding.ISO_8859_1);

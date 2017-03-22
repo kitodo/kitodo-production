@@ -54,7 +54,8 @@ public class MetadatenVerifizierungWithoutHibernate {
     /**
      * Validate.
      *
-     * @param inProzess Process object
+     * @param inProzess
+     *            Process object
      * @return boolean
      */
     public boolean validate(Process inProzess) {
@@ -75,10 +76,14 @@ public class MetadatenVerifizierungWithoutHibernate {
     /**
      * Validate.
      *
-     * @param gdzfile Fileformat object
-     * @param inPrefs Prefs object
-     * @param processId int
-     * @param title String
+     * @param gdzfile
+     *            Fileformat object
+     * @param inPrefs
+     *            Prefs object
+     * @param processId
+     *            int
+     * @param title
+     *            String
      * @return boolean
      */
     public boolean validate(Fileformat gdzfile, Prefs inPrefs, int processId, String title) {
@@ -101,8 +106,8 @@ public class MetadatenVerifizierungWithoutHibernate {
         if (logical.getAllIdentifierMetadata() != null && logical.getAllIdentifierMetadata().size() > 0) {
             Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
             try {
-                if (!identifierTopStruct.getValue().replaceAll(ConfigMain.getParameter(
-                        "validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                if (!identifierTopStruct.getValue()
+                        .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                     Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                             + identifierTopStruct.getType().getNameByLanguage(metadataLanguage) + " in DocStruct "
                             + logical.getType().getNameByLanguage(metadataLanguage)
@@ -114,13 +119,12 @@ public class MetadatenVerifizierungWithoutHibernate {
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
                         && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                     Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
-                            + identifierTopStruct.getType().getName()
-                            + Helper.getTranslation("MetadataIdentifierSame") + logical.getType().getName()
-                            + " and " + firstChild.getType().getName());
+                            + identifierTopStruct.getType().getName() + Helper.getTranslation("MetadataIdentifierSame")
+                            + logical.getType().getName() + " and " + firstChild.getType().getName());
                     ergebnis = false;
                 }
-                if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter(
-                        "validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                if (!identifierFirstChild.getValue()
+                        .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                     Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                             + identifierFirstChild.getType().getName() + " in DocStruct "
                             + firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
@@ -134,14 +138,16 @@ public class MetadatenVerifizierungWithoutHibernate {
             ergebnis = false;
         }
         /*
-         * -------------------------------- PathImagesFiles prüfen --------------------------------
+         * -------------------------------- PathImagesFiles prüfen
+         * --------------------------------
          */
         if (!this.isValidPathImageFiles(dd.getPhysicalDocStruct(), inPrefs)) {
             ergebnis = false;
         }
 
         /*
-         * -------------------------------- auf Docstructs ohne Seiten prüfen --------------------------------
+         * -------------------------------- auf Docstructs ohne Seiten prüfen
+         * --------------------------------
          */
         DocStruct logicalTop = dd.getLogicalDocStruct();
         this.docStructsOhneSeiten = new ArrayList<DocStruct>();
@@ -162,7 +168,8 @@ public class MetadatenVerifizierungWithoutHibernate {
         }
 
         /*
-         * -------------------------------- auf Seiten ohne Docstructs prüfen --------------------------------
+         * -------------------------------- auf Seiten ohne Docstructs prüfen
+         * --------------------------------
          */
         List<String> seitenOhneDocstructs = null;
         try {
@@ -187,17 +194,17 @@ public class MetadatenVerifizierungWithoutHibernate {
         if (mandatoryList.size() != 0) {
             for (Iterator<String> iter = mandatoryList.iterator(); iter.hasNext();) {
                 String temp = iter.next();
-                Helper.setFehlerMeldung(title + ": " + Helper.getTranslation(
-                        "MetadataMandatoryElement"), temp);
+                Helper.setFehlerMeldung(title + ": " + Helper.getTranslation("MetadataMandatoryElement"), temp);
             }
             ergebnis = false;
         }
 
         /*
-         * auf Details in den Metadaten prüfen, die in der Konfiguration angegeben wurden
+         * auf Details in den Metadaten prüfen, die in der Konfiguration
+         * angegeben wurden
          */
-        List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(),
-                new ArrayList<String>(), inPrefs, metadataLanguage, project);
+        List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<String>(),
+                inPrefs, metadataLanguage, project);
         if (configuredList.size() != 0) {
             for (Iterator<String> iter = configuredList.iterator(); iter.hasNext();) {
                 String temp = iter.next();
@@ -217,7 +224,8 @@ public class MetadatenVerifizierungWithoutHibernate {
         }
 
         /*
-         * -------------------------------- Metadaten ggf. zum Schluss speichern --------------------------------
+         * -------------------------------- Metadaten ggf. zum Schluss speichern
+         * --------------------------------
          */
 
         try {
@@ -320,8 +328,8 @@ public class MetadatenVerifizierungWithoutHibernate {
             int real = 0;
             real = ll.size();
 
-            if ((number.equals("1m") || number.equals("+")) && real == 1 && (ll.get(0).getValue() == null
-                    || ll.get(0).getValue().equals(""))) {
+            if ((number.equals("1m") || number.equals("+")) && real == 1
+                    && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
                 inList.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
                         + Helper.getTranslation("MetadataIsEmpty"));
             }
@@ -352,10 +360,11 @@ public class MetadatenVerifizierungWithoutHibernate {
     }
 
     /**
-     * individuelle konfigurierbare projektspezifische Validierung der Metadaten.
+     * individuelle konfigurierbare projektspezifische Validierung der
+     * Metadaten.
      */
     private List<String> checkConfiguredValidationValues(DocStruct inStruct, ArrayList<String> inFehlerList,
-                                                         Prefs inPrefs, String language, ProjectObject project) {
+            Prefs inPrefs, String language, ProjectObject project) {
         /*
          * Konfiguration öffnen und die Validierungsdetails auslesen
          */
@@ -383,8 +392,8 @@ public class MetadatenVerifizierungWithoutHibernate {
                 Helper.setFehlerMeldung("[" + this.title + "] " + "Metadatatype does not exist: ", prop_metadatatype);
             }
             /*
-             * wenn das Metadatum des FirstChilds überprüfen werden soll, dann dieses jetzt (sofern vorhanden)
-             * übernehmen
+             * wenn das Metadatum des FirstChilds überprüfen werden soll, dann
+             * dieses jetzt (sofern vorhanden) übernehmen
              */
             if (prop_doctype != null && prop_doctype.equals("firstchild")) {
                 if (myStruct.getAllChildren() != null && myStruct.getAllChildren().size() > 0) {
@@ -395,7 +404,8 @@ public class MetadatenVerifizierungWithoutHibernate {
             }
 
             /*
-             * wenn der MetadatenTyp existiert, dann jetzt die nötige Aktion überprüfen
+             * wenn der MetadatenTyp existiert, dann jetzt die nötige Aktion
+             * überprüfen
              */
             if (mdt != null) {
                 /* ein CreatorsAllOrigin soll erzeugt werden */
@@ -423,15 +433,17 @@ public class MetadatenVerifizierungWithoutHibernate {
     }
 
     /**
-     * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum erzeugen, sofern dies an
-     * der jeweiligen Stelle erlaubt und noch nicht vorhanden.
+     * Create Element From - für alle Strukturelemente ein bestimmtes Metadatum
+     * erzeugen, sofern dies an der jeweiligen Stelle erlaubt und noch nicht
+     * vorhanden.
      */
     private void checkCreateElementFrom(ArrayList<String> inFehlerList, ArrayList<MetadataType> inListOfFromMdts,
-                                        DocStruct myStruct, MetadataType mdt, String language) {
+            DocStruct myStruct, MetadataType mdt, String language) {
 
         /*
-         * existiert das zu erzeugende Metadatum schon, dann überspringen, ansonsten alle Daten zusammensammeln und
-         * in das neue Element schreiben.
+         * existiert das zu erzeugende Metadatum schon, dann überspringen,
+         * ansonsten alle Daten zusammensammeln und in das neue Element
+         * schreiben.
          */
         List<? extends Metadata> createMetadaten = myStruct.getAllMetadataByType(mdt);
         if (createMetadaten == null || createMetadaten.size() == 0) {
@@ -439,21 +451,23 @@ public class MetadatenVerifizierungWithoutHibernate {
                 Metadata createdElement = new Metadata(mdt);
                 StringBuffer myValue = new StringBuffer();
                 /*
-                 * alle anzufügenden Metadaten durchlaufen und an das Element anhängen
+                 * alle anzufügenden Metadaten durchlaufen und an das Element
+                 * anhängen
                  */
                 for (MetadataType mdttemp : inListOfFromMdts) {
 
                     List<Person> fromElemente = myStruct.getAllPersons();
                     if (fromElemente != null && fromElemente.size() > 0) {
                         /*
-                         * wenn Personen vorhanden sind (z.B. Illustrator), dann diese durchlaufen
+                         * wenn Personen vorhanden sind (z.B. Illustrator), dann
+                         * diese durchlaufen
                          */
                         for (Person p : fromElemente) {
 
                             if (p.getRole() == null) {
-                                Helper.setFehlerMeldung("[" + this.title + " "
-                                        + myStruct.getType().getNameByLanguage(language) + "] "
-                                        + Helper.getTranslation("MetadataPersonWithoutRole"));
+                                Helper.setFehlerMeldung(
+                                        "[" + this.title + " " + myStruct.getType().getNameByLanguage(language) + "] "
+                                                + Helper.getTranslation("MetadataPersonWithoutRole"));
                                 break;
                             } else {
                                 if (p.getRole().equals(mdttemp.getName())) {
@@ -495,7 +509,7 @@ public class MetadatenVerifizierungWithoutHibernate {
      * Metadatum soll mit bestimmten String beginnen oder enden.
      */
     private void checkStartsEndsWith(List<String> inFehlerList, String prop_startswith, String prop_endswith,
-                                     DocStruct myStruct, MetadataType mdt, String language) {
+            DocStruct myStruct, MetadataType mdt, String language) {
         /* startswith oder endswith */
         List<? extends Metadata> alleMetadaten = myStruct.getAllMetadataByType(mdt);
         if (alleMetadaten != null && alleMetadaten.size() > 0) {
@@ -514,9 +528,8 @@ public class MetadatenVerifizierungWithoutHibernate {
                     }
                     if (!isOk && !this.autoSave) {
                         inFehlerList.add(md.getType().getNameByLanguage(language) + " "
-                                + Helper.getTranslation("MetadataWithValue") + " "
-                                + md.getValue() + " " + Helper.getTranslation("MetadataDoesNotStartWith")
-                                + " " + prop_startswith);
+                                + Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
+                                + Helper.getTranslation("MetadataDoesNotStartWith") + " " + prop_startswith);
                     }
                     if (!isOk && this.autoSave) {
                         md.setValue(new StringTokenizer(prop_startswith, "|").nextToken() + md.getValue());
@@ -534,9 +547,8 @@ public class MetadatenVerifizierungWithoutHibernate {
                     }
                     if (!isOk && !this.autoSave) {
                         inFehlerList.add(md.getType().getNameByLanguage(language) + " "
-                                + Helper.getTranslation("MetadataWithValue") + " "
-                                + md.getValue() + " " + Helper.getTranslation("MetadataDoesNotEndWith")
-                                + " " + prop_endswith);
+                                + Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
+                                + Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
                     }
                     if (!isOk && this.autoSave) {
                         md.setValue(md.getValue() + new StringTokenizer(prop_endswith, "|").nextToken());
@@ -560,7 +572,8 @@ public class MetadatenVerifizierungWithoutHibernate {
     /**
      * Validate identifier.
      *
-     * @param uppermostStruct DocStruct object
+     * @param uppermostStruct
+     *            DocStruct object
      * @return boolean
      */
     public boolean validateIdentifier(DocStruct uppermostStruct) {
@@ -578,8 +591,8 @@ public class MetadatenVerifizierungWithoutHibernate {
                                 + Helper.getTranslation("MetadataIsEmpty"));
                         return false;
                     }
-                    if (!identifierTopStruct.getValue().replaceAll(ConfigMain.getParameter(
-                            "validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                    if (!identifierTopStruct.getValue()
+                            .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                         Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                                 + identifierTopStruct.getType().getNameByLanguage(language) + " in DocStruct "
                                 + uppermostStruct.getType().getNameByLanguage(language)
@@ -591,8 +604,8 @@ public class MetadatenVerifizierungWithoutHibernate {
                     if (identifierFirstChild.getValue() == null || identifierFirstChild.getValue().length() == 0) {
                         return false;
                     }
-                    if (!identifierFirstChild.getValue().replaceAll(ConfigMain.getParameter(
-                            "validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                    if (!identifierFirstChild.getValue()
+                            .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                         Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in "
                                 + uppermostStruct.getType().getNameByLanguage(language) + " "
                                 + Helper.getTranslation("MetadataIsEmpty"));
@@ -602,8 +615,8 @@ public class MetadatenVerifizierungWithoutHibernate {
                             && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                         Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                                 + identifierTopStruct.getType().getName()
-                                + Helper.getTranslation("MetadataIdentifierSame")
-                                + uppermostStruct.getType().getName() + " and " + firstChild.getType().getName());
+                                + Helper.getTranslation("MetadataIdentifierSame") + uppermostStruct.getType().getName()
+                                + " and " + firstChild.getType().getName());
                         return false;
                     }
                 } catch (Exception e) {

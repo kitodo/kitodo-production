@@ -27,9 +27,11 @@ public class ProjectDAO extends BaseDAO {
     /**
      * Find project object.
      *
-     * @param id of search object
+     * @param id
+     *            of search object
      * @return project object
-     * @throws DAOException hibernate
+     * @throws DAOException
+     *             hibernate
      */
     public Project find(Integer id) throws DAOException {
         Project result = (Project) retrieveObject(Project.class, id);
@@ -52,8 +54,10 @@ public class ProjectDAO extends BaseDAO {
     /**
      * Remove project object.
      *
-     * @param project object
-     * @throws DAOException hibernate
+     * @param project
+     *            object
+     * @throws DAOException
+     *             hibernate
      */
     public void remove(Project project) throws DAOException {
         if (project.getId() != null) {
@@ -64,8 +68,10 @@ public class ProjectDAO extends BaseDAO {
     /**
      * Remove project object vy id.
      *
-     * @param id of project object
-     * @throws DAOException hibernate
+     * @param id
+     *            of project object
+     * @throws DAOException
+     *             hibernate
      */
     public void remove(Integer id) throws DAOException {
         if (id != null) {

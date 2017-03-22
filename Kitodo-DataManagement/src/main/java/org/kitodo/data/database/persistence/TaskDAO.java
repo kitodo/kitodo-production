@@ -23,9 +23,12 @@ public class TaskDAO extends BaseDAO {
     /**
      * Find task object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public Task find(Integer id) throws DAOException {
         Task result = (Task) retrieveObject(Task.class, id);
@@ -53,9 +56,11 @@ public class TaskDAO extends BaseDAO {
     /**
      * The function remove() removes a task from database.
      *
-     * @param task to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param task
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Task task) throws DAOException {
         if (task.getId() != null) {
@@ -66,9 +71,11 @@ public class TaskDAO extends BaseDAO {
     /**
      * The function remove() removes a task from database.
      *
-     * @param id of the task to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param id
+     *            of the task to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
         @SuppressWarnings("unused")
@@ -87,7 +94,9 @@ public class TaskDAO extends BaseDAO {
 
     /**
      * Again this weird thing.
-     * @param task object
+     * 
+     * @param task
+     *            object
      */
     public void refresh(Task task) {
         Object o = task;

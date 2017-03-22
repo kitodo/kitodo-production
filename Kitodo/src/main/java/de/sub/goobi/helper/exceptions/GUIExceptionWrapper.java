@@ -18,22 +18,27 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * This class provides the tools it takes to generate a configurable Error message for Errors which are unexpected
- * An example for the area in GoobiProperties.config is given after the class declaration in the source code.
+ * This class provides the tools it takes to generate a configurable Error
+ * message for Errors which are unexpected An example for the area in
+ * GoobiProperties.config is given after the class declaration in the source
+ * code.
  *
- * <p>Besides building up the information in the constructor the other important
- * method is getLocalizedMessage(), which provides the build up message in html.</p>
+ * <p>
+ * Besides building up the information in the constructor the other important
+ * method is getLocalizedMessage(), which provides the build up message in html.
+ * </p>
  *
  * @author Wulf
  * @version 12/10/2009
  *
- * Variables in Messages Bundle:
- * err_emailBody -> message in the email before the stack trace
- * err_emailMessage -> message displayed if email is enabled in GoobiConfig: err_userHandling=true
- * err_fallBackMessage -> messgae displayed if feature is turned off in GoobiConfig
- * err_linkText -> message in which the link from GoobiConfig: err_linkToPage=
- * err_noMailService -> message if email is disabled in GoobiConfig: err_emailEnabled=false
- * err_subjectLine -> message in Subject Line of email
+ *          Variables in Messages Bundle: err_emailBody -> message in the email
+ *          before the stack trace err_emailMessage -> message displayed if
+ *          email is enabled in GoobiConfig: err_userHandling=true
+ *          err_fallBackMessage -> messgae displayed if feature is turned off in
+ *          GoobiConfig err_linkText -> message in which the link from
+ *          GoobiConfig: err_linkToPage= err_noMailService -> message if email
+ *          is disabled in GoobiConfig: err_emailEnabled=false err_subjectLine
+ *          -> message in Subject Line of email
  *
  */
 public class GUIExceptionWrapper extends Exception {
@@ -72,8 +77,10 @@ public class GUIExceptionWrapper extends Exception {
     /**
      * Exception Class catching unhandled exceptions to wrap it for GUI.
      *
-     * @param message additional info, like which class called this constructor
-     * @param cause   last Exception cought with this wrapper
+     * @param message
+     *            additional info, like which class called this constructor
+     * @param cause
+     *            last Exception cought with this wrapper
      */
     public GUIExceptionWrapper(String message, Throwable cause) {
         this(cause);
@@ -127,8 +134,9 @@ public class GUIExceptionWrapper extends Exception {
     }
 
     /**
-     * this method overwrites supers method of the same name. It provides the output of collected error data
-     * and shapes it into html format for display in browsers.
+     * this method overwrites supers method of the same name. It provides the
+     * output of collected error data and shapes it into html format for display
+     * in browsers.
      */
     @Override
     public String getLocalizedMessage() {
@@ -156,11 +164,8 @@ public class GUIExceptionWrapper extends Exception {
         // only elaborate email part if
         if (this.emailAddresses.size() > 0) {
             emailPart = this.err_emailMessage.replace("{0}",
-                    mailtoLinkHrefMailTo + getAddresses()
-                            + mailtoLinkSubject + this.err_subjectLine
-                            + mailtoLinkBody +  this.err_emailBody
-                            + htmlLineFeed + htmlLineFeed
-                            + htmlLineFeed + getContextInfo()
+                    mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject + this.err_subjectLine + mailtoLinkBody
+                            + this.err_emailBody + htmlLineFeed + htmlLineFeed + htmlLineFeed + getContextInfo()
                             + htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
         } else {
@@ -168,8 +173,7 @@ public class GUIExceptionWrapper extends Exception {
             emailPart = Helper.getTranslation("err_noMailService");
         }
 
-        this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed
-                + emailPart;
+        this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed + emailPart;
 
         return this.userSeenErrorMessage;
     }
@@ -177,7 +181,8 @@ public class GUIExceptionWrapper extends Exception {
     /**
      * Get address.
      *
-     * @return collected addresses as a string to be used after &lt;a href="mailto:"&gt;
+     * @return collected addresses as a string to be used after &lt;a
+     *         href="mailto:"&gt;
      */
     private String getAddresses() {
         StringBuffer addresses = new StringBuffer();
@@ -190,7 +195,8 @@ public class GUIExceptionWrapper extends Exception {
     /**
      * Get stack trace.
      *
-     * @param stackTrace StackTraceElement object
+     * @param stackTrace
+     *            StackTraceElement object
      * @return stack trace as String
      */
     private String getStackTrace(StackTraceElement[] stackTrace) {
@@ -198,9 +204,10 @@ public class GUIExceptionWrapper extends Exception {
         String tempTraceReturn = "";
         Integer counter = 0;
         for (StackTraceElement itStackTrace : stackTrace) {
-            // only taking those elements from the stack trace, which contain goobi and the top level element
-            if (counter ++ == 1 || itStackTrace.toString().toLowerCase().contains("goobi")) {
-                stackTraceReturn = stackTraceReturn +  "<br/>" + itStackTrace.toString();
+            // only taking those elements from the stack trace, which contain
+            // goobi and the top level element
+            if (counter++ == 1 || itStackTrace.toString().toLowerCase().contains("goobi")) {
+                stackTraceReturn = stackTraceReturn + "<br/>" + itStackTrace.toString();
                 tempTraceReturn = "";
             } else {
                 if (tempTraceReturn.length() < 1) {

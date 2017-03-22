@@ -30,43 +30,43 @@ import ugh.dl.Metadata;
  */
 interface RenderableGroupableMetadatum {
 
-	/**
-	 * Shall add the data passed from the metadata element as content to the
-	 * element.
-	 * 
-	 * @param data
-	 *            data to add
-	 */
-	void addContent(Metadata data);
+    /**
+     * Shall add the data passed from the metadata element as content to the
+     * element.
+     * 
+     * @param data
+     *            data to add
+     */
+    void addContent(Metadata data);
 
-	/**
-	 * Shall return the label for the metadatum in the language previously set.
-	 * 
-	 * @return the label for the metadatum
-	 */
-	String getLabel();
+    /**
+     * Shall return the label for the metadatum in the language previously set.
+     * 
+     * @return the label for the metadatum
+     */
+    String getLabel();
 
-	/**
-	 * Shall return true if the element is contained in a group and is the first
-	 * element in its members list, false otherwise.
-	 * 
-	 * @return if the element is the first in its list
-	 */
-	boolean isFirst();
+    /**
+     * Shall return true if the element is contained in a group and is the first
+     * element in its members list, false otherwise.
+     * 
+     * @return if the element is the first in its list
+     */
+    boolean isFirst();
 
-	/**
-	 * Shall return whether the user shall be depredated the permission to edit
-	 * the value(s) on the screen.
-	 * 
-	 * @return whether the component shall be read-only
-	 */
-	boolean isReadonly();
+    /**
+     * Shall return whether the user shall be depredated the permission to edit
+     * the value(s) on the screen.
+     * 
+     * @return whether the component shall be read-only
+     */
+    boolean isReadonly();
 
-	/**
-	 * Shall return the metadata elements contained in this display element
-	 * backing bean.
-	 * 
-	 * @return the metadata elements contained in this bean
-	 */
-	List<? extends Metadata> toMetadata();
+    /**
+     * Shall return the metadata elements contained in this display element
+     * backing bean.
+     * 
+     * @return the metadata elements contained in this bean
+     */
+    List<? extends Metadata> toMetadata();
 }

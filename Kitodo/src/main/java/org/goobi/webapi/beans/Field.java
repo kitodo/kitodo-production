@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.goobi.webapi.beans.Label.KeyAttribute;
 import org.kitodo.data.database.beans.Project;
 
-@XmlType(propOrder = { "required", "from", "option", "ughbinding", "docstruct" })
+@XmlType(propOrder = {"required", "from", "option", "ughbinding", "docstruct" })
 public class Field {
 
     @XmlAttribute
@@ -43,11 +43,12 @@ public class Field {
     private String docstruct;
 
     /**
-	 * Get field config for project.
+     * Get field config for project.
      *
-	 * @param project object
-	 * @return list of fields
-	 */
+     * @param project
+     *            object
+     * @return list of fields
+     */
     public static List<Field> getFieldConfigForProject(Project project) throws IOException {
         List<Field> fields = new ArrayList<>();
 

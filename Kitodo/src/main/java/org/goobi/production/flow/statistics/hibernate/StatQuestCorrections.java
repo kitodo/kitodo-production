@@ -33,149 +33,158 @@ import org.hibernate.type.StandardBasicTypes;
 import org.kitodo.data.database.helper.enums.HistoryType;
 
 /*****************************************************************************
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with
+ * predefined Values in data Table
  * 
  * @author Wulf Riebensahm
  ****************************************************************************/
-public class StatQuestCorrections implements
-		IStatisticalQuestionLimitedTimeframe {
+public class StatQuestCorrections implements IStatisticalQuestionLimitedTimeframe {
 
-	private Date timeFilterFrom;
-	private TimeUnit timeGrouping;
-	private Date timeFilterTo;
+    private Date timeFilterFrom;
+    private TimeUnit timeGrouping;
+    private Date timeFilterTo;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
-	 */
-	@Override
-	public void setTimeUnit(TimeUnit timeGrouping) {
-		this.timeGrouping = timeGrouping;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(org
+     * .goobi.production.flow.statistics.enums.TimeUnit)
+     */
+    @Override
+    public void setTimeUnit(TimeUnit timeGrouping) {
+        this.timeGrouping = timeGrouping;
+    }
 
-	private TimeUnit getTimeUnit() {
-		if (this.timeGrouping == null) {
-			throw new NullPointerException(
-					"The called method in StatQuestCorrection requires that TimeUnit was set");
-		}
-		return this.timeGrouping;
-	}
+    private TimeUnit getTimeUnit() {
+        if (this.timeGrouping == null) {
+            throw new NullPointerException("The called method in StatQuestCorrection requires that TimeUnit was set");
+        }
+        return this.timeGrouping;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(org.goobi.production.flow.statistics.IDataSource)
-	 */
-	@Override
-	public List<DataTable> getDataTables(IDataSource dataSource) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * org.goobi.production.flow.statistics.IDataSource)
+     */
+    @Override
+    public List<DataTable> getDataTables(IDataSource dataSource) {
 
-		List<DataTable> allTables = new ArrayList<DataTable>();
+        List<DataTable> allTables = new ArrayList<DataTable>();
 
-		IEvaluableFilter originalFilter;
+        IEvaluableFilter originalFilter;
 
-		if (dataSource instanceof IEvaluableFilter) {
-			originalFilter = (IEvaluableFilter) dataSource;
-		} else {
-			throw new UnsupportedOperationException(
-					"This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
-		}
+        if (dataSource instanceof IEvaluableFilter) {
+            originalFilter = (IEvaluableFilter) dataSource;
+        } else {
+            throw new UnsupportedOperationException(
+                    "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
+        }
 
-		//gathering IDs from the filter passed by dataSource
-		List<Integer> IDlist = null;
-		try {
-			IDlist = originalFilter.getIDList();
-		} catch (UnsupportedOperationException e) {
-		}
-		if (IDlist == null || IDlist.size() == 0) {
-			return null;
-		}
-		
-		// adding time restrictions
-		String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo,
-				getTimeUnit(), IDlist).getSQL(HistoryType.taskError, null,
-				false, false);
+        // gathering IDs from the filter passed by dataSource
+        List<Integer> IDlist = null;
+        try {
+            IDlist = originalFilter.getIDList();
+        } catch (UnsupportedOperationException e) {
+        }
+        if (IDlist == null || IDlist.size() == 0) {
+            return null;
+        }
 
-		Session session = Helper.getHibernateSession();
+        // adding time restrictions
+        String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, getTimeUnit(), IDlist)
+                .getSQL(HistoryType.taskError, null, false, false);
 
-		SQLQuery query = session.createSQLQuery(natSQL);
+        Session session = Helper.getHibernateSession();
 
-		//needs to be there otherwise an exception is thrown
-		query.addScalar("stepCount", StandardBasicTypes.DOUBLE);
-		query.addScalar("intervall", StandardBasicTypes.STRING);
+        SQLQuery query = session.createSQLQuery(natSQL);
 
-		@SuppressWarnings("rawtypes")
-		List list = query.list();
+        // needs to be there otherwise an exception is thrown
+        query.addScalar("stepCount", StandardBasicTypes.DOUBLE);
+        query.addScalar("intervall", StandardBasicTypes.STRING);
 
-		DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
-				this.getClass()).getTitle()
-				+ Helper.getTranslation("_(number)"));
+        @SuppressWarnings("rawtypes")
+        List list = query.list();
 
-		DataRow dataRow;
+        DataTable dtbl = new DataTable(
+                StatisticsMode.getByClassName(this.getClass()).getTitle() + Helper.getTranslation("_(number)"));
 
-		// each data row comes out as an Array of Objects
-		// the only way to extract the data is by knowing
-		// in which order they come out 
-		for (Object obj : list) {
-			dataRow = new DataRow(null);
-			Object[] objArr = (Object[]) obj;
-			try {
+        DataRow dataRow;
 
-				// getting localized time group unit
+        // each data row comes out as an Array of Objects
+        // the only way to extract the data is by knowing
+        // in which order they come out
+        for (Object obj : list) {
+            dataRow = new DataRow(null);
+            Object[] objArr = (Object[]) obj;
+            try {
 
-				//setting row name with date/time extraction based on the group
+                // getting localized time group unit
 
-				dataRow.setName(new Converter(objArr[1]).getString() + "");
+                // setting row name with date/time extraction based on the group
 
-				dataRow.addValue(Helper.getTranslation("Corrections/Errors"),
-						(new Converter(objArr[0]).getDouble()));
+                dataRow.setName(new Converter(objArr[1]).getString() + "");
 
-			} catch (Exception e) {
-				dataRow.addValue(e.getMessage(), 0.0);
-			}
+                dataRow.addValue(Helper.getTranslation("Corrections/Errors"), (new Converter(objArr[0]).getDouble()));
 
-			//finally adding dataRow to DataTable and fetching next row
-			dtbl.addDataRow(dataRow);
-		}
+            } catch (Exception e) {
+                dataRow.addValue(e.getMessage(), 0.0);
+            }
 
-		// a list of DataTables is expected as return Object, even if there is only one 
-		// Data Table as it is here in this implementation
-		dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit()
-				.getSingularTitle()));
-		allTables.add(dtbl);
-		return allTables;
-	}
+            // finally adding dataRow to DataTable and fetching next row
+            dtbl.addDataRow(dataRow);
+        }
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
-	 */
-	@Override
-	public void setCalculationUnit(CalculationUnit cu) {
-	}
+        // a list of DataTables is expected as return Object, even if there is
+        // only one
+        // Data Table as it is here in this implementation
+        dtbl.setUnitLabel(Helper.getTranslation(getTimeUnit().getSingularTitle()));
+        allTables.add(dtbl);
+        return allTables;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#setTimeFrame(java.util.Date, java.util.Date)
-	 */
-	@Override
-	public void setTimeFrame(Date timeFrom, Date timeTo) {
-		this.timeFilterFrom = timeFrom;
-		this.timeFilterTo = timeTo;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit(org.goobi.production.flow.statistics.enums.
+     * CalculationUnit)
+     */
+    @Override
+    public void setCalculationUnit(CalculationUnit cu) {
+    }
 
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe
+     * #setTimeFrame(java.util.Date, java.util.Date)
+     */
+    @Override
+    public void setTimeFrame(Date timeFrom, Date timeTo) {
+        this.timeFilterFrom = timeFrom;
+        this.timeFilterTo = timeTo;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
-	 */
-	@Override
-	public Boolean isRendererInverted(IRenderer inRenderer) {
-		return inRenderer instanceof ChartRenderer;
-	}
+    }
 
-	@Override
-	public String getNumberFormatPattern() {
-		return "#";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
+     */
+    @Override
+    public Boolean isRendererInverted(IRenderer inRenderer) {
+        return inRenderer instanceof ChartRenderer;
+    }
+
+    @Override
+    public String getNumberFormatPattern() {
+        return "#";
+    }
 
 }

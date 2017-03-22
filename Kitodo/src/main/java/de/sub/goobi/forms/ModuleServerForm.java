@@ -73,13 +73,14 @@ public class ModuleServerForm {
             try {
                 md.getModuleClient().initialize();
             } catch (GoobiModuleException e) {
-                Helper.setFehlerMeldung("GoobiModuleException im Modul " + md.getName() + " mit der URL "
-                        + md.getUrl() + ": ", e.getMessage());
+                Helper.setFehlerMeldung(
+                        "GoobiModuleException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ",
+                        e.getMessage());
                 logger.error(e);
             } catch (XmlRpcException e) {
-                Helper.setFehlerMeldung("XmlRpcException im Modul " + md.getName() + " mit der URL "
-                        + md.getUrl() + ": ", e.getMessage() + "\n"
-                        + Helper.getStacktraceAsString(e));
+                Helper.setFehlerMeldung(
+                        "XmlRpcException im Modul " + md.getName() + " mit der URL " + md.getUrl() + ": ",
+                        e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
             }
         }
         running = true;
@@ -96,7 +97,8 @@ public class ModuleServerForm {
                     final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
                             new ExtendedDataImpl());
 
-                    // Alle Modulbeschreibungen aus der Konfigurationsdatei modules.xml einlesen
+                    // Alle Modulbeschreibungen aus der Konfigurationsdatei
+                    // modules.xml einlesen
                     for (ModuleDesc md : getModulesFromConfigurationFile()) {
                         manager.add(md);
                     }
@@ -140,12 +142,10 @@ public class ModuleServerForm {
         try {
             myModule.getModuleClient().initialize();
         } catch (GoobiModuleException e) {
-            Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
+            Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
             logger.error(e);
         } catch (XmlRpcException e) {
-            Helper.setFehlerMeldung("XmlRpcException: ", e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
+            Helper.setFehlerMeldung("XmlRpcException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
             logger.error(e);
         }
     }
@@ -160,8 +160,7 @@ public class ModuleServerForm {
         try {
             myModule.getModuleClient().shutdown();
         } catch (GoobiModuleException e) {
-            Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
+            Helper.setFehlerMeldung("GoobiModuleException: ", e.getMessage() + "\n" + Helper.getStacktraceAsString(e));
             logger.error(e);
         } catch (XmlRpcException e) {
         }
@@ -185,17 +184,16 @@ public class ModuleServerForm {
             /* alle Module durchlaufen */
             for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
                 Element myModule = iter.next();
-                rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"),
-                        myModule.getAttributeValue("url"), null,
-                        myModule.getAttributeValue("description")));
+                rueckgabe.add(new ModuleDesc(myModule.getAttributeValue("name"), myModule.getAttributeValue("url"),
+                        null, myModule.getAttributeValue("description")));
             }
         } catch (JDOMException e1) {
-            Helper.setFehlerMeldung("Error on reading, JDOMException: ", e1.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e1));
+            Helper.setFehlerMeldung("Error on reading, JDOMException: ",
+                    e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
             logger.error(e1);
         } catch (IOException e1) {
-            Helper.setFehlerMeldung("Error on reading, IOException: ", e1.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e1));
+            Helper.setFehlerMeldung("Error on reading, IOException: ",
+                    e1.getMessage() + "\n" + Helper.getStacktraceAsString(e1));
             logger.error(e1);
         }
         return rueckgabe;
@@ -289,8 +287,7 @@ public class ModuleServerForm {
 
         String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
 
-        gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId="
-                + tempID);
+        gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId=" + tempID);
         gmp.put("type", "PRODUCE");
 
         myModule.getGmps().add(gmp); // add shortsession in den Manager
@@ -326,7 +323,8 @@ public class ModuleServerForm {
         if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
             String in_session = message.from;
             /*
-             * erstmal wird geschaut welcher module und welche session ist der Absender.
+             * erstmal wird geschaut welcher module und welche session ist der
+             * Absender.
              */
             int i = 0;
             if (modules.size() == i) {
@@ -336,8 +334,9 @@ public class ModuleServerForm {
                 for (GoobiModuleParameter gmp : gmps) {
                     if (gmp.sessionId.equals(in_session)) {
                         /*
-                         * Jetzt wird herausgefunden um was für eine Message es geht. dabei ist: Module
-                         * : modules.get(i) Session wird durch gmp beschrieben
+                         * Jetzt wird herausgefunden um was für eine Message es
+                         * geht. dabei ist: Module : modules.get(i) Session wird
+                         * durch gmp beschrieben
                          */
                         if (message.body.type.equals("trigger")) {
                             // Behandlung aller trigger messages

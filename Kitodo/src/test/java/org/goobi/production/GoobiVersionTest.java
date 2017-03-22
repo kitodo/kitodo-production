@@ -17,7 +17,6 @@ import java.util.jar.Manifest;
 
 import org.junit.Test;
 
-
 public class GoobiVersionTest {
 
     private static final String VERSION = "1.2.3";
@@ -44,7 +43,8 @@ public class GoobiVersionTest {
 
         GoobiVersion.setupFromManifest(manifest);
 
-        assertEquals("Buildversion attribute should be equal to Implementation-Version as specified in the given Manifest.",
+        assertEquals(
+                "Buildversion attribute should be equal to Implementation-Version as specified in the given Manifest.",
                 VERSION, GoobiVersion.getBuildversion());
     }
 
@@ -54,7 +54,8 @@ public class GoobiVersionTest {
 
         GoobiVersion.setupFromManifest(manifest);
 
-        assertEquals("Builddate attribute should be equal to Implementation-Build-Date as specified in the given Manifest.",
+        assertEquals(
+                "Builddate attribute should be equal to Implementation-Build-Date as specified in the given Manifest.",
                 BUILDDATE, GoobiVersion.getBuilddate());
     }
 

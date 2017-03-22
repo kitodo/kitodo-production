@@ -35,16 +35,8 @@ public class DesEncrypter {
     private Cipher encryptionCipher;
     private Cipher decryptionCipher;
 
-    private static final byte[] defaultSalt = {
-        (byte) 0xA9,
-        (byte) 0x9B,
-        (byte) 0xC8,
-        (byte) 0x32,
-        (byte) 0x56,
-        (byte) 0x35,
-        (byte) 0xE3,
-        (byte) 0x03
-    };
+    private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
+            (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
     private static final Logger logger = Logger.getLogger(DesEncrypter.class);
 
@@ -84,7 +76,8 @@ public class DesEncrypter {
     /**
      * Encrypt a given string.
      *
-     * @param messageToEncrypt String to encrypt
+     * @param messageToEncrypt
+     *            String to encrypt
      * @return encrypted string or null on error
      */
     public String encrypt(String messageToEncrypt) {
@@ -108,7 +101,8 @@ public class DesEncrypter {
     /**
      * Decrypt a encrypted string.
      *
-     * @param messageToDecrypt String to decrypt
+     * @param messageToDecrypt
+     *            String to decrypt
      * @return decrypted string or null on error
      */
     public String decrypt(String messageToDecrypt) {

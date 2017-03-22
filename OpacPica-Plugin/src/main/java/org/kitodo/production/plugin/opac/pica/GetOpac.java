@@ -33,8 +33,8 @@ import org.xml.sax.XMLReader;
 /**
  * Connects to OPAC system.
  *
- * TODO Talk with the GBV if the URLs are ok this way
- * TODO check if correct character encodings are returned
+ * TODO Talk with the GBV if the URLs are ok this way TODO check if correct
+ * character encodings are returned
  *
  * @author Ludwig
  * @version 0.1
@@ -120,7 +120,8 @@ class GetOpac {
      * Note that up to now the search item list is always retrieved and parsed.
      * TODO check for local availability.
      *
-     * @param opac catalogue
+     * @param opac
+     *            catalogue
      * @since 0.1
      * @throws ParserConfigurationException
      *             if a DocumentBuilder cannot be created which satisfies the
@@ -137,7 +138,8 @@ class GetOpac {
     // MANIPULATION (Manipulation - what the object does)
 
     /**
-     * Gets the number of hits for the query in the specified field from the OPAC.
+     * Gets the number of hits for the query in the specified field from the
+     * OPAC.
      *
      * @param query
      *            The query string you are looking for.
@@ -152,9 +154,11 @@ class GetOpac {
     }
 
     /**
-     * Gets the formatted picaplus data of the specified hits for the query from the OPAC.
+     * Gets the formatted picaplus data of the specified hits for the query from
+     * the OPAC.
      *
-     * @param query string you are looking for.
+     * @param query
+     *            string you are looking for.
      * @param numberOfHits
      *            the number of hits to return. Set to a value lesser than 1 to
      *            return all hits.
@@ -163,13 +167,14 @@ class GetOpac {
      * @throws IOException
      *             If connection to catalogue system failed
      */
-    Node retrievePicaNode(Query query, int numberOfHits, long timeout) throws IOException, SAXException,
-            ParserConfigurationException {
+    Node retrievePicaNode(Query query, int numberOfHits, long timeout)
+            throws IOException, SAXException, ParserConfigurationException {
         return retrievePicaNode(query, 0, numberOfHits < 1 ? -1 : numberOfHits, timeout);
     }
 
     /**
-     * Gets the formatted picaplus data of the specified hits for the query from the OPAC.
+     * Gets the formatted picaplus data of the specified hits for the query from
+     * the OPAC.
      *
      * @param query
      *            The query you are looking for.
@@ -182,14 +187,15 @@ class GetOpac {
      * @throws IOException
      *             If connection to catalogue system failed
      */
-    Node retrievePicaNode(Query query, int start, int end, long timeout) throws IOException, SAXException,
-            ParserConfigurationException {
+    Node retrievePicaNode(Query query, int start, int end, long timeout)
+            throws IOException, SAXException, ParserConfigurationException {
         return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
                 .getDocumentElement();
     }
 
     /**
-     * Gets the raw picaplus data for the specified hits for the query in the specified field from the OPAC.
+     * Gets the raw picaplus data for the specified hits for the query in the
+     * specified field from the OPAC.
      *
      * @param query
      *            The query you are looking for.
@@ -205,8 +211,8 @@ class GetOpac {
      * @throws IOException
      *             If connection to catalogue system failed
      */
-    private String retrievePica(Query query, int start, int end, long timeout) throws IOException, SAXException,
-            ParserConfigurationException {
+    private String retrievePica(Query query, int start, int end, long timeout)
+            throws IOException, SAXException, ParserConfigurationException {
         StringBuffer xmlResult = new StringBuffer();
 
         // querySummary is used to check if cached result and sessionid
@@ -255,8 +261,8 @@ class GetOpac {
     private String retrievePicaTitle(int numberOfHits, long timeout) throws IOException {
         // get pica longtitle
         int retrieveNumber = numberOfHits + 1;
-        return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.charset
-                + SET_ID_URL + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
+        return retrieveDataFromOPAC(DATABASE_URL + this.cat.getDataBase() + PICAPLUS_XML_URL + this.charset + SET_ID_URL
+                + this.lastOpacResult.getSet() + SESSIONID_URL + this.lastOpacResult.getSessionId()
                 + SHOW_LONGTITLE_NR_URL + retrieveNumber, timeout);
     }
 
@@ -270,8 +276,8 @@ class GetOpac {
      * @throws IOException
      *             If connection to catalogue system failed.
      */
-    private OpacResponseHandler getResult(Query query, long timeout) throws IOException, SAXException,
-            ParserConfigurationException {
+    private OpacResponseHandler getResult(Query query, long timeout)
+            throws IOException, SAXException, ParserConfigurationException {
         String result = null;
 
         String querySummary = query.getQueryUrl() + this.charset + this.cat.getDataBase() + this.cat.getServerAddress()
@@ -396,7 +402,8 @@ class GetOpac {
         // set timeout if no connection can be established
         opacClient.getParams().setParameter("http.connection.timeout", HTTP_CONNECTION_TIMEOUT);
 
-        // set timeout if a connection is established but there is no response (= time the database needs to search)
+        // set timeout if a connection is established but there is no response
+        // (= time the database needs to search)
         if (timeout > 0 && timeout <= Integer.MAX_VALUE) {
             opacClient.getParams().setParameter("http.socket.timeout", Long.valueOf(timeout).intValue());
         } else {
@@ -415,8 +422,8 @@ class GetOpac {
         }
     }
 
-    private OpacResponseHandler parseOpacResponse(String opacResponse) throws IOException, SAXException,
-            ParserConfigurationException {
+    private OpacResponseHandler parseOpacResponse(String opacResponse)
+            throws IOException, SAXException, ParserConfigurationException {
         opacResponse = opacResponse.replace("&amp;amp;", "&amp;").replace("&amp;quot;", "&quot;")
                 .replace("&amp;lt;", "&lt;").replace("&amp;gt;", "&gt;");
 
@@ -434,8 +441,9 @@ class GetOpac {
     }
 
     /**
-     * Set requested character encoding for the response of the catalogue system. For goettingen iso-8859-1
-	 * and utf-8 work, the default is iso-8859-1.
+     * Set requested character encoding for the response of the catalogue
+     * system. For goettingen iso-8859-1 and utf-8 work, the default is
+     * iso-8859-1.
      *
      * @param charset
      *            The character encoding to set.

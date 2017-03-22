@@ -21,8 +21,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 /**
- * The CatalogueConfiguration class provides the Jersey API URL pattern ${SERVLET_CONTEXT}/rest/catalogueConfiguration
- * which returns the major data from the ConfigOpac() configuration class in XML or JSON format.
+ * The CatalogueConfiguration class provides the Jersey API URL pattern
+ * ${SERVLET_CONTEXT}/rest/catalogueConfiguration which returns the major data
+ * from the ConfigOpac() configuration class in XML or JSON format.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -30,7 +31,7 @@ import javax.ws.rs.core.MediaType;
 public class CatalogueConfiguration {
 
     @GET
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ConfigOpac getCatalogueConfiguration() throws IOException {
         return new ConfigOpac();
     }

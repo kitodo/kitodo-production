@@ -26,20 +26,24 @@ import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
- * The class Citation represents a citation as they are used in academic writings.
+ * The class Citation represents a citation as they are used in academic
+ * writings.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class Citation {
     /**
-     * The enum Type lists the citation formatting variants supported by the citation class. These are:
+     * The enum Type lists the citation formatting variants supported by the
+     * citation class. These are:
      *
      * <p>
-     * <b>MONOGRAPH</b> − to cite from a continuous book (unlike an anthology)<br>
+     * <b>MONOGRAPH</b> − to cite from a continuous book (unlike an
+     * anthology)<br>
      * <b>ANTHOLOGY</b> − to cite from an article published in an antology<br>
      * <b>PERIODICAL</b> − to cite from an article published in a periodical<br>
-     * <b>THESIS</b> − to cite from an academic writing <b>STANDARD</b> − to cite from a standard <b>INTERNET</b>
-     * − to cite from a web site (use PERIODICAL for online journals as well)
+     * <b>THESIS</b> − to cite from an academic writing <b>STANDARD</b> − to
+     * cite from a standard <b>INTERNET</b> − to cite from a web site (use
+     * PERIODICAL for online journals as well)
      * </p>
      *
      * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -49,28 +53,32 @@ public class Citation {
     }
 
     /**
-     * The constant ACCESS_TIME_FORMAT holds the DateTimeFormat used to format the point in time when
-     * the work was last accessed.
+     * The constant ACCESS_TIME_FORMAT holds the DateTimeFormat used to format
+     * the point in time when the work was last accessed.
      */
     private static final DateTimeFormatter ACCESS_TIME_FORMAT = DateTimeFormat.forPattern("d. MMMM yyyy HH:mm ZZ");
 
     /**
-     * The constant PUBLICATION_DATE_FORMAT holds the DateTimeFormat used to format the day when the work was published.
+     * The constant PUBLICATION_DATE_FORMAT holds the DateTimeFormat used to
+     * format the day when the work was published.
      */
     private static final DateTimeFormatter PUBLICATION_DATE_FORMAT = DateTimeFormat.forPattern("d. MMMM yyyy");
 
     /**
-     * The field style holds the {@link Citation.Style} used for formatting this citation.
+     * The field style holds the {@link Citation.Style} used for formatting this
+     * citation.
      */
     private final Type style;
 
     /**
-     * The field accessed holds the point in time when the work was last accessed.
+     * The field accessed holds the point in time when the work was last
+     * accessed.
      */
     private DateTime accessed;
 
     /**
-     * The field contributors holds the list of editors, compilers, translators,  … of the anthology.
+     * The field contributors holds the list of editors, compilers, translators,
+     * … of the anthology.
      */
     private final List<String> contributors = new ArrayList<String>();
 
@@ -105,7 +113,8 @@ public class Citation {
     private String number;
 
     /**
-     * The field overallTitle holds the title of the series that the work appeared in.
+     * The field overallTitle holds the title of the series that the work
+     * appeared in.
      */
     private String overallTitle;
 
@@ -130,7 +139,8 @@ public class Citation {
     private LocalDate published;
 
     /**
-     * The field publisher holds the name of the publishing house that published the work.
+     * The field publisher holds the name of the publishing house that published
+     * the work.
      */
     private String publisher;
 
@@ -173,8 +183,9 @@ public class Citation {
      * Constructor. Creates a new citation.
      *
      * @param format
-     *            format that is to be used to summarise the bibliographic metadata, may be one
-     *            of the {@link Citation.Type} types. An unknown entry will be formatted as monograph.
+     *            format that is to be used to summarise the bibliographic
+     *            metadata, may be one of the {@link Citation.Type} types. An
+     *            unknown entry will be formatted as monograph.
      */
     public Citation(String format) {
         Type type;
@@ -189,7 +200,8 @@ public class Citation {
     }
 
     /**
-     * The method addMultipleAuthors() can be used to set the creators of the work.
+     * The method addMultipleAuthors() can be used to set the creators of the
+     * work.
      *
      * @param creators
      *            the creators of the work
@@ -201,7 +213,8 @@ public class Citation {
     }
 
     /**
-     * The method addMultipleContributors() can be used to set the editors, compilers, translators, … of the anthology.
+     * The method addMultipleContributors() can be used to set the editors,
+     * compilers, translators, … of the anthology.
      *
      * @param contributors
      *            the editors of the anthology
@@ -213,7 +226,8 @@ public class Citation {
     }
 
     /**
-     * The function addMultiple() adds multiple entities from a String to a collection.
+     * The function addMultiple() adds multiple entities from a String to a
+     * collection.
      *
      * @param list
      *            a String listing one or more entities
@@ -238,7 +252,8 @@ public class Citation {
     }
 
     /**
-     * The method setAccessTime() can be used to set the point in time when the work was last accessed.
+     * The method setAccessTime() can be used to set the point in time when the
+     * work was last accessed.
      *
      * @param accessed
      *            the point in time when the work was last accessed
@@ -261,7 +276,8 @@ public class Citation {
     }
 
     /**
-     * The method setDepartment() can be used to set the department of the author of the academic writing.
+     * The method setDepartment() can be used to set the department of the
+     * author of the academic writing.
      *
      * @param department
      *            the department of the author
@@ -274,7 +290,8 @@ public class Citation {
     }
 
     /**
-     * The method setEdition() can be used to set edition information of the work.
+     * The method setEdition() can be used to set edition information of the
+     * work.
      *
      * @param edition
      *            edition information
@@ -287,8 +304,8 @@ public class Citation {
     }
 
     /**
-     * The method setEmployer() can be used to set the employer—usually a university—of the author of
-     * the academic writing.
+     * The method setEmployer() can be used to set the employer—usually a
+     * university—of the author of the academic writing.
      *
      * @param employer
      *            the employer of the author
@@ -314,7 +331,8 @@ public class Citation {
     }
 
     /**
-     * The method setOverallTitle() can be used to set the title of the series that the work appeared in.
+     * The method setOverallTitle() can be used to set the title of the series
+     * that the work appeared in.
      *
      * @param title
      *            the title of the series
@@ -327,7 +345,8 @@ public class Citation {
     }
 
     /**
-     * The method setPages() can be used to set the page range covered by the article.
+     * The method setPages() can be used to set the page range covered by the
+     * article.
      *
      * @param pages
      *            the page range
@@ -353,7 +372,8 @@ public class Citation {
     }
 
     /**
-     * The method setPlace() can be used to set the place of publication of the work.
+     * The method setPlace() can be used to set the place of publication of the
+     * work.
      *
      * @param place
      *            the place of publication of the work
@@ -366,7 +386,8 @@ public class Citation {
     }
 
     /**
-     * The method setPublicationDate() can be used to set the day when the work was published.
+     * The method setPublicationDate() can be used to set the day when the work
+     * was published.
      *
      * @param date
      *            the day when the work was published
@@ -376,7 +397,8 @@ public class Citation {
     }
 
     /**
-     * The method setPublisher() can be used to set the name of the publishing house that published the work.
+     * The method setPublisher() can be used to set the name of the publishing
+     * house that published the work.
      *
      * @param publisher
      *            the name of the publishing house
@@ -389,7 +411,8 @@ public class Citation {
     }
 
     /**
-     * The method setSubseries() can be used to set the subseries the work appeared in.
+     * The method setSubseries() can be used to set the subseries the work
+     * appeared in.
      *
      * @param subseries
      *            the subseries the work appared in
@@ -402,7 +425,8 @@ public class Citation {
     }
 
     /**
-     * The method setTitle() can be used to set the title of the autonomous work.
+     * The method setTitle() can be used to set the title of the autonomous
+     * work.
      *
      * @param title
      *            the title of the autonomous work
@@ -428,7 +452,8 @@ public class Citation {
     }
 
     /**
-     * The method setURL() can be used to set the Internet address of the online resource.
+     * The method setURL() can be used to set the Internet address of the online
+     * resource.
      *
      * @param url
      *            the Internet address
@@ -454,7 +479,8 @@ public class Citation {
     }
 
     /**
-     * The method setVolumeTitle() can be used to set the volume title of the work.
+     * The method setVolumeTitle() can be used to set the volume title of the
+     * work.
      *
      * @param title
      *            the volume title
@@ -615,7 +641,8 @@ public class Citation {
     }
 
     /**
-     * The function toString() returns a string that textually represents this object.
+     * The function toString() returns a string that textually represents this
+     * object.
      *
      * @return a human raedable String representation
      * @see java.lang.Object#toString()
@@ -626,7 +653,8 @@ public class Citation {
     }
 
     /**
-     * The method appendAccessed() appends the time of last access to the given StringBuilder.
+     * The method appendAccessed() appends the time of last access to the given
+     * StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -647,8 +675,8 @@ public class Citation {
     }
 
     /**
-     * The method appendArticle() appends the article title to the given StringBuilder.
-     * An unterminated phrase will be ended by a full stop.
+     * The method appendArticle() appends the article title to the given
+     * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
      *            StringBuilder to write to
@@ -666,7 +694,8 @@ public class Citation {
     }
 
     /**
-     * The method appendContainedIn() appends the “ In: ” remark to the given StringBuilder.
+     * The method appendContainedIn() appends the “ In: ” remark to the given
+     * StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -678,8 +707,8 @@ public class Citation {
     }
 
     /**
-     * The method appendEdition() appends edition information to the given StringBuilder.
-     * An unterminated phrase will be ended by a full stop.
+     * The method appendEdition() appends edition information to the given
+     * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
      *            StringBuilder to write to
@@ -695,7 +724,8 @@ public class Citation {
     }
 
     /**
-     * The method appendNames() appends a list of names to the given StringBuilder.
+     * The method appendNames() appends a list of names to the given
+     * StringBuilder.
      *
      * @param names
      *            a list of names to append
@@ -713,8 +743,9 @@ public class Citation {
     }
 
     /**
-     * The method formatName() returns a name formatted in HTML. If colon is true, it returns “Lastname, Firstname”,
-     * otherwise it returns “Firstname Lastname”. In either case, the last name will be formatted in small caps.
+     * The method formatName() returns a name formatted in HTML. If colon is
+     * true, it returns “Lastname, Firstname”, otherwise it returns “Firstname
+     * Lastname”. In either case, the last name will be formatted in small caps.
      *
      * @param name
      *            Name to format, scheme "Lastname, Firstname"
@@ -745,7 +776,8 @@ public class Citation {
     }
 
     /**
-     * The method appendOverallTitleAndNumber() appends the series title and number to the given StringBuilder.
+     * The method appendOverallTitleAndNumber() appends the series title and
+     * number to the given StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -769,7 +801,8 @@ public class Citation {
     }
 
     /**
-     * The method appendPagerange() appends the page range to the given StringBuilder.
+     * The method appendPagerange() appends the page range to the given
+     * StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -784,8 +817,8 @@ public class Citation {
     }
 
     /**
-     * The method appendPlaceAndPublisher() appends the place of publication and the publishing house
-     * to the given StringBuilder.
+     * The method appendPlaceAndPublisher() appends the place of publication and
+     * the publishing house to the given StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -805,7 +838,8 @@ public class Citation {
     }
 
     /**
-     * The method appendPublished() appends the date of publish to the given StringBuilder.
+     * The method appendPublished() appends the date of publish to the given
+     * StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -817,8 +851,8 @@ public class Citation {
     }
 
     /**
-     * The method appendTitle() appends the main title to the given StringBuilder.
-     * An unterminated phrase will be ended by a full stop.
+     * The method appendTitle() appends the main title to the given
+     * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
      *            StringBuilder to write to
@@ -828,8 +862,8 @@ public class Citation {
     }
 
     /**
-     * The method appendTitle() appends the main title to the given StringBuilder.
-     * An unterminated phrase will be ended by a full stop.
+     * The method appendTitle() appends the main title to the given
+     * StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
      *            StringBuilder to write to
@@ -863,8 +897,8 @@ public class Citation {
     }
 
     /**
-     * The method appendVolumeInformation() appends volume information to the given StringBuilder.
-     * An unterminated phrase will be ended by a full stop.
+     * The method appendVolumeInformation() appends volume information to the
+     * given StringBuilder. An unterminated phrase will be ended by a full stop.
      *
      * @param builder
      *            StringBuilder to write to
@@ -888,7 +922,8 @@ public class Citation {
     }
 
     /**
-     * The method appendYear() appends information about the year of publishing to the given StringBuilder.
+     * The method appendYear() appends information about the year of publishing
+     * to the given StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to
@@ -902,7 +937,8 @@ public class Citation {
     }
 
     /**
-     * The method appendYear() appends information about the year of publishing to the given StringBuilder.
+     * The method appendYear() appends information about the year of publishing
+     * to the given StringBuilder.
      *
      * @param builder
      *            StringBuilder to write to

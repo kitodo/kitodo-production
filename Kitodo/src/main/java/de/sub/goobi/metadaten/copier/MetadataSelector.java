@@ -26,8 +26,8 @@ import ugh.dl.DocStruct;
 public abstract class MetadataSelector extends DataSelector {
 
     /**
-     * Factory method to create a metadata selector. Depending on the path, the required implementation
-	 * will be constructed.
+     * Factory method to create a metadata selector. Depending on the path, the
+     * required implementation will be constructed.
      *
      * @param path
      *            path to create a metadata selector from.
@@ -53,10 +53,11 @@ public abstract class MetadataSelector extends DataSelector {
     }
 
     /**
-     * Calling createIfPathExistsOnly() on the implementing instance should check if the document structure node
-     * the metadata selector is pointing at is available, but no metadata as named by the path is available at
-     * that document structure node, and only in this case add a metadata as named by the path with the value
-     * passed to the function.
+     * Calling createIfPathExistsOnly() on the implementing instance should
+     * check if the document structure node the metadata selector is pointing at
+     * is available, but no metadata as named by the path is available at that
+     * document structure node, and only in this case add a metadata as named by
+     * the path with the value passed to the function.
      *
      * @param data
      *            data to work on
@@ -70,9 +71,10 @@ public abstract class MetadataSelector extends DataSelector {
     protected abstract void createIfPathExistsOnly(CopierData data, DocStruct logicalNode, String value);
 
     /**
-     * Checks if the document structure node the metadata selector is pointing at is available, but no metadata
-     * as named by the path is available at that document structure node, and only in this case adds a metadata
-     * as named by the path with the value passed to the function.
+     * Checks if the document structure node the metadata selector is pointing
+     * at is available, but no metadata as named by the path is available at
+     * that document structure node, and only in this case adds a metadata as
+     * named by the path with the value passed to the function.
      *
      * @param data
      *            data to work on
@@ -86,10 +88,12 @@ public abstract class MetadataSelector extends DataSelector {
     }
 
     /**
-     * Calling createOrOverwrite() on the implementing instance should check if the document structure node
-     * as named by the path is available, and set the metadata as named by the path to the value passed to
-     * the function. If the document structure node isn’t yet present, it should be created.
-     * If the metadata already exists, it shall be overwritten, otherwise it shall be created.
+     * Calling createOrOverwrite() on the implementing instance should check if
+     * the document structure node as named by the path is available, and set
+     * the metadata as named by the path to the value passed to the function. If
+     * the document structure node isn’t yet present, it should be created. If
+     * the metadata already exists, it shall be overwritten, otherwise it shall
+     * be created.
      *
      * @param data
      *            data to work on
@@ -103,9 +107,11 @@ public abstract class MetadataSelector extends DataSelector {
     protected abstract void createOrOverwrite(CopierData data, DocStruct logicalNode, String value);
 
     /**
-     * Checks if the document structure node as named by the path is available, and sets the metadata as named by
-     * the path to the value passed to the function. If the document structure node isn’t yet present, it will be
-     * created. If the metadata already exists, it will be overwritten, otherwise it will be created.
+     * Checks if the document structure node as named by the path is available,
+     * and sets the metadata as named by the path to the value passed to the
+     * function. If the document structure node isn’t yet present, it will be
+     * created. If the metadata already exists, it will be overwritten,
+     * otherwise it will be created.
      *
      * @param data
      *            data to work on
@@ -119,7 +125,8 @@ public abstract class MetadataSelector extends DataSelector {
     }
 
     /**
-     * Returns all concrete metadata selectors the potentially generic metadata selector expression resolves to.
+     * Returns all concrete metadata selectors the potentially generic metadata
+     * selector expression resolves to.
      *
      * @param data
      *            copier data to work on
@@ -130,8 +137,8 @@ public abstract class MetadataSelector extends DataSelector {
     }
 
     /**
-     * Must be implemented to return all concrete metadata selectors the potentially generic metadata selector
-     * expression resolves to.
+     * Must be implemented to return all concrete metadata selectors the
+     * potentially generic metadata selector expression resolves to.
      *
      * @param logicalNode
      *            Node of the logical document structure to work on
@@ -140,8 +147,9 @@ public abstract class MetadataSelector extends DataSelector {
     protected abstract Iterable<MetadataSelector> findAll(DocStruct logicalNode);
 
     /**
-     * Returns the value of the metadata named by the path used to construct the metadata selector, or null
-     * if either the path or the metadata at the end of the path aren’t available.
+     * Returns the value of the metadata named by the path used to construct the
+     * metadata selector, or null if either the path or the metadata at the end
+     * of the path aren’t available.
      *
      * @return the value the path points to, or null if absent
      * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(de.sub.goobi.metadaten.copier.CopierData)
@@ -152,9 +160,10 @@ public abstract class MetadataSelector extends DataSelector {
     }
 
     /**
-     * Calling findIn() on the implementing instance should return the value of the metadata named by
-     * the path used to construct the metadata selector. Should return null if either the path or the metadata at
-     * the end of the path aren’t available.
+     * Calling findIn() on the implementing instance should return the value of
+     * the metadata named by the path used to construct the metadata selector.
+     * Should return null if either the path or the metadata at the end of the
+     * path aren’t available.
      *
      * @param logicalNode
      *            document structure node to examine, intended for recursion

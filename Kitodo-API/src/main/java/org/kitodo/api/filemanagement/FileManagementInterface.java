@@ -18,7 +18,9 @@ public interface FileManagementInterface {
 
     /**
      * Retrieves a File from a given path.
-     * @param path The path, to get the File from.
+     * 
+     * @param path
+     *            The path, to get the File from.
      * @return The retrieved file.
      */
     File retrieve(Path path);
@@ -26,8 +28,10 @@ public interface FileManagementInterface {
     /**
      * Saves a given File to a given Path.
      *
-     * @param file the file to be saved.
-     * @param path the path, to save the file to.
+     * @param file
+     *            the file to be saved.
+     * @param path
+     *            the path, to save the file to.
      * @return true, if saving was successfull, false if an error occured.
      */
     boolean save(File file, Path path);

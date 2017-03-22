@@ -31,14 +31,16 @@ public class FilesystemHelper {
     private static final Logger logger = Logger.getLogger(FilesystemHelper.class);
 
     /**
-     * Creates a directory with a name given. Under Linux a script is used to set the file system permissions
-     * accordingly. This cannot be done from within java code before version 1.7.
+     * Creates a directory with a name given. Under Linux a script is used to
+     * set the file system permissions accordingly. This cannot be done from
+     * within java code before version 1.7.
      *
      * @param dirName
      *            Name of directory to create
      * @throws InterruptedException
-     *             If the thread running the script is interrupted by another thread while it is waiting,
-     *             then the wait is ended and an InterruptedException is thrown.
+     *             If the thread running the script is interrupted by another
+     *             thread while it is waiting, then the wait is ended and an
+     *             InterruptedException is thrown.
      * @throws IOException
      *             If an I/O error occurs.
      */
@@ -46,20 +48,22 @@ public class FilesystemHelper {
     public static void createDirectory(String dirName) throws IOException, InterruptedException {
         if (!new File(dirName).exists()) {
             ShellScript createDirScript = new ShellScript(new File(ConfigMain.getParameter("script_createDirMeta")));
-            createDirScript.run(Arrays.asList(new String[] { dirName }));
+            createDirScript.run(Arrays.asList(new String[] {dirName }));
         }
     }
 
     /**
-     * Creates a directory with a name given and assigns permissions to the given user. Under Linux a script is
-     * used to set the file system permissions accordingly. This cannot be done from within java code
-     * before version 1.7.
+     * Creates a directory with a name given and assigns permissions to the
+     * given user. Under Linux a script is used to set the file system
+     * permissions accordingly. This cannot be done from within java code before
+     * version 1.7.
      *
      * @param dirName
      *            Name of directory to create
      * @throws InterruptedException
-     *             If the thread running the script is interrupted by another thread while it is waiting,
-     *             then the wait is ended and an InterruptedException is thrown.
+     *             If the thread running the script is interrupted by another
+     *             thread while it is waiting, then the wait is ended and an
+     *             InterruptedException is thrown.
      * @throws IOException
      *             If an I/O error occurs.
      */
@@ -67,23 +71,24 @@ public class FilesystemHelper {
     public static void createDirectoryForUser(String dirName, String userName)
             throws IOException, InterruptedException {
         if (!new File(dirName).exists()) {
-            ShellScript createDirScript = new ShellScript(new File(
-                    ConfigMain.getParameter("script_createDirUserHome")));
-            createDirScript.run(Arrays.asList(new String[] { userName, dirName }));
+            ShellScript createDirScript = new ShellScript(
+                    new File(ConfigMain.getParameter("script_createDirUserHome")));
+            createDirScript.run(Arrays.asList(new String[] {userName, dirName }));
         }
     }
 
     /**
      * Delete sym link.
      *
-     * @param symLink String
+     * @param symLink
+     *            String
      */
     public static void deleteSymLink(String symLink) {
         String command = ConfigMain.getParameter("script_deleteSymLink");
         ShellScript deleteSymLinkScript;
         try {
             deleteSymLinkScript = new ShellScript(new File(command));
-            deleteSymLinkScript.run(Arrays.asList(new String[] { symLink }));
+            deleteSymLinkScript.run(Arrays.asList(new String[] {symLink }));
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException in deleteSymLink()", e);
             Helper.setFehlerMeldung("Couldn't find script file, error", e.getMessage());
@@ -94,8 +99,9 @@ public class FilesystemHelper {
     }
 
     /**
-     * This function implements file renaming. Renaming of files is full of mischief under Windows
-     * which unaccountably holds locks on files. Sometimes running the JVM’s garbage collector puts things right.
+     * This function implements file renaming. Renaming of files is full of
+     * mischief under Windows which unaccountably holds locks on files.
+     * Sometimes running the JVM’s garbage collector puts things right.
      *
      * @param oldFileName
      *            File to move or rename
@@ -104,7 +110,8 @@ public class FilesystemHelper {
      * @throws IOException
      *             is thrown if the rename fails permanently
      * @throws FileNotFoundException
-     *             is thrown if old file (source file of renaming) does not exists
+     *             is thrown if old file (source file of renaming) does not
+     *             exists
      */
     public static void renameFile(String oldFileName, String newFileName) throws IOException {
         final int SLEEP_INTERVAL_MILLIS = 20;
@@ -153,8 +160,7 @@ public class FilesystemHelper {
                 }
                 millisWaited += SLEEP_INTERVAL_MILLIS;
             }
-        }
-        while (!success && millisWaited < MAX_WAIT_MILLIS);
+        } while (!success && millisWaited < MAX_WAIT_MILLIS);
 
         if (!success) {
             logger.error("Rename " + oldFileName + " failed. This is a permanent error. Giving up.");

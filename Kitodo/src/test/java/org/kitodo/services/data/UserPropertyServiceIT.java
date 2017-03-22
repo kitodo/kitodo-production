@@ -37,7 +37,7 @@ public class UserPropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -45,7 +45,8 @@ public class UserPropertyServiceIT {
         UserPropertyService userPropertyService = new UserPropertyService();
 
         UserProperty userProperty = userPropertyService.find(1);
-        boolean condition = userProperty.getTitle().equals("First Property") && userProperty.getValue().equals("first value");
+        boolean condition = userProperty.getTitle().equals("First Property")
+                && userProperty.getValue().equals("first value");
         assertTrue("User property was not found in database!", condition);
     }
 

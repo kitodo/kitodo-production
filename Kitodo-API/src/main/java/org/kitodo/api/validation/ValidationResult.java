@@ -21,29 +21,39 @@ public class ValidationResult {
     /** A list of result messages. */
     private ArrayList<String> resultMessages;
 
-    /** Gets valid.
+    /**
+     * Gets valid.
+     * 
      * @return The valid.
      */
     public boolean isValid() {
         return valid;
     }
 
-    /** Sets valid.
-     * @param valid The valid.
+    /**
+     * Sets valid.
+     * 
+     * @param valid
+     *            The valid.
      */
     public void setValid(boolean valid) {
         this.valid = valid;
     }
 
-    /** Gets the resultMessages.
+    /**
+     * Gets the resultMessages.
+     * 
      * @return The resultMessages.
      */
     public ArrayList<String> getResultMessages() {
         return resultMessages;
     }
 
-    /** Sets the resultMessages.
-     * @param resultMessages The resultMessages.
+    /**
+     * Sets the resultMessages.
+     * 
+     * @param resultMessages
+     *            The resultMessages.
      */
     public void setResultMessages(ArrayList<String> resultMessages) {
         this.resultMessages = resultMessages;

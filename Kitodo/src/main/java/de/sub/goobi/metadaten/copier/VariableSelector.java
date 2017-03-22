@@ -26,10 +26,11 @@ public class VariableSelector extends DataSelector {
     private final String qualifier;
 
     /**
-     * If the selector passed to the constructor references a variable that is part of an object which is held
-	 * in a variable itself, then this VariableSelector only handles the resolving of the first variable, and
-     * the field subselector holds another VariableSelector to resolve the remaining variable. Otherwise,
-     * this field is null.
+     * If the selector passed to the constructor references a variable that is
+     * part of an object which is held in a variable itself, then this
+     * VariableSelector only handles the resolving of the first variable, and
+     * the field subselector holds another VariableSelector to resolve the
+     * remaining variable. Otherwise, this field is null.
      */
     private final VariableSelector subselector;
 
@@ -54,8 +55,8 @@ public class VariableSelector extends DataSelector {
     }
 
     /**
-     * Returns the value of the variable named by the path used to construct the variable selector.
-     * Returns null if the variable isn’t available.
+     * Returns the value of the variable named by the path used to construct the
+     * variable selector. Returns null if the variable isn’t available.
      *
      * @param data
      *            object to inspect
@@ -68,8 +69,8 @@ public class VariableSelector extends DataSelector {
     }
 
     /**
-     * Returns the value of the variable named by the path used to construct the variable selector.
-     * Returns null if the variable isn’t available.
+     * Returns the value of the variable named by the path used to construct the
+     * variable selector. Returns null if the variable isn’t available.
      *
      * @param classInstance
      *            object to inspect

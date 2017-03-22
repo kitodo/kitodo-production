@@ -24,7 +24,6 @@ class MockMetadatum implements Metadatum {
 
     private String value;
 
-
     public MockMetadatum() {
     }
 

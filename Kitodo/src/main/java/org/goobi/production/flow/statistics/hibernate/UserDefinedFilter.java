@@ -26,7 +26,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Process;
 
-//import java.lang.ref.WeakReference;
+// import java.lang.ref.WeakReference;
 
 /**
  * This class UserDefinedFilter implements the IEvaluateFilter interface It
@@ -74,9 +74,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getCriteria
-     * ()
+     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getCriteria ()
      */
     @Override
     public Criteria getCriteria() {
@@ -168,7 +167,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
         crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
         /*
-         * combine all parameters together this part was exported to FilterHelper so that other Filters could access it
+         * combine all parameters together this part was exported to
+         * FilterHelper so that other Filters could access it
          */
         String message = FilterHelper.criteriaBuilder(session, inFilter, crit, null, myParameter, false, null, true);
         if (message.length() > 0) {
@@ -176,13 +176,13 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
         }
 
         /*
-         * used for step filter if query conditions include more than one step by using a range the Criteria produces
-         * more than one item per process, for each step it involves
+         * used for step filter if query conditions include more than one step
+         * by using a range the Criteria produces more than one item per
+         * process, for each step it involves
          */
         createIDListFromCriteria(crit);
         crit = null;
         crit = createCriteriaFromIDList();
-
 
         return crit;
     }
@@ -195,7 +195,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     @SuppressWarnings("unchecked")
     private void createIDListFromCriteria(Criteria crit) {
         myIds = new ArrayList<Integer>();
-        for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it.hasNext();) {
+        for (Iterator<Object> it = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list().iterator(); it
+                .hasNext();) {
             Process p = (Process) it.next();
             myIds.add(p.getId());
             myCriteria = null;
@@ -243,9 +244,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getObservable
-     * ()
+     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getObservable ()
      */
     @Override
     public Observable getObservable() {
@@ -290,7 +290,8 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
      */
     @Override
     public void setSQL(String sqlString) {
-        throw new UnsupportedOperationException("The class " + this.getClass().getName() + " does not implement setSQL() ");
+        throw new UnsupportedOperationException(
+                "The class " + this.getClass().getName() + " does not implement setSQL() ");
     }
 
     protected static class Parameters {

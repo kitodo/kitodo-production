@@ -30,121 +30,119 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 
 /**
  * This class implements the IProvideProjectTaskList and approaches the problem
- * by using a projection on the hibernate criteria, which accelerates data  retrieval
+ * by using a projection on the hibernate criteria, which accelerates data
+ * retrieval
  *
  * @author Wulf Riebensahm
  *
  */
 public class HibernateProjectionProjectTaskList implements IProvideProjectTaskList {
-	private static final Logger logger = Logger.getLogger(HibernateProjectionProjectTaskList.class);
-	
-	@Override
-	public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
-		List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
-		calculate(inProject, myTaskList, countImages, inMax);
-		return myTaskList;
-	}
+    private static final Logger logger = Logger.getLogger(HibernateProjectionProjectTaskList.class);
 
-	@SuppressWarnings("rawtypes")
-	private synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages, Integer inMax) {
+    @Override
+    public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
+        List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
+        calculate(inProject, myTaskList, countImages, inMax);
+        return myTaskList;
+    }
 
-		Session session = Helper.getHibernateSession();
-		Criteria crit = session.createCriteria(Task.class);
+    @SuppressWarnings("rawtypes")
+    private synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages,
+            Integer inMax) {
 
-		crit.createCriteria("process", "proc");
-		
-		crit.addOrder(Order.asc("ordering"));
+        Session session = Helper.getHibernateSession();
+        Criteria crit = session.createCriteria(Task.class);
 
-		crit.add(Restrictions.eq("proc.template", Boolean.FALSE));
-		crit.add(Restrictions.eq("proc.project", inProject));
+        crit.createCriteria("process", "proc");
 
-		ProjectionList proList = Projections.projectionList();
+        crit.addOrder(Order.asc("ordering"));
 
-		proList.add(Projections.property("title"));
-		proList.add(Projections.property("processingStatus"));
-		proList.add(Projections.sum("proc.sortHelperImages"));
-		proList.add(Projections.count("id"));
-		//proList.add(Projections.groupProperty(("reihenfolge")));
-		
-		proList.add(Projections.groupProperty(("title")));
-		proList.add(Projections.groupProperty(("processingStatus")));
+        crit.add(Restrictions.eq("proc.template", Boolean.FALSE));
+        crit.add(Restrictions.eq("proc.project", inProject));
 
-		crit.setProjection(proList);
+        ProjectionList proList = Projections.projectionList();
 
-		List list = crit.list();
+        proList.add(Projections.property("title"));
+        proList.add(Projections.property("processingStatus"));
+        proList.add(Projections.sum("proc.sortHelperImages"));
+        proList.add(Projections.count("id"));
+        // proList.add(Projections.groupProperty(("reihenfolge")));
 
-	    Iterator it = list.iterator();
-	      if(!it.hasNext()){
-	          logger.debug("No any data!");
-	        }
-	        else{
-	        	Integer rowCount = 0;
-	          while(it.hasNext()){
-	            Object[] row = (Object[])it.next();
-	            rowCount ++;
-	            String message = "";
-	            int i;
+        proList.add(Projections.groupProperty(("title")));
+        proList.add(Projections.groupProperty(("processingStatus")));
 
-	            	String shorttitle;
-	            	if (((String) row[FieldList.stepName.getFieldLocation()]).length() > 60){
-	            		shorttitle = ((String) row[FieldList.stepName.getFieldLocation()]).substring(0, 60) + "..."; 
-	            	}else{
-	            		shorttitle = (String) row[FieldList.stepName.getFieldLocation()];
-	            	}
-	            	
-	            	IProjectTask pt = null;
-					for (IProjectTask task : myTaskList) {
-						if (task.getTitle().equals(shorttitle)) {
-							pt = task;
-							break;
-						}
-					}
+        crit.setProjection(proList);
 
-					if (pt == null) {
-						pt = new ProjectTask(shorttitle, 0, 0);
-						myTaskList.add(pt);
-					}
+        List list = crit.list();
 
-					if (TaskStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
-						if (countImages) {
-							pt.setStepsCompleted((Integer) row[FieldList.pageCount.getFieldLocation()]);
-						} else {
-							pt.setStepsCompleted((Integer) row[FieldList.processCount.getFieldLocation()]);
-						}
-					}
+        Iterator it = list.iterator();
+        if (!it.hasNext()) {
+            logger.debug("No any data!");
+        } else {
+            Integer rowCount = 0;
+            while (it.hasNext()) {
+                Object[] row = (Object[]) it.next();
+                rowCount++;
+                String message = "";
+                int i;
 
-					if (countImages) {
-						pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.pageCount.getFieldLocation()]);
-					} else {
-						pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.processCount.getFieldLocation()]);
-					}
-	            	
-					//TODO remove following lines all the way to system.out
-		            for(i = 0; i < row.length;i++){
-		            	message = message + "|" + row[i];
-	            	}
-					logger.debug(Integer.toString(rowCount) + message);
-	            
-	          }
-	        }
-	
+                String shorttitle;
+                if (((String) row[FieldList.stepName.getFieldLocation()]).length() > 60) {
+                    shorttitle = ((String) row[FieldList.stepName.getFieldLocation()]).substring(0, 60) + "...";
+                } else {
+                    shorttitle = (String) row[FieldList.stepName.getFieldLocation()];
+                }
 
+                IProjectTask pt = null;
+                for (IProjectTask task : myTaskList) {
+                    if (task.getTitle().equals(shorttitle)) {
+                        pt = task;
+                        break;
+                    }
+                }
 
-	      
-	}
+                if (pt == null) {
+                    pt = new ProjectTask(shorttitle, 0, 0);
+                    myTaskList.add(pt);
+                }
 
-	private enum FieldList {
-		stepName(0), stepStatus(1), pageCount(2), processCount(3);
+                if (TaskStatus.DONE.getValue().equals(row[FieldList.stepStatus.getFieldLocation()])) {
+                    if (countImages) {
+                        pt.setStepsCompleted((Integer) row[FieldList.pageCount.getFieldLocation()]);
+                    } else {
+                        pt.setStepsCompleted((Integer) row[FieldList.processCount.getFieldLocation()]);
+                    }
+                }
 
-		Integer fieldLocation;
+                if (countImages) {
+                    pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.pageCount.getFieldLocation()]);
+                } else {
+                    pt.setStepsMax(pt.getStepsMax() + (Integer) row[FieldList.processCount.getFieldLocation()]);
+                }
 
-		FieldList(Integer fieldLocation) {
-			this.fieldLocation = fieldLocation;
-		}
+                // TODO remove following lines all the way to system.out
+                for (i = 0; i < row.length; i++) {
+                    message = message + "|" + row[i];
+                }
+                logger.debug(Integer.toString(rowCount) + message);
 
-		Integer getFieldLocation() {
-			return this.fieldLocation;
-		}
-	}
+            }
+        }
+
+    }
+
+    private enum FieldList {
+        stepName(0), stepStatus(1), pageCount(2), processCount(3);
+
+        Integer fieldLocation;
+
+        FieldList(Integer fieldLocation) {
+            this.fieldLocation = fieldLocation;
+        }
+
+        Integer getFieldLocation() {
+            return this.fieldLocation;
+        }
+    }
 
 }

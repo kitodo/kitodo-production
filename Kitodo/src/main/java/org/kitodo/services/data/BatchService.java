@@ -33,9 +33,11 @@ public class BatchService {
     private Indexer<Batch, BatchType> indexer = new Indexer<>("kitodo", Batch.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param batch object
+     * @param batch
+     *            object
      */
     public void save(Batch batch) throws DAOException, IOException {
         batchDao.save(batch);
@@ -52,9 +54,11 @@ public class BatchService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param batch object
+     * @param batch
+     *            object
      */
     public void remove(Batch batch) throws DAOException, IOException {
         batchDao.remove(batch);
@@ -63,9 +67,11 @@ public class BatchService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         batchDao.remove(id);
@@ -86,10 +92,11 @@ public class BatchService {
     }
 
     /**
-     * The function add() adds the given process to this batch if it is not already present.
-     * TODO: Not sure if this method is needed, check it
+     * The function add() adds the given process to this batch if it is not
+     * already present. TODO: Not sure if this method is needed, check it
      *
-     * @param process to add
+     * @param process
+     *            to add
      * @return true if this batch did not already contain the specified process
      */
     public boolean add(Batch batch, Process process) {
@@ -97,11 +104,12 @@ public class BatchService {
     }
 
     /**
-     * The function addAll() adds all of the elements in the given collection to this batch
-     * if they're not already present.
-     * TODO: Not sure if this method is needed, check it
+     * The function addAll() adds all of the elements in the given collection to
+     * this batch if they're not already present. TODO: Not sure if this method
+     * is needed, check it
      *
-     * @param processes collection containing elements to be added to this set
+     * @param processes
+     *            collection containing elements to be added to this set
      * @return true if this set changed as a result of the call
      */
     public boolean addAll(Batch batch, Collection<? extends Process> processes) {
@@ -109,22 +117,22 @@ public class BatchService {
     }
 
     /**
-     * The function contains() returns true if the title (if set) or the id-based label contain the specified
-     * sequence of char values.
+     * The function contains() returns true if the title (if set) or the
+     * id-based label contain the specified sequence of char values.
      *
-     * @param sequence the sequence to search for
+     * @param sequence
+     *            the sequence to search for
      * @return true if the title or label contain s, false otherwise
      */
     public boolean contains(Batch batch, CharSequence sequence) {
-        return sequence == null
-				|| batch.getTitle() != null
-                && batch.getTitle().contains(sequence)
+        return sequence == null || batch.getTitle() != null && batch.getTitle().contains(sequence)
                 || getNumericLabel(batch).contains(sequence);
     }
 
     /**
-     * The function getIdString() returns the identifier for the batch as read-only property "idString".
-     * This method is required by Faces which silently fails if you try to use the id Integer.
+     * The function getIdString() returns the identifier for the batch as
+     * read-only property "idString". This method is required by Faces which
+     * silently fails if you try to use the id Integer.
      *
      * @return the identifier for the batch as String
      */
@@ -133,9 +141,11 @@ public class BatchService {
     }
 
     /**
-     * The function getLabel() returns a readable label for the batch, which is either its title, if defined, or,
-     * for batches not having a title (in recent versions of Production, batches didn’t support titles) its ancient
-     * label, consisting of the prefix “Batch ” (in the desired translation) together with its id number.
+     * The function getLabel() returns a readable label for the batch, which is
+     * either its title, if defined, or, for batches not having a title (in
+     * recent versions of Production, batches didn’t support titles) its ancient
+     * label, consisting of the prefix “Batch ” (in the desired translation)
+     * together with its id number.
      *
      * @return a readable label for the batch
      */
@@ -144,8 +154,9 @@ public class BatchService {
     }
 
     /**
-     * The function getNumericLabel() returns a readable label for the batch, consisting of the prefix “Batch ”
-     * (in the desired translation) together with its id number.
+     * The function getNumericLabel() returns a readable label for the batch,
+     * consisting of the prefix “Batch ” (in the desired translation) together
+     * with its id number.
      *
      * @return a readable label for the batch
      */
@@ -167,9 +178,12 @@ public class BatchService {
     }
 
     /**
-     * The function removeAll() removes all elements that are contained in the given collection from this batch.
-     * TODO: Not sure if this method is needed, check it
-     * @param processes collection containing elements to be removed from this set
+     * The function removeAll() removes all elements that are contained in the
+     * given collection from this batch. TODO: Not sure if this method is
+     * needed, check it
+     * 
+     * @param processes
+     *            collection containing elements to be removed from this set
      * @return true if the set of processes was changed as a result of the call
      */
     public boolean removeAll(Batch batch, Collection<?> processes) {
@@ -177,8 +191,8 @@ public class BatchService {
     }
 
     /**
-     * Returns the number of processes in this batch. If this batch contains more than Integer.MAX_VALUE processes,
-     * returns Integer.MAX_VALUE.
+     * Returns the number of processes in this batch. If this batch contains
+     * more than Integer.MAX_VALUE processes, returns Integer.MAX_VALUE.
      *
      * @return the number of elements in this batch
      * @see java.util.Collection#size()
@@ -188,15 +202,14 @@ public class BatchService {
     }
 
     /**
-     * The function toString() returns a concise but informative representation that is easy for a person to read
-     * and that "textually represents" this batch.
+     * The function toString() returns a concise but informative representation
+     * that is easy for a person to read and that "textually represents" this
+     * batch.
      *
      */
     public String toString(Batch batch) {
         try {
-            StringBuilder result = new StringBuilder(
-                    batch.getTitle() != null ? batch.getTitle().length() + 20 : 30
-            );
+            StringBuilder result = new StringBuilder(batch.getTitle() != null ? batch.getTitle().length() + 20 : 30);
             try {
                 if (batch.getTitle() != null) {
                     result.append(batch.getTitle());
@@ -220,8 +233,8 @@ public class BatchService {
             result.append(')');
             if (batch.getType() != null) {
                 result.append(" [");
-                //TODO: check out method
-                result.append( getTypeTranslated(batch));
+                // TODO: check out method
+                result.append(getTypeTranslated(batch));
                 result.append(']');
             }
             return result.toString();
@@ -231,8 +244,8 @@ public class BatchService {
     }
 
     /**
-     * Goobi does not keep objects around from Hibernate session to Hibernate session,
-     * so this is the working approach here.
+     * Goobi does not keep objects around from Hibernate session to Hibernate
+     * session, so this is the working approach here.
      *
      * @see "https://developer.jboss.org/wiki/EqualsandHashCode"
      */
