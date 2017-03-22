@@ -152,9 +152,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     public ExportNewspaperBatchTask(Batch batch)
             throws HibernateException, PreferencesException, ReadException, SwapException, DAOException, IOException,
             InterruptedException {
-        //TODO: find a way to call it!
-        super("test");
-        //super(batchService.getLabel(batch));
+        super(batch.getLabel());
         batchId = batch.getId();
         action = 1;
         aggregation = new ArrayListMap<>();
