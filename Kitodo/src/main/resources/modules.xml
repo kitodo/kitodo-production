@@ -12,6 +12,6 @@
  *
 -->
 <ModuleDesc>
-	<Params name="TestService" url="http://localhost:1234" description="TestService">
-	</Params>
+    <Params name="TestService" url="http://localhost:1234" description="TestService">
+    </Params>
 </ModuleDesc>

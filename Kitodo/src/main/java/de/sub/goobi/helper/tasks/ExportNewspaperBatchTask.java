@@ -142,9 +142,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if the current thread is interrupted by another thread while it is waiting for the shell script
      *             to create the directory to finish
      */
-    public ExportNewspaperBatchTask(Batch batch)
-            throws HibernateException, PreferencesException, ReadException, SwapException, DAOException, IOException,
-            InterruptedException {
+    public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException,
+            SwapException, DAOException, IOException, InterruptedException {
         super(batch.getLabel());
         batchId = batch.getId();
         action = 1;
