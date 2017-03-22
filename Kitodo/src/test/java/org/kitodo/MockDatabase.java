@@ -351,6 +351,8 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2016,10,20);
         firstTask.setProcessingBegin(localDate.toDate());
         localDate = new LocalDate(2016,12,24);
+        firstTask.setProcessingTime(localDate.toDate());
+        localDate = new LocalDate(2016,12,24);
         firstTask.setProcessingEnd(localDate.toDate());
         User firstUser = userService.find(1);
         firstTask.setProcessingUser(firstUser);

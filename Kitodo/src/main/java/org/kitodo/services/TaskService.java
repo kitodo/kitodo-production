@@ -35,9 +35,6 @@ import org.kitodo.data.index.Indexer;
 import org.kitodo.data.index.elasticsearch.type.TaskType;
 
 public class TaskService {
-
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyymmdd");
-
     private TaskDAO taskDao = new TaskDAO();
     private TaskType taskType = new TaskType();
     private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
@@ -100,33 +97,17 @@ public class TaskService {
     }
 
     /**
-     * Convert Date start date to String.
+     * Convert date of processing begin to formatted String.
      *
      * @param task object
      * @return formatted date string
      */
-    public String getStartDate(Task task) {
-        if (task.getProcessingBegin() != null) {
-            return this.formatter.format(task.getProcessingBegin());
-        }
-        return "";
+    public String getProcessingBeginAsFormattedString(Task task) {
+        return Helper.getDateAsFormattedString(task.getProcessingBegin());
     }
 
     /**
-     * Convert Date end date to String.
-     *
-     * @param task object
-     * @return formatted date string
-     */
-    public String getEndDate(Task task) {
-        if (task.getProcessingEnd() != null) {
-            return this.formatter.format(task.getProcessingEnd());
-        }
-        return "";
-    }
-
-    /**
-     * Convert Date start date to String.
+     * Convert date of processing end to formatted String.
      *
      * @param task object
      * @return formatted date string
@@ -136,7 +117,7 @@ public class TaskService {
     }
 
     /**
-     * Convert Date end date to String.
+     * Convert date of processing day to formatted String.
      *
      * @param task object
      * @return formatted date string

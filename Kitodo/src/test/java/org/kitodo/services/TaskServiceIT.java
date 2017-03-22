@@ -59,38 +59,36 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldGetStartDate() throws Exception {
+    public void shouldGetProcessingBeginAsFormattedString() throws Exception {
         TaskService taskService = new TaskService();
 
         Task task = taskService.find(1);
-        String expected = "";
-        String actual = taskService.getStartDate(task);
-        System.out.println("start formatted: " + actual);
-        //not sure what should be the result here, it gives 20160020, seems not correct
-        //assertEquals("Start date is incorrect!", expected, actual);
-        //TODO: find out what cause it!
+        String expected = "2016-10-20 00:00:00";
+        String actual = taskService.getProcessingBeginAsFormattedString(task);
+        assertEquals("Processing time date is incorrect!", expected, actual);
     }
 
     @Test
-    public void shouldGetEndDate() throws Exception {
+    public void shouldGetProcessingTimeAsFormattedString() throws Exception {
         TaskService taskService = new TaskService();
 
         Task task = taskService.find(1);
-        String expected = "";
-        String actual = taskService.getEndDate(task);
-        System.out.println("end formatted: " + actual);
-        //not sure what should be the result here, it gives 20160024, seems not correct,
-        //especially this 00 in place of month
-        //assertEquals("End date is incorrect!", expected, actual);
+        String expected = "2016-12-24 00:00:00";
+        String actual = taskService.getProcessingTimeAsFormattedString(task);
+        assertEquals("Processing time date is incorrect!", expected, actual);
+
+        task = taskService.find(2);
+        expected = "-";
+        actual = taskService.getProcessingTimeAsFormattedString(task);
+        assertEquals("Processing time date is incorrect!", expected, actual);
     }
 
-    @Ignore("fix the method")
     @Test
     public void shouldGetProcessingEndAsFormattedString() throws Exception {
         TaskService taskService = new TaskService();
 
         Task task = taskService.find(1);
-        String expected = "Dec 24, 2016 12:00:00 AM";
+        String expected = "2016-12-24 00:00:00";
         String actual = taskService.getProcessingEndAsFormattedString(task);
         assertEquals("Processing end date is incorrect!", expected, actual);
     }
