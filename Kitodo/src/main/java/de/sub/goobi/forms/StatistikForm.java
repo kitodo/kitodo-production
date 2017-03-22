@@ -40,8 +40,8 @@ public class StatistikForm {
     /**
      * Get amount list literature together.
      *
-	 * @return Anzahl aller Literatureinträge Integer
-	 */
+     * @return Anzahl aller Literatureinträge Integer
+     */
     public Integer getAnzahlLiteraturGesamt() {
         return Integer.valueOf(0);
     }

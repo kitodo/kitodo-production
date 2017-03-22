@@ -287,7 +287,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             if no corresponding MetadataType object is returned by
      *             getAddableMetadataTypes()
      */
-    private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues, String publicationRun)
+    private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues,
+                                        String publicationRun)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 
         // initialise

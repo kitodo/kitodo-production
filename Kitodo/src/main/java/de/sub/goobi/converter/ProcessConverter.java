@@ -25,28 +25,28 @@ import org.kitodo.services.data.ProcessService;
 
 public class ProcessConverter implements Converter {
     private final ServiceManager serviceManager = new ServiceManager();
-   public static final String CONVERTER_ID = "ProcessConverter";
-   private static final Logger logger = Logger.getLogger(ProcessConverter.class);
-   
-   @Override
-	public Object getAsObject(FacesContext context, UIComponent component, String value)
-         throws ConverterException {
-      if (value == null) {
-         return null;
-      } else {
-         try {
-              return serviceManager.getProcessService().find(Integer.valueOf(value));
-			} catch (NumberFormatException e) {
-				logger.error(e);
-				return "0";
-			} catch (DAOException e) {
-				logger.error(e);
-				return "0";
-			}
-      }
-	}
+    public static final String CONVERTER_ID = "ProcessConverter";
+    private static final Logger logger = Logger.getLogger(ProcessConverter.class);
 
-	/**
+    @Override
+    public Object getAsObject(FacesContext context, UIComponent component, String value)
+            throws ConverterException {
+        if (value == null) {
+            return null;
+        } else {
+            try {
+                return serviceManager.getProcessService().find(Integer.valueOf(value));
+            } catch (NumberFormatException e) {
+                logger.error(e);
+                return "0";
+            } catch (DAOException e) {
+                logger.error(e);
+                return "0";
+            }
+        }
+    }
+
+    /**
      * Replace ProzessDAO with ProcessService.
 	 *
      * @return a new ProzessDAO
@@ -56,17 +56,17 @@ public class ProcessConverter implements Converter {
     }
 
     @Override
-public String getAsString(FacesContext context, UIComponent component, Object value)
+    public String getAsString(FacesContext context, UIComponent component, Object value)
          throws ConverterException {
-      if (value == null) {
-         return null;
-      } else if (value instanceof Process) {
-         return String.valueOf(((Process) value).getId().intValue());
-      } else if (value instanceof String) {
-         return (String) value;
-      } else {
-         throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Prozess' sein!");
-      }
-   }
+        if (value == null) {
+            return null;
+        } else if (value instanceof Process) {
+            return String.valueOf(((Process) value).getId().intValue());
+        } else if (value instanceof String) {
+            return (String) value;
+        } else {
+            throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Prozess' sein!");
+        }
+    }
 
 }
