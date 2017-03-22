@@ -16,8 +16,6 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;

@@ -12,6 +12,7 @@
 package org.goobi.production.flow.statistics.hibernate;
 
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class ConverterTest {

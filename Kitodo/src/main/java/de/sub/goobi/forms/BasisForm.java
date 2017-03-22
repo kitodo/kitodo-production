@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Page;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 

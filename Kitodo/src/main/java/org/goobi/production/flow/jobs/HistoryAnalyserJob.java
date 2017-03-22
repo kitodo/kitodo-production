@@ -12,7 +12,6 @@
 package org.goobi.production.flow.jobs;
 
 import de.sub.goobi.helper.Helper;
-
 import de.unigoettingen.sub.commons.util.file.FileUtils;
 
 import java.io.File;
@@ -26,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;

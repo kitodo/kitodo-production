@@ -16,8 +16,6 @@ import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMetsWithoutHibernate;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.metadaten.MetadatenVerifizierungWithoutHibernate;
 import de.sub.goobi.metadaten.copier.CopierData;
@@ -30,9 +28,7 @@ import java.io.IOException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -46,8 +42,6 @@ import org.kitodo.services.ServiceManager;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;

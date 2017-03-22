@@ -11,6 +11,10 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
+
 import de.sub.goobi.helper.FilesystemHelper;
 
 import java.io.IOException;
@@ -21,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
@@ -30,9 +33,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
 import ugh.dl.DigitalDocument;
-
-import static org.junit.Assert.*;
-import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 /**
  * Tests for ProcessService class.

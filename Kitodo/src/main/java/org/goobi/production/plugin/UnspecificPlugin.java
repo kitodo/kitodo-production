@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
-
 import org.kitodo.production.exceptions.NotImplementedException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 

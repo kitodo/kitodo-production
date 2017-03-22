@@ -14,7 +14,7 @@
 <%@ page session="false" contentType="text/html;charset=utf-8"%>
 <%@page pageEncoding="UTF-8"%>
 <%@ page
-	import="java.util.List,java.io.PrintWriter,org.apache.myfaces.shared_tomahawk.util.ExceptionUtils"
+	import="java.io.PrintWriter,java.util.List,org.apache.myfaces.shared_tomahawk.util.ExceptionUtils"
 	isErrorPage="true"%>
 <%@ taglib uri="http://java.sun.com/jsf/core" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsf/html" prefix="h"%>

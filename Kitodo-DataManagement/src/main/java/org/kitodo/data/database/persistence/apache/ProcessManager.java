@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Ruleset;
 
 public class ProcessManager {

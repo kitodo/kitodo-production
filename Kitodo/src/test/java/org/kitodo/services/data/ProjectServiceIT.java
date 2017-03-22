@@ -11,21 +11,20 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for ProjectService class.

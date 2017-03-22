@@ -11,11 +11,11 @@
 
 package org.goobi.production;
 
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
 
 import java.util.jar.Manifest;
 
-import static junit.framework.Assert.assertEquals;
+import org.junit.Test;
 
 
 public class GoobiVersionTest {

@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.kitodo.data.database.persistence.apache.MySQLHelper;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 public class StepManager {
 

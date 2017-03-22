@@ -20,23 +20,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import net.xeoh.plugins.base.Plugin;
-import net.xeoh.plugins.base.PluginManager;
-import net.xeoh.plugins.base.impl.PluginManagerFactory;
-import net.xeoh.plugins.base.util.PluginManagerUtil;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
-
 import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
+
+import net.xeoh.plugins.base.Plugin;
+import net.xeoh.plugins.base.PluginManager;
+import net.xeoh.plugins.base.impl.PluginManagerFactory;
+import net.xeoh.plugins.base.util.PluginManagerUtil;
 
 /**
  * The class PluginLoader provides for the loading of plug-ins at runtime.

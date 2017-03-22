@@ -23,7 +23,6 @@ import org.goobi.api.display.DisplayCase;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
-
 import org.kitodo.data.database.beans.Process;
 
 import ugh.dl.Metadata;

@@ -12,10 +12,8 @@
 package de.sub.goobi.export.download;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import javax.faces.context.FacesContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

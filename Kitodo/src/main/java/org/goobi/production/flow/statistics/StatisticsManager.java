@@ -11,6 +11,12 @@
 
 package org.goobi.production.flow.statistics;
 
+import de.intranda.commons.chart.results.DataRow;
+import de.intranda.commons.chart.results.DataTable;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.statistik.StatistikLaufzeitSchritte;
+import de.sub.goobi.statistik.StatistikStatus;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -29,12 +35,6 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.goobi.production.flow.statistics.hibernate.StatQuestThroughput;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultValueDataset;
-
-import de.intranda.commons.chart.results.DataRow;
-import de.intranda.commons.chart.results.DataTable;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.statistik.StatistikLaufzeitSchritte;
-import de.sub.goobi.statistik.StatistikStatus;
 
 /**
  * The Class StatisticsManager organizes all statistical questions by choosing

@@ -20,14 +20,12 @@ import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
-
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,23 +37,20 @@ import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
-import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
-
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.goobi.production.plugin.PluginLoader;
-
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -66,9 +61,15 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
-import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workpiece;
+import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;

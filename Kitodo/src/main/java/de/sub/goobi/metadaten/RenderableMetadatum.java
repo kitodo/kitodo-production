@@ -21,13 +21,12 @@ import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import ugh.exceptions.MetadataTypeNotAllowedException;
-
-import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
  * Abstract base class for all kinds of backing beans usable to render input

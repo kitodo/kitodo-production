@@ -11,11 +11,11 @@
 
 package de.sub.goobi.metadaten;
 
-import org.junit.Test;
-import org.junit.internal.ArrayComparisonFailure;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.junit.internal.ArrayComparisonFailure;
 
 public class PaginatorTest {
 

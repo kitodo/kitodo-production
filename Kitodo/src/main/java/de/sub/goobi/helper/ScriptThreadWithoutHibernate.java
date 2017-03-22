@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper;
 
+import de.sub.goobi.helper.tasks.EmptyTask;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +21,6 @@ import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
-
-import de.sub.goobi.helper.tasks.EmptyTask;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;

@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.UserGroup;
 

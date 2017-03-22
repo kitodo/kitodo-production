@@ -11,7 +11,7 @@
 
 package org.goobi.production.chart;
 
-import java.awt.Color;
+import java.awt.*;
 
 public enum ChartColor {
 

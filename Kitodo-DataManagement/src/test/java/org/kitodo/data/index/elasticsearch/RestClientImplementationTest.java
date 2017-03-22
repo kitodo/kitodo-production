@@ -11,15 +11,14 @@
 
 package org.kitodo.data.index.elasticsearch;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for RestClientImplementation.

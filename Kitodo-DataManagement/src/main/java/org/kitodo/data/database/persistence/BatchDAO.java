@@ -14,7 +14,6 @@ package org.kitodo.data.database.persistence;
 import java.util.List;
 
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.Helper;

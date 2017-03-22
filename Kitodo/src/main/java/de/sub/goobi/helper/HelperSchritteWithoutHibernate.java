@@ -24,12 +24,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;

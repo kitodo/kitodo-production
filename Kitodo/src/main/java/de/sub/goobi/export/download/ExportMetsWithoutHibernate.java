@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;

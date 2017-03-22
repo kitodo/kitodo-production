@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.goobi.io.SafeFile;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;

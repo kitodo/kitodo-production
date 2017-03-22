@@ -27,7 +27,6 @@ import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Task;
 
 /**

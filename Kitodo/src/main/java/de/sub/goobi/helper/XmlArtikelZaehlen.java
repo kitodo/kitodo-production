@@ -14,7 +14,6 @@ package de.sub.goobi.helper;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;

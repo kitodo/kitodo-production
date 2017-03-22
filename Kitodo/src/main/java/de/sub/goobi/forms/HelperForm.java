@@ -30,7 +30,6 @@ import org.goobi.io.SafeFile;
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
-
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;

@@ -31,11 +31,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.hibernate.Hibernate;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;

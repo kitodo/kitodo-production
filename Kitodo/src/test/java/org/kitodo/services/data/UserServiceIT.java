@@ -11,6 +11,9 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.sub.goobi.config.ConfigMain;
 
 import java.io.File;
@@ -21,12 +24,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for UserService class.

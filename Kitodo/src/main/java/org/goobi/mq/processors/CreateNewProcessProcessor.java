@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
-
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
 
 /**

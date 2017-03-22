@@ -27,9 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;

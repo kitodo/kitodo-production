@@ -11,28 +11,24 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for TaskType.

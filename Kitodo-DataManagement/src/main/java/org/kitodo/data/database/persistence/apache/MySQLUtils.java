@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.ResultSetHandler;
-
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Ruleset;
 

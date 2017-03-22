@@ -33,9 +33,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;

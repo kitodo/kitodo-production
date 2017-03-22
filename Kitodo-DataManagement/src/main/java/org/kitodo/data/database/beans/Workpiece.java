@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

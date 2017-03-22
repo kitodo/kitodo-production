@@ -31,13 +31,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-import ugh.dl.*;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
+import ugh.dl.Fileformat;
+import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;

@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;

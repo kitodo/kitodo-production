@@ -38,8 +38,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import net.xeoh.plugins.base.annotations.PluginImplementation;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -60,21 +58,19 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.goobi.production.properties.ImportProperty;
-
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;

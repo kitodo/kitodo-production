@@ -13,14 +13,12 @@ package org.kitodo.data.database.persistence;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
 import org.kitodo.data.database.exceptions.InfrastructureException;
 
 //TODO: Fix for Hibernate-Session-Management, replaced with older version, 

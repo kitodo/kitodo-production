@@ -20,7 +20,6 @@ import java.util.Calendar;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.data.database.helper.enums.HistoryType;
 
 public class SQLStepRequestsTest {

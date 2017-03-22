@@ -22,7 +22,6 @@ import java.util.Map.Entry;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.configuration.ConfigurationException;
-
 import org.kitodo.data.database.helper.Util;
 
 import ugh.dl.Metadata;

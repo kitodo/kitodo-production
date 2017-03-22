@@ -15,6 +15,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import de.intranda.commons.chart.renderer.ChartRenderer;
+import de.intranda.commons.chart.renderer.HtmlTableRenderer;
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataTable;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -24,11 +29,6 @@ import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import de.intranda.commons.chart.renderer.ChartRenderer;
-import de.intranda.commons.chart.renderer.HtmlTableRenderer;
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataTable;
 
 public class StatQuestStorageTest {
 

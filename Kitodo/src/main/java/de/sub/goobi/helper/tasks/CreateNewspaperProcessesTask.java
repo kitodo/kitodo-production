@@ -29,9 +29,7 @@ import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
-
 import org.joda.time.LocalDate;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;

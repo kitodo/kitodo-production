@@ -11,9 +11,9 @@
 
 package org.goobi.pagination;
 
-import ugh.dl.RomanNumeral;
-
 import java.util.ArrayList;
+
+import ugh.dl.RomanNumeral;
 
 public class RomanNumberSequence extends ArrayList<String> {
 

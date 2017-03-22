@@ -30,7 +30,6 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.goobi.production.IProcessDataExport;
-
 import org.kitodo.data.database.beans.Process;
 
 /**

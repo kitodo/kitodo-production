@@ -14,17 +14,17 @@ package org.goobi.production.flow.statistics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import de.intranda.commons.chart.results.DataTable;
+import de.schlichtherle.io.File;
+import de.sub.goobi.config.ConfigMain;
+
 import java.util.Locale;
 
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.Ignore;
-
-import de.intranda.commons.chart.results.DataTable;
-import de.schlichtherle.io.File;
-import de.sub.goobi.config.ConfigMain;
+import org.junit.Test;
 
 @Ignore("Crashes")
 public class StatisticsRenderingElementTest {

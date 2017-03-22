@@ -17,7 +17,6 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 

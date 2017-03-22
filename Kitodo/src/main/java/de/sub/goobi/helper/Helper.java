@@ -53,7 +53,6 @@ import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
 import org.kitodo.data.database.persistence.HibernateUtilOld;

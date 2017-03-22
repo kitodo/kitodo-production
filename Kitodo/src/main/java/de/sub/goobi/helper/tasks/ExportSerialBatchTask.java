@@ -21,9 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.goobi.production.constants.Parameters;
-
 import org.hibernate.Hibernate;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;

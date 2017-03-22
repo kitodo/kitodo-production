@@ -11,14 +11,12 @@
 
 package org.goobi.production.plugin.interfaces;
 
-import org.kitodo.data.database.persistence.apache.StepObject;
-
 import java.util.HashMap;
 
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.StepReturnValue;
-
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.persistence.apache.StepObject;
 
 public interface IStepPlugin extends IPlugin {
 

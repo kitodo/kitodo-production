@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
-
 import org.goobi.io.SafeFile;
 
 public class FolderInformation {

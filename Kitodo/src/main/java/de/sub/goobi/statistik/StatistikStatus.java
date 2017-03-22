@@ -15,7 +15,6 @@ import java.util.List;
 
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.services.ServiceManager;

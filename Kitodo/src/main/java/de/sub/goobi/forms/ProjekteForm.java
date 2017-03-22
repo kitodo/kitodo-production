@@ -13,12 +13,11 @@ package de.sub.goobi.forms;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
-
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +55,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;

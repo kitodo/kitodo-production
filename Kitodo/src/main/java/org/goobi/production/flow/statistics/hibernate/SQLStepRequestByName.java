@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-
 import org.kitodo.data.database.helper.enums.HistoryType;
 
 /**

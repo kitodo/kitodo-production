@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
-
 import org.kitodo.data.database.beans.Process;
 
 public class DisplayCase {

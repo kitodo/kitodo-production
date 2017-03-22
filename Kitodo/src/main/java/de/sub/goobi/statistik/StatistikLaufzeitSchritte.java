@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 

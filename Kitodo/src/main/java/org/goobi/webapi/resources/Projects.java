@@ -29,7 +29,6 @@ import javax.ws.rs.core.MediaType;
 import org.goobi.webapi.beans.ProjectsRootNode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 

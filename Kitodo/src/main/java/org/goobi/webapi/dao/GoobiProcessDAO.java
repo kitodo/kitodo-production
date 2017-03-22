@@ -17,11 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.beans.IdentifierPPN;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -29,7 +27,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 

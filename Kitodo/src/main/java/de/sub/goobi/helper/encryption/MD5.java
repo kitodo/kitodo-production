@@ -18,7 +18,8 @@ if not, see <http://www.gnu.org/licenses/>
 package de.sub.goobi.helper.encryption;
 
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * <u>MD5-Klasse, zum erzeugen von MD5-Hashes aus Zeichenketten</u><br><br>

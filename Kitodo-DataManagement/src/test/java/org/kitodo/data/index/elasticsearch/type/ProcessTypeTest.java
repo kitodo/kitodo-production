@@ -11,6 +11,8 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,19 +21,15 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for ProcessType.

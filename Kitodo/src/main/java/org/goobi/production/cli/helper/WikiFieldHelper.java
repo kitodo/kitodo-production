@@ -15,7 +15,6 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 
 public class WikiFieldHelper {

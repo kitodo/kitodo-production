@@ -13,7 +13,6 @@ package de.sub.goobi.helper;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.persistence.HibernateUtilOld;

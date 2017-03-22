@@ -12,7 +12,9 @@
 package org.goobi.production.flow.statistics.hibernate;
 
 import static org.junit.Assert.assertNotNull;
+
 import java.util.List;
+
 import org.hibernate.Criteria;
 import org.junit.Ignore;
 import org.junit.Test;

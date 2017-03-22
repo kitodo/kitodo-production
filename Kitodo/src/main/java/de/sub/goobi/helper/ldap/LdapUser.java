@@ -13,8 +13,6 @@ package de.sub.goobi.helper.ldap;
 
 import de.sub.goobi.config.ConfigMain;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -46,9 +44,10 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
+
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like

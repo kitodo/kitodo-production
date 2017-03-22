@@ -40,7 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;

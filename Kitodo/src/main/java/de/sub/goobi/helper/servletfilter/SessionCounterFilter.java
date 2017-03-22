@@ -13,6 +13,8 @@ package de.sub.goobi.helper.servletfilter;
 
 //TODO: Parts of this class seem to be copied from the Internet, what's the licence?
 
+import de.sub.goobi.forms.SessionForm;
+
 import java.io.IOException;
 
 import javax.faces.FactoryFinder;
@@ -29,8 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import de.sub.goobi.forms.SessionForm;
 
 
 public class SessionCounterFilter implements Filter {

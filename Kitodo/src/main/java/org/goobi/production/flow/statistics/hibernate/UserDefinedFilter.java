@@ -14,7 +14,6 @@ package org.goobi.production.flow.statistics.hibernate;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
 
-//import java.lang.ref.WeakReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,8 +24,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
+
+//import java.lang.ref.WeakReference;
 
 /**
  * This class UserDefinedFilter implements the IEvaluateFilter interface It

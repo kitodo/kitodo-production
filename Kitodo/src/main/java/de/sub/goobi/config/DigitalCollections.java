@@ -25,7 +25,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.data.database.beans.Process;
 
 public class DigitalCollections {

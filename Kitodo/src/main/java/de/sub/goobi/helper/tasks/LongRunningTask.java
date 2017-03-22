@@ -14,7 +14,6 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 
 /**

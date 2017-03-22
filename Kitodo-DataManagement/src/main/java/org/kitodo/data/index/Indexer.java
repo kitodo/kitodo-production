@@ -14,14 +14,12 @@ package org.kitodo.data.index;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Table;
 
 import org.apache.http.HttpEntity;
-
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.index.elasticsearch.RestClientImplementation;

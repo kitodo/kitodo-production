@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.modul.ExtendedDataImpl;
 import de.sub.goobi.modul.ExtendedProzessImpl;
-
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.exception.GoobiModuleException;
 import de.unigoettingen.goobi.module.api.message.Message;
@@ -44,7 +43,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;

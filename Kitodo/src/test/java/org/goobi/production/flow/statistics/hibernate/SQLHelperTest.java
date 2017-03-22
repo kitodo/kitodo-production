@@ -12,7 +12,9 @@
 package org.goobi.production.flow.statistics.hibernate;
 
 import static org.junit.Assert.assertTrue;
+
 import java.util.Date;
+
 import org.junit.Test;
 
 public class SQLHelperTest {

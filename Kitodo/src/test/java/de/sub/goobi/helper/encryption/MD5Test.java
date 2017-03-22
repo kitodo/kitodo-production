@@ -17,8 +17,6 @@ import java.util.HashMap;
 
 import org.junit.Test;
 
-import de.sub.goobi.helper.encryption.MD5;
-
 public class MD5Test {
 	static HashMap<String, String> testData;
 

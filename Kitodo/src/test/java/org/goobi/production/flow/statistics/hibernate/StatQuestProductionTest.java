@@ -11,10 +11,19 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
+
+import java.util.Calendar;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+
 import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.StatisticsManager;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
@@ -24,16 +33,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class StatQuestProductionTest {
 

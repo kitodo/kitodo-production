@@ -13,7 +13,6 @@ package de.sub.goobi.modul;
 
 import de.sub.goobi.forms.ModuleServerForm;
 import de.sub.goobi.helper.Helper;
-
 import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
@@ -21,7 +20,6 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 

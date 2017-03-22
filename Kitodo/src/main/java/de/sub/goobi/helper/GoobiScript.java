@@ -28,11 +28,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.hibernate.Hibernate;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;

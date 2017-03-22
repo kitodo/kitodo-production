@@ -11,13 +11,9 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.apache.log4j.Logger;
 
 @Entity
 @Table(name = "ruleset")

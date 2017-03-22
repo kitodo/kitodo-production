@@ -42,7 +42,6 @@ import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;

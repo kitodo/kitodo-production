@@ -13,7 +13,6 @@ package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.ISODateTimeFormat;
-
 import org.kitodo.production.exceptions.NotImplementedException;
 
 /**

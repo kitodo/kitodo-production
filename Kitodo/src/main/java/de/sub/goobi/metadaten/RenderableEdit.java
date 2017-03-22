@@ -11,19 +11,18 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.ConfigMain;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.constants.Parameters;
+import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import ugh.dl.Metadata;
 import ugh.dl.MetadataGroup;
 import ugh.dl.MetadataType;
 import ugh.dl.Person;
-
-import org.kitodo.production.exceptions.UnreachableCodeException;
-
-import de.sub.goobi.config.ConfigMain;
 
 /**
  * Backing bean for a single line input box element to edit a metadatum

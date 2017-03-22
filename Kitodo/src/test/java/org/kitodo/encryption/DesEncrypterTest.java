@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-
 import org.kitodo.data.encryption.DesEncrypter;
 
 public class DesEncrypterTest {

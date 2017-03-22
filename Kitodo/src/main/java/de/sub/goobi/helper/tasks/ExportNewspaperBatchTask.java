@@ -26,13 +26,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.HibernateException;
-
 import org.joda.time.LocalDate;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;

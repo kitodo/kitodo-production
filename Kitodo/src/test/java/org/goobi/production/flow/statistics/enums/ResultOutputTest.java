@@ -11,8 +11,7 @@
 
 package org.goobi.production.flow.statistics.enums;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

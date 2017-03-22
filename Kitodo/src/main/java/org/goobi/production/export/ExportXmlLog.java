@@ -12,10 +12,8 @@
 package org.goobi.production.export;
 
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,12 +25,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
-
 import org.goobi.production.IProcessDataExport;
-
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
-
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -43,7 +38,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;

@@ -14,16 +14,15 @@ package de.sub.goobi.helper.archive;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import de.sub.goobi.helper.tasks.ProcessSwapInTask;
+import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import de.sub.goobi.helper.tasks.ProcessSwapInTask;
-import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 

@@ -11,13 +11,13 @@
 
 package org.goobi.production.flow.statistics;
 
+import de.intranda.commons.chart.renderer.IRenderer;
+import de.intranda.commons.chart.results.DataTable;
+
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-
-import de.intranda.commons.chart.renderer.IRenderer;
-import de.intranda.commons.chart.results.DataTable;
 
 
 /**

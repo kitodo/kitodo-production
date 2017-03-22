@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import ugh.dl.DocStruct;

@@ -11,11 +11,16 @@
 
 package org.kitodo;
 
+import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
+import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
+import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
+
+import de.sub.goobi.helper.Helper;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.sub.goobi.helper.Helper;
 import org.hibernate.Session;
 import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.*;
@@ -26,8 +31,6 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
-
-import static org.kitodo.data.database.beans.Batch.Type.*;
 
 /**
  * Insert data to test database.

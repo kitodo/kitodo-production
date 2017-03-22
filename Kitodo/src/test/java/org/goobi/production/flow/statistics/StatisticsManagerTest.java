@@ -15,6 +15,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import de.schlichtherle.io.File;
+import de.sub.goobi.config.ConfigMain;
+
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -27,10 +30,11 @@ import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.jfree.data.general.DefaultValueDataset;
-import org.junit.*;
-
-import de.schlichtherle.io.File;
-import de.sub.goobi.config.ConfigMain;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class StatisticsManagerTest {
 	static StatisticsManager testManager;

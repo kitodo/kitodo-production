@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 

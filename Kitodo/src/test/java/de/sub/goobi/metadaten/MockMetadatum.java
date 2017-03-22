@@ -11,12 +11,14 @@
 
 package de.sub.goobi.metadaten;
 
-import org.goobi.api.display.Item;
-import ugh.dl.Metadata;
-
-import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.faces.model.SelectItem;
+
+import org.goobi.api.display.Item;
+
+import ugh.dl.Metadata;
 
 class MockMetadatum implements Metadatum {
 

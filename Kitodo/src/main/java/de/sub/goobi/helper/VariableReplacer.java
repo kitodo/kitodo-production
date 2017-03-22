@@ -25,10 +25,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;

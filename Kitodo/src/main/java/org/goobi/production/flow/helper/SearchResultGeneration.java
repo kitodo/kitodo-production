@@ -24,7 +24,6 @@ import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
 

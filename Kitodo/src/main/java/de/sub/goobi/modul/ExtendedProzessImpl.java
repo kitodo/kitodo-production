@@ -14,7 +14,6 @@ package de.sub.goobi.modul;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.forms.ModuleServerForm;
 import de.sub.goobi.helper.Helper;
-
 import de.unigoettingen.goobi.module.api.dataprovider.process.ProcessImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 

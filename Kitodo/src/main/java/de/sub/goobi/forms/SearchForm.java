@@ -21,16 +21,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.production.flow.statistics.hibernate.FilterString;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;

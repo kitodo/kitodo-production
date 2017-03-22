@@ -20,13 +20,11 @@ import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
-import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -45,7 +42,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Task;

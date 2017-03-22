@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
-
 import org.kitodo.data.database.beans.Project;
 
 @XmlType(propOrder = { "required", "from", "option", "ughbinding", "docstruct" })

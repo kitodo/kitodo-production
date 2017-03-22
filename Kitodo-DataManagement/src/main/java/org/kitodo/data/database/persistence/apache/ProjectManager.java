@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.ProjectFileGroup;
 
 public class ProjectManager {

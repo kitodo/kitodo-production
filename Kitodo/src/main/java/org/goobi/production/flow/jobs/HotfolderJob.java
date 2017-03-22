@@ -27,7 +27,6 @@ import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;

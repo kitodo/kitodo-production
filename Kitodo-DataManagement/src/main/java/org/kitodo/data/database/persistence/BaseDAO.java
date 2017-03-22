@@ -23,7 +23,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.Helper;
 import org.kitodo.data.database.helper.Util;

@@ -24,7 +24,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.Session;
-
 import org.kitodo.data.database.persistence.HibernateSessionLong;
 
 // TODO: Previous Hibernate-Filter for old manual Hibernate-Session-Management, old version, reactivated, because 

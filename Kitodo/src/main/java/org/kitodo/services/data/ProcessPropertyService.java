@@ -11,11 +11,11 @@
 
 package org.kitodo.services.data;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProcessPropertyDAO;
-
-import java.util.List;
 
 public class ProcessPropertyService {
 

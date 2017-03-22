@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Ruleset;
 

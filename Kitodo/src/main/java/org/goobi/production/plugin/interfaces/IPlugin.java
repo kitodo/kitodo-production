@@ -11,9 +11,9 @@
 
 package org.goobi.production.plugin.interfaces;
 
-import net.xeoh.plugins.base.Plugin;
-
 import org.goobi.production.enums.PluginType;
+
+import net.xeoh.plugins.base.Plugin;
 
 public interface IPlugin extends Plugin {
 	

@@ -18,7 +18,6 @@ import de.intranda.commons.chart.renderer.HtmlTableRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.renderer.PieChartRenderer;
 import de.intranda.commons.chart.results.DataTable;
-
 import de.sub.goobi.config.ConfigMain;
 
 import java.awt.image.BufferedImage;

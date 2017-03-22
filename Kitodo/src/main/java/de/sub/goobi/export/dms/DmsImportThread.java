@@ -17,9 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 
 public class DmsImportThread extends Thread {

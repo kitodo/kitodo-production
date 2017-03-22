@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
+
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
@@ -32,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +47,6 @@ import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
@@ -60,9 +59,9 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
-
 import org.kitodo.data.index.Indexer;
 import org.kitodo.data.index.elasticsearch.type.ProcessType;
+
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;

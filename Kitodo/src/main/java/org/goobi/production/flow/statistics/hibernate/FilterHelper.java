@@ -24,14 +24,12 @@ import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
 import org.goobi.production.flow.IlikeExpression;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Parameters;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;

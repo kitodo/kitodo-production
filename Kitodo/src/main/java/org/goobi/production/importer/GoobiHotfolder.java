@@ -24,7 +24,6 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 

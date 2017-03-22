@@ -22,7 +22,6 @@ import java.util.Observable;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Task;
 
 /**

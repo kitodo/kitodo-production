@@ -17,14 +17,12 @@ import de.sub.goobi.helper.ProjectHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
-
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
