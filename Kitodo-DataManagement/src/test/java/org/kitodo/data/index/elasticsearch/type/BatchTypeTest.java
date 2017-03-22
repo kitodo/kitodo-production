@@ -18,6 +18,8 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Batch;
@@ -67,18 +69,20 @@ public class BatchTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         BatchType batchType = new BatchType();
+        JSONParser parser = new JSONParser();
 
         Batch batch = prepareData().get(0);
         HttpEntity document = batchType.createDocument(batch);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
-        assertEquals("Batch JSON string doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\","
+                + "\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}");
+        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
 
         batch = prepareData().get(1);
         document = batchType.createDocument(batch);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}";
-        assertEquals("Batch JSON string doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}");
+        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test

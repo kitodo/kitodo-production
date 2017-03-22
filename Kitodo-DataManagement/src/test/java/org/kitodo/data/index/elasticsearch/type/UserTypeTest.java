@@ -100,47 +100,29 @@ public class UserTypeTest {
 
         User user = prepareData().get(0);
         HttpEntity document = userType.createDocument(user);
-        JSONObject userObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-        String actual = String.valueOf(userObject.get("name"));
-        String excepted = "Jan";
-        assertEquals("User value for name key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userObject.get("surname"));
-        excepted = "Kowalski";
-        assertEquals("User value for surname key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userObject.get("login"));
-        excepted = "jkowalski";
-        assertEquals("User value for login key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userObject.get("ldapLogin"));
-        excepted = "null";
-        assertEquals("User value for ldapLogin key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userObject.get("location"));
-        excepted = "Dresden";
-        assertEquals("User value for location key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userObject.get("active"));
-        excepted = "true";
-        assertEquals("User JSON string doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],"
+                + "\"ldapGroup\":\"1\",\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":null,"
+                + "\"active\":\"true\",\"location\":\"Dresden\",\"login\":\"jkowalski\",\"properties\":[]}");
+        assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(1);
         document = userType.createDocument(user);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"ldapGroup\":\"null\","
-                + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
-                + "{\"title\":\"second\",\"value\":\"2\"}]}";
-        assertEquals("User JSON string doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
+                + "\"ldapGroup\":\"null\",\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,"
+                + "\"active\":\"true\",\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":"
+                + "\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
         document = userType.createDocument(user);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"ldapLogin\":null,\"userGroups\":[],\"ldapGroup\":\"null\",\"surname\":\"Müller\",\"name\":\"Peter\","
-                + "\"metadataLanguage\":null,\"active\":\"true\",\"location\":null,\"login\":\"pmueller\","
-                + "\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}";
-        assertEquals("User JSON string doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],\"ldapGroup\":\"null\","
+                + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":\"true\","
+                + "\"location\":null,\"login\":\"pmueller\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
+                + "{\"title\":\"second\",\"value\":\"2\"}]}");
+        assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test

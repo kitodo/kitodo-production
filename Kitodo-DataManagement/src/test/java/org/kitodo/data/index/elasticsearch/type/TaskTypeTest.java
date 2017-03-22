@@ -21,6 +21,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import org.joda.time.LocalDate;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Process;
@@ -110,45 +112,46 @@ public class TaskTypeTest {
     }
 
     @Test
-    //problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         TaskType taskType = new TaskType();
+        JSONParser parser = new JSONParser();
 
         Task task = prepareData().get(0);
         HttpEntity document = taskType.createDocument(task);
-        String actual = EntityUtils.toString(document);
-        //again problem with ordering... LinkedHashMap solved it for some types, for some other not
-        String excepted = "{\"process\":\"1\",\"homeDirectory\":\"1\",\"typeAutomatic\":\"false\",\"ordering\":\"1\","
-                + "\"typeMetadata\":\"true\",\"title\":\"Testing\",\"priority\":\"1\","
-                + "\"typeImportFileUpload\":\"false\",\"processingTime\":\"2017-02-17\","
-                + "\"processingBegin\":\"2017-02-01\",\"batchStep\":\"true\",\"users\":[{\"id\":1},{\"id\":2}],"
-                + "\"processingUser\":\"1\",\"processingStatus\":\"DONE\","
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"process\":\"1\","
+                + "\"homeDirectory\":\"1\",\"typeAutomatic\":\"false\",\"ordering\":\"1\","
+                + "\"typeMetadata\":\"true\",\"priority\":\"1\",\"typeImportFileUpload\":\"false\","
+                + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-01\",\"batchStep\":\"true\","
+                + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":\"1\",\"processingStatus\":\"DONE\","
                 + "\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"typeImagesWrite\":\"false\","
-                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}";
-        assertEquals("Task JSON string doesn't match to given plain text!", excepted, actual);
+                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}");
+        assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(1);
         document = taskType.createDocument(task);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"process\":\"null\",\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":\"2\","
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"process\":\"null\","
+                + "\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":\"2\","
                 + "\"typeMetadata\":\"false\",\"title\":\"Rendering\",\"priority\":\"2\","
                 + "\"typeImportFileUpload\":\"false\",\"processingTime\":\"2017-02-17\","
                 + "\"processingBegin\":\"2017-02-10\",\"batchStep\":\"false\",\"users\":[{\"id\":1},{\"id\":2}],"
                 + "\"processingUser\":\"2\",\"processingStatus\":\"INWORK\",\"userGroups\":[{\"id\":\"1\"},"
                 + "{\"id\":\"2\"}],\"typeImagesWrite\":\"false\",\"processingEnd\":null,"
-                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}";
-        assertEquals("Task JSON string doesn't match to given plain text!", excepted, actual);
+                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}");
+        assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(2);
         document = taskType.createDocument(task);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"process\":\"null\",\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":\"0\","
-                + "\"typeMetadata\":\"false\",\"title\":\"Incomplete\",\"priority\":\"0\","
-                + "\"typeImportFileUpload\":\"false\",\"processingTime\":null,\"processingBegin\":null,"
-                + "\"batchStep\":\"false\",\"users\":[],\"processingUser\":\"null\",\"processingStatus\":\"OPEN\","
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"process\":\"null\","
+                + "\"homeDirectory\":\"0\",\"typeAutomatic\":\"false\",\"ordering\":\"0\","
+                + "\"typeMetadata\":\"false\",\"priority\":\"0\",\"typeImportFileUpload\":\"false\","
+                + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":\"false\",\"users\":[],"
+                + "\"processingUser\":\"null\",\"processingStatus\":\"OPEN\","
                 + "\"userGroups\":[],\"typeImagesWrite\":\"false\",\"processingEnd\":null,"
-                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}";
-        assertEquals("Task JSON string doesn't match to given plain text!", excepted, actual);
+                + "\"typeImagesRead\":\"false\",\"typeExportRussian\":\"false\"}");
+        assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test

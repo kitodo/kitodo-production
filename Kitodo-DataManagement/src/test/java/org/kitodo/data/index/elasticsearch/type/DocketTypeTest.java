@@ -57,15 +57,9 @@ public class DocketTypeTest {
 
         HttpEntity document = docketType.createDocument(docket);
         JSONParser parser = new JSONParser();
-        JSONObject docketObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-
-        String actual = String.valueOf(docketObject.get("name"));
-        String excepted = "default";
-        assertEquals("Docket value for name key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(docketObject.get("file"));
-        excepted = "docket.xsl";
-        assertEquals("Docket value for file key doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject excepted = (JSONObject) parser.parse("{\"name\":\"default\",\"file\":\"docket.xsl\"}");
+        assertEquals("Docket JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 
     @Test

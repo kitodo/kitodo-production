@@ -79,25 +79,16 @@ public class TemplateTypeTest {
 
         Template template = prepareData().get(0);
         HttpEntity document = templateType.createDocument(template);
-        JSONObject workpieceObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-        String actual = String.valueOf(workpieceObject.get("process"));
-        String excepted = "1";
-        assertEquals("Template value for process doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(workpieceObject.get("properties"));
-        excepted = "[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]";
-        assertEquals("Template value for properties doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject excepted = (JSONObject) parser.parse("{\"process\":\"1\",\"properties\":[{\"title\":\"first\","
+                + "\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
 
         template = prepareData().get(1);
         document = templateType.createDocument(template);
-        workpieceObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-        actual = String.valueOf(workpieceObject.get("process"));
-        excepted = "2";
-        assertEquals("Template value for process doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(workpieceObject.get("properties"));
-        excepted = "[]";
-        assertEquals("Template value for properties  doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        excepted = (JSONObject) parser.parse("{\"process\":\"2\",\"properties\":[]}");
+        assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 
     @Test
