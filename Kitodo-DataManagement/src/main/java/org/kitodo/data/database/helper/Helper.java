@@ -67,14 +67,14 @@ public class Helper implements Serializable {
     /**
      * Ermitteln eines bestimmten Parameters des Requests.
      *
-     * @return Parameter als String
+     * @return parameter als String
      */
     @SuppressWarnings("rawtypes")
-    public static String getRequestParameter(String Parameter) {
-        /* einen bestimmten übergebenen Parameter ermitteln */
+    public static String getRequestParameter(String parameter) {
+        /* einen bestimmten übergebenen parameter ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         Map requestParams = context.getExternalContext().getRequestParameterMap();
-        String myParameter = (String) requestParams.get(Parameter);
+        String myParameter = (String) requestParams.get(parameter);
         if (myParameter == null) {
             myParameter = "";
         }

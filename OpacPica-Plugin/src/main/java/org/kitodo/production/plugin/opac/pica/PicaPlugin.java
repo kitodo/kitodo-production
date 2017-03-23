@@ -21,6 +21,9 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.xeoh.plugins.base.Plugin;
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -30,8 +33,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.w3c.dom.Node;
 
-import net.xeoh.plugins.base.Plugin;
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
 import ugh.dl.DocStructType;

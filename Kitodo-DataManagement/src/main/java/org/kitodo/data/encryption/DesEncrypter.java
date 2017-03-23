@@ -86,8 +86,8 @@ public class DesEncrypter {
         }
 
         try {
-            byte[] utf8 = messageToEncrypt.getBytes(StandardCharsets.UTF_8);
-            byte[] enc = encryptionCipher.doFinal(utf8);
+            byte[] utfEight = messageToEncrypt.getBytes(StandardCharsets.UTF_8);
+            byte[] enc = encryptionCipher.doFinal(utfEight);
             return new String(Base64.encodeBase64(enc), StandardCharsets.UTF_8);
         } catch (BadPaddingException e) {
             logger.warn("Catched BadPaddingException with message: " + e.getMessage());
@@ -109,8 +109,8 @@ public class DesEncrypter {
 
         try {
             byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes(StandardCharsets.UTF_8));
-            byte[] utf8 = decryptionCipher.doFinal(dec);
-            return new String(utf8, StandardCharsets.UTF_8);
+            byte[] utfEight = decryptionCipher.doFinal(dec);
+            return new String(utfEight, StandardCharsets.UTF_8);
         } catch (IllegalBlockSizeException e) {
             logger.warn("Catched IllegalBlockSizeException with message: " + e.getMessage());
         } catch (BadPaddingException e) {

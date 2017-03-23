@@ -13,12 +13,12 @@ package org.goobi.production.plugin.interfaces;
 
 import java.util.HashMap;
 
+import net.xeoh.plugins.base.annotations.PluginImplementation;
+
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.enums.StepReturnValue;
 import org.kitodo.data.database.beans.Task;
-
-import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 @PluginImplementation
 public abstract class AbstractStepPlugin implements IStepPlugin {

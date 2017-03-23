@@ -89,15 +89,15 @@ public class ConnectionManager {
     /**
      *
      * @param connectURI
-     *            - JDBC Connection URI
+     *            - JDBC Connection URI.
      * @param username
-     *            - JDBC Connection username
+     *            - JDBC Connection username.
      * @param password
-     *            - JDBC Connection password
+     *            - JDBC Connection password.
      * @param minIdle
-     *            - Minimum number of idel connection in the connection pool
+     *            - Minimum number of idel connection in the connection pool.
      * @param maxActive
-     *            - Connection Pool Maximum Capacity (Size)
+     *            - Connection Pool Maximum Capacity (Size).
      */
     public static DataSource setupDataSource(String connectURI, String username, String password, int minIdle,
             int maxActive) {
@@ -158,13 +158,13 @@ public class ConnectionManager {
      * @return Number of locked processes
      */
     public int getNumLockedProcesses() {
-        int num_locked_connections = 0;
+        int numLockedConnections = 0;
         try (Connection con = this.ds.getConnection();
                 PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
                 ResultSet rs = p_stmt.executeQuery()) {
             while (rs.next()) {
                 if (rs.getString("State") != null && rs.getString("State").equals("Locked")) {
-                    num_locked_connections++;
+                    numLockedConnections++;
                 }
             }
         } catch (java.sql.SQLException ex) {
@@ -174,7 +174,7 @@ public class ConnectionManager {
                 logger.debug("Failed to get Locked Connections - Exception: " + e.toString());
             }
         }
-        return num_locked_connections;
+        return numLockedConnections;
     }
 
     public DataSource getDataSource() {

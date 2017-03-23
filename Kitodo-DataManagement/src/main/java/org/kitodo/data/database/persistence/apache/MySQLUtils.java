@@ -306,7 +306,7 @@ public class MySQLUtils {
         public List<ProjectFileGroup> handle(ResultSet rs) throws SQLException {
             List<ProjectFileGroup> answer = new ArrayList<ProjectFileGroup>();
             while (rs.next()) {
-                int ProjectFileGroupID = rs.getInt("id");
+                int projectFileGroupID = rs.getInt("id");
                 String name = rs.getString("name");
                 String path = rs.getString("path");
                 String mimeType = rs.getString("mimeType");
@@ -314,7 +314,7 @@ public class MySQLUtils {
                 // int ProjekteID = rs.getInt("ProjekteID");
                 String folder = rs.getString("folder");
                 ProjectFileGroup pfg = new ProjectFileGroup();
-                pfg.setId(ProjectFileGroupID);
+                pfg.setId(projectFileGroupID);
                 pfg.setName(name);
                 pfg.setPath(path);
                 pfg.setMimeType(mimeType);
