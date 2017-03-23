@@ -95,8 +95,8 @@ public class ExportMetsWithoutHibernate {
         /*
          * Read Document
          */
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
-                .getRuleset(process.getRulesetId()));
+        this.myPrefs = serviceManager.getRulesetService()
+                .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
 
         this.project = ProjectManager.getProjectById(process.getProjectId());
         String atsPpnBand = process.getTitle();
@@ -140,8 +140,8 @@ public class ExportMetsWithoutHibernate {
             boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
             SwapException, DAOException, TypeNotAllowedForParentException {
         this.fi = new FolderInformation(process.getId(), process.getTitle());
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
-                .getRuleset(process.getRulesetId()));
+        this.myPrefs = serviceManager.getRulesetService()
+                .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
         this.project = ProjectManager.getProjectById(process.getProjectId());
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);

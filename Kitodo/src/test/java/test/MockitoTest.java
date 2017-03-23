@@ -11,21 +11,6 @@
 
 package test;
 
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import de.sub.goobi.converter.ProcessConverter;
-
-import junit.framework.Assert;
-import org.junit.Test;
-import org.mockito.Matchers;
-
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
-
 public class MockitoTest {
 
     /*

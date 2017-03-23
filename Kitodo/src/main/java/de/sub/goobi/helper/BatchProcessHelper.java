@@ -41,7 +41,8 @@ public class BatchProcessHelper {
     /**
      * Constructor.
      *
-     * @param batch object
+     * @param batch
+     *            object
      */
     public BatchProcessHelper(Batch batch) {
         this.processes = batch.getProcesses();
@@ -104,7 +105,8 @@ public class BatchProcessHelper {
     /**
      * Set process name.
      *
-     * @param processName String
+     * @param processName
+     *            String
      */
     public void setProcessName(String processName) {
         this.processName = processName;
@@ -146,11 +148,11 @@ public class BatchProcessHelper {
                     serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
                 }
             }
-            if (!serviceManager.getProcessService().getPropertiesInitialized(this.processProperty
-                    .getProzesseigenschaft().getProcess())
+            if (!serviceManager.getProcessService()
+                    .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess())
                     .contains(this.processProperty.getProzesseigenschaft())) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.processProperty
-                        .getProzesseigenschaft().getProcess())
+                serviceManager.getProcessService()
+                        .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess())
                         .add(this.processProperty.getProzesseigenschaft());
             }
             try {
@@ -198,8 +200,8 @@ public class BatchProcessHelper {
                         boolean match = false;
                         for (org.kitodo.data.database.beans.ProcessProperty processPe : process.getProperties()) {
                             if (processPe.getTitle() != null) {
-                                if (pe.getTitle().equals(processPe.getTitle())
-                                        && pe.getContainer() == null ? processPe.getContainer() == null
+                                if (pe.getTitle().equals(processPe.getTitle()) && pe.getContainer() == null
+                                        ? processPe.getContainer() == null
                                         : pe.getContainer().equals(processPe.getContainer())) {
                                     processPe.setValue(pe.getValue());
                                     match = true;
@@ -220,8 +222,8 @@ public class BatchProcessHelper {
                 } else {
                     if (!serviceManager.getProcessService().getPropertiesInitialized(process)
                             .contains(this.processProperty.getProzesseigenschaft())) {
-                        serviceManager.getProcessService().getPropertiesInitialized(process).add(this.processProperty
-                                .getProzesseigenschaft());
+                        serviceManager.getProcessService().getPropertiesInitialized(process)
+                                .add(this.processProperty.getProzesseigenschaft());
                     }
                 }
 
@@ -334,7 +336,8 @@ public class BatchProcessHelper {
     /**
      * Set container.
      *
-     * @param container Integer
+     * @param container
+     *            Integer
      */
     public void setContainer(Integer container) {
         this.container = container;
@@ -405,6 +408,7 @@ public class BatchProcessHelper {
 
     /**
      * TODO wird nur für currentStep ausgeführt.
+     * 
      * @return String
      */
     public String duplicateContainerForAll() throws IOException {

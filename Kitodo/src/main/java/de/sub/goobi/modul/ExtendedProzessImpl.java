@@ -26,10 +26,9 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 /**
- * Das ist die Implementierung von ProcessInterface.
- * Wird auf Goobi-Seiten Ausgeführt
- * Ist auch vorläufer für GoobiEngine
- * Erweitert um die individuellen Api-Aufrufe
+ * Das ist die Implementierung von ProcessInterface. Wird auf Goobi-Seiten
+ * Ausgeführt Ist auch vorläufer für GoobiEngine Erweitert um die individuellen
+ * Api-Aufrufe
  *
  * @author Igor Toker
  */
@@ -37,12 +36,14 @@ public class ExtendedProzessImpl extends ProcessImpl {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten.
-     * Die Implementierung dieser Methode ist optional.
+     * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess
+     * ID zu erhalten. Die Implementierung dieser Methode ist optional.
      *
-     * @param sessionID String
+     * @param sessionID
+     *            String
      * @return ProzessID
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254, 1400
      */
     @Override
     public String get(String sessionID) throws GoobiException {
@@ -53,16 +54,18 @@ public class ExtendedProzessImpl extends ProcessImpl {
     /**
      * Diese Methode wird benötigt um die Volltextdatei zu erhalten.
      *
-     * @param sessionId String
+     * @param sessionId
+     *            String
      * @return Pfad zur XML Datei (String)
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254, 1400, 1401
      */
     @Override
     public String getFullTextFile(String sessionId) throws GoobiException {
         super.getFullTextFile(sessionId);
         try {
-            return serviceManager.getProcessService().getFulltextFilePath(ModuleServerForm.
-                    getProcessFromShortSession(sessionId));
+            return serviceManager.getProcessService()
+                    .getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
@@ -79,18 +82,21 @@ public class ExtendedProzessImpl extends ProcessImpl {
     }
 
     /**
-     * Diese Methode wird benötigt um das relative Arbeisverzeichnis zu erhalten.
+     * Diese Methode wird benötigt um das relative Arbeisverzeichnis zu
+     * erhalten.
      *
-     * @param sessionId String
+     * @param sessionId
+     *            String
      * @return Arbeitsverzeichnis (String)
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254, 1400, 1401
      */
     @Override
     public String getImageDir(String sessionId) throws GoobiException {
         super.getImageDir(sessionId);
         try {
-            return serviceManager.getProcessService().getImagesDirectory(ModuleServerForm
-                    .getProcessFromShortSession(sessionId));
+            return serviceManager.getProcessService()
+                    .getImagesDirectory(ModuleServerForm.getProcessFromShortSession(sessionId));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
@@ -109,16 +115,18 @@ public class ExtendedProzessImpl extends ProcessImpl {
     /**
      * Diese Methode wird benötigt um die Metadatendatei zu erhalten.
      *
-     * @param sessionId String
+     * @param sessionId
+     *            String
      * @return Pfad zur XML Datei (String)
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254, 1400, 1401
      */
     @Override
     public String getMetadataFile(String sessionId) throws GoobiException {
         super.getMetadataFile(sessionId);
         try {
-            return serviceManager.getProcessService().getMetadataFilePath(ModuleServerForm
-                    .getProcessFromShortSession(sessionId));
+            return serviceManager.getProcessService()
+                    .getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
@@ -135,12 +143,14 @@ public class ExtendedProzessImpl extends ProcessImpl {
     }
 
     /**
-     * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen.
-     * Die Implementierung dieser Methode ist optional.
+     * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu
+     * bekommen. Die Implementierung dieser Methode ist optional.
      *
-     * @param sessionId String
+     * @param sessionId
+     *            String
      * @return Parameter Struktur
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254
      */
     @Override
     public HashMap<String, String> getParams(String sessionId) throws GoobiException {
@@ -167,12 +177,14 @@ public class ExtendedProzessImpl extends ProcessImpl {
     }
 
     /**
-     * Diese Methode liefert das Projekt eines Prozesses.
-     * Die Implementierung dieser Methode ist optional.
+     * Diese Methode liefert das Projekt eines Prozesses. Die Implementierung
+     * dieser Methode ist optional.
      *
-     * @param sessionId String
+     * @param sessionId
+     *            String
      * @return Projekttitel (String)
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254, 1400
      */
     @Override
     public String getProject(String sessionId) throws GoobiException {
@@ -181,12 +193,14 @@ public class ExtendedProzessImpl extends ProcessImpl {
     }
 
     /**
-     * Diese Methode liefert den Titel eines Prozesses.
-     * Die Implementierung dieser Methode ist optional.
+     * Diese Methode liefert den Titel eines Prozesses. Die Implementierung
+     * dieser Methode ist optional.
      *
-     * @param sessionId String
+     * @param sessionId
+     *            String
      * @return Prozesstitel (String)
-     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400
+     * @throws GoobiException:
+     *             1, 2, 4, 5, 6, 254, 1400
      */
     @Override
     public String getTitle(String sessionId) throws GoobiException {

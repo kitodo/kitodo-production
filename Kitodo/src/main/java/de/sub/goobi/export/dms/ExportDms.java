@@ -59,8 +59,9 @@ public class ExportDms extends ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * The field exportDmsTask holds an optional task instance. Its progress and its errors will be passed to
-     * the task manager screen (if available) for visualisation.
+     * The field exportDmsTask holds an optional task instance. Its progress and
+     * its errors will be passed to the task manager screen (if available) for
+     * visualisation.
      */
     public EmptyTask exportDmsTask = null;
 
@@ -80,14 +81,14 @@ public class ExportDms extends ExportMets {
     /**
      * DMS-Export an eine gewünschte Stelle.
      *
-     * @param process object
-     * @param inZielVerzeichnis String
+     * @param process
+     *            object
+     * @param inZielVerzeichnis
+     *            String
      */
     @Override
-    public boolean startExport(Process process, String inZielVerzeichnis)
-            throws IOException, InterruptedException, WriteException,
-            PreferencesException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    public boolean startExport(Process process, String inZielVerzeichnis) throws IOException, InterruptedException,
+            WriteException, PreferencesException, SwapException, DAOException, TypeNotAllowedForParentException {
 
         Hibernate.initialize(process.getProject().getProjectFileGroups());
         if (process.getProject().isUseDmsImport()
@@ -140,18 +141,17 @@ public class ExportDms extends ExportMets {
      *             https://github.com/kitodo/kitodo-ugh/issues/2
      */
     public boolean startExport(Process process, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
-            throws IOException, InterruptedException, WriteException, PreferencesException,
-            SwapException, DAOException, TypeNotAllowedForParentException {
+            throws IOException, InterruptedException, WriteException, PreferencesException, SwapException, DAOException,
+            TypeNotAllowedForParentException {
         this.exportDmsTask = exportDmsTask;
         try {
-            return startExport(process, inZielVerzeichnis, serviceManager.getProcessService().readMetadataFile(process)
-                    .getDigitalDocument());
+            return startExport(process, inZielVerzeichnis,
+                    serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
         } catch (Exception e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                Helper.setFehlerMeldung(Helper.getTranslation("exportError")
-                        + process.getTitle(), e);
+                Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
             }
             myLogger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
@@ -161,14 +161,16 @@ public class ExportDms extends ExportMets {
     /**
      * Start export.
      *
-     * @param process object
-     * @param inZielVerzeichnis String
-     * @param newFile DigitalDocument
+     * @param process
+     *            object
+     * @param inZielVerzeichnis
+     *            String
+     * @param newFile
+     *            DigitalDocument
      * @return boolean
      */
     public boolean startExport(Process process, String inZielVerzeichnis, DigitalDocument newFile)
-            throws IOException, InterruptedException, WriteException,
-            PreferencesException, SwapException, DAOException,
+            throws IOException, InterruptedException, WriteException, PreferencesException, SwapException, DAOException,
             TypeNotAllowedForParentException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
@@ -197,8 +199,7 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                Helper.setFehlerMeldung(Helper.getTranslation("exportError")
-                        + process.getTitle(), e);
+                Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
             }
             myLogger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
@@ -258,16 +259,16 @@ public class ExportDms extends ExportMets {
                     return false;
                 }
                 /* alte Success-Ordner löschen */
-                SafeFile successFile = new SafeFile(process.getProject().getDmsImportSuccessPath()
-                        + File.separator + process.getTitle());
+                SafeFile successFile = new SafeFile(
+                        process.getProject().getDmsImportSuccessPath() + File.separator + process.getTitle());
                 if (!successFile.deleteDir()) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                             "Success folder could not be cleared");
                     return false;
                 }
                 /* alte Error-Ordner löschen */
-                SafeFile errorfile = new SafeFile(process.getProject().getDmsImportErrorPath()
-                        + File.separator + process.getTitle());
+                SafeFile errorfile = new SafeFile(
+                        process.getProject().getDmsImportErrorPath() + File.separator + process.getTitle());
                 if (!errorfile.deleteDir()) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                             "Error folder could not be cleared");
@@ -284,9 +285,7 @@ public class ExportDms extends ExportMets {
             // wenn das Home existiert, erst löschen und dann neu anlegen
             userHome = new SafeFile(zielVerzeichnis);
             if (!userHome.deleteDir()) {
-                Helper.setFehlerMeldung(
-                        "Export canceled: " + process.getTitle(),
-                        "could not delete home directory");
+                Helper.setFehlerMeldung("Export canceled: " + process.getTitle(), "could not delete home directory");
                 return false;
             }
             prepareUserDirectory(zielVerzeichnis);
@@ -310,39 +309,36 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                Helper.setFehlerMeldung(
-                        "Export canceled, Process: " + process.getTitle(), e);
+                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
             }
             return false;
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den Import-Ordner oder ins
-         * Benutzerhome anschliessend den Import-Thread starten
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
+         * den Import-Ordner oder ins Benutzerhome anschliessend den
+         * Import-Thread starten
          */
         if (process.getProject().isUseDmsImport()) {
             if (exportDmsTask != null) {
                 exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
             }
-            if (MetadataFormat.findFileFormatsHelperByName(process
-                    .getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
+            if (MetadataFormat.findFileFormatsHelperByName(
+                    process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
-                writeMetsFile(process, userHome + File.separator
-                        + atsPpnBand + ".xml", gdzfile, false);
+                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
             } else {
                 /* ...wenn nicht, nur ein Fileformat schreiben. */
                 gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
             }
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
-            if (MetadataFormat.findFileFormatsHelperByName(process
-                    .getProject().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeMetsFile(process, userHome + File.separator + atsPpnBand
-                        + ".mets.xml", gdzfile, false);
+            if (MetadataFormat.findFileFormatsHelperByName(
+                    process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
+                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 
-            Helper.setMeldung(null, process.getTitle() + ": ",
-                    "DMS-Export started");
+            Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
             if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
                 DmsImportThread agoraThread = new DmsImportThread(process, atsPpnBand);
                 agoraThread.start();
@@ -356,31 +352,27 @@ public class ExportDms extends ExportMets {
                     if (exportDmsTask != null) {
                         exportDmsTask.setException(e);
                     } else {
-                        Helper.setFehlerMeldung(process.getTitle()
-                                + ": error on export - ", e.getMessage());
+                        Helper.setFehlerMeldung(process.getTitle() + ": error on export - ", e.getMessage());
                     }
                     myLogger.error(process.getTitle() + ": error on export", e);
                 }
                 if (agoraThread.result.length() > 0) {
                     if (exportDmsTask != null) {
-                        exportDmsTask.setException(new RuntimeException(process.getTitle() + ": "
-                                + agoraThread.result));
+                        exportDmsTask
+                                .setException(new RuntimeException(process.getTitle() + ": " + agoraThread.result));
                     } else {
-                        Helper.setFehlerMeldung(process.getTitle() + ": ",
-                                agoraThread.result);
+                        Helper.setFehlerMeldung(process.getTitle() + ": ", agoraThread.result);
                     }
                 } else {
                     if (exportDmsTask != null) {
                         exportDmsTask.setProgress(100);
                     } else {
-                        Helper.setMeldung(null, process.getTitle() + ": ",
-                                "ExportFinished");
+                        Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
                     }
                     /* Success-Ordner wieder löschen */
                     if (process.getProject().isDmsImportCreateProcessFolder()) {
-                        SafeFile successFile = new SafeFile(process.getProject()
-                                .getDmsImportSuccessPath() + File.separator
-                                + process.getTitle());
+                        SafeFile successFile = new SafeFile(
+                                process.getProject().getDmsImportSuccessPath() + File.separator + process.getTitle());
                         successFile.deleteDir();
                     }
                 }
@@ -390,22 +382,21 @@ public class ExportDms extends ExportMets {
             }
         } else {
             /* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
-            if (MetadataFormat.findFileFormatsHelperByName(process
-                    .getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
-                writeMetsFile(process, zielVerzeichnis + atsPpnBand + ".xml",
-                        gdzfile, false);
+            if (MetadataFormat.findFileFormatsHelperByName(
+                    process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
+                writeMetsFile(process, zielVerzeichnis + atsPpnBand + ".xml", gdzfile, false);
             } else {
                 gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
             }
 
-            Helper.setMeldung(null, process.getTitle() + ": ",
-                    "ExportFinished");
+            Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
         }
         return true;
     }
 
     /**
-     * Setter method to pass in a task thread to whom progress and error messages shall be reported.
+     * Setter method to pass in a task thread to whom progress and error
+     * messages shall be reported.
      *
      * @param task
      *            task implementation
@@ -415,7 +406,8 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the strings calls itself recursively.
+     * Run through all metadata and children of given docstruct to trim the
+     * strings calls itself recursively.
      */
     private void trimAllMetadata(DocStruct inStruct) {
         /* trimm all metadata values */
@@ -438,10 +430,14 @@ public class ExportDms extends ExportMets {
     /**
      * Download full text.
      *
-     * @param process object
-     * @param userHome SafeFile
-     * @param atsPpnBand String
-     * @param ordnerEndung String
+     * @param process
+     *            object
+     * @param userHome
+     *            SafeFile
+     * @param atsPpnBand
+     *            String
+     * @param ordnerEndung
+     *            String
      */
     public void fulltextDownload(Process process, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException, SwapException, DAOException {
@@ -449,8 +445,7 @@ public class ExportDms extends ExportMets {
         // download sources
         SafeFile sources = new SafeFile(serviceManager.getProcessService().getSourceDirectory(process));
         if (sources.exists() && sources.list().length > 0) {
-            SafeFile destination = new SafeFile(userHome + File.separator
-                    + atsPpnBand + "_src");
+            SafeFile destination = new SafeFile(userHome + File.separator + atsPpnBand + "_src");
             if (!destination.exists()) {
                 destination.mkdir();
             }
@@ -460,8 +455,7 @@ public class ExportDms extends ExportMets {
                     if (exportDmsTask != null) {
                         exportDmsTask.setWorkDetail(files[i].getName());
                     }
-                    SafeFile meinZiel = new SafeFile(destination + File.separator
-                            + files[i].getName());
+                    SafeFile meinZiel = new SafeFile(destination + File.separator + files[i].getName());
                     files[i].copyFile(meinZiel, false);
                 }
             }
@@ -498,10 +492,14 @@ public class ExportDms extends ExportMets {
     /**
      * Download image.
      *
-     * @param process object
-     * @param userHome SafeFile
-     * @param atsPpnBand String
-     * @param ordnerEndung String
+     * @param process
+     *            object
+     * @param userHome
+     *            SafeFile
+     * @param atsPpnBand
+     *            String
+     * @param ordnerEndung
+     *            String
      */
     public void imageDownload(Process process, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException, SwapException, DAOException {
@@ -515,8 +513,7 @@ public class ExportDms extends ExportMets {
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
         if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-            SafeFile zielTif = new SafeFile(userHome + File.separator + atsPpnBand
-                    + ordnerEndung);
+            SafeFile zielTif = new SafeFile(userHome + File.separator + atsPpnBand + ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
             if (process.getProject().isUseDmsImport()) {
@@ -525,7 +522,8 @@ public class ExportDms extends ExportMets {
                 }
             } else {
                 /*
-                 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
+                 * wenn kein Agora-Import, dann den Ordner mit
+                 * Benutzerberechtigung neu anlegen
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
@@ -556,8 +554,7 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setWorkDetail(dateien[i].getName());
                 }
-                SafeFile meinZiel = new SafeFile(zielTif + File.separator
-                        + dateien[i].getName());
+                SafeFile meinZiel = new SafeFile(zielTif + File.separator + dateien[i].getName());
                 dateien[i].copyFile(meinZiel, false);
                 if (exportDmsTask != null) {
                     exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
@@ -573,10 +570,13 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder.
+     * Starts copying all directories configured in goobi_config.properties
+     * parameter "processDirs" to export folder.
      *
-     * @param process object
-     * @param zielVerzeichnis the destination directory
+     * @param process
+     *            object
+     * @param zielVerzeichnis
+     *            the destination directory
      *
      */
     private void directoryDownload(Process process, String zielVerzeichnis)
@@ -585,11 +585,11 @@ public class ExportDms extends ExportMets {
         String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            SafeFile srcDir = new SafeFile(FilenameUtils.concat(
-                    serviceManager.getProcessService().getProcessDataDirectory(process),
-                    processDir.replace("(processtitle)", process.getTitle())));
-            SafeFile dstDir = new SafeFile(FilenameUtils.concat(
-                    zielVerzeichnis, processDir.replace("(processtitle)", process.getTitle())));
+            SafeFile srcDir = new SafeFile(
+                    FilenameUtils.concat(serviceManager.getProcessService().getProcessDataDirectory(process),
+                            processDir.replace("(processtitle)", process.getTitle())));
+            SafeFile dstDir = new SafeFile(
+                    FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", process.getTitle())));
 
             if (srcDir.isDirectory()) {
                 srcDir.copyDir(dstDir);

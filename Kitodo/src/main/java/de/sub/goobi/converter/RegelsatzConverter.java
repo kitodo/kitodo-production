@@ -21,15 +21,13 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
-
 public class RegelsatzConverter implements Converter {
     public static final String CONVERTER_ID = "RegelsatzConverter";
     private static final Logger logger = Logger.getLogger(RegelsatzConverter.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value)
-            throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
         if (value == null) {
             return null;
         } else {
@@ -43,8 +41,7 @@ public class RegelsatzConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value)
-            throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
         if (value == null) {
             return null;
         } else if (value instanceof Ruleset) {

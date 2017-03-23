@@ -40,7 +40,7 @@ public class MockDatabase {
     private static final ServiceManager serviceManager = new ServiceManager();
 
     public static void insertProcessesFull() throws DAOException, IOException {
-        if(serviceManager.getBatchService().find(1) == null) {
+        if (serviceManager.getBatchService().find(1) == null) {
             System.out.println(serviceManager.getBatchService().find(1));
             insertBatches();
             insertDockets();
@@ -100,7 +100,7 @@ public class MockDatabase {
         firstHistory.setNumericValue(2.0);
         firstHistory.setStringValue("History");
         firstHistory.setHistoryType(HistoryType.color);
-        LocalDate localDate = new LocalDate(2017,1,14);
+        LocalDate localDate = new LocalDate(2017, 1, 14);
         firstHistory.setDate(localDate.toDate());
         firstHistory.setProcess(firstProcess);
         serviceManager.getHistoryService().save(firstHistory);
@@ -122,7 +122,7 @@ public class MockDatabase {
         firstProcess.setTitle("First process");
         firstProcess.setOutputName("Test");
         firstProcess.setWikiField("wiki");
-        LocalDate localDate = new LocalDate(2016,10,20);
+        LocalDate localDate = new LocalDate(2016, 10, 20);
         firstProcess.setCreationDate(localDate.toDate());
 
         List<Batch> batches = new ArrayList<>();
@@ -145,7 +145,7 @@ public class MockDatabase {
         secondProcess.setTitle("Second process");
         secondProcess.setOutputName("Testowy");
         secondProcess.setWikiField("field");
-        localDate = new LocalDate(2017,1,20);
+        localDate = new LocalDate(2017, 1, 20);
         secondProcess.setCreationDate(localDate.toDate());
         secondProcess.setDocket(serviceManager.getDocketService().find(1));
         secondProcess.setProject(serviceManager.getProjectService().find(1));
@@ -156,7 +156,7 @@ public class MockDatabase {
         thirdProcess.setTitle("Second process");
         thirdProcess.setOutputName("Unreachable");
         thirdProcess.setWikiField("problem");
-        localDate = new LocalDate(2017,2,10);
+        localDate = new LocalDate(2017, 2, 10);
         thirdProcess.setCreationDate(localDate.toDate());
         thirdProcess.setDocket(serviceManager.getDocketService().find(1));
         thirdProcess.setProject(serviceManager.getProjectService().find(1));
@@ -172,7 +172,7 @@ public class MockDatabase {
         firstProcessProperty.setObligatory(true);
         firstProcessProperty.setType(PropertyType.general);
         firstProcessProperty.setChoice("choice");
-        LocalDate localDate = new LocalDate(2017,1,14);
+        LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.setContainer(1);
         firstProcessProperty.setProcess(process);
@@ -184,7 +184,7 @@ public class MockDatabase {
         secondProcessProperty.setObligatory(false);
         secondProcessProperty.setType(PropertyType.CommandLink);
         secondProcessProperty.setChoice("chosen");
-        localDate = new LocalDate(2017,1,15);
+        localDate = new LocalDate(2017, 1, 15);
         secondProcessProperty.setCreationDate(localDate.toDate());
         secondProcessProperty.setContainer(2);
         secondProcessProperty.setProcess(process);
@@ -202,9 +202,9 @@ public class MockDatabase {
         Project firstProject = new Project();
         firstProject.setTitle("First project");
         firstProject.setUseDmsImport(true);
-        LocalDate localDate = new LocalDate(2016,10,20);
+        LocalDate localDate = new LocalDate(2016, 10, 20);
         firstProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017,10,20);
+        localDate = new LocalDate(2017, 10, 20);
         firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
@@ -215,9 +215,9 @@ public class MockDatabase {
         Project secondProject = new Project();
         secondProject.setTitle("Second project");
         secondProject.setUseDmsImport(false);
-        localDate = new LocalDate(2016,11,10);
+        localDate = new LocalDate(2016, 11, 10);
         secondProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017,9,15);
+        localDate = new LocalDate(2017, 9, 15);
         secondProject.setEndDate(localDate.toDate());
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
@@ -232,9 +232,9 @@ public class MockDatabase {
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Archived project");
-        localDate = new LocalDate(2014,11,10);
+        localDate = new LocalDate(2014, 11, 10);
         thirdProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2016,9,15);
+        localDate = new LocalDate(2016, 9, 15);
         thirdProject.setEndDate(localDate.toDate());
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
@@ -321,11 +321,11 @@ public class MockDatabase {
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
         firstTask.setEditTypeEnum(TaskEditType.ADMIN);
-        LocalDate localDate = new LocalDate(2016,10,20);
+        LocalDate localDate = new LocalDate(2016, 10, 20);
         firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2016,12,24);
+        localDate = new LocalDate(2016, 12, 24);
         firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2016,12,24);
+        localDate = new LocalDate(2016, 12, 24);
         firstTask.setProcessingEnd(localDate.toDate());
         User firstUser = serviceManager.getUserService().find(1);
         firstTask.setProcessingUser(firstUser);
@@ -347,7 +347,7 @@ public class MockDatabase {
         secondTask = serviceManager.getTaskService().setCorrectionStep(secondTask);
         secondTask.setOrdering(2);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016,9,25);
+        localDate = new LocalDate(2016, 9, 25);
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
@@ -366,7 +366,7 @@ public class MockDatabase {
         thirdTask.setTitle("Testing and Blocking");
         thirdTask.setOrdering(3);
         thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2017,1,25);
+        localDate = new LocalDate(2017, 1, 25);
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         thirdTask.setProcess(secondProcess);
@@ -377,7 +377,7 @@ public class MockDatabase {
         fourthTask.setOrdering(4);
         fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         fourthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017,1,29);
+        localDate = new LocalDate(2017, 1, 29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         fourthTask.setProcessingUser(serviceManager.getUserService().find(2));
@@ -429,7 +429,7 @@ public class MockDatabase {
         firstTemplateProperty.setObligatory(true);
         firstTemplateProperty.setType(PropertyType.general);
         firstTemplateProperty.setChoice("choice");
-        LocalDate localDate = new LocalDate(2017,1,14);
+        LocalDate localDate = new LocalDate(2017, 1, 14);
         firstTemplateProperty.setCreationDate(localDate.toDate());
         firstTemplateProperty.setContainer(1);
         firstTemplateProperty.setTemplate(template);
@@ -441,7 +441,7 @@ public class MockDatabase {
         secondTemplateProperty.setObligatory(false);
         secondTemplateProperty.setType(PropertyType.CommandLink);
         secondTemplateProperty.setChoice("chosen");
-        localDate = new LocalDate(2017,1,15);
+        localDate = new LocalDate(2017, 1, 15);
         secondTemplateProperty.setCreationDate(localDate.toDate());
         secondTemplateProperty.setContainer(2);
         secondTemplateProperty.setTemplate(template);
@@ -513,7 +513,7 @@ public class MockDatabase {
         firstUserProperty.setObligatory(true);
         firstUserProperty.setType(PropertyType.general);
         firstUserProperty.setChoice("choice");
-        LocalDate localDate = new LocalDate(2017,1,14);
+        LocalDate localDate = new LocalDate(2017, 1, 14);
         firstUserProperty.setCreationDate(localDate.toDate());
         firstUserProperty.setContainer(1);
         firstUserProperty.setUser(user);
@@ -525,7 +525,7 @@ public class MockDatabase {
         secondUserProperty.setObligatory(false);
         secondUserProperty.setType(PropertyType.CommandLink);
         secondUserProperty.setChoice("chosen");
-        localDate = new LocalDate(2017,1,15);
+        localDate = new LocalDate(2017, 1, 15);
         secondUserProperty.setCreationDate(localDate.toDate());
         secondUserProperty.setContainer(2);
         secondUserProperty.setUser(user);
@@ -561,7 +561,7 @@ public class MockDatabase {
         firstWorkpieceProperty.setObligatory(true);
         firstWorkpieceProperty.setType(PropertyType.general);
         firstWorkpieceProperty.setChoice("choice");
-        LocalDate localDate = new LocalDate(2017,1,13);
+        LocalDate localDate = new LocalDate(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(localDate.toDate());
         firstWorkpieceProperty.setContainer(1);
         firstWorkpieceProperty.setWorkpiece(workpiece);
@@ -573,7 +573,7 @@ public class MockDatabase {
         secondWorkpieceProperty.setObligatory(false);
         secondWorkpieceProperty.setType(PropertyType.CommandLink);
         secondWorkpieceProperty.setChoice("chosen");
-        localDate = new LocalDate(2017,1,14);
+        localDate = new LocalDate(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(localDate.toDate());
         secondWorkpieceProperty.setContainer(2);
         secondWorkpieceProperty.setWorkpiece(workpiece);
@@ -584,7 +584,8 @@ public class MockDatabase {
         serviceManager.getWorkpieceService().save(workpiece);
     }
 
-    //TODO: find out why this method doesn't clean database after every test's class
+    // TODO: find out why this method doesn't clean database after every test's
+    // class
     public static void cleanDatabase() {
         Session session = Helper.getHibernateSession();
         session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
@@ -606,6 +607,6 @@ public class MockDatabase {
         session.createQuery("DELETE FROM UserGroup WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM UserProperty WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM WorkpieceProperty WHERE id !=null").executeUpdate();
-        //session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        // session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
     }
 }

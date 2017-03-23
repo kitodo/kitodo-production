@@ -97,7 +97,8 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Prepare import object.
      *
-     * @param io import object
+     * @param io
+     *            import object
      * @return page or empty String
      */
     public String prepare(ImportObject io) {
@@ -192,8 +193,8 @@ public class CopyProcess extends ProzesskopieForm {
             return;
         }
 
-        this.docType = cp.getParamString("createNewProcess.defaultdoctype", ConfigOpac.getAllDoctypes().get(0)
-                .getTitle());
+        this.docType = cp.getParamString("createNewProcess.defaultdoctype",
+                ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
         this.naviFirstPage = "ProzessverwaltungKopie1";
@@ -244,8 +245,8 @@ public class CopyProcess extends ProzesskopieForm {
                 fa.setSelectList(new ArrayList<SelectItem>());
             }
             for (int j = 0; j < selectItemCount; j++) {
-                String svalue = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select("
-                        + j + ")[@label]");
+                String svalue = cp
+                        .getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")[@label]");
                 String sid = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")");
                 fa.getSelectList().add(new SelectItem(sid, svalue, null));
             }
@@ -255,7 +256,9 @@ public class CopyProcess extends ProzesskopieForm {
 
     /**
      * OPAC evaluation.
-     * @param io import object
+     * 
+     * @param io
+     *            import object
      * @return empty String
      */
     public String OpacAuswerten(ImportObject io) {
@@ -307,7 +310,8 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei füllen.
+     * die Eingabefelder für die Eigenschaften mit Inhalten aus der RDF-Datei
+     * füllen.
      */
     private void fillFieldsFromMetadataFile(Fileformat myRdf) throws PreferencesException {
         if (myRdf != null) {
@@ -346,8 +350,9 @@ public class CopyProcess extends ProzesskopieForm {
                             field.setValue(myautoren);
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
-                            MetadataType mdt = UghHelper.getMetadataType(serviceManager.getRulesetService()
-                                    .getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
+                            MetadataType mdt = UghHelper.getMetadataType(
+                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                    field.getMetadata());
                             Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
@@ -438,7 +443,8 @@ public class CopyProcess extends ProzesskopieForm {
             myLogger.error("Fehler beim Anlegen des Vorgangs", e);
         } catch (RuntimeException e) {
             /*
-             * das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden
+             * das Firstchild unterhalb des Topstructs konnte nicht ermittelt
+             * werden
              */
         }
 
@@ -476,8 +482,8 @@ public class CopyProcess extends ProzesskopieForm {
         if (this.prozessKopie.getTitle() != null) {
             long anzahl = 0;
             try {
-                anzahl = serviceManager.getProcessService().count("from Process where title='"
-                        + this.prozessKopie.getTitle() + "'");
+                anzahl = serviceManager.getProcessService()
+                        .count("from Process where title='" + this.prozessKopie.getTitle() + "'");
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
                 valide = false;
@@ -506,8 +512,8 @@ public class CopyProcess extends ProzesskopieForm {
             if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
                     && (StringUtils.isBlank(field.getValue()))) {
                 valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle()
-                        + " " + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
+                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle() + " "
+                        + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
             }
         }
         return valide;
@@ -556,8 +562,8 @@ public class CopyProcess extends ProzesskopieForm {
             if (this.prozessKopie.getTitle() != null) {
                 long anzahl = 0;
                 try {
-                    anzahl = serviceManager.getProcessService().count("from Prozess where titel='"
-                            + this.prozessKopie.getTitle() + "'");
+                    anzahl = serviceManager.getProcessService()
+                            .count("from Prozess where titel='" + this.prozessKopie.getTitle() + "'");
                 } catch (DAOException e) {
                     Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
                     valide = false;
@@ -576,9 +582,8 @@ public class CopyProcess extends ProzesskopieForm {
      * Anlegen des Prozesses und Speichern der Metadaten.
      */
 
-    public Process NeuenProzessAnlegen2()
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-            WriteException {
+    public Process NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException,
+            SwapException, DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -601,8 +606,10 @@ public class CopyProcess extends ProzesskopieForm {
              */
             if (step.getProcessingStatusEnum() == TaskStatus.DONE) {
                 step.setProcessingBegin(this.prozessKopie.getCreationDate());
-                // this concerns steps, which are set as done right on creation bearbeitungsbeginn is
-                // set to creation timestamp of process because the creation of it is basically begin
+                // this concerns steps, which are set as done right on creation
+                // bearbeitungsbeginn is
+                // set to creation timestamp of process because the creation of
+                // it is basically begin
                 // of work
                 Date myDate = new Date();
                 step.setProcessingTime(myDate);
@@ -620,7 +627,8 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
+         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
+         * stattfand, dann jetzt eine anlegen
          */
         if (this.myRdf == null) {
             createNewFileformat();
@@ -652,12 +660,12 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Create Process.
      *
-     * @param io import object
+     * @param io
+     *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException,
-            DAOException, WriteException {
+    public Process createProcess(ImportObject io) throws ReadException, IOException, InterruptedException,
+            PreferencesException, SwapException, DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -701,7 +709,8 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         /*
-         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage stattfand, dann jetzt eine anlegen
+         * wenn noch keine RDF-Datei vorhanden ist (weil keine Opac-Abfrage
+         * stattfand, dann jetzt eine anlegen
          */
         if (this.myRdf == null) {
             createNewFileformat();
@@ -744,8 +753,8 @@ public class CopyProcess extends ProzesskopieForm {
      */
     private void removeCollections(DocStruct colStruct) {
         try {
-            MetadataType mdt = UghHelper.getMetadataType(serviceManager.getRulesetService()
-                            .getPreferences(this.prozessKopie.getRuleset()),
+            MetadataType mdt = UghHelper.getMetadataType(
+                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection");
             ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
@@ -887,7 +896,8 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * this is needed for GUI, render multiple select only if this is false if this is true use the only choice.
+     * this is needed for GUI, render multiple select only if this is false if
+     * this is true use the only choice.
      *
      * @author Wulf
      */
@@ -898,8 +908,8 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * this is needed for GUI, render multiple select only if this is false if isSingleChoiceCollection is true use
-     * this choice.
+     * this is needed for GUI, render multiple select only if this is false if
+     * isSingleChoiceCollection is true use this choice.
      *
      * @author Wulf
      */
@@ -944,8 +954,8 @@ public class CopyProcess extends ProzesskopieForm {
                     for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
                         Element col = it2.next();
 
-                        if (col.getAttribute("default") != null && col.getAttributeValue("default")
-                                .equalsIgnoreCase("true")) {
+                        if (col.getAttribute("default") != null
+                                && col.getAttributeValue("default").equalsIgnoreCase("true")) {
                             digitalCollections.add(col.getText());
                         }
 
@@ -992,7 +1002,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-
     @Override
     public List<String> getAllOpacCatalogues() {
         return ConfigOpac.getAllCatalogueTitles();
@@ -1004,7 +1013,8 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /*
-     * changed, so that on first request list gets set if there is only one choice
+     * changed, so that on first request list gets set if there is only one
+     * choice
      */
     @Override
     public List<String> getDigitalCollections() {
@@ -1159,7 +1169,8 @@ public class CopyProcess extends ProzesskopieForm {
             String myString = tokenizer.nextToken();
             // System.out.println(myString);
             /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
+             * übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'")) {
                 newTitle += myString.substring(1, myString.length() - 1);
@@ -1169,8 +1180,8 @@ public class CopyProcess extends ProzesskopieForm {
                     AdditionalField myField = (AdditionalField) it2.next();
 
                     /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
-                     * nicht vorhanden
+                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
+                     * atstsl einsetzen, sofern noch nicht vorhanden
                      */
                     if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
                             && myField.getShowDependingOnDoctype()
@@ -1227,8 +1238,7 @@ public class CopyProcess extends ProzesskopieForm {
             return;
         }
 
-        tif_definition = cp.getParamString("tifheader."
-                + this.docType.toLowerCase(), "blabla");
+        tif_definition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
 
         /*
          * evtuelle Ersetzungen
@@ -1249,7 +1259,8 @@ public class CopyProcess extends ProzesskopieForm {
         while (tokenizer.hasMoreTokens()) {
             String myString = tokenizer.nextToken();
             /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so übernehmen
+             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
+             * übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
                 this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
@@ -1262,8 +1273,8 @@ public class CopyProcess extends ProzesskopieForm {
                     AdditionalField myField = it2.next();
 
                     /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten atstsl einsetzen, sofern noch
-                     * nicht vorhanden
+                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
+                     * atstsl einsetzen, sofern noch nicht vorhanden
                      */
                     if ((myField.getTitle().equals("ATS") || myField.getTitle().equals("TSL"))
                             && myField.getShowDependingOnDoctype()

@@ -54,7 +54,8 @@ public class StatistikForm {
      *
      * @return the count of valid user accounts
      * @throws DAOException
-     *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback.
      */
 
     public Long getAnzahlBenutzer() {

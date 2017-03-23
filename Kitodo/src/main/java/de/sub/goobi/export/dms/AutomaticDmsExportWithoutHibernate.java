@@ -58,8 +58,9 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * The field task holds an optional task instance. Its progress and its errors will be passed to
-     * the task manager screen (if available) for visualisation.
+     * The field task holds an optional task instance. Its progress and its
+     * errors will be passed to the task manager screen (if available) for
+     * visualisation.
      */
     private EmptyTask task;
 
@@ -79,15 +80,16 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     /**
      * DMS-Export an eine gewünschte Stelle.
      *
-     * @param process object
+     * @param process
+     *            object
      */
 
     @Override
-    public boolean startExport(ProcessObject process)
-            throws DAOException, IOException, PreferencesException, WriteException, SwapException,
-            TypeNotAllowedForParentException, InterruptedException {
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
-                .getRuleset(process.getRulesetId()));;
+    public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException,
+            WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
+        this.myPrefs = serviceManager.getRulesetService()
+                .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
+        ;
 
         this.project = ProjectManager.getProjectById(process.getProjectId());
 
@@ -178,16 +180,16 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                 return false;
             }
             /* alte Success-Ordner löschen */
-            SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath()
-                    + File.separator + process.getTitle());
+            SafeFile successFile = new SafeFile(
+                    this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
             if (!successFile.deleteDir()) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Success folder could not be cleared");
                 return false;
             }
             /* alte Error-Ordner löschen */
-            SafeFile errorfile = new SafeFile(this.project.getDmsImportErrorPath()
-                    + File.separator + process.getTitle());
+            SafeFile errorfile = new SafeFile(
+                    this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
             if (!errorfile.deleteDir()) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Error folder could not be cleared");
@@ -223,15 +225,16 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den Import-Ordner oder ins
-         * Benutzerhome anschliessend den Import-Thread starten
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
+         * den Import-Ordner oder ins Benutzerhome anschliessend den
+         * Import-Thread starten
          */
         if (this.project.isUseDmsImport()) {
             if (task != null) {
                 task.setWorkDetail(atsPpnBand + ".xml");
             }
-            if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat
-                    .METS) {
+            if (MetadataFormat
+                    .findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
                 writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
             } else {
@@ -240,8 +243,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             }
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
-            if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat
-                    .METS_AND_RDF) {
+            if (MetadataFormat.findFileFormatsHelperByName(
+                    this.project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
                 writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 
@@ -250,8 +253,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
                 /* Success-Ordner wieder löschen */
                 if (this.project.isDmsImportCreateProcessFolder()) {
-                    SafeFile successFile = new SafeFile(this.project.getDmsImportSuccessPath() + File.separator
-                            + process.getTitle());
+                    SafeFile successFile = new SafeFile(
+                            this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
                     successFile.deleteDir();
                 }
             }
@@ -263,7 +266,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the strings calls itself recursively.
+     * Run through all metadata and children of given docstruct to trim the
+     * strings calls itself recursively.
      */
     private void trimAllMetadata(DocStruct inStruct) {
         /* trimm all metadata values */
@@ -286,27 +290,29 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     /**
      * Download full text.
      *
-     * @param myProcess process object
-     * @param userHome safe file
-     * @param atsPpnBand String
-     * @param ordnerEndung String
+     * @param myProcess
+     *            process object
+     * @param userHome
+     *            safe file
+     * @param atsPpnBand
+     *            String
+     * @param ordnerEndung
+     *            String
      */
-    public void fulltextDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void fulltextDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand,
+            final String ordnerEndung) throws IOException, InterruptedException, SwapException, DAOException {
 
         // download sources
         SafeFile sources = new SafeFile(fi.getSourceDirectory());
         if (sources.exists() && sources.list().length > 0) {
-            SafeFile destination = new SafeFile(userHome + File.separator
-                    + atsPpnBand + "_src");
+            SafeFile destination = new SafeFile(userHome + File.separator + atsPpnBand + "_src");
             if (!destination.exists()) {
                 destination.mkdir();
             }
             SafeFile[] dateien = sources.listFiles();
             for (int i = 0; i < dateien.length; i++) {
                 if (dateien[i].isFile()) {
-                    SafeFile meinZiel = new SafeFile(destination + File.separator
-                            + dateien[i].getName());
+                    SafeFile meinZiel = new SafeFile(destination + File.separator + dateien[i].getName());
                     dateien[i].copyFile(meinZiel, false);
                 }
             }
@@ -337,10 +343,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     /**
      * Download image.
      *
-     * @param myProcess process object
-     * @param userHome safe file
-     * @param atsPpnBand String
-     * @param ordnerEndung String
+     * @param myProcess
+     *            process object
+     * @param userHome
+     *            safe file
+     * @param atsPpnBand
+     *            String
+     * @param ordnerEndung
+     *            String
      */
     public void imageDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException, SwapException, DAOException {
@@ -362,7 +372,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                 }
             } else {
                 /*
-                 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
+                 * wenn kein Agora-Import, dann den Ordner mit
+                 * Benutzerberechtigung neu anlegen
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
@@ -401,20 +412,23 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     }
 
     /**
-     * Starts copying all directories configured in goobi_config.properties parameter "processDirs" to export folder.
+     * Starts copying all directories configured in goobi_config.properties
+     * parameter "processDirs" to export folder.
      *
-     * @param myProcess the process object
-     * @param zielVerzeichnis the destination directory
+     * @param myProcess
+     *            the process object
+     * @param zielVerzeichnis
+     *            the destination directory
      */
     private void directoryDownload(ProcessObject myProcess, String zielVerzeichnis) throws IOException {
         String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
 
-            SafeFile srcDir = new SafeFile(FilenameUtils.concat(
-                    fi.getProcessDataDirectory(), processDir.replace("(processtitle)", myProcess.getTitle())));
-            SafeFile dstDir = new SafeFile(FilenameUtils.concat(
-                    zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
+            SafeFile srcDir = new SafeFile(FilenameUtils.concat(fi.getProcessDataDirectory(),
+                    processDir.replace("(processtitle)", myProcess.getTitle())));
+            SafeFile dstDir = new SafeFile(
+                    FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
 
             if (srcDir.isDirectory()) {
                 srcDir.copyDir(dstDir);
@@ -423,11 +437,13 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     }
 
     /**
-     * The method setTask() can be used to pass in a task instance. If that is passed in, the progress in it will
-     * be updated during processing and occurring errors will be passed to it to be visible in the task manager
+     * The method setTask() can be used to pass in a task instance. If that is
+     * passed in, the progress in it will be updated during processing and
+     * occurring errors will be passed to it to be visible in the task manager
      * screen.
      *
-     * @param task object to submit progress updates and errors to
+     * @param task
+     *            object to submit progress updates and errors to
      */
     public void setTask(EmptyTask task) {
         this.task = task;

@@ -171,15 +171,20 @@ public class HotfolderJob extends AbstractGoobiJob {
     /**
      * Generate process.
      *
-     * @param processTitle String
-     * @param vorlage Process object
-     * @param dir SafeFile object
-     * @param digitalCollection String
-     * @param updateStrategy String
+     * @param processTitle
+     *            String
+     * @param vorlage
+     *            Process object
+     * @param dir
+     *            SafeFile object
+     * @param digitalCollection
+     *            String
+     * @param updateStrategy
+     *            String
      * @return int
      */
     public static int generateProcess(String processTitle, Process vorlage, SafeFile dir, String digitalCollection,
-                                      String updateStrategy) {
+            String updateStrategy) {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -264,8 +269,9 @@ public class HotfolderJob extends AbstractGoobiJob {
                             }
                             for (String file : imageDir) {
                                 SafeFile image = new SafeFile(images, file);
-                                SafeFile dest = new SafeFile(serviceManager.getProcessService()
-                                        .getImagesOrigDirectory(false, p) + image.getName());
+                                SafeFile dest = new SafeFile(
+                                        serviceManager.getProcessService().getImagesOrigDirectory(false, p)
+                                                + image.getName());
                                 image.moveFile(dest);
                             }
                             images.deleteDirectory();
@@ -291,8 +297,8 @@ public class HotfolderJob extends AbstractGoobiJob {
                         try {
                             new SafeFile(dir.getAbsolutePath() + File.separator + processTitle).forceDelete();
                         } catch (Exception e) {
-                            logger.error("Can not delete file " + processTitle + " after importing "
-                                    + p.getTitle() + " into goobi", e);
+                            logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
+                                    + " into goobi", e);
                             return 30;
                         }
                         SafeFile anchor = new SafeFile(dir.getAbsolutePath() + File.separator
@@ -342,8 +348,10 @@ public class HotfolderJob extends AbstractGoobiJob {
     /**
      * Generate process.
      *
-     * @param io ImportObject
-     * @param vorlage Process object
+     * @param io
+     *            ImportObject
+     * @param vorlage
+     *            Process object
      * @return Process object
      */
     @SuppressWarnings("static-access")
@@ -432,7 +440,8 @@ public class HotfolderJob extends AbstractGoobiJob {
     /**
      * Test title.
      *
-     * @param titel String
+     * @param titel
+     *            String
      * @return boolean
      */
     public static boolean testTitle(String titel) {

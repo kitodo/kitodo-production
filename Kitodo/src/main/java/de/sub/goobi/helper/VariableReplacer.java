@@ -67,10 +67,14 @@ public class VariableReplacer {
     /**
      * Constructor.
      *
-     * @param inDigitalDocument DigitalDocument object
-     * @param inPrefs Prefs object
-     * @param p Process object
-     * @param s Task object
+     * @param inDigitalDocument
+     *            DigitalDocument object
+     * @param inPrefs
+     *            Prefs object
+     * @param p
+     *            Process object
+     * @param s
+     *            Task object
      */
     public VariableReplacer(DigitalDocument inDigitalDocument, Prefs inPrefs, Process p, Task s) {
         this.dd = inDigitalDocument;
@@ -80,8 +84,8 @@ public class VariableReplacer {
     }
 
     /**
-     * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die Variablen durchlaufen und aus
-     * dem Digital Document holen
+     * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
+     * Variablen durchlaufen und aus dem Digital Document holen
      */
     public String replace(String inString) {
         if (inString == null) {
@@ -93,11 +97,11 @@ public class VariableReplacer {
          */
         for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
             if (r.group(1).toLowerCase().startsWith("firstchild.")) {
-                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD,
-                        r.group(1).substring(11)));
+                inString = inString.replace(r.group(),
+                        getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
             } else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
-                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT,
-                        r.group(1).substring(10)));
+                inString = inString.replace(r.group(),
+                        getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
             } else {
                 inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
             }
@@ -105,24 +109,26 @@ public class VariableReplacer {
 
         // replace paths and files
         try {
-            String processpath = serviceManager.getProcessService().getProcessDataDirectory(this.process)
-                    .replace("\\", "/");
-            String tifpath = serviceManager.getProcessService().getImagesTifDirectory(false, this.process)
-                    .replace("\\", "/");
+            String processpath = serviceManager.getProcessService().getProcessDataDirectory(this.process).replace("\\",
+                    "/");
+            String tifpath = serviceManager.getProcessService().getImagesTifDirectory(false, this.process).replace("\\",
+                    "/");
             String imagepath = serviceManager.getProcessService().getImagesDirectory(this.process).replace("\\", "/");
             String origpath = serviceManager.getProcessService().getImagesOrigDirectory(false, this.process)
                     .replace("\\", "/");
             String metaFile = serviceManager.getProcessService().getMetadataFilePath(this.process).replace("\\", "/");
             String ocrBasisPath = serviceManager.getProcessService().getOcrDirectory(this.process).replace("\\", "/");
-            String ocrPlaintextPath = serviceManager.getProcessService().getTxtDirectory(this.process)
-                    .replace("\\", "/");
+            String ocrPlaintextPath = serviceManager.getProcessService().getTxtDirectory(this.process).replace("\\",
+                    "/");
             // TODO name ändern?
             String sourcePath = serviceManager.getProcessService().getSourceDirectory(this.process).replace("\\", "/");
             String importPath = serviceManager.getProcessService().getImportDirectory(this.process).replace("\\", "/");
-            String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis")
-                    + this.process.getRuleset().getFile();
+            String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
 
-            /* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
+            /*
+             * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben
+             * wollen, wird diese rausgenommen
+             */
             if (tifpath.endsWith(File.separator)) {
                 tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
             }
@@ -133,8 +139,8 @@ public class VariableReplacer {
                 origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
             }
             if (processpath.endsWith(File.separator)) {
-                processpath = processpath.substring(0, processpath.length() - File.separator.length())
-                        .replace("\\", "/");
+                processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\",
+                        "/");
             }
             if (importPath.endsWith(File.separator)) {
                 importPath = importPath.substring(0, importPath.length() - File.separator.length()).replace("\\", "/");
@@ -143,8 +149,8 @@ public class VariableReplacer {
                 sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
             }
             if (ocrBasisPath.endsWith(File.separator)) {
-                ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length())
-                        .replace("\\", "/");
+                ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
+                        "/");
             }
             if (ocrPlaintextPath.endsWith(File.separator)) {
                 ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
@@ -274,7 +280,8 @@ public class VariableReplacer {
     }
 
     /**
-     * Metadatum von FirstChild oder TopStruct ermitteln (vorzugsweise vom FirstChild) und zurückgeben.
+     * Metadatum von FirstChild oder TopStruct ermitteln (vorzugsweise vom
+     * FirstChild) und zurückgeben.
      */
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
         if (this.dd != null) {
@@ -303,7 +310,10 @@ public class VariableReplacer {
 
             switch (inLevel) {
                 case FIRSTCHILD:
-                    /* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
+                    /*
+                     * ohne vorhandenes FirstChild, kann dieses nicht
+                     * zurückgegeben werden
+                     */
                     if (resultFirst == null) {
                         if (logger.isInfoEnabled()) {
                             logger.info("Can not replace firstChild-variable for METS: " + metadata);
@@ -346,7 +356,8 @@ public class VariableReplacer {
     }
 
     /**
-     * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null zurückgegeben.
+     * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
+     * zurückgegeben.
      */
     private String getMetadataValue(DocStruct inDocstruct, MetadataType mdt) {
         List<? extends Metadata> mds = inDocstruct.getAllMetadataByType(mdt);
@@ -358,7 +369,8 @@ public class VariableReplacer {
     }
 
     /**
-     * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen Treffer als Liste zurück.
+     * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen
+     * Treffer als Liste zurück.
      */
     public static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
         List<MatchResult> results = new ArrayList<MatchResult>();

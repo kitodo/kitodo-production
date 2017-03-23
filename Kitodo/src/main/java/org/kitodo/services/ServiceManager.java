@@ -11,23 +11,7 @@
 
 package org.kitodo.services;
 
-import org.kitodo.services.data.BatchService;
-import org.kitodo.services.data.DocketService;
-import org.kitodo.services.data.HistoryService;
-import org.kitodo.services.data.LdapGroupService;
-import org.kitodo.services.data.ProcessPropertyService;
-import org.kitodo.services.data.ProcessService;
-import org.kitodo.services.data.ProjectFileGroupService;
-import org.kitodo.services.data.ProjectService;
-import org.kitodo.services.data.RulesetService;
-import org.kitodo.services.data.TaskService;
-import org.kitodo.services.data.TemplatePropertyService;
-import org.kitodo.services.data.TemplateService;
-import org.kitodo.services.data.UserGroupService;
-import org.kitodo.services.data.UserPropertyService;
-import org.kitodo.services.data.UserService;
-import org.kitodo.services.data.WorkpiecePropertyService;
-import org.kitodo.services.data.WorkpieceService;
+import org.kitodo.services.data.*;
 
 public class ServiceManager {
 
@@ -172,7 +156,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize HistoryService if it is not yet initialized and next return it.
+     * Initialize HistoryService if it is not yet initialized and next return
+     * it.
      *
      * @return HistoryService object
      */
@@ -182,7 +167,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize LdapGroupService if it is not yet initialized and next return it.
+     * Initialize LdapGroupService if it is not yet initialized and next return
+     * it.
      *
      * @return LdapGroupService object
      */
@@ -192,7 +178,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ProcessPropertyService if it is not yet initialized and next return it.
+     * Initialize ProcessPropertyService if it is not yet initialized and next
+     * return it.
      *
      * @return ProcessPropertyService object
      */
@@ -202,7 +189,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ProcessService if it is not yet initialized and next return it.
+     * Initialize ProcessService if it is not yet initialized and next return
+     * it.
      *
      * @return ProcessService object
      */
@@ -212,7 +200,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ProjectFileGroupService if it is not yet initialized and next return it.
+     * Initialize ProjectFileGroupService if it is not yet initialized and next
+     * return it.
      *
      * @return ProjectFileGroupService object
      */
@@ -222,7 +211,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ProjectService if it is not yet initialized and next return it.
+     * Initialize ProjectService if it is not yet initialized and next return
+     * it.
      *
      * @return ProjectService object
      */
@@ -232,7 +222,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize RulesetService if it is not yet initialized and next return it.
+     * Initialize RulesetService if it is not yet initialized and next return
+     * it.
      *
      * @return RulesetService object
      */
@@ -252,7 +243,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize TemplatePropertyService if it is not yet initialized and next return it.
+     * Initialize TemplatePropertyService if it is not yet initialized and next
+     * return it.
      *
      * @return TemplatePropertyService object
      */
@@ -262,7 +254,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize TemplateService if it is not yet initialized and next return it.
+     * Initialize TemplateService if it is not yet initialized and next return
+     * it.
      *
      * @return TemplateService object
      */
@@ -272,7 +265,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize UserGroupService if it is not yet initialized and next return it.
+     * Initialize UserGroupService if it is not yet initialized and next return
+     * it.
      *
      * @return UserGroupService object
      */
@@ -282,7 +276,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize UserPropertyService if it is not yet initialized and next return it.
+     * Initialize UserPropertyService if it is not yet initialized and next
+     * return it.
      *
      * @return UserPropertyService object
      */
@@ -302,7 +297,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize WorkpiecePropertyService if it is not yet initialized and next return it.
+     * Initialize WorkpiecePropertyService if it is not yet initialized and next
+     * return it.
      *
      * @return WorkpiecePropertyService object
      */
@@ -312,7 +308,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize WorkpieceService if it is not yet initialized and next return it.
+     * Initialize WorkpieceService if it is not yet initialized and next return
+     * it.
      *
      * @return WorkpieceService object
      */

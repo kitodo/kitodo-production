@@ -79,11 +79,11 @@ public class BasisForm implements Serializable {
             return;
         }
         serviceManager.getUserService().addFilter(this.user.getId(), this.filter);
-        //try {
-        //	new BenutzerDAO().save(this.user);
-        //} catch (DAOException e) {
-        //	logger.error(e);
-        //}
+        // try {
+        // new BenutzerDAO().save(this.user);
+        // } catch (DAOException e) {
+        // logger.error(e);
+        // }
     }
 
     /**
@@ -94,10 +94,10 @@ public class BasisForm implements Serializable {
             return;
         }
         serviceManager.getUserService().removeFilter(this.user.getId(), this.filter);
-        //try {
-        //	new BenutzerDAO().save(this.user);
-        //} catch (DAOException e) {
-        //	logger.error(e);
-        //}
+        // try {
+        // new BenutzerDAO().save(this.user);
+        // } catch (DAOException e) {
+        // logger.error(e);
+        // }
     }
 }

@@ -130,8 +130,8 @@ public class ExportPdf extends ExportMets {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
                     FilenameFilter filter = new FileListFilter("\\d*\\.tif");
-                    SafeFile imagesDir = new SafeFile(serviceManager.getProcessService()
-                            .getImagesTifDirectory(true, myProcess));
+                    SafeFile imagesDir = new SafeFile(
+                            serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
                     SafeFile[] meta = imagesDir.listFiles(filter);
                     int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();

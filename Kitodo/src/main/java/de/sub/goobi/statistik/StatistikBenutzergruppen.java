@@ -27,7 +27,8 @@ public class StatistikBenutzergruppen {
     /**
      * Get diagram.
      *
-     * @param inProzesse list of Process objects
+     * @param inProzesse
+     *            list of Process objects
      * @return Dataset object
      */
     public static Dataset getDiagramm(List<Process> inProzesse) {

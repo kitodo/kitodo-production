@@ -21,12 +21,12 @@ import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.goobi.production.properties.AccessCondition;
 import org.goobi.production.properties.ProcessProperty;
-
 import org.kitodo.services.ServiceManager;
 
 /**
- * This is a web service interface to close steps. You have to provide the step id as “id”; you can add
- * a field “message” which will be added to the wiki field.
+ * This is a web service interface to close steps. You have to provide the step
+ * id as “id”; you can add a field “message” which will be added to the wiki
+ * field.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -34,8 +34,9 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * The default constructor looks up the queue name to use in goobi_config.properties.
-     * If that is not configured and “null” is passed to the super constructor, this will prevent
+     * The default constructor looks up the queue name to use in
+     * goobi_config.properties. If that is not configured and “null” is passed
+     * to the super constructor, this will prevent
      * ActiveMQDirector.registerListeners() from starting this service.
      */
     public FinaliseStepProcessor() {
@@ -43,8 +44,9 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * This is the main routine processing incoming tickets. It gets an AktuelleSchritteForm object,
-     * sets it to the appropriate step which is retrieved from the database, appends the message − if any − to the wiki
+     * This is the main routine processing incoming tickets. It gets an
+     * AktuelleSchritteForm object, sets it to the appropriate step which is
+     * retrieved from the database, appends the message − if any − to the wiki
      * field, and executes the form’s the step close function.
      *
      * @param ticket
@@ -68,7 +70,8 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * The method updateProperties() transfers the properties to set into Goobi’s data model.
+     * The method updateProperties() transfers the properties to set into
+     * Goobi’s data model.
      *
      * @param dialog
      *            The AktuelleSchritteForm that we work with

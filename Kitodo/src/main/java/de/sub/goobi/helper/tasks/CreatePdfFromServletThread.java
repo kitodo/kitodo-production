@@ -36,7 +36,8 @@ import org.kitodo.services.ServiceManager;
 
 /**
  * Creation of PDF-Files as long running task for GoobiContentServerServlet.
- * First of all the variables have to be set via the setters after that you can initialize and run it
+ * First of all the variables have to be set via the setters after that you can
+ * initialize and run it
  *
  * @author Steffen Hankiewicz
  * @version 12.02.2009
@@ -96,7 +97,10 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              * using mets file
              */
             if (new MetadatenVerifizierung().validate(this.getProcess()) && (this.metsURL != null)) {
-                /* if no contentserverurl defined use internal goobiContentServerServlet */
+                /*
+                 * if no contentserverurl defined use internal
+                 * goobiContentServerServlet
+                 */
                 if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
                     contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
                 }
@@ -111,8 +115,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
                 String url = "";
                 FilenameFilter filter = Helper.imageNameFilter;
-                SafeFile imagesDir = new SafeFile(serviceManager.getProcessService().getImagesTifDirectory(true,
-                        this.getProcess()));
+                SafeFile imagesDir = new SafeFile(
+                        serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess()));
                 SafeFile[] meta = imagesDir.listFiles(filter);
                 ArrayList<String> filenames = new ArrayList<String>();
                 for (SafeFile data : meta) {
@@ -150,10 +154,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
 
                 InputStream inStream = method.getResponseBodyAsStream();
-                try (
-                        BufferedInputStream bis = new BufferedInputStream(inStream);
-                        FileOutputStream fos = tempPdf.createFileOutputStream();
-                ) {
+                try (BufferedInputStream bis = new BufferedInputStream(inStream);
+                        FileOutputStream fos = tempPdf.createFileOutputStream();) {
                     byte[] bytes = new byte[8192];
                     int count = bis.read(bytes);
                     while ((count != -1) && (count <= 8192)) {
@@ -186,21 +188,18 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             }
         } catch (Exception e) {
             logger.error("Error while creating pdf for " + this.getProcess().getTitle(), e);
-            setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: "
-                    + e.getMessage());
+            setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: " + e.getMessage());
             setStatusProgress(-1);
 
             /*
              * report Error to User as Error-Log
              */
             String text = "error while pdf creation: " + e.getMessage();
-            SafeFile file = new SafeFile(this.targetFolder, this.getProcess().getTitle()
-                    + ".PDF-ERROR.log");
+            SafeFile file = new SafeFile(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
             try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
                 output.write(text);
             } catch (IOException e1) {
-                logger.error("Error while reporting error to user in file "
-                        + file.getAbsolutePath(), e);
+                logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);
             }
             return;
         } finally {

@@ -58,12 +58,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Name of the structural element used to represent the day of month in the anchor structure of the newspaper.
+     * Name of the structural element used to represent the day of month in the
+     * anchor structure of the newspaper.
      */
     private final String dayLevelName;
 
     /**
-     * Name of the structural element used to represent the issue in the anchor structure of the newspaper.
+     * Name of the structural element used to represent the issue in the anchor
+     * structure of the newspaper.
      */
     private final String issueLevelName;
 
@@ -74,7 +76,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     private final String monthLevelName;
 
     /**
-     * Name of the structural element used to represent the year in the anchor structure of the newspaper.
+     * Name of the structural element used to represent the year in the anchor
+     * structure of the newspaper.
      */
     private final String yearLevelName;
 
@@ -84,40 +87,45 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     private Batch batch;
 
     /**
-     * The field aggregation holds a 4-dimensional list (hierarchy: year, month, day, issue) into which
-     * the issues are aggregated.
+     * The field aggregation holds a 4-dimensional list (hierarchy: year, month,
+     * day, issue) into which the issues are aggregated.
      */
     private final ArrayListMap<org.joda.time.LocalDate, String> aggregation;
 
     /**
      * The field action holds the number of the action the task currently is in.
-     * Valid values range from 1 to 2. This is to start up at the right position after an interruption again.
+     * Valid values range from 1 to 2. This is to start up at the right position
+     * after an interruption again.
      */
     private int action;
 
     /**
-     * The field processesIterator holds an iterator object to walk though the processes of the batch.
-     * The processes in a batch are a Set implementation, so we use an iterator to walk through and do not use an
+     * The field processesIterator holds an iterator object to walk though the
+     * processes of the batch. The processes in a batch are a Set
+     * implementation, so we use an iterator to walk through and do not use an
      * index.
      */
     private Iterator<Process> processesIterator;
 
     /**
-     * The field dividend holds the number of processes that have been processed in this action. The fields dividend
-     * and divisor are used to display a progress bar.
+     * The field dividend holds the number of processes that have been processed
+     * in this action. The fields dividend and divisor are used to display a
+     * progress bar.
      */
     private int dividend;
 
     /**
-     * The field dividend holds the number of processes to process in each action. The fields dividend and divisor
-     * are used to display a progress bar.
+     * The field dividend holds the number of processes to process in each
+     * action. The fields dividend and divisor are used to display a progress
+     * bar.
      */
     private final double divisor;
 
     private final HashMap<Integer, String> collectedYears;
 
     /**
-     * The field batchId holds the ID number of the batch whose processes are to export.
+     * The field batchId holds the ID number of the batch whose processes are to
+     * export.
      */
     private Integer batchId;
 
@@ -127,20 +135,25 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @param batch
      *            batch to export
      * @throws HibernateException
-     *             if the batch isn’t attached to a Hibernate session and cannot be reattached either
+     *             if the batch isn’t attached to a Hibernate session and cannot
+     *             be reattached either
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available in the rule set configured
+     *             if the no node corresponding to the file format is available
+     *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws SwapException
      *             if an error occurs while the process is swapped back in
      * @throws DAOException
-     *             if an error occurs while saving the fact that the process has been swapped back in to the database
+     *             if an error occurs while saving the fact that the process has
+     *             been swapped back in to the database
      * @throws IOException
-     *             if creating the process directory or reading the meta data file fails
+     *             if creating the process directory or reading the meta data
+     *             file fails
      * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while it is waiting for the shell script
-     *             to create the directory to finish
+     *             if the current thread is interrupted by another thread while
+     *             it is waiting for the shell script to create the directory to
+     *             finish
      */
     public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException,
             SwapException, DAOException, IOException, InterruptedException {
@@ -151,8 +164,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         collectedYears = new HashMap<>();
         dividend = 0;
         divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
-        DocStruct dsNewspaper = serviceManager.getProcessService().getDigitalDocument(batch.getProcesses().iterator()
-                .next()).getLogicalDocStruct();
+        DocStruct dsNewspaper = serviceManager.getProcessService()
+                .getDigitalDocument(batch.getProcesses().iterator().next()).getLogicalDocStruct();
         DocStruct dsYear = dsNewspaper.getAllChildren().get(0);
         yearLevelName = dsYear.getType().getName();
         DocStruct dsMonth = dsYear.getAllChildren().get(0);
@@ -164,8 +177,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The copy constructor creates a new thread from a given one. This is  required to call
-     * the copy constructor of the parent.
+     * The copy constructor creates a new thread from a given one. This is
+     * required to call the copy constructor of the parent.
      *
      * @param master
      *            copy master
@@ -186,8 +199,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function run() is the main function of this task (which is a thread). It will aggregate the data
-     * from all processes and then export all processes with the recombined data. The statusProgress variable is being
+     * The function run() is the main function of this task (which is a thread).
+     * It will aggregate the data from all processes and then export all
+     * processes with the recombined data. The statusProgress variable is being
      * updated to show the operator how far the task has proceeded.
      *
      * @see java.lang.Thread#run()
@@ -206,8 +220,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         return;
                     }
                     process = processesIterator.next();
-                    Integer processesYear = Integer.valueOf(getYear(serviceManager.getProcessService()
-                            .getDigitalDocument(process)));
+                    Integer processesYear = Integer
+                            .valueOf(getYear(serviceManager.getProcessService().getDigitalDocument(process)));
                     if (!collectedYears.containsKey(processesYear)) {
                         collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
                     }
@@ -225,17 +239,18 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     if (isInterrupted()) {
                         return;
                     }
-                    MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(),
-                            collectedYears, aggregation);
+                    MetsMods extendedData = buildExportableMetsMods(process = processesIterator.next(), collectedYears,
+                            aggregation);
                     setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
-                    new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
-                            process, LoginForm.getCurrentUserHomeDir(), extendedData.getDigitalDocument());
+                    new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true))
+                            .startExport(process, LoginForm.getCurrentUserHomeDir(), extendedData.getDigitalDocument());
                     setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
                 }
             }
         } catch (Exception e) {
-            // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException
+            // PreferencesException, ReadException, SwapException, DAOException,
+            // IOException, InterruptedException
             // and some runtime exceptions
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
@@ -245,10 +260,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function getYear() returns the year that of issues are contained in this act. The function relies on
-     * the assumption that the first level of the logical structure tree of the act is of type METADATA_ELEMENT_YEAR,
-     * is present exactly once and has a METADATA_FIELD_LABEL whose value represents the year and can be parsed
-     * to integer.
+     * The function getYear() returns the year that of issues are contained in
+     * this act. The function relies on the assumption that the first level of
+     * the logical structure tree of the act is of type METADATA_ELEMENT_YEAR,
+     * is present exactly once and has a METADATA_FIELD_LABEL whose value
+     * represents the year and can be parsed to integer.
      *
      * @param act
      *            act to examine
@@ -280,8 +296,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function getMetadataIntValueByName() returns the value of a named meta data entry associated with
-     * a structure entity as int.
+     * The function getMetadataIntValueByName() returns the value of a named
+     * meta data entry associated with a structure entity as int.
      *
      * @param structureTypeName
      *            structureEntity to get the meta data value from
@@ -306,26 +322,31 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function getMetsYearAnchorPointerURL() returns the URL for a METS pointer to retrieve the course
-     * of appearance data for the year the given process is in.
+     * The function getMetsYearAnchorPointerURL() returns the URL for a METS
+     * pointer to retrieve the course of appearance data for the year the given
+     * process is in.
      *
      * @param process
      *            process whese year anchor pointer shall be returned
      * @return URL to retrieve the year data
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available in the rule set configured
+     *             if the no node corresponding to the file format is available
+     *             in the rule set configured
      * @throws ReadException
-     *             if the no node corresponding to the file format is available in the rule set configured
+     *             if the no node corresponding to the file format is available
+     *             in the rule set configured
      * @throws SwapException
      *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
      * @throws IOException
-     *             if creating the process directory or reading the meta data file fails
+     *             if creating the process directory or reading the meta data
+     *             file fails
      * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while it is waiting for the shell script
-     *             to create the directory to finish
+     *             if the current thread is interrupted by another thread while
+     *             it is waiting for the shell script to create the directory to
+     *             finish
      */
     private static String getMetsYearAnchorPointerURL(Process process)
             throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
@@ -339,30 +360,36 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function getIssueDates() returns a list with all the dates of the issues contained in this process.
-     * The function relies on the assumption that the child elements descending from the topmost logical structure
-     * entity of the process represent year, month and day of appearance and that the immediate children of
-     * the day level represent issues. The levels year, month and day must have meta data elements named
-     * "PublicationYear", "PublicationMonth" and "PublicationDay" associated whose value can be interpreted as
-     * an integer.
+     * The function getIssueDates() returns a list with all the dates of the
+     * issues contained in this process. The function relies on the assumption
+     * that the child elements descending from the topmost logical structure
+     * entity of the process represent year, month and day of appearance and
+     * that the immediate children of the day level represent issues. The levels
+     * year, month and day must have meta data elements named "PublicationYear",
+     * "PublicationMonth" and "PublicationDay" associated whose value can be
+     * interpreted as an integer.
      *
      * @return a list with the dates of all issues in this process
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available in the rule set used
+     *             if the no node corresponding to the file format is available
+     *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws SwapException
      *             if an error occurs while the process is swapped back in
      * @throws DAOException
-     *             if an error occurs while saving the fact that the process has been swapped back in to the database
+     *             if an error occurs while saving the fact that the process has
+     *             been swapped back in to the database
      * @throws IOException
-     *             if creating the process directory or reading the meta data file fails
+     *             if creating the process directory or reading the meta data
+     *             file fails
      * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while it is waiting for the shell script
-     *             to create the directory to finish
+     *             if the current thread is interrupted by another thread while
+     *             it is waiting for the shell script to create the directory to
+     *             finish
      */
-    private static List<LocalDate> getIssueDates(DigitalDocument act) throws PreferencesException, ReadException,
-            SwapException, DAOException, IOException, InterruptedException {
+    private static List<LocalDate> getIssueDates(DigitalDocument act)
+            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
         List<LocalDate> result = new LinkedList<>();
         DocStruct logicalDocStruct = act.getLogicalDocStruct();
         for (DocStruct annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {
@@ -371,10 +398,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 int monthOfYear = getMetadataIntValueByName(monthNode,
                         MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE);
                 for (DocStruct dayNode : skipIfNull(monthNode.getAllChildren())) {
-                    LocalDate appeared = new LocalDate(year, monthOfYear, getMetadataIntValueByName(dayNode,
-                            MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
+                    LocalDate appeared = new LocalDate(year, monthOfYear,
+                            getMetadataIntValueByName(dayNode, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
                     for (@SuppressWarnings("unused")
-                            DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
+                    DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
                         result.add(appeared);
                     }
                 }
@@ -384,10 +411,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function skipIfNull() returns the list passed in, or Collections.emptyList() if the list is null.
-     * {@link DocStruct#getAllChildren()} does return null if no children are contained. This would throw
-     * a NullPointerException if passed into a loop. Replacing null by Collections.emptyList() results in
-     * the loop to be silently skipped, so that the outer code continues normally.
+     * The function skipIfNull() returns the list passed in, or
+     * Collections.emptyList() if the list is null.
+     * {@link DocStruct#getAllChildren()} does return null if no children are
+     * contained. This would throw a NullPointerException if passed into a loop.
+     * Replacing null by Collections.emptyList() results in the loop to be
+     * silently skipped, so that the outer code continues normally.
      *
      * @param list
      *            list to check for being null
@@ -435,8 +464,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             it is waiting for the shell script to create the directory to
      *             finish
      */
-    static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, SwapException,
-            DAOException, IOException, InterruptedException {
+    static String getMetsPointerURL(Process process)
+            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
         VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
                 serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         return replacer.replace(process.getProject().getMetsPointerPathAnchor());
@@ -484,18 +513,18 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private MetsMods buildExportableMetsMods(Process process, HashMap<Integer, String> years,
-                                             ArrayListMap<LocalDate, String> issues)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException,
-            InterruptedException, TypeNotAllowedForParentException,  MetadataTypeNotAllowedException,
-            TypeNotAllowedAsChildException {
+            ArrayListMap<LocalDate, String> issues)
+            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException,
+            TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsMods result = new MetsMods(ruleSet);
         result.read(serviceManager.getProcessService().getMetadataFilePath(process));
 
         DigitalDocument caudexDigitalis = result.getDigitalDocument();
-        int ownYear = getMetadataIntValueByName(caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator()
-                .next(), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
+        int ownYear = getMetadataIntValueByName(
+                caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator().next(),
+                MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE);
         String ownMetsPointerURL = getMetsPointerURL(process);
 
         insertReferencesToYears(years, ownYear, caudexDigitalis, ruleSet);
@@ -504,14 +533,17 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * The function insertReferencesToYears() inserts METS pointer references to all years into the logical
-     * hierarchy of the document. For all but the current year, an additional child node will be created.
+     * The function insertReferencesToYears() inserts METS pointer references to
+     * all years into the logical hierarchy of the document. For all but the
+     * current year, an additional child node will be created.
      *
      * @param act
-     *            level of the logical document structure tree that holds years (that is the top level)
+     *            level of the logical document structure tree that holds years
+     *            (that is the top level)
      * @param years
      *            a map with all years and their pointer URLs
-     * @param ownYear int
+     * @param ownYear
+     *            int
      * @param ruleSet
      *            the rule set this process is based on
      * @throws TypeNotAllowedForParentException
@@ -525,9 +557,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act,
-                                         Prefs ruleSet)
-            throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException,
-            TypeNotAllowedAsChildException {
+            Prefs ruleSet)
+            throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         for (Integer year : years.keySet()) {
             if (year.intValue() != ownYear) {
                 DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
@@ -571,7 +602,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private static DocStruct getOrCreateChild(DocStruct parent, String type, String identifierField, String identifier,
-                                              String optionalField, DigitalDocument act, Prefs ruleset)
+            String optionalField, DigitalDocument act, Prefs ruleset)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         try {
             return parent.getChild(type, identifierField, identifier);
@@ -582,8 +613,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 child.addMetadata(optionalField, identifier);
             } catch (MetadataTypeNotAllowedException e) {
                 if (logger.isInfoEnabled()) {
-                    logger.info(e.getMessage().replaceFirst("^Couldn’t add ([^:]+):",
-                            "Couldn’t add optional field $1."));
+                    logger.info(
+                            e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
                 }
             }
 
@@ -666,19 +697,22 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @param ownMetsPointerURL
      *            the current year—issues of other years are skipped
      * @param ownMetsPointerURL
-     *            my own METS pointer URL—issues that share the same URL are also skipped
+     *            my own METS pointer URL—issues that share the same URL are
+     *            also skipped
      * @param ruleSet
      *            rule set the process is based on
      * @throws TypeNotAllowedForParentException
      *             is thrown, if this DocStruct is not allowed for a parent
      * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't member of this instance's DocStruct type
+     *             if a child should be added, but it's DocStruct type isn't
+     *             member of this instance's DocStruct type
      * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not allow the MetadataType or if
-     *             the maximum number of Metadata (of this type) is already available
+     *             if the DocStructType of this DocStruct instance does not
+     *             allow the MetadataType or if the maximum number of Metadata
+     *             (of this type) is already available
      */
     private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
-                                                         String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
+            String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
         for (int i = 0; i < issues.size(); i++) {
             if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {
@@ -689,7 +723,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
     }
 
     /**
-     * Inserts a reference (METS pointer (mptr) URL) for an issue on a given date into an act.
+     * Inserts a reference (METS pointer (mptr) URL) for an issue on a given
+     * date into an act.
      *
      * @param act
      *            act in whose logical structure the pointer is to create
@@ -702,8 +737,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws TypeNotAllowedForParentException
      *             is thrown, if this DocStruct is not allowed for a parent
      * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not allow the MetadataType or if
-     *             the maximum number of Metadata (of this type) is already available
+     *             if the DocStructType of this DocStruct instance does not
+     *             allow the MetadataType or if the maximum number of Metadata
+     *             (of this type) is already available
      * @throws TypeNotAllowedAsChildException
      *             if a child should be added, but it's DocStruct type isn't
      *             member of this instance's DocStruct type
@@ -713,19 +749,19 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         DocStruct year = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
                 MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, Integer.toString(date.getYear()),
                 MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleset);
-        DocStruct month = getOrCreateChild(year, monthLevelName,
-                MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getMonthOfYear()),
-                MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
-        DocStruct day = getOrCreateChild(month, dayLevelName,
-                MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, Integer.toString(date.getDayOfMonth()),
-                MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
+        DocStruct month = getOrCreateChild(year, monthLevelName, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                Integer.toString(date.getMonthOfYear()), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act,
+                ruleset);
+        DocStruct day = getOrCreateChild(month, dayLevelName, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                Integer.toString(date.getDayOfMonth()), MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, act, ruleset);
         DocStruct issue = day.createChild(issueLevelName, act, ruleset);
         issue.addMetadata(MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE, metsPointerURL);
     }
 
     /**
-     * Calls the clone constructor to create a not yet executed instance of this thread object.
-     * This is necessary for threads that have terminated in order to render possible to restart them.
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()

@@ -595,8 +595,8 @@ public class ProjekteForm extends BasisForm {
     public StatQuestProjectProgressData getProjectProgressInterface() {
         synchronized (this.projectProgressData) {
             try {
-                this.projectProgressData.setCommonWorkflow(serviceManager.getProjectService()
-                        .getWorkFlow(this.myProjekt));
+                this.projectProgressData
+                        .setCommonWorkflow(serviceManager.getProjectService().getWorkFlow(this.myProjekt));
                 this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
                 this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
                 this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),

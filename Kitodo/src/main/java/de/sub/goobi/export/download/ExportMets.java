@@ -242,8 +242,8 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    SafeFile folder = new SafeFile(serviceManager.getProcessService()
-                            .getMethodFromName(pfg.getFolder(), myProcess));
+                    SafeFile folder = new SafeFile(
+                            serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
                     if (folder.exists() && folder.list().length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());

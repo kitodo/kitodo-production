@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -44,8 +43,10 @@ public class JobCreation {
     /**
      * Generate process.
      *
-     * @param io ImportObject
-     * @param vorlage Process object
+     * @param io
+     *            ImportObject
+     * @param vorlage
+     *            Process object
      * @return Process object
      */
     @SuppressWarnings("static-access")
@@ -141,7 +142,8 @@ public class JobCreation {
     /**
      * Test title.
      *
-     * @param titel String
+     * @param titel
+     *            String
      * @return boolean
      */
     public static boolean testTitle(String titel) {
@@ -161,9 +163,12 @@ public class JobCreation {
     /**
      * Move files.
      *
-     * @param metsfile SafeFile object
-     * @param basepath String
-     * @param p Process object
+     * @param metsfile
+     *            SafeFile object
+     * @param basepath
+     *            String
+     * @param p
+     *            Process object
      */
     @SuppressWarnings("static-access")
     public static void moveFiles(SafeFile metsfile, String basepath, Process p)
@@ -182,8 +187,8 @@ public class JobCreation {
                 }
                 for (String file : imageDir) {
                     SafeFile image = new SafeFile(imagesFolder, file);
-                    SafeFile dest = new SafeFile(serviceManager.getProcessService().getImagesOrigDirectory(false, p)
-                            + image.getName());
+                    SafeFile dest = new SafeFile(
+                            serviceManager.getProcessService().getImagesOrigDirectory(false, p) + image.getName());
                     image.moveFile(dest);
                 }
                 imagesFolder.deleteDirectory();
