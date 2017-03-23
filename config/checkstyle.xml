@@ -19,7 +19,7 @@
      To completely disable a check, just comment it out or delete it from the file.
      Author: Beatrycze Kmiec. -->
 
-<module name="Checker">
+<module name = "Checker">
     <property name="charset" value="UTF-8"/>
 
     <property name="severity" value="warning"/>
@@ -37,7 +37,7 @@
         </module>
 
         <module name="LineLength">
-            <property name="max" value="120"/>
+            <property name="max" value="140"/>
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
         </module>
 
@@ -179,10 +179,16 @@
 
         <!--Check if there are whitespaces at the end of the line -->
         <module name="RegexpSinglelineJava">
-            <property name="format" value="\s+$"/>
+            <property name="format" value="\s\s+$"/>
             <property name="minimum" value="0"/>
             <property name="maximum" value="2"/>
         </module>
+
+        <!-- Checks if the licenceheader is present -->
+        <module name="Regexp">
+            <property name="format" value="\A/\*"/>
+        </module>
+
 
         <module name="AbbreviationAsWordInName">
             <property name="ignoreFinal" value="false"/>
