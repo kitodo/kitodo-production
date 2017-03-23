@@ -138,8 +138,4 @@ public class SqlConfiguration {
         return this.dbPoolMaxSize;
     }
 
-    public static void main(String[] args) {
-        SqlConfiguration.getInstance();
-    }
-
 }
