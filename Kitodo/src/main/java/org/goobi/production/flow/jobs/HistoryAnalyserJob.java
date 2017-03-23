@@ -34,7 +34,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.HistoryType;
 import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * HistoryJob proofs History of {@link Process} and creates missing {@link History}s
@@ -45,6 +45,7 @@ import org.kitodo.services.ProcessService;
  */
 public class HistoryAnalyserJob extends AbstractGoobiJob {
     private static final Logger logger = Logger.getLogger(HistoryAnalyserJob.class);
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /*
      * (non-Javadoc)
@@ -81,7 +82,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      */
     public static Boolean updateHistory(Process inProcess)
             throws IOException, InterruptedException, SwapException, DAOException {
-        ProcessService processService = new ProcessService();
         boolean updated = false;
         /* storage */
         if (updateHistoryEvent(inProcess, HistoryType.storageDifference, getCurrentStorageSize(inProcess))) {
@@ -89,14 +89,14 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
         }
         /* imagesWork */
         Integer numberWork = FileUtils.getNumberOfFiles(new File(
-                processService.getImagesTifDirectory(true, inProcess)), ".tif");
+                serviceManager.getProcessService().getImagesTifDirectory(true, inProcess)), ".tif");
         if (updateHistoryEvent(inProcess, HistoryType.imagesWorkDiff, numberWork.longValue())) {
             updated = true;
         }
 
         /* imagesMaster */
         Integer numberMaster = FileUtils.getNumberOfFiles(new File(
-                processService.getImagesOrigDirectory(true, inProcess)), ".tif");
+                serviceManager.getProcessService().getImagesOrigDirectory(true, inProcess)), ".tif");
         if (updateHistoryEvent(inProcess, HistoryType.imagesMasterDiff, numberMaster.longValue())) {
             updated = true;
         }
@@ -278,11 +278,10 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      */
     private static History addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName, HistoryType type,
                                            Process inProcess) {
-        ProcessService processService = new ProcessService();
         History he = new History(timeStamp, stepOrder, stepName, type, inProcess);
 
         if (!getHistoryContainsEventAlready(he, inProcess)) {
-            processService.getHistoryInitialized(inProcess).add(he);
+            serviceManager.getProcessService().getHistoryInitialized(inProcess).add(he);
             return he;
         } else {
             return null;
@@ -349,9 +348,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return size in bytes, or 0 if error.
      */
     private static long getCurrentStorageSize(Process inProcess)
-			throws IOException, InterruptedException, SwapException, DAOException {
-        ProcessService processService = new ProcessService();
-        String dirAsString = processService.getProcessDataDirectory(inProcess);
+            throws IOException, InterruptedException, SwapException, DAOException {
+        String dirAsString = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
         File directory = new File(dirAsString);
         if (!directory.isDirectory()) {
             throw new IOException("History Manager error while calculating size of " + inProcess.getTitle());

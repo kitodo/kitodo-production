@@ -57,9 +57,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
-import org.kitodo.services.TaskService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -82,27 +80,22 @@ public class CopyProcess extends ProzesskopieForm {
     private String opacKatalog;
     private Process prozessVorlage = new Process();
     private Process prozessKopie = new Process();
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
-    private TaskService taskService = new TaskService();
     /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
     private boolean useOpac;
     private boolean useTemplates;
     public String metadataFile;
-
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
     private String tifHeader_imagedescription = "";
     private String tifHeader_documentname = "";
-
     private String naviFirstPage;
     private Integer auswahl;
     private String docType;
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
     private List<String> possibleDigitalCollection;
-
+    private final ServiceManager serviceManager = new ServiceManager();
     public static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
@@ -112,12 +105,12 @@ public class CopyProcess extends ProzesskopieForm {
      * @return page or empty String
      */
     public String prepare(ImportObject io) {
-        if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
+        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
             return "";
         }
 
         clearValues();
-        Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile);
@@ -149,9 +142,10 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public String prepare() {
-        if (processService.getContainsUnreachableSteps(this.prozessVorlage)) {
+        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
             for (Task s : this.prozessVorlage.getTasks()) {
-                if (taskService.getUserGroupsSize(s) == 0 && taskService.getUsersSize(s) == 0) {
+                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
+                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
                     Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
                 }
             }
@@ -159,7 +153,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile);
@@ -272,7 +266,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         readProjectConfigs();
         try {
-            Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+            Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile);
@@ -298,7 +292,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         readProjectConfigs();
         try {
-            Prefs myPrefs = rulesetService.getPreferences(this.prozessVorlage.getRuleset());
+            Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile);
@@ -356,7 +350,7 @@ public class CopyProcess extends ProzesskopieForm {
                             field.setValue(myautoren);
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
-                            MetadataType mdt = UghHelper.getMetadataType(rulesetService
+                            MetadataType mdt = UghHelper.getMetadataType(serviceManager.getRulesetService()
                                     .getPreferences(this.prozessKopie.getRuleset()), field.getMetadata());
                             Metadata md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
@@ -406,8 +400,8 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public String TemplateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
-        Process tempProzess = processService.find(this.auswahl);
-        if (processService.getWorkpiecesSize(tempProzess) > 0) {
+        Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
+        if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);
             for (WorkpieceProperty eig : werk.getProperties()) {
@@ -419,7 +413,7 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
 
-        if (processService.getTemplatesSize(tempProzess) > 0) {
+        if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
             /* erste Vorlage durchlaufen */
             Template vor = tempProzess.getTemplates().get(0);
             for (TemplateProperty eig : vor.getProperties()) {
@@ -432,7 +426,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         try {
-            this.myRdf = processService.readMetadataAsTemplateFile(tempProzess);
+            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (Exception e) {
             Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
         }
@@ -486,7 +480,8 @@ public class CopyProcess extends ProzesskopieForm {
         if (this.prozessKopie.getTitle() != null) {
             long anzahl = 0;
             try {
-                anzahl = processService.count("from Process where title='" + this.prozessKopie.getTitle() + "'");
+                anzahl = serviceManager.getProcessService().count("from Process where title='"
+                        + this.prozessKopie.getTitle() + "'");
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
                 valide = false;
@@ -565,8 +560,8 @@ public class CopyProcess extends ProzesskopieForm {
             if (this.prozessKopie.getTitle() != null) {
                 long anzahl = 0;
                 try {
-                    anzahl = processService.count("from Prozess where titel='" + this.prozessKopie.getTitle()
-                            + "'");
+                    anzahl = serviceManager.getProcessService().count("from Prozess where titel='"
+                            + this.prozessKopie.getTitle() + "'");
                 } catch (DAOException e) {
                     Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
                     valide = false;
@@ -620,8 +615,8 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         try {
-            processService.save(this.prozessKopie);
-            processService.refresh(this.prozessKopie);
+            serviceManager.getProcessService().save(this.prozessKopie);
+            serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DAOException e) {
             e.printStackTrace();
             myLogger.error("error on save: ", e);
@@ -635,14 +630,14 @@ public class CopyProcess extends ProzesskopieForm {
             createNewFileformat();
         }
 
-        processService.writeMetadataFile(this.myRdf, this.prozessKopie);
+        serviceManager.getProcessService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
         // Adding process to history
         if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
             Helper.setFehlerMeldung("historyNotUpdated");
         } else {
             try {
-                processService.save(this.prozessKopie);
+                serviceManager.getProcessService().save(this.prozessKopie);
             } catch (DAOException e) {
                 e.printStackTrace();
                 myLogger.error("error on save: ", e);
@@ -650,7 +645,7 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
 
-        processService.readMetadataFile(this.prozessKopie);
+        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
@@ -698,11 +693,11 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         if (!io.getBatches().isEmpty()) {
-            processService.getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
+            serviceManager.getProcessService().getBatchesInitialized(this.prozessKopie).addAll(io.getBatches());
         }
         try {
-            processService.save(this.prozessKopie);
-            processService.refresh(this.prozessKopie);
+            serviceManager.getProcessService().save(this.prozessKopie);
+            serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DAOException e) {
             e.printStackTrace();
             myLogger.error("error on save: ", e);
@@ -716,14 +711,14 @@ public class CopyProcess extends ProzesskopieForm {
             createNewFileformat();
         }
 
-        File f = new File(processService.getProcessDataDirectoryIgnoreSwapping(this.prozessKopie));
+        File f = new File(serviceManager.getProcessService().getProcessDataDirectoryIgnoreSwapping(this.prozessKopie));
         if (!f.exists() && !f.mkdir()) {
             Helper.setFehlerMeldung("Could not create process directory");
             myLogger.error("Could not create process directory");
             return this.prozessKopie;
         }
 
-        processService.writeMetadataFile(this.myRdf, this.prozessKopie);
+        serviceManager.getProcessService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
         // }
 
@@ -732,7 +727,7 @@ public class CopyProcess extends ProzesskopieForm {
             Helper.setFehlerMeldung("historyNotUpdated");
         } else {
             try {
-                processService.save(this.prozessKopie);
+                serviceManager.getProcessService().save(this.prozessKopie);
             } catch (DAOException e) {
                 e.printStackTrace();
                 myLogger.error("error on save: ", e);
@@ -740,7 +735,7 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
 
-        processService.readMetadataFile(this.prozessKopie);
+        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
@@ -753,7 +748,8 @@ public class CopyProcess extends ProzesskopieForm {
      */
     private void removeCollections(DocStruct colStruct) {
         try {
-            MetadataType mdt = UghHelper.getMetadataType(rulesetService.getPreferences(this.prozessKopie.getRuleset()),
+            MetadataType mdt = UghHelper.getMetadataType(serviceManager.getRulesetService()
+                            .getPreferences(this.prozessKopie.getRuleset()),
                     "singleDigCollection");
             ArrayList<Metadata> myCollections = new ArrayList<Metadata>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
@@ -773,7 +769,7 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void createNewFileformat() {
 
-        Prefs myPrefs = rulesetService.getPreferences(this.prozessKopie.getRuleset());
+        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
 
         Fileformat ff;
         try {
@@ -792,7 +788,7 @@ public class CopyProcess extends ProzesskopieForm {
          * Vorlageneigenschaften initialisieren
          */
         Template vor;
-        if (processService.getTemplatesSize(this.prozessKopie) > 0) {
+        if (serviceManager.getProcessService().getTemplatesSize(this.prozessKopie) > 0) {
             vor = this.prozessKopie.getTemplates().get(0);
         } else {
             vor = new Template();
@@ -806,7 +802,7 @@ public class CopyProcess extends ProzesskopieForm {
          * Werkstückeigenschaften initialisieren
          */
         Workpiece werk;
-        if (processService.getWorkpiecesSize(this.prozessKopie) > 0) {
+        if (serviceManager.getProcessService().getWorkpiecesSize(this.prozessKopie) > 0) {
             werk = this.prozessKopie.getWorkpieces().get(0);
         } else {
             werk = new Workpiece();
@@ -1140,7 +1136,7 @@ public class CopyProcess extends ProzesskopieForm {
                 titeldefinition = titel;
                 break;
             }
- 
+
             /* wenn beides angegeben wurde */
             if (!isdoctype.equals("") && !isnotdoctype.equals("")
                     && StringUtils.containsIgnoreCase(isdoctype, this.docType)
@@ -1329,7 +1325,7 @@ public class CopyProcess extends ProzesskopieForm {
         eig.setContainer(property.getContainer());
         eig.setType(property.getType());
         eig.setProcess(inProcess);
-        List<ProcessProperty> eigenschaften = processService.getPropertiesInitialized(inProcess);
+        List<ProcessProperty> eigenschaften = serviceManager.getProcessService().getPropertiesInitialized(inProcess);
         if (eigenschaften != null) {
             eigenschaften.add(eig);
         }

@@ -18,21 +18,27 @@ import org.jfree.data.general.DefaultPieDataset;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class StatistikStatus {
+    private static final ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Get diagram.
+     *
+     * @param inProzesse list
+     * @return Dataset object
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Dataset getDiagramm(List inProzesse) {
-        ProcessService processService = new ProcessService();
         DefaultPieDataset dataset = new DefaultPieDataset();
         for (Process proz : (List<Process>) inProzesse) {
-            Task step = processService.getCurrentTask(proz);
+            Task step = serviceManager.getProcessService().getCurrentTask(proz);
             /* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
             if (step != null) {
                 /* prüfen, ob der Schritt schon erfasst wurde, wenn ja hochzählen */
                 String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step
-                    .getTitle());
+                        .getTitle());
                 if (dataset.getIndex(kurztitel) != -1) {
                     dataset.setValue(kurztitel, dataset.getValue(kurztitel).intValue() + 1);
                 } else {

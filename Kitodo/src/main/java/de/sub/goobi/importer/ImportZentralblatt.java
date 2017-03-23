@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -53,7 +53,7 @@ public class ImportZentralblatt {
     String Trennzeichen;
     private final Helper help;
     private Prefs myPrefs;
-    private RulesetService rulesetService = new RulesetService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Allgemeiner Konstruktor ().
@@ -72,7 +72,7 @@ public class ImportZentralblatt {
             throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
         myLogger.debug("ParsenZentralblatt() - Start");
-        this.myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         String prozessID = String.valueOf(inProzess.getId().intValue());
         String line;
         this.Trennzeichen = ":";

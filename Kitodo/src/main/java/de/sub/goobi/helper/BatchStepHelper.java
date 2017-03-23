@@ -54,16 +54,10 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.TaskService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class BatchStepHelper {
-
     private List<Task> steps;
-    private final ProcessService processService = new ProcessService();
-    private final TaskService taskService = new TaskService();
-    private final UserService userService = new UserService();
     private static final Logger logger = Logger.getLogger(BatchStepHelper.class);
     private Task currentStep;
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -78,6 +72,7 @@ public class BatchStepHelper {
     private String processName = "";
     private String addToWikiField = "";
     private String script;
+    private final ServiceManager serviceManager = new ServiceManager();
     private final WebDav myDav = new WebDav();
     private List<String> processNameList = new ArrayList<String>();
 
@@ -177,7 +172,7 @@ public class BatchStepHelper {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(this.currentStep.getProcess());
                 this.processProperty.setProzesseigenschaft(pe);
-                this.processService.getPropertiesInitialized(this.currentStep.getProcess()).add(pe);
+                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess()).add(pe);
             }
             this.processProperty.transfer();
 
@@ -185,16 +180,16 @@ public class BatchStepHelper {
             List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
             for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
                 if (pe.getTitle() == null) {
-                    processService.getPropertiesInitialized(p).remove(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
                 }
             }
-            if (!this.processService.getPropertiesInitialized(this.processProperty.getProzesseigenschaft()
-                    .getProcess()).contains(this.processProperty.getProzesseigenschaft())) {
-                this.processService.getPropertiesInitialized(this.processProperty.getProzesseigenschaft()
-                        .getProcess()).add(this.processProperty.getProzesseigenschaft());
+            if (!this.serviceManager.getProcessService().getPropertiesInitialized(this.processProperty
+                    .getProzesseigenschaft() .getProcess()).contains(this.processProperty.getProzesseigenschaft())) {
+                this.serviceManager.getProcessService().getPropertiesInitialized(this.processProperty
+                        .getProzesseigenschaft().getProcess()).add(this.processProperty.getProzesseigenschaft());
             }
             try {
-                this.processService.save(this.currentStep.getProcess());
+                this.serviceManager.getProcessService().save(this.currentStep.getProcess());
                 Helper.setMeldung("Property saved");
             } catch (DAOException e) {
                 logger.error(e);
@@ -219,7 +214,7 @@ public class BatchStepHelper {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(this.currentStep.getProcess());
                 this.processProperty.setProzesseigenschaft(pe);
-                this.processService.getPropertiesInitialized(this.currentStep.getProcess()).add(pe);
+                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess()).add(pe);
             }
             this.processProperty.transfer();
 
@@ -250,12 +245,12 @@ public class BatchStepHelper {
                             p.setContainer(pe.getContainer());
                             p.setType(pe.getType());
                             p.setProcess(process);
-                            this.processService.getPropertiesInitialized(process).add(p);
+                            this.serviceManager.getProcessService().getPropertiesInitialized(process).add(p);
                         }
                     }
                 } else {
                     if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                        this.processService.getPropertiesInitialized(process)
+                        this.serviceManager.getProcessService().getPropertiesInitialized(process)
                                 .add(this.processProperty.getProzesseigenschaft());
                     }
                 }
@@ -263,12 +258,12 @@ public class BatchStepHelper {
                 List<org.kitodo.data.database.beans.ProcessProperty> props = process.getProperties();
                 for (org.kitodo.data.database.beans.ProcessProperty peig : props) {
                     if (peig.getTitle() == null) {
-                        this.processService.getPropertiesInitialized(process).remove(peig);
+                        this.serviceManager.getProcessService().getPropertiesInitialized(process).remove(peig);
                     }
                 }
 
                 try {
-                    this.processService.save(process);
+                    this.serviceManager.getProcessService().save(process);
                 } catch (DAOException e) {
                     error = true;
                     logger.error(e);
@@ -294,7 +289,7 @@ public class BatchStepHelper {
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setProcess(s.getProcess());
                 pt.setProzesseigenschaft(pe);
-                this.processService.getPropertiesInitialized(s.getProcess()).add(pe);
+                this.serviceManager.getProcessService().getPropertiesInitialized(s.getProcess()).add(pe);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -440,11 +435,11 @@ public class BatchStepHelper {
         List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
         for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
             if (pe.getTitle() == null) {
-                this.processService.getPropertiesInitialized(p).remove(pe);
+                this.serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
             }
         }
         try {
-            this.processService.save(this.currentStep.getProcess());
+            this.serviceManager.getProcessService().save(this.currentStep.getProcess());
         } catch (DAOException e) {
             logger.error(e);
         }
@@ -538,27 +533,27 @@ public class BatchStepHelper {
             }
             if (temp != null) {
                 temp.setProcessingStatusEnum(TaskStatus.OPEN);
-                temp = taskService.setCorrectionStep(temp);
+                temp = serviceManager.getTaskService().setCorrectionStep(temp);
                 temp.setProcessingEnd(null);
 
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setTitle(Helper.getTranslation("Korrektur notwendig"));
-                pe.setValue("[" + this.formatter.format(new Date()) + ", " + userService.getFullName(ben) + "] "
-                        + this.problemMessage);
+                pe.setValue("[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService()
+                        .getFullName(ben) + "] " + this.problemMessage);
                 pe.setType(PropertyType.messageError);
                 pe.setProcess(this.currentStep.getProcess());
                 this.currentStep.getProcess().getProperties().add(pe);
 
                 String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
-                        + this.problemMessage + " (" + userService.getFullName(ben) + ")";
+                        + this.problemMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
                 this.currentStep.getProcess()
                         .setWikiField(
                                 WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                                         this.currentStep.getProcess().getWikiField(), "error",
                                         message));
 
-                this.taskService.save(temp);
-                this.processService.getHistoryInitialized(this.currentStep.getProcess()).add(
+                this.serviceManager.getTaskService().save(temp);
+                this.serviceManager.getProcessService().getHistoryInitialized(this.currentStep.getProcess()).add(
                         new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(), HistoryType.taskError,
                                 temp.getProcess()));
                 /*
@@ -573,7 +568,7 @@ public class BatchStepHelper {
                 for (Iterator<Task> iter = alleSchritteDazwischen.iterator(); iter.hasNext();) {
                     Task step = iter.next();
                     step.setProcessingStatusEnum(TaskStatus.LOCKED);
-                    step = taskService.setCorrectionStep(step);
+                    step = serviceManager.getTaskService().setCorrectionStep(step);
                     step.setProcessingEnd(null);
                 }
             }
@@ -597,7 +592,7 @@ public class BatchStepHelper {
                 .addOrder(Order.desc("ordering")).createCriteria("process")
                 .add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
         for (Task s : alleVorherigenSchritte) {
-            answer.add(new SelectItem(s.getTitle(), taskService.getTitleWithUserName(s)));
+            answer.add(new SelectItem(s.getTitle(), serviceManager.getTaskService().getTitleWithUserName(s)));
         }
         return answer;
     }
@@ -616,7 +611,7 @@ public class BatchStepHelper {
                 .addOrder(Order.asc("ordering")).createCriteria("process")
                 .add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
         for (Task s : alleNachfolgendenSchritte) {
-            answer.add(new SelectItem(s.getTitle(), taskService.getTitleWithUserName(s)));
+            answer.add(new SelectItem(s.getTitle(), serviceManager.getTaskService().getTitleWithUserName(s)));
         }
         return answer;
     }
@@ -701,24 +696,24 @@ public class BatchStepHelper {
                     step.setPriority(0);
                     if (step.getId().intValue() == temp.getId().intValue()) {
                         step.setProcessingStatusEnum(TaskStatus.OPEN);
-                        step = taskService.setCorrectionStep(step);
+                        step = serviceManager.getTaskService().setCorrectionStep(step);
                         step.setProcessingEnd(null);
                         step.setProcessingTime(now);
                     }
-                    this.taskService.save(step);
+                    this.serviceManager.getTaskService().save(step);
                 }
 
                 org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
                 pe.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-                pe.setValue("[" + this.formatter.format(new Date()) + ", " + userService.getFullName(ben) + "] "
-                        + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solutionMessage);
+                pe.setValue("[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService()
+                        .getFullName(ben) + "] " + Helper.getTranslation("KorrekturloesungFuer") + " "
+                        + temp.getTitle() + ": " + this.solutionMessage);
                 pe.setProcess(this.currentStep.getProcess());
                 pe.setType(PropertyType.messageImportant);
                 this.currentStep.getProcess().getProperties().add(pe);
 
                 String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
-                        + this.solutionMessage + " (" + userService.getFullName(ben) + ")";
+                        + this.solutionMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
                 this.currentStep.getProcess().setWikiField(
                         WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                                 this.currentStep.getProcess().getWikiField(), "info", message));
@@ -789,14 +784,14 @@ public class BatchStepHelper {
     public void addToWikiField() throws IOException {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-            String message = this.addToWikiField + " (" + userService.getFullName(user) + ")";
+            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.currentStep.getProcess().setWikiField(
                     WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                             this.currentStep.getProcess().getWikiField(),
                             "user", message));
             this.addToWikiField = "";
             try {
-                this.processService.save(this.currentStep.getProcess());
+                this.serviceManager.getProcessService().save(this.currentStep.getProcess());
             } catch (DAOException e) {
                 logger.error(e);
             }
@@ -809,13 +804,13 @@ public class BatchStepHelper {
     public void addToWikiFieldForAll() throws IOException {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-            String message = this.addToWikiField + " (" + userService.getFullName(user) + ")";
+            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             for (Task s : this.steps) {
                 s.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(s.getProcess(),
                         s.getProcess().getWikiField(),
                         "user", message));
                 try {
-                    this.processService.save(s.getProcess());
+                    this.serviceManager.getProcessService().save(s.getProcess());
                 } catch (DAOException e) {
                     logger.error(e);
                 }
@@ -838,9 +833,9 @@ public class BatchStepHelper {
     public void executeScript() {
         for (Task step : this.steps) {
 
-            if (taskService.getAllScripts(step).containsKey(this.script)) {
+            if (serviceManager.getTaskService().getAllScripts(step).containsKey(this.script)) {
                 StepObject so = StepManager.getStepById(step.getId());
-                String scriptPath = taskService.getAllScripts(step).get(this.script);
+                String scriptPath = serviceManager.getTaskService().getAllScripts(step).get(this.script);
 
                 new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, scriptPath, false);
 
@@ -875,7 +870,7 @@ public class BatchStepHelper {
 
             this.myDav.UploadFromHome(s.getProcess());
             s.setProcessingStatusEnum(TaskStatus.OPEN);
-            if (taskService.isCorrectionStep(s)) {
+            if (serviceManager.getTaskService().isCorrectionStep(s)) {
                 s.setProcessingBegin(null);
             }
             s.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
@@ -886,7 +881,7 @@ public class BatchStepHelper {
             }
 
             try {
-                this.processService.save(s.getProcess());
+                this.serviceManager.getProcessService().save(s.getProcess());
             } catch (DAOException e) {
                 logger.error(e);
             }
@@ -944,7 +939,7 @@ public class BatchStepHelper {
                     MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
                     try {
                         if (!mih.checkIfImagesValid(s.getProcess().getTitle(),
-                                processService.getImagesOrigDirectory(false, s.getProcess()))) {
+                                serviceManager.getProcessService().getImagesOrigDirectory(false, s.getProcess()))) {
                             error = true;
                         }
                     } catch (Exception e) {
@@ -990,7 +985,7 @@ public class BatchStepHelper {
      */
     public List<String> getScriptnames() {
         List<String> answer = new ArrayList<String>();
-        answer.addAll(taskService.getAllScripts(getCurrentStep()).keySet());
+        answer.addAll(serviceManager.getTaskService().getAllScripts(getCurrentStep()).keySet());
         return answer;
     }
 

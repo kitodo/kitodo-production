@@ -27,9 +27,10 @@ import org.jdom.input.SAXBuilder;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapInTask extends LongRunningTask {
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * No-argument constructor. Creates an empty ProcessSwapInTask. Must be made
@@ -73,7 +74,6 @@ public class ProcessSwapInTask extends LongRunningTask {
     public void run() {
         setStatusProgress(5);
         String swapPath = null;
-        ProcessService processService = new ProcessService();
         String processDirectory = "";
 
         if (ConfigMain.getBooleanParameter("useSwapping")) {
@@ -95,7 +95,7 @@ public class ProcessSwapInTask extends LongRunningTask {
             return;
         }
         try {
-            processDirectory = processService.getProcessDataDirectoryIgnoreSwapping(getProcess());
+            processDirectory = serviceManager.getProcessService().getProcessDataDirectoryIgnoreSwapping(getProcess());
             // TODO: Don't catch Exception (the super class)
         } catch (Exception e) {
             logger.warn("Exception:", e);
@@ -204,9 +204,9 @@ public class ProcessSwapInTask extends LongRunningTask {
         fileOut.deleteDir();
         try {
             setStatusMessage("saving process");
-            Process myProcess = processService.find(getProcess().getId());
+            Process myProcess = serviceManager.getProcessService().find(getProcess().getId());
             myProcess.setSwappedOutGui(false);
-            processService.save(myProcess);
+            serviceManager.getProcessService().save(myProcess);
         } catch (DAOException e) {
             setStatusMessage("DAOException while saving process: " + e.getMessage());
             logger.warn("DAOException:", e);
@@ -222,7 +222,7 @@ public class ProcessSwapInTask extends LongRunningTask {
 
     /**
      * Calls the clone constructor to create a not yet executed instance of this thread object.
-	 * This is necessary for threads that have terminated in order to render possible to restart them.
+     * This is necessary for threads that have terminated in order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()

@@ -23,19 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.beans.WorkpieceProperty;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.WorkpieceService;
+import org.kitodo.services.ServiceManager;
 
 
 /**
  * Die Klasse TiffHeader dient zur Generierung einer Tiffheaderdatei *.conf
- * 
+ *
  * @author Steffen Hankiewicz
  * @version 1.00 - 12.04.2005
  */
 public class TiffHeader {
-    private ProcessService processService = new ProcessService();
-    private WorkpieceService workpieceService = new WorkpieceService();
     // private String Haupttitel="";
     // private String Autor="";
     // private String DocType="";
@@ -48,18 +45,18 @@ public class TiffHeader {
     // private String Ort="";
     // private String Verlag="";
     private String Artist = "";
-
     private String tifHeader_imagedescription = "";
     private String tifHeader_documentname = "";
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der Eigenschaften des Werkstücks bzw.
      * der Scanvorlage
      */
     public TiffHeader(Process process) {
-        if (processService.getWorkpiecesSize(process) > 0) {
+        if (serviceManager.getProcessService().getWorkpiecesSize(process) > 0) {
             Workpiece myWerkstueck = process.getWorkpieces().get(0);
-            if (workpieceService.getPropertiesSize(myWerkstueck) > 0) {
+            if (serviceManager.getWorkpieceService().getPropertiesSize(myWerkstueck) > 0) {
                 for (WorkpieceProperty eig : myWerkstueck.getProperties()) {
                     // Werkstueckeigenschaft eig = (Werkstueckeigenschaft) iter.next();
 
@@ -110,10 +107,10 @@ public class TiffHeader {
         return strBuf.toString();
     }
 
-	/**
-	 * Start export.
-	 */
-	public void ExportStart() throws IOException {
+    /**
+     * Start export.
+     */
+    public void ExportStart() throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();

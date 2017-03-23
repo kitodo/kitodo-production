@@ -38,9 +38,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.BatchService;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -57,12 +55,8 @@ import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportNewspaperBatchTask extends EmptyTask {
     private static final Logger logger = Logger.getLogger(ExportNewspaperBatchTask.class);
-
     private static final double GAUGE_INCREMENT_PER_ACTION = 100 / 3d;
-
-    private BatchService batchService = new BatchService();
-    private RulesetService rulesetService = new RulesetService();
-    private ProcessService processService = new ProcessService();
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Name of the structural element used to represent the day of month in the anchor structure of the newspaper.
@@ -159,8 +153,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         collectedYears = new HashMap<>();
         dividend = 0;
         divisor = batch.getProcesses().size() / GAUGE_INCREMENT_PER_ACTION;
-        DocStruct dsNewspaper = processService.getDigitalDocument(batch.getProcesses().iterator().next())
-                .getLogicalDocStruct();
+        DocStruct dsNewspaper = serviceManager.getProcessService().getDigitalDocument(batch.getProcesses().iterator()
+                .next()).getLogicalDocStruct();
         DocStruct dsYear = dsNewspaper.getAllChildren().get(0);
         yearLevelName = dsYear.getType().getName();
         DocStruct dsMonth = dsYear.getAllChildren().get(0);
@@ -205,7 +199,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         Process process = null;
         try {
             if (processesIterator == null) {
-                batch = batchService.find(batchId);
+                batch = serviceManager.getBatchService().find(batchId);
                 processesIterator = batch.getProcesses().iterator();
             }
             if (action == 1) {
@@ -214,11 +208,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         return;
                     }
                     process = processesIterator.next();
-                    Integer processesYear = Integer.valueOf(getYear(processService.getDigitalDocument(process)));
+                    Integer processesYear = Integer.valueOf(getYear(serviceManager.getProcessService()
+                            .getDigitalDocument(process)));
                     if (!collectedYears.containsKey(processesYear)) {
                         collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
                     }
-                    aggregation.addAll(getIssueDates(processService.getDigitalDocument(process)),
+                    aggregation.addAll(getIssueDates(serviceManager.getProcessService().getDigitalDocument(process)),
                             getMetsPointerURL(process));
                     setProgress(++dividend / divisor);
                 }
@@ -334,12 +329,10 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if the current thread is interrupted by another thread while it is waiting for the shell script
      *             to create the directory to finish
      */
-    private static String getMetsYearAnchorPointerURL(Process process) throws PreferencesException, ReadException,
-            SwapException, DAOException, IOException, InterruptedException {
-        ProcessService processService = new ProcessService();
-        RulesetService rulesetService = new RulesetService();
-        VariableReplacer replacer = new VariableReplacer(processService.getDigitalDocument(process), rulesetService
-                .getPreferences(process.getRuleset()), process, null);
+    private static String getMetsYearAnchorPointerURL(Process process)
+            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
+        VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
+                serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         String metsPointerPathAnchor = process.getProject().getMetsPointerPath();
         if (metsPointerPathAnchor.contains(Project.ANCHOR_SEPARATOR)) {
             metsPointerPathAnchor = metsPointerPathAnchor.split(Project.ANCHOR_SEPARATOR)[1];
@@ -383,7 +376,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     LocalDate appeared = new LocalDate(year, monthOfYear, getMetadataIntValueByName(dayNode,
                             MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
                     for (@SuppressWarnings("unused")
-                    DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
+                            DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
                         result.add(appeared);
                     }
                 }
@@ -446,10 +439,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, SwapException,
             DAOException, IOException, InterruptedException {
-        ProcessService processService = new ProcessService();
-        RulesetService rulesetService = new RulesetService();
-        VariableReplacer replacer = new VariableReplacer(processService.getDigitalDocument(process), rulesetService
-                .getPreferences(process.getRuleset()), process, null);
+        VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
+                serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         return replacer.replace(process.getProject().getMetsPointerPathAnchor());
     }
 
@@ -495,13 +486,14 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private MetsMods buildExportableMetsMods(Process process, HashMap<Integer, String> years,
-            ArrayListMap<LocalDate, String> issues) throws PreferencesException, ReadException, SwapException,
-            DAOException, IOException, InterruptedException, TypeNotAllowedForParentException,
-            MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+                                             ArrayListMap<LocalDate, String> issues)
+            throws PreferencesException, ReadException, SwapException, DAOException, IOException,
+            InterruptedException, TypeNotAllowedForParentException,  MetadataTypeNotAllowedException,
+            TypeNotAllowedAsChildException {
 
-        Prefs ruleSet = rulesetService.getPreferences(process.getRuleset());
+        Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsMods result = new MetsMods(ruleSet);
-        result.read(processService.getMetadataFilePath(process));
+        result.read(serviceManager.getProcessService().getMetadataFilePath(process));
 
         DigitalDocument caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator()
@@ -535,7 +527,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private void insertReferencesToYears(HashMap<Integer, String> years, int ownYear, DigitalDocument act,
-            Prefs ruleSet) throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException,
+                                         Prefs ruleSet)
+            throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException,
             TypeNotAllowedAsChildException {
         for (Integer year : years.keySet()) {
             if (year.intValue() != ownYear) {
@@ -580,8 +573,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private static DocStruct getOrCreateChild(DocStruct parent, String type, String identifierField, String identifier,
-            String optionalField, DigitalDocument act, Prefs ruleset) throws TypeNotAllowedForParentException,
-            MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
+                                              String optionalField, DigitalDocument act, Prefs ruleset)
+            throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         try {
             return parent.getChild(type, identifierField, identifier);
         } catch (NoSuchElementException nose) {
@@ -686,8 +679,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             if the DocStructType of this DocStruct instance does not allow the MetadataType or if
      *             the maximum number of Metadata (of this type) is already available
      */
-    private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues,
-            int currentYear, String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
+    private void insertReferencesToOtherIssuesInThisYear(ArrayListMap<LocalDate, String> issues, int currentYear,
+                                                         String ownMetsPointerURL, DigitalDocument act, Prefs ruleSet)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
         for (int i = 0; i < issues.size(); i++) {
             if ((issues.getKey(i).getYear() == currentYear) && !issues.getValue(i).equals(ownMetsPointerURL)) {

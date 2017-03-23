@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -27,12 +27,11 @@ import ugh.exceptions.PreferencesException;
 /**
  * A CopierData object contains all the data the data copier has access to. It has been implemented as
  * an own bean class to allow to easily add variables later without needing to extend many interfaces.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CopierData {
-
-    private RulesetService rulesetService = new RulesetService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * A metadata selector relative to which the data shall be read during copying.
@@ -115,9 +114,10 @@ public class CopierData {
      */
     public Prefs getPreferences() throws SQLException {
         if (process instanceof ProcessObject) {
-            return rulesetService.getPreferences(MySQLHelper.getRulesetForId(((ProcessObject) process).getRulesetId()));
+            return serviceManager.getRulesetService().getPreferences(MySQLHelper
+                    .getRulesetForId(((ProcessObject) process).getRulesetId()));
         } else {
-            return rulesetService.getPreferences(((Process) process).getRuleset());
+            return serviceManager.getRulesetService().getPreferences(((Process) process).getRuleset());
         }
     }
 

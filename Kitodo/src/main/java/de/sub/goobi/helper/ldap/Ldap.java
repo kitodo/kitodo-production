@@ -50,12 +50,11 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class Ldap {
     private static final Logger myLogger = Logger.getLogger(Ldap.class);
-
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     public Ldap() {
 
@@ -93,7 +92,7 @@ public class Ldap {
             ctx.close();
             setNextUidNumber();
             Helper.setMeldung(null, Helper.getTranslation("ldapWritten") + " "
-                    + userService.getFullName(inBenutzer), "");
+                    + serviceManager.getUserService().getFullName(inBenutzer), "");
             /*
              * check if HomeDir exists, else create it
              */
@@ -320,7 +319,7 @@ public class Ldap {
             ctx = new InitialDirContext(env);
             Attributes matchAttrs = new BasicAttributes(true);
             NamingEnumeration<SearchResult> answer = ctx.search("ou=users,dc=gdz,dc=sub,dc=uni-goettingen,dc=de",
-					matchAttrs);
+                    matchAttrs);
             rueckgabe = answer.hasMoreElements();
 
             while (answer.hasMore()) {
@@ -531,10 +530,10 @@ public class Ldap {
         File myPfad = new File(path);
         if (!myPfad.exists()) {
             try (
-                FileOutputStream ksos = new FileOutputStream(path);
-                // TODO: Rename parameters to something more meaningful, this is quite specific for the GDZ
-                FileInputStream cacertFile = new FileInputStream(ConfigMain.getParameter("ldap_cert_root"));
-                FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"))
+                    FileOutputStream ksos = new FileOutputStream(path);
+                    // TODO: Rename parameters to something more meaningful, this is quite specific for the GDZ
+                    FileInputStream cacertFile = new FileInputStream(ConfigMain.getParameter("ldap_cert_root"));
+                    FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"))
             ) {
 
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");

@@ -17,15 +17,16 @@ import java.util.List;
 import org.goobi.production.flow.statistics.StepInformation;
 
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.services.ProjectService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * This implementation get the workflow from the project.
- * 
+ *
  * @author Wulf Riebensahm
  *
  */
 public class WorkflowProjectTaskList implements IProvideProjectTaskList {
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     @Override
     public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
@@ -35,9 +36,8 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
     }
 
     private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages,
-											   Integer inMax) {
-        ProjectService projectService = new ProjectService();
-        List<StepInformation> workFlow = projectService.getWorkFlow(inProject);
+                                               Integer inMax) {
+        List<StepInformation> workFlow = serviceManager.getProjectService().getWorkFlow(inProject);
         Integer usedMax = 0;
 
         for (StepInformation step : workFlow) {

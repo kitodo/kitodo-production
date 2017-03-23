@@ -38,8 +38,7 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.ProjectManager;
 import org.kitodo.data.database.persistence.apache.ProjectObject;
-import org.kitodo.services.RulesetService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -60,8 +59,7 @@ public class ExportMetsWithoutHibernate {
     protected Prefs myPrefs;
     private FolderInformation fi;
     private ProjectObject project;
-    private RulesetService rulesetService = new RulesetService();
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     protected static final Logger myLogger = Logger.getLogger(ExportMetsWithoutHibernate.class);
 
@@ -77,7 +75,7 @@ public class ExportMetsWithoutHibernate {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         String benutzerHome = "";
         if (login != null) {
-            benutzerHome = userService.getHomeDirectory(login.getMyBenutzer());
+            benutzerHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
         }
         return startExport(process, benutzerHome);
     }
@@ -96,7 +94,8 @@ public class ExportMetsWithoutHibernate {
         /*
          * Read Document
          */
-        this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
+                .getRuleset(process.getRulesetId()));
 
         this.project = ProjectManager.getProjectById(process.getProjectId());
         String atsPpnBand = process.getTitle();
@@ -141,7 +140,8 @@ public class ExportMetsWithoutHibernate {
             throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
             TypeNotAllowedForParentException {
         this.fi = new FolderInformation(process.getId(), process.getTitle());
-        this.myPrefs = rulesetService.getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
+                .getRuleset(process.getRulesetId()));
         this.project = ProjectManager.getProjectById(process.getProjectId());
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);

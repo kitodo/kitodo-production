@@ -59,18 +59,13 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
-import org.kitodo.services.RulesetService;
-import org.kitodo.services.TaskService;
 import ugh.dl.Prefs;
 
 public class MassImportForm {
     private static final Logger logger = Logger.getLogger(MassImportForm.class);
     private Process template;
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
-    private TaskService taskService = new TaskService();
     private List<Process> processes;
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
@@ -85,17 +80,16 @@ public class MassImportForm {
     private List<String> usablePluginsForFolder = new ArrayList<String>();
     private String currentPlugin = "";
     private IImportPlugin plugin;
-
     private File importFile = null;
     private final Helper help = new Helper();
-
+    private final ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
 
     private List<Process> processList;
 
     /**
-	 * Constructor.
-	 */
+     * Constructor.
+     */
     public MassImportForm() {
         usablePluginsForRecords = PluginLoader
                 .getImportPluginsForType(ImportType.Record);
@@ -113,12 +107,13 @@ public class MassImportForm {
      * @return String
      */
     public String prepare() {
-        if (processService.getContainsUnreachableSteps(this.template)) {
+        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.template)) {
             if (this.template.getTasks().size() == 0) {
                 Helper.setFehlerMeldung("noStepsInWorkflow");
             }
             for (Task s : this.template.getTasks()) {
-                if (taskService.getUserGroupsSize(s) == 0 && taskService.getUsersSize(s) == 0) {
+                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
+                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
                     List<String> param = new ArrayList<String>();
                     param.add(s.getTitle());
                     Helper.setFehlerMeldung(Helper.getTranslation(
@@ -166,7 +161,7 @@ public class MassImportForm {
 
                         if (col.getAttribute("default") != null
                                 && col.getAttributeValue("default")
-                                        .equalsIgnoreCase("true")) {
+                                .equalsIgnoreCase("true")) {
                             digitalCollections.add(col.getText());
                         }
 
@@ -189,7 +184,7 @@ public class MassImportForm {
 
                                 if (col.getAttribute("default") != null
                                         && col.getAttributeValue("default")
-                                                .equalsIgnoreCase("true")) {
+                                        .equalsIgnoreCase("true")) {
                                     digitalCollections.add(col.getText());
                                 }
 
@@ -251,7 +246,7 @@ public class MassImportForm {
             Batch batch = null;
 
             // found list with ids
-            Prefs prefs = rulesetService.getPreferences(this.template.getRuleset());
+            Prefs prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
             String tempfolder = ConfigMain.getParameter("tempfolder");
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
@@ -727,7 +722,7 @@ public class MassImportForm {
             if (this.plugin.getImportTypes().contains(ImportType.FOLDER)) {
                 this.allFilenames = this.plugin.getAllFilenames();
             }
-            plugin.setPrefs(rulesetService.getPreferences(template.getRuleset()));
+            plugin.setPrefs(serviceManager.getRulesetService().getPreferences(template.getRuleset()));
         }
     }
 

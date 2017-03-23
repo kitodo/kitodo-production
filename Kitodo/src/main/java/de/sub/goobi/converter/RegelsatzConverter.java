@@ -20,23 +20,22 @@ import org.apache.log4j.Logger;
 
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 
 public class RegelsatzConverter implements Converter {
     public static final String CONVERTER_ID = "RegelsatzConverter";
     private static final Logger logger = Logger.getLogger(RegelsatzConverter.class);
+    private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value)
-           throws ConverterException {
-        RulesetService rulesetService = new RulesetService();
-
+            throws ConverterException {
         if (value == null) {
             return null;
         } else {
             try {
-                return rulesetService.find(Integer.valueOf(value));
+                return serviceManager.getRulesetService().find(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
                 logger.error(e);
                 return "0";
@@ -46,7 +45,7 @@ public class RegelsatzConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value)
-             throws ConverterException {
+            throws ConverterException {
         if (value == null) {
             return null;
         } else if (value instanceof Ruleset) {

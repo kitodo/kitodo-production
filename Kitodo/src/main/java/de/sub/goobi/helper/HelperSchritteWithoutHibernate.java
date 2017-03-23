@@ -40,7 +40,7 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Prefs;
@@ -51,9 +51,8 @@ import ugh.exceptions.WriteException;
 
 public class HelperSchritteWithoutHibernate {
     private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
+    private final ServiceManager serviceManager = new ServiceManager();
     public static final String DIRECTORY_PREFIX = "orig_";
-
-    private RulesetService rulesetService = new RulesetService();
 
     /**
      * The field task holds an optional task instance. Its progress and its errors will be passed to
@@ -296,7 +295,7 @@ public class HelperSchritteWithoutHibernate {
         ProcessObject po = ProcessManager.getProcessObjectForId(step.getProcessId());
 
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        Prefs prefs = rulesetService.getPreferences(ProcessManager.getRuleset(po.getRulesetId()));
+        Prefs prefs = serviceManager.getRulesetService().getPreferences(ProcessManager.getRuleset(po.getRulesetId()));
 
         try {
             dd = po.readMetadataFile(fi.getMetadataFilePath(), prefs).getDigitalDocument();

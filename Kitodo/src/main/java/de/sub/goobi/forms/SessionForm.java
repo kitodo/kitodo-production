@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Die Klasse SessionForm für den überblick über die aktuell offenen Sessions
@@ -37,7 +37,7 @@ public class SessionForm {
     private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
     private String aktuelleZeit = this.formatter.format(new Date());
     private String bitteAusloggen = "";
-    private UserService userService = new UserService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Get active sessions.
@@ -167,10 +167,10 @@ public class SessionForm {
             HashMap map = (HashMap) iter.next();
             if (map.get("id").equals(insession.getId())) {
                 if (inBenutzer != null) {
-                    insession.setAttribute("User", userService.getFullName(inBenutzer));
-                    map.put("user", userService.getFullName(inBenutzer));
+                    insession.setAttribute("User", serviceManager.getUserService().getFullName(inBenutzer));
+                    map.put("user", serviceManager.getUserService().getFullName(inBenutzer));
                     map.put("userid", inBenutzer.getId());
-                    insession.setMaxInactiveInterval(userService.getSessionTimeout(inBenutzer));
+                    insession.setMaxInactiveInterval(serviceManager.getUserService().getSessionTimeout(inBenutzer));
                 } else {
                     map.put("user", "- ausgeloggt - ");
                     map.put("userid", Integer.valueOf(0));
@@ -205,7 +205,7 @@ public class SessionForm {
      * @param inBenutzer User object
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, User inBenutzer) {
+    public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession,User inBenutzer) {
         List alleSessionKopie = new ArrayList(this.alleSessions);
         for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {
             HashMap map = (HashMap) iter.next();
@@ -231,5 +231,4 @@ public class SessionForm {
     public void setBitteAusloggen(String bitteAusloggen) {
         this.bitteAusloggen = bitteAusloggen;
     }
-
 }

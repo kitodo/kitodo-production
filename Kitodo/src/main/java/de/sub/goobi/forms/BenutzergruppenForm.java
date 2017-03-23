@@ -26,12 +26,12 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.SimpleDAO;
-import org.kitodo.services.UserGroupService;
+import org.kitodo.services.ServiceManager;
 
 public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private UserGroup myBenutzergruppe = new UserGroup();
-    private UserGroupService userGroupService = new UserGroupService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     public String Neu() {
         this.myBenutzergruppe = new UserGroup();
@@ -45,7 +45,7 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String Speichern() {
         try {
-            this.userGroupService.save(this.myBenutzergruppe);
+            this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             return "BenutzergruppenAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
@@ -69,13 +69,13 @@ public class BenutzergruppenForm extends BasisForm {
                     b.getUserGroups().remove(this.myBenutzergruppe);
                 }
                 this.myBenutzergruppe.setUsers(new ArrayList<User>());
-                this.userGroupService.save(this.myBenutzergruppe);
+                this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             }
             if (this.myBenutzergruppe.getTasks().size() > 0) {
                 Helper.setFehlerMeldung("userGroupAssignedError");
                 return "";
             }
-            this.userGroupService.remove(this.myBenutzergruppe);
+            this.serviceManager.getUserGroupService().remove(this.myBenutzergruppe);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
             return "";

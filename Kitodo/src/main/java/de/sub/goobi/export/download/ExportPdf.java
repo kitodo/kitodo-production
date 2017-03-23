@@ -38,8 +38,7 @@ import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.DocStructHasNoTypeException;
@@ -50,10 +49,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 
 public class ExportPdf extends ExportMets {
-
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
-
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
     private static final String PDF_EXTENSION = ".pdf";
 
@@ -66,9 +62,9 @@ public class ExportPdf extends ExportMets {
         /*
          * Read Document
          */
-        Fileformat gdzfile = processService.readMetadataFile(myProcess);
+        Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
         String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
-        this.myPrefs = rulesetService.getPreferences(myProcess.getRuleset());
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
 
         /*
          * first of all write mets-file in images-Folder of process
@@ -133,7 +129,8 @@ public class ExportPdf extends ExportMets {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
                     FilenameFilter filter = new FileListFilter("\\d*\\.tif");
-                    SafeFile imagesDir = new SafeFile(processService.getImagesTifDirectory(true, myProcess));
+                    SafeFile imagesDir = new SafeFile(serviceManager.getProcessService()
+                            .getImagesTifDirectory(true, myProcess));
                     SafeFile[] meta = imagesDir.listFiles(filter);
                     int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();

@@ -30,8 +30,7 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.ProjectManager;
 import org.kitodo.data.database.persistence.apache.ProjectObject;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -49,11 +48,8 @@ import ugh.exceptions.PreferencesException;
 public class MetadatenVerifizierungWithoutHibernate {
     List<DocStruct> docStructsOhneSeiten;
     boolean autoSave = false;
-
     private String title;
-
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Validate.
@@ -62,13 +58,13 @@ public class MetadatenVerifizierungWithoutHibernate {
      * @return boolean
      */
     public boolean validate(Process inProzess) {
-        Prefs myPrefs = rulesetService.getPreferences(inProzess.getRuleset());
+        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         /*
          * Fileformat einlesen
          */
         Fileformat gdzfile;
         try {
-            gdzfile = processService.readMetadataFile(inProzess);
+            gdzfile = serviceManager.getProcessService().readMetadataFile(inProzess);
         } catch (Exception e) {
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + this.title, e.getMessage());
             return false;

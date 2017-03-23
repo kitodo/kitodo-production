@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -44,9 +43,8 @@ import ugh.exceptions.PreferencesException;
 public class MetadatenVerifizierung {
     List<DocStruct> docStructsOhneSeiten;
     Process myProcess;
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
     boolean autoSave = false;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Validate.
@@ -55,13 +53,13 @@ public class MetadatenVerifizierung {
      * @return boolean
      */
     public boolean validate(Process process) {
-        Prefs myPrefs = rulesetService.getPreferences(process.getRuleset());
+        Prefs myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         /*
          * Fileformat einlesen
          */
         Fileformat gdzfile;
         try {
-            gdzfile = processService.readMetadataFile(process);
+            gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         } catch (Exception e) {
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + process.getTitle(),
                     e.getMessage());
@@ -211,7 +209,7 @@ public class MetadatenVerifizierung {
         MetadatenImagesHelper mih = new MetadatenImagesHelper(inPrefs, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
-                    processService.getImagesTifDirectory(true, process))) {
+                    serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
                 ergebnis = false;
             }
         } catch (Exception e) {
@@ -242,7 +240,7 @@ public class MetadatenVerifizierung {
          */
         try {
             if (this.autoSave) {
-                processService.writeMetadataFile(gdzfile, process);
+                serviceManager.getProcessService().writeMetadataFile(gdzfile, process);
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Error while writing metadata: " + process.getTitle(), e);

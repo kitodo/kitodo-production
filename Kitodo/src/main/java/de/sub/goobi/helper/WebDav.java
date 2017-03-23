@@ -32,14 +32,10 @@ import org.goobi.io.SafeFile;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.UserService;
+import org.kitodo.services.ServiceManager;
 
 public class WebDav implements Serializable {
-
-    private ProcessService processService = new ProcessService();
-    private UserService userService = new UserService();
-
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
@@ -63,7 +59,7 @@ public class WebDav implements Serializable {
         String VerzeichnisAlle;
 
         try {
-            VerzeichnisAlle = userService.getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception UploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
@@ -103,7 +99,7 @@ public class WebDav implements Serializable {
         String VerzeichnisAlle;
         User aktuellerBenutzer = Helper.getCurrentUser();
         try {
-            VerzeichnisAlle = userService.getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception RemoveFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
@@ -138,7 +134,7 @@ public class WebDav implements Serializable {
         String nach = "";
 
         try {
-            nach = userService.getHomeDirectory(inBenutzer);
+            nach = serviceManager.getUserService().getHomeDirectory(inBenutzer);
         } catch (Exception ioe) {
             myLogger.error("Exception UploadFromHome(...)", ioe);
             Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
@@ -180,9 +176,9 @@ public class WebDav implements Serializable {
         String userHome = "";
 
         try {
-            von = processService.getImagesDirectory(myProcess);
+            von = serviceManager.getProcessService().getImagesDirectory(myProcess);
             /* UserHome ermitteln */
-            userHome = userService.getHomeDirectory(aktuellerBenutzer);
+            userHome = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer);
 
             /*
              * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren
@@ -250,15 +246,17 @@ public class WebDav implements Serializable {
     private void saveTiffHeader(Process inProcess) {
         try {
             /* prüfen, ob Tiff-Header schon existiert */
-            if (new SafeFile(processService.getImagesDirectory(inProcess) + "tiffwriter.conf").exists()) {
+            if (new SafeFile(serviceManager.getProcessService().getImagesDirectory(inProcess)
+                    + "tiffwriter.conf").exists()) {
                 return;
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (
-                BufferedWriter outfile =
-                    new BufferedWriter(new OutputStreamWriter(
-                            new FileOutputStream(processService.getImagesDirectory(inProcess)
-                                    + "tiffwriter.conf"), StandardCharsets.UTF_8));
+                    BufferedWriter outfile =
+                            new BufferedWriter(new OutputStreamWriter(
+                                    new FileOutputStream(serviceManager.getProcessService()
+                                            .getImagesDirectory(inProcess) + "tiffwriter.conf"),
+                                    StandardCharsets.UTF_8));
             ) {
                 outfile.write(tif.getTiffAlles());
             }
@@ -277,7 +275,8 @@ public class WebDav implements Serializable {
     public int getAnzahlBaende(String inVerzeichnis) {
         try {
             User aktuellerBenutzer = Helper.getCurrentUser();
-            String VerzeichnisAlle = userService.getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            String VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
+                    + inVerzeichnis;
             SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
             FilenameFilter filter = new FilenameFilter() {
                 @Override

@@ -12,9 +12,9 @@
 package test;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.ProcessService;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kitodo.services.ServiceManager;
 
 public class DBConnectionTestIT {
 
@@ -23,14 +23,14 @@ public class DBConnectionTestIT {
 
         Process test = new Process();
         test.setTitle("First process");
-        ProcessService processService = new ProcessService();
-        processService.save(test);
+        ServiceManager serviceManager = new ServiceManager();
+        serviceManager.getProcessService().save(test);
 
-        long counted = processService.count("from Process");
+        long counted = serviceManager.getProcessService().count("from Process");
         Assert.assertNotNull("No Process found",counted);
         Assert.assertEquals(4, counted);
 
-        String title = processService.find(1).getTitle();
+        String title = serviceManager.getProcessService().find(1).getTitle();
         Assert.assertEquals("First process", title);
 
     }

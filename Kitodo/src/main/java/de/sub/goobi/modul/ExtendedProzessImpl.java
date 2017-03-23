@@ -24,10 +24,10 @@ import java.util.HashMap;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 /**
- * Das ist die Implementierung von ProcessInterface. 
+ * Das ist die Implementierung von ProcessInterface.
  * Wird auf Goobi-Seiten Ausgeführt
  * Ist auch vorläufer für GoobiEngine
  * Erweitert um die individuellen Api-Aufrufe
@@ -35,8 +35,7 @@ import org.kitodo.services.ProcessService;
  * @author Igor Toker
  */
 public class ExtendedProzessImpl extends ProcessImpl {
-
-    private ProcessService processService = new ProcessService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Diese Methode wird benötigt um die mit der Session ID verbundene Prozess ID zu erhalten.
@@ -53,29 +52,30 @@ public class ExtendedProzessImpl extends ProcessImpl {
     }
 
     /**
-    * Diese Methode wird benötigt um die Volltextdatei zu erhalten.
-    *
-    * @param sessionId String
-    * @return Pfad zur XML Datei (String)
-    * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
-    */
+     * Diese Methode wird benötigt um die Volltextdatei zu erhalten.
+     *
+     * @param sessionId String
+     * @return Pfad zur XML Datei (String)
+     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
+     */
     @Override
     public String getFullTextFile(String sessionId) throws GoobiException {
         super.getFullTextFile(sessionId);
         try {
-            return processService.getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
+            return serviceManager.getProcessService().getFulltextFilePath(ModuleServerForm.
+                    getProcessFromShortSession(sessionId));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (InterruptedException e) {
             throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (SwapException e) {
             throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
             throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         }
     }
 
@@ -90,57 +90,59 @@ public class ExtendedProzessImpl extends ProcessImpl {
     public String getImageDir(String sessionId) throws GoobiException {
         super.getImageDir(sessionId);
         try {
-            return processService.getImagesDirectory(ModuleServerForm.getProcessFromShortSession(sessionId));
+            return serviceManager.getProcessService().getImagesDirectory(ModuleServerForm
+                    .getProcessFromShortSession(sessionId));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (InterruptedException e) {
             throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (SwapException e) {
             throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
             throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         }
     }
 
     /**
-    * Diese Methode wird benötigt um die Metadatendatei zu erhalten.
-    *
-    * @param sessionId String
-    * @return Pfad zur XML Datei (String)
-    * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
-    */
+     * Diese Methode wird benötigt um die Metadatendatei zu erhalten.
+     *
+     * @param sessionId String
+     * @return Pfad zur XML Datei (String)
+     * @throws GoobiException: 1, 2, 4, 5, 6, 254, 1400, 1401
+     */
     @Override
     public String getMetadataFile(String sessionId) throws GoobiException {
         super.getMetadataFile(sessionId);
         try {
-            return processService.getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
+            return serviceManager.getProcessService().getMetadataFilePath(ModuleServerForm
+                    .getProcessFromShortSession(sessionId));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (InterruptedException e) {
             throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (SwapException e) {
             throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
             throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                 + Helper.getStacktraceAsString(e));
+                    + Helper.getStacktraceAsString(e));
         }
     }
 
     /**
-    * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen.
-    * Die Implementierung dieser Methode ist optional.
-    *
-    * @param sessionId String
-    * @return Parameter Struktur
-    * @throws GoobiException: 1, 2, 4, 5, 6, 254
-    */
+     * Diese Methode wird benutzt um die Parameter für den Aufruf des Moduls zu bekommen.
+     * Die Implementierung dieser Methode ist optional.
+     *
+     * @param sessionId String
+     * @return Parameter Struktur
+     * @throws GoobiException: 1, 2, 4, 5, 6, 254
+     */
     @Override
     public HashMap<String, String> getParams(String sessionId) throws GoobiException {
         super.getParams(sessionId);
@@ -148,7 +150,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
         myMap.put("ruleset", ConfigMain.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile());
         try {
-            myMap.put("tifdirectory", processService.getImagesTifDirectory(false, p));
+            myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));

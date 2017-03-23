@@ -41,8 +41,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.services.ProcessService;
-import org.kitodo.services.RulesetService;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -60,6 +59,7 @@ public class ExportDms extends ExportMets {
     ConfigProjects cp;
     private boolean exportWithImages = true;
     private boolean exportFullText = true;
+    private final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The field exportDmsTask holds an optional task instance. Its progress and its errors will be passed to
@@ -68,9 +68,6 @@ public class ExportDms extends ExportMets {
     public EmptyTask exportDmsTask = null;
 
     public static final String DIRECTORY_SUFFIX = "_tif";
-
-    private ProcessService processService = new ProcessService();
-    private RulesetService rulesetService = new RulesetService();
 
     public ExportDms() {
     }
@@ -150,7 +147,7 @@ public class ExportDms extends ExportMets {
             SwapException, DAOException, TypeNotAllowedForParentException {
         this.exportDmsTask = exportDmsTask;
         try {
-            return startExport(process, inZielVerzeichnis, processService.readMetadataFile(process)
+            return startExport(process, inZielVerzeichnis, serviceManager.getProcessService().readMetadataFile(process)
                     .getDigitalDocument());
         } catch (Exception e) {
             if (exportDmsTask != null) {
@@ -177,7 +174,7 @@ public class ExportDms extends ExportMets {
             PreferencesException, SwapException, DAOException,
             TypeNotAllowedForParentException {
 
-        this.myPrefs = rulesetService.getPreferences(process.getRuleset());
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         this.cp = new ConfigProjects(process.getProject().getTitle());
         String atsPpnBand = process.getTitle();
 
@@ -453,7 +450,7 @@ public class ExportDms extends ExportMets {
             throws IOException, InterruptedException, SwapException, DAOException {
 
         // download sources
-        SafeFile sources = new SafeFile(processService.getSourceDirectory(process));
+        SafeFile sources = new SafeFile(serviceManager.getProcessService().getSourceDirectory(process));
         if (sources.exists() && sources.list().length > 0) {
             SafeFile destination = new SafeFile(userHome + File.separator
                     + atsPpnBand + "_src");
@@ -473,7 +470,7 @@ public class ExportDms extends ExportMets {
             }
         }
 
-        SafeFile ocr = new SafeFile(processService.getOcrDirectory(process));
+        SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(process));
         if (ocr.exists()) {
             SafeFile[] folder = ocr.listFiles();
             for (SafeFile dir : folder) {
@@ -515,7 +512,7 @@ public class ExportDms extends ExportMets {
         /*
          * dann den Ausgangspfad ermitteln
          */
-        SafeFile tifOrdner = new SafeFile(processService.getImagesTifDirectory(true, process));
+        SafeFile tifOrdner = new SafeFile(serviceManager.getProcessService().getImagesTifDirectory(true, process));
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
@@ -592,8 +589,8 @@ public class ExportDms extends ExportMets {
 
         for (String processDir : processDirs) {
             SafeFile srcDir = new SafeFile(FilenameUtils.concat(
-                    processService.getProcessDataDirectory(process), processDir.replace("(processtitle)",
-                            process.getTitle())));
+                    serviceManager.getProcessService().getProcessDataDirectory(process),
+                    processDir.replace("(processtitle)", process.getTitle())));
             SafeFile dstDir = new SafeFile(FilenameUtils.concat(
                     zielVerzeichnis, processDir.replace("(processtitle)", process.getTitle())));
 

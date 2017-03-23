@@ -21,12 +21,12 @@ import org.hibernate.criterion.Order;
 
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.LdapGroupService;
+import org.kitodo.services.ServiceManager;
 
 public class LdapGruppenForm extends BasisForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
-    private LdapGroupService ldapGroupService = new LdapGroupService();
+    private final ServiceManager serviceManager = new ServiceManager();
 
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
@@ -40,7 +40,7 @@ public class LdapGruppenForm extends BasisForm {
      */
     public String Speichern() {
         try {
-            this.ldapGroupService.save(this.myLdapGruppe);
+            this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
             return "LdapGruppenAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not save", e.getMessage());
@@ -55,7 +55,7 @@ public class LdapGruppenForm extends BasisForm {
      */
     public String Loeschen() {
         try {
-            this.ldapGroupService.remove(this.myLdapGruppe);
+            this.serviceManager.getLdapGroupService().remove(this.myLdapGruppe);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
             return "";

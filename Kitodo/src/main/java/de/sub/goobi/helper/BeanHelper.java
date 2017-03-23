@@ -24,9 +24,11 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.beans.WorkpieceProperty;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 public class BeanHelper {
+
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Add property for process.
@@ -37,11 +39,10 @@ public class BeanHelper {
      */
     public static void addProperty(Process process, String title, String value) {
         ProcessProperty property = new ProcessProperty();
-        ProcessService processService = new ProcessService();
         property.setTitle(title);
         property.setValue(value);
         property.setProcess(process);
-        List<ProcessProperty> properties = processService.getPropertiesInitialized(process);
+        List<ProcessProperty> properties = serviceManager.getProcessService().getPropertiesInitialized(process);
         if (properties == null) {
             properties = new ArrayList<>();
         }

@@ -25,16 +25,16 @@ import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.ProcessService;
+import org.kitodo.services.ServiceManager;
 
 @Ignore("Crashing") 
 public class ProcessSwapOutTaskTest {
    static Process proz = null;
-   static ProcessService processService = new ProcessService();
+   static ServiceManager serviceManager = new ServiceManager();
    
    @BeforeClass
    public static void setUpBeforeClass() throws Exception {
-      proz = processService.find(119);
+      proz = serviceManager.getProcessService().find(119);
    }
 
    @AfterClass
