@@ -69,32 +69,22 @@ public class WorkpieceTypeTest {
     }
 
     @Test
-    //problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         WorkpieceType workpieceType = new WorkpieceType();
         JSONParser parser = new JSONParser();
 
         Workpiece workpiece = prepareData().get(0);
         HttpEntity document = workpieceType.createDocument(workpiece);
-        JSONObject workpieceObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-        String actual = String.valueOf(workpieceObject.get("process"));
-        String excepted = "1";
-        assertEquals("Workpiece value for process key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(workpieceObject.get("properties"));
-        excepted = "[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]";
-        assertEquals("Workpiece value for properties key doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"process\":\"1\",\"properties\":[{\"title\":\"first\","
+                + "\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        assertEquals("Workpiece value for process key doesn't match to given plain text!", expected, actual);
 
         workpiece = prepareData().get(1);
         document = workpieceType.createDocument(workpiece);
-        workpieceObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-        actual = String.valueOf(workpieceObject.get("process"));
-        excepted = "2";
-        assertEquals("Workpiece value for process key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(workpieceObject.get("properties"));
-        excepted = "[]";
-        assertEquals("Workpiece value for properties key doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"process\":\"2\",\"properties\":[]}");
+        assertEquals("Workpiece value for process key doesn't match to given plain text!", expected, actual);
     }
 
     @Test

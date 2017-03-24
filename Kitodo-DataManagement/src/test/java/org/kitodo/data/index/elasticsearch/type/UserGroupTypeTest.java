@@ -67,35 +67,16 @@ public class UserGroupTypeTest {
 
         UserGroup userGroup = prepareData().get(0);
         HttpEntity document = userGroupType.createDocument(userGroup);
-        JSONObject userGroupObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-
-        String actual = userGroupObject.get("title").toString();
-        String excepted = "Administrator";
-        assertEquals("UserGroup value for title key doesn't match to given plain text!", excepted, actual);
-
-        actual = userGroupObject.get("permission").toString();
-        excepted = "1";
-        assertEquals("UserGroup value for permission key doesn't match to given plain text!", excepted, actual);
-
-        actual = userGroupObject.get("users").toString();
-        excepted = "[{\"id\":\"1\"},{\"id\":\"2\"}]";
-        assertEquals("UserGroup value for users key doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Administrator\",\"permission\":\"1\","
+                + "\"users\":[{\"id\":\"1\"},{\"id\":\"2\"}]}");
+        assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
 
         userGroup = prepareData().get(1);
         document = userGroupType.createDocument(userGroup);
-        userGroupObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-
-        actual = String.valueOf(userGroupObject.get("title"));
-        excepted = "Random";
-        assertEquals("UserGroup value for title key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userGroupObject.get("permission"));
-        excepted = "4";
-        assertEquals("UserGroup value for permission key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(userGroupObject.get("users"));
-        excepted = "[]";
-        assertEquals("UserGroup value for users key doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"title\":\"Random\",\"permission\":\"4\",\"users\":[]}");
+        assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test

@@ -21,6 +21,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import org.joda.time.LocalDate;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Process;
@@ -135,17 +137,18 @@ public class ProjectTypeTest {
     }
 
     @Test
-    //problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         ProjectType processType = new ProjectType();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        JSONParser parser = new JSONParser();
 
         Project project = prepareData().get(0);
         HttpEntity document = processType.createDocument(project);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"archived\":\"false\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
-                + "\"numberOfPages\":\"100\",\"endDate\":\"2017-03-01\",\"numberOfVolumes\":\"10\","
-                + "\"name\":\"Testing\",\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"name\":\"Testing\",\"archived\":\"false\","
+                + "\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"numberOfPages\":\"100\","
+                + "\"endDate\":\"2017-03-01\",\"numberOfVolumes\":\"10\","
+                + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
                 + "(meta.CatalogIDDigital)\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":"
                 + "\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
                 + "CatalogIDDigital)\\/jpgs\\/default\\/\",\"folder\":null,\"name\":\"DEFAULT\",\"mimeType\":"
@@ -155,14 +158,15 @@ public class ProjectTypeTest {
                 + "CatalogIDDigital)\\/ocr\\/alto\\/\",\"folder\":null,\"name\":\"FULLTEXT\",\"mimeType\":\"text\\/"
                 + "xml\",\"suffix\":\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
                 + "CatalogIDDigital)\\/pdf\\/\",\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/"
-                + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"users\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
-        assertEquals("Project JSON string doesn't match to given plain text!", excepted, actual);
+                + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"users\":[{\"id\":\"1\"},{\"id\":\"2\"}]}");
+        assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(1);
         document = processType.createDocument(project);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"archived\":\"false\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"numberOfPages\":\"2000\","
-                + "\"endDate\":\"2017-09-10\",\"numberOfVolumes\":\"20\",\"name\":\"Rendering\",\"projectFileGroups\":"
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));;
+        expected = (JSONObject) parser.parse("{\"archived\":\"false\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
+                + "\"numberOfPages\":\"2000\",\"endDate\":\"2017-09-10\",\"numberOfVolumes\":\"20\","
+                + "\"name\":\"Rendering\",\"projectFileGroups\":"
                 + "[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/jpgs\\/max\\/\","
                 + "\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":"
                 + "\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/jpgs\\/default\\/\",\"folder\":"
@@ -173,17 +177,17 @@ public class ProjectTypeTest {
                 + "\"FULLTEXT\",\"mimeType\":\"text\\/xml\",\"suffix\":\"xml\"},{\"path\":\"http:\\/\\/www.example."
                 + "com\\/content\\/$(meta.CatalogIDDigital)\\/pdf\\/\",\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType"
                 + "\":\"application\\/pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-10\",\"users\":[{\"id\":\"1\"},"
-                + "{\"id\":\"2\"}]}";
-        assertEquals("Project JSON string doesn't match to given plain text!", excepted, actual);
+                + "{\"id\":\"2\"}]}");
+        assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);
         document = processType.createDocument(project);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"archived\":\"false\",\"processes\":[],\"numberOfPages\":\"0\",\"endDate\":\""
-                + dateFormat.format(project.getEndDate()) + "\",\"numberOfVolumes\":\"0\",\"name\":\"Incomplete\","
-                + "\"projectFileGroups\":[],\""
-                + "startDate\":\"" + dateFormat.format(project.getEndDate()) + "\",\"users\":[]}";
-        assertEquals("Project JSON string doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"archived\":\"false\",\"processes\":[],"
+                + "\"numberOfPages\":\"0\",\"endDate\":\"" + dateFormat.format(project.getEndDate())
+                + "\",\"numberOfVolumes\":\"0\",\"projectFileGroups\":[],\"startDate\":\""
+                + dateFormat.format(project.getEndDate()) + "\",\"users\":[]}");
+        assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test

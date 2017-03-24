@@ -54,22 +54,13 @@ public class RulesetTypeTest {
     public void shouldCreateDocument() throws Exception {
         RulesetType rulesetType = new RulesetType();
         Ruleset ruleset = prepareData().get(0);
+        JSONParser parser = new JSONParser();
 
         HttpEntity document = rulesetType.createDocument(ruleset);
-        JSONParser parser = new JSONParser();
-        JSONObject rulesetObject = (JSONObject) parser.parse(EntityUtils.toString(document));
-
-        String actual = String.valueOf(rulesetObject.get("title"));
-        String excepted = "SLUBDD";
-        assertEquals("Ruleset value for title key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(rulesetObject.get("file"));
-        excepted = "ruleset_slubdd.xml";
-        assertEquals("Ruleset value for file key doesn't match to given plain text!", excepted, actual);
-
-        actual = String.valueOf(rulesetObject.get("fileContent"));
-        excepted = "";
-        assertEquals("Ruleset value for fileContent key doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject excepted = (JSONObject) parser.parse("{,\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\","
+                + "\"fileContent\":\"\"}");
+        assertEquals("Ruleset JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 
     @Test

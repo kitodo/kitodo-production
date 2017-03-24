@@ -21,6 +21,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 
 import org.joda.time.LocalDate;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 
 import org.kitodo.data.database.beans.Docket;
@@ -90,34 +92,35 @@ public class ProcessTypeTest {
     }
 
     @Test
-    //problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         ProcessType processType = new ProcessType();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        JSONParser parser = new JSONParser();
 
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
-        String actual = EntityUtils.toString(document);
-        String excepted = "{\"outputName\":\"Test\",\"wikiField\":\"Wiki\",\"ldapGroup\":\"null\","
-                + "\"name\":\"Testing\",\"ruleset\":\"1\",\"project\":\"1\",\"creationDate\":\"2017-01-01\","
-                + "\"properties\":[]}";
-        assertEquals("Process JSON string doesn't match to given plain text!", excepted, actual);
+        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        JSONObject expected = (JSONObject) parser.parse("{\"name\":\"Testing\",\"outputName\":\"Test\","
+                + "\"wikiField\":\"Wiki\",\"ldapGroup\":\"null\",\"ruleset\":\"1\",\"project\":\"1\","
+                + "\"creationDate\":\"2017-01-01\",\"properties\":[]}");
+        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
         document = processType.createDocument(process);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"outputName\":\"Render\",\"wikiField\":\"Field\",\"ldapGroup\":\"1\",\"name\":\"Rendering\","
-                + "\"ruleset\":\"null\",\"project\":\"1\",\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}";
-        assertEquals("Process JSON string doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"name\":\"Rendering\",\"outputName\":\"Render\","
+                + "\"wikiField\":\"Field\",\"ldapGroup\":\"1\",\"name\":\"Rendering\",\"ruleset\":\"null\","
+                + "\"project\":\"1\",\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
+                + "\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
         document = processType.createDocument(process);
-        actual = EntityUtils.toString(document);
-        excepted = "{\"outputName\":null,\"wikiField\":\"\",\"ldapGroup\":\"null\",\"name\":\"Incomplete\","
-                + "\"ruleset\":\"null\",\"project\":\"null\",\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"properties\":[]}";
-        assertEquals("Process JSON string doesn't match to given plain text!", excepted, actual);
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
+                + "\"ldapGroup\":\"null\",\"ruleset\":\"null\",\"project\":\"null\","
+                + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())+ "\",\"properties\":[]}");
+        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test
