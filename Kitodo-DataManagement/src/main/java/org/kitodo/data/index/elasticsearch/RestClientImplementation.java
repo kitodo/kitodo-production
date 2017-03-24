@@ -40,9 +40,12 @@ public class RestClientImplementation implements ClientInterface {
     /**
      * Create REST client.
      *
-     * @param host default host is localhost
-     * @param port default port ist 9200
-     * @param protocol default protocol is http
+     * @param host
+     *            default host is localhost
+     * @param port
+     *            default port ist 9200
+     * @param protocol
+     *            default protocol is http
      */
     public void initiateClient(String host, Integer port, String protocol) {
         restClient = RestClient.builder(new HttpHost(host, port, protocol)).build();
@@ -54,58 +57,55 @@ public class RestClientImplementation implements ClientInterface {
      * @return information about the server
      */
     public String getServerInformation() throws IOException {
-        Response response = restClient.performRequest("GET", "/",
-                Collections.singletonMap("pretty", "true"));
+        Response response = restClient.performRequest("GET", "/", Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
     }
 
     /**
      * Close REST Client.
      *
-     * @throws IOException add description
+     * @throws IOException
+     *             add description
      */
     public void closeClient() throws IOException {
         restClient.close();
     }
 
     /**
-     * Add document to the index. This method will be used for add or update of single document.
+     * Add document to the index. This method will be used for add or update of
+     * single document.
      *
-     * @param entity with document which is going to be indexed
-     * @param id of document - equal to the id from table in database
+     * @param entity
+     *            with document which is going to be indexed
+     * @param id
+     *            of document - equal to the id from table in database
      * @return response from the server
      */
-    public String addDocument(HttpEntity entity, Integer id)
-            throws IOException {
-        Response indexResponse = restClient.performRequest(
-                "PUT",
-                "/" + this.getIndex() + "/" + this.getType() + "/" + id,
-                Collections.<String, String>emptyMap(),
+    public String addDocument(HttpEntity entity, Integer id) throws IOException {
+        Response indexResponse = restClient.performRequest("PUT",
+                "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.<String, String>emptyMap(),
                 entity);
 
         return IOUtils.toString(indexResponse.getEntity().getContent(), "UTF-8");
     }
 
     /**
-     * Add list of documents to the index. This method will be used for add whole table to the index.
-     * It performs asynchronous request.
+     * Add list of documents to the index. This method will be used for add
+     * whole table to the index. It performs asynchronous request.
      *
-     * @param documentsToIndex list of json documents to the index
+     * @param documentsToIndex
+     *            list of json documents to the index
      */
     public String addType(HashMap<Integer, HttpEntity> documentsToIndex) throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final StringBuilder output = new StringBuilder();
 
         for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
-            restClient.performRequestAsync(
-                    "PUT",
-                    "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
-                    Collections.<String, String>emptyMap(),
-                    entry.getValue(),
-                    new ResponseListener() {
+            restClient.performRequestAsync("PUT", "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
+                    Collections.<String, String>emptyMap(), entry.getValue(), new ResponseListener() {
                         @Override
-                        //problem with return type - it should be String
-                        //dirty hack private variable ArrayResult
+                        // problem with return type - it should be String
+                        // dirty hack private variable ArrayResult
                         public void onSuccess(Response response) {
                             output.append(response.toString());
                             latch.countDown();
@@ -115,8 +115,7 @@ public class RestClientImplementation implements ClientInterface {
                         public void onFailure(Exception exception) {
                             latch.countDown();
                         }
-                    }
-            );
+                    });
         }
         latch.await();
 
@@ -126,12 +125,12 @@ public class RestClientImplementation implements ClientInterface {
     /**
      * Delete document from the index.
      *
-     * @param id of the document
+     * @param id
+     *            of the document
      * @return response from server
      */
     public String deleteDocument(Integer id) throws IOException {
-        Response indexResponse = restClient.performRequest(
-                "DELETE",
+        Response indexResponse = restClient.performRequest("DELETE",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id);
         return indexResponse.toString();
     }
@@ -142,17 +141,11 @@ public class RestClientImplementation implements ClientInterface {
      * @return response from server
      */
     public String deleteType() throws IOException {
-        String query = "{\n"
-                + "  \"query\": {\n"
-                + "    \"match_all\": {}\n"
-                + "  }\n"
-                + "}";
+        String query = "{\n" + "  \"query\": {\n" + "    \"match_all\": {}\n" + "  }\n" + "}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest(
-                "POST",
-                "/" + this.getIndex() + "/" + this.getType() +  "/_delete_by_query?conflicts=proceed",
-                Collections.<String, String>emptyMap(),
-                entity);
+        Response indexResponse = restClient.performRequest("POST",
+                "/" + this.getIndex() + "/" + this.getType() + "/_delete_by_query?conflicts=proceed",
+                Collections.<String, String>emptyMap(), entity);
         return indexResponse.toString();
     }
 
@@ -163,7 +156,8 @@ public class RestClientImplementation implements ClientInterface {
     /**
      * Setter for index.
      *
-     * @param index - equal to the name of database, default kitodo
+     * @param index
+     *            - equal to the name of database, default kitodo
      */
     public void setIndex(String index) {
         this.index = index;
@@ -176,7 +170,8 @@ public class RestClientImplementation implements ClientInterface {
     /**
      * Setter for type.
      *
-     * @param type - equal to the name of table in database
+     * @param type
+     *            - equal to the name of table in database
      */
     public void setType(String type) {
         this.type = type;

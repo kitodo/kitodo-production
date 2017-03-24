@@ -67,11 +67,11 @@ public class TaskTypeTest {
         firstTask.setOrdering(1);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
         firstTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        LocalDate localDate = new LocalDate(2017,2,17);
+        LocalDate localDate = new LocalDate(2017, 2, 17);
         firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2017,2,1);
+        localDate = new LocalDate(2017, 2, 1);
         firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2017,2,17);
+        localDate = new LocalDate(2017, 2, 17);
         firstTask.setProcessingEnd(localDate.toDate());
         firstTask.setHomeDirectory((short) 1);
         firstTask.setTypeMetadata(true);
@@ -89,9 +89,9 @@ public class TaskTypeTest {
         secondTask.setPriority(2);
         secondTask.setOrdering(2);
         secondTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        localDate = new LocalDate(2017,2,17);
+        localDate = new LocalDate(2017, 2, 17);
         secondTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2017,2,10);
+        localDate = new LocalDate(2017, 2, 10);
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(users.get(1));
         secondTask.setUsers(users);

@@ -64,7 +64,7 @@ public class ProcessTypeTest {
         firstProcess.setId(1);
         firstProcess.setTitle("Testing");
         firstProcess.setOutputName("Test");
-        LocalDate localDate = new LocalDate(2017,1,1);
+        LocalDate localDate = new LocalDate(2017, 1, 1);
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setWikiField("Wiki");
         firstProcess.setProject(project);
@@ -116,8 +116,8 @@ public class ProcessTypeTest {
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
-                + "\"ldapGroup\":\"null\",\"ruleset\":\"null\",\"project\":\"null\","
-                + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())+ "\",\"properties\":[]}");
+                + "\"ldapGroup\":\"null\",\"ruleset\":\"null\",\"project\":\"null\"," + "\"creationDate\":\""
+                + dateFormat.format(process.getCreationDate()) + "\",\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

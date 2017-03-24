@@ -101,9 +101,9 @@ public class ProjectTypeTest {
         Project firstProject = new Project();
         firstProject.setId(1);
         firstProject.setTitle("Testing");
-        LocalDate localDate = new LocalDate(2017,1,1);
+        LocalDate localDate = new LocalDate(2017, 1, 1);
         firstProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017,3,1);
+        localDate = new LocalDate(2017, 3, 1);
         firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(100);
         firstProject.setNumberOfVolumes(10);
@@ -115,9 +115,9 @@ public class ProjectTypeTest {
         Project secondProject = new Project();
         secondProject.setId(2);
         secondProject.setTitle("Rendering");
-        localDate = new LocalDate(2017,1,10);
+        localDate = new LocalDate(2017, 1, 10);
         secondProject.setStartDate(localDate.toDate());
-        localDate = new LocalDate(2017,9,10);
+        localDate = new LocalDate(2017, 9, 10);
         secondProject.setEndDate(localDate.toDate());
         secondProject.setNumberOfPages(2000);
         secondProject.setNumberOfVolumes(20);
@@ -161,7 +161,8 @@ public class ProjectTypeTest {
 
         project = prepareData().get(1);
         document = processType.createDocument(project);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));;
+        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
+        ;
         expected = (JSONObject) parser.parse("{\"archived\":\"false\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
                 + "\"numberOfPages\":\"2000\",\"endDate\":\"2017-09-10\",\"numberOfVolumes\":\"20\","
                 + "\"name\":\"Rendering\",\"projectFileGroups\":"

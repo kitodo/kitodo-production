@@ -97,7 +97,8 @@ public class HibernateUtilOld {
     /**
      * Rebuild the SessionFactory with the given Hibernate Configuration.
      *
-     * @param cfg the configuration
+     * @param cfg
+     *            the configuration
      */
     public static void rebuildSessionFactory(Configuration cfg) throws InfrastructureException {
         synchronized (sessionFactoryRebuildLock) {

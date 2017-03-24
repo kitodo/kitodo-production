@@ -56,8 +56,8 @@ public class RulesetTypeTest {
 
         HttpEntity document = rulesetType.createDocument(ruleset);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{,\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\","
-                + "\"fileContent\":\"\"}");
+        JSONObject excepted = (JSONObject) parser
+                .parse("{,\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\"," + "\"fileContent\":\"\"}");
         assertEquals("Ruleset JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 

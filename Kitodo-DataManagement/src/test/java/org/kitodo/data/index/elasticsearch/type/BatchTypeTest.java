@@ -11,21 +11,19 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for BatchType.
@@ -74,8 +72,8 @@ public class BatchTypeTest {
         Batch batch = prepareData().get(0);
         HttpEntity document = batchType.createDocument(batch);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\","
-                + "\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}");
+        JSONObject expected = (JSONObject) parser.parse(
+                "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\"," + "\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}");
         assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
 
         batch = prepareData().get(1);
