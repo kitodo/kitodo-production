@@ -154,8 +154,8 @@ public class ExportSerialBatchTask extends EmptyTask {
         try {
             if (stepcounter == 0) {
                 pointers.clear();
-                for (Process process1 : batch.getProcesses()) {
-                    process = process1;
+                for (Process processIterator : batch.getProcesses()) {
+                    process = processIterator;
                     pointers.add(ExportNewspaperBatchTask.getMetsPointerURL(process));
                 }
                 processesIterator = batch.getProcesses().iterator();
@@ -184,7 +184,6 @@ public class ExportSerialBatchTask extends EmptyTask {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
-            return;
         }
     }
 

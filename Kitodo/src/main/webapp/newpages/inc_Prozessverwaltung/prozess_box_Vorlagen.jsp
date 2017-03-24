@@ -71,7 +71,7 @@
 
 </x:dataTable>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.VorlageNeu}"
                rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                value="#{msgs.vorlageHinzufuegen}" title="#{msgs.vorlageHinzufuegen}">

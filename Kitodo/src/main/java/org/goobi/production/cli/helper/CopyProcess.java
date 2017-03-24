@@ -580,7 +580,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * Anlegen des Prozesses und Speichern der Metadaten.
+     * Anlegen des Prozesses und save der Metadaten.
      */
 
     public Process NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException,
@@ -952,8 +952,8 @@ public class CopyProcess extends ProzesskopieForm {
                 // collect default collections
                 if (projekt.getName().equals("default")) {
                     List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
+                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                        Element col = secondIterator.next();
 
                         if (col.getAttribute("default") != null
                                 && col.getAttributeValue("default").equalsIgnoreCase("true")) {
@@ -970,8 +970,8 @@ public class CopyProcess extends ProzesskopieForm {
                         // all all collections to list
                         if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
                             List<Element> myCols = projekt.getChildren("DigitalCollection");
-                            for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                                Element col = it2.next();
+                            for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                                Element col = secondIterator.next();
 
                                 if (col.getAttribute("default") != null
                                         && col.getAttributeValue("default").equalsIgnoreCase("true")) {
@@ -984,10 +984,7 @@ public class CopyProcess extends ProzesskopieForm {
                     }
                 }
             }
-        } catch (JDOMException e1) {
-            myLogger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-        } catch (IOException e1) {
+        } catch (JDOMException | IOException e1) {
             myLogger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         }
@@ -1177,8 +1174,8 @@ public class CopyProcess extends ProzesskopieForm {
                 newTitle += myString.substring(1, myString.length() - 1);
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator it2 = this.additionalFields.iterator(); it2.hasNext();) {
-                    AdditionalField myField = (AdditionalField) it2.next();
+                for (Iterator secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
+                    AdditionalField myField = (AdditionalField) secondIterator.next();
 
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
@@ -1230,7 +1227,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public void CalcTiffheader() {
-        String tif_definition = "";
+        String tifDefinition = "";
         ConfigProjects cp = null;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
@@ -1239,13 +1236,13 @@ public class CopyProcess extends ProzesskopieForm {
             return;
         }
 
-        tif_definition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
+        tifDefinition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
 
         /*
          * evtuelle Ersetzungen
          */
-        tif_definition = tif_definition.replaceAll("\\[\\[", "<");
-        tif_definition = tif_definition.replaceAll("\\]\\]", ">");
+        tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
+        tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
         /*
          * Documentname ist im allgemeinen = Prozesstitel
@@ -1255,7 +1252,7 @@ public class CopyProcess extends ProzesskopieForm {
         /*
          * Imagedescription
          */
-        StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
+        StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         while (tokenizer.hasMoreTokens()) {
             String myString = tokenizer.nextToken();
@@ -1270,8 +1267,8 @@ public class CopyProcess extends ProzesskopieForm {
                 this.tifHeader_imagedescription += this.docType;
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
-                    AdditionalField myField = it2.next();
+                for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
+                    AdditionalField myField = secondIterator.next();
 
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten

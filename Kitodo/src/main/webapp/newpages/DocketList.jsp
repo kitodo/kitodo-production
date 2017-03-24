@@ -61,7 +61,7 @@
                                     <h:outputText id="id4" value="#{msgs.dockets}"/>
                                 </htm:h3>
 
-                                <%-- Neu-Schaltknopf --%>
+                                <%-- newUser-Schaltknopf --%>
                                 <h:commandLink id="id5" action="#{DocketForm.Neu}"
                                                immediate="true"
                                                rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">

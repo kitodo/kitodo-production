@@ -85,6 +85,19 @@ public class BatchService {
     }
 
     /**
+     * The function removeAll() removes all elements that are contained in the
+     * given collection from this batch. TODO: Not sure if this method is
+     * needed, check it
+     *
+     * @param processes
+     *            collection containing elements to be removed from this set
+     * @return true if the set of processes was changed as a result of the call
+     */
+    public boolean removeAll(Batch batch, Collection<?> processes) {
+        return batch.getProcesses().removeAll(processes);
+    }
+    
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
     public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
@@ -176,19 +189,6 @@ public class BatchService {
         } else {
             return "";
         }
-    }
-
-    /**
-     * The function removeAll() removes all elements that are contained in the
-     * given collection from this batch. TODO: Not sure if this method is
-     * needed, check it
-     * 
-     * @param processes
-     *            collection containing elements to be removed from this set
-     * @return true if the set of processes was changed as a result of the call
-     */
-    public boolean removeAll(Batch batch, Collection<?> processes) {
-        return batch.getProcesses().removeAll(processes);
     }
 
     /**

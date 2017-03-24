@@ -217,7 +217,7 @@
 </htm:table>
 
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.createNewProperty}" value="#{msgs.eigenschaftHinzufuegen}"
                title="#{msgs.eigenschaftHinzufuegen}"
                rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">

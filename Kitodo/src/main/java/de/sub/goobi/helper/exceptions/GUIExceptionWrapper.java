@@ -31,14 +31,14 @@ import java.util.Date;
  * @author Wulf
  * @version 12/10/2009
  *
- *          Variables in Messages Bundle: err_emailBody -> message in the email
- *          before the stack trace err_emailMessage -> message displayed if
- *          email is enabled in GoobiConfig: err_userHandling=true
- *          err_fallBackMessage -> messgae displayed if feature is turned off in
- *          GoobiConfig err_linkText -> message in which the link from
- *          GoobiConfig: err_linkToPage= err_noMailService -> message if email
- *          is disabled in GoobiConfig: err_emailEnabled=false err_subjectLine
- *          -> message in Subject Line of email
+ *          Variables in Messages Bundle: errEmailBody -> message in the email
+ *          before the stack trace errEmailMessage -> message displayed if email
+ *          is enabled in GoobiConfig: err_userHandling=true err_fallBackMessage
+ *          -> messgae displayed if feature is turned off in GoobiConfig
+ *          errLinkText -> message in which the link from GoobiConfig:
+ *          err_linkToPage= err_noMailService -> message if email is disabled in
+ *          GoobiConfig: err_emailEnabled=false errSubjectLine -> message in
+ *          Subject Line of email
  *
  */
 public class GUIExceptionWrapper extends Exception {
@@ -51,11 +51,11 @@ public class GUIExceptionWrapper extends Exception {
 
     private String additionalMessage = "";
 
-    private String err_linkText = "";
+    private String errLinkText = "";
 
-    private String err_emailBody = "";
-    private String err_emailMessage = "";
-    private String err_subjectLine = "";
+    private String errEmailBody = "";
+    private String errEmailMessage = "";
+    private String errSubjectLine = "";
 
     private ArrayList<String> emailAddresses = new ArrayList<String>();
 
@@ -92,15 +92,15 @@ public class GUIExceptionWrapper extends Exception {
 
         try {
             if (ConfigCore.getBooleanParameter("err_userHandling")) {
-                this.err_linkText = Helper.getTranslation("err_linkText");
-                this.err_linkText = this.err_linkText.replace("{0}",
+                this.errLinkText = Helper.getTranslation("err_linkText");
+                this.errLinkText = this.errLinkText.replace("{0}",
                         ConfigCore.getParameter("err_linkToPage", "./Main.jsf"));
 
                 if (ConfigCore.getBooleanParameter("err_emailEnabled")) {
 
-                    this.err_emailMessage = Helper.getTranslation("err_emailMessage");
-                    this.err_subjectLine = Helper.getTranslation("err_subjectLine");
-                    this.err_emailBody = Helper.getTranslation("err_emailBody");
+                    this.errEmailMessage = Helper.getTranslation("err_emailMessage");
+                    this.errSubjectLine = Helper.getTranslation("err_subjectLine");
+                    this.errEmailBody = Helper.getTranslation("err_emailBody");
 
                     Integer emailCounter = Integer.valueOf(0);
                     String email = "";
@@ -116,7 +116,7 @@ public class GUIExceptionWrapper extends Exception {
 
                 } else {
                     // no email service enabled, build standard message
-                    this.err_emailMessage = Helper.getTranslation("err_noMailService");
+                    this.errEmailMessage = Helper.getTranslation("err_noMailService");
 
                 }
             } else {
@@ -129,7 +129,6 @@ public class GUIExceptionWrapper extends Exception {
                     + "<br/><br/>";
             this.userSeenErrorMessage = this.fallBackErrorMessage;
 
-        } finally {
         }
     }
 
@@ -159,13 +158,13 @@ public class GUIExceptionWrapper extends Exception {
         String linkPart = "";
         String emailPart = "";
 
-        linkPart = this.err_linkText + lineFeed;
+        linkPart = this.errLinkText + lineFeed;
 
         // only elaborate email part if
         if (this.emailAddresses.size() > 0) {
-            emailPart = this.err_emailMessage.replace("{0}",
-                    mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject + this.err_subjectLine + mailtoLinkBody
-                            + this.err_emailBody + htmlLineFeed + htmlLineFeed + htmlLineFeed + getContextInfo()
+            emailPart = this.errEmailMessage.replace("{0}",
+                    mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject + this.errSubjectLine + mailtoLinkBody
+                            + this.errEmailBody + htmlLineFeed + htmlLineFeed + htmlLineFeed + getContextInfo()
                             + htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
         } else {

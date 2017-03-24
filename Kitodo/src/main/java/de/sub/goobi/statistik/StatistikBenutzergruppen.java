@@ -41,8 +41,8 @@ public class StatistikBenutzergruppen {
                  * von dem Schritt alle verantwortlichen Benutzergruppen
                  * ermitteln und im Diagramm erfassen
                  */
-                for (Iterator<UserGroup> iter2 = step.getUserGroups().iterator(); iter2.hasNext();) {
-                    UserGroup group = iter2.next();
+                for (Iterator<UserGroup> secondIterator = step.getUserGroups().iterator(); secondIterator.hasNext();) {
+                    UserGroup group = secondIterator.next();
                     if (dataset.getIndex(group.getTitle()) != -1) {
                         dataset.setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
                     } else {

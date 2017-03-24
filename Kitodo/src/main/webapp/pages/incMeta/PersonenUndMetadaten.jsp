@@ -24,7 +24,7 @@
 
     <%-- ########################################
 
-        Speichern der Metadaten und Ueberschrift
+        save der Metadaten und Ueberschrift
         
          #########################################--%>
     <htm:table width="540">
@@ -94,7 +94,7 @@
                     <x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}"/>
                 </h:commandLink>
 
-                <%-- Loeschen-Schaltknopf --%>
+                <%-- delete-Schaltknopf --%>
                 <h:commandLink id="l6" action="#{Metadaten.LoeschenPerson}" title="#{msgs.personendatenLoeschen}">
                     <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
@@ -312,7 +312,7 @@
                     <f:param name="ID" value="#{Item.identifier}"/>
                     <x:updateActionListener property="#{Metadaten.curMetadatum}" value="#{Item}"/>
                 </h:commandLink>
-                <%-- Loeschen-Schaltknopf --%>
+                <%-- delete-Schaltknopf --%>
                 <h:commandLink id="l4" action="#{Metadaten.Loeschen}" title="#{msgs.metadatenLoeschen}">
                     <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
@@ -325,7 +325,7 @@
 
     <%-- ########################################
 
-                          Speichern der Metadaten oder neue hinzufuegen
+                          save der Metadaten oder neue hinzufuegen
 
          #########################################--%>
     <htm:table width="540">

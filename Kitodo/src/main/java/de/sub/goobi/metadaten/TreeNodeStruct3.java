@@ -31,7 +31,7 @@ public class TreeNodeStruct3 extends TreeNode {
     private boolean einfuegenErlaubt;
 
     /**
-     * Konstruktoren
+     * Konstruktoren.
      */
     public TreeNodeStruct3() {
     }

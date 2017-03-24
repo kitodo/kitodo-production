@@ -175,13 +175,9 @@ public enum TimeUnit {
             case years:
                 return new DateTime(inDate).toString(getFormatter());
             case quarters:
-                return new DateTime(inDate).toString(getFormatter()) + "/" + // TODO:
-                                                                             // Remove
-                                                                             // use
-                                                                             // of
-                                                                             // deprecated
-                                                                             // method
-                        Integer.toString((inDate.getMonth() - 1) / 3 + 1);
+                // TODO: Remove use of deprecated method
+                return new DateTime(inDate).toString(getFormatter()) + "/"
+                        + Integer.toString((inDate.getMonth() - 1) / 3 + 1);
         }
         return inDate.toString();
 

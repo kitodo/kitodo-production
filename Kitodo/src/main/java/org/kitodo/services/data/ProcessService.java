@@ -721,7 +721,7 @@ public class ProcessService {
     }
 
     /**
-     * Old getFortschritt1().
+     * Old getProcess().
      *
      * @param process
      *            object
@@ -733,7 +733,7 @@ public class ProcessService {
     }
 
     /**
-     * Old getFortschritt2().
+     * Old getProgressTwo().
      *
      * @param process
      *            object
@@ -747,7 +747,7 @@ public class ProcessService {
     }
 
     /**
-     * Old getFortschritt3().
+     * Old getProgressThree().
      *
      * @param process
      *            object

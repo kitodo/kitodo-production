@@ -175,8 +175,9 @@ public abstract class UnspecificPlugin {
      *            the configuration map created by the PluginLoader
      */
     void configure(Map<String, String> configuration) {
-        if (configure != null)
+        if (configure != null) {
             invokeQuietly(plugin, configure, configuration, null);
+        }
     }
 
     /**
@@ -215,7 +216,7 @@ public abstract class UnspecificPlugin {
      *
      * @param name
      *            name of the method to look up
-     * @param parameter0Type
+     * @param parameterType
      *            type of the parameter of the method to look up
      * @param resultType
      *            result type of the method to look up
@@ -232,9 +233,9 @@ public abstract class UnspecificPlugin {
      * @throws NoSuchMethodException
      *             if a matching method is not found
      */
-    protected final Method getDeclaredMethod(String name, Class<?> parameter0Type, Class<?> resultType)
+    protected final Method getDeclaredMethod(String name, Class<?> parameterType, Class<?> resultType)
             throws SecurityException, NoSuchMethodException {
-        return getDeclaredMethod(name, new Class[] {parameter0Type }, resultType);
+        return getDeclaredMethod(name, new Class[] {parameterType }, resultType);
     }
 
     /**
@@ -265,9 +266,10 @@ public abstract class UnspecificPlugin {
     protected final Method getDeclaredMethod(String name, Class<?>[] parameterTypes, Class<?> resultType)
             throws SecurityException, NoSuchMethodException {
         Method result = plugin.getClass().getDeclaredMethod(name, parameterTypes);
-        if (!resultType.isAssignableFrom(result.getReturnType()))
+        if (!resultType.isAssignableFrom(result.getReturnType())) {
             throw new NoSuchMethodException("Bad return type of method " + result.toString() + " ("
                     + Arrays.toString(parameterTypes) + "), must be " + resultType.toString());
+        }
         return result;
     }
 
@@ -327,7 +329,7 @@ public abstract class UnspecificPlugin {
      *
      * @param name
      *            name of the method to look up
-     * @param parameter0Type
+     * @param parameterType
      *            type of the parameter of the method to look up
      * @param resultType
      *            result type of the method to look up
@@ -342,9 +344,9 @@ public abstract class UnspecificPlugin {
      *             checkPackageAccess() denies access to the package of this
      *             class.
      */
-    protected final Method getOptionalMethod(String name, Class<?> parameter0Type, Class<?> resultType)
+    protected final Method getOptionalMethod(String name, Class<?> parameterType, Class<?> resultType)
             throws SecurityException {
-        return getOptionalMethod(name, new Class[] {parameter0Type }, resultType);
+        return getOptionalMethod(name, new Class[] {parameterType }, resultType);
     }
 
     /**
@@ -434,14 +436,14 @@ public abstract class UnspecificPlugin {
      *            object to invoke a method on
      * @param method
      *            method to invoke on the object
-     * @param arg0
+     * @param arg
      *            argument to pass to the object
      * @param resultType
      *            result type of the method to invoke (may be Void.TYPE)
      * @return an object of the specified type
      */
-    protected <T> T invokeQuietly(Object object, Method method, Object arg0, Class<T> resultType) {
-        return invokeQuietly(object, method, new Object[] {arg0 }, resultType);
+    protected <T> T invokeQuietly(Object object, Method method, Object arg, Class<T> resultType) {
+        return invokeQuietly(object, method, new Object[] {arg }, resultType);
     }
 
     /**
@@ -470,11 +472,12 @@ public abstract class UnspecificPlugin {
             throw toBeRethrown;
         } catch (InvocationTargetException toBeUnwrapped) {
             Throwable wrappedException = toBeUnwrapped.getTargetException();
-            if (wrappedException == null)
+            if (wrappedException == null) {
                 throw new RuntimeException(toBeUnwrapped.getMessage(), toBeUnwrapped);
-            if (wrappedException instanceof RuntimeException)
+            }
+            if (wrappedException instanceof RuntimeException) {
                 throw (RuntimeException) wrappedException;
-            else
+            } else
                 throw new RuntimeException(wrappedException.getMessage(), wrappedException);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -501,8 +504,9 @@ public abstract class UnspecificPlugin {
         // return PluginType.Validation;
         // if (CommandPlugin.class.isAssignableFrom(clazz))
         // return PluginType.Command;
-        if (CataloguePlugin.class.isAssignableFrom(clazz))
+        if (CataloguePlugin.class.isAssignableFrom(clazz)) {
             return PluginType.Opac;
+        }
         return null;
     }
 }

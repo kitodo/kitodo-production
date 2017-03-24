@@ -43,7 +43,7 @@ public class TiffHeader {
     // private String Verlag="";
     private String Artist = "";
     private String tifHeader_imagedescription = "";
-    private String tifHeader_documentname = "";
+    private String tifHeaderDocumentname = "";
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -59,7 +59,7 @@ public class TiffHeader {
                     // iter.next();
 
                     if (eig.getTitle().equals("TifHeaderDocumentname")) {
-                        this.tifHeader_documentname = eig.getValue();
+                        this.tifHeaderDocumentname = eig.getValue();
                     }
                     if (eig.getTitle().equals("TifHeaderImagedescription")) {
                         this.tifHeader_imagedescription = eig.getValue();
@@ -84,7 +84,7 @@ public class TiffHeader {
      * Rückgabe des kompletten Tiff-Headers.
      */
     private String getDocumentName() {
-        return this.tifHeader_documentname;
+        return this.tifHeaderDocumentname;
     }
 
     /**
@@ -108,7 +108,7 @@ public class TiffHeader {
     /**
      * Start export.
      */
-    public void ExportStart() throws IOException {
+    public void exportStart() throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();

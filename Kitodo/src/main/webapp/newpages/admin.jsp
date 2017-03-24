@@ -102,7 +102,7 @@
                                                 <h:commandLink id="id9" value="Prozesse durchlaufen"
                                                                rendered="false"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.ProzesseDurchlaufen}"/>
+                                                               action="#{AdministrationForm.prozesseDurchlaufen}"/>
                                                 <htm:br/>
 
                                                 <%-- Schritt zurückgeben an vorherige Station für Korrekturzwecke --%>
@@ -203,13 +203,13 @@
                                                 <h:commandLink id="id24" value="Sici korrigieren"
                                                                rendered="false"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.SiciKorr}"/>
+                                                               action="#{AdministrationForm.siciKorr}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink id="id25" value="ProzesseDatumSetzen"
                                                                rendered="true"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.ProzesseDatumSetzen}"/>
+                                                               action="#{AdministrationForm.prozesseDatumSetzen}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink id="id26" value="RusDmlBaendeTiffPruefen"
@@ -221,7 +221,7 @@
                                                 <h:commandLink id="id27" value="Imagepfad korrigieren"
                                                                rendered="true"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.ImagepfadKorrigieren}"/>
+                                                               action="#{AdministrationForm.imagepfadKorrigieren}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink id="id28"
@@ -233,27 +233,27 @@
                                                 <h:commandLink id="id29" value="PPNs korrigieren"
                                                                rendered="true"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.PPNsKorrigieren}"/>
+                                                               action="#{AdministrationForm.ppnsKorrigieren}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink
                                                         value="PPNs für Statistisches Jahrbuch korrigieren"
                                                         rendered="true"
                                                         onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                        action="#{AdministrationForm.PPNsFuerStatistischesJahrbuchKorrigieren}"/>
+                                                        action="#{AdministrationForm.ppnsFuerStatistischesJahrbuchKorrigieren}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink
                                                         value="PPNs für Statistisches Jahrbuch korrigieren2"
                                                         rendered="true"
                                                         onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                        action="#{AdministrationForm.PPNsFuerStatistischesJahrbuchKorrigieren2}"/>
+                                                        action="#{AdministrationForm.ppnsFuerStatistischesJahrbuchKorrigierenTwo}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink id="id30" value="Anzahlen ermitteln"
                                                                rendered="true"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.AnzahlenErmitteln}"/>
+                                                               action="#{AdministrationForm.anzahlenErmitteln}"/>
                                                 <htm:br/>
 
                                                 <h:commandLink id="id31" value="LDAP testen"
@@ -265,7 +265,7 @@
                                                 <h:commandLink id="id32" value="Regelsatz festlegen"
                                                                rendered="false"
                                                                onclick="if (!confirm('#{msgs.sicher}?')) return"
-                                                               action="#{AdministrationForm.StandardRegelsatzSetzen}"/>
+                                                               action="#{AdministrationForm.standardRegelsatzSetzen}"/>
                                                 <htm:br/>
                                                 <htm:br/>
 

@@ -45,7 +45,7 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Speichern() {
+    public String save() {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
@@ -79,7 +79,7 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Loeschen() {
+    public String deleteDocket() {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setFehlerMeldung("DocketInUse");
@@ -114,7 +114,7 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         try {
             // HibernateUtil.clearSession();
             Session session = Helper.getHibernateSession();
@@ -130,8 +130,8 @@ public class DocketForm extends BasisForm {
         return "DocketList";
     }
 
-    public String FilterKeinMitZurueck() {
-        FilterKein();
+    public String filterKeinMitZurueck() {
+        filterKein();
         return this.zurueck;
     }
 

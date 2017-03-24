@@ -491,7 +491,7 @@ public class BatchStepHelper {
     /**
      * Error management for single.
      */
-    public String ReportProblemForSingle() throws IOException, ResponseException {
+    public String reportProblemForSingle() throws IOException, ResponseException {
 
         this.myDav.UploadFromHome(this.currentStep.getProcess());
         reportProblem();
@@ -505,7 +505,7 @@ public class BatchStepHelper {
     /**
      * Error management for all.
      */
-    public String ReportProblemForAll() throws IOException, ResponseException {
+    public String reportProblemForAll() throws IOException, ResponseException {
         for (Task s : this.steps) {
             this.currentStep = s;
             this.myDav.UploadFromHome(this.currentStep.getProcess());
@@ -622,7 +622,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String SolveProblemForSingle() throws IOException, ResponseException {
+    public String solveProblemForSingle() throws IOException, ResponseException {
         try {
             solveProblem();
             saveStep();
@@ -642,7 +642,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String SolveProblemForAll() throws IOException, ResponseException {
+    public String solveProblemForAll() throws IOException, ResponseException {
         try {
             for (Task s : this.steps) {
                 this.currentStep = s;
@@ -864,7 +864,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String BatchDurchBenutzerZurueckgeben() throws IOException, ResponseException {
+    public String batchDurchBenutzerZurueckgeben() throws IOException, ResponseException {
 
         for (Task s : this.steps) {
 
@@ -895,7 +895,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String BatchDurchBenutzerAbschliessen() {
+    public String batchDurchBenutzerAbschliessen() {
 
         // for (ProcessProperty pp : this.processPropertyList) {
         // this.processProperty = pp;

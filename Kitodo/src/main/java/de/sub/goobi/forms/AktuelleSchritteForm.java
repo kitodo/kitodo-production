@@ -559,7 +559,7 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     public String SperrungAufheben() {
-        MetadatenSperrung.UnlockProcess(this.mySchritt.getProcess().getId());
+        MetadatenSperrung.unlockProcess(this.mySchritt.getProcess().getId());
         return "";
     }
 
@@ -1126,7 +1126,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public void DownloadTiffHeader() throws IOException {
         TiffHeader tiff = new TiffHeader(this.mySchritt.getProcess());
-        tiff.ExportStart();
+        tiff.exportStart();
     }
 
     /**

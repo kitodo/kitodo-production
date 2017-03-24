@@ -28,7 +28,7 @@ public class StatisticsTimeUnitConverter implements Converter {
     public static final String CONVERTER_ID = "StatisticsTimeUnitConverter";
 
     /**
-     * Convert String to TimeUnit
+     * Convert String to TimeUnit.
      */
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {

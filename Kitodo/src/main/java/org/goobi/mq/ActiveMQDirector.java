@@ -100,8 +100,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
         try {
             connection = new ActiveMQConnectionFactory(server).createConnection();
             connection.start();
-            connection.setExceptionListener(this); // →
-                                                   // ActiveMQDirector.onException()
+            connection.setExceptionListener(this); // ActiveMQDirector.onException()
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (Exception e) {
             logger.fatal("Error connecting to ActiveMQ server, giving up.", e);

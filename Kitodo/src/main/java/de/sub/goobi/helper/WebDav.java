@@ -54,17 +54,17 @@ public class WebDav implements Serializable {
     public List<String> UploadFromHomeAlle(String inVerzeichnis) {
         List<String> rueckgabe = new ArrayList<String>();
         User aktuellerBenutzer = Helper.getCurrentUser();
-        String VerzeichnisAlle;
+        String verzeichnisAlle;
 
         try {
-            VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception UploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return rueckgabe;
         }
 
-        SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
+        SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -94,10 +94,10 @@ public class WebDav implements Serializable {
      */
     // TODO: Use generic types
     public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
-        String VerzeichnisAlle;
+        String verzeichnisAlle;
         User aktuellerBenutzer = Helper.getCurrentUser();
         try {
-            VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception RemoveFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
@@ -106,7 +106,7 @@ public class WebDav implements Serializable {
 
         for (Iterator<String> it = inList.iterator(); it.hasNext();) {
             String myname = it.next();
-            FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
+            FilesystemHelper.deleteSymLink(verzeichnisAlle + myname);
         }
     }
 
