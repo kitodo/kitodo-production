@@ -154,7 +154,7 @@ public class RestClientImplementation implements ClientInterface {
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest(
                 "POST",
-                "/" + this.getIndex() + "/" + this.getType() +  "/_delete_by_query",
+                "/" + this.getIndex() + "/" + this.getType() +  "/_delete_by_query?conflicts=proceed",
                 Collections.<String, String>emptyMap(),
                 entity);
         return indexResponse.toString();
