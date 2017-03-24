@@ -14,7 +14,6 @@ package org.kitodo.data.database.persistence;
 import java.util.List;
 
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.Helper;
@@ -29,11 +28,14 @@ public class BatchDAO extends BaseDAO {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The function find() retrieves a Batch identified by the given ID from the database.
+     * The function find() retrieves a Batch identified by the given ID from the
+     * database.
      *
-     * @param id of batch to load
+     * @param id
+     *            of batch to load
      * @return persisted batch
-     * @throws DAOException if a HibernateException is thrown
+     * @throws DAOException
+     *             if a HibernateException is thrown
      */
     public Batch find(Integer id) throws DAOException {
         return (Batch) retrieveObject(Batch.class, id);
@@ -52,20 +54,25 @@ public class BatchDAO extends BaseDAO {
     /**
      * The method save() saves a batch to the database.
      *
-     * @param batch object to persist
-     * @throws DAOException if the current session can't be retrieved or an exception is thrown while
-     * 				performing the rollback
+     * @param batch
+     *            object to persist
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
      */
     public void save(Batch batch) throws DAOException {
         storeObject(batch);
     }
 
     /**
-     * The method remove() removes batch specified by the given ID from the database.
+     * The method remove() removes batch specified by the given ID from the
+     * database.
      *
-     * @param id of batches to delete
-     * @throws DAOException if the current session can't be retrieved or an exception is thrown while
-     * 				performing the rollback
+     * @param id
+     *            of batches to delete
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
      */
     public void remove(Integer id) throws DAOException {
         removeObject(Batch.class, id);
@@ -76,11 +83,14 @@ public class BatchDAO extends BaseDAO {
     }
 
     /**
-     * The method removeAll() removes all batches specified by the given IDs from the database.
+     * The method removeAll() removes all batches specified by the given IDs
+     * from the database.
      *
-     * @param ids of batches to delete
-     * @throws DAOException if the current session can't be retrieved or an exception is thrown while
-     * 				performing the rollback
+     * @param ids
+     *            of batches to delete
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
      */
     public void removeAll(Iterable<Integer> ids) throws DAOException {
         for (Integer id : ids) {
@@ -89,10 +99,11 @@ public class BatchDAO extends BaseDAO {
     }
 
     /**
-     * The function reattach() reattaches a batch to a Hibernate session, i.e. for accessing properties
-     * that are lazy loaded.
+     * The function reattach() reattaches a batch to a Hibernate session, i.e.
+     * for accessing properties that are lazy loaded.
      *
-     * @param batch object to reattach
+     * @param batch
+     *            object to reattach
      * @return the batch
      */
     public static Batch reattach(Batch batch) {

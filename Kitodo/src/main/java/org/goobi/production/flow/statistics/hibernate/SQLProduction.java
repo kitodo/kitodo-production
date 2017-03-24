@@ -16,18 +16,17 @@ import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
-//TODO: Remove redundant code
+// TODO: Remove redundant code
 
 /**
- * This Class provide methods to prepare SQL Queries needed for production statistics. 
- * It depends on time frame and time unit.
+ * This Class provide methods to prepare SQL Queries needed for production
+ * statistics. It depends on time frame and time unit.
  *
  * @author Wulf Riebensahm
  */
 class SQLProduction extends SQLGenerator {
 
-    public SQLProduction(Date timeFrom, Date timeTo, TimeUnit timeUnit,
-            List<Integer> ids) {
+    public SQLProduction(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids) {
         super(timeFrom, timeTo, timeUnit, ids, null);
     }
 
@@ -40,11 +39,10 @@ class SQLProduction extends SQLGenerator {
     public String getSQL() {
 
         String subQuery = "";
-        String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-                myTimeFrom, myTimeTo, "timeLimiter");
+        String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
         String outerWhereClause = "";
 
-        //inner table -> alias "table_1"
+        // inner table -> alias "table_1"
         String innerWhereClause;
 
         if (myIdsCondition != null) {
@@ -57,24 +55,23 @@ class SQLProduction extends SQLGenerator {
             outerWhereClause = "WHERE (" + outerWhereClauseTimeFrame + ") ";
         }
 
-        subQuery = "(SELECT process.id AS singleProcess, "
-                + "process.sortHelperImages AS pages, "
-                + getIntervallExpression(myTimeUnit, "processingEnd")
-                + " AS intervall, processingEnd AS timeLimiter "
-                + "FROM task inner join process on task.process_id=process.id "
-                + "WHERE " + innerWhereClause
+        subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
+                + getIntervallExpression(myTimeUnit, "processingEnd") + " AS intervall, processingEnd AS timeLimiter "
+                + "FROM task inner join process on task.process_id=process.id " + "WHERE " + innerWhereClause
                 + "GROUP BY process.id) AS table_1";
 
-        mySql = "SELECT count(table_1.singleProcess) AS volumes, "
-                + "sum(table_1.pages) AS pages, table_1.intervall " + "FROM "
-                + subQuery + " " + outerWhereClause + " GROUP BY intervall "
-                + "ORDER BY timeLimiter";
+        mySql = "SELECT count(table_1.singleProcess) AS volumes, " + "sum(table_1.pages) AS pages, table_1.intervall "
+                + "FROM " + subQuery + " " + outerWhereClause + " GROUP BY intervall " + "ORDER BY timeLimiter";
 
         return mySql;
     }
 
-    /* (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL(java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL(java.
+     * lang.Integer)
      */
     public String getSQL(Integer stepDone) {
 
@@ -84,38 +81,31 @@ class SQLProduction extends SQLGenerator {
 
         String subQuery = "";
         String outerWhereClause = "";
-        String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(
-                myTimeFrom, myTimeTo, "timeLimiter");
+        String outerWhereClauseTimeFrame = getWhereClauseForTimeFrame(myTimeFrom, myTimeTo, "timeLimiter");
 
         if (outerWhereClauseTimeFrame.length() > 0) {
             outerWhereClause = "WHERE".concat(outerWhereClauseTimeFrame);
         }
 
         // inserting the required step to be done from the parameter
-        String innerWhereClause = "task.ordering=" + stepDone.toString()
-                + " AND " + "task.processingStatus>2";
+        String innerWhereClause = "task.ordering=" + stepDone.toString() + " AND " + "task.processingStatus>2";
 
         // adding ids to conditions if exist
         if (myIdsCondition != null) {
-            innerWhereClause = "WHERE ".concat(innerWhereClause).concat(
-                    " AND (" + myIdsCondition + ")");
+            innerWhereClause = "WHERE ".concat(innerWhereClause).concat(" AND (" + myIdsCondition + ")");
         } else {
             innerWhereClause = "WHERE ".concat(innerWhereClause);
         }
 
         // building the inner SQL
-        subQuery = "(SELECT process.id AS singleProcess, "
-                + "process.sortHelperImages AS pages, "
-                + getIntervallExpression(myTimeUnit, "processingEnd")
-                + " AS intervall, processingEnd AS timeLimiter "
-                + "FROM task inner join process on task.process_id=process.id "
-                + innerWhereClause + "GROUP BY process.id) AS table_1";
+        subQuery = "(SELECT process.id AS singleProcess, " + "process.sortHelperImages AS pages, "
+                + getIntervallExpression(myTimeUnit, "processingEnd") + " AS intervall, processingEnd AS timeLimiter "
+                + "FROM task inner join process on task.process_id=process.id " + innerWhereClause
+                + "GROUP BY process.id) AS table_1";
 
         // building complete query
-        mySql = "SELECT count(table_1.singleProcess) AS volumes, "
-                + "sum(table_1.pages) AS pages, table_1.intervall " + "FROM "
-                + subQuery + " " + outerWhereClause + " GROUP BY intervall "
-                + "ORDER BY timeLimiter";
+        mySql = "SELECT count(table_1.singleProcess) AS volumes, " + "sum(table_1.pages) AS pages, table_1.intervall "
+                + "FROM " + subQuery + " " + outerWhereClause + " GROUP BY intervall " + "ORDER BY timeLimiter";
 
         return mySql;
     }

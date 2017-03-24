@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.ResultSetHandler;
-
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Ruleset;
 
-//TODO: fix it!
+// TODO: fix it!
 public class MySQLUtils {
 
     public static final ResultSetHandler<List<StepObject>> resultSetToStepObjectListHandler = new ResultSetHandler<List<StepObject>>() {
@@ -153,8 +152,8 @@ public class MySQLUtils {
                 int sortHelperMetadata = rs.getInt("sortHelperMetadata");
                 String wikiField = rs.getString("wikiField");
                 return new ProcessObject(processId, title, outputName, template, swappedOut, inChoiceListShown,
-                        sortHelperStatus, sortHelperImages, sortHelperArticles, creationDate, projectId,
-                        rulesetId, sortHelperDocstructs, sortHelperMetadata, wikiField);
+                        sortHelperStatus, sortHelperImages, sortHelperArticles, creationDate, projectId, rulesetId,
+                        sortHelperDocstructs, sortHelperMetadata, wikiField);
             }
             return null;
         }
@@ -289,11 +288,13 @@ public class MySQLUtils {
                 int numberOfVolumes = rs.getInt("numberOfVolumes");
                 boolean projectIsArchived = rs.getBoolean("projectIsArchived");
 
-                ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut, dmsImportRootPath, dmsImportImagesPath,
-                        dmsImportSuccessPath, dmsImportErrorPath, dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport,
-                        metsRightsOwner, metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation, metsPointerPath,
-                        metsPointerPathAnchor, metsDigiprovReferenceAnchor, metsDigiprovPresentationAnchor, metsPurl, metsContentIDs,
-                        metsRightsOwnerMail, startDate, endDate, numberOfPages, numberOfVolumes, projectIsArchived);
+                ProjectObject po = new ProjectObject(projekteID, titel, useDmsImport, dmsImportTimeOut,
+                        dmsImportRootPath, dmsImportImagesPath, dmsImportSuccessPath, dmsImportErrorPath,
+                        dmsImportCreateProcessFolder, fileFormatInternal, fileFormatDmsExport, metsRightsOwner,
+                        metsRightsOwnerLogo, metsRightsOwnerSite, metsDigiprovReference, metsDigiprovPresentation,
+                        metsPointerPath, metsPointerPathAnchor, metsDigiprovReferenceAnchor,
+                        metsDigiprovPresentationAnchor, metsPurl, metsContentIDs, metsRightsOwnerMail, startDate,
+                        endDate, numberOfPages, numberOfVolumes, projectIsArchived);
                 return po;
             }
             return null;
@@ -305,7 +306,7 @@ public class MySQLUtils {
         public List<ProjectFileGroup> handle(ResultSet rs) throws SQLException {
             List<ProjectFileGroup> answer = new ArrayList<ProjectFileGroup>();
             while (rs.next()) {
-                int ProjectFileGroupID = rs.getInt("id");
+                int projectFileGroupID = rs.getInt("id");
                 String name = rs.getString("name");
                 String path = rs.getString("path");
                 String mimeType = rs.getString("mimeType");
@@ -313,7 +314,7 @@ public class MySQLUtils {
                 // int ProjekteID = rs.getInt("ProjekteID");
                 String folder = rs.getString("folder");
                 ProjectFileGroup pfg = new ProjectFileGroup();
-                pfg.setId(ProjectFileGroupID);
+                pfg.setId(projectFileGroupID);
                 pfg.setName(name);
                 pfg.setPath(path);
                 pfg.setMimeType(mimeType);

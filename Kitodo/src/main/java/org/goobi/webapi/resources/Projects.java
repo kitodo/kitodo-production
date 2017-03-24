@@ -29,13 +29,13 @@ import javax.ws.rs.core.MediaType;
 import org.goobi.webapi.beans.ProjectsRootNode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 
 /**
- * The CatalogueConfiguration class provides the Jersey API URL pattern ${SERVLET_CONTEXT}/rest/projects
- * which returns the major data from the project configuration in XML or JSON format.
+ * The CatalogueConfiguration class provides the Jersey API URL pattern
+ * ${SERVLET_CONTEXT}/rest/projects which returns the major data from the
+ * project configuration in XML or JSON format.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -48,7 +48,7 @@ public class Projects {
      * @return ProjectsRootNode object
      */
     @GET
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
         Map<Project, Set<Process>> data = new HashMap<Project, Set<Process>>();
 

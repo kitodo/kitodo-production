@@ -15,12 +15,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.ProjectFileGroup;
 
 public class ProjectManager {
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
-
 
     public static ProjectObject getProjectById(int projectId) {
         try {
@@ -30,7 +28,6 @@ public class ProjectManager {
         }
         return null;
     }
-
 
     public static List<ProjectFileGroup> getFilegroupsForProjectId(int projectId) {
         try {

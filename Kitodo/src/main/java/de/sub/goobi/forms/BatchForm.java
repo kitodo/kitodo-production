@@ -42,7 +42,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -210,6 +209,7 @@ public class BatchForm extends BasisForm {
 
     /**
      * Filter all start.
+     * 
      * @return page - all batches
      */
     public String FilterAlleStart() throws DAOException {
@@ -309,7 +309,7 @@ public class BatchForm extends BasisForm {
                 if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                                Arrays.asList(new String[] { serviceManager.getBatchService().getLabel(batch) })), p);
+                                Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
                     }
                     this.serviceManager.getProcessService().saveList(this.selectedProcesses);
                 }
@@ -342,10 +342,12 @@ public class BatchForm extends BasisForm {
             serviceManager.getBatchService().save(batch);
             if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : this.selectedProcesses) {
-                    serviceManager.getProcessService().addToWikiField(
-                            Helper.getTranslation("removeFromBatch",
-                                    Arrays.asList(new String[] { serviceManager.getBatchService().getLabel(batch) })),
-                            p);
+                    serviceManager.getProcessService()
+                            .addToWikiField(
+                                    Helper.getTranslation("removeFromBatch",
+                                            Arrays.asList(
+                                                    new String[] {serviceManager.getBatchService().getLabel(batch) })),
+                                    p);
                 }
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
@@ -376,7 +378,7 @@ public class BatchForm extends BasisForm {
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
                 logger.error(e);
-            } catch (IOException e ) {
+            } catch (IOException e) {
                 Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
                 logger.error(e);
             }
@@ -398,8 +400,12 @@ public class BatchForm extends BasisForm {
             serviceManager.getBatchService().save(batch);
             if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : selectedProcesses) {
-                    serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                            Arrays.asList(new String[] { serviceManager.getBatchService().getLabel(batch) })), p);
+                    serviceManager.getProcessService()
+                            .addToWikiField(
+                                    Helper.getTranslation("addToBatch",
+                                            Arrays.asList(
+                                                    new String[] {serviceManager.getBatchService().getLabel(batch) })),
+                                    p);
                 }
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
@@ -483,8 +489,8 @@ public class BatchForm extends BasisForm {
                             Hibernate.initialize(prozess.getProject());
                             Hibernate.initialize(prozess.getProject().getProjectFileGroups());
                             Hibernate.initialize(prozess.getRuleset());
-                            ExportDms dms = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
-                                    true));
+                            ExportDms dms = new ExportDms(
+                                    ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                             dms.startExport(prozess);
                         }
                         return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";

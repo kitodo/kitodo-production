@@ -11,6 +11,8 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,19 +21,15 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for ProcessType.
@@ -66,7 +64,7 @@ public class ProcessTypeTest {
         firstProcess.setId(1);
         firstProcess.setTitle("Testing");
         firstProcess.setOutputName("Test");
-        LocalDate localDate = new LocalDate(2017,1,1);
+        LocalDate localDate = new LocalDate(2017, 1, 1);
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setWikiField("Wiki");
         firstProcess.setProject(project);
@@ -118,8 +116,8 @@ public class ProcessTypeTest {
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
-                + "\"ldapGroup\":\"null\",\"ruleset\":\"null\",\"project\":\"null\","
-                + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())+ "\",\"properties\":[]}");
+                + "\"ldapGroup\":\"null\",\"ruleset\":\"null\",\"project\":\"null\"," + "\"creationDate\":\""
+                + dateFormat.format(process.getCreationDate()) + "\",\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

@@ -33,9 +33,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -68,12 +66,12 @@ public class ExportMets {
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
      *
-     * @param myProcess Process object
+     * @param myProcess
+     *            Process object
      */
-    public boolean startExport(Process myProcess)
-            throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
-            WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-            SwapException, DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process myProcess) throws IOException, InterruptedException, DocStructHasNoTypeException,
+            PreferencesException, WriteException, MetadataTypeNotAllowedException, ExportFileException,
+            UghHelperException, ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         String userHome = "";
         if (login != null) {
@@ -85,13 +83,15 @@ public class ExportMets {
     /**
      * DMS-Export an eine gewünschte Stelle.
      *
-     * @param myProcess Process object
-     * @param inZielVerzeichnis String
+     * @param myProcess
+     *            Process object
+     * @param inZielVerzeichnis
+     *            String
      */
     public boolean startExport(Process myProcess, String inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException,
-            DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
-            ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
+            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
+            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+            DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -129,7 +129,8 @@ public class ExportMets {
     /**
      * prepare user directory.
      *
-     * @param inTargetFolder the folder to prove and maybe create it
+     * @param inTargetFolder
+     *            the folder to prove and maybe create it
      */
     protected String prepareUserDirectory(String inTargetFolder) {
         String target = inTargetFolder;
@@ -138,8 +139,8 @@ public class ExportMets {
             try {
                 FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
             } catch (Exception e) {
-                Helper.setFehlerMeldung("Export canceled, could not create destination directory: "
-                        + inTargetFolder, e);
+                Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder,
+                        e);
             }
         }
         return target;
@@ -148,14 +149,17 @@ public class ExportMets {
     /**
      * write MetsFile to given Path.
      *
-     * @param myProcess the Process to use
-     * @param targetFileName the filename where the metsfile should be written
-     * @param gdzfile the FileFormat-Object to use for Mets-Writing
+     * @param myProcess
+     *            the Process to use
+     * @param targetFileName
+     *            the filename where the metsfile should be written
+     * @param gdzfile
+     *            the FileFormat-Object to use for Mets-Writing
      */
 
-    protected boolean writeMetsFile(Process myProcess, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
-            throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    protected boolean writeMetsFile(Process myProcess, String targetFileName, Fileformat gdzfile,
+            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
+            SwapException, DAOException, TypeNotAllowedForParentException {
 
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
@@ -173,7 +177,8 @@ public class ExportMets {
         }
 
         /*
-         * get the topstruct element of the digital document depending on anchor property
+         * get the topstruct element of the digital document depending on anchor
+         * property
          */
         DocStruct topElement = dd.getLogicalDocStruct();
         if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
@@ -200,11 +205,11 @@ public class ExportMets {
                 }
             } else {
                 if (this instanceof ExportDms && ((ExportDms) this).exportDmsTask != null) {
-                    ((ExportDms) this).exportDmsTask.setException(new RuntimeException(myProcess.getTitle()
-                            + ": could not find any referenced images, export aborted"));
+                    ((ExportDms) this).exportDmsTask.setException(new RuntimeException(
+                            myProcess.getTitle() + ": could not find any referenced images, export aborted"));
                 } else {
-                    Helper.setFehlerMeldung(myProcess.getTitle()
-                            + ": could not find any referenced images, export aborted");
+                    Helper.setFehlerMeldung(
+                            myProcess.getTitle() + ": could not find any referenced images, export aborted");
                 }
                 return false;
             }
@@ -225,9 +230,11 @@ public class ExportMets {
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die
+         * Metsstruktur übernommen
          */
-        // Replace all paths with the given VariableReplacer, also the file group paths!
+        // Replace all paths with the given VariableReplacer, also the file
+        // group paths!
         VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), this.myPrefs, myProcess, null);
         List<ProjectFileGroup> myFilegroups = myProcess.getProject().getProjectFileGroups();
 
@@ -235,8 +242,8 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    SafeFile folder = new SafeFile(serviceManager.getProcessService()
-                            .getMethodFromName(pfg.getFolder(), myProcess));
+                    SafeFile folder = new SafeFile(
+                            serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
                     if (folder.exists() && folder.list().length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
@@ -272,7 +279,7 @@ public class ExportMets {
         mm.setPurlUrl(vp.replace(myProcess.getProject().getMetsPurl()));
         mm.setContentIDs(vp.replace(myProcess.getProject().getMetsContentIDs()));
 
-        // Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl  is the
+        // Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
         // pointer used to point to the superordinate (anchor) file, that is
         // representing a “virtual” group such as a series. Several anchors
         // pointer paths can be defined/ since it is possible to define several
@@ -285,7 +292,8 @@ public class ExportMets {
             mm.setMptrUrl(anchorPointer);
         }
 
-        // metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point from the (lowest) superordinate
+        // metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
+        // from the (lowest) superordinate
         // (anchor) file to the lowest level file (the non-anchor file).
         String metsPointerToReplace = myProcess.getProject().getMetsPointerPathAnchor();
         String metsPointer = vp.replace(metsPointerToReplace);

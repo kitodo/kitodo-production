@@ -18,54 +18,53 @@ import java.util.List;
 
 public interface IGoobiHotfolder {
 
-	
-	/**
-	 * 
-	 * @return a list with all xml files in GoobiHotfolder
-	 */
-	
-	public List<File> getCurrentFiles() ;
+    /**
+     * 
+     * @return a list with all xml files in GoobiHotfolder
+     */
 
-	/**
-	 * 
-	 * @param name
-	 * @return a list with all filenames containing the name in GoobiHotfolder
-	 */
-	
-	public List<String> getFilesByName(String name) ;
-	
-	/**
-	 * 
-	 * @param filter
-	 * @return a list with all filenames matching the filter
-	 */
-	
-	public List<String> getFileNamesByFilter(FilenameFilter filter) ;
+    public List<File> getCurrentFiles();
 
-	/**
-	 * 
-	 * @param filter
-	 * @return a list with all file matching the filter
-	 */
-	
-	public List<File> getFilesByFilter(FilenameFilter filter) ;
-	
-	/**
-	 * 
-	 * @return hotfolder as string
-	 */
-	public String getFolderAsString();
-	
-	/**
-	 * 
-	 * @return hotfolder as file
-	 */
-	public File getFolderAsFile() ;
-	
-	/**
-	 * 
-	 * @return hotfolder as URI
-	 */
-	public URI getFolderAsUri();
-	
+    /**
+     * 
+     * @param name
+     * @return a list with all filenames containing the name in GoobiHotfolder
+     */
+
+    public List<String> getFilesByName(String name);
+
+    /**
+     * 
+     * @param filter
+     * @return a list with all filenames matching the filter
+     */
+
+    public List<String> getFileNamesByFilter(FilenameFilter filter);
+
+    /**
+     * 
+     * @param filter
+     * @return a list with all file matching the filter
+     */
+
+    public List<File> getFilesByFilter(FilenameFilter filter);
+
+    /**
+     * 
+     * @return hotfolder as string
+     */
+    public String getFolderAsString();
+
+    /**
+     * 
+     * @return hotfolder as file
+     */
+    public File getFolderAsFile();
+
+    /**
+     * 
+     * @return hotfolder as URI
+     */
+    public URI getFolderAsUri();
+
 }

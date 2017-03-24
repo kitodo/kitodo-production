@@ -31,7 +31,8 @@ public class BatchDisplayItem implements Comparable<BatchDisplayItem> {
     /**
      * Constructor.
      *
-     * @param s task
+     * @param s
+     *            task
      */
     public BatchDisplayItem(Task s) {
         this.stepTitle = s.getTitle();

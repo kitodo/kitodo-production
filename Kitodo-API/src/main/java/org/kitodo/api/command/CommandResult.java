@@ -29,10 +29,15 @@ public class CommandResult {
 
     /**
      * Constructor.
-     * @param id The id.
-     * @param command The command.
-     * @param successful If command was successful.
-     * @param messages The resultmessages
+     * 
+     * @param id
+     *            The id.
+     * @param command
+     *            The command.
+     * @param successful
+     *            If command was successful.
+     * @param messages
+     *            The resultmessages
      */
     public CommandResult(Integer id, String command, boolean successful, ArrayList<String> messages) {
         this.id = id;
@@ -41,28 +46,36 @@ public class CommandResult {
         this.messages = messages;
     }
 
-    /** Gets the id.
+    /**
+     * Gets the id.
+     * 
      * @return The id.
      */
     public Integer getId() {
         return id;
     }
 
-    /** Gets the command.
+    /**
+     * Gets the command.
+     * 
      * @return The command.
      */
     public String getCommand() {
         return command;
     }
 
-    /** Gets if command was successfull.
+    /**
+     * Gets if command was successfull.
+     * 
      * @return The successful.
      */
     public boolean isSuccessful() {
         return successful;
     }
 
-    /** Gets the messages.
+    /**
+     * Gets the messages.
+     * 
      * @return The messages.
      */
     public ArrayList<String> getMessages() {

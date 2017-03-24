@@ -22,9 +22,12 @@ public class TemplateDAO extends BaseDAO {
     /**
      * Find template object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public Template find(Integer id) throws DAOException {
         Template result = (Template) retrieveObject(Template.class, id);
@@ -52,9 +55,11 @@ public class TemplateDAO extends BaseDAO {
     /**
      * The function remove() removes a template from database.
      *
-     * @param template to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param template
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Template template) throws DAOException {
         if (template.getId() != null) {
@@ -65,9 +70,11 @@ public class TemplateDAO extends BaseDAO {
     /**
      * The function remove() removes a template from database.
      *
-     * @param id of the task to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param id
+     *            of the task to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Integer id) throws DAOException {
         @SuppressWarnings("unused")

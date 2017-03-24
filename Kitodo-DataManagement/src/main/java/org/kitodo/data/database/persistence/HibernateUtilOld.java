@@ -13,24 +13,25 @@ package org.kitodo.data.database.persistence;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
 import org.kitodo.data.database.exceptions.InfrastructureException;
 
-//TODO: Fix for Hibernate-Session-Management, replaced with older version, 
-// the newer version follows on bottom  of this class
+// TODO: Fix for Hibernate-Session-Management, replaced with older version,
+// the newer version follows on bottom of this class
 
 /**
- * Basic Hibernate helper class, handles SessionFactory, Session and Transaction.
+ * Basic Hibernate helper class, handles SessionFactory, Session and
+ * Transaction.
  *
- * <p>Uses a static initializer for the initial SessionFactory creation and holds Session and Transactions in thread
- * local variables. All exceptions are wrapped in an unchecked InfrastructureException.
+ * <p>
+ * Uses a static initializer for the initial SessionFactory creation and holds
+ * Session and Transactions in thread local variables. All exceptions are
+ * wrapped in an unchecked InfrastructureException.
  *
  * @author christian@hibernate.org
  */
@@ -97,6 +98,7 @@ public class HibernateUtilOld {
      * Rebuild the SessionFactory with the given Hibernate Configuration.
      *
      * @param cfg
+     *            the configuration
      */
     public static void rebuildSessionFactory(Configuration cfg) throws InfrastructureException {
         synchronized (sessionFactoryRebuildLock) {
@@ -112,7 +114,8 @@ public class HibernateUtilOld {
     /**
      * Retrieves the current Session local to the thread.
      *
-     * <p/> If no Session is open, opens a new Session for the running thread.
+     * <p/>
+     * If no Session is open, opens a new Session for the running thread.
      *
      * @return Session
      */
@@ -202,7 +205,6 @@ public class HibernateUtilOld {
         }
     }
 
-
     /**
      * Disconnect and return Session from current Thread.
      *
@@ -225,8 +227,10 @@ public class HibernateUtilOld {
     /**
      * Register a Hibernate interceptor with the current thread.
      *
-     * <p>Every Session opened is opened with this interceptor after registration. Has no effect if the current Session
-	 * of the thread is already open, effective on next close()/getSession().
+     * <p>
+     * Every Session opened is opened with this interceptor after registration.
+     * Has no effect if the current Session of the thread is already open,
+     * effective on next close()/getSession().
      */
     public static void registerInterceptor(Interceptor interceptor) {
         threadInterceptor.set(interceptor);

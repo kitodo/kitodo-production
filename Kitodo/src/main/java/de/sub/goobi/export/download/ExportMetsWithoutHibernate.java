@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
@@ -66,12 +64,13 @@ public class ExportMetsWithoutHibernate {
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
      *
-     * @param process ProcessObject
+     * @param process
+     *            ProcessObject
      */
     public boolean startExport(ProcessObject process)
-            throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException,
-            WriteException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException,
-            SwapException, DAOException, TypeNotAllowedForParentException {
+            throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException, WriteException,
+            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+            DAOException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         String benutzerHome = "";
         if (login != null) {
@@ -83,19 +82,21 @@ public class ExportMetsWithoutHibernate {
     /**
      * DMS-Export an eine gewünschte Stelle.
      *
-     * @param process ProcessObject
-     * @param inZielVerzeichnis String
+     * @param process
+     *            ProcessObject
+     * @param inZielVerzeichnis
+     *            String
      */
     public boolean startExport(ProcessObject process, String inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException,
-            DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
-            ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
+            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
+            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+            DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
          */
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
-                .getRuleset(process.getRulesetId()));
+        this.myPrefs = serviceManager.getRulesetService()
+                .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
 
         this.project = ProjectManager.getProjectById(process.getProjectId());
         String atsPpnBand = process.getTitle();
@@ -120,8 +121,7 @@ public class ExportMetsWithoutHibernate {
         try {
             FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Export canceled, could not create destination directory: "
-                    + inTargetFolder, e);
+            Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
         }
         return target;
     }
@@ -136,12 +136,12 @@ public class ExportMetsWithoutHibernate {
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
-    protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile, boolean writeLocalFilegroup)
-            throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile,
+            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
+            SwapException, DAOException, TypeNotAllowedForParentException {
         this.fi = new FolderInformation(process.getId(), process.getTitle());
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(ProcessManager
-                .getRuleset(process.getRulesetId()));
+        this.myPrefs = serviceManager.getRulesetService()
+                .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
         this.project = ProjectManager.getProjectById(process.getProjectId());
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
@@ -157,7 +157,8 @@ public class ExportMetsWithoutHibernate {
         }
 
         /*
-         * get the topstruct element of the digital document depending on anchor property
+         * get the topstruct element of the digital document depending on anchor
+         * property
          */
         DocStruct topElement = dd.getLogicalDocStruct();
         if (this.myPrefs.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
@@ -203,9 +204,11 @@ public class ExportMetsWithoutHibernate {
         mm.setDigitalDocument(dd);
 
         /*
-         * wenn Filegroups definiert wurden, werden diese jetzt in die Metsstruktur übernommen
+         * wenn Filegroups definiert wurden, werden diese jetzt in die
+         * Metsstruktur übernommen
          */
-        // Replace all paths with the given VariableReplacer, also the file group paths!
+        // Replace all paths with the given VariableReplacer, also the file
+        // group paths!
         VariableReplacerWithoutHibernate vp = new VariableReplacerWithoutHibernate(mm.getDigitalDocument(),
                 this.myPrefs, process, null);
         List<ProjectFileGroup> myFilegroups = ProjectManager.getFilegroupsForProjectId(this.project.getId());

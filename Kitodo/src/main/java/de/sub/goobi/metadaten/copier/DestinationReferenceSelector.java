@@ -19,8 +19,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import ugh.dl.DocStruct;
 
 /**
- * A DestinationReferenceSelector provides methods to retrieve document structure nodes relative to
- * the respective document structure that the result of the operation shall be written to for reading from them.
+ * A DestinationReferenceSelector provides methods to retrieve document
+ * structure nodes relative to the respective document structure that the result
+ * of the operation shall be written to for reading from them.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -38,7 +39,8 @@ public class DestinationReferenceSelector extends DataSelector {
     private final int index;
 
     /**
-     * A further selector to read data relative to the resolved result of this selector.
+     * A further selector to read data relative to the resolved result of this
+     * selector.
      */
     private final MetadataSelector nextSelector;
 
@@ -60,7 +62,8 @@ public class DestinationReferenceSelector extends DataSelector {
     }
 
     /**
-     * Returns the document structure level indicated by the index form the respective destination path.
+     * Returns the document structure level indicated by the index form the
+     * respective destination path.
      *
      * @see de.sub.goobi.metadaten.copier.DataSelector#findIn(de.sub.goobi.metadaten.copier.CopierData)
      */

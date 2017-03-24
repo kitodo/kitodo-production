@@ -26,7 +26,6 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -47,13 +46,16 @@ public class StatistikForm {
     }
 
     /**
-     * The function getAnzahlBenutzer() counts the number of user accounts in the goobi.production environment.
-     * Since user accounts are not hard deleted from the database when the delete button is pressed a where clause
-     * is used in the SQL statement to exclude the deleted accounts from the sum.
+     * The function getAnzahlBenutzer() counts the number of user accounts in
+     * the goobi.production environment. Since user accounts are not hard
+     * deleted from the database when the delete button is pressed a where
+     * clause is used in the SQL statement to exclude the deleted accounts from
+     * the sum.
      *
      * @return the count of valid user accounts
      * @throws DAOException
-     *             if the current session can't be retrieved or an exception is thrown while performing the rollback.
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback.
      */
 
     public Long getAnzahlBenutzer() {
@@ -176,7 +178,10 @@ public class StatistikForm {
             critGruppen.createCriteria("process", "proz");
             critGruppen.add(Restrictions.eq("proz.template", Boolean.FALSE));
 
-            /* nur Schritte, wo Benutzergruppen des aktuellen Benutzers eingetragen sind */
+            /*
+             * nur Schritte, wo Benutzergruppen des aktuellen Benutzers
+             * eingetragen sind
+             */
             critGruppen.createCriteria("userGroups", "gruppen").createCriteria("users", "gruppennutzer");
             critGruppen.add(Restrictions.eq("gruppennutzer.id", login.getMyBenutzer().getId()));
 

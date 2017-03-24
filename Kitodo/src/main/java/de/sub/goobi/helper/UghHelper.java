@@ -17,7 +17,6 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -34,8 +33,10 @@ public class UghHelper {
     /**
      * MetadataType aus Preferences eines Prozesses ermitteln.
      *
-     * @param inProzess Process object
-     * @param inName String
+     * @param inProzess
+     *            Process object
+     * @param inName
+     *            String
      * @return MetadataType
      */
     public static MetadataType getMetadataType(Process inProzess, String inName) throws UghHelperException {
@@ -46,8 +47,10 @@ public class UghHelper {
     /**
      * MetadataType aus Preferences ermitteln.
      *
-     * @param inPrefs Prefs object
-     * @param inName String
+     * @param inPrefs
+     *            Prefs object
+     * @param inName
+     *            String
      * @return MetadataType
      */
     public static MetadataType getMetadataType(Prefs inPrefs, String inName) throws UghHelperException {
@@ -61,8 +64,10 @@ public class UghHelper {
     /**
      * Metadata eines Docstructs ermitteln.
      *
-     * @param inStruct DocStruct object
-     * @param inMetadataType MetadataType object
+     * @param inStruct
+     *            DocStruct object
+     * @param inMetadataType
+     *            MetadataType object
      * @return Metadata
      */
     public static Metadata getMetadata(DocStruct inStruct, MetadataType inMetadataType) {

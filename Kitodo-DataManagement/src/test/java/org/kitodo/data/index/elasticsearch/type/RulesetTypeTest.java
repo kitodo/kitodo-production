@@ -11,20 +11,18 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.Ruleset;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for DocketType.
@@ -58,8 +56,8 @@ public class RulesetTypeTest {
 
         HttpEntity document = rulesetType.createDocument(ruleset);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{,\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\","
-                + "\"fileContent\":\"\"}");
+        JSONObject excepted = (JSONObject) parser
+                .parse("{,\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\"," + "\"fileContent\":\"\"}");
         assertEquals("Ruleset JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 

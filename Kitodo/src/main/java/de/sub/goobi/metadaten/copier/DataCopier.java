@@ -19,7 +19,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 /**
- * A data copier is a class that can be parametrised to copy data in goobi processes depending on rules.
+ * A data copier is a class that can be parametrised to copy data in goobi
+ * processes depending on rules.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -50,7 +51,8 @@ public class DataCopier {
     }
 
     /**
-     * Applies the rules defined by the “program” passed to the constructor onto a given dataset.
+     * Applies the rules defined by the “program” passed to the constructor onto
+     * a given dataset.
      *
      * @param data
      *            a data object to work on

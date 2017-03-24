@@ -32,8 +32,8 @@ public class ImportProperty implements IProperty {
     private boolean required = false;
 
     /**
-	 * Constructor.
-	 */
+     * Constructor.
+     */
     public ImportProperty() {
         this.possibleValues = new ArrayList<String>();
         this.projects = new ArrayList<String>();
@@ -141,7 +141,7 @@ public class ImportProperty implements IProperty {
     }
 
     @Override
-    public void transfer(){
+    public void transfer() {
     }
 
     /**
@@ -161,7 +161,8 @@ public class ImportProperty implements IProperty {
     /**
      * Set value list.
      *
-     * @param valueList list of Strings
+     * @param valueList
+     *            list of Strings
      */
     public void setValueList(List<String> valueList) {
         this.value = "";
@@ -186,7 +187,8 @@ public class ImportProperty implements IProperty {
     /**
      * Set boolean value.
      *
-     * @param val boolean
+     * @param val
+     *            boolean
      */
     public void setBooleanValue(boolean val) {
         if (val) {
@@ -201,7 +203,6 @@ public class ImportProperty implements IProperty {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         value = format.format(inDate);
     }
-
 
     @Override
     public Date getDateValue() {

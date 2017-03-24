@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.kitodo.data.database.persistence.apache.MySQLHelper;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 public class StepManager {
 
@@ -61,7 +59,7 @@ public class StepManager {
 
     public static void addHistory(Date myDate, double order, String value, int type, int processId) {
         try {
-            MySQLHelper.getInstance().addHistory( myDate,  order,  value,  type,  processId);
+            MySQLHelper.getInstance().addHistory(myDate, order, value, type, processId);
         } catch (SQLException e) {
             logger.error("Cannot not save history event", e);
         }
@@ -75,7 +73,8 @@ public class StepManager {
         }
         return new ArrayList<String>();
     }
-    public static Map<String,String> loadScriptMap(int id) {
+
+    public static Map<String, String> loadScriptMap(int id) {
         try {
             return MySQLHelper.getScriptMapForStep(id);
         } catch (SQLException e) {

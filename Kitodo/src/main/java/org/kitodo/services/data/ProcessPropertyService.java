@@ -11,11 +11,11 @@
 
 package org.kitodo.services.data;
 
+import java.util.List;
+
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProcessPropertyDAO;
-
-import java.util.List;
 
 public class ProcessPropertyService {
 
@@ -38,7 +38,7 @@ public class ProcessPropertyService {
     }
 
     public String getNormalizedTitle(ProcessProperty processProperty) {
-        //why trim after replace spaces to _, it should have reversed order
+        // why trim after replace spaces to _, it should have reversed order
         return processProperty.getTitle().replace(" ", "_").trim();
     }
 

@@ -13,7 +13,6 @@ package de.sub.goobi.helper;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
@@ -21,11 +20,12 @@ import org.kitodo.data.database.persistence.HibernateUtilOld;
 public class RefreshObject {
     private static final Logger logger = Logger.getLogger(RefreshObject.class);
 
-	/**
-	 * Refresh process.
+    /**
+     * Refresh process.
      *
-	 * @param processID int
-	 */
+     * @param processID
+     *            int
+     */
     public static void refreshProcess(int processID) {
         if (logger.isDebugEnabled()) {
             logger.debug("refreshing process with id " + processID);
@@ -64,7 +64,8 @@ public class RefreshObject {
     /**
      * Refresh process - GUI.
      *
-     * @param processID int
+     * @param processID
+     *            int
      */
     public static void refreshProcess_GUI(int processID) {
         if (logger.isDebugEnabled()) {
@@ -99,7 +100,8 @@ public class RefreshObject {
     /**
      * Stop refresh.
      *
-     * @param stepID task id
+     * @param stepID
+     *            task id
      */
     public static void refreshStep(int stepID) {
         try {

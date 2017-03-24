@@ -12,10 +12,8 @@
 package de.sub.goobi.export.download;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import javax.faces.context.FacesContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +22,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.services.ServiceManager;
-
 
 /**
  * Die Klasse TiffHeader dient zur Generierung einer Tiffheaderdatei *.conf
@@ -50,15 +47,16 @@ public class TiffHeader {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der Eigenschaften des Werkstücks bzw.
-     * der Scanvorlage
+     * Erzeugen des Tiff-Headers anhand des übergebenen Prozesses Einlesen der
+     * Eigenschaften des Werkstücks bzw. der Scanvorlage
      */
     public TiffHeader(Process process) {
         if (serviceManager.getProcessService().getWorkpiecesSize(process) > 0) {
             Workpiece myWerkstueck = process.getWorkpieces().get(0);
             if (serviceManager.getWorkpieceService().getPropertiesSize(myWerkstueck) > 0) {
                 for (WorkpieceProperty eig : myWerkstueck.getProperties()) {
-                    // Werkstueckeigenschaft eig = (Werkstueckeigenschaft) iter.next();
+                    // Werkstueckeigenschaft eig = (Werkstueckeigenschaft)
+                    // iter.next();
 
                     if (eig.getTitle().equals("TifHeaderDocumentname")) {
                         this.tifHeader_documentname = eig.getValue();
@@ -90,7 +88,7 @@ public class TiffHeader {
     }
 
     /**
-     *  Tiff-Header-Daten als ein grosser String.
+     * Tiff-Header-Daten als ein grosser String.
      */
     public String getTiffAlles() {
         String lineBreak = "\r\n";

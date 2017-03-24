@@ -19,7 +19,8 @@ import javax.faces.convert.ConverterException;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 
 /**
- * StatisticCalculationUnitConverter for statistics CalculationUnits as select-items in jsf-guis.
+ * StatisticCalculationUnitConverter for statistics CalculationUnits as
+ * select-items in jsf-guis.
  * 
  * @author Steffen Hankiewicz
  * @version 21.05.2009

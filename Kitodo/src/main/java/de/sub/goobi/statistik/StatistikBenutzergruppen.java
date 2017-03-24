@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.UserGroup;
@@ -28,7 +27,8 @@ public class StatistikBenutzergruppen {
     /**
      * Get diagram.
      *
-     * @param inProzesse list of Process objects
+     * @param inProzesse
+     *            list of Process objects
      * @return Dataset object
      */
     public static Dataset getDiagramm(List<Process> inProzesse) {
@@ -37,12 +37,14 @@ public class StatistikBenutzergruppen {
             Task step = serviceManager.getProcessService().getCurrentTask(proz);
             /* wenn wirklich ein aktueller Schritt zurückgegeben wurde */
             if (step != null) {
-                /* von dem Schritt alle verantwortlichen Benutzergruppen ermitteln und im Diagramm erfassen */
+                /*
+                 * von dem Schritt alle verantwortlichen Benutzergruppen
+                 * ermitteln und im Diagramm erfassen
+                 */
                 for (Iterator<UserGroup> iter2 = step.getUserGroups().iterator(); iter2.hasNext();) {
                     UserGroup group = iter2.next();
                     if (dataset.getIndex(group.getTitle()) != -1) {
-                        dataset
-                                .setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
+                        dataset.setValue(group.getTitle(), dataset.getValue(group.getTitle()).intValue() + 1);
                     } else {
                         dataset.setValue(group.getTitle(), 1);
                     }

@@ -10,23 +10,27 @@
  */
 
 /**
- * Contains a plug-in required to access a PICA library catalogue system.
- * The main class implementing the plug-in is PicaPlugin. It provides the
- * following public methods which are specified in
+ * Contains a plug-in required to access a PICA library catalogue system. The
+ * main class implementing the plug-in is PicaPlugin. It provides the following
+ * public methods which are specified in
  * {@link org.goobi.production.plugin.UnspecificPlugin}:
  * 
- * <pre>   void    configure(Map)
+ * <pre>
+ *    void    configure(Map)
  *   String  getDescription()
- *   String  getTitle()</pre>
+ *   String  getTitle()
+ * </pre>
  * 
  * and in {@link org.goobi.production.plugin.CataloguePlugin.CataloguePlugin}:
  *
- * <pre>   Object  find(String, long)
+ * <pre>
+ *    Object  find(String, long)
  *   Map     getHit(Object, long, long)
  *   long    getNumberOfHits(Object, long)
  *   void    setPreferences(Prefs)
  *   boolean supportsCatalogue(String)
- *   void    useCatalogue(String)</pre>
+ *   void    useCatalogue(String)
+ * </pre>
  *
  * Most of the code originates form the package
  * <kbd>de.unigoettingen.sub.search.opac</kbd> created by “Ludwig” and maybe

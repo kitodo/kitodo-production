@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -30,16 +29,19 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
-
 import org.kitodo.data.database.beans.Process;
 
 /**
- * This class is an implementation of {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data
- * about the productivity of the selected processes, which are passed into this class via implementations of
- * the IDataSource interface.
+ * This class is an implementation of
+ * {@link IStatisticalQuestionLimitedTimeframe} and retrieves statistical Data
+ * about the productivity of the selected processes, which are passed into this
+ * class via implementations of the IDataSource interface.
  *
- * <p>According to {@link IStatisticalQuestionLimitedTimeframe} other parameters can be set before the productivity of
- * the selected {@link Process}es is valuated.</p>
+ * <p>
+ * According to {@link IStatisticalQuestionLimitedTimeframe} other parameters
+ * can be set before the productivity of the selected {@link Process}es is
+ * valuated.
+ * </p>
  * 
  * @author Wulf Riebensahm
  * @author Robert Sehr
@@ -55,19 +57,24 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     private CalculationUnit cu = CalculationUnit.volumesAndPages;
 
     /**
-     * IDataSource needs here to be an implementation of hibernate.IEvaluableFilter, which is a hibernate based
-     * extension of IDataSource
+     * IDataSource needs here to be an implementation of
+     * hibernate.IEvaluableFilter, which is a hibernate based extension of
+     * IDataSource
      *
-     * <p>(non-Javadoc)</p>
+     * <p>
+     * (non-Javadoc)
+     * </p>
      *
      * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
-     * org.goobi.production.flow.statistics.IDataSource)
+     *      org.goobi.production.flow.statistics.IDataSource)
      */
     @Override
     public List<DataTable> getDataTables(IDataSource dataSource) {
 
-        // contains an intger representing "reihenfolge" in schritte, as defined for this request
-        // if not defined it will trigger a fall back on a different way of retrieving the statistical data
+        // contains an intger representing "reihenfolge" in schritte, as defined
+        // for this request
+        // if not defined it will trigger a fall back on a different way of
+        // retrieving the statistical data
         Integer exactStepDone = null;
         String stepname = null;
         List<DataTable> allTables = new ArrayList<DataTable>();
@@ -81,7 +88,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                     "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
         }
 
-        // gathering some information from the filter passed by dataSource exactStepDone is very important ...
+        // gathering some information from the filter passed by dataSource
+        // exactStepDone is very important ...
 
         try {
             exactStepDone = originalFilter.stepDone();
@@ -151,13 +159,15 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                 // getting localized time group unit
 
                 // String identifier = timeGrouping.getTitle();
-                // setting row name with localized time group and the date/time extraction based on the group
+                // setting row name with localized time group and the date/time
+                // extraction based on the group
 
                 dataRowChart.setName(new Converter(objArr[2]).getString() + "");
                 dataRow.setName(new Converter(objArr[2]).getString() + "");
                 // dataRow.setName(new Converter(objArr[2]).getString());
 
-                // building up row depending on requested output having different fields
+                // building up row depending on requested output having
+                // different fields
                 switch (this.cu) {
 
                     case volumesAndPages: {
@@ -170,8 +180,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
                     }
                         break;
                     case volumes: {
-                        dataRowChart.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0])
-                                .getDouble()));
+                        dataRowChart.addValue(CalculationUnit.volumes.getTitle(),
+                                (new Converter(objArr[0]).getDouble()));
                         dataRow.addValue(CalculationUnit.volumes.getTitle(), (new Converter(objArr[0]).getDouble()));
                     }
                         break;
@@ -195,7 +205,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
             dtbl.addDataRow(dataRow);
         }
 
-        // a list of DataTables is expected as return Object, even if there is only one
+        // a list of DataTables is expected as return Object, even if there is
+        // only one
         // Data Table as it is here in this implementation
         dtblChart.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
@@ -212,8 +223,9 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#
-     * setTimeFrame(java.util.Date, java.util.Date)
+     * @see org.goobi.production.flow.statistics.
+     * IStatisticalQuestionLimitedTimeframe# setTimeFrame(java.util.Date,
+     * java.util.Date)
      */
     @Override
     public void setTimeFrame(Date timeFrom, Date timeTo) {
@@ -236,7 +248,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
      * (non-Javadoc)
      *
      * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
-     * setCalculationUnit(org.goobi.production.flow.statistics.enums.CalculationUnit)
+     * setCalculationUnit(org.goobi.production.flow.statistics.enums.
+     * CalculationUnit)
      */
     @Override
     public void setCalculationUnit(CalculationUnit cu) {
@@ -257,7 +270,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * getNumberFormatPattern()
      */
     @Override
     public String getNumberFormatPattern() {

@@ -1,18 +1,18 @@
 /*
  * Copyright by intranda GmbH 2013. All rights reserved.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.plugin.importer.massimport.sru;
@@ -31,13 +31,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru.SRUClient;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
 
-import ugh.dl.*;
+import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
+import ugh.dl.DocStructType;
+import ugh.dl.Fileformat;
+import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
@@ -49,15 +51,20 @@ public class SRUHelper {
 
     private static final Namespace PICA = Namespace.getNamespace("pica", "info:srw/schema/5/picaXML-v1.0");
 
-    // private static final Namespace DC = Namespace.getNamespace("dc", "http://purl.org/dc/elements/1.1/");
-    // private static final Namespace DIAG = Namespace.getNamespace("diag", "http://www.loc.gov/zing/srw/diagnostic/");
-    // private static final Namespace XCQL = Namespace.getNamespace("xcql", "http://www.loc.gov/zing/cql/xcql/");
+    // private static final Namespace DC = Namespace.getNamespace("dc",
+    // "http://purl.org/dc/elements/1.1/");
+    // private static final Namespace DIAG = Namespace.getNamespace("diag",
+    // "http://www.loc.gov/zing/srw/diagnostic/");
+    // private static final Namespace XCQL = Namespace.getNamespace("xcql",
+    // "http://www.loc.gov/zing/cql/xcql/");
 
     /**
      * Search.
      *
-     * @param ppn String
-     * @param address String
+     * @param ppn
+     *            String
+     * @param address
+     *            String
      * @return String
      */
     public static String search(String ppn, String address) {
@@ -74,22 +81,19 @@ public class SRUHelper {
     /**
      * Parse result.
      *
-     * @param resultString String
+     * @param resultString
+     *            String
      * @return Node
      */
-    public static Node parseResult(String resultString) throws IOException,
-            JDOMException, ParserConfigurationException {
+    public static Node parseResult(String resultString)
+            throws IOException, JDOMException, ParserConfigurationException {
 
         // removed validation against external dtd
         SAXBuilder builder = new SAXBuilder(false);
         builder.setValidation(false);
         builder.setFeature("http://xml.org/sax/features/validation", false);
-        builder.setFeature(
-                "http://apache.org/xml/features/nonvalidating/load-dtd-grammar",
-                false);
-        builder.setFeature(
-                "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                false);
+        builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
         Document doc = builder.build(new StringReader(resultString));
         // srw:searchRetrieveResponse
@@ -123,19 +127,15 @@ public class SRUHelper {
                     org.w3c.dom.Element field = answer.createElement("field");
                     picaRecord.appendChild(field);
                     if (datafield.getAttributeValue("occurrence") != null) {
-                        field.setAttribute("occurrence",
-                                datafield.getAttributeValue("occurrence"));
+                        field.setAttribute("occurrence", datafield.getAttributeValue("occurrence"));
                     }
-                    field.setAttribute("tag",
-                            datafield.getAttributeValue("tag"));
+                    field.setAttribute("tag", datafield.getAttributeValue("tag"));
                     @SuppressWarnings("unchecked")
                     List<Element> subfields = datafield.getChildren();
                     for (Element sub : subfields) {
-                        org.w3c.dom.Element subfield = answer
-                                .createElement("subfield");
+                        org.w3c.dom.Element subfield = answer.createElement("subfield");
                         field.appendChild(subfield);
-                        subfield.setAttribute("code",
-                                sub.getAttributeValue("code"));
+                        subfield.setAttribute("code", sub.getAttributeValue("code"));
                         Text text = answer.createTextNode(sub.getText());
                         subfield.appendChild(text);
                     }
@@ -149,8 +149,10 @@ public class SRUHelper {
     /**
      * Parse pica format.
      *
-     * @param pica Node
-     * @param prefs Prefs
+     * @param pica
+     *            Node
+     * @param prefs
+     *            Prefs
      * @return Fileformat
      */
     public static Fileformat parsePicaFormat(Node pica, Prefs prefs)

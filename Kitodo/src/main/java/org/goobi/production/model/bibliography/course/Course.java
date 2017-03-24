@@ -32,8 +32,10 @@ import org.w3c.dom.Node;
 /**
  * The class Course represents the course of appearance of a newspaper.
  *
- * <p> A course of appearance consists of one or more blocks of time. Interruptions in the course of appearance
- * can be modeled by subsequent blocks. </p>
+ * <p>
+ * A course of appearance consists of one or more blocks of time. Interruptions
+ * in the course of appearance can be modeled by subsequent blocks.
+ * </p>
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -41,20 +43,26 @@ public class Course extends ArrayList<Block> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Attribute <code>date="…"</code> used in the XML representation of a course of appearance.
+     * Attribute <code>date="…"</code> used in the XML representation of a
+     * course of appearance.
      */
     private static final String ATTRIBUTE_DATE = "date";
 
     /**
-     * Attribute <code>index="…"</code> used in the XML representation of a course of appearance.
+     * Attribute <code>index="…"</code> used in the XML representation of a
+     * course of appearance.
      *
-     * <p> The attribute <code>index="…"</code> is optional. It may be used to distinguish different blocks
-     * if needed and can be omitted if only one block is used.</p>
+     * <p>
+     * The attribute <code>index="…"</code> is optional. It may be used to
+     * distinguish different blocks if needed and can be omitted if only one
+     * block is used.
+     * </p>
      */
     private static final String ATTRIBUTE_VARIANT = "index";
 
     /**
-     * Attribute <code>issue="…"</code> used in the XML representation of a course of appearance.
+     * Attribute <code>issue="…"</code> used in the XML representation of a
+     * course of appearance.
      *
      * <p>
      * The attribute <code>issue="…"</code> holds the name of the issue.
@@ -66,7 +74,8 @@ public class Course extends ArrayList<Block> {
     private static final String ATTRIBUTE_ISSUE_HEADING = "issue";
 
     /**
-     * Element <code>&lt;appeared&gt;</code> used in the XML representation of a course of appearance.
+     * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
+     * course of appearance.
      *
      * <p>
      * Each <code>&lt;appeared&gt;</code> element represents one issue that
@@ -78,7 +87,8 @@ public class Course extends ArrayList<Block> {
     private static final String ELEMENT_APPEARED = "appeared";
 
     /**
-     * Element <code>&lt;course&gt;</code> used in the XML representation of a course of appearance.
+     * Element <code>&lt;course&gt;</code> used in the XML representation of a
+     * course of appearance.
      *
      * <p>
      * <code>&lt;course&gt;</code> is the root element of the XML
@@ -90,7 +100,8 @@ public class Course extends ArrayList<Block> {
     private static final String ELEMENT_COURSE = "course";
 
     /**
-     * Element <code>&lt;description&gt;</code> used in the XML representation of a course of appearance.
+     * Element <code>&lt;description&gt;</code> used in the XML representation
+     * of a course of appearance.
      *
      * <p>
      * <code>&lt;description&gt;</code> holds a verbal, human-readable
@@ -101,7 +112,8 @@ public class Course extends ArrayList<Block> {
     private static final String ELEMENT_DESCRIPTION = "description";
 
     /**
-     * Element <code>&lt;process&gt;</code> used in the XML representation of a course of appearance.
+     * Element <code>&lt;process&gt;</code> used in the XML representation of a
+     * course of appearance.
      *
      * <p>
      * Each <code>&lt;process&gt;</code> element represents one process to be
@@ -112,7 +124,8 @@ public class Course extends ArrayList<Block> {
     private static final String ELEMENT_PROCESS = "process";
 
     /**
-     * Element <code>&lt;processes&gt;</code> used in the XML representation of a course of appearance.
+     * Element <code>&lt;processes&gt;</code> used in the XML representation of
+     * a course of appearance.
      *
      * <p>
      * Each <code>&lt;processes&gt;</code> element represents the processes to
@@ -147,7 +160,8 @@ public class Course extends ArrayList<Block> {
     private boolean processesAreVolatile = true;
 
     /**
-     * Default constructor, creates an empty course. Must be made explicit since we offer other constructors, too.
+     * Default constructor, creates an empty course. Must be made explicit since
+     * we offer other constructors, too.
      */
     public Course() {
         super();

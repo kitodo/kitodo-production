@@ -20,8 +20,11 @@ public interface FileStructureValidationInterface {
 
     /**
      * validates a given xml file against a xsd at a given location.
-     * @param xmlFile The file to validate.
-     * @param xsdFileUrl The location of the schema to validate against.
+     * 
+     * @param xmlFile
+     *            The file to validate.
+     * @param xsdFileUrl
+     *            The location of the schema to validate against.
      * @return A ValidationResult, with result boolean and resultMessages.
      */
     ValidationResult validate(File xmlFile, URL xsdFileUrl);

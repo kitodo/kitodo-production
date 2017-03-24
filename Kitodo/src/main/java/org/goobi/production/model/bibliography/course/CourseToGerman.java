@@ -24,8 +24,8 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
 /**
- * The static class CourseToGerman provides a toString() method to convert a course of appearance into
- * a verbal description in German language.
+ * The static class CourseToGerman provides a toString() method to convert a
+ * course of appearance into a verbal description in German language.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -38,9 +38,8 @@ public class CourseToGerman {
      * references Sunday. Therefore the “null” in first place.
      * </p>
      */
-    private static final String[] DAYS_OF_WEEK_NAMES = new String[] {
-            null, "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"
-    };
+    private static final String[] DAYS_OF_WEEK_NAMES = new String[] {null, "Montag", "Dienstag", "Mittwoch",
+            "Donnerstag", "Freitag", "Samstag", "Sonntag" };
 
     /**
      * Month’s names in German.
@@ -49,13 +48,12 @@ public class CourseToGerman {
      * Joda time’s months are 1-based, therefore the “null” in first place.
      * </p>
      */
-    private static final String[] MONTH_NAMES = new String[] {
-            null, "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober",
-            "November", "Dezember"
-    };
+    private static final String[] MONTH_NAMES = new String[] {null, "Januar", "Februar", "März", "April", "Mai", "Juni",
+            "Juli", "August", "September", "Oktober", "November", "Dezember" };
 
     /**
-     * The function toString() returns a verbal description of the course of appearance in German.
+     * The function toString() returns a verbal description of the course of
+     * appearance in German.
      *
      * @return Verbal description of the course in German
      */
@@ -76,13 +74,13 @@ public class CourseToGerman {
                 }
             }
             hasPreviousBlock = true;
-        }
-        while (blocks.hasNext());
+        } while (blocks.hasNext());
         return result;
     }
 
     /**
-     * The function titleToString() formulates the regular appearance of a block in German language.
+     * The function titleToString() formulates the regular appearance of a block
+     * in German language.
      *
      * @param block
      *            Titel to formulate
@@ -138,7 +136,8 @@ public class CourseToGerman {
     }
 
     /**
-     * The function irregularitiesToString() formulates the irregularities of a given issue in German language.
+     * The function irregularitiesToString() formulates the irregularities of a
+     * given issue in German language.
      *
      * @param issue
      *            issues whose irregularities shall be formulated
@@ -170,7 +169,8 @@ public class CourseToGerman {
     }
 
     /**
-     * The method appendManyDates() converts a lot of date objects into readable text in German language.
+     * The method appendManyDates() converts a lot of date objects into readable
+     * text in German language.
      *
      * @param buffer
      *            StringBuilder to write to
@@ -236,8 +236,8 @@ public class CourseToGerman {
                     lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, next.getYear());
                 }
             } else if (next != null) {
-                if (nextInSameMonth && nextBothInSameMonth || !nextInSameMonth
-                        && next.getMonthOfYear() != lastMonthOfYear) {
+                if (nextInSameMonth && nextBothInSameMonth
+                        || !nextInSameMonth && next.getMonthOfYear() != lastMonthOfYear) {
                     buffer.append(", ");
                 } else {
                     buffer.append(" und ");
@@ -248,8 +248,7 @@ public class CourseToGerman {
             current = next;
             next = overNext;
             overNext = datesIterator.hasNext() ? datesIterator.next() : null;
-        }
-        while (current != null);
+        } while (current != null);
     }
 
     /**

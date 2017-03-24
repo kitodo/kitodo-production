@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
-
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.services.ServiceManager;
 
@@ -36,7 +35,7 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
     }
 
     private static synchronized void calculate(Project inProject, List<IProjectTask> myTaskList, Boolean countImages,
-                                               Integer inMax) {
+            Integer inMax) {
         List<StepInformation> workFlow = serviceManager.getProjectService().getWorkFlow(inProject);
         Integer usedMax = 0;
 
@@ -56,7 +55,8 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
             if (countImages) {
                 usedMax = step.getNumberOfTotalImages();
                 if (usedMax > inMax) {
-                    //TODO notify calling object, that the inMax is not set right
+                    // TODO notify calling object, that the inMax is not set
+                    // right
                 } else {
                     usedMax = inMax;
                 }
@@ -65,7 +65,8 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
             } else {
                 usedMax = step.getNumberOfTotalSteps();
                 if (usedMax > inMax) {
-                    //TODO notify calling object, that the inMax is not set right
+                    // TODO notify calling object, that the inMax is not set
+                    // right
                 } else {
                     usedMax = inMax;
                 }

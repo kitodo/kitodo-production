@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
-
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.index.api.TypeInterface;
 

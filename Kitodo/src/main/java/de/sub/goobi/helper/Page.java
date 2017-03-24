@@ -22,9 +22,9 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 
 /**
- * This class provides pagination for displaying results from a large result set over a number of pages
- * (i.e. with a given number of results per page).
- * Taken from http://blog.hibernate.org/cgi-bin/blosxom.cgi/2004/08/14#fn.html.
+ * This class provides pagination for displaying results from a large result set
+ * over a number of pages (i.e. with a given number of results per page). Taken
+ * from http://blog.hibernate.org/cgi-bin/blosxom.cgi/2004/08/14#fn.html.
  *
  * @author Gavin King
  * @author Eric Broyles
@@ -40,11 +40,15 @@ public class Page implements Serializable { // implements Iterator
     private Criteria criteria;
     private static final Logger logger = Logger.getLogger(Page.class);
 
-    /** Construct a new Page with a Criteria. Page numbers are zero-based, so the first page is page 0.
+    /**
+     * Construct a new Page with a Criteria. Page numbers are zero-based, so the
+     * first page is page 0.
      *
-     * @param criteria the Hibernate Criteria
+     * @param criteria
+     *            the Hibernate Criteria
      *
-     * @param page the page number (zero-based)
+     * @param page
+     *            the page number (zero-based)
      */
     public Page(Criteria criteria, int page) {
         this.page = page;
@@ -60,7 +64,8 @@ public class Page implements Serializable { // implements Iterator
             if (criteria instanceof PaginatingCriteria) {
                 this.totalResults = ((PaginatingCriteria) criteria).count();
             } else {
-                // this case should be avoided, especially if dealing with a large number of Objects
+                // this case should be avoided, especially if dealing with a
+                // large number of Objects
                 logger.debug("Page-Object is working with a memory stressing Criteria. Try to replace by "
                         + "PaginatingCriteria, if performance or memory is going down");
                 this.totalResults = criteria.list().size();
@@ -81,7 +86,8 @@ public class Page implements Serializable { // implements Iterator
      */
     public int getLastPageNumber() {
         /*
-         * We use the Math.floor() method because page numbers are zero-based (i.e. the first page is page 0).
+         * We use the Math.floor() method because page numbers are zero-based
+         * (i.e. the first page is page 0).
          */
         int rueckgabe = Double.valueOf(Math.floor(this.totalResults / this.pageSize)).intValue();
         if (this.totalResults % this.pageSize == 0) {
@@ -99,8 +105,9 @@ public class Page implements Serializable { // implements Iterator
     @SuppressWarnings("rawtypes")
     public List getList() {
         /*
-         * Since we retrieved one more than the specified pageSize when the class was constructed,
-         * we now trim it down to the pageSize if a next page exists.
+         * Since we retrieved one more than the specified pageSize when the
+         * class was constructed, we now trim it down to the pageSize if a next
+         * page exists.
          */
         return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
     }
@@ -133,8 +140,9 @@ public class Page implements Serializable { // implements Iterator
     @SuppressWarnings("rawtypes")
     public List getListReload() {
         /*
-         * Since we retrieved one more than the specified pageSize when the class was constructed,
-         * we now trim it down to the pageSize if a next page exists.
+         * Since we retrieved one more than the specified pageSize when the
+         * class was constructed, we now trim it down to the pageSize if a next
+         * page exists.
          */
         if (this.criteria != null) {
             try {
@@ -224,7 +232,8 @@ public class Page implements Serializable { // implements Iterator
     /**
      * Set txt move to.
      *
-     * @param neueSeite int
+     * @param neueSeite
+     *            int
      */
     public void setTxtMoveTo(int neueSeite) {
         if (neueSeite > 0 && neueSeite <= getLastPageNumber() + 1) {

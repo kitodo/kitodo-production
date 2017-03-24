@@ -31,22 +31,23 @@ import javax.faces.el.ValueBinding;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
-//TODO: split this class! here should be only parts of Helper which are needed for Beans and Persistence
+// TODO: split this class! here should be only parts of Helper which are needed
+// for Beans and Persistence
 public class Helper implements Serializable {
 
     /**
-     * Always treat de-serialization as a full-blown constructor, by validating the final state of
-     * the de-serialized object.
+     * Always treat de-serialization as a full-blown constructor, by validating
+     * the final state of the de-serialized object.
      */
     private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
     }
 
     /**
-     * This is the default implementation of writeObject. Customise if necessary.
+     * This is the default implementation of writeObject. Customise if
+     * necessary.
      */
     private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
 
@@ -66,14 +67,14 @@ public class Helper implements Serializable {
     /**
      * Ermitteln eines bestimmten Parameters des Requests.
      *
-     * @return Parameter als String
+     * @return parameter als String
      */
     @SuppressWarnings("rawtypes")
-    public static String getRequestParameter(String Parameter) {
-        /* einen bestimmten übergebenen Parameter ermitteln */
+    public static String getRequestParameter(String parameter) {
+        /* einen bestimmten übergebenen parameter ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         Map requestParams = context.getExternalContext().getRequestParameterMap();
-        String myParameter = (String) requestParams.get(Parameter);
+        String myParameter = (String) requestParams.get(parameter);
         if (myParameter == null) {
             myParameter = "";
         }
@@ -83,7 +84,8 @@ public class Helper implements Serializable {
     /**
      * Get stack trace as String.
      *
-     * @param inException input exception
+     * @param inException
+     *            input exception
      * @return stack traces as string
      */
     public static String getStacktraceAsString(Exception inException) {
@@ -95,7 +97,8 @@ public class Helper implements Serializable {
     /**
      * Get Date as formatted String.
      *
-     * @param inDate input date
+     * @param inDate
+     *            input date
      * @return date as formatted string
      */
     public static String getDateAsFormattedString(Date inDate) {
@@ -110,7 +113,8 @@ public class Helper implements Serializable {
     /**
      * Get managed bean value.
      *
-     * @param expr String
+     * @param expr
+     *            String
      * @return managed bean
      */
     public static Object getManagedBeanValue(String expr) {

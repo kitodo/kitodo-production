@@ -25,8 +25,9 @@ import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
 /**
- * A CopierData object contains all the data the data copier has access to. It has been implemented as
- * an own bean class to allow to easily add variables later without needing to extend many interfaces.
+ * A CopierData object contains all the data the data copier has access to. It
+ * has been implemented as an own bean class to allow to easily add variables
+ * later without needing to extend many interfaces.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -34,7 +35,8 @@ public class CopierData {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * A metadata selector relative to which the data shall be read during copying.
+     * A metadata selector relative to which the data shall be read during
+     * copying.
      */
     private final MetadataSelector destination;
 
@@ -49,7 +51,8 @@ public class CopierData {
     private final Object process;
 
     /**
-     * Creates a new CopierData bean with an additional destination metadata selector.
+     * Creates a new CopierData bean with an additional destination metadata
+     * selector.
      *
      * @param data
      *            data bean without or with destination metadata selector
@@ -77,7 +80,8 @@ public class CopierData {
     }
 
     /**
-     * Returns the destination metadata selector relative to which the data shall be read during copying.
+     * Returns the destination metadata selector relative to which the data
+     * shall be read during copying.
      *
      * @return the destination metadata selector
      */
@@ -86,7 +90,8 @@ public class CopierData {
     }
 
     /**
-     * Returns the digital document contained in the fileformat passed-in in the constructor.
+     * Returns the digital document contained in the fileformat passed-in in the
+     * constructor.
      *
      * @return the digital document
      */
@@ -114,8 +119,8 @@ public class CopierData {
      */
     public Prefs getPreferences() throws SQLException {
         if (process instanceof ProcessObject) {
-            return serviceManager.getRulesetService().getPreferences(MySQLHelper
-                    .getRulesetForId(((ProcessObject) process).getRulesetId()));
+            return serviceManager.getRulesetService()
+                    .getPreferences(MySQLHelper.getRulesetForId(((ProcessObject) process).getRulesetId()));
         } else {
             return serviceManager.getRulesetService().getPreferences(((Process) process).getRuleset());
         }

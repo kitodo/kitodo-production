@@ -35,16 +35,8 @@ public class DesEncrypter {
     private Cipher encryptionCipher;
     private Cipher decryptionCipher;
 
-    private static final byte[] defaultSalt = {
-        (byte) 0xA9,
-        (byte) 0x9B,
-        (byte) 0xC8,
-        (byte) 0x32,
-        (byte) 0x56,
-        (byte) 0x35,
-        (byte) 0xE3,
-        (byte) 0x03
-    };
+    private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
+            (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
     private static final Logger logger = Logger.getLogger(DesEncrypter.class);
 
@@ -84,7 +76,8 @@ public class DesEncrypter {
     /**
      * Encrypt a given string.
      *
-     * @param messageToEncrypt String to encrypt
+     * @param messageToEncrypt
+     *            String to encrypt
      * @return encrypted string or null on error
      */
     public String encrypt(String messageToEncrypt) {
@@ -93,8 +86,8 @@ public class DesEncrypter {
         }
 
         try {
-            byte[] utf8 = messageToEncrypt.getBytes(StandardCharsets.UTF_8);
-            byte[] enc = encryptionCipher.doFinal(utf8);
+            byte[] utfEight = messageToEncrypt.getBytes(StandardCharsets.UTF_8);
+            byte[] enc = encryptionCipher.doFinal(utfEight);
             return new String(Base64.encodeBase64(enc), StandardCharsets.UTF_8);
         } catch (BadPaddingException e) {
             logger.warn("Catched BadPaddingException with message: " + e.getMessage());
@@ -108,15 +101,16 @@ public class DesEncrypter {
     /**
      * Decrypt a encrypted string.
      *
-     * @param messageToDecrypt String to decrypt
+     * @param messageToDecrypt
+     *            String to decrypt
      * @return decrypted string or null on error
      */
     public String decrypt(String messageToDecrypt) {
 
         try {
             byte[] dec = Base64.decodeBase64(messageToDecrypt.getBytes(StandardCharsets.UTF_8));
-            byte[] utf8 = decryptionCipher.doFinal(dec);
-            return new String(utf8, StandardCharsets.UTF_8);
+            byte[] utfEight = decryptionCipher.doFinal(dec);
+            return new String(utfEight, StandardCharsets.UTF_8);
         } catch (IllegalBlockSizeException e) {
             logger.warn("Catched IllegalBlockSizeException with message: " + e.getMessage());
         } catch (BadPaddingException e) {

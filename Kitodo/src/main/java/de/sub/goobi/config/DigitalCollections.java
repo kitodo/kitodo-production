@@ -25,20 +25,19 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.data.database.beans.Process;
 
 public class DigitalCollections {
 
     /**
-	 * Get possible digital collections for process.
+     * Get possible digital collections for process.
      *
-	 * @param process object
-	 * @return list of Strings
-	 */
+     * @param process
+     *            object
+     * @return list of Strings
+     */
     @SuppressWarnings("unchecked")
-    public static List<String> possibleDigitalCollectionsForProcess(Process process)
-            throws JDOMException, IOException {
+    public static List<String> possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
 
         List<String> result = new ArrayList<String>();
         String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
@@ -60,7 +59,8 @@ public class DigitalCollections {
                 Element projectName = iterator.next();
 
                 /*
-                 * wenn der Projektname aufgeführt wird, dann alle Digitalen Collectionen in die Liste
+                 * wenn der Projektname aufgeführt wird, dann alle Digitalen
+                 * Collectionen in die Liste
                  */
                 if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
                     List<Element> myCols = projekt.getChildren("DigitalCollection");

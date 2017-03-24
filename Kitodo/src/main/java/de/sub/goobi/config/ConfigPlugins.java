@@ -26,7 +26,8 @@ public class ConfigPlugins {
     /**
      * Get plugin configuration.
      *
-     * @param inPlugin input plugin
+     * @param inPlugin
+     *            input plugin
      * @return plugin configuration
      */
     public static XMLConfiguration getPluginConfig(IPlugin inPlugin) {

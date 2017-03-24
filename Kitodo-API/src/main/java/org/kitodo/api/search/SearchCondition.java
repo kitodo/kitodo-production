@@ -11,7 +11,7 @@
 
 package org.kitodo.api.search;
 
-public class SearchCondition<S,V> {
+public class SearchCondition<S, V> {
 
     /** The field to search in. */
     private String fieldName;
@@ -22,43 +22,58 @@ public class SearchCondition<S,V> {
     /** The value to search for. */
     private V value;
 
-    /** Gets the fieldName.
+    /**
+     * Gets the fieldName.
+     * 
      * @return The fieldName.
      */
     public String getFieldName() {
         return fieldName;
     }
 
-    /** Sets the fieldName.
-     * @param fieldName The fieldName.
+    /**
+     * Sets the fieldName.
+     * 
+     * @param fieldName
+     *            The fieldName.
      */
     public void setFieldName(String fieldName) {
         this.fieldName = fieldName;
     }
 
-    /** Gets the include.
+    /**
+     * Gets the include.
+     * 
      * @return The include.
      */
     public boolean isInclude() {
         return include;
     }
 
-    /** Sets the include.
-     * @param include The include.
+    /**
+     * Sets the include.
+     * 
+     * @param include
+     *            The include.
      */
     public void setInclude(boolean include) {
         this.include = include;
     }
 
-    /** Gets the value.
+    /**
+     * Gets the value.
+     * 
      * @return The value.
      */
     public V getValue() {
         return value;
     }
 
-    /** Sets the value.
-     * @param value The value.
+    /**
+     * Sets the value.
+     * 
+     * @param value
+     *            The value.
      */
     public void setValue(V value) {
         this.value = value;

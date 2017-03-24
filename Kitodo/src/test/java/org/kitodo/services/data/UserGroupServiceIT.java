@@ -11,17 +11,17 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for UserGroupService class.
@@ -35,7 +35,7 @@ public class UserGroupServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test

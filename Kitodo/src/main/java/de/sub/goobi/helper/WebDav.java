@@ -27,9 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
@@ -115,7 +113,8 @@ public class WebDav implements Serializable {
     /**
      * Upload from home.
      *
-     * @param myProcess Process object
+     * @param myProcess
+     *            Process object
      */
     public void UploadFromHome(Process myProcess) {
         User aktuellerBenutzer = Helper.getCurrentUser();
@@ -127,8 +126,10 @@ public class WebDav implements Serializable {
     /**
      * Upload from home.
      *
-     * @param inBenutzer User object
-     * @param myProcess Process object
+     * @param inBenutzer
+     *            User object
+     * @param myProcess
+     *            Process object
      */
     public void UploadFromHome(User inBenutzer, Process myProcess) {
         String nach = "";
@@ -165,9 +166,12 @@ public class WebDav implements Serializable {
     /**
      * Download to home.
      *
-     * @param myProcess Process object
-     * @param inSchrittID int
-     * @param inNurLesen boolean
+     * @param myProcess
+     *            Process object
+     * @param inSchrittID
+     *            int
+     * @param inNurLesen
+     *            boolean
      */
     public void DownloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
         saveTiffHeader(myProcess);
@@ -181,7 +185,8 @@ public class WebDav implements Serializable {
             userHome = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer);
 
             /*
-             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis existieren
+             * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
+             * existieren
              */
             if (aktuellerBenutzer.isWithMassDownload()) {
                 SafeFile projekt = new SafeFile(userHome + myProcess.getProject().getTitle());
@@ -198,8 +203,9 @@ public class WebDav implements Serializable {
         }
 
         /*
-         * abhängig davon, ob der Download als "Massendownload" in einen Projektordner erfolgen soll oder nicht,
-         * das Zielverzeichnis definieren
+         * abhängig davon, ob der Download als "Massendownload" in einen
+         * Projektordner erfolgen soll oder nicht, das Zielverzeichnis
+         * definieren
          */
         String processLinkName = myProcess.getTitle() + "__[" + myProcess.getId() + "]";
         String nach = userHome;
@@ -246,18 +252,15 @@ public class WebDav implements Serializable {
     private void saveTiffHeader(Process inProcess) {
         try {
             /* prüfen, ob Tiff-Header schon existiert */
-            if (new SafeFile(serviceManager.getProcessService().getImagesDirectory(inProcess)
-                    + "tiffwriter.conf").exists()) {
+            if (new SafeFile(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
+                    .exists()) {
                 return;
             }
             TiffHeader tif = new TiffHeader(inProcess);
-            try (
-                    BufferedWriter outfile =
-                            new BufferedWriter(new OutputStreamWriter(
-                                    new FileOutputStream(serviceManager.getProcessService()
-                                            .getImagesDirectory(inProcess) + "tiffwriter.conf"),
-                                    StandardCharsets.UTF_8));
-            ) {
+            try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(
+                            serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf"),
+                    StandardCharsets.UTF_8));) {
                 outfile.write(tif.getTiffAlles());
             }
         } catch (Exception e) {
@@ -269,7 +272,8 @@ public class WebDav implements Serializable {
     /**
      * Get amount.
      *
-     * @param inVerzeichnis String
+     * @param inVerzeichnis
+     *            String
      * @return int
      */
     public int getAnzahlBaende(String inVerzeichnis) {

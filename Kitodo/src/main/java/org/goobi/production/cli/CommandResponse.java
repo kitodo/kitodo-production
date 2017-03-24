@@ -17,11 +17,15 @@ public class CommandResponse {
     private String message;
 
     /**
-	 * Constructor.
-	 * @param status int
-	 * @param inTitle String
-	 * @param inMessage String
-	 */
+     * Constructor.
+     * 
+     * @param status
+     *            int
+     * @param inTitle
+     *            String
+     * @param inMessage
+     *            String
+     */
     public CommandResponse(int status, String inTitle, String inMessage) {
         this.status = status;
         title = inTitle;
@@ -31,8 +35,10 @@ public class CommandResponse {
     /**
      * Constructor.
      *
-     * @param inTitle String
-     * @param inMessage String
+     * @param inTitle
+     *            String
+     * @param inMessage
+     *            String
      */
     public CommandResponse(String inTitle, String inMessage) {
         status = 200;

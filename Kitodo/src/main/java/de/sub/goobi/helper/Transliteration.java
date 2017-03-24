@@ -16,7 +16,8 @@ public class Transliteration {
     /**
      * Transliterate.
      *
-     * @param inString String
+     * @param inString
+     *            String
      * @return String
      */
     public String transliterate_iso(String inString) {
@@ -223,7 +224,8 @@ public class Transliteration {
     /**
      * Transliteration.
      *
-     * @param inString String
+     * @param inString
+     *            String
      * @return String
      */
     public String transliterate_din(String inString) {

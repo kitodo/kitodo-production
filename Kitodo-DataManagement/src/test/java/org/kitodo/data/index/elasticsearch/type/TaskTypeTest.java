@@ -11,28 +11,24 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for TaskType.
@@ -71,11 +67,11 @@ public class TaskTypeTest {
         firstTask.setOrdering(1);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
         firstTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        LocalDate localDate = new LocalDate(2017,2,17);
+        LocalDate localDate = new LocalDate(2017, 2, 17);
         firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2017,2,1);
+        localDate = new LocalDate(2017, 2, 1);
         firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2017,2,17);
+        localDate = new LocalDate(2017, 2, 17);
         firstTask.setProcessingEnd(localDate.toDate());
         firstTask.setHomeDirectory((short) 1);
         firstTask.setTypeMetadata(true);
@@ -93,9 +89,9 @@ public class TaskTypeTest {
         secondTask.setPriority(2);
         secondTask.setOrdering(2);
         secondTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        localDate = new LocalDate(2017,2,17);
+        localDate = new LocalDate(2017, 2, 17);
         secondTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2017,2,10);
+        localDate = new LocalDate(2017, 2, 10);
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(users.get(1));
         secondTask.setUsers(users);

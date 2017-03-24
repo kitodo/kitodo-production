@@ -33,9 +33,12 @@ public class BeanHelper {
     /**
      * Add property for process.
      *
-     * @param process object
-     * @param title String
-     * @param value String
+     * @param process
+     *            object
+     * @param title
+     *            String
+     * @param value
+     *            String
      */
     public static void addProperty(Process process, String title, String value) {
         ProcessProperty property = new ProcessProperty();
@@ -52,9 +55,12 @@ public class BeanHelper {
     /**
      * Add property for template.
      *
-     * @param template object
-     * @param title String
-     * @param value String
+     * @param template
+     *            object
+     * @param title
+     *            String
+     * @param value
+     *            String
      */
     public static void addProperty(Template template, String title, String value) {
         TemplateProperty property = new TemplateProperty();
@@ -71,9 +77,12 @@ public class BeanHelper {
     /**
      * Add property for workpiece.
      *
-     * @param workpiece object
-     * @param title String
-     * @param value String
+     * @param workpiece
+     *            object
+     * @param title
+     *            String
+     * @param value
+     *            String
      */
     public static void addProperty(Workpiece workpiece, String title, String value) {
         WorkpieceProperty property = new WorkpieceProperty();
@@ -90,8 +99,10 @@ public class BeanHelper {
     /**
      * Copy tasks from process' template to process.
      *
-     * @param processTemplate template object
-     * @param processCopy new object
+     * @param processTemplate
+     *            template object
+     * @param processCopy
+     *            new object
      */
     public static void copyTasks(Process processTemplate, Process processCopy) {
         List<Task> myTasks = new ArrayList<>();
@@ -163,8 +174,10 @@ public class BeanHelper {
     /**
      * Copy workpieces from process' template to process.
      *
-     * @param processTemplate template object
-     * @param processCopy new object
+     * @param processTemplate
+     *            template object
+     * @param processCopy
+     *            new object
      */
     public static void copyWorkpieces(Process processTemplate, Process processCopy) {
         List<Workpiece> myWorkpieces = new ArrayList<>();
@@ -200,8 +213,10 @@ public class BeanHelper {
     /**
      * Copy properties from process' template to process.
      *
-     * @param processTemplate template object
-     * @param processCopy new object
+     * @param processTemplate
+     *            template object
+     * @param processCopy
+     *            new object
      */
     public static void copyProperties(Process processTemplate, Process processCopy) {
         List<ProcessProperty> myProperties = new ArrayList<>();
@@ -222,8 +237,10 @@ public class BeanHelper {
     /**
      * Copy scan templates from process' template to process.
      *
-     * @param processTemplate template object
-     * @param processCopy new object
+     * @param processTemplate
+     *            template object
+     * @param processCopy
+     *            new object
      */
     public static void copyScanTemplates(Process processTemplate, Process processCopy) {
         List<Template> myTemplates = new ArrayList<>();
@@ -260,8 +277,10 @@ public class BeanHelper {
     /**
      * Determine workpiece property.
      *
-     * @param myProcess process object
-     * @param inputProperty input property
+     * @param myProcess
+     *            process object
+     * @param inputProperty
+     *            input property
      * @return property String
      */
     public static String determineWorkpieceProperty(Process myProcess, String inputProperty) {
@@ -279,8 +298,10 @@ public class BeanHelper {
     /**
      * Determine scan template property.
      *
-     * @param myProcess process object
-     * @param inputProperty input property
+     * @param myProcess
+     *            process object
+     * @param inputProperty
+     *            input property
      * @return property String
      */
     public static String determineScanTemplateProperty(Process myProcess, String inputProperty) {
@@ -298,9 +319,12 @@ public class BeanHelper {
     /**
      * Change workpiece property.
      *
-     * @param myProcess process object
-     * @param inputProperty input property
-     * @param inputValue input value
+     * @param myProcess
+     *            process object
+     * @param inputProperty
+     *            input property
+     * @param inputValue
+     *            input value
      */
     public static void changeWorkpieceProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
@@ -315,9 +339,12 @@ public class BeanHelper {
     /**
      * Change scan template property.
      *
-     * @param myProcess process object
-     * @param inputProperty input property
-     * @param inputValue input value
+     * @param myProcess
+     *            process object
+     * @param inputProperty
+     *            input property
+     * @param inputValue
+     *            input value
      */
     public static void changeScanTemplateProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Template myTemplate : myProcess.getTemplates()) {
@@ -332,9 +359,12 @@ public class BeanHelper {
     /**
      * Remove workpiece property.
      *
-     * @param myProcess process object
-     * @param inputProperty input property
-     * @param inputValue input value
+     * @param myProcess
+     *            process object
+     * @param inputProperty
+     *            input property
+     * @param inputValue
+     *            input value
      */
     public static void removeWorkpieceProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
@@ -349,9 +379,12 @@ public class BeanHelper {
     /**
      * Remove scan template property.
      *
-     * @param myProcess process object
-     * @param inputProperty input property
-     * @param inputValue input value
+     * @param myProcess
+     *            process object
+     * @param inputProperty
+     *            input property
+     * @param inputValue
+     *            input value
      */
     public static void removeScanTemplateProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Template myTemplate : myProcess.getTemplates()) {
@@ -366,7 +399,8 @@ public class BeanHelper {
     /**
      * Remove double workpiece property.
      *
-     * @param myProcess process object
+     * @param myProcess
+     *            process object
      */
     public static void removeDoubleWorkpieceProperty(Process myProcess) {
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
@@ -385,7 +419,8 @@ public class BeanHelper {
     /**
      * Remove double scan template property.
      *
-     * @param myProcess process object
+     * @param myProcess
+     *            process object
      */
     public static void removeDoubleScanTemplateProperty(Process myProcess) {
         for (Template myTemplate : myProcess.getTemplates()) {

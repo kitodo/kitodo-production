@@ -12,9 +12,10 @@
 package org.kitodo.production.plugin.opac.pica;
 
 /**
- * The class FindResult represents the result of a find() operation of the plug-in. The Production plug-in API
- * allows to return any object as result of find() which is passed back to it if further operations on that
- * search result (i.e. getting a certain hit) are required. This class is used to store
+ * The class FindResult represents the result of a find() operation of the
+ * plug-in. The Production plug-in API allows to return any object as result of
+ * find() which is passed back to it if further operations on that search result
+ * (i.e. getting a certain hit) are required. This class is used to store
  * anything we need for later actions on the hit list.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -37,8 +38,9 @@ class FindResult {
     }
 
     /**
-     * The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not implement hashCode()—implementing
-     * hashCode() here would not work correctly.
+     * The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not
+     * implement hashCode()—implementing hashCode() here would not work
+     * correctly.
      *
      * @throws UnsupportedOperationException
      *             if trying to invoke hashCode()
@@ -47,12 +49,12 @@ class FindResult {
     public int hashCode() {
         throw new UnsupportedOperationException(
                 "The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not implement "
-						+ "hashCode()—implementing hashCode() here would not work correctly");
+                        + "hashCode()—implementing hashCode() here would not work correctly");
     }
 
     /**
-     * The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not implement equals()—implementing
-     * equals() here would not work correctly.
+     * The classes Catalogue, ConfigOpacCatalogue, GetOpac and Query do not
+     * implement equals()—implementing equals() here would not work correctly.
      *
      * @throws UnsupportedOperationException
      *             if trying to invoke equals()

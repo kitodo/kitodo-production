@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
-
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -71,8 +70,7 @@ public class Import {
         return "";
     }
 
-    private void Einlesen()
-            throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+    private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
             PreferencesException, SwapException, DAOException, WriteException {
         myLogger.debug("Einlesen() - Start");
@@ -80,7 +78,8 @@ public class Import {
         try {
 
             /*
-             * prüfen ob es ein russischer oder ein zbl-Import ist und entsprechende Routine aufrufen
+             * prüfen ob es ein russischer oder ein zbl-Import ist und
+             * entsprechende Routine aufrufen
              */
 
             /* russischer Import */

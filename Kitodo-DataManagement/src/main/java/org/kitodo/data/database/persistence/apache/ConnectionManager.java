@@ -40,7 +40,8 @@ public class ConnectionManager {
     private static GenericObjectPool _pool = null;
 
     /**
-     * @param config configuration from an XML file.
+     * @param config
+     *            configuration from an XML file.
      */
     public ConnectionManager(SqlConfiguration config) {
         try {
@@ -77,10 +78,8 @@ public class ConnectionManager {
 
         logger.debug("Trying to connect to database...");
         try {
-            this.ds = setupDataSource(
-                    config.getDbURI(), config.getDbUser(), config.getDbPassword(),
-                    config.getDbPoolMinSize(), config.getDbPoolMaxSize()
-            );
+            this.ds = setupDataSource(config.getDbURI(), config.getDbUser(), config.getDbPassword(),
+                    config.getDbPoolMinSize(), config.getDbPoolMaxSize());
             logger.debug("Connection attempt to database succeeded.");
         } catch (Exception e) {
             logger.error("Error when attempting to connect to DB ", e);
@@ -89,17 +88,25 @@ public class ConnectionManager {
 
     /**
      *
-     * @param connectURI - JDBC Connection URI
-     * @param username - JDBC Connection username
-     * @param password - JDBC Connection password
-     * @param minIdle - Minimum number of idel connection in the connection pool
-     * @param maxActive - Connection Pool Maximum Capacity (Size)
+     * @param connectURI
+     *            - JDBC Connection URI.
+     * @param username
+     *            - JDBC Connection username.
+     * @param password
+     *            - JDBC Connection password.
+     * @param minIdle
+     *            - Minimum number of idel connection in the connection pool.
+     * @param maxActive
+     *            - Connection Pool Maximum Capacity (Size).
      */
-    public static DataSource setupDataSource(String connectURI, String username, String password, int minIdle, int maxActive) {
+    public static DataSource setupDataSource(String connectURI, String username, String password, int minIdle,
+            int maxActive) {
         //
-        // First, we'll need a ObjectPool that serves as the actual pool of connections.
+        // First, we'll need a ObjectPool that serves as the actual pool of
+        // connections.
         //
-        // We'll use a GenericObjectPool instance, although any ObjectPool implementation will suffice.
+        // We'll use a GenericObjectPool instance, although any ObjectPool
+        // implementation will suffice.
         //
         GenericObjectPool connectionPool = new GenericObjectPool(null);
 
@@ -109,17 +116,22 @@ public class ConnectionManager {
         ConnectionManager._pool = connectionPool;
         // we keep it for two reasons
         // #1 We need it for statistics/debugging
-        // #2 PoolingDataSource does not have getPool() method, for some obscure, weird reason.
+        // #2 PoolingDataSource does not have getPool() method, for some
+        // obscure, weird reason.
 
         //
-        // Next, we'll create a ConnectionFactory that the pool will use to create Connections.
-        // We'll use the DriverManagerConnectionFactory, using the connect string from configuration
+        // Next, we'll create a ConnectionFactory that the pool will use to
+        // create Connections.
+        // We'll use the DriverManagerConnectionFactory, using the connect
+        // string from configuration
         //
         ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(connectURI, username, password);
 
         //
-        // Now we'll create the PoolableConnectionFactory, which wraps the "real" Connections created by
-        // the ConnectionFactory with the classes that implement the pooling functionality.
+        // Now we'll create the PoolableConnectionFactory, which wraps the
+        // "real" Connections created by
+        // the ConnectionFactory with the classes that implement the pooling
+        // functionality.
         //
         new PoolableConnectionFactory(connectionFactory, connectionPool, null, null, false, true);
 
@@ -140,20 +152,19 @@ public class ConnectionManager {
     }
 
     /**
-     * getNumLockedProcesses - gets the number of currently locked processes on the MySQL db.
+     * getNumLockedProcesses - gets the number of currently locked processes on
+     * the MySQL db.
      *
      * @return Number of locked processes
      */
     public int getNumLockedProcesses() {
-        int num_locked_connections = 0;
-        try (
-            Connection con = this.ds.getConnection();
-            PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
-            ResultSet rs = p_stmt.executeQuery()
-        ) {
+        int numLockedConnections = 0;
+        try (Connection con = this.ds.getConnection();
+                PreparedStatement p_stmt = con.prepareStatement("SHOW PROCESSLIST");
+                ResultSet rs = p_stmt.executeQuery()) {
             while (rs.next()) {
                 if (rs.getString("State") != null && rs.getString("State").equals("Locked")) {
-                    num_locked_connections++;
+                    numLockedConnections++;
                 }
             }
         } catch (java.sql.SQLException ex) {
@@ -163,7 +174,7 @@ public class ConnectionManager {
                 logger.debug("Failed to get Locked Connections - Exception: " + e.toString());
             }
         }
-        return num_locked_connections;
+        return numLockedConnections;
     }
 
     public DataSource getDataSource() {

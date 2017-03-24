@@ -17,9 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 
 public class DmsImportThread extends Thread {
@@ -35,17 +33,20 @@ public class DmsImportThread extends Thread {
 
     public boolean stop = false;
 
-	/**
-	 * Constructor.
+    /**
+     * Constructor.
      *
-	 * @param process object
-	 * @param ats String
-	 */
+     * @param process
+     *            object
+     * @param ats
+     *            String
+     */
     public DmsImportThread(Process process, String ats) {
         setDaemon(true);
-        /* aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle, ansonsten lieber
-        * in neuem FehlerOrdner
-        */
+        /*
+         * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter
+         * Stelle, ansonsten lieber in neuem FehlerOrdner
+         */
         if (process.getProject().getDmsImportErrorPath() == null
                 || process.getProject().getDmsImportErrorPath().length() == 0) {
             this.fileError = new SafeFile(process.getProject().getDmsImportRootPath(), ats + ".log");

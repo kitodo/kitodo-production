@@ -11,18 +11,18 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for TemplatePropertyService class.
@@ -36,7 +36,7 @@ public class TemplatePropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -44,7 +44,8 @@ public class TemplatePropertyServiceIT {
         TemplatePropertyService templatePropertyService = new TemplatePropertyService();
 
         TemplateProperty templateProperty = templatePropertyService.find(1);
-        boolean condition = templateProperty.getTitle().equals("first title") && templateProperty.getValue().equals("first value");
+        boolean condition = templateProperty.getTitle().equals("first title")
+                && templateProperty.getValue().equals("first value");
         assertTrue("Process property was not found in database!", condition);
     }
 

@@ -22,24 +22,24 @@
 ######################################### -->
 
 <head>
-<meta http-equiv="Refresh" content="0; URL=newpages/Main.jsf"/>
-<title>Kitodo</title>
+    <meta http-equiv="Refresh" content="0; URL=newpages/Main.jsf"/>
+    <title>Kitodo</title>
 </head>
 <body>
 <table width="100%" height="100%" border="0">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td valign="middle">
-		<div align="center"><img src="newpages/images/ajax-loader.gif"><br>
-		<br>
-		<font face="Arial, Helvetica, sans-serif" style="color:#219ABD">Kitodo is loading</font></div>
-		</td>
-	</tr>
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
+    <tr>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td valign="middle">
+            <div align="center"><img src="newpages/images/ajax-loader.gif"><br>
+                <br>
+                <font face="Arial, Helvetica, sans-serif" style="color:#219ABD">Kitodo is loading</font></div>
+        </td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+    </tr>
 </table>
 </body>
 </html>

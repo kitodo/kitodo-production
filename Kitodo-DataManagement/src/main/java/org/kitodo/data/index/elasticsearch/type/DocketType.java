@@ -16,9 +16,7 @@ import java.util.LinkedHashMap;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-
 import org.json.simple.JSONObject;
-
 import org.kitodo.data.database.beans.Docket;
 
 /**

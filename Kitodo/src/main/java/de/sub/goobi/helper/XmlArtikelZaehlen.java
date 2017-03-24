@@ -14,7 +14,6 @@ package de.sub.goobi.helper;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -37,7 +36,8 @@ public class XmlArtikelZaehlen {
     /**
      * Anzahl der Strukturelemente ermitteln.
      *
-     * @param myProcess process object
+     * @param myProcess
+     *            process object
      */
     public int getNumberOfUghElements(Process myProcess, CountType inType) throws IOException {
         int rueckgabe = 0;
@@ -62,8 +62,7 @@ public class XmlArtikelZaehlen {
             DocStruct logicalTopstruct = mydocument.getLogicalDocStruct();
             rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
         } catch (PreferencesException e1) {
-            Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ",
-                    e1.getMessage());
+            Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
             logger.error(e1);
             rueckgabe = 0;
         }
@@ -80,19 +79,21 @@ public class XmlArtikelZaehlen {
         return rueckgabe;
     }
 
-
-
     /**
-     * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band hat, rekursiv durchlaufen.
+     * Anzahl der Strukturelemente oder der Metadaten ermitteln, die ein Band
+     * hat, rekursiv durchlaufen.
      *
-     * @param inStruct DocStruct object
-     * @param inType CountType object
+     * @param inStruct
+     *            DocStruct object
+     * @param inType
+     *            CountType object
      */
     public int getNumberOfUghElements(DocStruct inStruct, CountType inType) {
         int rueckgabe = 0;
         if (inStruct != null) {
             /*
-             * increment number of docstructs, or add number of metadata elements
+             * increment number of docstructs, or add number of metadata
+             * elements
              */
             if (inType == CountType.DOCSTRUCT) {
                 rueckgabe++;

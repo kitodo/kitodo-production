@@ -21,9 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.goobi.production.constants.Parameters;
-
 import org.hibernate.Hibernate;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -41,11 +39,15 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
- * Thread implementation to export a batch holding a serial publication as set, cross-over inserting METS pointer
- * references to the respective other volumes in the anchor file.
+ * Thread implementation to export a batch holding a serial publication as set,
+ * cross-over inserting METS pointer references to the respective other volumes
+ * in the anchor file.
  *
- * <p>Requires the {@code MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE} metadata type ("MetsPointerURL") to be
- * available for adding to the first level child of the logical document structure hierarchy (typically "Volume").</p>
+ * <p>
+ * Requires the {@code MetsModsImportExport.CREATE_MPTR_ELEMENT_TYPE} metadata
+ * type ("MetsPointerURL") to be available for adding to the first level child
+ * of the logical document structure hierarchy (typically "Volume").
+ * </p>
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -64,7 +66,8 @@ public class ExportSerialBatchTask extends EmptyTask {
     private final ArrayList<String> pointers;
 
     /**
-     * Counter used for incrementing the progress bar, starts from 0 and ends with “maxsize”.
+     * Counter used for incrementing the progress bar, starts from 0 and ends
+     * with “maxsize”.
      */
     private int stepcounter;
 
@@ -79,7 +82,8 @@ public class ExportSerialBatchTask extends EmptyTask {
     private final int maxsize;
 
     /**
-     * Creates a new ExportSerialBatchTask from a batch of processes belonging to a serial publication.
+     * Creates a new ExportSerialBatchTask from a batch of processes belonging
+     * to a serial publication.
      *
      * @param batch
      *            batch holding a serial publication
@@ -106,8 +110,9 @@ public class ExportSerialBatchTask extends EmptyTask {
     }
 
     /**
-     * Initialises the the rule sets of the processes to export that export depends on.
-     * This cannot be done later because the therad doesn’t have access to the hibernate session any more.
+     * Initialises the the rule sets of the processes to export that export
+     * depends on. This cannot be done later because the therad doesn’t have
+     * access to the hibernate session any more.
      *
      * @param processes
      *            collection of processes whose rulesets are to be initialised
@@ -120,7 +125,8 @@ public class ExportSerialBatchTask extends EmptyTask {
 
     /**
      * Clone constructor. Creates a new ExportSerialBatchTask from another one.
-     * This is used for restarting the thread as a Java thread cannot be run twice.
+     * This is used for restarting the thread as a Java thread cannot be run
+     * twice.
      *
      * @param master
      *            copy master
@@ -163,8 +169,8 @@ public class ExportSerialBatchTask extends EmptyTask {
                     }
                     process = processesIterator.next();
                     DigitalDocument out = buildExportDocument(process, pointers);
-                    ExportDms exporter = new ExportDms(ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES,
-                            true));
+                    ExportDms exporter = new ExportDms(
+                            ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
                     exporter.startExport(process, LoginForm.getCurrentUserHomeDir(), out);
                     stepcounter++;
@@ -172,19 +178,20 @@ public class ExportSerialBatchTask extends EmptyTask {
                 }
             }
         } catch (Exception e) {
-            // PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException
+            // PreferencesException, ReadException, SwapException, DAOException,
+            // IOException, InterruptedException
             // and some runtime exceptions
-            String message = e.getClass().getSimpleName() + " while "
-                    + (stepcounter == 0 ? "examining " : "exporting ") + (process != null ? process.getTitle() : "")
-                    + ": " + e.getMessage();
+            String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
+                    + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
             return;
         }
     }
 
     /**
-     * The function buildExportableMetsMods() returns a DigitalDocument object whose logical document structure
-     * tree has been enriched with all nodes that have to be exported along with the data to make cross-volume
+     * The function buildExportableMetsMods() returns a DigitalDocument object
+     * whose logical document structure tree has been enriched with all nodes
+     * that have to be exported along with the data to make cross-volume
      * referencing work.
      *
      * @param process
@@ -193,25 +200,31 @@ public class ExportSerialBatchTask extends EmptyTask {
      *            all the METS pointers from all volumes
      * @return an enriched DigitalDocument
      * @throws PreferencesException
-     *             if the no node corresponding to the file format is available in the rule set used
+     *             if the no node corresponding to the file format is available
+     *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
      * @throws SwapException
      *             if an error occurs while the process is swapped back in
      * @throws DAOException
-     *             if an error occurs while saving the fact that the process has been swapped back in to the database
+     *             if an error occurs while saving the fact that the process has
+     *             been swapped back in to the database
      * @throws IOException
-     *             if creating the process directory or reading the meta data file fails
+     *             if creating the process directory or reading the meta data
+     *             file fails
      * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while it is waiting for the shell script
-     *             to create the directory to finish
+     *             if the current thread is interrupted by another thread while
+     *             it is waiting for the shell script to create the directory to
+     *             finish
      * @throws TypeNotAllowedForParentException
      *             is thrown, if this DocStruct is not allowed for a parent
      * @throws MetadataTypeNotAllowedException
-     *             if the DocStructType of this DocStruct instance does not allow the MetadataType or if
-     *             the maximum number of Metadata (of this type) is already available
+     *             if the DocStructType of this DocStruct instance does not
+     *             allow the MetadataType or if the maximum number of Metadata
+     *             (of this type) is already available
      * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't member of this instance's DocStruct type
+     *             if a child should be added, but it's DocStruct type isn't
+     *             member of this instance's DocStruct type
      */
     private static DigitalDocument buildExportDocument(Process process, Iterable<String> allPointers)
             throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException,

@@ -70,7 +70,7 @@ public class SessionForm {
         }
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked" })
     private void sessionAdd(HttpSession insession) {
         HashMap map = new HashMap();
         map.put("id", insession.getId());
@@ -118,7 +118,7 @@ public class SessionForm {
         this.alleSessions.add(map);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked" })
     private void sessionsAufraeumen(int time) {
         List temp = new ArrayList(this.alleSessions);
         for (Iterator iter = temp.iterator(); iter.hasNext();) {
@@ -133,9 +133,10 @@ public class SessionForm {
     /**
      * Update session.
      *
-     * @param insession HttpSession object
+     * @param insession
+     *            HttpSession object
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes" })
     public void sessionAktualisieren(HttpSession insession) {
         boolean gefunden = false;
         this.aktuelleZeit = this.formatter.format(new Date());
@@ -157,10 +158,12 @@ public class SessionForm {
     /**
      * Update user session.
      *
-     * @param insession HttpSession object
-     * @param inBenutzer User object
+     * @param insession
+     *            HttpSession object
+     * @param inBenutzer
+     *            User object
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes" })
     public void sessionBenutzerAktualisieren(HttpSession insession, User inBenutzer) {
         // logger.debug("sessionBenutzerAktualisieren-start");
         for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
@@ -201,11 +204,13 @@ public class SessionForm {
     /**
      * Java doc.
      *
-     * @param inSession HttpSession object
-     * @param inBenutzer User object
+     * @param inSession
+     *            HttpSession object
+     * @param inBenutzer
+     *            User object
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession,User inBenutzer) {
+    @SuppressWarnings({"unchecked", "rawtypes" })
+    public void alteSessionsDesSelbenBenutzersAufraeumen(HttpSession inSession, User inBenutzer) {
         List alleSessionKopie = new ArrayList(this.alleSessions);
         for (Iterator iter = alleSessionKopie.iterator(); iter.hasNext();) {
             HashMap map = (HashMap) iter.next();

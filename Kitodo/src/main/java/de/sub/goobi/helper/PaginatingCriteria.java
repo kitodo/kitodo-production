@@ -3,18 +3,22 @@
  *
  * Copyright (c) 2007 Steve Liang
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
@@ -42,11 +46,13 @@ import org.kitodo.production.exceptions.NotImplementedException;
 
 /**
  * The source for this code was found at the web address
- * http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1 and
- * changed by retaining the class name of the class which was used to instantiate the current instance of
- * PaginatingCriteria
+ * http://laingsolutions.com/joomla/index.php?option=com_content&task=view&id=14&Itemid=1
+ * and changed by retaining the class name of the class which was used to
+ * instantiate the current instance of PaginatingCriteria
  *
- * <p>Implementation of Criteria specifically for paginated searches.</p>
+ * <p>
+ * Implementation of Criteria specifically for paginated searches.
+ * </p>
  *
  * @see org.hibernate.Criteria
  *
@@ -64,8 +70,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Constructor. Create 'real' Criteria and clone Criteria to do row count.
      *
-     * @param clazz Class object
-     * @param session object
+     * @param clazz
+     *            Class object
+     * @param session
+     *            object
      */
     @SuppressWarnings("rawtypes")
     public PaginatingCriteria(Class clazz, Session session) {
@@ -78,8 +86,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Used internally.
      *
-     * @param criteria object
-     * @param clone Criteria object
+     * @param criteria
+     *            object
+     * @param clone
+     *            Criteria object
      */
     private PaginatingCriteria(Criteria criteria, Criteria clone) {
         this.criteria = criteria;
@@ -99,7 +109,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
     /**
      * @see Criteria#setProjection(org.hibernate.criterion.Projection)
-     * @param projection object
+     * @param projection
+     *            object
      * @return Criteria
      */
     @Override
@@ -110,7 +121,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Adds Criterion to both the internal Criteria instances.
      *
-     * @param criterion object
+     * @param criterion
+     *            object
      * @return Criteria
      * @see Criteria#add(org.hibernate.criterion.Criterion)
      */
@@ -121,7 +133,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param order object
+     * @param order
+     *            object
      * @return Criteria
      * @see Criteria#addOrder(org.hibernate.criterion.Order)
      */
@@ -131,8 +144,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param associationPath String
-     * @param mode FetchMode object
+     * @param associationPath
+     *            String
+     * @param mode
+     *            FetchMode object
      * @return Criteria
      * @see Criteria#setFetchMode(java.lang.String, org.hibernate.FetchMode)
      */
@@ -143,7 +158,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param lockMode LockMode object
+     * @param lockMode
+     *            LockMode object
      * @return Criteria
      * @see Criteria#setLockMode(org.hibernate.LockMode)
      */
@@ -153,8 +169,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param alias String
-     * @param lockMode LockMode object
+     * @param alias
+     *            String
+     * @param lockMode
+     *            LockMode object
      * @return Criteria
      * @see Criteria#setLockMode(java.lang.String, org.hibernate.LockMode)
      */
@@ -165,8 +183,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param associationPath String
-     * @param alias String
+     * @param associationPath
+     *            String
+     * @param alias
+     *            String
      * @return Criteria
      * @see Criteria#createAlias(java.lang.String, java.lang.String)
      */
@@ -177,9 +197,12 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param arg0 String
-     * @param arg1 String
-     * @param arg2 String
+     * @param arg0
+     *            String
+     * @param arg1
+     *            String
+     * @param arg2
+     *            String
      * @return Criteria
      * @see Criteria#createAlias(java.lang.String, java.lang.String, int)
      */
@@ -208,7 +231,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param associationPath String
+     * @param associationPath
+     *            String
      * @return Criteria
      * @see Criteria#createCriteria(java.lang.String)
      */
@@ -219,8 +243,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param arg0 String
-     * @param arg1 int
+     * @param arg0
+     *            String
+     * @param arg1
+     *            int
      * @return Criteria
      * @see Criteria#createCriteria(java.lang.String, int)
      */
@@ -231,8 +257,10 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param associationPath String
-     * @param alias String
+     * @param associationPath
+     *            String
+     * @param alias
+     *            String
      * @return Criteria
      * @see Criteria#createCriteria(java.lang.String, java.lang.String)
      */
@@ -243,9 +271,12 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param arg0 String
-     * @param arg1 String
-     * @param arg2 int
+     * @param arg0
+     *            String
+     * @param arg1
+     *            String
+     * @param arg2
+     *            int
      * @return Criteria
      * @see Criteria#createCriteria(java.lang.String, java.lang.String, int)
      */
@@ -282,7 +313,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param resultTransformer ResultTransformer object
+     * @param resultTransformer
+     *            ResultTransformer object
      * @return Criteria
      * @see Criteria#setResultTransformer(org.hibernate.transform.ResultTransformer)
      */
@@ -295,7 +327,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Set max results.
      *
-     * @param maxResults int
+     * @param maxResults
+     *            int
      * @return Criteria
      * @see Criteria#setMaxResults(int)
      */
@@ -307,7 +340,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Set first result.
      *
-     * @param firstResult int
+     * @param firstResult
+     *            int
      * @return Criteria
      * @see Criteria#setFirstResult(int)
      */
@@ -319,7 +353,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Set fetch size.
      *
-     * @param fetchSize int
+     * @param fetchSize
+     *            int
      * @return Criteria
      * @see Criteria#setFetchSize(int)
      */
@@ -331,7 +366,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Set timeout.
      *
-     * @param timeout int
+     * @param timeout
+     *            int
      * @return Criteria
      * @see Criteria#setTimeout(int)
      */
@@ -343,7 +379,9 @@ public class PaginatingCriteria implements Criteria, Serializable {
 
     /**
      * Set cacheable.
-     * @param cacheable boolean
+     * 
+     * @param cacheable
+     *            boolean
      * @return Criteria
      * @see Criteria#setCacheable(boolean)
      */
@@ -353,7 +391,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param cacheRegion String
+     * @param cacheRegion
+     *            String
      * @return Criteria
      * @see Criteria#setCacheRegion(java.lang.String)
      */
@@ -365,7 +404,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Sets a comment on both internal Criteria instances
      *
-     * @param comment String
+     * @param comment
+     *            String
      * @return Criteria
      * @see Criteria#setComment(java.lang.String)
      */
@@ -378,7 +418,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     /**
      * Adds a query hint on both internal Criteria instances
      *
-     * @param queryHint String
+     * @param queryHint
+     *            String
      * @return Criteria
      * @see Criteria#addQueryHint(java.lang.String)
      */
@@ -388,7 +429,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param flushMode FlushMode object
+     * @param flushMode
+     *            FlushMode object
      * @return Criteria
      * @see Criteria#setFlushMode(org.hibernate.FlushMode)
      */
@@ -398,7 +440,8 @@ public class PaginatingCriteria implements Criteria, Serializable {
     }
 
     /**
-     * @param cacheMode CacheMode object
+     * @param cacheMode
+     *            CacheMode object
      * @return Criteria
      * @see Criteria#setCacheMode(org.hibernate.CacheMode)
      */

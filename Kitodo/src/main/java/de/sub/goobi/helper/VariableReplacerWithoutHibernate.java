@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
@@ -62,13 +61,17 @@ public class VariableReplacerWithoutHibernate {
     /**
      * Constructor.
      *
-     * @param inDigitalDocument DigitalDocument object
-     * @param inPrefs Prefs object
-     * @param p ProcessObject
-     * @param s StepObject
+     * @param inDigitalDocument
+     *            DigitalDocument object
+     * @param inPrefs
+     *            Prefs object
+     * @param p
+     *            ProcessObject
+     * @param s
+     *            StepObject
      */
     public VariableReplacerWithoutHibernate(DigitalDocument inDigitalDocument, Prefs inPrefs, ProcessObject p,
-                                            StepObject s) {
+            StepObject s) {
         this.dd = inDigitalDocument;
         this.prefs = inPrefs;
         this.process = p;
@@ -76,8 +79,8 @@ public class VariableReplacerWithoutHibernate {
     }
 
     /**
-     * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die Variablen durchlaufen und aus
-     * dem Digital Document holen.
+     * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
+     * Variablen durchlaufen und aus dem Digital Document holen.
      */
     public String replace(String inString) {
         if (inString == null) {
@@ -89,14 +92,13 @@ public class VariableReplacerWithoutHibernate {
          */
         for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
             if (r.group(1).toLowerCase().startsWith("firstchild.")) {
-                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD,
-                        r.group(1).substring(11)));
+                inString = inString.replace(r.group(),
+                        getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
             } else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
-                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT,
-                        r.group(1).substring(10)));
+                inString = inString.replace(r.group(),
+                        getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
             } else {
-                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL,
-                        r.group(1)));
+                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
             }
         }
 
@@ -114,7 +116,10 @@ public class VariableReplacerWithoutHibernate {
         Ruleset ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
         String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile();
 
-        /* da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird diese rausgenommen */
+        /*
+         * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen,
+         * wird diese rausgenommen
+         */
         if (tifpath.endsWith(File.separator)) {
             tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
         }
@@ -134,8 +139,8 @@ public class VariableReplacerWithoutHibernate {
             sourcePath = sourcePath.substring(0, sourcePath.length() - File.separator.length()).replace("\\", "/");
         }
         if (ocrBasisPath.endsWith(File.separator)) {
-            ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length())
-                    .replace("\\", "/");
+            ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
+                    "/");
         }
         if (ocrPlaintextPath.endsWith(File.separator)) {
             ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
@@ -250,7 +255,8 @@ public class VariableReplacerWithoutHibernate {
     }
 
     /**
-     * Metadatum von FirstChild oder TopStruct ermitteln (vorzugsweise vom FirstChild) und zurückgeben.
+     * Metadatum von FirstChild oder TopStruct ermitteln (vorzugsweise vom
+     * FirstChild) und zurückgeben.
      */
     private String getMetadataFromDigitalDocument(MetadataLevel inLevel, String metadata) {
         if (this.dd != null) {
@@ -279,7 +285,10 @@ public class VariableReplacerWithoutHibernate {
 
             switch (inLevel) {
                 case FIRSTCHILD:
-                    /* ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden */
+                    /*
+                     * ohne vorhandenes FirstChild, kann dieses nicht
+                     * zurückgegeben werden
+                     */
                     if (resultFirst == null) {
                         if (logger.isInfoEnabled()) {
                             logger.info("Can not replace firstChild-variable for METS: " + metadata);
@@ -321,7 +330,8 @@ public class VariableReplacerWithoutHibernate {
     }
 
     /**
-     * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null zurückgegeben.
+     * Metadatum von übergebenen Docstruct ermitteln, im Fehlerfall wird null
+     * zurückgegeben.
      */
     private String getMetadataValue(DocStruct inDocstruct, MetadataType mdt) {
         List<? extends Metadata> mds = inDocstruct.getAllMetadataByType(mdt);
@@ -333,7 +343,8 @@ public class VariableReplacerWithoutHibernate {
     }
 
     /**
-     * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen Treffer als Liste zurück.
+     * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen
+     * Treffer als Liste zurück.
      */
     public static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
         List<MatchResult> results = new ArrayList<MatchResult>();

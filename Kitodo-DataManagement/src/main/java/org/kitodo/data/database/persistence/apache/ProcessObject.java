@@ -49,8 +49,8 @@ public class ProcessObject {
 
     public ProcessObject(int processId, String title, String outputName, boolean template, boolean swappedOut,
             boolean inChoiceListShown, String sortHelperStatus, int sortHelperImages, int sortHelperArticles,
-            Date creationDate, int projectId, int rulesetId, int sortHelperDocstructs,
-            int sortHelperMetadata, String wikiField) {
+            Date creationDate, int projectId, int rulesetId, int sortHelperDocstructs, int sortHelperMetadata,
+            String wikiField) {
         super();
         this.id = processId;
         this.title = title;

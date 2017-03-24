@@ -24,10 +24,10 @@ public class MetadatenSperrung implements Serializable {
     private static final long serialVersionUID = -8248209179063050307L;
     private static HashMap<Integer, HashMap<String, String>> sperrungen = new HashMap<Integer, HashMap<String, String>>();
     /*
-     * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu behalten (30 min)
+     * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
+     * behalten (30 min)
      */
-    private static final long sperrzeit = ConfigMain.getLongParameter("MetsEditorLockingTime", 30 * 60
-            * 1000);
+    private static final long sperrzeit = ConfigMain.getLongParameter("MetsEditorLockingTime", 30 * 60 * 1000);
 
     /**
      * Metadaten eines bestimmten Prozesses wieder freigeben.
@@ -58,8 +58,7 @@ public class MetadatenSperrung implements Serializable {
             return false;
         } else {
             /* wenn er in der Hashmap ist, muss die Zeit geprüft werden */
-            long lebenszeichen = Long.parseLong(temp
-                    .get("Lebenszeichen"));
+            long lebenszeichen = Long.parseLong(temp.get("Lebenszeichen"));
             if (lebenszeichen < System.currentTimeMillis() - sperrzeit) {
                 /*
                  * wenn die Zeit Größer ist als erlaubt, ist Metadatum nicht
@@ -77,12 +76,12 @@ public class MetadatenSperrung implements Serializable {
     /**
      * Java doc.
      *
-     * @param inBenutzerID Integer
+     * @param inBenutzerID
+     *            Integer
      */
     public void alleBenutzerSperrungenAufheben(Integer inBenutzerID) {
         String inBenutzerString = String.valueOf(inBenutzerID.intValue());
-        HashMap<Integer, HashMap<String, String>> temp = new HashMap<Integer, HashMap<String, String>>(
-                sperrungen);
+        HashMap<Integer, HashMap<String, String>> temp = new HashMap<Integer, HashMap<String, String>>(sperrungen);
         for (Iterator<Integer> iter = temp.keySet().iterator(); iter.hasNext();) {
             Integer myKey = iter.next();
             HashMap<String, String> intern = sperrungen.get(myKey);
@@ -98,9 +97,11 @@ public class MetadatenSperrung implements Serializable {
     public String getLockBenutzer(int ProzessID) {
         String rueckgabe = "-1";
         HashMap<String, String> temp = sperrungen.get(ProzessID);
-        /* wenn der Prozess nicht in der Hashpmap ist, gibt es keinen Benutzer */
+        /*
+         * wenn der Prozess nicht in der Hashpmap ist, gibt es keinen Benutzer
+         */
         if (temp != null) {
-            rueckgabe =  temp.get("Benutzer");
+            rueckgabe = temp.get("Benutzer");
         }
         return rueckgabe;
     }
@@ -128,8 +129,7 @@ public class MetadatenSperrung implements Serializable {
         if (temp == null) {
             return 0;
         } else {
-            return (System.currentTimeMillis() - Long.parseLong( temp
-                    .get("Lebenszeichen"))) / 1000;
+            return (System.currentTimeMillis() - Long.parseLong(temp.get("Lebenszeichen"))) / 1000;
         }
     }
 }

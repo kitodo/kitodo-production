@@ -27,12 +27,11 @@ import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Task;
 
 /**
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with
+ * predefined Values in data Table
  * 
  * @author Steffen Hankiewicz
  */
@@ -40,7 +39,9 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
      * org.goobi.production.flow.statistics.IDataSource)
      */
     @Override
@@ -71,8 +72,8 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
         for (Object obj : crit.list()) {
             Task step = (Task) obj;
-            String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..." : step
-                    .getTitle());
+            String kurztitel = (step.getTitle().length() > 60 ? step.getTitle().substring(0, 60) + "..."
+                    : step.getTitle());
             dRow.addValue(kurztitel, dRow.getValue(kurztitel) + 1);
         }
 
@@ -86,8 +87,9 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
-     * de.intranda.commons.chart.renderer.IRenderer)
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * isRendererInverted( de.intranda.commons.chart.renderer.IRenderer)
      */
     @Override
     public Boolean isRendererInverted(IRenderer inRenderer) {
@@ -96,7 +98,9 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit(
      * org.goobi.production.flow.statistics.enums.CalculationUnit)
      */
     @Override
@@ -105,7 +109,9 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
      * org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
@@ -114,7 +120,9 @@ public class StatQuestVolumeStatus implements IStatisticalQuestion {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * getNumberFormatPattern()
      */
     @Override
     public String getNumberFormatPattern() {

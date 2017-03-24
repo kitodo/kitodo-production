@@ -17,8 +17,9 @@ import de.sub.goobi.helper.Helper;
 import org.kitodo.data.database.beans.Process;
 
 /**
- * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms} for a process and provides the ability
- * to run the export in the background this way. This is especially valuable if the export has a big load of images
+ * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms}
+ * for a process and provides the ability to run the export in the background
+ * this way. This is especially valuable if the export has a big load of images
  * to copy.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
@@ -47,7 +48,8 @@ public class ExportDmsTask extends EmptyTask {
     }
 
     /**
-     * Clone constructor. Provides the ability to restart an export that was previously interrupted by the user.
+     * Clone constructor. Provides the ability to restart an export that was
+     * previously interrupted by the user.
      *
      * @param source
      *            terminated thread
@@ -70,8 +72,9 @@ public class ExportDmsTask extends EmptyTask {
     }
 
     /**
-     * If the task is started, it will execute this run() method which will start the export on the ExportDms.
-	 * This task instance is passed in addition so that the ExportDms can update the task’s state.
+     * If the task is started, it will execute this run() method which will
+     * start the export on the ExportDms. This task instance is passed in
+     * addition so that the ExportDms can update the task’s state.
      *
      * @see de.sub.goobi.helper.tasks.EmptyTask#run()
      */
@@ -85,8 +88,9 @@ public class ExportDmsTask extends EmptyTask {
     }
 
     /**
-     * Calls the clone constructor to create a not yet executed instance of this thread object.
-     * This is necessary for threads that have terminated in order to render possible to restart them.
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()

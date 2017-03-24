@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 public class SecurityCheckFilter implements Filter {
 
     public SecurityCheckFilter() {
-        //called once. no method arguments allowed here!
+        // called once. no method arguments allowed here!
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SecurityCheckFilter implements Filter {
      */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-         throws IOException, ServletException {
+            throws IOException, ServletException {
         HttpServletRequest hreq = (HttpServletRequest) request;
         HttpServletResponse hres = (HttpServletResponse) response;
         HttpSession session = hreq.getSession();
@@ -54,7 +54,7 @@ public class SecurityCheckFilter implements Filter {
             return;
         }
 
-        //deliver request to next filter
+        // deliver request to next filter
         chain.doFilter(request, response);
     }
 }

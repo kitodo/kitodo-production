@@ -23,9 +23,12 @@ public class UserDAO extends BaseDAO {
     /**
      * Find user object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public User find(Integer id) throws DAOException {
         User result = (User) retrieveObject(User.class, id);
@@ -51,12 +54,15 @@ public class UserDAO extends BaseDAO {
     }
 
     /**
-     * The function remove() removes a user from the environment. Since the user ID may still be referenced
-     * somewhere, the user account is invalidated instead.
+     * The function remove() removes a user from the environment. Since the user
+     * ID may still be referenced somewhere, the user account is invalidated
+     * instead.
      *
-     * @param user to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param user
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(User user) throws DAOException {
         user.selfDestruct();
@@ -76,11 +82,15 @@ public class UserDAO extends BaseDAO {
     /**
      * Search for a list of users by a named parameter.
      *
-     * @param query Search query
-     * @param namedParameter Name of named parameter
-     * @param parameter Parameter value
+     * @param query
+     *            Search query
+     * @param namedParameter
+     *            Name of named parameter
+     * @param parameter
+     *            Parameter value
      * @return list of users
-     * @throws DAOException if a HibernateException is thrown
+     * @throws DAOException
+     *             if a HibernateException is thrown
      */
     @SuppressWarnings("unchecked")
     public List<User> search(String query, String namedParameter, String parameter) throws DAOException {

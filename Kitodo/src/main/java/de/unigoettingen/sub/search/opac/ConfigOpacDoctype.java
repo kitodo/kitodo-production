@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.goobi.webapi.beans.Label;
 import org.goobi.webapi.beans.Label.KeyAttribute;
-
 import org.kitodo.production.exceptions.NotImplementedException;
 
 public class ConfigOpacDoctype {
@@ -88,10 +87,10 @@ public class ConfigOpacDoctype {
     }
 
     /**
-	 * Get localized label.
+     * Get localized label.
      *
-	 * @return String
-	 */
+     * @return String
+     */
     public String getLocalizedLabel() {
         String currentLocale = FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
         if (currentLocale != null && !currentLocale.equals("")) {

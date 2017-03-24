@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -152,37 +151,23 @@ public class Task extends BaseBean {
     private Process process;
 
     /**
-     * This field contains information about users, which are allowed to work on this task.
+     * This field contains information about users, which are allowed to work on
+     * this task.
      */
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "task_x_user",
-            joinColumns = {
-                    @JoinColumn(
-                            name = "task_id",
-                            foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")
-                    ) },
-            inverseJoinColumns = {
-                    @JoinColumn(
-                            name = "user_id",
-                            foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")
-                    ) })
+    @JoinTable(name = "task_x_user", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
-     * This field contains information about user's groups, which are allowed to work on this task.
+     * This field contains information about user's groups, which are allowed to
+     * work on this task.
      */
     @ManyToMany
-    @JoinTable(name = "task_x_userGroup",
-            joinColumns = {
-                    @JoinColumn(
-                            name = "task_id",
-                            foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")
-                    ) },
-            inverseJoinColumns = {
-                    @JoinColumn(
-                            name = "userGroup_id",
-                            foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")
-                    ) })
+    @JoinTable(name = "task_x_userGroup", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     @Transient
@@ -227,7 +212,8 @@ public class Task extends BaseBean {
     }
 
     /**
-     * Getter for editType set to private for hibernate, for use in program use getEditTypeEnum instead.
+     * Getter for editType set to private for hibernate, for use in program use
+     * getEditTypeEnum instead.
      *
      * @return editType as integer
      */
@@ -237,10 +223,11 @@ public class Task extends BaseBean {
     }
 
     /**
-     * Set editType to defined integer. only for internal use through hibernate, for changing editType
-     * use setEditTypeEnum instead.
+     * Set editType to defined integer. only for internal use through hibernate,
+     * for changing editType use setEditTypeEnum instead.
      *
-     * @param editType as Integer
+     * @param editType
+     *            as Integer
      */
     @SuppressWarnings("unused")
     private void setEditType(Integer editType) {
@@ -259,15 +246,16 @@ public class Task extends BaseBean {
     /**
      * Set editType to specific value from {@link TaskEditType}.
      *
-     * @param inputType as {@link TaskEditType}
+     * @param inputType
+     *            as {@link TaskEditType}
      */
     public void setEditTypeEnum(TaskEditType inputType) {
         this.editType = inputType.getValue();
     }
 
     /**
-     * Getter for processing status (set to private for hibernate), for use in program use
-     * getProcessingStatusEnum instead.
+     * Getter for processing status (set to private for hibernate), for use in
+     * program use getProcessingStatusEnum instead.
      *
      * @return processingStatus as integer
      */
@@ -276,10 +264,12 @@ public class Task extends BaseBean {
     }
 
     /**
-     * Set processing status to defined integer. only for internal use through hibernate, for changing
-     * processing status use setProcessingStatusEnum instead.
+     * Set processing status to defined integer. only for internal use through
+     * hibernate, for changing processing status use setProcessingStatusEnum
+     * instead.
      *
-     * @param processingStatus as Integer
+     * @param processingStatus
+     *            as Integer
      */
     public void setProcessingStatus(Integer processingStatus) {
         this.processingStatus = processingStatus;
@@ -288,7 +278,8 @@ public class Task extends BaseBean {
     /**
      * Set processing status to specific value from {@link TaskStatus}.
      *
-     * @param inputStatus as {@link TaskStatus}
+     * @param inputStatus
+     *            as {@link TaskStatus}
      */
     public void setProcessingStatusEnum(TaskStatus inputStatus) {
         this.processingStatus = inputStatus.getValue();
@@ -616,7 +607,8 @@ public class Task extends BaseBean {
         this.validationPlugin = validationPlugin;
     }
 
-    //Here will be methods which should be in TaskService but are used by jsp files
+    // Here will be methods which should be in TaskService but are used by jsp
+    // files
 
     public String getTitleWithUserName() {
         String result = this.getTitle();
@@ -629,7 +621,7 @@ public class Task extends BaseBean {
 
     public String getLocalizedTitle() {
         return this.title;
-        //return Helper.getTranslation(task.getTitle());
+        // return Helper.getTranslation(task.getTitle());
     }
 
     public int getUsersSize() {
@@ -659,17 +651,17 @@ public class Task extends BaseBean {
 
     public String getProcessingBeginAsFormattedString() {
         return this.processingBegin.toString();
-        //return Helper.getDateAsFormattedString(task.getProcessingBegin());
+        // return Helper.getDateAsFormattedString(task.getProcessingBegin());
     }
 
     public String getProcessingTimeAsFormattedString() {
         return this.processingTime.toString();
-        //return Helper.getDateAsFormattedString(task.getProcessingTime());
+        // return Helper.getDateAsFormattedString(task.getProcessingTime());
     }
 
     public String getProcessingEndAsFormattedString(Task task) {
         return task.processingEnd.toString();
-        //return Helper.getDateAsFormattedString(task.getProcessingEnd());
+        // return Helper.getDateAsFormattedString(task.getProcessingEnd());
     }
 
     public int getProcessingTimeNow() {

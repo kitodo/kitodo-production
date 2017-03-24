@@ -18,14 +18,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -36,20 +34,24 @@ public class ProjectHelper {
     /**
      * static to reduce load
      *
-     * @param project object
-     * @return a GoobiCollection of the following structure:
-     *     GoobiCollection 1-n representing the steps each step has the following properties @ stepTitle,
-	 *     stepOrder, stepCount,stepImageCount,totalProcessCount,totalImageCount which can get extracted by
-     *     the IGoobiCollection Interface using the getItem(&lt;name&gt;) method standard workflow of
-     *     the project according to the definition that only steps shared by all processes are returned.
-     *     The workflow order is returned according to the average order return by a grouping by
-     *     step title consider workflow structure to be a prototype, it would probably make things easier,
-     *     to either assemble the underlying construction in separate classes or to create a new class
-     *     with these properties
+     * @param project
+     *            object
+     * @return a GoobiCollection of the following structure: GoobiCollection 1-n
+     *         representing the steps each step has the following properties @
+     *         stepTitle, stepOrder,
+     *         stepCount,stepImageCount,totalProcessCount,totalImageCount which
+     *         can get extracted by the IGoobiCollection Interface using the
+     *         getItem(&lt;name&gt;) method standard workflow of the project
+     *         according to the definition that only steps shared by all
+     *         processes are returned. The workflow order is returned according
+     *         to the average order return by a grouping by step title consider
+     *         workflow structure to be a prototype, it would probably make
+     *         things easier, to either assemble the underlying construction in
+     *         separate classes or to create a new class with these properties
      */
 
     @SuppressWarnings("unchecked")
-	public static synchronized List<StepInformation> getProjectWorkFlowOverview(Project project) {
+    public static synchronized List<StepInformation> getProjectWorkFlowOverview(Project project) {
         Long totalNumberOfProc = 0l;
         Long totalNumberOfImages = 0l;
 
@@ -93,12 +95,14 @@ public class ProjectHelper {
         proList.add(Projections.count("id"));
         proList.add(Projections.avg("ordering"));
 
-
         critSteps.setProjection(proList);
 
-        // now we have to discriminate the hits where the max number of hits doesn't reach numberOfProcs
-        // and extract a workflow, which is the workflow common for all processes according to its titel
-        // the position will be calculated by the average of 'reihenfolge' of steps
+        // now we have to discriminate the hits where the max number of hits
+        // doesn't reach numberOfProcs
+        // and extract a workflow, which is the workflow common for all
+        // processes according to its titel
+        // the position will be calculated by the average of 'reihenfolge' of
+        // steps
 
         list = critSteps.list();
 
@@ -116,7 +120,8 @@ public class ProjectHelper {
             numberOfSteps = (Long) (row[FieldList.stepCount.fieldLocation]);
             averageStepOrder = (Double) (row[FieldList.stepOrder.fieldLocation]);
 
-            // in this step we only take the steps which are present in each of the workflows
+            // in this step we only take the steps which are present in each of
+            // the workflows
             if (numberOfSteps.equals(totalNumberOfProc)) {
                 StepInformation newStep = new StepInformation(title, averageStepOrder);
                 newStep.setNumberOfTotalImages(totalNumberOfImages.intValue());
@@ -151,7 +156,8 @@ public class ProjectHelper {
             numberOfSteps = (Long) (row[FieldList.stepCount.fieldLocation]);
             numberOfImages = (Long) (row[FieldList.imageCount.fieldLocation]);
 
-            // getting from the workflow collection the collection which represents step <title>
+            // getting from the workflow collection the collection which
+            // represents step <title>
             // we only created one for each step holding the counts of processes
             for (StepInformation currentStep : workFlow) {
                 if (currentStep.getTitle().equals(title)) {

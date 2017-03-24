@@ -15,9 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * The class ArrayListMap implements a simple table with two columns which are realized as ArrayLists.
- * All modifying operations on the ArrayListMap are implemented in a way that they modify both columns
- * in the same way, thus granting that they will always have the same length.
+ * The class ArrayListMap implements a simple table with two columns which are
+ * realized as ArrayLists. All modifying operations on the ArrayListMap are
+ * implemented in a way that they modify both columns in the same way, thus
+ * granting that they will always have the same length.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -27,8 +28,9 @@ public class ArrayListMap<K, V> {
     private final ArrayList<V> values = new ArrayList<>();
 
     /**
-     * The function addAll() appends all of the elements in the specified collection to the end of the keys list,
-     * in the order that they are returned by the specified collection's Iterator. The same quantity of
+     * The function addAll() appends all of the elements in the specified
+     * collection to the end of the keys list, in the order that they are
+     * returned by the specified collection's Iterator. The same quantity of
      * elements with the given value will be added to the values list.
      *
      * @param keyList

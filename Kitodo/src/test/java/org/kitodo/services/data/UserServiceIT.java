@@ -11,6 +11,9 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.sub.goobi.config.ConfigMain;
 
 import java.io.File;
@@ -21,12 +24,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for UserService class.
@@ -40,7 +40,7 @@ public class UserServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -189,11 +189,13 @@ public class UserServiceIT {
         User user = userService.find(1);
         String homeDirectory = ConfigMain.getParameter("dir_Users");
         boolean condition = userService.getHomeDirectory(user).equals(homeDirectory + "kowal" + File.separator);
-        System.out.println("1. Home directory: " + user.getLogin() +userService.getHomeDirectory(user));
+        System.out.println("1. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
 
-        //probably here home directory should look differently (depending on  LDAP group)
-        // but not sure how to test because it depends on config.properties ldap_use
+        // probably here home directory should look differently (depending on
+        // LDAP group)
+        // but not sure how to test because it depends on config.properties
+        // ldap_use
         user = userService.find(2);
         condition = userService.getHomeDirectory(user).contains("nowak");
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));

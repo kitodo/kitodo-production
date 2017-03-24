@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +25,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -36,14 +34,19 @@ import javax.xml.bind.annotation.XmlType;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 
 @XmlAccessorType(XmlAccessType.NONE)
-// This annotation is to instruct the Jersey API not to generate arbitrary XML elements. Further XML elements can be
-// added as needed by annotating with  @XmlElement, but their respective names should be wisely chosen according to
+// This annotation is to instruct the Jersey API not to generate arbitrary XML
+// elements. Further XML elements can be
+// added as needed by annotating with @XmlElement, but their respective names
+// should be wisely chosen according to
 // the Coding Guidelines (e.g. *english* names).
 // TODO: get rid of this xml attributes
-@XmlType(propOrder = { "template", "fieldConfig" })
-// This annotation declares the desired order of XML elements generated and rather serves for better legibility of
-// the generated XML. The list must be exhaustive and the properties have to be named according to their respective
-// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be referenced as "fieldConfig" here, not
+@XmlType(propOrder = {"template", "fieldConfig" })
+// This annotation declares the desired order of XML elements generated and
+// rather serves for better legibility of
+// the generated XML. The list must be exhaustive and the properties have to be
+// named according to their respective
+// getter function, e.g. @XmlElement(name="field") getFieldConfig() must be
+// referenced as "fieldConfig" here, not
 // "field" as one might expect.
 @Entity
 @Table(name = "project")
@@ -51,10 +54,11 @@ public class Project extends BaseBean implements Comparable<Project> {
     private static final long serialVersionUID = -8543713331407761617L;
 
     /**
-     * The constant ANCHOR_SEPARATOR holds the character U+00A6 (&ldquo;&brvbar;&rdquo;) which can be used to
-     * separate  multiple anchors, if several of them are needed in one project. The anchors must then be
-     * listed the hierarchical order they have to be applied, that is the topmost anchor in first place, followed by
-     * the second one and so on.
+     * The constant ANCHOR_SEPARATOR holds the character U+00A6
+     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
+     * if several of them are needed in one project. The anchors must then be
+     * listed the hierarchical order they have to be applied, that is the
+     * topmost anchor in first place, followed by the second one and so on.
      */
     public static final String ANCHOR_SEPARATOR = "\u00A6";
 
@@ -140,17 +144,9 @@ public class Project extends BaseBean implements Comparable<Project> {
     private Boolean projectIsArchived = false;
 
     @ManyToMany
-    @JoinTable(name = "project_x_user",
-            joinColumns = {
-                    @JoinColumn(
-                            name = "project_id",
-                            foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")
-                    ) },
-            inverseJoinColumns = {
-                    @JoinColumn(
-                            name = "user_id",
-                            foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")
-                    ) })
+    @JoinTable(name = "project_x_user", joinColumns = {
+            @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) })
     private List<User> users;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -161,8 +157,10 @@ public class Project extends BaseBean implements Comparable<Project> {
 
     @Transient
     @XmlElement(name = "template")
-    public List<Process> template; // The ‘template’ variable is populated from org.goobi.webapi.resources.Projects
-    // when calling ${SERVLET_CONTEXT}/rest/projects to output the templates available within a project as XML child
+    public List<Process> template; // The ‘template’ variable is populated from
+                                   // org.goobi.webapi.resources.Projects
+    // when calling ${SERVLET_CONTEXT}/rest/projects to output the templates
+    // available within a project as XML child
     // nodes of the respective project.
 
     /**
@@ -261,8 +259,9 @@ public class Project extends BaseBean implements Comparable<Project> {
     }
 
     /**
-     * Here different Getters and Setters for the same value, because Hibernate  does not like bit-Fields with null
-     * Values (that's why Boolean) and MyFaces seams not to like Boolean (that's why boolean for the GUI).
+     * Here different Getters and Setters for the same value, because Hibernate
+     * does not like bit-Fields with null Values (that's why Boolean) and
+     * MyFaces seams not to like Boolean (that's why boolean for the GUI).
      */
     public boolean isDmsImportCreateProcessFolder() {
         if (this.dmsImportCreateProcessFolder == null) {
@@ -422,7 +421,8 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Set number of volumes.
      *
-     * @param numberOfVolumes for this project
+     * @param numberOfVolumes
+     *            for this project
      */
 
     public void setNumberOfVolumes(Integer numberOfVolumes) {
@@ -443,8 +443,9 @@ public class Project extends BaseBean implements Comparable<Project> {
 
     /**
      * Set number of pages.
-
-     * @param numberOfPages the number of pages to set
+     * 
+     * @param numberOfPages
+     *            the number of pages to set
      */
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
@@ -485,7 +486,8 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Set if projects is archived.
      *
-     * @param projectIsArchived true or false
+     * @param projectIsArchived
+     *            true or false
      */
     public void setProjectIsArchived(Boolean projectIsArchived) {
         if (projectIsArchived == null) {
@@ -517,7 +519,8 @@ public class Project extends BaseBean implements Comparable<Project> {
         return this.title == null ? 0 : this.title.hashCode();
     }
 
-    //Here will be methods which should be in ProjectService but are used by jsp files
+    // Here will be methods which should be in ProjectService but are used by
+    // jsp files
 
     public boolean isDeleteAble() {
         return this.processes.size() == 0;

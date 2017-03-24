@@ -1,19 +1,19 @@
-/* 
- * The Fascinator - ReDBox/Mint SRU Client - NLA Identity
- * Copyright (C) 2012 Queensland Cyber Infrastructure Foundation (http://www.qcif.edu.au/)
+/*
+ * The Fascinator - ReDBox/Mint SRU Client - NLA Identity Copyright (C) 2012
+ * Queensland Cyber Infrastructure Foundation (http://www.qcif.edu.au/)
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru;
@@ -43,18 +43,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>A light-weight SRU client implementation. Originally written for the purpose
+ * <p>
+ * A light-weight SRU client implementation. Originally written for the purpose
  * of searching the National Library of Australia's Party Infrastructure Project
- * (PIP) via GET (ie. not POST or SOAP, both of which PIP also supports).</p>
- * <p>More information/documentation for PIP is <a href="https://wiki.nla.gov.au/display/ARDCPIP/Documentation">
- *     available on the NLA wiki</a>.</p>
+ * (PIP) via GET (ie. not POST or SOAP, both of which PIP also supports).
+ * </p>
+ * <p>
+ * More information/documentation for PIP is
+ * <a href="https://wiki.nla.gov.au/display/ARDCPIP/Documentation"> available on
+ * the NLA wiki</a>.
+ * </p>
  *
  * @author Greg Pendlebury
  *
- * <p>Credit for some of inspiration has to go to another light-weight implementation available under LGPL
- * we looked at before we started coding:
- * <a href="http://code.google.com/p/sinciput/source/browse/trunk/sinciput/src/com/technosophos/sinciput/sru/SRUClient.java">
- *     SRUClient</a> from 'Sinciput'.</p>
+ *         <p>
+ *         Credit for some of inspiration has to go to another light-weight
+ *         implementation available under LGPL we looked at before we started
+ *         coding: <a href=
+ *         "http://code.google.com/p/sinciput/source/browse/trunk/sinciput/src/com/technosophos/sinciput/sru/SRUClient.java">
+ *         SRUClient</a> from 'Sinciput'.
+ *         </p>
  *
  */
 public class SRUClient {
@@ -85,8 +93,9 @@ public class SRUClient {
     private String maximumRecords = "2";
 
     /**
-     * Default Constructor. Connect to the NLA unless otherwise instructed. This will rely on
-     * the more complicated constructor defaulting to the searching for EAC-CPF records as well.
+     * Default Constructor. Connect to the NLA unless otherwise instructed. This
+     * will rely on the more complicated constructor defaulting to the searching
+     * for EAC-CPF records as well.
      */
     public SRUClient() {
         saxInit();
@@ -95,8 +104,10 @@ public class SRUClient {
     /**
      * Constructor indicating the base URL for the SRU interface.
      *
-     * @param baseUrl The Base URL for the SRU interface. Required.
-     * @throws MalformedURLException Will be thrown if the 'baseUrl' provided is not well formed.
+     * @param baseUrl
+     *            The Base URL for the SRU interface. Required.
+     * @throws MalformedURLException
+     *             Will be thrown if the 'baseUrl' provided is not well formed.
      */
     public SRUClient(String baseUrl) throws MalformedURLException {
         this(baseUrl, null, null, null);
@@ -105,41 +116,60 @@ public class SRUClient {
     /**
      * Constructor indicating the base URL and metadata schema.
      *
-     * @param baseUrl The Base URL for the SRU interface. Required.
-     * @param schema The SRU 'recordSchema' to use. NULL values will default to EAC-CPC ('urn:isbn:1-931666-33-4')
-     * @throws MalformedURLException Will be thrown if the 'baseUrl' provided is not well formed.
+     * @param baseUrl
+     *            The Base URL for the SRU interface. Required.
+     * @param schema
+     *            The SRU 'recordSchema' to use. NULL values will default to
+     *            EAC-CPC ('urn:isbn:1-931666-33-4')
+     * @throws MalformedURLException
+     *             Will be thrown if the 'baseUrl' provided is not well formed.
      */
-    public SRUClient(String baseUrl, String schema)
-            throws MalformedURLException {
+    public SRUClient(String baseUrl, String schema) throws MalformedURLException {
         this(baseUrl, schema, null, null);
     }
 
     /**
-     * <p>Constructor indicating the base URL, metadata schema and format packing for responses.</p>
+     * <p>
+     * Constructor indicating the base URL, metadata schema and format packing
+     * for responses.
+     * </p>
      *
-     * @param baseUrl The Base URL for the SRU interface. Required.
-     * @param schema The SRU 'recordSchema' to use. NULL values will default to EAC-CPC ('urn:isbn:1-931666-33-4')
-     * @param packing The SRU 'recordPacking' to use. NULL values will default to 'xml'
-     * @throws MalformedURLException Will be thrown if the 'baseUrl' provided is not well formed.
+     * @param baseUrl
+     *            The Base URL for the SRU interface. Required.
+     * @param schema
+     *            The SRU 'recordSchema' to use. NULL values will default to
+     *            EAC-CPC ('urn:isbn:1-931666-33-4')
+     * @param packing
+     *            The SRU 'recordPacking' to use. NULL values will default to
+     *            'xml'
+     * @throws MalformedURLException
+     *             Will be thrown if the 'baseUrl' provided is not well formed.
      */
-    public SRUClient(String baseUrl, String schema, String packing)
-            throws MalformedURLException {
+    public SRUClient(String baseUrl, String schema, String packing) throws MalformedURLException {
         this(baseUrl, schema, packing, null);
     }
 
     /**
-     * <p>This constructor is where the real work happens. All the constructors
+     * <p>
+     * This constructor is where the real work happens. All the constructors
      * above provide wrappers of this one based on how much you want to deviate
-     * from the defaults (which assume you are connecting to the NLA.</p>
+     * from the defaults (which assume you are connecting to the NLA.
+     * </p>
      *
-     * @param baseUrl The Base URL for the SRU interface. Required.
-     * @param version The SRU 'version' to use. NULL values will default to v1.1
-     * @param schema The SRU 'recordSchema' to use. NULL values will default to EAC-CPC ('urn:isbn:1-931666-33-4')
-     * @param packing The SRU 'recordPacking' to use. NULL values will default to 'xml'
-     * @throws MalformedURLException Will be thrown if the 'baseUrl' provided is not well formed.
+     * @param baseUrl
+     *            The Base URL for the SRU interface. Required.
+     * @param version
+     *            The SRU 'version' to use. NULL values will default to v1.1
+     * @param schema
+     *            The SRU 'recordSchema' to use. NULL values will default to
+     *            EAC-CPC ('urn:isbn:1-931666-33-4')
+     * @param packing
+     *            The SRU 'recordPacking' to use. NULL values will default to
+     *            'xml'
+     * @throws MalformedURLException
+     *             Will be thrown if the 'baseUrl' provided is not well formed.
      */
-    public SRUClient(String baseUrl, String schema, String packing,
-            String version) throws MalformedURLException {
+    public SRUClient(String baseUrl, String schema, String packing, String version) throws MalformedURLException {
         // Make sure our URL is valid first
         try {
             @SuppressWarnings("unused")
@@ -168,37 +198,48 @@ public class SRUClient {
     }
 
     /**
-     * <p>Used to change the 'recordSchema' after instantiation. All outgoing
-     * requests sent after this call will use the new schema.</p>
+     * <p>
+     * Used to change the 'recordSchema' after instantiation. All outgoing
+     * requests sent after this call will use the new schema.
+     * </p>
      *
-     * @param newSchema The new schema to use.
+     * @param newSchema
+     *            The new schema to use.
      */
     public void setRecordSchema(String newSchema) {
         recordSchema = newSchema;
     }
 
     /**
-     * <p>Used to change the 'version' after instantiation. All outgoing
-     * requests sent after this call will use the new version.</p>
+     * <p>
+     * Used to change the 'version' after instantiation. All outgoing requests
+     * sent after this call will use the new version.
+     * </p>
      *
-     * @param newVersion The new version to use.
+     * @param newVersion
+     *            The new version to use.
      */
     public void setVersion(String newVersion) {
         sruVersion = newVersion;
     }
 
     /**
-     * <p>Used to change 'recordPacking' after instantiation. All outgoing
-     * requests sent after this call will use the new format.</p>
+     * <p>
+     * Used to change 'recordPacking' after instantiation. All outgoing requests
+     * sent after this call will use the new format.
+     * </p>
      *
-     * @param newPacking The new packing format to use.
+     * @param newPacking
+     *            The new packing format to use.
      */
     public void setPacking(String newPacking) {
         responsePacking = newPacking;
     }
 
     /**
-     * <p>Simple init for the SAX Reader.</p>
+     * <p>
+     * Simple init for the SAX Reader.
+     * </p>
      */
     private void saxInit() {
         namespaces = new HashMap<String, String>();
@@ -208,11 +249,16 @@ public class SRUClient {
     }
 
     /**
-     * <p>Used in unit testing to indicate a package resource to use as search responses, rather then submitting
-     * a real SRU query.</p>
+     * <p>
+     * Used in unit testing to indicate a package resource to use as search
+     * responses, rather then submitting a real SRU query.
+     * </p>
      *
-     * @param fileName The name of a resource 'file' to use as simulated search result.
-     * @throws IOException If encoding/access issues occur accessing the resource.
+     * @param fileName
+     *            The name of a resource 'file' to use as simulated search
+     *            result.
+     * @throws IOException
+     *             If encoding/access issues occur accessing the resource.
      */
     public void testResponseResource(String fileName) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -227,7 +273,8 @@ public class SRUClient {
     /**
      * Parse an XML document from a string
      *
-     * @param xmlData The String to parse
+     * @param xmlData
+     *            The String to parse
      * @return Document The parsed XML Object. Null if any problems occur.
      */
     public Document parseXml(String xmlData) {
@@ -242,9 +289,12 @@ public class SRUClient {
     }
 
     /**
-     * <p>Parse an XML String response and populate a response Object.</p>
+     * <p>
+     * Parse an XML String response and populate a response Object.
+     * </p>
      *
-     * @param xmlData The XML String returned from the search
+     * @param xmlData
+     *            The XML String returned from the search
      * @return SRUResponse An instantiated response object
      */
     public SRUResponse getResponseObject(String xmlData) {
@@ -266,9 +316,13 @@ public class SRUClient {
     }
 
     /**
-     * <p>Parse an XML String response and get a List Object containing all of the SRU search results.</p>
+     * <p>
+     * Parse an XML String response and get a List Object containing all of the
+     * SRU search results.
+     * </p>
      *
-     * @param xmlData The XML String returned from the search
+     * @param xmlData
+     *            The XML String returned from the search
      * @return List<Node> A List containing a DOM4J Node for each search result
      */
     public List<Node> getResultList(String xmlData) {
@@ -282,9 +336,12 @@ public class SRUClient {
     }
 
     /**
-     * <p>Basic wrapper for safely encoding Strings used in URLs.</p>
+     * <p>
+     * Basic wrapper for safely encoding Strings used in URLs.
+     * </p>
      *
-     * @param value The String to be used in the URL
+     * @param value
+     *            The String to be used in the URL
      * @return String A safely encoded version of 'value' for use in URLs.
      */
     private String encode(String value) {
@@ -297,18 +354,24 @@ public class SRUClient {
     }
 
     /**
-     * <p>Get the requested URL and return the GetMethod Object afterwards.
-     * To access more info use its method: eg. GetMethod.getStatusCode() and
-     * GetMethod.getResponseBodyAsString()</p>
+     * <p>
+     * Get the requested URL and return the GetMethod Object afterwards. To
+     * access more info use its method: eg. GetMethod.getStatusCode() and
+     * GetMethod.getResponseBodyAsString()
+     * </p>
      *
-     * <p>Internally wraps a Fascinator BasicHttpClient Object, so any configured
-     * proxy details from the system will be used automatically.</p>
+     * <p>
+     * Internally wraps a Fascinator BasicHttpClient Object, so any configured
+     * proxy details from the system will be used automatically.
+     * </p>
      *
-     * @param url The URL to retrieve
+     * @param url
+     *            The URL to retrieve
      * @return GetMethod The instantiated and executed GetMethod Object.
-     * @throws IOException If any network errors occur accessing the URL. Note
-     * this does not cover HTTP errors returned from the web server; use the
-     * returned Object to check for these.
+     * @throws IOException
+     *             If any network errors occur accessing the URL. Note this does
+     *             not cover HTTP errors returned from the web server; use the
+     *             returned Object to check for these.
      */
     private GetMethod getUrl(String url) throws IOException {
         HttpClient client = new HttpClient();
@@ -318,9 +381,12 @@ public class SRUClient {
     }
 
     /**
-     * <p>Generate a basic search URL for this SRU interface.</p>
+     * <p>
+     * Generate a basic search URL for this SRU interface.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface.
+     * @param query
+     *            The query String to perform against the SRU interface.
      * @return String A URL that can be retrieved to execute this search.
      */
     public String generateSearchUrl(String query) {
@@ -328,10 +394,16 @@ public class SRUClient {
     }
 
     /**
-     * <p>Generate a search URL for this SRU interface. No sorting or pagination.</p>
+     * <p>
+     * Generate a search URL for this SRU interface. No sorting or pagination.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface. Required.
-     * @param operation The 'operation' perform. If null this will default to 'searchRetrieve'.
+     * @param query
+     *            The query String to perform against the SRU interface.
+     *            Required.
+     * @param operation
+     *            The 'operation' perform. If null this will default to
+     *            'searchRetrieve'.
      * @return String A URL that can be retrieved to execute this search.
      */
     public String generateSearchUrl(String query, String operation) {
@@ -339,31 +411,47 @@ public class SRUClient {
     }
 
     /**
-     * <p>Generate a search URL for this SRU interface. No pagination.</p>
+     * <p>
+     * Generate a search URL for this SRU interface. No pagination.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface. Required.
-     * @param operation The 'operation' perform. If null this will default to 'searchRetrieve'.
-     * @param sortKeys Sorting. Optional, with no default.
+     * @param query
+     *            The query String to perform against the SRU interface.
+     *            Required.
+     * @param operation
+     *            The 'operation' perform. If null this will default to
+     *            'searchRetrieve'.
+     * @param sortKeys
+     *            Sorting. Optional, with no default.
      * @return String A URL that can be retrieved to execute this search.
      */
-    public String generateSearchUrl(String query, String operation,
-            String sortKeys) {
+    public String generateSearchUrl(String query, String operation, String sortKeys) {
         return this.generateSearchUrl(query, operation, sortKeys, null, null);
     }
 
     /**
-     * <p>Generate a search URL for this SRU interface. This is the actual implementation method wrapped by
-     * the methods above with most parameters as optional.</p>
+     * <p>
+     * Generate a search URL for this SRU interface. This is the actual
+     * implementation method wrapped by the methods above with most parameters
+     * as optional.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface. Required.
-     * @param operation The 'operation' perform. If null this will default to 'searchRetrieve'.
-     * @param sortKeys Sorting. Optional, with no default.
-     * @param startRecord Starting record number. Optional, with no default.
-     * @param maxRecords Maximum rows to return. Optional, with no default.
+     * @param query
+     *            The query String to perform against the SRU interface.
+     *            Required.
+     * @param operation
+     *            The 'operation' perform. If null this will default to
+     *            'searchRetrieve'.
+     * @param sortKeys
+     *            Sorting. Optional, with no default.
+     * @param startRecord
+     *            Starting record number. Optional, with no default.
+     * @param maxRecords
+     *            Maximum rows to return. Optional, with no default.
      * @return String A URL that can be retrieved to execute this search.
      */
-    public String generateSearchUrl(String query, String operation,
-            String sortKeys, String startRecord, String maxRecords) {
+    public String generateSearchUrl(String query, String operation, String sortKeys, String startRecord,
+            String maxRecords) {
         String searchUrl = baseUrl;
 
         if (query == null) {
@@ -398,9 +486,12 @@ public class SRUClient {
     }
 
     /**
-     * <p>Perform a basic search and return the response body.</p>
+     * <p>
+     * Perform a basic search and return the response body.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface.
+     * @param query
+     *            The query String to perform against the SRU interface.
      * @return String The response body return from the SRU interface.
      */
     public String getSearchResponse(String query) {
@@ -408,10 +499,16 @@ public class SRUClient {
     }
 
     /**
-     * <p>Perform a search and return the response body. No sorting or pagination.</p>
+     * <p>
+     * Perform a search and return the response body. No sorting or pagination.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface. Required.
-     * @param operation The 'operation' perform. If null this will default to 'searchRetrieve'.
+     * @param query
+     *            The query String to perform against the SRU interface.
+     *            Required.
+     * @param operation
+     *            The 'operation' perform. If null this will default to
+     *            'searchRetrieve'.
      * @return String The response body return from the SRU interface.
      */
     public String getSearchResponse(String query, String operation) {
@@ -419,34 +516,49 @@ public class SRUClient {
     }
 
     /**
-     * <p>Perform a search and return the response body. No pagination.</p>
+     * <p>
+     * Perform a search and return the response body. No pagination.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface. Required.
-     * @param operation The 'operation' perform. If null this will default to 'searchRetrieve'.
-     * @param sortKeys Sorting. Optional, with no default.
+     * @param query
+     *            The query String to perform against the SRU interface.
+     *            Required.
+     * @param operation
+     *            The 'operation' perform. If null this will default to
+     *            'searchRetrieve'.
+     * @param sortKeys
+     *            Sorting. Optional, with no default.
      * @return String The response body return from the SRU interface.
      */
-    public String getSearchResponse(String query, String operation,
-            String sortKeys) {
+    public String getSearchResponse(String query, String operation, String sortKeys) {
         return getSearchResponse(query, operation, sortKeys, null, null);
     }
 
     /**
-     * <p>Perform a search and return the response body. This is the actual implementation method wrapped by
-     * the methods above with most parameters as optional.</p>
+     * <p>
+     * Perform a search and return the response body. This is the actual
+     * implementation method wrapped by the methods above with most parameters
+     * as optional.
+     * </p>
      *
-     * @param query The query String to perform against the SRU interface. Required.
-     * @param operation The 'operation' perform. If null this will default to 'searchRetrieve'.
-     * @param sortKeys Sorting. Optional, with no default.
-     * @param startRecord Starting record number. Optional, with no default.
-     * @param maxRecords Maximum rows to return. Optional, with no default.
+     * @param query
+     *            The query String to perform against the SRU interface.
+     *            Required.
+     * @param operation
+     *            The 'operation' perform. If null this will default to
+     *            'searchRetrieve'.
+     * @param sortKeys
+     *            Sorting. Optional, with no default.
+     * @param startRecord
+     *            Starting record number. Optional, with no default.
+     * @param maxRecords
+     *            Maximum rows to return. Optional, with no default.
      * @return String The response body return from the SRU interface.
      */
-    public String getSearchResponse(String query, String operation,
-            String sortKeys, String startRecord, String maxRecords) {
+    public String getSearchResponse(String query, String operation, String sortKeys, String startRecord,
+            String maxRecords) {
         // Get a search URL to execute first
-        String searchUrl = generateSearchUrl(query, operation,
-                sortKeys, startRecord, maxRecords);
+        String searchUrl = generateSearchUrl(query, operation, sortKeys, startRecord, maxRecords);
         if (searchUrl == null) {
             log.error("Invalid search URL. Cannot perform search.");
             return null;
@@ -486,8 +598,10 @@ public class SRUClient {
     }
 
     /**
-     * <p>Make sure that the SAX Reader is aware of the XML namespaces used by
-     * the NLA when parsing their.</p>
+     * <p>
+     * Make sure that the SAX Reader is aware of the XML namespaces used by the
+     * NLA when parsing their.
+     * </p>
      */
     private void nlaNamespaces() {
         if (!namespaces.containsKey("srw")) {
@@ -499,11 +613,14 @@ public class SRUClient {
     }
 
     /**
-     * <p>Search for a record from the National Library of Australia with the
+     * <p>
+     * Search for a record from the National Library of Australia with the
      * provided identifier. If multiple records match this identifier only the
-     * first will be returned.</p>
+     * first will be returned.
+     * </p>
      *
-     * @param id The identifier to search for
+     * @param id
+     *            The identifier to search for
      * @return String The record matching this identifier. Null if not found
      */
     private Node nlaGetRecordNodeById(String id) {
@@ -532,11 +649,14 @@ public class SRUClient {
     }
 
     /**
-     * <p>Search for a record from the National Library of Australia with the
+     * <p>
+     * Search for a record from the National Library of Australia with the
      * provided identifier. If multiple records match this identifier only the
-     * first will be returned.</p>
+     * first will be returned.
+     * </p>
      *
-     * @param id The identifier to search for
+     * @param id
+     *            The identifier to search for
      * @return String The record matching this identifier. Null if not found
      */
     public String nlaGetRecordById(String id) {
@@ -554,11 +674,14 @@ public class SRUClient {
     }
 
     /**
-     * <p>Search for a record from the National Library of Australia with the
+     * <p>
+     * Search for a record from the National Library of Australia with the
      * provided identifier. If multiple records match this identifier only the
-     * first will be returned.</p>
+     * first will be returned.
+     * </p>
      *
-     * @param id The identifier to search for
+     * @param id
+     *            The identifier to search for
      * @return String The record matching this identifier. Null if not found
      */
     public String nlaGetNationalId(String id) {
@@ -581,12 +704,16 @@ public class SRUClient {
     }
 
     /**
-     * <p>Search for a record from the National Library of Australia with the
-     * provided identifier. Process and return their Identity record.</p>
+     * <p>
+     * Search for a record from the National Library of Australia with the
+     * provided identifier. Process and return their Identity record.
+     * </p>
      *
-     * @param id The identifier to search for
+     * @param id
+     *            The identifier to search for
      * @return NLAIdentity A processed Identity
-     * @throws SRUException If processing the Identity fails.
+     * @throws SRUException
+     *             If processing the Identity fails.
      */
     public NLAIdentity nlaGetIdentityById(String id) throws SRUException {
         Node node = nlaGetRecordNodeById(id);
@@ -594,9 +721,11 @@ public class SRUClient {
     }
 
     /**
-     * Search for a records from the National Library of Australia and parse the resultant XML is a wrapper object.
+     * Search for a records from the National Library of Australia and parse the
+     * resultant XML is a wrapper object.
      *
-     * @param search The search to submit to the NLA
+     * @param search
+     *            The search to submit to the NLA
      * @return SRUResponse A parsed response
      */
     public SRUResponse nlaGetResponseBySearch(String search) {
@@ -604,20 +733,22 @@ public class SRUClient {
     }
 
     /**
-     * Search for a records from the National Library of Australia and parse the resultant XML is a wrapper object.
+     * Search for a records from the National Library of Australia and parse the
+     * resultant XML is a wrapper object.
      *
-     * @param search The search to submit to the NLA
-     * @param startRecord Starting record number. Optional, with no default.
-     * @param maxRecords Maximum rows to return. Optional, with no default.
+     * @param search
+     *            The search to submit to the NLA
+     * @param startRecord
+     *            Starting record number. Optional, with no default.
+     * @param maxRecords
+     *            Maximum rows to return. Optional, with no default.
      * @return SRUResponse A parsed response
      */
-    public SRUResponse nlaGetResponseBySearch(String search, String startRecord,
-            String maxRecords) {
+    public SRUResponse nlaGetResponseBySearch(String search, String startRecord, String maxRecords) {
         nlaNamespaces();
 
         // Search NLA
-        String xmlResponse = getSearchResponse(search, null, null,
-                startRecord, maxRecords);
+        String xmlResponse = getSearchResponse(search, null, null, startRecord, maxRecords);
         if (xmlResponse == null) {
             log.error("Searching NLA failed!");
             return null;
@@ -628,11 +759,14 @@ public class SRUClient {
     }
 
     /**
-     * <p>Search for records from the National Library of Australia. Process
-     * and return their Identity records. It is important to note that if any
-     * Identity fails to process it will not appear in the List.</p>
+     * <p>
+     * Search for records from the National Library of Australia. Process and
+     * return their Identity records. It is important to note that if any
+     * Identity fails to process it will not appear in the List.
+     * </p>
      *
-     * @param search The search to submit to the NLA
+     * @param search
+     *            The search to submit to the NLA
      * @return List<NLAIdentity> A list of processed Identities
      */
     public List<NLAIdentity> nlaGetIdentitiesBySearch(String search) {
@@ -640,17 +774,21 @@ public class SRUClient {
     }
 
     /**
-     * <p>Search for records from the National Library of Australia. Process
-     * and return their Identity records. It is important to note that if any
-     * Identity fails to process it will not appear in the List.</p>
+     * <p>
+     * Search for records from the National Library of Australia. Process and
+     * return their Identity records. It is important to note that if any
+     * Identity fails to process it will not appear in the List.
+     * </p>
      *
-     * @param search The search to submit to the NLA
-     * @param startRecord Starting record number. Optional, with no default.
-     * @param maxRecords Maximum rows to return. Optional, with no default.
+     * @param search
+     *            The search to submit to the NLA
+     * @param startRecord
+     *            Starting record number. Optional, with no default.
+     * @param maxRecords
+     *            Maximum rows to return. Optional, with no default.
      * @return List<NLAIdentity> A list of processed Identities
      */
-    public List<NLAIdentity> nlaGetIdentitiesBySearch(String search,
-            String startRecord, String maxRecords) {
+    public List<NLAIdentity> nlaGetIdentitiesBySearch(String search, String startRecord, String maxRecords) {
         SRUResponse response = nlaGetResponseBySearch(search);
         if (response == null) {
             log.error("Searching NLA failed!");

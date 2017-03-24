@@ -12,11 +12,15 @@
 package org.kitodo.api.schemaconverter;
 
 /**
- * Determines the Schema Formats supported by the module. Needs to be implemented by an emun.
+ * Determines the Schema Formats supported by the module. Needs to be
+ * implemented by an emun.
  */
 public interface SchemaFormat {
 
-    /** returns the enum values, is overwritten by enums default 'values()' method */
+    /**
+     * returns the enum values, is overwritten by enums default 'values()'
+     * method
+     */
     SchemaFormat[] values();
 
 }

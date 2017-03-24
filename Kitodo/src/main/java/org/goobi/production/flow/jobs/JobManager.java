@@ -69,7 +69,7 @@ public class JobManager implements ServletContextListener {
     /**
      * initializes given SimpleGoobiJob at given time.
      */
-    private static void initializeJob(IGoobiJob goobiJob, String configuredStartTimeProperty,Scheduler sched)
+    private static void initializeJob(IGoobiJob goobiJob, String configuredStartTimeProperty, Scheduler sched)
             throws SchedulerException {
         logger.debug(goobiJob.getJobName());
         JobDetail jobDetail = new JobDetail(goobiJob.getJobName(), null, goobiJob.getClass());
@@ -99,7 +99,7 @@ public class JobManager implements ServletContextListener {
     /**
      * initializes given SimpleGoobiJob at given time.
      */
-    private static void initializeJobNonConfigured(IGoobiJob goobiJob, int myTime,Scheduler sched)
+    private static void initializeJobNonConfigured(IGoobiJob goobiJob, int myTime, Scheduler sched)
             throws SchedulerException {
         logger.debug(goobiJob.getJobName());
         JobDetail jobDetail = new JobDetail(goobiJob.getJobName(), null, goobiJob.getClass());

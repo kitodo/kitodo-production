@@ -24,7 +24,8 @@ import org.apache.commons.configuration.ConfigurationException;
 public class OverwriteOrCreateRule extends DataCopyrule {
 
     /**
-     * Operator representing the OverwriteOrCreateRule in the data copier syntax.
+     * Operator representing the OverwriteOrCreateRule in the data copier
+     * syntax.
      */
     protected static final String OPERATOR = "=";
 
@@ -55,7 +56,8 @@ public class OverwriteOrCreateRule extends DataCopyrule {
     }
 
     /**
-     * Returns the minimal number of objects required by the rule to work as expected, that is 1.
+     * Returns the minimal number of objects required by the rule to work as
+     * expected, that is 1.
      *
      * @return always 1
      * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMinObjects()
@@ -66,7 +68,8 @@ public class OverwriteOrCreateRule extends DataCopyrule {
     }
 
     /**
-     * Returns the maximal number of objects supported by the rule to work as expected, that is 1.
+     * Returns the maximal number of objects supported by the rule to work as
+     * expected, that is 1.
      *
      * @return always 1
      * @see de.sub.goobi.metadaten.copier.DataCopyrule#getMaxObjects()

@@ -24,12 +24,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.io.SafeFile;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -55,8 +53,9 @@ public class HelperSchritteWithoutHibernate {
     public static final String DIRECTORY_PREFIX = "orig_";
 
     /**
-     * The field task holds an optional task instance. Its progress and its errors will be passed to
-     * the task manager screen (if available) for visualisation.
+     * The field task holds an optional task instance. Its progress and its
+     * errors will be passed to the task manager screen (if available) for
+     * visualisation.
      */
     private EmptyTask task;
 
@@ -106,7 +105,10 @@ public class HelperSchritteWithoutHibernate {
 
         StepManager.addHistory(myDate, currentStep.getOrdering(), currentStep.getTitle(),
                 HistoryType.taskDone.getValue(), processId);
-        /* prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht abgeschlossen sind */
+        /*
+         * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
+         * abgeschlossen sind
+         */
 
         List<StepObject> steps = StepManager.getStepsForProcess(processId);
         List<StepObject> allehoeherenSchritte = new ArrayList<StepObject>();
@@ -119,7 +121,10 @@ public class HelperSchritteWithoutHibernate {
                 allehoeherenSchritte.add(so);
             }
         }
-        /* wenn keine offenen parallelschritte vorhanden sind, die nächsten Schritte aktivieren */
+        /*
+         * wenn keine offenen parallelschritte vorhanden sind, die nächsten
+         * Schritte aktivieren
+         */
         if (offeneSchritteGleicherReihenfolge == 0) {
             if (logger.isDebugEnabled()) {
                 logger.debug("found " + allehoeherenSchritte.size() + " tasks");
@@ -134,7 +139,8 @@ public class HelperSchritteWithoutHibernate {
                 if (reihenfolge == myStep.getOrdering() && myStep.getProcessingStatus() != 3
                         && myStep.getProcessingStatus() != 2) {
                     /*
-                     * den Schritt aktivieren, wenn es kein vollautomatischer ist
+                     * den Schritt aktivieren, wenn es kein vollautomatischer
+                     * ist
                      */
                     if (logger.isDebugEnabled()) {
                         logger.debug("open step " + myStep.getTitle());
@@ -212,7 +218,8 @@ public class HelperSchritteWithoutHibernate {
     /**
      * Update process status.
      *
-     * @param processId int
+     * @param processId
+     *            int
      */
     public void updateProcessStatus(int processId) {
         int offen = 0;
@@ -249,8 +256,10 @@ public class HelperSchritteWithoutHibernate {
     /**
      * Execute all scripts for step.
      *
-     * @param step StepObject
-     * @param automatic boolean
+     * @param step
+     *            StepObject
+     * @param automatic
+     *            boolean
      */
     public void executeAllScriptsForStep(StepObject step, boolean automatic) {
         List<String> scriptpaths = StepManager.loadScripts(step.getId());
@@ -281,9 +290,12 @@ public class HelperSchritteWithoutHibernate {
     /**
      * Execute script for StepObject.
      *
-     * @param step StepObject
-     * @param script String
-     * @param automatic boolean
+     * @param step
+     *            StepObject
+     * @param script
+     *            String
+     * @param automatic
+     *            boolean
      * @return int
      */
     public int executeScriptForStepObject(StepObject step, String script, boolean automatic) {
@@ -365,8 +377,10 @@ public class HelperSchritteWithoutHibernate {
     /**
      * Execute DMS export.
      *
-     * @param step StepObject
-     * @param automatic boolean
+     * @param step
+     *            StepObject
+     * @param automatic
+     *            boolean
      */
     public void executeDmsExport(StepObject step, boolean automatic) {
         AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(

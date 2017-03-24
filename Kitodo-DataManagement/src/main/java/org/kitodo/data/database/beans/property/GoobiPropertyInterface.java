@@ -51,7 +51,8 @@ public interface GoobiPropertyInterface {
     /**
      * Set data type to specific value from {@link PropertyType}.
      *
-     * @param dataType as {@link PropertyType}
+     * @param dataType
+     *            as {@link PropertyType}
      */
     void setType(PropertyType dataType);
 

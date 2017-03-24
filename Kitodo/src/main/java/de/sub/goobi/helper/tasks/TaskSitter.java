@@ -25,15 +25,20 @@ import javax.servlet.ServletContextListener;
 import org.joda.time.Duration;
 
 /**
- * The class TaskSitter takes care of the tasks in the task manager. While the application is working,
- * a scheduler on the TaskManager will call the run() method of the TaskSitter every some seconds to
- * delete threads that have died, replace threads that are to be restarted by new copies of themselves
- * (a Thread can never be started twice) and finally starts some new threads if there aren’t
- * too many working any more. Several limits are configurable for the {@link #run()} method.
+ * The class TaskSitter takes care of the tasks in the task manager. While the
+ * application is working, a scheduler on the TaskManager will call the run()
+ * method of the TaskSitter every some seconds to delete threads that have died,
+ * replace threads that are to be restarted by new copies of themselves (a
+ * Thread can never be started twice) and finally starts some new threads if
+ * there aren’t too many working any more. Several limits are configurable for
+ * the {@link #run()} method.
  *
- * <p>On shutdown of the servlet container, the TaskSitter will try to shut down all threads
- * that are still running. Because the TaskManager is singleton (its constructor is private)
- * a caring class is needed which will be available for instantiation to the servlet container.</p>
+ * <p>
+ * On shutdown of the servlet container, the TaskSitter will try to shut down
+ * all threads that are still running. Because the TaskManager is singleton (its
+ * constructor is private) a caring class is needed which will be available for
+ * instantiation to the servlet container.
+ * </p>
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -44,9 +49,10 @@ public class TaskSitter implements Runnable, ServletContextListener {
     private static final long KEEP_SUCCESSFUL_MINS = 20;
 
     /**
-     * The field autoRunLimit holds the number of threads which at most are allowed to be started automatically.
-     * It is by default initialised by the number of available processors of the runtime and set to 0 while
-     * the feature is disabled.
+     * The field autoRunLimit holds the number of threads which at most are
+     * allowed to be started automatically. It is by default initialised by the
+     * number of available processors of the runtime and set to 0 while the
+     * feature is disabled.
      */
     private static int autoRunLimit;
 
@@ -55,7 +61,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * When the servlet is unloaded, i.e. on container shutdown, the TaskManager shall be shut down gracefully.
+     * When the servlet is unloaded, i.e. on container shutdown, the TaskManager
+     * shall be shut down gracefully.
      *
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
@@ -74,7 +81,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function isAutoRunningThreads() returns whether the TaskManager’s autorun mode is on or not.
+     * The function isAutoRunningThreads() returns whether the TaskManager’s
+     * autorun mode is on or not.
      *
      * @return whether the TaskManager is auto-running threads or not
      */
@@ -83,38 +91,62 @@ public class TaskSitter implements Runnable, ServletContextListener {
     }
 
     /**
-     * The function run() examines the task list, deletes threads that have died, replaces threads
-     * that are to be restarted by new copies of themselves and finally starts new threads up to the given limit.
+     * The function run() examines the task list, deletes threads that have
+     * died, replaces threads that are to be restarted by new copies of
+     * themselves and finally starts new threads up to the given limit.
      *
-     * <p>Several limits are configurable: There are both limits in number and in time for successfully finished
-     * or erroneous threads which can be set in the configuration. There are internal default values for
-     * these settings too, which will be applied in case of missing configuration entries.
-     * Since zombie processes will still occupy all their resources and aren’t available for garbage collection,
-     * these values have been chosen rather restrictive. For the limit for auto starting threads, see
-     * {@link #setAutoRunningThreads(boolean)}.</p>
+     * <p>
+     * Several limits are configurable: There are both limits in number and in
+     * time for successfully finished or erroneous threads which can be set in
+     * the configuration. There are internal default values for these settings
+     * too, which will be applied in case of missing configuration entries.
+     * Since zombie processes will still occupy all their resources and aren’t
+     * available for garbage collection, these values have been chosen rather
+     * restrictive. For the limit for auto starting threads, see
+     * {@link #setAutoRunningThreads(boolean)}.
+     * </p>
      *
-     * <p>If the task list is empty, the method will exit without further delay, otherwise it will initialise
-     * its variables and read the configuration. Reading the configuration is done again in each iteration so
-     * configuration changes will propagate here.</p>
+     * <p>
+     * If the task list is empty, the method will exit without further delay,
+     * otherwise it will initialise its variables and read the configuration.
+     * Reading the configuration is done again in each iteration so
+     * configuration changes will propagate here.
+     * </p>
      *
-     * <p>Then the function iterates along the task list and takes care for each task. To be able to modify
-     * the list in passing, we need a {@link java.util.ListIterator} here.</p>
+     * <p>
+     * Then the function iterates along the task list and takes care for each
+     * task. To be able to modify the list in passing, we need a
+     * {@link java.util.ListIterator} here.
+     * </p>
      *
-     * <p>Running tasks reduce the clearance to run new tasks. (However, the clearance must not become negative.)
-     * New tasks will be added to the launch list, except if they have already been marked for removal, of course.
-     * If a task has terminated, it is handled as specified by its behaviour variable: All tasks that are marked
-     * DELETE_IMMEDIATELY will instantly be disposed of; otherwise, they will be kept as long as configured
-     * and only be removed if their dead body has become older. Tasks marked PREPARE_FOR_RESTART will be replaced
-     * (because a  {@link java.lang.Thread} cannot be started a second time) by a copy of them.</p>
+     * <p>
+     * Running tasks reduce the clearance to run new tasks. (However, the
+     * clearance must not become negative.) New tasks will be added to the
+     * launch list, except if they have already been marked for removal, of
+     * course. If a task has terminated, it is handled as specified by its
+     * behaviour variable: All tasks that are marked DELETE_IMMEDIATELY will
+     * instantly be disposed of; otherwise, they will be kept as long as
+     * configured and only be removed if their dead body has become older. Tasks
+     * marked PREPARE_FOR_RESTART will be replaced (because a
+     * {@link java.lang.Thread} cannot be started a second time) by a copy of
+     * them.
+     * </p>
      *
-     * <p>If a ConcurrentModificationException arises during list examination, the method will behave like
-     * a polite servant and retire silently until the lordship has scarpered. This is not a pity because
-     * it will be started every some seconds.</p>
+     * <p>
+     * If a ConcurrentModificationException arises during list examination, the
+     * method will behave like a polite servant and retire silently until the
+     * lordship has scarpered. This is not a pity because it will be started
+     * every some seconds.
+     * </p>
      *
-     * </p>After having finished iterating, the method will reduce the absolute number of expired threads
-     * as configured. (Since new threads will be added to the bottom of the list and we therefore want to
-     * remove older ones top-down we cannot do this before we know their count, thus we cannot do  this
-     * while iterating.) Last, new threads will be started up to the remaining available clearance.</p>
+     * </p>
+     * After having finished iterating, the method will reduce the absolute
+     * number of expired threads as configured. (Since new threads will be added
+     * to the bottom of the list and we therefore want to remove older ones
+     * top-down we cannot do this before we know their count, thus we cannot do
+     * this while iterating.) Last, new threads will be started up to the
+     * remaining available clearance.
+     * </p>
      *
      * @see java.lang.Runnable#run()
      */
@@ -130,8 +162,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
         LinkedList<EmptyTask> failedThreads = new LinkedList<EmptyTask>();
         int availableClearance = autoRunLimit;
 
-        int successfulMaxCount = ConfigMain
-                .getIntParameter("taskManager.keepThreads.successful.count", KEEP_SUCCESSFUL);
+        int successfulMaxCount = ConfigMain.getIntParameter("taskManager.keepThreads.successful.count",
+                KEEP_SUCCESSFUL);
         int failedMaxCount = ConfigMain.getIntParameter("taskManager.keepThreads.failed.count", KEEP_FAILED);
         Duration successfulMaxAge = ConfigMain.getDurationParameter("taskManager.keepThreads.successful.minutes",
                 TimeUnit.MINUTES, KEEP_SUCCESSFUL_MINS);

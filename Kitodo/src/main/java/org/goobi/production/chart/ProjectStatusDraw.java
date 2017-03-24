@@ -14,11 +14,7 @@ package org.goobi.production.chart;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
@@ -28,9 +24,10 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 /**
- * ProjectStatusDraw class creates and paints the chart depending on given parameters.
- * The value parameters are transferred as {@link ProjectStatusDataTable}-Object.
- * Width and height have to be set as pixel values.
+ * ProjectStatusDraw class creates and paints the chart depending on given
+ * parameters. The value parameters are transferred as
+ * {@link ProjectStatusDataTable}-Object. Width and height have to be set as
+ * pixel values.
  *
  * @author Karsten Köhler
  * @author Hendrik Söhnholz
@@ -128,8 +125,7 @@ public class ProjectStatusDraw {
         // Print date of project begin
         drawLeftAlignedString(dateFormatter.format(projectBegin), borderLeft, BORDERTOP - 1.5 * fm.getHeight());
         // Print date of project end
-        drawRightAlignedString(dateFormatter.format(projectEnd), width - BORDERRIGHT, BORDERTOP - 1.5
-                * fm.getHeight());
+        drawRightAlignedString(dateFormatter.format(projectEnd), width - BORDERRIGHT, BORDERTOP - 1.5 * fm.getHeight());
 
         // Read ProjectStatusDataTable and draw the chart
         for (ProjectTask t : dataTable.getTasks()) {
@@ -165,12 +161,12 @@ public class ProjectStatusDraw {
             if ((borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight()
                     + fm.stringWidth(stepsCompletedString)) >= borderLeft + chartWidth) {
                 g2d.setColor(Color.white);
-                drawRightAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted()
-                        * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
+                drawRightAlignedString(stepsCompletedString,
+                        borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps - fm.getHeight(), y);
             } else {
                 g2d.setColor(Color.black);
-                drawLeftAlignedString(stepsCompletedString, borderLeft + t.getStepsCompleted()
-                        * chartWidth / nonNullMaxSteps + fm.getHeight(), y);
+                drawLeftAlignedString(stepsCompletedString,
+                        borderLeft + t.getStepsCompleted() * chartWidth / nonNullMaxSteps + fm.getHeight(), y);
             }
         }
 
@@ -181,19 +177,16 @@ public class ProjectStatusDraw {
         if (myLogger.isDebugEnabled()) {
             myLogger.debug(datePosition + " / " + duration);
         }
-        float dash1[] = { 2.0f };
-        BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
-                1.0f, dash1, 0.0f);
+        float dash1[] = {2.0f };
+        BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash1, 0.0f);
         g2d.setStroke(dashed);
         g2d.setColor(Color.black);
         g2d.draw(new Line2D.Double(borderLeft + datePosition * chartWidth / duration,
-                BORDERTOP  + dataTable.getNumberOfTasks() * BARSPACING
-                - BARWIDTH, borderLeft + datePosition * chartWidth / duration,
-                BORDERTOP - 1 * fm.getHeight()));
+                BORDERTOP + dataTable.getNumberOfTasks() * BARSPACING - BARWIDTH,
+                borderLeft + datePosition * chartWidth / duration, BORDERTOP - 1 * fm.getHeight()));
         drawCenteredString(dateFormatter.format(today), borderLeft + datePosition * chartWidth / duration,
                 BORDERTOP - 2.5 * fm.getHeight());
     }
-
 
     /**
      * Draw horizontal bar with given color.
@@ -252,11 +245,11 @@ public class ProjectStatusDraw {
         g2d.drawString(str, (int) (xpos - fm.stringWidth(str)), (int) (ypos + 0.5 * fm.getAscent() - 1));
     }
 
-
     /**
      * Get size of Image for rendering.
      *
-     * @param count int
+     * @param count
+     *            int
      */
     public static int getImageHeight(int count) {
         return BORDERTOP + count * BARSPACING;

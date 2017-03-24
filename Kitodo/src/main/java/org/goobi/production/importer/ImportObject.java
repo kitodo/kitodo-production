@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.TemplateProperty;

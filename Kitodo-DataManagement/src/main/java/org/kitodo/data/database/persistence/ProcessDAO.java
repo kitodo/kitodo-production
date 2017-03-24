@@ -24,9 +24,12 @@ public class ProcessDAO extends BaseDAO {
     /**
      * Find process object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public Process find(Integer id) throws DAOException {
         Process result = (Process) retrieveObject(Process.class, id);
@@ -48,10 +51,14 @@ public class ProcessDAO extends BaseDAO {
 
     /**
      *
-     * @param process object
-     * @param progress service
+     * @param process
+     *            object
+     * @param progress
+     *            service
      * @return process object
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure failure.
      */
     public Process save(Process process, String progress) throws DAOException {
         process.setSortHelperStatus(progress);
@@ -61,8 +68,11 @@ public class ProcessDAO extends BaseDAO {
 
     /**
      *
-     * @param list of processes
-     * @throws DAOException an exception that can be thrown from the underlying saveList() procedure failure.
+     * @param list
+     *            of processes
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying
+     *             saveList() procedure failure.
      */
     public void saveList(List<Process> list) throws DAOException {
         List<Object> l = new ArrayList<>();
@@ -73,9 +83,11 @@ public class ProcessDAO extends BaseDAO {
     /**
      * The function remove() removes a process from database.
      *
-     * @param process to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param process
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(Process process) throws DAOException {
         if (process.getId() != null) {
@@ -98,7 +110,9 @@ public class ProcessDAO extends BaseDAO {
 
     /**
      * Never ending loop...
-     * @param process object
+     * 
+     * @param process
+     *            object
      */
     public void refresh(Process process) {
         Object o = process;
@@ -107,7 +121,9 @@ public class ProcessDAO extends BaseDAO {
 
     /**
      * Never ending loop...
-     * @param process object
+     * 
+     * @param process
+     *            object
      */
     public void update(Process process) {
         Object o = process;

@@ -21,7 +21,6 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 
@@ -31,7 +30,8 @@ public class PropertyParser {
     /**
      * Get properties for task.
      *
-     * @param mySchritt Task object
+     * @param mySchritt
+     *            Task object
      * @return list of ProcessProperty objects
      */
     public static ArrayList<ProcessProperty> getPropertiesForStep(Task mySchritt) {
@@ -119,14 +119,16 @@ public class PropertyParser {
             }
         }
 
-        // add existing 'eigenschaften' to properties from config, so we have all properties from config and
+        // add existing 'eigenschaften' to properties from config, so we have
+        // all properties from config and
         // some of them with already existing 'eigenschaften'
         ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
         List<org.kitodo.data.database.beans.ProcessProperty> plist = mySchritt.getProcess().getProperties();
         for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
 
             for (ProcessProperty pp : listClone) {
-                // TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
+                // TODO added temporarily a fix for NPE. Properties without
+                // title shouldn't exist at all
                 if (pe.getTitle() != null) {
 
                     if (pe.getTitle().equals(pp.getName())) {
@@ -153,7 +155,8 @@ public class PropertyParser {
     /**
      * Get properties for process.
      *
-     * @param process object
+     * @param process
+     *            object
      * @return ProcessProperty object
      */
     public static ArrayList<ProcessProperty> getPropertiesForProcess(Process process) {
@@ -220,13 +223,15 @@ public class PropertyParser {
                 properties.add(pp);
 
             }
-        } // add existing 'eigenschaften' to properties from config, so we have all properties from config and some
-        // of them with already existing 'eigenschaften'
+        } // add existing 'eigenschaften' to properties from config, so we have
+          // all properties from config and some
+          // of them with already existing 'eigenschaften'
         List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
         List<org.kitodo.data.database.beans.ProcessProperty> plist = process.getProperties();
         for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
 
-            // TODO added temporarily a fix for NPE. Properties without title shouldn't exist at all
+            // TODO added temporarily a fix for NPE. Properties without title
+            // shouldn't exist at all
             if (pe.getTitle() != null) {
 
                 for (ProcessProperty pp : listClone) {

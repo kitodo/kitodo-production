@@ -21,8 +21,10 @@ public interface DocketInterface {
     /**
      * Generates a docket from given data.
      *
-     * @param docketData    - the data shown in the docket
-     * @param pathToXslFile - the path to the schema xsl file
+     * @param docketData
+     *            - the data shown in the docket
+     * @param pathToXslFile
+     *            - the path to the schema xsl file
      * @return a docket file
      */
     File generateDocket(DocketData docketData, Path pathToXslFile) throws IOException;
@@ -30,8 +32,10 @@ public interface DocketInterface {
     /**
      * Generates multiple dockets
      *
-     * @param docketData    - a List data shown in the dockets
-     * @param pathToXslFile - the path to the schema xsl file
+     * @param docketData
+     *            - a List data shown in the dockets
+     * @param pathToXslFile
+     *            - the path to the schema xsl file
      * @return a list of docket files.
      */
     File generateMultipleDockets(ArrayList<DocketData> docketData, Path pathToXslFile) throws IOException;

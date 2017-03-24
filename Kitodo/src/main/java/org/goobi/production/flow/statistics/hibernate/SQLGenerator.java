@@ -18,8 +18,9 @@ import java.util.List;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 
 /**
- * This is the superclass for SQL generation and it provides some common data collection in the constructor and
- * abstract methods which needs to  be implemented in the sub classes.
+ * This is the superclass for SQL generation and it provides some common data
+ * collection in the constructor and abstract methods which needs to be
+ * implemented in the sub classes.
  *
  * @author Wulf Riebensahm
  */
@@ -38,8 +39,7 @@ public abstract class SQLGenerator {
         super();
     }
 
-    public SQLGenerator(Date timeFrom, Date timeTo, TimeUnit timeUnit,
-            List<Integer> ids, String idFieldName) {
+    public SQLGenerator(Date timeFrom, Date timeTo, TimeUnit timeUnit, List<Integer> ids, String idFieldName) {
         this();
         myTimeFrom = timeFrom;
         myTimeTo = timeTo;
@@ -61,10 +61,7 @@ public abstract class SQLGenerator {
             for (Integer i : ids) {
                 myIdsCondition = myIdsCondition.concat(i.toString() + ",");
             }
-            myIdsCondition = myIdsCondition.substring(0, myIdsCondition
-                    .length()
-                    - ",".length())
-                    + ")";
+            myIdsCondition = myIdsCondition.substring(0, myIdsCondition.length() - ",".length()) + ")";
         }
     }
 
@@ -78,35 +75,32 @@ public abstract class SQLGenerator {
     /**
      * Generates SQL-WHERE for the time frame.
      *
-     * @param timeFrom start time
-     * @param timeTo   end time
-     * @param timeLimiter name of field used to apply the timeframe
+     * @param timeFrom
+     *            start time
+     * @param timeTo
+     *            end time
+     * @param timeLimiter
+     *            name of field used to apply the timeframe
      */
-    protected static String getWhereClauseForTimeFrame(Date timeFrom,
-            Date timeTo, String timeLimiter) {
+    protected static String getWhereClauseForTimeFrame(Date timeFrom, Date timeTo, String timeLimiter) {
 
         if (timeFrom == null && timeTo == null) {
             return "";
         }
 
         if (timeFrom != null && timeTo != null) {
-            return " date_format(" + timeLimiter
-                    + ",'%Y%m%d%H%i%s')+0>=date_format('"
-                    + dateToSqlTimestamp(timeFrom) + "','%Y%m%d%H%i%s')+0 AND "
-                    + " date_format(" + timeLimiter
-                    + ",'%Y%m%d%H%i%s')+0<=date_format('"
+            return " date_format(" + timeLimiter + ",'%Y%m%d%H%i%s')+0>=date_format('" + dateToSqlTimestamp(timeFrom)
+                    + "','%Y%m%d%H%i%s')+0 AND " + " date_format(" + timeLimiter + ",'%Y%m%d%H%i%s')+0<=date_format('"
                     + dateToSqlTimestamp(timeTo) + "','%Y%m%d%H%i%s')+0 ";
         }
 
         if (timeFrom != null) {
-            return " date_format(" + timeLimiter
-                    + ",'%Y%m%d%H%i%s')+0>=date_format('"
-                    + dateToSqlTimestamp(timeFrom) + "','%Y%m%d%H%i%s')+0";
+            return " date_format(" + timeLimiter + ",'%Y%m%d%H%i%s')+0>=date_format('" + dateToSqlTimestamp(timeFrom)
+                    + "','%Y%m%d%H%i%s')+0";
         }
 
-        return " date_format(" + timeLimiter
-                + ",'%Y%m%d%H%i%s')+0<=date_format('"
-                + dateToSqlTimestamp(timeTo) + "','%Y%m%d%H%i%s')+0";
+        return " date_format(" + timeLimiter + ",'%Y%m%d%H%i%s')+0<=date_format('" + dateToSqlTimestamp(timeTo)
+                + "','%Y%m%d%H%i%s')+0";
     }
 
     /**
@@ -116,8 +110,7 @@ public abstract class SQLGenerator {
      * @param timeUnit
      * @return String - simple date format
      */
-    protected static String getIntervallExpression(TimeUnit timeUnit,
-            String fieldExpression) {
+    protected static String getIntervallExpression(TimeUnit timeUnit, String fieldExpression) {
 
         if (timeUnit == null) {
             return "'Total'";
@@ -127,19 +120,15 @@ public abstract class SQLGenerator {
             case years:
                 return "year(" + fieldExpression + ")";
             case months:
-                return "concat(year(" + fieldExpression + ") , '/' , date_format("
-                    + fieldExpression + ",'%m'))";
+                return "concat(year(" + fieldExpression + ") , '/' , date_format(" + fieldExpression + ",'%m'))";
             case quarters:
-                return "concat(year(" + fieldExpression + ") , '/' , quarter("
-                    + fieldExpression + "))";
+                return "concat(year(" + fieldExpression + ") , '/' , quarter(" + fieldExpression + "))";
             case weeks:
-                return "concat(left(yearweek(" + fieldExpression
-                    + ",3),4), '/', right(yearweek(" + fieldExpression
-                    + ",3),2))";
+                return "concat(left(yearweek(" + fieldExpression + ",3),4), '/', right(yearweek(" + fieldExpression
+                        + ",3),2))";
             case days:
-                return "concat(year(" + fieldExpression + ") , '-' , date_format("
-                    + fieldExpression + ",'%m') , '-' , date_format("
-                    + fieldExpression + ",'%d'))";
+                return "concat(year(" + fieldExpression + ") , '-' , date_format(" + fieldExpression
+                        + ",'%m') , '-' , date_format(" + fieldExpression + ",'%d'))";
             default:
                 return "'timeUnit(" + timeUnit.getTitle() + ") undefined'";
         }
@@ -148,7 +137,8 @@ public abstract class SQLGenerator {
     /**
      * Converts the format of a date to match MySQL Timestamp format.
      *
-     * @param date as Date
+     * @param date
+     *            as Date
      * @return time stamp
      */
     private static Timestamp dateToSqlTimestamp(Date date) {

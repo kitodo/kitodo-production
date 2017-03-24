@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Page;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 
@@ -80,11 +79,11 @@ public class BasisForm implements Serializable {
             return;
         }
         serviceManager.getUserService().addFilter(this.user.getId(), this.filter);
-        //try {
-        //	new BenutzerDAO().save(this.user);
-        //} catch (DAOException e) {
-        //	logger.error(e);
-        //}
+        // try {
+        // new BenutzerDAO().save(this.user);
+        // } catch (DAOException e) {
+        // logger.error(e);
+        // }
     }
 
     /**
@@ -95,10 +94,10 @@ public class BasisForm implements Serializable {
             return;
         }
         serviceManager.getUserService().removeFilter(this.user.getId(), this.filter);
-        //try {
-        //	new BenutzerDAO().save(this.user);
-        //} catch (DAOException e) {
-        //	logger.error(e);
-        //}
+        // try {
+        // new BenutzerDAO().save(this.user);
+        // } catch (DAOException e) {
+        // logger.error(e);
+        // }
     }
 }

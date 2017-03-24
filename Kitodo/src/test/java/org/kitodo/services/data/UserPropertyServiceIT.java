@@ -11,18 +11,18 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.UserProperty;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for UserPropertyService class.
@@ -37,7 +37,7 @@ public class UserPropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -45,7 +45,8 @@ public class UserPropertyServiceIT {
         UserPropertyService userPropertyService = new UserPropertyService();
 
         UserProperty userProperty = userPropertyService.find(1);
-        boolean condition = userProperty.getTitle().equals("First Property") && userProperty.getValue().equals("first value");
+        boolean condition = userProperty.getTitle().equals("First Property")
+                && userProperty.getValue().equals("first value");
         assertTrue("User property was not found in database!", condition);
     }
 

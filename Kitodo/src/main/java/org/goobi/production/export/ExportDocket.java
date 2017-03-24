@@ -30,7 +30,6 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.goobi.production.IProcessDataExport;
-
 import org.kitodo.data.database.beans.Process;
 
 /**
@@ -41,8 +40,8 @@ import org.kitodo.data.database.beans.Process;
 public class ExportDocket implements IProcessDataExport {
 
     /**
-     * This method exports the production metadata as run note to a given stream. the docket.xsl has to be in
-     * the config-folder.
+     * This method exports the production metadata as run note to a given
+     * stream. the docket.xsl has to be in the config-folder.
      *
      * @param process
      *            the process to export
@@ -80,14 +79,16 @@ public class ExportDocket implements IProcessDataExport {
     }
 
     /**
-	 * Start export.
+     * Start export.
      *
-	 * @param processList list of process' objects
-	 * @param os OutputStream object
-	 * @param xsltfile String
-	 */
-    public void startExport(Iterable<Process> processList, OutputStream os, String xsltfile)
-            throws IOException {
+     * @param processList
+     *            list of process' objects
+     * @param os
+     *            OutputStream object
+     * @param xsltfile
+     *            String
+     */
+    public void startExport(Iterable<Process> processList, OutputStream os, String xsltfile) throws IOException {
 
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -124,6 +125,5 @@ public class ExportDocket implements IProcessDataExport {
         }
         return null;
     }
-
 
 }

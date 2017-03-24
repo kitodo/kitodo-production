@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.goobi.io.SafeFile;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -40,8 +38,9 @@ public class ProcessSwapInTask extends LongRunningTask {
     }
 
     /**
-     * The clone constructor creates a new instance of this object. This is necessary for
-     * Threads that have terminated in order to render to run them again possible.
+     * The clone constructor creates a new instance of this object. This is
+     * necessary for Threads that have terminated in order to render to run them
+     * again possible.
      *
      * @param processSwapInTask
      *            copy master to create a clone of
@@ -99,8 +98,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             // TODO: Don't catch Exception (the super class)
         } catch (Exception e) {
             logger.warn("Exception:", e);
-            setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - "
-                    + e.getMessage());
+            setStatusMessage(
+                    "Error while getting process data folder: " + e.getClass().getName() + " - " + e.getMessage());
             setStatusProgress(-1);
             return;
         }
@@ -127,8 +126,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             // TODO: Don't catch Exception (the super class)
         } catch (Exception e) {
             logger.warn("Exception:", e);
-            setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName()
-                    + " - " + e.getMessage());
+            setStatusMessage("Error while reading swapped.xml in process data folder: " + e.getClass().getName() + " - "
+                    + e.getMessage());
             setStatusProgress(-1);
             return;
         }
@@ -156,7 +155,8 @@ public class ProcessSwapInTask extends LongRunningTask {
         doc.setRootElement(root);
 
         /*
-         * Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren
+         * Verzeichnisse und Dateien kopieren und anschliessend den Ordner
+         * leeren
          */
         setStatusProgress(50);
         try {
@@ -221,8 +221,9 @@ public class ProcessSwapInTask extends LongRunningTask {
     }
 
     /**
-     * Calls the clone constructor to create a not yet executed instance of this thread object.
-     * This is necessary for threads that have terminated in order to render possible to restart them.
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()

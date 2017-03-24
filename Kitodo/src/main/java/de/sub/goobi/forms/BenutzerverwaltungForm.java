@@ -40,7 +40,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -117,11 +116,13 @@ public class BenutzerverwaltungForm extends BasisForm {
                 Disjunction ex = Restrictions.disjunction();
                 ex.add(Restrictions.like("name", "%" + this.filter + "%"));
                 ex.add(Restrictions.like("surname", "%" + this.filter + "%"));
-                //crit.createCriteria("projekte", "proj");
-                //ex.add(Restrictions.like("proj.titel", "%" + this.filter + "%"));
+                // crit.createCriteria("projekte", "proj");
+                // ex.add(Restrictions.like("proj.titel", "%" + this.filter +
+                // "%"));
 
-                //crit.createCriteria("benutzergruppen", "group");
-                //ex.add(Restrictions.like("group.titel", "%" + this.filter + "%"));
+                // crit.createCriteria("benutzergruppen", "group");
+                // ex.add(Restrictions.like("group.titel", "%" + this.filter +
+                // "%"));
                 crit.add(ex);
             }
             crit.addOrder(Order.asc("surname"));
@@ -150,7 +151,10 @@ public class BenutzerverwaltungForm extends BasisForm {
 
         Integer blub = this.myClass.getId();
         try {
-            /* prüfen, ob schon ein anderer Benutzer mit gleichem Login existiert */
+            /*
+             * prüfen, ob schon ein anderer Benutzer mit gleichem Login
+             * existiert
+             */
             if (this.serviceManager.getUserService().count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
                 return "BenutzerAlle";
@@ -184,18 +188,18 @@ public class BenutzerverwaltungForm extends BasisForm {
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes"
                 + File.separator + "goobi_loginBlacklist.txt";
-        /* Datei zeilenweise durchlaufen und die auf ungültige Zeichen vergleichen */
-        try (
-                FileInputStream fis = new FileInputStream(filename);
+        /*
+         * Datei zeilenweise durchlaufen und die auf ungültige Zeichen
+         * vergleichen
+         */
+        try (FileInputStream fis = new FileInputStream(filename);
                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(isr);
-        ) {
+                BufferedReader in = new BufferedReader(isr);) {
             String str;
             while ((str = in.readLine()) != null) {
                 if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
                     valide = false;
-                    Helper.setFehlerMeldung("", "Login " + str
-                            + Helper.getTranslation("loginNotValid"));
+                    Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
                 }
             }
         } catch (IOException e) {
@@ -206,10 +210,13 @@ public class BenutzerverwaltungForm extends BasisForm {
     /**
      * The function Loeschen() deletes a user account.
      *
-     * <p>Please note that deleting a user in goobi.production will not delete the user from
-     * a connected LDAP service.</p>
+     * <p>
+     * Please note that deleting a user in goobi.production will not delete the
+     * user from a connected LDAP service.
+     * </p>
      *
-     * @return a string indicating the screen showing up after the command has been performed.
+     * @return a string indicating the screen showing up after the command has
+     *         been performed.
      */
     public String Loeschen() {
         try {
@@ -318,7 +325,8 @@ public class BenutzerverwaltungForm extends BasisForm {
     /**
      * Set class.
      *
-     * @param inMyClass user object
+     * @param inMyClass
+     *            user object
      */
     public void setMyClass(User inMyClass) {
         Helper.getHibernateSession().flush();

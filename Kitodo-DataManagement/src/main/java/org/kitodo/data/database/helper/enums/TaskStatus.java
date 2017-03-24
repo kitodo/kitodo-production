@@ -12,7 +12,8 @@
 package org.kitodo.data.database.helper.enums;
 
 /**
- * Enum for status of steps, each one with integer value for database, with title and images for gui
+ * Enum for status of steps, each one with integer value for database, with
+ * title and images for gui
  * 
  * @author Steffen Hankiewicz
  * @version 17.05.2009
@@ -22,15 +23,15 @@ public enum TaskStatus {
     /**
      * Locked = step not startable.
      */
-    LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif","steplocked"),
+    LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif", "steplocked"),
     /**
      * Open = someone can begin with this step.
      */
-    OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif","stepopen"),
+    OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif", "stepopen"),
     /**
      * Inwork = someone is currently working on that step.
      */
-    INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif","stepinwork"),
+    INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif", "stepinwork"),
     /**
      * Done = step is executed.
      */
@@ -43,7 +44,8 @@ public enum TaskStatus {
     private String searchString;
 
     /**
-     * Private constructor, initializes integer value, title, small and big image.
+     * Private constructor, initializes integer value, title, small and big
+     * image.
      */
     private TaskStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
         this.value = inValue;
@@ -69,7 +71,7 @@ public enum TaskStatus {
      */
     public String getTitle() {
         return this.title;
-        //return Helper.getTranslation(this.title);
+        // return Helper.getTranslation(this.title);
     }
 
     /**
@@ -91,10 +93,11 @@ public enum TaskStatus {
     }
 
     /**
-     * Retrieve StepStatus by integer value, necessary for database handlings, where only integer is saved
-     * but not type safe.
+     * Retrieve StepStatus by integer value, necessary for database handlings,
+     * where only integer is saved but not type safe.
      *
-     * @param inValue as integer value
+     * @param inValue
+     *            as integer value
      * @return {@link TaskStatus} for given integer
      */
     public static TaskStatus getStatusFromValue(Integer inValue) {

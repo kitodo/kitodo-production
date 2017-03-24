@@ -21,9 +21,10 @@ import javax.xml.bind.annotation.XmlValue;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
 /**
- * The Label class provides serialization for Map &lt;String,String&gt; objects where keys are
- * language identifiers (examples include “en”, “de”, …) and values are texts in the respective language.
- * This is necessary because Maps unfortunately do not natively serialize to XML.
+ * The Label class provides serialization for Map &lt;String,String&gt; objects
+ * where keys are language identifiers (examples include “en”, “de”, …) and
+ * values are texts in the respective language. This is necessary because Maps
+ * unfortunately do not natively serialize to XML.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -42,8 +43,9 @@ public class Label {
     public String value;
 
     /**
-     * Default constructor is required to be explicitly coded because copy constructor is given.
-     * Java only provides an implicit default constructor as long as no other constructors are given.
+     * Default constructor is required to be explicitly coded because copy
+     * constructor is given. Java only provides an implicit default constructor
+     * as long as no other constructors are given.
      */
     public Label() {
         // there is nothing to do
@@ -64,8 +66,10 @@ public class Label {
     /**
      * To list of labels.
      *
-     * @param data Map of Strings
-     * @param keyAttribute KeyAttribute object
+     * @param data
+     *            Map of Strings
+     * @param keyAttribute
+     *            KeyAttribute object
      * @return list of Label objects
      */
     public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {

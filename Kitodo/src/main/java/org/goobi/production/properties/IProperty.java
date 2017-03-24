@@ -16,50 +16,50 @@ import java.util.List;
 
 public interface IProperty {
 
-	public abstract String getName();
+    public abstract String getName();
 
-	public abstract void setName(String name);
+    public abstract void setName(String name);
 
-	public abstract int getContainer();
+    public abstract int getContainer();
 
-	public abstract void setContainer(int container);
+    public abstract void setContainer(int container);
 
-	public abstract String getValidation();
+    public abstract String getValidation();
 
-	public abstract void setValidation(String validation);
+    public abstract void setValidation(String validation);
 
-	public abstract Type getType();
+    public abstract Type getType();
 
-	public abstract void setType(Type type);
+    public abstract void setType(Type type);
 
-	public abstract String getValue();
+    public abstract String getValue();
 
-	public abstract void setValue(String value);
+    public abstract void setValue(String value);
 
-	public abstract List<String> getPossibleValues();
+    public abstract List<String> getPossibleValues();
 
-	public abstract void setPossibleValues(List<String> possibleValues);
+    public abstract void setPossibleValues(List<String> possibleValues);
 
-	public abstract List<String> getProjects();
+    public abstract List<String> getProjects();
 
-	public abstract void setProjects(List<String> projects);
+    public abstract void setProjects(List<String> projects);
 
-	public abstract List<ShowStepCondition> getShowStepConditions();
+    public abstract List<ShowStepCondition> getShowStepConditions();
 
-	public abstract void setShowStepConditions(List<ShowStepCondition> showStepConditions);
+    public abstract void setShowStepConditions(List<ShowStepCondition> showStepConditions);
 
-	public abstract AccessCondition getShowProcessGroupAccessCondition();
+    public abstract AccessCondition getShowProcessGroupAccessCondition();
 
-	public abstract void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition);
+    public abstract void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition);
 
-	public abstract boolean isValid();
+    public abstract boolean isValid();
 
-	public void setDateValue(Date inDate);
-	
-	public Date getDateValue();
+    public void setDateValue(Date inDate);
 
-	public abstract IProperty getClone(int containerNumber);
+    public Date getDateValue();
 
-	public abstract void transfer();
+    public abstract IProperty getClone(int containerNumber);
+
+    public abstract void transfer();
 
 }

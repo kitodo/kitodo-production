@@ -29,9 +29,7 @@ import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
-
 import org.joda.time.LocalDate;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -48,7 +46,8 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 /**
- * The class CreateNewspaperProcessesTask is a LongRunningTask to create processes from a course of appearance.
+ * The class CreateNewspaperProcessesTask is a LongRunningTask to create
+ * processes from a course of appearance.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -56,21 +55,24 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * The field batchLabel is set in addToBatches() on the first function call which finds it to be null,
-     * and is used and set back to null in flushLogisticsBatch() to create the batches’ specific part of the
+     * The field batchLabel is set in addToBatches() on the first function call
+     * which finds it to be null, and is used and set back to null in
+     * flushLogisticsBatch() to create the batches’ specific part of the
      * identifier (put in parentheses behind the shared part).
      */
     private String batchLabel;
 
     /**
-     * The field createBatches holds a granularity level that is used to create batches out of the given processes.
-     * The field may be null which disables the feature.
+     * The field createBatches holds a granularity level that is used to create
+     * batches out of the given processes. The field may be null which disables
+     * the feature.
      */
     private final Granularity createBatches;
 
     /**
-     * The field currentBreakMark holds an integer hash value which, for a given Granularity, shall indicate for
-     * two neighboring processes whether they form the same logistics batch (break mark is equal) or to different
+     * The field currentBreakMark holds an integer hash value which, for a given
+     * Granularity, shall indicate for two neighboring processes whether they
+     * form the same logistics batch (break mark is equal) or to different
      * processes (break mark differs).
      */
     private Integer currentBreakMark;
@@ -81,40 +83,47 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     private Batch fullBatch = new Batch(Type.NEWSPAPER);
 
     /**
-     * The field logisticsBatch holds a batch that all issues of the same logistics unit will be assigned to.
+     * The field logisticsBatch holds a batch that all issues of the same
+     * logistics unit will be assigned to.
      */
     private Batch logisticsBatch = new Batch(Type.LOGISTIC);
 
     /**
-     * The field nextProcessToCreate holds the index of the next process to create. Because long running tasks
-     * are interruptible is a field so the thread will continue to work with the next process after being continued.
+     * The field nextProcessToCreate holds the index of the next process to
+     * create. Because long running tasks are interruptible is a field so the
+     * thread will continue to work with the next process after being continued.
      */
     private int nextProcessToCreate;
 
     /**
-     * The field numberOfProcesses holds the processes’ size to prevent calling size() over and over again.
+     * The field numberOfProcesses holds the processes’ size to prevent calling
+     * size() over and over again.
      */
     private final int numberOfProcesses;
 
     /**
-     * The field pattern holds a ProzesskopieForm instance that will be used as pattern for the creation of processes.
+     * The field pattern holds a ProzesskopieForm instance that will be used as
+     * pattern for the creation of processes.
      */
     private final ProzesskopieForm pattern;
 
     /**
-     * The field processes holds a List of List of IndividualIssue objects that processes will be created from.
-     * Each list object, which is a list itself, represents a process to create. Each process can consist of
-     * many issues which will be part of that process.
+     * The field processes holds a List of List of IndividualIssue objects that
+     * processes will be created from. Each list object, which is a list itself,
+     * represents a process to create. Each process can consist of many issues
+     * which will be part of that process.
      */
     private final List<List<IndividualIssue>> processes;
 
     /**
-     * The field description holds a verbal description of the course of appearance.
+     * The field description holds a verbal description of the course of
+     * appearance.
      */
     private final List<String> description;
 
     /**
-     * The class CreateNewspaperProcessesTask is a LongRunningTask to create processes from a course of appearance.
+     * The class CreateNewspaperProcessesTask is a LongRunningTask to create
+     * processes from a course of appearance.
      *
      * @param pattern
      *            a ProzesskopieForm to use for creating processes
@@ -139,8 +148,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * The copy constructor creates a new thread from a given one. This is required to call the copy constructor
-     * of the parent.
+     * The copy constructor creates a new thread from a given one. This is
+     * required to call the copy constructor of the parent.
      *
      * @param master
      *            copy master
@@ -162,12 +171,19 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     /**
      * The function run() is the main function of this task (which is a thread).
      *
-     * <p>It will create a new process for each entry from the field “processes”.</p>
+     * <p>
+     * It will create a new process for each entry from the field “processes”.
+     * </p>
      *
-     * <p>Therefore it makes use of CreateNewProcessProcessor.newProcessFromTemplate() to once again load
-     * a ProzesskopieForm from Hibernate for each process to create, sets the required fields accordingly,
-     * then triggers the calculation of the process title and finally initiates the process creation one by one.
-     * The statusProgress variable is being updated to show the operator how far the task has proceeded.</p>
+     * <p>
+     * Therefore it makes use of
+     * CreateNewProcessProcessor.newProcessFromTemplate() to once again load a
+     * ProzesskopieForm from Hibernate for each process to create, sets the
+     * required fields accordingly, then triggers the calculation of the process
+     * title and finally initiates the process creation one by one. The
+     * statusProgress variable is being updated to show the operator how far the
+     * task has proceeded.
+     * </p>
      *
      * @see java.lang.Thread#run()
      */
@@ -178,15 +194,15 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             while (nextProcessToCreate < numberOfProcesses) {
                 List<IndividualIssue> issues = processes.get(nextProcessToCreate);
                 if (issues.size() > 0) {
-                    ProzesskopieForm newProcess = CreateNewProcessProcessor.newProcessFromTemplate(pattern
-                            .getProzessVorlage().getTitle());
+                    ProzesskopieForm newProcess = CreateNewProcessProcessor
+                            .newProcessFromTemplate(pattern.getProzessVorlage().getTitle());
                     newProcess.setDigitalCollections(pattern.getDigitalCollections());
                     newProcess.setDocType(pattern.getDocType());
                     newProcess.setAdditionalFields(pattern.getAdditionalFields());
                     currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
                     if (currentTitle.equals("")) {
-                        setException(new RuntimeException("Couldn’t create process title for issue "
-                                + issues.get(0).toString()));
+                        setException(new RuntimeException(
+                                "Couldn’t create process title for issue " + issues.get(0).toString()));
                         return;
                     }
                     setWorkDetail(currentTitle);
@@ -216,20 +232,22 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             saveFullBatch(currentTitle);
             setProgress(100);
         } catch (Exception e) {
-            // ReadException, PreferencesException, SwapException, DAOException, WriteException, IOException,
+            // ReadException, PreferencesException, SwapException, DAOException,
+            // WriteException, IOException,
             // InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
-            String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null) ? Helper
-                    .getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
-                            Arrays.asList(new String[] { currentTitle })) : e.getClass().getSimpleName()
-                    + (currentTitle != null ? " while creating " + currentTitle : " in CreateNewspaperProcessesTask");
+            String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null)
+                    ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
+                            Arrays.asList(new String[] {currentTitle }))
+                    : e.getClass().getSimpleName() + (currentTitle != null ? " while creating " + currentTitle
+                            : " in CreateNewspaperProcessesTask");
             setException(new RuntimeException(message + ": " + e.getMessage(), e));
             return;
         }
     }
 
     /**
-     * The function createFirstChild() creates the first level of the logical document structure available at
-     * the given parent.
+     * The function createFirstChild() creates the first level of the logical
+     * document structure available at the given parent.
      *
      * @param docStruct
      *            level of the logical document structure to create a child in
@@ -269,8 +287,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * Creates a logical structure tree in the process under creation. In the tree, all issues will have been created.
-     * Presumption is that never issues for more than one year will be added to the same process.
+     * Creates a logical structure tree in the process under creation. In the
+     * tree, all issues will have been created. Presumption is that never issues
+     * for more than one year will be added to the same process.
      *
      * @param newProcess
      *            process under creation
@@ -288,7 +307,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             getAddableMetadataTypes()
      */
     private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues,
-                                        String publicationRun)
+            String publicationRun)
             throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
 
         // initialise
@@ -351,7 +370,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * The function addMetadatum() adds a metadata to the given level of the logical document structure hierarchy.
+     * The function addMetadatum() adds a metadata to the given level of the
+     * logical document structure hierarchy.
      *
      * @param level
      *            level of the logical document structure to create a child in
@@ -367,16 +387,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             level.addMetadata(key, value);
         } catch (Exception e) {
             if (fail) {
-                throw new RuntimeException("Could not create metadatum "
-                        + key
-                        + " in "
+                throw new RuntimeException("Could not create metadatum " + key + " in "
                         + (level.getType() != null ? "DocStrctType " + level.getType().getName()
-                        : "anonymous DocStrctType")
-                        + ": "
-                        + e.getClass()
-                        .getSimpleName()
-                        .replace("NullPointerException",
-                                "No metadata types are associated with that DocStructType."), e);
+                                : "anonymous DocStrctType")
+                        + ": " + e.getClass().getSimpleName().replace("NullPointerException",
+                                "No metadata types are associated with that DocStructType."),
+                        e);
             }
         }
     }
@@ -414,8 +430,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * The method flushLogisticsBatch() sets the title for the logistics batch, saves it to hibernate and
-     * then populates the global variable with a new, empty batch.
+     * The method flushLogisticsBatch() sets the title for the logistics batch,
+     * saves it to hibernate and then populates the global variable with a new,
+     * empty batch.
      *
      * @param processTitle
      *            the title of the process
@@ -444,7 +461,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * The method saveFullBatch() sets the title for the allover batch and saves it to hibernate.
+     * The method saveFullBatch() sets the title for the allover batch and saves
+     * it to hibernate.
      *
      * @param theProcessTitle
      *            the title of the process
@@ -458,12 +476,15 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * The function firstGroupFrom() extracts the first sequence of characters that are no punctuation characters
-     * (<kbd>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</kbd>) from the given string.
+     * The function firstGroupFrom() extracts the first sequence of characters
+     * that are no punctuation characters
+     * (<kbd>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</kbd>) from the
+     * given string.
      *
      * @param s
      *            string to parse
-     * @return the first sequence of characters that are no punctuation characters
+     * @return the first sequence of characters that are no punctuation
+     *         characters
      */
     private String firstGroupFrom(String s) {
         final Pattern p = Pattern.compile("^[\\p{Punct}\\p{Space}]*([^\\p{Punct}]+)");
@@ -476,8 +497,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     }
 
     /**
-     * Calls the clone constructor to create a not yet executed instance of this thread object. This is necessary
-     * for threads that have terminated in order to render possible to restart them.
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()

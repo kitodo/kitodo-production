@@ -60,7 +60,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-
 import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
@@ -76,14 +75,12 @@ import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.goobi.production.properties.Type;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -216,8 +213,8 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String Speichern() {
         /*
-         * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei erfolgreicher Prüfung
-         * an allen relevanten Stellen mitgeändert
+         * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
+         * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
          */
         if (this.myProzess != null && this.myProzess.getTitle() != null) {
             if (!this.myProzess.getTitle().equals(this.myNewProcessTitle)) {
@@ -231,8 +228,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     for (org.kitodo.data.database.beans.ProcessProperty pe : this.myProzess.getProperties()) {
                         if (pe != null && pe.getValue() != null) {
                             if (pe.getValue().contains(this.myProzess.getTitle())) {
-                                pe.setValue(pe.getValue().replaceAll(this.myProzess.getTitle(),
-                                        this.myNewProcessTitle));
+                                pe.setValue(
+                                        pe.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -240,8 +237,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     for (Template vl : this.myProzess.getTemplates()) {
                         for (TemplateProperty ve : vl.getProperties()) {
                             if (ve.getValue().contains(this.myProzess.getTitle())) {
-                                ve.setValue(ve.getValue().replaceAll(this.myProzess.getTitle(),
-                                        this.myNewProcessTitle));
+                                ve.setValue(
+                                        ve.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -249,8 +246,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     for (Workpiece w : this.myProzess.getWorkpieces()) {
                         for (WorkpieceProperty we : w.getProperties()) {
                             if (we.getValue().contains(this.myProzess.getTitle())) {
-                                we.setValue(we.getValue().replaceAll(this.myProzess.getTitle(),
-                                        this.myNewProcessTitle));
+                                we.setValue(
+                                        we.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -289,14 +286,14 @@ public class ProzessverwaltungForm extends BasisForm {
                             String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
                             for (String processDir : processDirs) {
 
-                                String processDirAbsolut = FilenameUtils.concat(serviceManager.getProcessService()
-                                        .getProcessDataDirectory(myProzess), processDir.replace("(processtitle)",
-                                        myProzess.getTitle()));
+                                String processDirAbsolut = FilenameUtils.concat(
+                                        serviceManager.getProcessService().getProcessDataDirectory(myProzess),
+                                        processDir.replace("(processtitle)", myProzess.getTitle()));
 
                                 SafeFile dir = new SafeFile(processDirAbsolut);
                                 if (dir.isDirectory()) {
-                                    dir.renameTo(new SafeFile(dir.getAbsolutePath().replace(myProzess.getTitle(),
-                                            myNewProcessTitle)));
+                                    dir.renameTo(new SafeFile(
+                                            dir.getAbsolutePath().replace(myProzess.getTitle(), myNewProcessTitle)));
                                 }
                             }
                         }
@@ -469,9 +466,12 @@ public class ProzessverwaltungForm extends BasisForm {
          */
         try {
 
-            // ... Criteria will persist, because it gets passed on to the PageObject
-            // but in order to use the extended functions of the UserDefinedFilter
-            // for statistics, we will have to hold a reference to the instance of UserDefinedFilter
+            // ... Criteria will persist, because it gets passed on to the
+            // PageObject
+            // but in order to use the extended functions of the
+            // UserDefinedFilter
+            // for statistics, we will have to hold a reference to the instance
+            // of UserDefinedFilter
             this.myFilteredDataSource = new UserDefinedFilter(this.filter);
 
             // set observable to replace helper.setMessage
@@ -823,8 +823,8 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             export.startExport(this.myProzess);
         } catch (Exception e) {
-            Helper.setFehlerMeldung("An error occurred while trying to export METS file for: "
-                    + this.myProzess.getTitle(), e);
+            Helper.setFehlerMeldung(
+                    "An error occurred while trying to export METS file for: " + this.myProzess.getTitle(), e);
             logger.error("ExportMETS error", e);
         }
     }
@@ -837,8 +837,8 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             export.startExport(this.myProzess);
         } catch (Exception e) {
-            Helper.setFehlerMeldung("An error occurred while trying to export PDF file for: "
-                    + this.myProzess.getTitle(), e);
+            Helper.setFehlerMeldung(
+                    "An error occurred while trying to export PDF file for: " + this.myProzess.getTitle(), e);
             logger.error("ExportPDF error", e);
         }
     }
@@ -851,8 +851,8 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             export.startExport(this.myProzess);
         } catch (Exception e) {
-            Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: "
-                    + this.myProzess.getTitle(), e);
+            Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.myProzess.getTitle(),
+                    e);
             logger.error("ExportDMS error", e);
         }
     }
@@ -868,7 +868,8 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 export.startExport(proz);
             } catch (Exception e) {
-                // without this a new exception is thrown, if an exception caught here doesn't have an errorMessage
+                // without this a new exception is thrown, if an exception
+                // caught here doesn't have an errorMessage
                 String errorMessage;
 
                 if (e.getMessage() != null) {
@@ -954,17 +955,19 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void DownloadToHome() {
         /*
-         * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen
-         * Homeverzeichnis abgelegt wurde, ansonsten Download
+         * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
+         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
+         * ansonsten Download
          */
         if (!serviceManager.getProcessService().isImageFolderInUse(this.myProzess)) {
             WebDav myDav = new WebDav();
             myDav.DownloadToHome(this.myProzess, 0, false);
         } else {
-            Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
-                            + this.myProzess.getTitle() + " " + Helper.getTranslation("isInUse"),
-                    serviceManager.getUserService().getFullName(serviceManager.getProcessService()
-                            .getImageFolderInUseUser(this.myProzess)));
+            Helper.setMeldung(null,
+                    Helper.getTranslation("directory ") + " " + this.myProzess.getTitle() + " "
+                            + Helper.getTranslation("isInUse"),
+                    serviceManager.getUserService()
+                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.myProzess)));
             WebDav myDav = new WebDav();
             myDav.DownloadToHome(this.myProzess, 0, true);
         }
@@ -978,15 +981,18 @@ public class ProzessverwaltungForm extends BasisForm {
         WebDav myDav = new WebDav();
         for (Process proz : (List<Process>) this.page.getListReload()) {
             /*
-             * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in Bearbeitung ist und in dessen
-             * Homeverzeichnis abgelegt wurde, ansonsten Download
+             * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer
+             * in Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
+             * ansonsten Download
              */
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                 myDav.DownloadToHome(proz, 0, false);
             } else {
-                Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
-                        + proz.getTitle() + " " + Helper.getTranslation("isInUse"), serviceManager.getUserService()
-                        .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
+                Helper.setMeldung(null,
+                        Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
+                                + Helper.getTranslation("isInUse"),
+                        serviceManager.getUserService()
+                                .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
                 myDav.DownloadToHome(proz, 0, true);
             }
         }
@@ -1004,10 +1010,11 @@ public class ProzessverwaltungForm extends BasisForm {
                 if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                     myDav.DownloadToHome(proz, 0, false);
                 } else {
-                    Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
-                                    + proz.getTitle() + " " + Helper.getTranslation("isInUse"),
-                            serviceManager.getUserService().getFullName(serviceManager.getProcessService()
-                                    .getImageFolderInUseUser(proz)));
+                    Helper.setMeldung(null,
+                            Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
+                                    + Helper.getTranslation("isInUse"),
+                            serviceManager.getUserService()
+                                    .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
                     myDav.DownloadToHome(proz, 0, true);
                 }
             }
@@ -1025,9 +1032,11 @@ public class ProzessverwaltungForm extends BasisForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
                 myDav.DownloadToHome(proz, 0, false);
             } else {
-                Helper.setMeldung(null, Helper.getTranslation("directory ") + " "
-                        + proz.getTitle() + " " + Helper.getTranslation("isInUse"), serviceManager.getUserService()
-                        .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
+                Helper.setMeldung(null,
+                        Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
+                                + Helper.getTranslation("isInUse"),
+                        serviceManager.getUserService()
+                                .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
                 myDav.DownloadToHome(proz, 0, true);
             }
         }
@@ -1221,7 +1230,8 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Set my process.
      *
-     * @param myProzess Process object
+     * @param myProzess
+     *            Process object
      */
     public void setMyProzess(Process myProzess) {
         this.myProzess = myProzess;
@@ -1387,7 +1397,8 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Set choice of project.
      *
-     * @param inProjektAuswahl Integer
+     * @param inProjektAuswahl
+     *            Integer
      */
     public void setProjektAuswahl(Integer inProjektAuswahl) {
         if (inProjektAuswahl.intValue() != 0) {
@@ -1426,8 +1437,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images selection.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesSelection()
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesSelection() throws IOException, InterruptedException, SwapException, DAOException {
         ArrayList<Process> auswahl = new ArrayList<Process>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
@@ -1548,7 +1558,6 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-
     /**
      * Starte GoobiScript über alle Treffer der Seite.
      */
@@ -1637,8 +1646,9 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * ist called via jsp at the end of building a chart in include file Prozesse_Liste_Statistik.jsp and resets
-     * the statistics so that with the next reload a chart is not shown anymore.
+     * ist called via jsp at the end of building a chart in include file
+     * Prozesse_Liste_Statistik.jsp and resets the statistics so that with the
+     * next reload a chart is not shown anymore.
      */
     public String getResetStatistic() {
         this.showStatistics = false;
@@ -1736,10 +1746,14 @@ public class ProzessverwaltungForm extends BasisForm {
         /**
          * Constructor.
          *
-         * @param title String
-         * @param metadata int
-         * @param docstructs int
-         * @param images int
+         * @param title
+         *            String
+         * @param metadata
+         *            int
+         * @param docstructs
+         *            int
+         * @param images
+         *            int
          */
         public ProcessCounterObject(String title, int metadata, int docstructs, int images) {
             super();
@@ -2039,7 +2053,8 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * sets new value for wiki field.
      *
-     * @param inString String
+     * @param inString
+     *            String
      */
     public void setWikiField(String inString) {
         this.myProzess.setWikiField(inString);
@@ -2060,8 +2075,8 @@ public class ProzessverwaltungForm extends BasisForm {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
-            this.myProzess.setWikiField(WikiFieldHelper.getWikiMessage(this.myProzess, this.myProzess.getWikiField(),
-                    "user", message));
+            this.myProzess.setWikiField(
+                    WikiFieldHelper.getWikiMessage(this.myProzess, this.myProzess.getWikiField(), "user", message));
             this.addToWikiField = "";
             try {
                 serviceManager.getProcessService().save(myProzess);
@@ -2192,7 +2207,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
                 }
             }
-            //null exception
+            // null exception
             if (!this.processProperty.getProzesseigenschaft().getProcess().getProperties()
                     .contains(this.processProperty.getProzesseigenschaft())) {
                 this.processProperty.getProzesseigenschaft().getProcess().getProperties()
@@ -2300,7 +2315,8 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Set container.
      *
-     * @param container Integer
+     * @param container
+     *            Integer
      */
     public void setContainer(Integer container) {
         this.container = container;

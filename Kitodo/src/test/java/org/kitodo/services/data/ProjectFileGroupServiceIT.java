@@ -11,19 +11,18 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for TaskService class.
@@ -37,7 +36,7 @@ public class ProjectFileGroupServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -45,7 +44,8 @@ public class ProjectFileGroupServiceIT {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
         ProjectFileGroup projectFileGroup = projectFileGroupService.find(1);
-        boolean condition = projectFileGroup.getName().equals("MAX") && projectFileGroup.getMimeType().equals("image/jpeg");
+        boolean condition = projectFileGroup.getName().equals("MAX")
+                && projectFileGroup.getMimeType().equals("image/jpeg");
         assertTrue("Project file group was not found in database!", condition);
     }
 

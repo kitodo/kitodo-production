@@ -23,9 +23,12 @@ public class ProcessPropertyDAO extends BaseDAO {
     /**
      * Find process property object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public ProcessProperty find(Integer id) throws DAOException {
         ProcessProperty result = (ProcessProperty) retrieveObject(ProcessProperty.class, id);
@@ -36,7 +39,8 @@ public class ProcessPropertyDAO extends BaseDAO {
     }
 
     /**
-     * The function findAll() retrieves all processes' properties from the database.
+     * The function findAll() retrieves all processes' properties from the
+     * database.
      *
      * @return all persisted processes' properties
      */
@@ -53,9 +57,11 @@ public class ProcessPropertyDAO extends BaseDAO {
     /**
      * The function remove() removes a process property
      *
-     * @param processProperty to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param processProperty
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(ProcessProperty processProperty) throws DAOException {
         removeObject(processProperty);

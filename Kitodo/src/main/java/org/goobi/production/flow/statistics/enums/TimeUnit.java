@@ -29,12 +29,9 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public enum TimeUnit {
 
-
-    days("1", "days", "day", "day", true, 1.0),
-    weeks("2", "weeks", "week", "week", true, 5.0),
-    months("3", "months", "month", "month", true, 21.3 ),
-    quarters("4", "quarters","quarter", "quarter", true, 64.0 ),
-    years("5", "years", "year", "year", true, 256.0);
+    days("1", "days", "day", "day", true, 1.0), weeks("2", "weeks", "week", "week", true, 5.0), months("3", "months",
+            "month", "month", true, 21.3), quarters("4", "quarters", "quarter", "quarter", true,
+                    64.0), years("5", "years", "year", "year", true, 256.0);
 
     private String id;
     private String title;
@@ -50,7 +47,7 @@ public enum TimeUnit {
      *            title as String
      */
     private TimeUnit(String inId, String inTitle, String inKeyword, String inSingularTitle, Boolean visible,
-                     Double dayFactor) {
+            Double dayFactor) {
         id = inId;
         title = inTitle;
         singularTitle = inSingularTitle;
@@ -96,9 +93,10 @@ public enum TimeUnit {
     }
 
     /**
-     * return the internal String representing the Title, use this for localisation.
+     * return the internal String representing the Title, use this for
+     * localisation.
      *
-     * @return  the internal title
+     * @return the internal title
      */
     @Override
     public String toString() {
@@ -138,7 +136,8 @@ public enum TimeUnit {
 
     /**
      *
-     * @return a day factor for the selected time unit based on an average year of 365.25 days
+     * @return a day factor for the selected time unit based on an average year
+     *         of 365.25 days
      */
     public Double getDayFactor() {
         return this.dayFactor;
@@ -147,8 +146,10 @@ public enum TimeUnit {
     /**
      * function allows to retrieve a date row based on start and end date.
      *
-     * @param start Date
-     * @param end Date
+     * @param start
+     *            Date
+     * @param end
+     *            Date
      * @return date row
      */
     public List<String> getDateRow(Date start, Date end) {
@@ -174,9 +175,13 @@ public enum TimeUnit {
             case years:
                 return new DateTime(inDate).toString(getFormatter());
             case quarters:
-                return new DateTime(inDate).toString(getFormatter()) + "/"
-                        + //TODO: Remove use of deprecated method
-                Integer.toString((inDate.getMonth() - 1) / 3 + 1);
+                return new DateTime(inDate).toString(getFormatter()) + "/" + // TODO:
+                                                                             // Remove
+                                                                             // use
+                                                                             // of
+                                                                             // deprecated
+                                                                             // method
+                        Integer.toString((inDate.getMonth() - 1) / 3 + 1);
         }
         return inDate.toString();
 

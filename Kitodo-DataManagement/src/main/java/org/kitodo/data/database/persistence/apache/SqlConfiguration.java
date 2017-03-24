@@ -25,7 +25,6 @@ import org.jdom.input.SAXBuilder;
 
 public class SqlConfiguration {
 
-
     private String dbDriverName = "com.mysql.jdbc.Driver";
     private String dbUser = "goobi";
     private String dbPassword = "CHANGEIT";

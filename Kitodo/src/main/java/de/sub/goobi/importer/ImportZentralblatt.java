@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -42,8 +41,8 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen Eigenschaften und erlaubt die Bearbeitung
- * der Schrittdetails.
+ * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
+ * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
@@ -65,8 +64,10 @@ public class ImportZentralblatt {
     /**
      * Parse.
      *
-     * @param reader BufferedReader object
-     * @param inProzess Process object
+     * @param reader
+     *            BufferedReader object
+     * @param inProzess
+     *            Process object
      */
     protected void Parsen(BufferedReader reader, Process inProzess)
             throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
@@ -111,12 +112,16 @@ public class ImportZentralblatt {
                             + "in der Zeile <br/>" + xmlTauglich);
                 }
 
-                /* wenn es gerade ein neuer Absatz ist, diesen als neuen Artikel in die Liste übernehmen */
+                /*
+                 * wenn es gerade ein neuer Absatz ist, diesen als neuen Artikel
+                 * in die Liste übernehmen
+                 */
                 if (!istAbsatz) {
                     DocStructType dstLocal = this.myPrefs.getDocStrctTypeByName("Article");
                     DocStruct ds = dd.createDocStruct(dstLocal);
                     listArtikel.add(ds);
-                    // myLogger.debug("---------------          neuer Artikel          ----------------");
+                    // myLogger.debug("--------------- neuer Artikel
+                    // ----------------");
                     istAbsatz = true;
                     istErsterTitel = true;
                 }
@@ -134,29 +139,42 @@ public class ImportZentralblatt {
                     String myRight = line.substring(posTrennzeichen + 1, line.length()).trim();
                     ParsenArtikel(listArtikel.getLast(), myLeft, myRight, istErsterTitel);
 
-                    /* wenn es ein Titel war, ist der nächste nicht mehr der erste Titel */
+                    /*
+                     * wenn es ein Titel war, ist der nächste nicht mehr der
+                     * erste Titel
+                     */
                     if (myLeft.equals("TI")) {
                         istErsterTitel = false;
                     }
 
-                    /* wenn es gerade der Zeitschriftenname ist, die Zeitschrift benennen */
+                    /*
+                     * wenn es gerade der Zeitschriftenname ist, die Zeitschrift
+                     * benennen
+                     */
                     if (myLeft.equals("J")) {
                         ParsenAllgemein(dsPeriodical, myLeft, myRight);
                     }
 
-                    /* wenn es gerade eine Jahresangabe ist, dann für den aktuellen Band */
+                    /*
+                     * wenn es gerade eine Jahresangabe ist, dann für den
+                     * aktuellen Band
+                     */
                     if (myLeft.equals("Y")) {
                         ParsenAllgemein(dsPeriodicalVolume, myLeft, myRight);
                     }
 
-                    /* wenn es gerade eine Jahresangabe ist, dann für den aktuellen Band */
+                    /*
+                     * wenn es gerade eine Jahresangabe ist, dann für den
+                     * aktuellen Band
+                     */
                     if (myLeft.equals("V")) {
                         ParsenAllgemein(dsPeriodicalVolume, myLeft, myRight);
                     }
 
                     /*
-                     * wenn es gerade die Heftnummer ist, dann jetzt dem richtigen Heft zuordnen und dieses
-                     * ggf. noch vorher anlegen
+                     * wenn es gerade die Heftnummer ist, dann jetzt dem
+                     * richtigen Heft zuordnen und dieses ggf. noch vorher
+                     * anlegen
                      */
                     if (myLeft.equals("I")) {
                         DocStruct dsPeriodicalIssue = ParsenHeftzuordnung(dsPeriodicalVolume, myRight, dd);
@@ -226,15 +244,18 @@ public class ImportZentralblatt {
     }
 
     /**
-     * Funktion für das Ermitteln des richtigen Heftes für einen Artikel Liegt das Heft noch nicht in dem Volume vor,
-     * wird es angelegt. Als Rückgabe kommt das Heft als DocStruct
+     * Funktion für das Ermitteln des richtigen Heftes für einen Artikel Liegt
+     * das Heft noch nicht in dem Volume vor, wird es angelegt. Als Rückgabe
+     * kommt das Heft als DocStruct
      *
-     * @param dsPeriodicalVolume DocStruct object
-     * @param myRight String
+     * @param dsPeriodicalVolume
+     *            DocStruct object
+     * @param myRight
+     *            String
      * @return DocStruct of periodical
      */
     private DocStruct ParsenHeftzuordnung(DocStruct dsPeriodicalVolume, String myRight,
-                                          DigitalDocument inDigitalDocument)
+            DigitalDocument inDigitalDocument)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         DocStructType dst;
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("CurrentNo");
@@ -267,8 +288,8 @@ public class ImportZentralblatt {
     /**
      * General parsing.
      */
-    private void ParsenAllgemein(DocStruct inStruct, String myLeft, String myRight) throws WrongImportFileException,
-            TypeNotAllowedForParentException, MetadataTypeNotAllowedException {
+    private void ParsenAllgemein(DocStruct inStruct, String myLeft, String myRight)
+            throws WrongImportFileException, TypeNotAllowedForParentException, MetadataTypeNotAllowedException {
 
         // myLogger.debug(myLeft);
         // myLogger.debug(myRight);
@@ -294,7 +315,10 @@ public class ImportZentralblatt {
                 md.setValue(myRight);
                 inStruct.addMetadata(md);
             } else {
-                /* wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser genauso lautet */
+                /*
+                 * wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser
+                 * genauso lautet
+                 */
                 md = myList.get(0);
                 if (!myRight.equals(md.getValue())) {
                     throw new WrongImportFileException("Parsingfehler: verschiedene Zeitschriftennamen in der Datei ('"
@@ -319,13 +343,18 @@ public class ImportZentralblatt {
                 inStruct.addMetadata(md);
             } else {
 
-                /* wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser genauso lautet */
                 /*
-                 * da Frau Jansch ständig Importprobleme mit jahrübergreifenden Bänden hat, jetzt mal auskommentiert
+                 * wurde schon ein Zeitschriftenname vergeben, prüfen, ob dieser
+                 * genauso lautet
+                 */
+                /*
+                 * da Frau Jansch ständig Importprobleme mit jahrübergreifenden
+                 * Bänden hat, jetzt mal auskommentiert
                  */
                 // md = myList.get(0);
                 // if (!myRight.equals(md.getValue()))
-                // throw new WrongImportFileException("Parsingfehler: verschiedene Jahresangaben in der Datei ('"
+                // throw new WrongImportFileException("Parsingfehler:
+                // verschiedene Jahresangaben in der Datei ('"
                 // + md.getValue() + "' & '" + myRight + "')");
             }
             return;
@@ -345,7 +374,10 @@ public class ImportZentralblatt {
                 inStruct.addMetadata(md);
             } else {
 
-                /* wurde schon eine Bandnummer vergeben, prüfen, ob dieser genauso lautet */
+                /*
+                 * wurde schon eine Bandnummer vergeben, prüfen, ob dieser
+                 * genauso lautet
+                 */
                 md = myList.get(0);
                 if (!myRight.equals(md.getValue())) {
                     throw new WrongImportFileException("Parsingfehler: verschiedene Bandangaben in der Datei ('"
@@ -382,8 +414,8 @@ public class ImportZentralblatt {
         /*
          * erledigt
          *
-         * TI: Titel AU: Autor LA: Sprache NH: Namensvariationen CC: MSC 2000 KW: Keywords AN: Zbl und/oder
-         * JFM Nummer P: Seiten
+         * TI: Titel AU: Autor LA: Sprache NH: Namensvariationen CC: MSC 2000
+         * KW: Keywords AN: Zbl und/oder JFM Nummer P: Seiten
          */
 
         /*
@@ -535,8 +567,8 @@ public class ImportZentralblatt {
                 String myTok = tokenizer.nextToken();
 
                 if (myTok.indexOf(",") == -1) {
-                    throw new WrongImportFileException("Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('"
-                            + myTok + "')");
+                    throw new WrongImportFileException(
+                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
                 }
 
                 p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());
@@ -557,8 +589,8 @@ public class ImportZentralblatt {
                 String myTok = tokenizer.nextToken();
 
                 if (myTok.indexOf(",") == -1) {
-                    throw new WrongImportFileException("Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('"
-                            + myTok + "')");
+                    throw new WrongImportFileException(
+                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + myTok + "')");
                 }
 
                 p.setLastname(myTok.substring(0, myTok.indexOf(",")).trim());

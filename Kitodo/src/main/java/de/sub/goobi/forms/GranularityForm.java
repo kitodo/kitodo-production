@@ -33,8 +33,9 @@ import org.goobi.production.model.bibliography.course.Granularity;
 import org.w3c.dom.Document;
 
 /**
- * The class GranularityForm provides the screen logic for a JSF page to choose the granularity to split up
- * the course of appearance of a newspaper into Goobi processes.
+ * The class GranularityForm provides the screen logic for a JSF page to choose
+ * the granularity to split up the course of appearance of a newspaper into
+ * Goobi processes.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -118,8 +119,8 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure downloadClick() is called if the user clicks the button to download the course of
-     * appearance in XML format.
+     * The procedure downloadClick() is called if the user clicks the button to
+     * download the course of appearance in XML format.
      */
     public void downloadClick() {
         try {
@@ -228,15 +229,16 @@ public class GranularityForm {
             return "";
         }
         double perIssue = (double) perProcess * getNumberOfProcesses() / course.countIndividualIssues();
-        List<String> args = Arrays.asList(new String[] { Long.toString(perProcess),
-                Long.toString((long) Math.ceil(perIssue)) });
-        return Helper.getTranslation("granularity.numberOfPages.tooSmall", args).replaceAll("\"", "″")
-                .replaceAll("'", "′");
+        List<String> args = Arrays
+                .asList(new String[] {Long.toString(perProcess), Long.toString((long) Math.ceil(perIssue)) });
+        return Helper.getTranslation("granularity.numberOfPages.tooSmall", args).replaceAll("\"", "″").replaceAll("'",
+                "′");
     }
 
     /**
-     * The function getNumberOfPages returns the total number of pages of the digitization project guessed
-     * and entered by the user—or null indicating that the user didn’t enter anything yet—as read-write property
+     * The function getNumberOfPages returns the total number of pages of the
+     * digitization project guessed and entered by the user—or null indicating
+     * that the user didn’t enter anything yet—as read-write property
      * “numberOfPages”.
      *
      * @return the total number of pages of the digitization project
@@ -246,8 +248,9 @@ public class GranularityForm {
     }
 
     /**
-     * The function getNumberOfPages returns the number of pages per issue guessed and entered by the user—or
-     * null indicating that the user didn’t enter anything yet—as read-write property “numberOfPagesPerIssue”.
+     * The function getNumberOfPages returns the number of pages per issue
+     * guessed and entered by the user—or null indicating that the user didn’t
+     * enter anything yet—as read-write property “numberOfPagesPerIssue”.
      *
      * @return the total number of pages of the digitization project
      */
@@ -256,8 +259,9 @@ public class GranularityForm {
     }
 
     /**
-     * The function getNumberOfPages returns the total number of pages of the digitization project entered by
-     * the user or a guessed value as read-only property “numberOfPagesOptionallyGuessed”.
+     * The function getNumberOfPages returns the total number of pages of the
+     * digitization project entered by the user or a guessed value as read-only
+     * property “numberOfPagesOptionallyGuessed”.
      *
      * @return an (optionally guessed) total number of pages
      */
@@ -270,9 +274,10 @@ public class GranularityForm {
     }
 
     /**
-     * The function getNumberOfProcesses() returns the number of processes that will be created. If the course
-     * had to condemn its processes because the user changed the course, the recalculation of the processes
-     * will be re-initiated here.
+     * The function getNumberOfProcesses() returns the number of processes that
+     * will be created. If the course had to condemn its processes because the
+     * user changed the course, the recalculation of the processes will be
+     * re-initiated here.
      *
      * @return the number of processes that will be created
      */
@@ -284,11 +289,15 @@ public class GranularityForm {
     }
 
     /**
-     * The function getPagesPerProcessRounded() returns the pages per process as a rounded string.
+     * The function getPagesPerProcessRounded() returns the pages per process as
+     * a rounded string.
      *
-     * <p>This should be done in JSF using “convertNumber”, but it doesn’t show any effect and the number still
-     * prints with a decimal fractions part that is not desired. This JSF code should put the number rounded into
-     * the request scope, but rounding doesn’t work for some unknown reason.</p>
+     * <p>
+     * This should be done in JSF using “convertNumber”, but it doesn’t show any
+     * effect and the number still prints with a decimal fractions part that is
+     * not desired. This JSF code should put the number rounded into the request
+     * scope, but rounding doesn’t work for some unknown reason.
+     * </p>
      *
      * <pre>
      * &lt;h:outputText binding=&quot;#{requestScope.pagesPerProcess}&quot; rendered=&quot;false&quot;&gt;
@@ -305,8 +314,8 @@ public class GranularityForm {
     }
 
     /**
-     * The function getSelectedBatchOption() returns the level for which batches will be created
-     * as read-write property “numberOfPagesOptionallyGuessed”.
+     * The function getSelectedBatchOption() returns the level for which batches
+     * will be created as read-write property “numberOfPagesOptionallyGuessed”.
      *
      * @return an (optionally guessed) total number of pages
      */
@@ -315,8 +324,9 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure issuesClick() is called if the user clicks the button to select the granularity level “issues”.
-     * It sets the granularity to BreakMode.ISSUES and triggers the recalculation of the breaks in the
+     * The procedure issuesClick() is called if the user clicks the button to
+     * select the granularity level “issues”. It sets the granularity to
+     * BreakMode.ISSUES and triggers the recalculation of the breaks in the
      * course of appearance data model.
      */
     public void issuesClick() {
@@ -324,8 +334,9 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure monthsClick() is called if the user clicks the button to select the granularity level “months”.
-     * It sets the granularity to BreakMode.MONTHS and triggers the recalculation of the breaks in the
+     * The procedure monthsClick() is called if the user clicks the button to
+     * select the granularity level “months”. It sets the granularity to
+     * BreakMode.MONTHS and triggers the recalculation of the breaks in the
      * course of appearance data model.
      */
     public void monthsClick() {
@@ -333,8 +344,9 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure monthsClick() is called if the user clicks the button to select the granularity level “quarters”.
-     * It sets the granularity to BreakMode.MONTHS and triggers the recalculation of the breaks in the
+     * The procedure monthsClick() is called if the user clicks the button to
+     * select the granularity level “quarters”. It sets the granularity to
+     * BreakMode.MONTHS and triggers the recalculation of the breaks in the
      * course of appearance data model.
      */
     public void quartersClick() {
@@ -342,8 +354,8 @@ public class GranularityForm {
     }
 
     /**
-     * The method setCourse() is called by JSF to inject the course data model into the form.
-     * This behaviour is configured in faces-config.xml
+     * The method setCourse() is called by JSF to inject the course data model
+     * into the form. This behaviour is configured in faces-config.xml
      *
      * @param course
      *            Course of appearance data model to be used
@@ -353,8 +365,9 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure setNumberOfPagesPerIssue() is called by Faces on postbacks to save the received value of
-     * the read-write property “numberOfPagesPerIssue”.
+     * The procedure setNumberOfPagesPerIssue() is called by Faces on postbacks
+     * to save the received value of the read-write property
+     * “numberOfPagesPerIssue”.
      *
      * @param value
      *            new value to be stored
@@ -364,8 +377,8 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure setSelectedBatchOption() is called by Faces on postbacks to save the received value of
-     * the read-write property “selectedBatchOption”.
+     * The procedure setSelectedBatchOption() is called by Faces on postbacks to
+     * save the received value of the read-write property “selectedBatchOption”.
      *
      * @param option
      *            Granularity level for which batches will be created
@@ -379,8 +392,9 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure weeksClick() is called if the user clicks the button to select the granularity level “weeks”.
-     * It sets the granularity to BreakMode.WEEKS and triggers the recalculation of the breaks in the
+     * The procedure weeksClick() is called if the user clicks the button to
+     * select the granularity level “weeks”. It sets the granularity to
+     * BreakMode.WEEKS and triggers the recalculation of the breaks in the
      * course of appearance data model.
      */
     public void weeksClick() {
@@ -388,8 +402,9 @@ public class GranularityForm {
     }
 
     /**
-     * The procedure yearsClick() is called if the user clicks the button to select the granularity level “years”.
-     * It sets the granularity to BreakMode.YEARS and triggers the recalculation of the breaks in the
+     * The procedure yearsClick() is called if the user clicks the button to
+     * select the granularity level “years”. It sets the granularity to
+     * BreakMode.YEARS and triggers the recalculation of the breaks in the
      * course of appearance data model.
      */
     public void yearsClick() {

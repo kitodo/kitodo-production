@@ -36,8 +36,10 @@ public class ConfigProjects {
     /**
      * Constructor.
      *
-     * @param projectTitle project title
-     * @param configPfad config path
+     * @param projectTitle
+     *            project title
+     * @param configPfad
+     *            config path
      */
     public ConfigProjects(String projectTitle, String configPfad) throws IOException {
         if (!(new File(configPfad)).exists()) {
@@ -69,8 +71,6 @@ public class ConfigProjects {
 
     }
 
-
-
     /**
      * Ermitteln eines bestimmten Parameters der Konfiguration als String.
      *
@@ -88,7 +88,8 @@ public class ConfigProjects {
     }
 
     /**
-     * Ermitteln eines bestimmten Parameters der Konfiguration mit Angabe eines Default-Wertes.
+     * Ermitteln eines bestimmten Parameters der Konfiguration mit Angabe eines
+     * Default-Wertes.
      *
      * @return Parameter als String
      */

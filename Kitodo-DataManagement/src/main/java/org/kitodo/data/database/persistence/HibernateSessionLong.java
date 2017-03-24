@@ -18,7 +18,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-//TODO: Fix for Hibernate-Session-Management, old Version reactivated
+// TODO: Fix for Hibernate-Session-Management, old Version reactivated
 
 public class HibernateSessionLong {
     private static final Logger mylogger = Logger.getLogger(HibernateSessionLong.class);
@@ -27,9 +27,10 @@ public class HibernateSessionLong {
     private Session sess;
 
     /**
-     * ONLY ever call this method from within the context of a servlet request (specifically, one that has been
-	 * associated with this filter). If you want a Hibernate session at some other time, call getSessionFactory()
-     * and open/close the session yourself.
+     * ONLY ever call this method from within the context of a servlet request
+     * (specifically, one that has been associated with this filter). If you
+     * want a Hibernate session at some other time, call getSessionFactory() and
+     * open/close the session yourself.
      *
      * @return an appropriate Session object
      */
@@ -67,7 +68,8 @@ public class HibernateSessionLong {
     }
 
     /**
-     * This is a simple method to reduce the amount of code that needs to be written every time hibernate is used.
+     * This is a simple method to reduce the amount of code that needs to be
+     * written every time hibernate is used.
      */
     public static void rollback(Transaction tx) {
         if (tx != null) {

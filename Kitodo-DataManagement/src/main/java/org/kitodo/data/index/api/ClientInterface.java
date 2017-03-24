@@ -14,7 +14,8 @@ package org.kitodo.data.index.api;
 import java.io.IOException;
 
 /**
- * Interface for different types of clients (actually only elasticsearch is used).
+ * Interface for different types of clients (actually only elasticsearch is
+ * used).
  */
 public interface ClientInterface {
 

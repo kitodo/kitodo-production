@@ -1,17 +1,17 @@
 /*
  * Copyright 2005 Nick Heudecker
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package org.kitodo.data.database.persistence;
@@ -23,15 +23,17 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.Helper;
 import org.kitodo.data.database.helper.Util;
 
 /**
- * Base class for DAOs. This class defines common CRUD methods. 
+ * Base class for DAOs. This class defines common CRUD methods.
  *
- * <p>Changes have been made by Steffen Hankiewicz with later changes by Beatrycze Kmiec</p>
+ * <p>
+ * Changes have been made by Steffen Hankiewicz with later changes by Beatrycze
+ * Kmiec
+ * </p>
  *
  * @author Nick Heudecker &lt;nick@systemmobile.com&gt;
  * @author Steffen Hankiewicz &lt;steffen.hankiewicz@intranda.com&gt;
@@ -44,8 +46,10 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Removes the object from the database.
      *
-     * @param object the class to remove
-     * @throws DAOException add description
+     * @param object
+     *            the class to remove
+     * @throws DAOException
+     *             add description
      */
     protected void removeObject(Object object) throws DAOException {
         try {
@@ -63,11 +67,15 @@ public abstract class BaseDAO implements Serializable {
     }
 
     /**
-     * Removes the object from the database with with specified class type and <code>id</code>.
+     * Removes the object from the database with with specified class type and
+     * <code>id</code>.
      *
-     * @param cls the class type to remove
-     * @param id the id of the class type
-     * @throws DAOException add description
+     * @param cls
+     *            the class type to remove
+     * @param id
+     *            the id of the class type
+     * @throws DAOException
+     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected static void removeObject(Class cls, Integer id) throws DAOException {
@@ -88,15 +96,18 @@ public abstract class BaseDAO implements Serializable {
     }
 
     /**
-     * Retrieves and <code>Object</code> of the class type specified by <code>c</code>,
-     * and having the given <code>id</code>.
+     * Retrieves and <code>Object</code> of the class type specified by
+     * <code>c</code>, and having the given <code>id</code>.
      *
-     * @param cls the class to load
-     * @param id object id
+     * @param cls
+     *            the class to load
+     * @param id
+     *            object id
      * @return Object may be null if object with ID doesn't exist
-     * @throws DAOException add description
+     * @throws DAOException
+     *             add description
      */
-    @SuppressWarnings({ "rawtypes" })
+    @SuppressWarnings({"rawtypes" })
     protected static Object retrieveObject(Class cls, Integer id) throws DAOException {
         try {
             Session session = Helper.getHibernateSession();
@@ -115,9 +126,11 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Own design one of previous authors for returning the objects.
      *
-     * @param query string
+     * @param query
+     *            string
      * @return list of results
-     * @throws DAOException add description
+     * @throws DAOException
+     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query) throws DAOException {
@@ -130,13 +143,18 @@ public abstract class BaseDAO implements Serializable {
     }
 
     /**
-     * Own design one of previous authors for maximum number of objects returned.
+     * Own design one of previous authors for maximum number of objects
+     * returned.
      *
-     * @param query string
-     * @param first result
-     * @param max amount of results
+     * @param query
+     *            string
+     * @param first
+     *            result
+     * @param max
+     *            amount of results
      * @return constrained list of results
-     * @throws DAOException add description
+     * @throws DAOException
+     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query, int first, int max) throws DAOException {
@@ -154,10 +172,13 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Standard design for returning the objects.
      *
-     * @param query string
-     * @param parameter string
+     * @param query
+     *            string
+     * @param parameter
+     *            string
      * @return list of results
-     * @throws DAOException add description
+     * @throws DAOException
+     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query, String parameter) throws DAOException {
@@ -174,11 +195,15 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Retrieve list of objects by query string and named parameter.
      *
-     * @param query string
-     * @param namedParameter Name of named parameter
-     * @param parameter Parameter value
+     * @param query
+     *            string
+     * @param namedParameter
+     *            Name of named parameter
+     * @param parameter
+     *            Parameter value
      * @return List
-     * @throws DAOException add description
+     * @throws DAOException
+     *             add description
      */
     protected List retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
         try {
@@ -200,9 +225,11 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Own design one of previous authors for determining the number of objects.
      *
-     * @param query string
+     * @param query
+     *            string
      * @return amount of results
-     * @throws DAOException add description
+     * @throws DAOException
+     *             add description
      */
     protected Long retrieveAmount(String query) throws DAOException {
         try {
@@ -216,8 +243,10 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Stores <code>object</code>, making it persistent.
      *
-     * @param object to persist
-     * @throws DAOException add description
+     * @param object
+     *            to persist
+     * @throws DAOException
+     *             add description
      */
     protected static void storeObject(Object object) throws DAOException {
         try {
@@ -249,8 +278,9 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Performs a rollback on the current session. Exceptions are logged.
      *
-     * @throws DAOException if the current session can't be retrieved or an exception is thrown while
-     * 				performing the rollback.
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback.
      */
     protected static void rollback() throws DAOException {
         try {
@@ -266,7 +296,8 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Retrieves the HQL query from the resource bundle.
      *
-     * @param key the HQL query to lookup
+     * @param key
+     *            the HQL query to lookup
      */
     protected String getQuery(String key) {
         return Util.getQuery(key);
@@ -301,7 +332,8 @@ public abstract class BaseDAO implements Serializable {
     /**
      * Update of the object.
      *
-     * @param object to update
+     * @param object
+     *            to update
      */
     protected void updateObject(Object object) {
         Session session = Helper.getHibernateSession();

@@ -13,12 +13,11 @@ package de.sub.goobi.forms;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
-
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +55,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Months;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -72,7 +70,8 @@ public class ProjekteForm extends BasisForm {
     private final ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting filegroups
-    // it needs the execution of commit fileGroups to make these changes permanent
+    // it needs the execution of commit fileGroups to make these changes
+    // permanent
     private List<Integer> newFileGroups = new ArrayList<Integer>();
     private List<Integer> deletedFileGroups = new ArrayList<Integer>();
 
@@ -100,7 +99,8 @@ public class ProjekteForm extends BasisForm {
     /**
      * this method deletes filegroups by their id's in the list.
      *
-     * @param fileGroups List
+     * @param fileGroups
+     *            List
      */
     private void deleteFileGroups(List<Integer> fileGroups) {
         for (Integer id : fileGroups) {
@@ -114,8 +114,8 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * this method flushes the newFileGroups List, thus makes them permanent and deletes those marked for deleting,
-     * making the removal permanent.
+     * this method flushes the newFileGroups List, thus makes them permanent and
+     * deletes those marked for deleting, making the removal permanent.
      */
     private void commitFileGroups() {
         // resetting the List of new fileGroups
@@ -301,7 +301,8 @@ public class ProjekteForm extends BasisForm {
     /**
      * Set my project.
      *
-     * @param inProjekt Project object
+     * @param inProjekt
+     *            Project object
      */
     public void setMyProjekt(Project inProjekt) {
         // has to be called if a page back move was done
@@ -310,8 +311,9 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * The need to commit deleted fileGroups only after the save action requires a filter, so that those filegroups
-     * marked for delete are not shown anymore.
+     * The need to commit deleted fileGroups only after the save action requires
+     * a filter, so that those filegroups marked for delete are not shown
+     * anymore.
      *
      * @return modified ArrayList
      */
@@ -340,7 +342,8 @@ public class ProjekteForm extends BasisForm {
     /**
      * Get statistic manager 1.
      *
-     * @return instance of {@link StatisticsMode#PRODUCTION} {@link StatisticsManager}
+     * @return instance of {@link StatisticsMode#PRODUCTION}
+     *         {@link StatisticsManager}
      */
 
     public StatisticsManager getStatisticsManager1() {
@@ -355,7 +358,8 @@ public class ProjekteForm extends BasisForm {
     /**
      * Get statistic manager 2.
      *
-     * @return instance of {@link StatisticsMode#THROUGHPUT} {@link StatisticsManager}
+     * @return instance of {@link StatisticsMode#THROUGHPUT}
+     *         {@link StatisticsManager}
      */
     public StatisticsManager getStatisticsManager2() {
         if (this.statisticsManager2 == null) {
@@ -369,7 +373,8 @@ public class ProjekteForm extends BasisForm {
     /**
      * Get statistic manager 3.
      *
-     * @return instance of {@link StatisticsMode#CORRECTIONS} {@link StatisticsManager}
+     * @return instance of {@link StatisticsMode#CORRECTIONS}
+     *         {@link StatisticsManager}
      */
     public StatisticsManager getStatisticsManager3() {
         if (this.statisticsManager3 == null) {
@@ -383,7 +388,8 @@ public class ProjekteForm extends BasisForm {
     /**
      * Get statistic manager 4.
      *
-     * @return instance of {@link StatisticsMode#STORAGE} {@link StatisticsManager}
+     * @return instance of {@link StatisticsMode#STORAGE}
+     *         {@link StatisticsManager}
      */
     public StatisticsManager getStatisticsManager4() {
         if (this.statisticsManager4 == null) {
@@ -418,7 +424,8 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * calculate pages per volume depending on given values, requested multiple times via ajax.
+     * calculate pages per volume depending on given values, requested multiple
+     * times via ajax.
      *
      * @return Integer of calculation
      */
@@ -582,13 +589,14 @@ public class ProjekteForm extends BasisForm {
     /**
      * Get project progress interface.
      *
-     * @return a StatQuestThroughputCommonFlow for the generation of project progress data
+     * @return a StatQuestThroughputCommonFlow for the generation of project
+     *         progress data
      */
     public StatQuestProjectProgressData getProjectProgressInterface() {
         synchronized (this.projectProgressData) {
             try {
-                this.projectProgressData.setCommonWorkflow(serviceManager.getProjectService()
-                        .getWorkFlow(this.myProjekt));
+                this.projectProgressData
+                        .setCommonWorkflow(serviceManager.getProjectService().getWorkFlow(this.myProjekt));
                 this.projectProgressData.setCalculationUnit(CalculationUnit.volumes);
                 this.projectProgressData.setRequiredDailyOutput(this.getThroughputPerDay());
                 this.projectProgressData.setTimeFrame(this.getMyProjekt().getStartDate(),
@@ -734,17 +742,14 @@ public class ProjekteForm extends BasisForm {
         if (!facesContext.getResponseComplete()) {
 
             /*
-             *  Vorbereiten der Header-Informationen
+             * Vorbereiten der Header-Informationen
              */
-            HttpServletResponse response = (HttpServletResponse) facesContext
-                    .getExternalContext().getResponse();
+            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
             try {
-                ServletContext servletContext = (ServletContext) facesContext
-                        .getExternalContext().getContext();
+                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
                 String contentType = servletContext.getMimeType("export.xls");
                 response.setContentType(contentType);
-                response.setHeader("Content-Disposition",
-                        "attachment;filename=\"export.xls\"");
+                response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
                 ServletOutputStream out = response.getOutputStream();
                 HSSFWorkbook wb = (HSSFWorkbook) this.myCurrentTable.getExcelRenderer().getRendering();
                 wb.write(out);

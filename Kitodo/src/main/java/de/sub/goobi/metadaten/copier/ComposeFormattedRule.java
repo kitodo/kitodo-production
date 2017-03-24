@@ -22,8 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- * Data copy rule that either overwrites the metadata described by the selector on the left hand side
- * or creates it anew, if it isn’t yet present.
+ * Data copy rule that either overwrites the metadata described by the selector
+ * on the left hand side or creates it anew, if it isn’t yet present.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -36,16 +36,18 @@ public class ComposeFormattedRule extends DataCopyrule {
             .compile("%(\\d+)\\$[ #(+,-0]*(?:[1-9][0-9]*)?([%ABCEGHSTXabcdefghnostx])");
 
     /**
-     * Operator representing the OverwriteOrCreateRule in the data copier syntax.
+     * Operator representing the OverwriteOrCreateRule in the data copier
+     * syntax.
      */
     protected static final String OPERATOR = "=format";
 
     /**
-     * The function typecast() converts the String arguments so that they can be used
-     * by {@link String#format(String, Object...)}. Only arguments that are referenced by number can be typecasted.
-     * If the format String contains “%2$02d”, the function will convert the second list object to long,
-     * if the format String contains “%02d” the function cannot tell which argument is meant and thus doesn’t
-     * do anything for it.
+     * The function typecast() converts the String arguments so that they can be
+     * used by {@link String#format(String, Object...)}. Only arguments that are
+     * referenced by number can be typecasted. If the format String contains
+     * “%2$02d”, the function will convert the second list object to long, if
+     * the format String contains “%02d” the function cannot tell which argument
+     * is meant and thus doesn’t do anything for it.
      *
      * @param format
      *            format String, to get the desired types from
@@ -99,7 +101,9 @@ public class ComposeFormattedRule extends DataCopyrule {
                     case 'x':
                         result[i] = Long.parseLong(elements.get(i));
                 }
-            } catch (RuntimeException e) { // ArrayIndexOutOfBoundsException, ClassCastException, NumberFormatException
+            } catch (RuntimeException e) { // ArrayIndexOutOfBoundsException,
+                                           // ClassCastException,
+                                           // NumberFormatException
                 continue;
             }
         }
@@ -184,8 +188,7 @@ public class ComposeFormattedRule extends DataCopyrule {
         format = DataSelector.create(listOfObjects.next());
         do {
             source.add(DataSelector.create(listOfObjects.next()));
-        }
-        while (listOfObjects.hasNext());
+        } while (listOfObjects.hasNext());
     }
 
     /**

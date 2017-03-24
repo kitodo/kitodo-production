@@ -12,14 +12,21 @@
 package org.kitodo.production.plugin.importer.massimport;
 
 import de.sub.goobi.config.ConfigMain;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.goobi.production.constants.Parameters;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+import org.goobi.production.constants.Parameters;
 
 public class UghUtils {
     private static final Logger myLogger = Logger.getLogger(UghUtils.class);

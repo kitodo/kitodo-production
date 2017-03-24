@@ -28,9 +28,11 @@ public class RulesetDAO extends BaseDAO {
     /**
      * Find ruleset object by id.
      *
-     * @param id of ruleset
+     * @param id
+     *            of ruleset
      * @return ruleset object
-     * @throws DAOException hibernate
+     * @throws DAOException
+     *             hibernate
      */
     public Ruleset find(Integer id) throws DAOException {
         Ruleset result = (Ruleset) retrieveObject(Ruleset.class, id);
@@ -53,8 +55,10 @@ public class RulesetDAO extends BaseDAO {
     /**
      * Remove ruleset object.
      *
-     * @param ruleset object
-     * @throws DAOException hibernate
+     * @param ruleset
+     *            object
+     * @throws DAOException
+     *             hibernate
      */
     public void remove(Ruleset ruleset) throws DAOException {
         if (ruleset.getId() != null) {

@@ -15,7 +15,6 @@ import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.renderer.IRenderer;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
-
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -33,8 +32,8 @@ import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 
 /**
- * Implementation of {@link IStatisticalQuestion}. 
- * Statistical Request with predefined Values in data Table
+ * Implementation of {@link IStatisticalQuestion}. Statistical Request with
+ * predefined Values in data Table
  * 
  * @author Wulf Riebensahm
  */
@@ -46,7 +45,9 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
      * org.goobi.production.flow.statistics.enums.TimeUnit)
      */
     @Override
@@ -56,7 +57,9 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * 
+     * @see
+     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
      * org.goobi.production.flow.statistics.IDataSource)
      */
     @Override
@@ -73,7 +76,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
                     "This implementation of IStatisticalQuestion needs an IDataSource for method getDataSets()");
         }
 
-        //gathering IDs from the filter passed by dataSource
+        // gathering IDs from the filter passed by dataSource
         List<Integer> IDlist = null;
         try {
             IDlist = originalFilter.getIDList();
@@ -84,61 +87,61 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
         }
 
         // adding time restrictions
-        String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo,
-                this.timeGrouping, IDlist).getSQL();
+        String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist).getSQL();
 
         Session session = Helper.getHibernateSession();
 
         SQLQuery query = session.createSQLQuery(natSQL);
 
-        //needs to be there otherwise an exception is thrown
+        // needs to be there otherwise an exception is thrown
         query.addScalar("storage", StandardBasicTypes.DOUBLE);
         query.addScalar("intervall", StandardBasicTypes.STRING);
 
         @SuppressWarnings("rawtypes")
         List list = query.list();
 
-        DataTable dtbl = new DataTable(StatisticsMode.getByClassName(
-                this.getClass()).getTitle() + " "
-                + Helper.getTranslation("_inGB"));
+        DataTable dtbl = new DataTable(
+                StatisticsMode.getByClassName(this.getClass()).getTitle() + " " + Helper.getTranslation("_inGB"));
 
         DataRow dataRow;
 
-        // each data row comes out as an Array of Objects the only way to extract the data is by knowing
+        // each data row comes out as an Array of Objects the only way to
+        // extract the data is by knowing
         // in which order they come out
         for (Object obj : list) {
             dataRow = new DataRow(null);
-            //TODO: Don't use arrays
+            // TODO: Don't use arrays
             Object[] objArr = (Object[]) obj;
             try {
 
                 // getting localized time group unit
-                //setting row name with date/time extraction based on the group
+                // setting row name with date/time extraction based on the group
 
                 dataRow.setName(new Converter(objArr[1]).getString() + "");
 
-                dataRow.addValue(Helper.getTranslation("storageDifference"),
-                        (new Converter(objArr[0]).getGB()));
+                dataRow.addValue(Helper.getTranslation("storageDifference"), (new Converter(objArr[0]).getGB()));
 
             } catch (Exception e) {
                 dataRow.addValue(e.getMessage(), 0.0);
             }
 
-            //finally adding dataRow to DataTable and fetching next row
+            // finally adding dataRow to DataTable and fetching next row
             dtbl.addDataRow(dataRow);
         }
 
-        // a list of DataTables is expected as return Object, even if there is only one
+        // a list of DataTables is expected as return Object, even if there is
+        // only one
         // Data Table as it is here in this implementation
-        dtbl.setUnitLabel(Helper
-                .getTranslation(this.timeGrouping.getSingularTitle()));
+        dtbl.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         allTables.add(dtbl);
         return allTables;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#setCalculationUnit(
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit(
      * org.goobi.production.flow.statistics.enums.CalculationUnit)
      */
     @Override
@@ -147,8 +150,10 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe#
-     * setTimeFrame(java.util.Date, java.util.Date)
+     * 
+     * @see org.goobi.production.flow.statistics.
+     * IStatisticalQuestionLimitedTimeframe# setTimeFrame(java.util.Date,
+     * java.util.Date)
      */
     @Override
     public void setTimeFrame(Date timeFrom, Date timeTo) {
@@ -158,18 +163,21 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#isRendererInverted(
-     * de.intranda.commons.chart.renderer.IRenderer)
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * isRendererInverted( de.intranda.commons.chart.renderer.IRenderer)
      */
     @Override
     public Boolean isRendererInverted(IRenderer inRenderer) {
-        //		return false;
+        // return false;
         return inRenderer instanceof ChartRenderer;
     }
 
     /*
      * (non-Javadoc)
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#getNumberFormatPattern()
+     * 
+     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * getNumberFormatPattern()
      */
     @Override
     public String getNumberFormatPattern() {

@@ -13,7 +13,6 @@ package de.sub.goobi.modul;
 
 import de.sub.goobi.forms.ModuleServerForm;
 import de.sub.goobi.helper.Helper;
-
 import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
@@ -21,7 +20,6 @@ import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,21 +33,23 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 /**
- * Namenraum Process.Data
- * Adressierung von Prozessmetadaten
- * Prozessmetadaten werden über eine Kombination aus SessionID, Typ, Nummer und Name angesprochen.
- * ·   Der Typ ist dabei ein String um z.B. zwischen Scanvorlage („TEMPLATE“)
- *     und Werkstück („WORKPIECE“) unterscheiden zu können.
- * ·   Die Nummer ist dabei die Nummer von z.B. Scanvorlage oder Werkstück.
- * Für Daten des Prozesses ist der Typ entweder „PROCESS“ oder leer, die Nummer wird ignoriert.
+ * Namenraum Process.Data Adressierung von Prozessmetadaten Prozessmetadaten
+ * werden über eine Kombination aus SessionID, Typ, Nummer und Name
+ * angesprochen. · Der Typ ist dabei ein String um z.B. zwischen Scanvorlage
+ * („TEMPLATE“) und Werkstück („WORKPIECE“) unterscheiden zu können. · Die
+ * Nummer ist dabei die Nummer von z.B. Scanvorlage oder Werkstück. Für Daten
+ * des Prozesses ist der Typ entweder „PROCESS“ oder leer, die Nummer wird
+ * ignoriert.
  *
- * <p>Für zukünftige Versionen bleiben Feldnamen mit dem Präfix „#“ reserviert,
- * sie dürfen durch die API nicht ausgelesen oder geschrieben werden.
- * Für die Adressierung und den Austausch von einzelnen Prozesseigenschaften
- * wird die Datenstruktur „Process Property“ verwendet. Dabei wird die Struktur
- * abhängig vom Kontext interpretiert:
- * ·   Die Methode „add“ ignoriert das Feld „id“.
- * ·   Die Methode „set“ kann das Feld „name“ ignorieren oder es zur Validierung einsetzen.</p>
+ * <p>
+ * Für zukünftige Versionen bleiben Feldnamen mit dem Präfix „#“ reserviert, sie
+ * dürfen durch die API nicht ausgelesen oder geschrieben werden. Für die
+ * Adressierung und den Austausch von einzelnen Prozesseigenschaften wird die
+ * Datenstruktur „Process Property“ verwendet. Dabei wird die Struktur abhängig
+ * vom Kontext interpretiert: · Die Methode „add“ ignoriert das Feld „id“. · Die
+ * Methode „set“ kann das Feld „name“ ignorieren oder es zur Validierung
+ * einsetzen.
+ * </p>
  *
  * @author Steffen Hankiewicz
  */
@@ -62,12 +62,17 @@ public class ExtendedDataImpl extends DataImpl {
     /**
      * Diese Methode wird benötigt um Metadaten zu schreiben.
      *
-     * @param sessionId String
-     * @param type String
-     * @param count int
-     * @param pp HashMap
+     * @param sessionId
+     *            String
+     * @param type
+     *            String
+     * @param count
+     *            int
+     * @param pp
+     *            HashMap
      * @return Status (Fehler)
-     * @throws GoobiException: 1, 2, 6, 7, 254, 1500, 1501, 1502
+     * @throws GoobiException:
+     *             1, 2, 6, 7, 254, 1500, 1501, 1502
      */
     @Override
     public int add(String sessionId, String type, int count, HashMap pp) throws GoobiException {
@@ -79,8 +84,8 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * Prozesseigenschaft
-        */
+         * Prozesseigenschaft
+         */
         if (type.equals("") || type.equals(isProcess)) {
             if (serviceManager.getProcessService().getPropertiesInitialized(p) == null) {
                 p.setProperties(new ArrayList<ProcessProperty>());
@@ -93,10 +98,13 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * Werkstückeigenschaft
-        */
+         * Werkstückeigenschaft
+         */
         if (type.equals(isWorkpiece)) {
-            /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
+            /*
+             * wenn auf Werkstück zugegriffen werden soll, was nicht existiert,
+             * raus
+             */
             if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
@@ -112,10 +120,13 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * Scanvorlageneigenschaft
-        */
+         * Scanvorlageneigenschaft
+         */
         if (type.equals(isTemplate)) {
-            /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
+            /*
+             * wenn auf Scanvorlage zugegriffen werden soll, die nicht
+             * existiert, raus
+             */
             if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
@@ -143,13 +154,18 @@ public class ExtendedDataImpl extends DataImpl {
     }
 
     /**
-     * Diese Methode wird benötigt um feste Eigenschaften von Metadaten auszulesen.
+     * Diese Methode wird benötigt um feste Eigenschaften von Metadaten
+     * auszulesen.
      *
-     * @param sessionId String
-     * @param type String
-     * @param count int
+     * @param sessionId
+     *            String
+     * @param type
+     *            String
+     * @param count
+     *            int
      * @return Liste von Namen – Wert Paaren
-     * @throws GoobiException: 1, 2, 6, 254, 1500, 1501, 1502
+     * @throws GoobiException:
+     *             1, 2, 6, 254, 1500, 1501, 1502
      */
     @Override
     public HashMap<String, String> getData(String sessionId, String type, int count) throws GoobiException {
@@ -158,8 +174,8 @@ public class ExtendedDataImpl extends DataImpl {
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
         HashMap<String, String> rueckgabe = new HashMap<String, String>();
         /*
-        * feste Prozesseigenschaften
-        */
+         * feste Prozesseigenschaften
+         */
         if (type.equals("") || type.equals(isProcess)) {
             rueckgabe.put("id", String.valueOf(p.getId().intValue()));
             rueckgabe.put("title", p.getTitle());
@@ -170,10 +186,13 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * feste Werkstückeigenschaften
-        */
+         * feste Werkstückeigenschaften
+         */
         if (type.equals(isWorkpiece)) {
-            /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
+            /*
+             * wenn auf Werkstück zugegriffen werden soll, was nicht existiert,
+             * raus
+             */
             if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
@@ -182,10 +201,13 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * feste Scanvorlageneigenschaften
-        */
+         * feste Scanvorlageneigenschaften
+         */
         if (type.equals(isTemplate)) {
-            /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
+            /*
+             * wenn auf Scanvorlage zugegriffen werden soll, die nicht
+             * existiert, raus
+             */
             if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
@@ -199,11 +221,15 @@ public class ExtendedDataImpl extends DataImpl {
     /**
      * Diese Methode wird benötigt um Eigenschaften von Metadaten auszulesen.
      *
-     * @param sessionId String
-     * @param type String
-     * @param count int
+     * @param sessionId
+     *            String
+     * @param type
+     *            String
+     * @param count
+     *            int
      * @return Liste von Namen – Wert Paaren
-     * @throws GoobiException: 1, 2, 6, 254, 1501, 1502
+     * @throws GoobiException:
+     *             1, 2, 6, 254, 1501, 1502
      */
     @Override
     public ArrayList<GoobiProcessProperty> getProperties(String sessionId, String type, int count)
@@ -212,10 +238,10 @@ public class ExtendedDataImpl extends DataImpl {
         ArrayList<GoobiProcessProperty> gpps = new ArrayList<GoobiProcessProperty>();
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
         /*
-        * Prozesseigenschaften
-        */
+         * Prozesseigenschaften
+         */
         if (type.equals("") || type.equals(isProcess)) {
-            //TODO: Use for loops
+            // TODO: Use for loops
             for (Iterator<ProcessProperty> it = p.getProperties().iterator(); it.hasNext();) {
                 ProcessProperty pe = it.next();
                 if (!pe.getTitle().startsWith("#")) {
@@ -226,15 +252,18 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * Werkstückeigenschaften
-        */
+         * Werkstückeigenschaften
+         */
         if (type.equals(isWorkpiece)) {
-            /* wenn auf Werkstück zugegriffen werden soll, was nicht existiert, raus */
+            /*
+             * wenn auf Werkstück zugegriffen werden soll, was nicht existiert,
+             * raus
+             */
             if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
             }
             Workpiece w = p.getWorkpieces().get(count);
-            //TODO: Use for loops
+            // TODO: Use for loops
             for (Iterator<WorkpieceProperty> it = w.getProperties().iterator(); it.hasNext();) {
                 WorkpieceProperty we = it.next();
                 if (!we.getTitle().startsWith("#")) {
@@ -245,15 +274,18 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * Scanvorlageneigenschaften
-        */
+         * Scanvorlageneigenschaften
+         */
         if (type.equals(isTemplate)) {
-            /* wenn auf Scanvorlage zugegriffen werden soll, die nicht existiert, raus */
+            /*
+             * wenn auf Scanvorlage zugegriffen werden soll, die nicht
+             * existiert, raus
+             */
             if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
             }
             Template v = p.getTemplates().get(count);
-            //TODO: Use for loops
+            // TODO: Use for loops
             for (Iterator<TemplateProperty> it = v.getProperties().iterator(); it.hasNext();) {
                 TemplateProperty ve = it.next();
                 if (!ve.getTitle().startsWith("#")) {
@@ -268,12 +300,17 @@ public class ExtendedDataImpl extends DataImpl {
     /**
      * Diese Methode wird benötigt um Metadaten zu schreiben.
      *
-     * @param sessionId String
-     * @param type String
-     * @param count int
-     * @param pp HashMap
+     * @param sessionId
+     *            String
+     * @param type
+     *            String
+     * @param count
+     *            int
+     * @param pp
+     *            HashMap
      * @return Status (Fehler)
-     * @throws GoobiException: 1, 2, 6, 7, 254, 1501, 1502
+     * @throws GoobiException:
+     *             1, 2, 6, 7, 254, 1501, 1502
      */
     @Override
     public int set(String sessionId, String type, int count, HashMap pp) throws GoobiException {
@@ -284,12 +321,12 @@ public class ExtendedDataImpl extends DataImpl {
             throw new GoobiException(5, "Parameter not allowed");
         }
         /*
-        * Prozesseigenschaft
-        */
+         * Prozesseigenschaft
+         */
         String myquery = "from ProcessProperty where process=" + p.getId().intValue();
         /*
-        * Werkstückeigenschaft
-        */
+         * Werkstückeigenschaft
+         */
         if (type.equals(isWorkpiece)) {
             if (serviceManager.getProcessService().getWorkpiecesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Workpiece does not exist");
@@ -299,8 +336,8 @@ public class ExtendedDataImpl extends DataImpl {
         }
 
         /*
-        * Scanvorlageneigenschaft
-        */
+         * Scanvorlageneigenschaft
+         */
         if (type.equals(isTemplate)) {
             if (serviceManager.getProcessService().getTemplatesSize(p) - 1 < count) {
                 throw new GoobiException(1500, "Template does not exist");
@@ -311,7 +348,7 @@ public class ExtendedDataImpl extends DataImpl {
         myquery += " and title='" + gpp.getName() + "' and id=" + gpp.getId();
 
         try {
-            //TODO: Use generics
+            // TODO: Use generics
             List hits = serviceManager.getProcessService().search(myquery);
             if (hits.size() > 0) {
                 if (type.equals("") || type.equals(isProcess)) {
@@ -328,8 +365,8 @@ public class ExtendedDataImpl extends DataImpl {
                 }
                 serviceManager.getProcessService().save(p);
             } else {
-                throw new GoobiException(1500, "Property " + gpp.getName() + " with id " + gpp.getId()
-                        + " does not exist");
+                throw new GoobiException(1500,
+                        "Property " + gpp.getName() + " with id " + gpp.getId() + " does not exist");
             }
         } catch (DAOException e) {
             throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"

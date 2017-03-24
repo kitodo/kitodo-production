@@ -53,24 +53,25 @@ import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
-//TODO: split this class! here should be only parts of Helper which are needed for Beans and Persistence
+// TODO: split this class! here should be only parts of Helper which are needed
+// for Beans and Persistence
 public class Helper implements Serializable, Observer {
 
     /**
-     * Always treat de-serialization as a full-blown constructor, by validating the final state of
-     * the de-serialized object.
+     * Always treat de-serialization as a full-blown constructor, by validating
+     * the final state of the de-serialized object.
      */
     private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
 
     }
 
     /**
-     * This is the default implementation of writeObject. Customise if necessary.
+     * This is the default implementation of writeObject. Customise if
+     * necessary.
      */
     private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
 
@@ -131,7 +132,8 @@ public class Helper implements Serializable, Observer {
     /**
      * Get stack trace as String.
      *
-     * @param inException Exception object
+     * @param inException
+     *            Exception object
      * @return String
      */
     public static String getStacktraceAsString(Exception inException) {
@@ -187,7 +189,8 @@ public class Helper implements Serializable, Observer {
     }
 
     /**
-     * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control übergeben.
+     * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
+     * übergeben.
      */
     private static void setMeldung(String control, String meldung, String beschreibung, boolean nurInfo) {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -233,7 +236,8 @@ public class Helper implements Serializable, Observer {
     }
 
     /**
-     * Returns a Map holding all translations that are configured in the front end of a given resource key.
+     * Returns a Map holding all translations that are configured in the front
+     * end of a given resource key.
      *
      * @param key
      *            resource key to get translations for
@@ -253,8 +257,10 @@ public class Helper implements Serializable, Observer {
     /**
      * Get String.
      *
-     * @param language Locale object
-     * @param key String
+     * @param language
+     *            Locale object
+     * @param key
+     *            String
      * @return String
      */
     public static String getString(Locale language, String key) {
@@ -283,7 +289,8 @@ public class Helper implements Serializable, Observer {
     /**
      * Get date as formatted String.
      *
-     * @param date Date object
+     * @param date
+     *            Date object
      * @return String
      */
     public static String getDateAsFormattedString(Date date) {
@@ -298,7 +305,8 @@ public class Helper implements Serializable, Observer {
     /**
      * Get managed bean value.
      *
-     * @param expr String
+     * @param expr
+     *            String
      * @return Object
      */
     public static Object getManagedBeanValue(String expr) {
@@ -374,17 +382,20 @@ public class Helper implements Serializable, Observer {
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
                 File file = new File(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
                 if (file.exists()) {
-                    // Load local message bundle from file system only if file exists;
-                    // if value not exists in bundle, use default bundle from classpath
+                    // Load local message bundle from file system only if file
+                    // exists;
+                    // if value not exists in bundle, use default bundle from
+                    // classpath
 
                     try {
                         final URL resourceURL = file.toURI().toURL();
-                        URLClassLoader urlLoader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
-                            @Override
-                            public URLClassLoader run() {
-                                return new URLClassLoader(new URL[] { resourceURL });
-                            }
-                        });
+                        URLClassLoader urlLoader = AccessController
+                                .doPrivileged(new PrivilegedAction<URLClassLoader>() {
+                                    @Override
+                                    public URLClassLoader run() {
+                                        return new URLClassLoader(new URL[] {resourceURL });
+                                    }
+                                });
                         ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
                         if (localBundle != null) {
                             localMessages.put(language, localBundle);
@@ -403,7 +414,8 @@ public class Helper implements Serializable, Observer {
     /**
      * Get translation.
      *
-     * @param dbTitel String
+     * @param dbTitel
+     *            String
      * @return String
      */
     public static String getTranslation(String dbTitel) {
@@ -430,8 +442,10 @@ public class Helper implements Serializable, Observer {
     /**
      * Get TRanslation.
      *
-     * @param dbTitel String
-     * @param parameterList list of Strings
+     * @param dbTitel
+     *            String
+     * @param parameterList
+     *            list of Strings
      * @return String
      */
     public static String getTranslation(String dbTitel, List<String> parameterList) {

@@ -12,10 +12,8 @@
 package org.goobi.production.export;
 
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,12 +25,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
-
 import org.goobi.production.IProcessDataExport;
-
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
-
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -43,7 +38,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
-
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
@@ -58,7 +52,8 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
 /**
- * This class provides xml logfile generation. After the generation the file will be written to user home directory
+ * This class provides xml logfile generation. After the generation the file
+ * will be written to user home directory
  *
  * @author Robert Sehr
  * @author Steffen Hankiewicz
@@ -86,8 +81,10 @@ public class ExportXmlLog implements IProcessDataExport {
     /**
      * Start export.
      *
-     * @param p Process object
-     * @param dest File
+     * @param p
+     *            Process object
+     * @param dest
+     *            File
      */
     public void startExport(Process p, File dest) throws IOException {
         try (FileOutputStream ostream = new FileOutputStream(dest)) {
@@ -120,11 +117,15 @@ public class ExportXmlLog implements IProcessDataExport {
     }
 
     /**
-     * This method exports the production metadata for al list of processes as a single file to a given stream.
+     * This method exports the production metadata for al list of processes as a
+     * single file to a given stream.
      *
-     * @param processList list of Process' objects
-     * @param outputStream object
-     * @param xslt String
+     * @param processList
+     *            list of Process' objects
+     * @param outputStream
+     *            object
+     * @param xslt
+     *            String
      */
     public void startExport(Iterable<Process> processList, OutputStream outputStream, String xslt) {
         Document answer = new Document();
@@ -135,8 +136,8 @@ public class ExportXmlLog implements IProcessDataExport {
         Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         root.addNamespaceDeclaration(xsi);
         root.setNamespace(xmlns);
-        Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile"
-                + " XML-logfile.xsd", xsi);
+        Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+                xsi);
         root.setAttribute(attSchema);
         for (Process p : processList) {
             Document doc = createDocument(p, false);
@@ -186,8 +187,8 @@ public class ExportXmlLog implements IProcessDataExport {
 
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             processElm.addNamespaceDeclaration(xsi);
-            Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile"
-                    + " XML-logfile.xsd", xsi);
+            Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+                    xsi);
             processElm.setAttribute(attSchema);
         }
         // process information
@@ -378,8 +379,8 @@ public class ExportXmlLog implements IProcessDataExport {
             String filename = serviceManager.getProcessService().getMetadataFilePath(process);
             Document metsDoc = new SAXBuilder().build(filename);
             Document anchorDoc = null;
-            String anchorfilename = serviceManager.getProcessService().getMetadataFilePath(process)
-                    .replace("meta.xml", "meta_anchor.xml");
+            String anchorfilename = serviceManager.getProcessService().getMetadataFilePath(process).replace("meta.xml",
+                    "meta_anchor.xml");
             File anchorFile = new File(anchorfilename);
             if (anchorFile.exists() && anchorFile.canRead()) {
                 anchorDoc = new SAXBuilder().build(anchorfilename);
@@ -440,9 +441,12 @@ public class ExportXmlLog implements IProcessDataExport {
     /**
      * Get METS values.
      *
-     * @param expr String
-     * @param element Object
-     * @param namespaces HashMap
+     * @param expr
+     *            String
+     * @param element
+     *            Object
+     * @param namespaces
+     *            HashMap
      * @return list of elements
      */
     @SuppressWarnings("unchecked")
@@ -458,7 +462,8 @@ public class ExportXmlLog implements IProcessDataExport {
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new window with the output file.
+     * This method transforms the xml log using a xslt file and opens a new
+     * window with the output file.
      *
      * @param out
      *            ServletOutputStream
@@ -559,12 +564,12 @@ public class ExportXmlLog implements IProcessDataExport {
     /**
      * Check step for non-open step state and step has a reqular user assigned.
      *
-     * @param s step to check
+     * @param s
+     *            step to check
      * @return boolean
      */
     private boolean isNonOpenStateAndHasRegularUser(Task s) {
-        return (!TaskStatus.OPEN.equals(s.getProcessingStatusEnum()))
-                && (s.getProcessingUser() != null)
+        return (!TaskStatus.OPEN.equals(s.getProcessingStatusEnum())) && (s.getProcessingUser() != null)
                 && (s.getProcessingUser().getId() != 0)
                 && (serviceManager.getUserService().getFullName(s.getProcessingUser()) != null);
     }

@@ -12,66 +12,66 @@
  *
 -->
 <!DOCTYPE hibernate-configuration PUBLIC
-		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
 
-		"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
 
-	<session-factory>
-		<!-- SQL - Settings -->
-		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
-		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <session-factory>
+        <!-- SQL - Settings -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
-		<property name="hibernate.connection.url">
-			jdbc:mysql://localhost/kitodo?autoReconnect=true&amp;autoReconnectForPools=true
-		</property>
-		<property name="hibernate.connection.username">kitodo</property>
-		<property name="hibernate.connection.password">kitodo</property>
+        <property name="hibernate.connection.url">
+            jdbc:mysql://localhost/kitodo?autoReconnect=true&amp;autoReconnectForPools=true
+        </property>
+        <property name="hibernate.connection.username">kitodo</property>
+        <property name="hibernate.connection.password">kitodo</property>
 
-		<!-- connection pool -->
-		<property name="hibernate.c3p0.max_size">5000</property>
-		<property name="hibernate.c3p0.min_size">10</property>
-		<property name="hibernate.c3p0.timeout">180</property>
-		<property name="hibernate.c3p0.max_statements">0</property>
-		<property name="hibernate.c3p0.idle_test_period">10</property>
-		<property name="hibernate.c3p0.acquire_increment">1</property>
-		<property name="hibernate.c3p0.validate">true</property>
+        <!-- connection pool -->
+        <property name="hibernate.c3p0.max_size">5000</property>
+        <property name="hibernate.c3p0.min_size">10</property>
+        <property name="hibernate.c3p0.timeout">180</property>
+        <property name="hibernate.c3p0.max_statements">0</property>
+        <property name="hibernate.c3p0.idle_test_period">10</property>
+        <property name="hibernate.c3p0.acquire_increment">1</property>
+        <property name="hibernate.c3p0.validate">true</property>
 
-		<!-- use the C3P0 connection pool -->
-		<property name="connection.provider_class">
-			org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
-		</property>
+        <!-- use the C3P0 connection pool -->
+        <property name="connection.provider_class">
+            org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
+        </property>
 
-		<!-- Enable Hibernate's automatic session context management -->
-		<property name="current_session_context_class">managed</property>
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">managed</property>
 
-		<!-- Don't echo all executed SQL to stdout -->
-		<property name="show_sql">false</property>
-		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+        <!-- Don't echo all executed SQL to stdout -->
+        <property name="show_sql">false</property>
+        <property name="hibernate.bytecode.use_reflection_optimizer">false</property>
 
-		<!-- Validate database schema on startup -->
-		<property name="hbm2ddl.auto">validate</property>
+        <!-- Validate database schema on startup -->
+        <property name="hbm2ddl.auto">validate</property>
 
-		<!-- Die einzelnen Mappings -->
-		<mapping class="org.kitodo.data.database.beans.Batch"/>
-		<mapping class="org.kitodo.data.database.beans.Docket"/>
-		<mapping class="org.kitodo.data.database.beans.History"/>
-		<mapping class="org.kitodo.data.database.beans.LdapGroup"/>
-		<mapping class="org.kitodo.data.database.beans.Process"/>
-		<mapping class="org.kitodo.data.database.beans.ProcessProperty"/>
-		<mapping class="org.kitodo.data.database.beans.Project"/>
-		<mapping class="org.kitodo.data.database.beans.ProjectFileGroup"/>
-		<mapping class="org.kitodo.data.database.beans.Ruleset"/>
-		<mapping class="org.kitodo.data.database.beans.Task"/>
-		<mapping class="org.kitodo.data.database.beans.Template"/>
-		<mapping class="org.kitodo.data.database.beans.TemplateProperty"/>
-		<mapping class="org.kitodo.data.database.beans.UserGroup"/>
-		<mapping class="org.kitodo.data.database.beans.User"/>
-		<mapping class="org.kitodo.data.database.beans.UserProperty"/>
-		<mapping class="org.kitodo.data.database.beans.Workpiece"/>
-		<mapping class="org.kitodo.data.database.beans.WorkpieceProperty"/>
+        <!-- Die einzelnen Mappings -->
+        <mapping class="org.kitodo.data.database.beans.Batch"/>
+        <mapping class="org.kitodo.data.database.beans.Docket"/>
+        <mapping class="org.kitodo.data.database.beans.History"/>
+        <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
+        <mapping class="org.kitodo.data.database.beans.Process"/>
+        <mapping class="org.kitodo.data.database.beans.ProcessProperty"/>
+        <mapping class="org.kitodo.data.database.beans.Project"/>
+        <mapping class="org.kitodo.data.database.beans.ProjectFileGroup"/>
+        <mapping class="org.kitodo.data.database.beans.Ruleset"/>
+        <mapping class="org.kitodo.data.database.beans.Task"/>
+        <mapping class="org.kitodo.data.database.beans.Template"/>
+        <mapping class="org.kitodo.data.database.beans.TemplateProperty"/>
+        <mapping class="org.kitodo.data.database.beans.UserGroup"/>
+        <mapping class="org.kitodo.data.database.beans.User"/>
+        <mapping class="org.kitodo.data.database.beans.UserProperty"/>
+        <mapping class="org.kitodo.data.database.beans.Workpiece"/>
+        <mapping class="org.kitodo.data.database.beans.WorkpieceProperty"/>
 
-	</session-factory>
+    </session-factory>
 
 </hibernate-configuration>

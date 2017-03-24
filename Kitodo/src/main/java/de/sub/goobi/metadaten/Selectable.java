@@ -18,19 +18,19 @@ package de.sub.goobi.metadaten;
  * @author Matthias Ronge
  */
 public interface Selectable {
-	
-	/**
-	 * Return an ID for the HTML {@code <OPTION>} element. Two different
-	 * elements in the list must have different IDs.
-	 * 
-	 * @return an ID for the element
-	 */
-	String getId();
 
-	/**
-	 * Return the human readable text in the HTML {@code <OPTION>} element.
-	 * 
-	 * @return the label of the elment in the web browser
-	 */
-	String getLabel();
+    /**
+     * Return an ID for the HTML {@code <OPTION>} element. Two different
+     * elements in the list must have different IDs.
+     * 
+     * @return an ID for the element
+     */
+    String getId();
+
+    /**
+     * Return the human readable text in the HTML {@code <OPTION>} element.
+     * 
+     * @return the label of the elment in the web browser
+     */
+    String getLabel();
 }

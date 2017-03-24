@@ -19,18 +19,18 @@ package de.sub.goobi.metadaten;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 interface SingleValueRenderableMetadatum {
-	/**
-	 * Sets the value of this editing component.
-	 * 
-	 * @param value
-	 *            value to set
-	 */
-	void setValue(String value);
+    /**
+     * Sets the value of this editing component.
+     * 
+     * @param value
+     *            value to set
+     */
+    void setValue(String value);
 
-	/**
-	 * May be used to retrieve the value from this editing component.
-	 * 
-	 * @return the value inside the component
-	 */
-	String getValue();
+    /**
+     * May be used to retrieve the value from this editing component.
+     * 
+     * @return the value inside the component
+     */
+    String getValue();
 }

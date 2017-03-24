@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.api.display.helper.ConfigDispayRules;
-
 import org.kitodo.data.database.beans.Process;
 
 public class DisplayCase {
@@ -30,11 +29,13 @@ public class DisplayCase {
     /**
      * gets items with current bind state.
      *
-     * @param inProcess input process object
-     * @param metaType String
+     * @param inProcess
+     *            input process object
+     * @param metaType
+     *            String
      */
 
-    public DisplayCase(Process inProcess, String metaType ) {
+    public DisplayCase(Process inProcess, String metaType) {
         metaName = metaType;
         myProcess = inProcess;
         myBindState = Modes.getBindState();
@@ -42,9 +43,9 @@ public class DisplayCase {
             configDisplay = ConfigDispayRules.getInstance();
             if (configDisplay != null) {
                 displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(),
-					myBindState.getTitle(), metaName);
+                        myBindState.getTitle(), metaName);
                 itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(),
-                    myBindState.getTitle(), metaName, displayType);
+                        myBindState.getTitle(), metaName, displayType);
             } else {
                 // no ruleset file
                 displayType = DisplayType.getByTitle("textarea");
@@ -60,11 +61,14 @@ public class DisplayCase {
     /**
      * gets items with given bind state.
      *
-     * @param inProcess input process object
-     * @param bind String
-     * @param metaType String
+     * @param inProcess
+     *            input process object
+     * @param bind
+     *            String
+     * @param metaType
+     *            String
      */
-    public DisplayCase(Process inProcess, String bind, String metaType ) {
+    public DisplayCase(Process inProcess, String bind, String metaType) {
         metaName = metaType;
         myProcess = inProcess;
         myBindState = Modes.getBindState();
@@ -98,7 +102,8 @@ public class DisplayCase {
     /**
      * Set item list.
      *
-     * @param itemList ArrayList with items for metadata
+     * @param itemList
+     *            ArrayList with items for metadata
      */
     public void setItemList(ArrayList<Item> itemList) {
         this.itemList = itemList;

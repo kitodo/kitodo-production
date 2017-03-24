@@ -11,13 +11,9 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.apache.log4j.Logger;
 
 @Entity
 @Table(name = "ruleset")
@@ -64,8 +60,7 @@ public class Ruleset extends BaseBean {
         return this.orderMetadataByRuleset;
     }
 
-    public void setOrderMetadataByRulesetHibernate(
-            Boolean orderMetadataByRuleset) {
+    public void setOrderMetadataByRulesetHibernate(Boolean orderMetadataByRuleset) {
         this.orderMetadataByRuleset = orderMetadataByRuleset;
     }
 }

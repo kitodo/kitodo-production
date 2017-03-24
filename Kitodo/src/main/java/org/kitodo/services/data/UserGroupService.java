@@ -36,9 +36,11 @@ public class UserGroupService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param userGroup object
+     * @param userGroup
+     *            object
      */
     public void save(UserGroup userGroup) throws DAOException, IOException {
         userGroupDao.save(userGroup);
@@ -47,9 +49,11 @@ public class UserGroupService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param userGroup object
+     * @param userGroup
+     *            object
      */
     public void remove(UserGroup userGroup) throws DAOException, IOException {
         userGroupDao.remove(userGroup);
@@ -76,7 +80,8 @@ public class UserGroupService {
     /**
      * Get permission as a string.
      *
-     * @param userGroup object
+     * @param userGroup
+     *            object
      * @return permission as a string
      */
     public String getPermissionAsString(UserGroup userGroup) {
@@ -95,7 +100,8 @@ public class UserGroupService {
     /**
      * Get tasks' list size.
      *
-     * @param userGroup object
+     * @param userGroup
+     *            object
      * @return size
      */
     public int getTasksSize(UserGroup userGroup) {

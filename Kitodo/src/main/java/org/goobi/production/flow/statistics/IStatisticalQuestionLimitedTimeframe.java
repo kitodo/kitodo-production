@@ -14,17 +14,20 @@ package org.goobi.production.flow.statistics;
 import java.util.Date;
 
 /**
- * Extension of {@link IStatisticalQuestion}. Statistical request limited by time frame.
+ * Extension of {@link IStatisticalQuestion}. Statistical request limited by
+ * time frame.
  * 
  */
 public interface IStatisticalQuestionLimitedTimeframe extends IStatisticalQuestion {
 
     /**
-	 * Define time frame.
-	 *  
-	 * @param timeFrom Date - from
-	 * @param timeTo   Date - to
-	 */
+     * Define time frame.
+     * 
+     * @param timeFrom
+     *            Date - from
+     * @param timeTo
+     *            Date - to
+     */
     public void setTimeFrame(Date timeFrom, Date timeTo);
 
 }

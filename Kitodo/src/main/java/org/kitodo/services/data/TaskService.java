@@ -16,8 +16,6 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -40,9 +37,11 @@ public class TaskService {
     private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
 
     /**
-     * Method saves object to database and insert document to the index of Elastic Search.
+     * Method saves object to database and insert document to the index of
+     * Elastic Search.
      *
-     * @param task object
+     * @param task
+     *            object
      */
     public void save(Task task) throws DAOException, IOException {
         taskDao.save(task);
@@ -59,9 +58,11 @@ public class TaskService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param task object
+     * @param task
+     *            object
      */
     public void remove(Task task) throws DAOException, IOException {
         taskDao.remove(task);
@@ -70,9 +71,11 @@ public class TaskService {
     }
 
     /**
-     * Method removes object from database and document from the index of Elastic Search.
+     * Method removes object from database and document from the index of
+     * Elastic Search.
      *
-     * @param id of object
+     * @param id
+     *            of object
      */
     public void remove(Integer id) throws DAOException, IOException {
         taskDao.remove(id);
@@ -99,7 +102,8 @@ public class TaskService {
     /**
      * Convert date of processing begin to formatted String.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return formatted date string
      */
     public String getProcessingBeginAsFormattedString(Task task) {
@@ -109,7 +113,8 @@ public class TaskService {
     /**
      * Convert date of processing end to formatted String.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return formatted date string
      */
     public String getProcessingEndAsFormattedString(Task task) {
@@ -119,14 +124,16 @@ public class TaskService {
     /**
      * Convert date of processing day to formatted String.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return formatted date string
      */
     public String getProcessingTimeAsFormattedString(Task task) {
         return Helper.getDateAsFormattedString(task.getProcessingTime());
     }
 
-    // a parameter is given here (even if not used) because jsf expects setter convention
+    // a parameter is given here (even if not used) because jsf expects setter
+    // convention
     public void setProcessingTimeNow(Task task) {
         task.setProcessingTime(new Date());
     }
@@ -136,9 +143,9 @@ public class TaskService {
     }
 
     /**
-     * If you change anything in the logic of priorities make sure that you catch dependencies on this system
-     * which are not directly related to priorities.
-     * TODO: check it!
+     * If you change anything in the logic of priorities make sure that you
+     * catch dependencies on this system which are not directly related to
+     * priorities. TODO: check it!
      */
     public Boolean isCorrectionStep(Task task) {
         return (task.getPriority() == 10);
@@ -160,7 +167,8 @@ public class TaskService {
     /**
      * Get users' list size.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return size
      */
     public int getUsersSize(Task task) {
@@ -174,7 +182,8 @@ public class TaskService {
     /**
      * Get user groups' list size.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return size
      */
     public int getUserGroupsSize(Task task) {
@@ -188,7 +197,8 @@ public class TaskService {
     /**
      * Set processing status up.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return task object
      */
     public Task setProcessingStatusUp(Task task) {
@@ -201,7 +211,8 @@ public class TaskService {
     /**
      * Set processing status down.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return task object
      */
     public Task setProcessingStatusDown(Task task) {
@@ -214,7 +225,8 @@ public class TaskService {
     /**
      * Get title with user.
      *
-     * @return des Schritttitels sowie (sofern vorhanden) den Benutzer mit vollständigem Namen
+     * @return des Schritttitels sowie (sofern vorhanden) den Benutzer mit
+     *         vollständigem Namen
      */
     public String getTitleWithUserName(Task task) {
         String result = task.getTitle();
@@ -237,7 +249,8 @@ public class TaskService {
     /**
      * Get all script paths.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return array list
      */
     public ArrayList<String> getAllScriptPaths(Task task) {
@@ -263,7 +276,8 @@ public class TaskService {
     /**
      * Get all scripts adn their paths.
      *
-     * @param task object
+     * @param task
+     *            object
      * @return hash map
      */
     public HashMap<String, String> getAllScripts(Task task) {
@@ -289,8 +303,10 @@ public class TaskService {
     /**
      * Set all scripts and their paths.
      *
-     * @param paths hash map of strings
-     * @param task object
+     * @param paths
+     *            hash map of strings
+     * @param task
+     *            object
      * @return task object
      */
     public Task setAllScripts(HashMap<String, String> paths, Task task) {
@@ -324,9 +340,11 @@ public class TaskService {
     }
 
     /**
-     * Get list of paths.
-     * TODO: inappropriate name of method - change during next phase of refactoring
-     * @param task object
+     * Get list of paths. TODO: inappropriate name of method - change during
+     * next phase of refactoring
+     * 
+     * @param task
+     *            object
      * @return string containing paths.
      */
     public String getListOfPaths(Task task) {
@@ -372,8 +390,8 @@ public class TaskService {
     }
 
     /**
-     * Returns whether this is a step of a process that is part of at least one batch as read-only property
-     * "batchSize".
+     * Returns whether this is a step of a process that is part of at least one
+     * batch as read-only property "batchSize".
      *
      * @return whether this step’s process is in a batch
      */

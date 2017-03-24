@@ -14,7 +14,6 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.helper.Helper;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 
 /**
@@ -25,8 +24,8 @@ import org.kitodo.data.database.beans.Process;
 @Deprecated
 public abstract class LongRunningTask extends EmptyTask {
     /**
-     * No-argument constructor. Creates an empty long running task. Must be made explicit
-     * because a constructor taking an argument is present.
+     * No-argument constructor. Creates an empty long running task. Must be made
+     * explicit because a constructor taking an argument is present.
      *
      * @deprecated New task implementations should directly implement EmptyTask.
      */
@@ -36,8 +35,9 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
-     * The clone constructor creates a new instance of this object. This is necessary for Threads
-     * that have terminated in order to render to run them again possible.
+     * The clone constructor creates a new instance of this object. This is
+     * necessary for Threads that have terminated in order to render to run them
+     * again possible.
      *
      * @param master
      *            copy master to create a clone of
@@ -57,8 +57,9 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
-     * The method setShowMessages() can be used to set a flag whether this long running task is
-	 * executing asynchronously or not, in the latter case it shall show messages to the user using
+     * The method setShowMessages() can be used to set a flag whether this long
+     * running task is executing asynchronously or not, in the latter case it
+     * shall show messages to the user using
      * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
      *
      * @param show
@@ -77,8 +78,9 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
-     * Calls the clone constructor to create a not yet executed instance of this thread object.
-     * This is necessary for threads that have terminated in order to render possible to restart them.
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
@@ -89,10 +91,11 @@ public abstract class LongRunningTask extends EmptyTask {
     /**
      * The method stopped() had been used to record that the thread has stopped.
      *
-     * @deprecated The method stopped() has become redundant due to newer development.
-     *      The thread state is now directly derived from {@link Thread#getState()}
-     *      which is reliable in determining  whether the thread has died,
-     *      independent of whether it ever managed to call stopped() or died before.
+     * @deprecated The method stopped() has become redundant due to newer
+     *             development. The thread state is now directly derived from
+     *             {@link Thread#getState()} which is reliable in determining
+     *             whether the thread has died, independent of whether it ever
+     *             managed to call stopped() or died before.
      */
     @Deprecated
     protected void stopped() {

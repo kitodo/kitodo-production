@@ -12,8 +12,8 @@
 package org.goobi.production.flow.statistics.hibernate;
 
 /**
- * This class is passed on to criteriaBuilders so that certain parameter can be set which depend on
- * the parsing of the filter string.
+ * This class is passed on to criteriaBuilders so that certain parameter can be
+ * set which depend on the parsing of the filter string.
  * 
  * @author Wulf
  *

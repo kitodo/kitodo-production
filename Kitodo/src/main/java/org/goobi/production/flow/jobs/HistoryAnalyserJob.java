@@ -12,7 +12,6 @@
 package org.goobi.production.flow.jobs;
 
 import de.sub.goobi.helper.Helper;
-
 import de.unigoettingen.sub.commons.util.file.FileUtils;
 
 import java.io.File;
@@ -26,7 +25,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -37,7 +35,8 @@ import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.services.ServiceManager;
 
 /**
- * HistoryJob proofs History of {@link Process} and creates missing {@link History}s
+ * HistoryJob proofs History of {@link Process} and creates missing
+ * {@link History}s
  *
  * @author Steffen Hankiewicz
  * @author Igor Toker
@@ -68,8 +67,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
     }
 
     /**
-     * Update the history if necessary. It means:
-     * - count storage difference in byte <br>
+     * Update the history if necessary. It means: - count storage difference in
+     * byte <br>
      * - count imagesWork difference <br>
      * - count imagesMaster difference <br>
      * - count metadata difference <br>
@@ -78,7 +77,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @param inProcess
      *            the {@link Process} to use
      *
-     * @return true, if any history event is updated, so the process has to be saved to database
+     * @return true, if any history event is updated, so the process has to be
+     *         saved to database
      */
     public static Boolean updateHistory(Process inProcess)
             throws IOException, InterruptedException, SwapException, DAOException {
@@ -88,15 +88,15 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
             updated = true;
         }
         /* imagesWork */
-        Integer numberWork = FileUtils.getNumberOfFiles(new File(
-                serviceManager.getProcessService().getImagesTifDirectory(true, inProcess)), ".tif");
+        Integer numberWork = FileUtils.getNumberOfFiles(
+                new File(serviceManager.getProcessService().getImagesTifDirectory(true, inProcess)), ".tif");
         if (updateHistoryEvent(inProcess, HistoryType.imagesWorkDiff, numberWork.longValue())) {
             updated = true;
         }
 
         /* imagesMaster */
-        Integer numberMaster = FileUtils.getNumberOfFiles(new File(
-                serviceManager.getProcessService().getImagesOrigDirectory(true, inProcess)), ".tif");
+        Integer numberMaster = FileUtils.getNumberOfFiles(
+                new File(serviceManager.getProcessService().getImagesOrigDirectory(true, inProcess)), ".tif");
         if (updateHistoryEvent(inProcess, HistoryType.imagesMasterDiff, numberMaster.longValue())) {
             updated = true;
         }
@@ -127,17 +127,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
         History he = null;
 
         /*
-         * These are the patterns, which must be set, if a pattern differs from these something is wrong, timestamp
-         * pattern overrules status, in that case status gets changed to match one of these pattern.
+         * These are the patterns, which must be set, if a pattern differs from
+         * these something is wrong, timestamp pattern overrules status, in that
+         * case status gets changed to match one of these pattern.
          *
-         * <pre>
-         *         status |  begin    in work    work done
-         *         -------+-------------------------------
-         *           0    |  null     null       null
-         *           1    |  null     null       null
-         *           2    |  set      set        null
-         *           3    |  set      set        set
-         * </pre>
+         * <pre> status | begin in work work done
+         * -------+------------------------------- 0 | null null null 1 | null
+         * null null 2 | set set null 3 | set set set </pre>
          */
         for (Task step : inProcess.getTasks()) {
 
@@ -173,7 +169,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     if (he != null) {
                         isDirty = true;
                     }
-                    // for each step done we need to create a step open event on that step based on
+                    // for each step done we need to create a step open event on
+                    // that step based on
                     // the latest timestamp for the previous step
                     he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getOrdering(),
                             step.getTitle(), HistoryType.taskOpen, inProcess);
@@ -206,7 +203,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     if (he != null) {
                         isDirty = true;
                     }
-                    // for each step inwork we need to create a step open event on that step based on
+                    // for each step inwork we need to create a step open event
+                    // on that step based on
                     // the latest timestamp from the previous step
                     he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getOrdering(),
                             step.getTitle(), HistoryType.taskOpen, inProcess);
@@ -215,10 +213,12 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     }
                     break;
                 case OPEN:
-                    // fix set start date - decision is that reopened (and therfore with timestamp for begin)
+                    // fix set start date - decision is that reopened (and
+                    // therfore with timestamp for begin)
                     // shouldn't be reset
                     /*
-                     * if (step.getBearbeitungsbeginn() != null) { step.setBearbeitungsbeginn(null); isDirty = true; }
+                     * if (step.getBearbeitungsbeginn() != null) {
+                     * step.setBearbeitungsbeginn(null); isDirty = true; }
                      */
                     // fix missing editing date
                     if (step.getProcessingTime() == null) {
@@ -226,7 +226,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                         if (step.getProcessingEnd() != null) {
                             step.setProcessingTime(step.getProcessingEnd());
                         } else {
-                            // step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess, step));
+                            // step.setBearbeitungsbeginn(getTimestampFromPreviousStep(inProcess,
+                            // step));
                             step.setProcessingTime(getTimestampFromPreviousStep(inProcess, step));
                         }
                     }
@@ -243,10 +244,12 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     break;
             }
 
-            // check corrections timestamp this clearly only works on past correction events done in the german
+            // check corrections timestamp this clearly only works on past
+            // correction events done in the german
             // language current corrections directly adds to the history
 
-            // adds for each step a step locked on the basis of the process creation timestamp (new in 1.6)
+            // adds for each step a step locked on the basis of the process
+            // creation timestamp (new in 1.6)
             he = addHistoryEvent(inProcess.getCreationDate(), step.getOrdering(), step.getTitle(),
                     HistoryType.taskLocked, inProcess);
 
@@ -268,16 +271,21 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
     /**
      * Add HistoryEvent.
      *
-     * @param timeStamp Date
-     * @param stepOrder Integer
-     * @param stepName String
-     * @param type HistoryType object
-     * @param inProcess Process object
-     * @return History event if event needs to be added, null if event(same kind, same time, same process)
-     *         already exists
+     * @param timeStamp
+     *            Date
+     * @param stepOrder
+     *            Integer
+     * @param stepName
+     *            String
+     * @param type
+     *            HistoryType object
+     * @param inProcess
+     *            Process object
+     * @return History event if event needs to be added, null if event(same
+     *         kind, same time, same process) already exists
      */
     private static History addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName, HistoryType type,
-                                           Process inProcess) {
+            Process inProcess) {
         History he = new History(timeStamp, stepOrder, stepName, type, inProcess);
 
         if (!getHistoryContainsEventAlready(he, inProcess)) {
@@ -409,10 +417,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
     }
 
     /**
-     * method returns a timestamp from a previous step, iterates through the steps if necessary.
+     * method returns a timestamp from a previous step, iterates through the
+     * steps if necessary.
      *
-     * @param inProcess Process object
-     * @param inStep Task object
+     * @param inProcess
+     *            Process object
+     * @param inStep
+     *            Task object
      */
     private static Date getTimestampFromPreviousStep(Process inProcess, Task inStep) {
         Date eventTimestamp = null;
@@ -461,10 +472,11 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
     }
 
     /**
-     * Method iterates through the event list and checks if there are duplicate entries, if so it will remove
-     * the entry and return a true.
+     * Method iterates through the event list and checks if there are duplicate
+     * entries, if so it will remove the entry and return a true.
      *
-     * @param inProcess Process object
+     * @param inProcess
+     *            Process object
      * @return true if there are duplicate entries, false otherwise
      */
     private static Boolean getHistoryEventDuplicated(Process inProcess) {
@@ -481,7 +493,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
     /**
      * Update history for process.
      *
-     * @param inProc Process object
+     * @param inProc
+     *            Process object
      * @return Boolean
      */
     public static Boolean updateHistoryForProcess(Process inProc) {

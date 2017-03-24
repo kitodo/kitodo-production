@@ -42,9 +42,9 @@ class ConfigOpacCatalogue {
     private String cbs;
     private String charset = "iso-8859-1";
     private final ArrayList<ConfigOpacCatalogueBeautifier> beautifySetList;
+
     private ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
-            int port,
-            ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
+            int port, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
         this.title = title;
         this.description = desciption;
         this.address = address;
@@ -54,9 +54,8 @@ class ConfigOpacCatalogue {
     }
 
     // Constructor that also takes a charset, a quick hack for DPD-81
-    ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist,
-            int port, String charset,
-            String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
+    ConfigOpacCatalogue(String title, String desciption, String address, String database, String iktlist, int port,
+            String charset, String cbs, ArrayList<ConfigOpacCatalogueBeautifier> inBeautifySetList, String opacType) {
         // Call the contructor above
         this(title, desciption, address, database, iktlist, port, inBeautifySetList, opacType);
         this.charset = charset;
@@ -101,7 +100,8 @@ class ConfigOpacCatalogue {
         Document doc = new DOMBuilder().build(myHitlist.getOwnerDocument());
 
         /*
-         * Im JDom-Object alle Felder durchlaufen und die notwendigen Ersetzungen vornehmen
+         * Im JDom-Object alle Felder durchlaufen und die notwendigen
+         * Ersetzungen vornehmen
          */
         /* alle Records durchlaufen */
         List<Element> elements = doc.getRootElement().getChildren();
@@ -142,9 +142,12 @@ class ConfigOpacCatalogue {
                 Element tagged = null;
                 moreOccurrences = 0;
                 boolean merelyCount = false;
-                /* eine Kopie der zu prüfenden Elemente anlegen (damit man darin löschen kann */
-                ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<>(beautifier
-                        .getTagElementsToProof());
+                /*
+                 * eine Kopie der zu prüfenden Elemente anlegen (damit man darin
+                 * löschen kann
+                 */
+                ArrayList<ConfigOpacCatalogueBeautifierElement> prooflist = new ArrayList<>(
+                        beautifier.getTagElementsToProof());
                 /* von jedem Record jedes Field durchlaufen */
                 List<Element> elements = el.getChildren("field");
                 Matcher matcher = null;
@@ -169,13 +172,14 @@ class ConfigOpacCatalogue {
                             }
                         }
                         /*
-                         * wenn die Werte des Subfeldes in der Liste der zu prüfenden Beutifier-Felder stehen,
-                         * dieses aus der Liste der Beautifier entfernen
+                         * wenn die Werte des Subfeldes in der Liste der zu
+                         * prüfenden Beutifier-Felder stehen, dieses aus der
+                         * Liste der Beautifier entfernen
                          */
                         if (!merelyCount) {
                             for (ConfigOpacCatalogueBeautifierElement cocbe : beautifier.getTagElementsToProof()) {
                                 if (cocbe.getTag().equals(tag) && cocbe.getSubtag().equals(subtag)
-                                            && !processed.contains(subfield)) {
+                                        && !processed.contains(subfield)) {
                                     matcher = Pattern.compile(cocbe.getValue()).matcher(value);
                                     if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
                                         prooflist.remove(cocbe);
@@ -189,8 +193,9 @@ class ConfigOpacCatalogue {
                     }
                 }
                 /*
-                 * wenn in der Kopie der zu prüfenden Elemente keine Elemente mehr enthalten sind, kann der zu ändernde
-                 * Wert wirklich geändert werden
+                 * wenn in der Kopie der zu prüfenden Elemente keine Elemente
+                 * mehr enthalten sind, kann der zu ändernde Wert wirklich
+                 * geändert werden
                  */
                 if (prooflist.size() == 0) {
                     if (elementToChange == null) {
@@ -206,35 +211,41 @@ class ConfigOpacCatalogue {
                     if (beautifier.getTagElementToChange().getMode().equals("replace")) {
                         elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher));
                     } else if (beautifier.getTagElementToChange().getMode().equals("prepend")) {
-                        elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher).concat(
-                                elementToChange.getText()));
+                        elementToChange.setText(fillIn(beautifier.getTagElementToChange().getValue(), matcher)
+                                .concat(elementToChange.getText()));
                     } else if (beautifier.getTagElementToChange().getMode().equals("unescapeXml")) {
-                        elementToChange.setText(StringEscapeUtils.unescapeXml(fillIn(beautifier.getTagElementToChange()
-                                .getValue(), matcher)));
+                        elementToChange.setText(StringEscapeUtils
+                                .unescapeXml(fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
                     } else {
-                        elementToChange.setText(elementToChange.getText().concat(
-                                fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
+                        elementToChange.setText(elementToChange.getText()
+                                .concat(fillIn(beautifier.getTagElementToChange().getValue(), matcher)));
                     }
                 }
                 if (elementToChange != null) {
                     processed.add(elementToChange);
                 }
-            }
-            while (moreOccurrences > 1);
+            } while (moreOccurrences > 1);
         }
 
     }
 
     /**
-     * The function fillIn() replaces marks in a given string by values derived from match results.
-     * There are two different mechanisms available for replacement.
+     * The function fillIn() replaces marks in a given string by values derived
+     * from match results. There are two different mechanisms available for
+     * replacement.
      *
-     * <p>If the marked string contains the replacement mark <code>{\\@}</code>, the matcher’s find() operation
-     * will be invoked over and over again and all match results are concatenated and inserted in place
-     * of the replacement marks.</p>
+     * <p>
+     * If the marked string contains the replacement mark <code>{\\@}</code>,
+     * the matcher’s find() operation will be invoked over and over again and
+     * all match results are concatenated and inserted in place of the
+     * replacement marks.
+     * </p>
      *
-     * <p>Otherwise, all replacement marks <code>{1}</code>, <code>{2}</code>, <code>{3}</code>, … will be
-     * replaced by the capturing groups matched by the matcher.</p>
+     * <p>
+     * Otherwise, all replacement marks <code>{1}</code>, <code>{2}</code>,
+     * <code>{3}</code>, … will be replaced by the capturing groups matched by
+     * the matcher.
+     * </p>
      *
      * @param markedString
      *            a string with replacement markers
@@ -284,7 +295,8 @@ class ConfigOpacCatalogue {
     }
 
     /**
-     * @param cbs the cbs to set
+     * @param cbs
+     *            the cbs to set
      */
     private void setCbs(String cbs) {
         this.cbs = cbs;

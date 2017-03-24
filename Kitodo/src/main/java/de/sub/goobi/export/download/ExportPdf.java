@@ -31,10 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
-
 import org.goobi.io.FileListFilter;
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -55,9 +53,9 @@ public class ExportPdf extends ExportMets {
 
     @Override
     public boolean startExport(Process myProcess, String inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException,
-            DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException, UghHelperException,
-            ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
+            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
+            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
+            DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -114,7 +112,10 @@ public class ExportPdf extends ExportMets {
                  */
 
                 if (new MetadatenVerifizierung().validate(myProcess) && metsTempFile.toURI().toURL() != null) {
-                    /* if no contentserverurl defined use internal goobiContentServerServlet */
+                    /*
+                     * if no contentserverurl defined use internal
+                     * goobiContentServerServlet
+                     */
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
                     }
@@ -129,8 +130,8 @@ public class ExportPdf extends ExportMets {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
                     FilenameFilter filter = new FileListFilter("\\d*\\.tif");
-                    SafeFile imagesDir = new SafeFile(serviceManager.getProcessService()
-                            .getImagesTifDirectory(true, myProcess));
+                    SafeFile imagesDir = new SafeFile(
+                            serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
                     SafeFile[] meta = imagesDir.listFiles(filter);
                     int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();

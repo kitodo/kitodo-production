@@ -140,7 +140,8 @@ public class TemplateProperty implements Serializable, GoobiPropertyInterface {
     }
 
     /**
-     * Getter for data type set to private for hibernate, for use in program use getType instead.
+     * Getter for data type set to private for hibernate, for use in program use
+     * getType instead.
      *
      * @return dataType as integer
      */
@@ -150,10 +151,11 @@ public class TemplateProperty implements Serializable, GoobiPropertyInterface {
     }
 
     /**
-     * Set data type to defined integer, only for internal use through hibernate, for changing data type
-     * use setType instead.
+     * Set data type to defined integer, only for internal use through
+     * hibernate, for changing data type use setType instead.
      *
-     * @param dataType as Integer
+     * @param dataType
+     *            as Integer
      */
     @SuppressWarnings("unused")
     private void setDataType(Integer dataType) {
@@ -176,7 +178,8 @@ public class TemplateProperty implements Serializable, GoobiPropertyInterface {
     /**
      * Set data type to specific value from {@link PropertyType}.
      *
-     * @param inputType as {@link PropertyType}
+     * @param inputType
+     *            as {@link PropertyType}
      */
     @Override
     public void setType(PropertyType inputType) {

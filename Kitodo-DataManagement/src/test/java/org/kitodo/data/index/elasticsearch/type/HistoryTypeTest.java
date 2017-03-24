@@ -11,23 +11,20 @@
 
 package org.kitodo.data.index.elasticsearch.type;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-
 import org.joda.time.LocalDate;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for HistoryType.
@@ -48,7 +45,7 @@ public class HistoryTypeTest {
         firstHistory.setId(1);
         firstHistory.setNumericValue(1.0);
         firstHistory.setStringValue("1");
-        LocalDate localDate = new LocalDate(2017,1,14);
+        LocalDate localDate = new LocalDate(2017, 1, 14);
         firstHistory.setDate(localDate.toDate());
         firstHistory.setProcess(firstProcess);
         histories.add(firstHistory);

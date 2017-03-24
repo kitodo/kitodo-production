@@ -23,9 +23,12 @@ public class TemplatePropertyDAO extends BaseDAO {
     /**
      * Find template property object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public TemplateProperty find(Integer id) throws DAOException {
         TemplateProperty result = (TemplateProperty) retrieveObject(TemplateProperty.class, id);
@@ -36,7 +39,8 @@ public class TemplatePropertyDAO extends BaseDAO {
     }
 
     /**
-     * The function findAll() retrieves all templates' properties from the database.
+     * The function findAll() retrieves all templates' properties from the
+     * database.
      *
      * @return all persisted templates' properties
      */
@@ -53,9 +57,11 @@ public class TemplatePropertyDAO extends BaseDAO {
     /**
      * The function remove() removes a template property
      *
-     * @param templateProperty to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param templateProperty
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(TemplateProperty templateProperty) throws DAOException {
         removeObject(templateProperty);

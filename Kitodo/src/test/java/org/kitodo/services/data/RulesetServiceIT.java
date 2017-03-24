@@ -11,20 +11,18 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
-
 import org.kitodo.data.database.exceptions.DAOException;
-import ugh.dl.Prefs;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for RulesetService class.
@@ -38,7 +36,7 @@ public class RulesetServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -64,7 +62,7 @@ public class RulesetServiceIT {
 
         Ruleset ruleset = rulesetService.find(1);
         String actual = rulesetService.getPreferences(ruleset).getVersion();
-        //not sure how to really check if Pref is correct
+        // not sure how to really check if Pref is correct
         System.out.println("Preferences: " + actual);
         assertEquals("Preference is incorrect!", "1.1-20091117", actual);
     }

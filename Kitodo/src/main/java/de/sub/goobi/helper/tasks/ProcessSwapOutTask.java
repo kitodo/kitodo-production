@@ -25,7 +25,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -34,7 +33,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Copies all files under srcDir to dstDir. If dstDir does not exist, it will be created.
+     * Copies all files under srcDir to dstDir. If dstDir does not exist, it
+     * will be created.
      */
 
     static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
@@ -59,7 +59,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
     }
 
     /**
-     * Deletes all files and subdirectories under dir. But not the dir itself and no metadata files.
+     * Deletes all files and subdirectories under dir. But not the dir itself
+     * and no metadata files.
      */
     static boolean deleteDataInDir(SafeFile dir) {
         if (dir.isDirectory()) {
@@ -141,11 +142,11 @@ public class ProcessSwapOutTask extends LongRunningTask {
         }
         try {
             processDirectory = serviceManager.getProcessService().getProcessDataDirectoryIgnoreSwapping(getProcess());
-            //TODO: Don't catch Exception (the super class)
+            // TODO: Don't catch Exception (the super class)
         } catch (Exception e) {
             logger.warn("Exception:", e);
-            setStatusMessage("Error while getting process data folder: " + e.getClass().getName() + " - "
-                    + e.getMessage());
+            setStatusMessage(
+                    "Error while getting process data folder: " + e.getClass().getName() + " - " + e.getMessage());
             setStatusProgress(-1);
             return;
         }
@@ -160,8 +161,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
         fileOut.mkdir();
 
         /*
-        * Xml-Datei vorbereiten
-        */
+         * Xml-Datei vorbereiten
+         */
         Document doc = new Document();
         Element root = new Element("goobiArchive");
         doc.setRootElement(root);
@@ -175,8 +176,9 @@ public class ProcessSwapOutTask extends LongRunningTask {
         root.addContent(mydate);
 
         /*
-        * Verzeichnisse und Dateien kopieren und anschliessend den Ordner leeren
-        */
+         * Verzeichnisse und Dateien kopieren und anschliessend den Ordner
+         * leeren
+         */
         setStatusProgress(50);
         try {
             setStatusMessage("copying process folder");
@@ -191,15 +193,15 @@ public class ProcessSwapOutTask extends LongRunningTask {
         deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
 
         /*
-        * xml-Datei schreiben
-        */
+         * xml-Datei schreiben
+         */
         Format format = Format.getPrettyFormat();
         format.setEncoding("UTF-8");
         try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
             setStatusMessage("writing swapped.xml");
             XMLOutputter xmlOut = new XMLOutputter(format);
             xmlOut.output(doc, fos);
-            //TODO: Don't catch Exception (the super class)
+            // TODO: Don't catch Exception (the super class)
         } catch (Exception e) {
             logger.warn("Exception:", e);
             setStatusMessage(e.getClass().getName() + " in xmlOut.output: " + e.getMessage());
@@ -227,8 +229,9 @@ public class ProcessSwapOutTask extends LongRunningTask {
     }
 
     /**
-     * Calls the clone constructor to create a not yet executed instance of this thread object.
-     * This is necessary for threads that have terminated in order to render possible to restart them.
+     * Calls the clone constructor to create a not yet executed instance of this
+     * thread object. This is necessary for threads that have terminated in
+     * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
      * @see de.sub.goobi.helper.tasks.EmptyTask#replace()

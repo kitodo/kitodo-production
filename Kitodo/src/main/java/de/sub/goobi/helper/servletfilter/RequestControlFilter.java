@@ -1,6 +1,6 @@
 /*
- * (c) 2004, Kevin Chipalowsky (kevin@farwestsoftware.com) and
- * Ivelin Ivanov (ivelin@apache.org)
+ * (c) 2004, Kevin Chipalowsky (kevin@farwestsoftware.com) and Ivelin Ivanov
+ * (ivelin@apache.org)
  *
  * Released under terms of the Artistic License
  * http://www.opensource.org/licenses/artistic-license.php
@@ -30,31 +30,36 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.LazyInitializationException;
 
 /**
- * Use this filter to synchronize requests to your web application and reduce the maximum load
- * that each individual user can put on your web application. Requests will be synchronized per session.
- * When more than one additional requests are made while a request is in process, only the most recent of
- * the additional requests will actually be processed.
+ * Use this filter to synchronize requests to your web application and reduce
+ * the maximum load that each individual user can put on your web application.
+ * Requests will be synchronized per session. When more than one additional
+ * requests are made while a request is in process, only the most recent of the
+ * additional requests will actually be processed.
  *
  * <p>
- * If a user makes two requests, A and B, then A will be processed first while B waits.
- * When A finishes, B will be processed.</p>
+ * If a user makes two requests, A and B, then A will be processed first while B
+ * waits. When A finishes, B will be processed.
+ * </p>
  *
  * <p>
- * If a user makes three or more requests (e.g. A, B, and C), then the first will be processed (A),
- * and then after it finishes the last will be processed (C), and any intermediate requests will be skipped (B).</p>
+ * If a user makes three or more requests (e.g. A, B, and C), then the first
+ * will be processed (A), and then after it finishes the last will be processed
+ * (C), and any intermediate requests will be skipped (B).
+ * </p>
  *
  * <p>
  * There are two additional limitations:
  * <ul>
- * <li>Requests will be excluded from filtering if their URI matches one of the exclusion patterns.
- * There will be no synchronization performed if a request matches one of those patterns.</li>
- * <li>Requests wait a maximum of 5 seconds, which can be overridden per URI pattern in the filter's configuration.</li>
+ * <li>Requests will be excluded from filtering if their URI matches one of the
+ * exclusion patterns. There will be no synchronization performed if a request
+ * matches one of those patterns.</li>
+ * <li>Requests wait a maximum of 5 seconds, which can be overridden per URI
+ * pattern in the filter's configuration.</li>
  * </ul>
  * 
  * @author Kevin Chipalowsky and Ivelin Ivanov
  */
 public class RequestControlFilter implements Filter {
-
 
     /**
      * Initialize this filter by reading its configuration parameters.
@@ -63,7 +68,7 @@ public class RequestControlFilter implements Filter {
      *            Configuration from web.xml file
      */
     @Override
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes" })
     public void init(FilterConfig config) throws ServletException {
 
         // parse all of the initialization parameters, collecting the exclude
@@ -104,8 +109,9 @@ public class RequestControlFilter implements Filter {
     }
 
     /**
-     * Synchronize the request and then either process it or skip it, depending on what other requests current
-     * exist for this session. See the description of this class for more details.
+     * Synchronize the request and then either process it or skip it, depending
+     * on what other requests current exist for this session. See the
+     * description of this class for more details.
      *
      * @param request
      *            ServletRequest
@@ -174,7 +180,8 @@ public class RequestControlFilter implements Filter {
     }
 
     /**
-     * Record that a request is in process so that the filter blocks additional requests until this one finishes.
+     * Record that a request is in process so that the filter blocks additional
+     * requests until this one finishes.
      *
      * @param request
      *            HttpServletRequest
@@ -185,7 +192,8 @@ public class RequestControlFilter implements Filter {
     }
 
     /**
-     * Release the next waiting request, because the current request has just finished.
+     * Release the next waiting request, because the current request has just
+     * finished.
      *
      * @param request
      *            The request that just finished
@@ -193,8 +201,10 @@ public class RequestControlFilter implements Filter {
     private void releaseQueuedRequest(HttpServletRequest request) {
         HttpSession session = request.getSession();
         synchronized (getSynchronizationObject(session)) {
-            // if this request is still the current one (i.e., it didn't run for too long and result
-            // in another request being processed), then clear it and thus release the lock
+            // if this request is still the current one (i.e., it didn't run for
+            // too long and result
+            // in another request being processed), then clear it and thus
+            // release the lock
             if (session.getAttribute(REQUEST_IN_PROCESS) == request) {
                 session.removeAttribute(REQUEST_IN_PROCESS);
                 getSynchronizationObject(session).notify();
@@ -214,12 +224,14 @@ public class RequestControlFilter implements Filter {
     }
 
     /**
-     * Wait for this server to finish with its current request so that it can begin processing our next request.
-     * This method also detects if its request is replaced by another request in the queue.
+     * Wait for this server to finish with its current request so that it can
+     * begin processing our next request. This method also detects if its
+     * request is replaced by another request in the queue.
      *
      * @param request
      *            Wait for this request to be ready to run
-     * @return true if this request may be processed, or false if this request was replaced by another in the queue.
+     * @return true if this request may be processed, or false if this request
+     *         was replaced by another in the queue.
      */
     private boolean waitForRelease(HttpServletRequest request) {
         HttpSession session = request.getSession();
@@ -238,7 +250,8 @@ public class RequestControlFilter implements Filter {
     }
 
     /**
-     * Put a new request in the queue. This new request will replace any other requests that were waiting.
+     * Put a new request in the queue. This new request will replace any other
+     * requests that were waiting.
      *
      * @param request
      *            The request to queue
@@ -281,8 +294,8 @@ public class RequestControlFilter implements Filter {
     }
 
     /**
-     * Look through the filter's configuration, and determine whether or not it should synchronize this request
-     * with others.
+     * Look through the filter's configuration, and determine whether or not it
+     * should synchronize this request with others.
      *
      * @param request
      *            HttpServletRequest

@@ -11,6 +11,10 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
+
 import de.sub.goobi.helper.FilesystemHelper;
 
 import java.io.IOException;
@@ -21,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
@@ -30,9 +33,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
 import ugh.dl.DigitalDocument;
-
-import static org.junit.Assert.*;
-import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 /**
  * Tests for ProcessService class.
@@ -46,7 +46,7 @@ public class ProcessServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -103,7 +103,8 @@ public class ProcessServiceIT {
         directory = processService.getImagesTifDirectory(false, process);
         condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
-        //I don't know what changes this useFallback so I'm testing for both cases
+        // I don't know what changes this useFallback so I'm testing for both
+        // cases
     }
 
     @Ignore("not sure how method works")
@@ -112,7 +113,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        //it is weird but it says that it doesn't exist....
+        // it is weird but it says that it doesn't exist....
         FilesystemHelper.createDirectory("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
         boolean condition = processService.checkIfTifDirectoryExists(process);
         assertTrue("Images TIF directory doesn't exist!", condition);
@@ -329,7 +330,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        //System.out.println("Progress: " + processService.getProgress(process));
+        // System.out.println("Progress: " +
+        // processService.getProgress(process));
         boolean condition = processService.getProgress(process).equals("");
         assertTrue("Progress doesn't match given plain text!", condition);
     }
@@ -340,7 +342,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        //System.out.println("Progress: " + processService.getProgressOpen(process));
+        // System.out.println("Progress: " +
+        // processService.getProgressOpen(process));
         int condition = processService.getProgressOpen(process);
         assertEquals("Progress doesn't match given plain text!", 1, condition);
     }
@@ -351,7 +354,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        //System.out.println("Progress: " + processService.getProgressInProcessing(process));
+        // System.out.println("Progress: " +
+        // processService.getProgressInProcessing(process));
         int condition = processService.getProgressInProcessing(process);
         assertEquals("Progress doesn't match given plain text!", 1, condition);
     }
@@ -362,7 +366,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        //System.out.println("Progress: " + processService.getProgressClosed(process));
+        // System.out.println("Progress: " +
+        // processService.getProgressClosed(process));
         int condition = processService.getProgressClosed(process);
         assertEquals("Progress doesn't match given plain text!", 1, condition);
     }
@@ -372,7 +377,7 @@ public class ProcessServiceIT {
     public void shouldGetMetadataFilePath() throws Exception {
         ProcessService processService = new ProcessService();
 
-        //TODO: solve problem of paths - it will be done with Path class!
+        // TODO: solve problem of paths - it will be done with Path class!
         Process process = processService.find(1);
         String directory = processService.getMetadataFilePath(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\meta.xml");
@@ -418,8 +423,9 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        //boolean condition = processService.writeMetadataFile(process).equals("");
-        //assertTrue("It was not possible to write metadata file!", condition);
+        // boolean condition =
+        // processService.writeMetadataFile(process).equals("");
+        // assertTrue("It was not possible to write metadata file!", condition);
     }
 
     @Ignore("no idea how check if it is correct - Fileformat class")
@@ -439,7 +445,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        //should return true or false
+        // should return true or false
         processService.writeMetadataAsTemplateFile(null, process);
         boolean condition = false;
         assertTrue("It was not possible to write metadata as template file!", condition);
@@ -486,7 +492,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        //TODO: method downloadDocket should return boolean not empty string
+        // TODO: method downloadDocket should return boolean not empty string
         boolean condition = processService.downloadDocket(process).equals("");
         assertTrue("Processing user doesn't match to the given user!", condition);
     }
@@ -518,7 +524,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(2);
-        //assertEquals("Process directories are not created!", expected, actual);
+        // assertEquals("Process directories are not created!", expected,
+        // actual);
     }
 
     @Ignore("not sure how it should look")
@@ -528,7 +535,7 @@ public class ProcessServiceIT {
 
         DigitalDocument expected = new DigitalDocument();
         DigitalDocument actual = processService.getDigitalDocument(processService.find(2));
-        //assertEquals("Digital documents are not equal!", expected, actual);
+        // assertEquals("Digital documents are not equal!", expected, actual);
     }
 
     @Ignore("not sure how it should look")
@@ -537,7 +544,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<ProcessProperty> expected = new ArrayList<>();
-        List<ProcessProperty> actual = processService.filterForCorrectionSolutionMessages(new ArrayList<ProcessProperty>());
+        List<ProcessProperty> actual = processService
+                .filterForCorrectionSolutionMessages(new ArrayList<ProcessProperty>());
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 

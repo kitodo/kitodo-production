@@ -86,15 +86,20 @@ public class LoginForm {
             if (treffer != null && treffer.size() > 0) {
                 /* Login vorhanden, nun passwort prüfen */
                 User b = treffer.get(0);
-                /* wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht mehr hier) wurde,
-                jetzt Meldung anzeigen */
+                /*
+                 * wenn der Benutzer auf inaktiv gesetzt (z.B. arbeitet er nicht
+                 * mehr hier) wurde, jetzt Meldung anzeigen
+                 */
                 if (!b.isActive()) {
                     Helper.setFehlerMeldung("login", "", Helper.getTranslation("loginInactive"));
                     return "";
                 }
                 /* wenn passwort auch richtig ist, den benutzer übernehmen */
                 if (serviceManager.getUserService().isPasswordCorrect(b, this.password)) {
-                    /* jetzt prüfen, ob dieser Benutzer schon in einer anderen Session eingeloggt ist */
+                    /*
+                     * jetzt prüfen, ob dieser Benutzer schon in einer anderen
+                     * Session eingeloggt ist
+                     */
                     SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
                     HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
                             .getSession(false);
@@ -114,7 +119,8 @@ public class LoginForm {
                 Helper.setFehlerMeldung("login", "", Helper.getTranslation("wrongLogin"));
             }
         }
-        // checking if saved css stylesheet is available, if not replace it by something available
+        // checking if saved css stylesheet is available, if not replace it by
+        // something available
         if (this.myBenutzer != null) {
             String tempCss = this.myBenutzer.getCss();
             String newCss = new HelperForm().getCssLinkIfExists(tempCss);
@@ -170,8 +176,9 @@ public class LoginForm {
             this.myBenutzer = serviceManager.getUserService().find(LoginID);
             /* in der Session den Login speichern */
             SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
-            temp.sessionBenutzerAktualisieren((HttpSession) FacesContext.getCurrentInstance().getExternalContext()
-                    .getSession(false), this.myBenutzer);
+            temp.sessionBenutzerAktualisieren(
+                    (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false),
+                    this.myBenutzer);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not read database", e.getMessage());
             return "";
@@ -276,7 +283,8 @@ public class LoginForm {
     /**
      * Set login.
      *
-     * @param login String
+     * @param login
+     *            String
      */
     public void setLogin(String login) {
         if (this.login != null && !this.login.equals(login)) {
@@ -348,14 +356,16 @@ public class LoginForm {
     }
 
     /**
-     * The function getUserHomeDir() returns the home directory of the currently logged in user,
-     * if any, or the empty string otherwise.
+     * The function getUserHomeDir() returns the home directory of the currently
+     * logged in user, if any, or the empty string otherwise.
      *
      * @return the home directory of the current user
      * @throws InterruptedException
-     *             If the thread running the script is interrupted by another thread while it is waiting,
-     *             then the wait is ended and an InterruptedException is thrown.
-     * @throws IOException if an I/O error occurs.
+     *             If the thread running the script is interrupted by another
+     *             thread while it is waiting, then the wait is ended and an
+     *             InterruptedException is thrown.
+     * @throws IOException
+     *             if an I/O error occurs.
      */
     public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
         String result = "";

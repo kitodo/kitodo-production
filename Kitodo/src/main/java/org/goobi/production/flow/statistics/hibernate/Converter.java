@@ -19,8 +19,8 @@ import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.StatisticsManager;
 
 /**
- * Class helps to convert results returned from Projections or Queries, where data types don't match
- * the target data type .
+ * Class helps to convert results returned from Projections or Queries, where
+ * data types don't match the target data type .
  *
  * @author Wulf Riebensahm
  * @version 23.05.2009
@@ -37,11 +37,9 @@ class Converter {
      */
     private Converter() {
         try {
-            this.sdf = new SimpleDateFormat("yyyy.MM.dd",
-                    new DateFormatSymbols(StatisticsManager.getLocale()));
+            this.sdf = new SimpleDateFormat("yyyy.MM.dd", new DateFormatSymbols(StatisticsManager.getLocale()));
         } catch (NullPointerException e) {
-            logger
-                    .error("Class statistics.hibernate.Converter Error, can't get FacesContext");
+            logger.error("Class statistics.hibernate.Converter Error, can't get FacesContext");
         }
     }
 

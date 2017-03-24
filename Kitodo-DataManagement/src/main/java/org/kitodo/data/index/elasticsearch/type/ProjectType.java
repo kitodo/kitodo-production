@@ -19,10 +19,8 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -46,7 +44,8 @@ public class ProjectType extends BaseType<Project> {
         orderedProjectMap.put("endDate", endDate);
         String numberOfPages = project.getNumberOfPages() != null ? project.getNumberOfPages().toString() : "null";
         orderedProjectMap.put("numberOfPages", numberOfPages);
-        String numberOfVolumes = project.getNumberOfVolumes() != null ? project.getNumberOfVolumes().toString() : "null";
+        String numberOfVolumes = project.getNumberOfVolumes() != null ? project.getNumberOfVolumes().toString()
+                : "null";
         orderedProjectMap.put("numberOfVolumes", numberOfVolumes);
         String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : "null";
         orderedProjectMap.put("archived", archived);

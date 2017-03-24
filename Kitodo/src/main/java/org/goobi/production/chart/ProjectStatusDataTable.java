@@ -17,12 +17,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * A ProjectStatusDataTable object holds all the information needed for rendering a project status chart
+ * A ProjectStatusDataTable object holds all the information needed for
+ * rendering a project status chart
  *
- * <p>A ProjectStatusDataTable consists of
- * - a name
- * - dates of project begin and project end
- * - a list of project tasks</p>
+ * <p>
+ * A ProjectStatusDataTable consists of - a name - dates of project begin and
+ * project end - a list of project tasks
+ * </p>
  *
  * @author Karsten Köhler
  * @author Hendrik Söhnholz
@@ -44,7 +45,8 @@ public class ProjectStatusDataTable implements Serializable {
     /**
      * public constructor, the name is set here.
      *
-     * @param inName the name to set
+     * @param inName
+     *            the name to set
      */
     public ProjectStatusDataTable(String inName, Date begin, Date end) {
         super();
@@ -58,7 +60,8 @@ public class ProjectStatusDataTable implements Serializable {
     /**
      * Remove a task from the list.
      *
-     * @param title String
+     * @param title
+     *            String
      */
     public void removeTask(String title) {
         if (taskTitles.contains(title)) {
@@ -72,7 +75,8 @@ public class ProjectStatusDataTable implements Serializable {
     /**
      * Add a task to the list.
      *
-     * @param inTask The task to add
+     * @param inTask
+     *            The task to add
      *
      */
     public void addTask(IProjectTask inTask) {

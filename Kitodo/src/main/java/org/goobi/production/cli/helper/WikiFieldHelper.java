@@ -15,13 +15,11 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 
 public class WikiFieldHelper {
 
     private static final Logger logger = Logger.getLogger(WikiFieldHelper.class);
-
 
     private static final String TAG_ERROR = "<font color=\"#FF0000\">";
     private static final String TAG_WARN = "<font color=\"#FF6600\">";
@@ -33,14 +31,18 @@ public class WikiFieldHelper {
     private static final String BREAK = "<br/>";
 
     /**
-	 * Get wiki messages.
+     * Get wiki messages.
      *
-	 * @param p Process object
-	 * @param currentWikiFieldContent String
-	 * @param type String
-	 * @param value String
-	 * @return String
-	 */
+     * @param p
+     *            Process object
+     * @param currentWikiFieldContent
+     *            String
+     * @param type
+     *            String
+     * @param value
+     *            String
+     * @return String
+     */
     public static String getWikiMessage(Process p, String currentWikiFieldContent, String type, String value) {
         String message = "";
         if (currentWikiFieldContent != null && currentWikiFieldContent.length() > 0) {
@@ -66,7 +68,7 @@ public class WikiFieldHelper {
             processName = "processname: " + p.getTitle() + ", message: ";
         }
         if (logger.isInfoEnabled()) {
-            logger.info(timestamp + " " + processName + " " + value );
+            logger.info(timestamp + " " + processName + " " + value);
         }
         message = message + timestamp + ": " + value + ENDTAG;
         return message;
@@ -75,9 +77,12 @@ public class WikiFieldHelper {
     /**
      * Get wiki messages.
      *
-     * @param currentWikiFieldContent String
-     * @param type String
-     * @param value String
+     * @param currentWikiFieldContent
+     *            String
+     * @param type
+     *            String
+     * @param value
+     *            String
      * @return String
      */
     public static String getWikiMessage(String currentWikiFieldContent, String type, String value) {

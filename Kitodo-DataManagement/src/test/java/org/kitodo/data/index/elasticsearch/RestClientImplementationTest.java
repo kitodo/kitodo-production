@@ -11,15 +11,14 @@
 
 package org.kitodo.data.index.elasticsearch;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Test class for RestClientImplementation.
@@ -56,7 +55,8 @@ public class RestClientImplementationTest {
         String result = restClient.addDocument(createEntities().get(1), 1);
 
         boolean created = result.contains("\"created\":true");
-        //if document already exists it is updated and in that case check if update successful
+        // if document already exists it is updated and in that case check if
+        // update successful
         boolean ok = result.contains("\"successful\":1");
         boolean condition = created || ok;
         assertTrue("Add of document has failed!", condition);
@@ -67,13 +67,17 @@ public class RestClientImplementationTest {
         RestClientImplementation restClient = initializeRestClient();
         String result = restClient.addType(createEntities());
 
-        boolean created = result.contains("requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
-        boolean ok = result.contains("requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 200 OK");
+        boolean created = result.contains(
+                "requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
+        boolean ok = result.contains(
+                "requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 200 OK");
         boolean condition = created || ok;
         assertTrue("Add of type has failed - document id 1!", condition);
 
-        created = result.contains("requestLine=PUT /kitodo/test/2 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
-        ok = result.contains("requestLine=PUT /kitodo/test/2 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 200 OK");
+        created = result.contains(
+                "requestLine=PUT /kitodo/test/2 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
+        ok = result.contains(
+                "requestLine=PUT /kitodo/test/2 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 200 OK");
         condition = created || ok;
         assertTrue("Add of type has failed - document id 2!", condition);
     }

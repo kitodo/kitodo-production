@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Process;
 
 import ugh.dl.DigitalDocument;
@@ -45,9 +44,12 @@ public class ExportDms_CorrectRusdml {
     /**
      * Constructor.
      *
-     * @param process object
-     * @param inPrefs Prefs object
-     * @param inGdzfile Fileformat object
+     * @param process
+     *            object
+     * @param inPrefs
+     *            Prefs object
+     * @param inGdzfile
+     *            Fileformat object
      */
     public ExportDms_CorrectRusdml(Process process, Prefs inPrefs, Fileformat inGdzfile) throws PreferencesException {
         myPrefs = inPrefs;
@@ -60,9 +62,8 @@ public class ExportDms_CorrectRusdml {
      *
      * @return String
      */
-    public String correctionStart()
-            throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, ExportFileException,
-			UghHelperException {
+    public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+            ExportFileException, UghHelperException {
         String atsPpnBand;
         DocStruct logicalTopstruct = myDocument.getLogicalDocStruct();
         docStructsOhneSeiten = new ArrayList<>();
@@ -93,9 +94,11 @@ public class ExportDms_CorrectRusdml {
     }
 
     /**
-     * Alle Strukturelemente rekursiv durchlaufen und den Elternelementen die Seiten der Kinder zuweisen.
+     * Alle Strukturelemente rekursiv durchlaufen und den Elternelementen die
+     * Seiten der Kinder zuweisen.
      *
-     * @param inStruct DocStruct object
+     * @param inStruct
+     *            DocStruct object
      */
     private void RusdmlDocStructPagesAuswerten(DocStruct inStruct)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
@@ -121,7 +124,8 @@ public class ExportDms_CorrectRusdml {
     /**
      * Alle nicht benötigten Metadaten des RUSDML-Projektes rauswerfen.
      *
-     * @param inStruct DocStruct
+     * @param inStruct
+     *            DocStruct
      */
 
     private void RusdmlDropMetadata(DocStruct inStruct)
@@ -185,7 +189,8 @@ public class ExportDms_CorrectRusdml {
                 }
 
                 /*
-                 * den Abstrakt des ZBLs übernehmen, aber nur die 255 ersten Zeichen
+                 * den Abstrakt des ZBLs übernehmen, aber nur die 255 ersten
+                 * Zeichen
                  */
                 if (meta.getType().getName().equals("ZBLAbstract")) {
                     MetadataType mdt = myPrefs.getMetadataTypeByName("Abstract");
@@ -198,7 +203,8 @@ public class ExportDms_CorrectRusdml {
         }
 
         /*
-         * nachdem alle Metadaten durchlaufen wurden, jetzt abhängig vom Sprachcode den richtigen MainTitle zuweisen
+         * nachdem alle Metadaten durchlaufen wurden, jetzt abhängig vom
+         * Sprachcode den richtigen MainTitle zuweisen
          */
         MetadataType mdtOrg = myPrefs.getMetadataTypeByName("TitleDocMain");
         Metadata metaOrg = new Metadata(mdtOrg);
@@ -223,7 +229,8 @@ public class ExportDms_CorrectRusdml {
     /**
      * Alle nicht benötigten Personen rauswerfen.
      *
-     * @param inStruct DocStruct object
+     * @param inStruct
+     *            DocStruct object
      */
     private void RusdmlDropPersons(DocStruct inStruct) {
         if (inStruct.getAllPersons() != null) {
@@ -240,7 +247,8 @@ public class ExportDms_CorrectRusdml {
     /**
      * Alle zu ändernden Metadaten ändern.
      *
-     * @param inStruct DocStruct object
+     * @param inStruct
+     *            DocStruct object
      */
     private void RusdmlCheckMetadata(DocStruct inStruct) {
         /*
@@ -265,10 +273,13 @@ public class ExportDms_CorrectRusdml {
     }
 
     /**
-     * Dabei die zentralen Projekteinstellungen in der xml-Konfiguration berücksichtigen.
+     * Dabei die zentralen Projekteinstellungen in der xml-Konfiguration
+     * berücksichtigen.
      *
-     * @param inTopStruct DocStruct object
-     * @param myProcess Process object
+     * @param inTopStruct
+     *            DocStruct object
+     * @param myProcess
+     *            Process object
      */
     private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Process myProcess)
             throws ExportFileException, UghHelperException {
@@ -285,9 +296,12 @@ public class ExportDms_CorrectRusdml {
     /**
      * Fehlende Metadaten für Rusdml ergänzen.
      *
-     * @param inTopStruct DocStruct object
-     * @param myProcess Process object
-     * @param PPN String
+     * @param inTopStruct
+     *            DocStruct object
+     * @param myProcess
+     *            Process object
+     * @param PPN
+     *            String
      */
     private void RusdmlAddMissingMetadata(DocStruct inTopStruct, Process myProcess, String PPN) {
         /*
@@ -365,9 +379,11 @@ public class ExportDms_CorrectRusdml {
     }
 
     /**
-     * Alle Metadaten eines Strukturelements durchlaufen und deren Umlaute maskieren.
+     * Alle Metadaten eines Strukturelements durchlaufen und deren Umlaute
+     * maskieren.
      *
-     * @param inStruct DocStruct object
+     * @param inStruct
+     *            DocStruct object
      */
 
     private void RusdmlUmlauteDemaskieren(DocStruct inStruct) {

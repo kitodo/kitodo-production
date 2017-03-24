@@ -39,8 +39,8 @@ public class ProcessProperty implements IProperty, Serializable {
     private boolean currentStepDuplicationAllowed = false;
 
     /**
-	 * Constructor.
-	 */
+     * Constructor.
+     */
     public ProcessProperty() {
         this.container = 0;
         this.value = "";
@@ -103,7 +103,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setValidation(java.lang.String)
+     * @see
+     * org.goobi.production.properties.IProperty#setValidation(java.lang.String)
      */
     @Override
     public void setValidation(String validation) {
@@ -123,7 +124,9 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setType(org.goobi.production.properties.Type)
+     * @see
+     * org.goobi.production.properties.IProperty#setType(org.goobi.production.
+     * properties.Type)
      */
     @Override
     public void setType(Type type) {
@@ -163,7 +166,9 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setPossibleValues(java.util.ArrayList)
+     * @see
+     * org.goobi.production.properties.IProperty#setPossibleValues(java.util.
+     * ArrayList)
      */
     @Override
     public void setPossibleValues(List<String> possibleValues) {
@@ -204,7 +209,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setProjects(java.util.ArrayList)
+     * @see org.goobi.production.properties.IProperty#setProjects(java.util.
+     * ArrayList)
      */
     @Override
     public void setProjects(List<String> projects) {
@@ -224,7 +230,9 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setShowStepConditions(java.util.ArrayList)
+     * @see
+     * org.goobi.production.properties.IProperty#setShowStepConditions(java.util
+     * .ArrayList)
      */
     @Override
     public void setShowStepConditions(List<ShowStepCondition> showStepConditions) {
@@ -234,7 +242,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getShowProcessGroupAccessCondition()
+     * @see org.goobi.production.properties.IProperty#
+     * getShowProcessGroupAccessCondition()
      */
     @Override
     public AccessCondition getShowProcessGroupAccessCondition() {
@@ -245,7 +254,8 @@ public class ProcessProperty implements IProperty, Serializable {
      * (non-Javadoc)
      *
      * @see org.goobi.production.properties.IProperty
-     * #setShowProcessGroupAccessCondition(org.goobi.production.properties.AccessCondition)
+     * #setShowProcessGroupAccessCondition(org.goobi.production.properties.
+     * AccessCondition)
      */
     @Override
     public void setShowProcessGroupAccessCondition(AccessCondition showProcessGroupAccessCondition) {
@@ -339,7 +349,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /**
      * Set value list.
      *
-     * @param valueList list of Strings
+     * @param valueList
+     *            list of Strings
      */
     public void setValueList(List<String> valueList) {
         this.value = "";
@@ -364,7 +375,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /**
      * Set boolean value.
      *
-     * @param val boolean
+     * @param val
+     *            boolean
      */
     public void setBooleanValue(boolean val) {
         if (val) {

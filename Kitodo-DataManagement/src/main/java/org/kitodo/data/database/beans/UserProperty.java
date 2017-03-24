@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -136,7 +135,8 @@ public class UserProperty implements GoobiPropertyInterface {
     }
 
     /**
-     * Getter for dataType set to private for hibernate, for use in program use getType instead - why?!.
+     * Getter for dataType set to private for hibernate, for use in program use
+     * getType instead - why?!.
      *
      * @return dataType as integer
      */
@@ -146,10 +146,11 @@ public class UserProperty implements GoobiPropertyInterface {
     }
 
     /**
-     * Set dataType to defined integer only for internal use through hibernate, for changing dataType
-     * use setType instead.
+     * Set dataType to defined integer only for internal use through hibernate,
+     * for changing dataType use setType instead.
      *
-     * @param dataType as Integer
+     * @param dataType
+     *            as Integer
      */
     @SuppressWarnings("unused")
     private void setDataType(Integer dataType) {
@@ -172,7 +173,8 @@ public class UserProperty implements GoobiPropertyInterface {
     /**
      * Set dataType to specific value from {@link PropertyType}.
      *
-     * @param inputType as {@link PropertyType}
+     * @param inputType
+     *            as {@link PropertyType}
      */
     @Override
     public void setType(PropertyType inputType) {
@@ -190,7 +192,8 @@ public class UserProperty implements GoobiPropertyInterface {
     }
 
     /**
-     * How it is possible that here appears list if object can have only one value?!.
+     * How it is possible that here appears list if object can have only one
+     * value?!.
      *
      * @return list of values
      */

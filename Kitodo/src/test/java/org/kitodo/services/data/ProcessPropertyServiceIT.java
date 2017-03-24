@@ -11,19 +11,18 @@
 
 package org.kitodo.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.exceptions.DAOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests for ProcessPropertyService class.
@@ -37,7 +36,7 @@ public class ProcessPropertyServiceIT {
 
     @AfterClass
     public static void cleanDatabase() {
-        //MockDatabase.cleanDatabase();
+        // MockDatabase.cleanDatabase();
     }
 
     @Test
@@ -45,7 +44,8 @@ public class ProcessPropertyServiceIT {
         ProcessPropertyService processPropertyService = new ProcessPropertyService();
 
         ProcessProperty processProperty = processPropertyService.find(1);
-        boolean condition = processProperty.getTitle().equals("First Property") && processProperty.getValue().equals("first value");
+        boolean condition = processProperty.getTitle().equals("First Property")
+                && processProperty.getValue().equals("first value");
         assertTrue("Process property was not found in database!", condition);
     }
 

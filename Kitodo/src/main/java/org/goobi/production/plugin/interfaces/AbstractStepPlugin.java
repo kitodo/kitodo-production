@@ -18,7 +18,6 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import org.apache.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.enums.StepReturnValue;
-
 import org.kitodo.data.database.beans.Task;
 
 @PluginImplementation

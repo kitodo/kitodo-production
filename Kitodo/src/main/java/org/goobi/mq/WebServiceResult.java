@@ -32,10 +32,14 @@ public class WebServiceResult {
     /**
      * Constructor.
      *
-     * @param queueName String
-     * @param id String
-     * @param level String
-     * @param message String
+     * @param queueName
+     *            String
+     * @param id
+     *            String
+     * @param level
+     *            String
+     * @param message
+     *            String
      */
     public WebServiceResult(String queueName, String id, ReportLevel level, String message) {
         this.queueName = queueName;
@@ -47,9 +51,12 @@ public class WebServiceResult {
     /**
      * Constructor.
      *
-     * @param queueName String
-     * @param id String
-     * @param level ReportLevel object
+     * @param queueName
+     *            String
+     * @param id
+     *            String
+     * @param level
+     *            ReportLevel object
      */
     public WebServiceResult(String queueName, String id, ReportLevel level) {
         this.queueName = queueName;
@@ -65,8 +72,7 @@ public class WebServiceResult {
 
             // If reporting to ActiveMQ is disabled, write log message
             logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
-                    "Processing message \"" + id + '@' + queueName
-                            + "\" reports " + level.toLowerCase() + "."
+                    "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
                             + (message != null ? " (" + message + ")" : ""));
         } else {
             try {
@@ -85,10 +91,8 @@ public class WebServiceResult {
                 ActiveMQDirector.getResultsTopic().send(report);
 
             } catch (Exception exce) {
-                logger.fatal("Error sending report  for \"" + id + '@'
-                        + queueName + "\" (" + level.toLowerCase()
-                        + (message != null ? ": " + message : "")
-                        + "): Giving up.", exce);
+                logger.fatal("Error sending report  for \"" + id + '@' + queueName + "\" (" + level.toLowerCase()
+                        + (message != null ? ": " + message : "") + "): Giving up.", exce);
             }
         }
     }

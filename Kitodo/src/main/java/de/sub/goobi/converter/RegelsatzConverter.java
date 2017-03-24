@@ -17,11 +17,9 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
-
 
 public class RegelsatzConverter implements Converter {
     public static final String CONVERTER_ID = "RegelsatzConverter";
@@ -29,8 +27,7 @@ public class RegelsatzConverter implements Converter {
     private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value)
-            throws ConverterException {
+    public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
         if (value == null) {
             return null;
         } else {
@@ -44,8 +41,7 @@ public class RegelsatzConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value)
-            throws ConverterException {
+    public String getAsString(FacesContext context, UIComponent component, Object value) throws ConverterException {
         if (value == null) {
             return null;
         } else if (value instanceof Ruleset) {

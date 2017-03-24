@@ -15,8 +15,6 @@ import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,9 +46,10 @@ import javax.naming.ldap.StartTlsResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
+
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 public class Ldap {
     private static final Logger myLogger = Logger.getLogger(Ldap.class);
@@ -74,8 +73,10 @@ public class Ldap {
     /**
      * create new user in LDAP-directory.
      *
-     * @param inBenutzer User object
-     * @param inPasswort String
+     * @param inBenutzer
+     *            User object
+     * @param inPasswort
+     *            String
      */
     public void createNewUser(User inBenutzer, String inPasswort)
             throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
@@ -113,8 +114,10 @@ public class Ldap {
     /**
      * Check if connection with login and password possible.
      *
-     * @param inBenutzer User object
-     * @param inPasswort String
+     * @param inBenutzer
+     *            User object
+     * @param inPasswort
+     *            String
      * @return Login correct or not
      */
     public boolean isUserPasswordCorrect(User inBenutzer, String inPasswort) {
@@ -144,7 +147,8 @@ public class Ldap {
                 ctx.addToEnvironment(Context.SECURITY_CREDENTIALS, inPasswort);
                 ctx.reconnect(null);
                 return true;
-                // Perform search for privileged attributes under authenticated context
+                // Perform search for privileged attributes under authenticated
+                // context
 
             } catch (IOException e) {
                 myLogger.error("TLS negotiation error:", e);
@@ -220,7 +224,8 @@ public class Ldap {
     /**
      * retrieve home directory of given user.
      *
-     * @param inBenutzer User object
+     * @param inBenutzer
+     *            User object
      * @return path as string
      */
     public String getUserHomeDirectory(User inBenutzer) {
@@ -255,7 +260,8 @@ public class Ldap {
                 Attribute la = attrs.get("homeDirectory");
                 return (String) la.get(0);
 
-                // Perform search for privileged attributes under authenticated context
+                // Perform search for privileged attributes under authenticated
+                // context
 
             } catch (IOException e) {
                 myLogger.error("TLS negotiation error:", e);
@@ -306,7 +312,8 @@ public class Ldap {
     /**
      * check if User already exists on system.
      *
-     * @param inLogin String
+     * @param inLogin
+     *            String
      * @return path as string
      */
     public boolean isUserAlreadyExists(String inLogin) {
@@ -428,9 +435,12 @@ public class Ldap {
     /**
      * change password of given user, needs old password for authentication.
      *
-     * @param inUser User object
-     * @param inOldPassword String
-     * @param inNewPassword String
+     * @param inUser
+     *            User object
+     * @param inOldPassword
+     *            String
+     * @param inNewPassword
+     *            String
      * @return boolean about result of change
      */
     public boolean changeUserPassword(User inUser, String inOldPassword, String inNewPassword)
@@ -454,9 +464,8 @@ public class Ldap {
                 /*
                  * UserPasswort-Attribut ändern
                  */
-                BasicAttribute userpassword = new BasicAttribute("userPassword", "{"
-                        + ConfigMain.getParameter("ldap_encryption", "SHA") + "}"
-                        + digestBase64);
+                BasicAttribute userpassword = new BasicAttribute("userPassword",
+                        "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
 
                 /*
                  * LanMgr-Passwort-Attribut ändern
@@ -465,7 +474,8 @@ public class Ldap {
                 try {
                     lanmgrpassword = new BasicAttribute("sambaLMPassword",
                             LdapUser.toHexString(LdapUser.lmHash(inNewPassword)));
-                    // TODO: Don't catch super class exception, make sure that the password isn't logged here
+                    // TODO: Don't catch super class exception, make sure that
+                    // the password isn't logged here
                 } catch (Exception e) {
                     myLogger.error(e);
                 }
@@ -529,12 +539,11 @@ public class Ldap {
         /* wenn die Zertifikate noch nicht im Keystore sind, jetzt einlesen */
         File myPfad = new File(path);
         if (!myPfad.exists()) {
-            try (
-                    FileOutputStream ksos = new FileOutputStream(path);
-                    // TODO: Rename parameters to something more meaningful, this is quite specific for the GDZ
+            try (FileOutputStream ksos = new FileOutputStream(path);
+                    // TODO: Rename parameters to something more meaningful,
+                    // this is quite specific for the GDZ
                     FileInputStream cacertFile = new FileInputStream(ConfigMain.getParameter("ldap_cert_root"));
-                    FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"))
-            ) {
+                    FileInputStream certFile2 = new FileInputStream(ConfigMain.getParameter("ldap_cert_pdc"))) {
 
                 CertificateFactory cf = CertificateFactory.getInstance("X.509");
                 X509Certificate cacert = (X509Certificate) cf.generateCertificate(cacertFile);
@@ -544,7 +553,8 @@ public class Ldap {
                 char[] password = passwd.toCharArray();
 
                 // TODO: Let this method really load a keystore if configured
-                // initialize the keystore, if file is available, load the keystore
+                // initialize the keystore, if file is available, load the
+                // keystore
                 ks.load(null);
 
                 ks.setCertificateEntry("ROOTCERT", cacert);

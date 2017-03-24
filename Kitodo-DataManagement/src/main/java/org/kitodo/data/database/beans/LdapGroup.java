@@ -86,7 +86,8 @@ public class LdapGroup implements Serializable {
     @Column(name = "sambaKickoffTime")
     private String sambaKickoffTime;
 
-    public LdapGroup() { }
+    public LdapGroup() {
+    }
 
     public Integer getId() {
         return this.id;

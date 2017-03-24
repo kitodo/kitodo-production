@@ -13,8 +13,6 @@ package de.sub.goobi.helper.ldap;
 
 import de.sub.goobi.config.ConfigMain;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -46,13 +44,14 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 
+import edu.sysu.virgoftp.ftp.encrypt.MD4;
+
 /**
- * This class is used by the DirObj example. It is a DirContext class that can be stored by service providers like
- * the LDAP system providers.
+ * This class is used by the DirObj example. It is a DirContext class that can
+ * be stored by service providers like the LDAP system providers.
  */
 public class LdapUser implements DirContext {
     private static final Logger myLogger = Logger.getLogger(LdapUser.class);
@@ -69,9 +68,12 @@ public class LdapUser implements DirContext {
     /**
      * configure LdapUser with Userdetails.
      *
-     * @param inUser User object
-     * @param inPassword String
-     * @param inUidNumber String
+     * @param inUser
+     *            User object
+     * @param inPassword
+     *            String
+     * @param inUidNumber
+     *            String
      */
     public void configure(User inUser, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
@@ -102,13 +104,13 @@ public class LdapUser implements DirContext {
 
             this.myAttrs.put("sambaAcctFlags", ReplaceVariables(lp.getSambaAcctFlags(), inUser, inUidNumber));
             this.myAttrs.put("sambaLogonScript", ReplaceVariables(lp.getSambaLogonScript(), inUser, inUidNumber));
-            this.myAttrs.put("sambaPrimaryGroupSID", ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser,
-                    inUidNumber));
+            this.myAttrs.put("sambaPrimaryGroupSID",
+                    ReplaceVariables(lp.getSambaPrimaryGroupSID(), inUser, inUidNumber));
             this.myAttrs.put("sambaSID", ReplaceVariables(lp.getSambaSID(), inUser, inUidNumber));
 
             this.myAttrs.put("sambaPwdMustChange", ReplaceVariables(lp.getSambaPwdMustChange(), inUser, inUidNumber));
-            this.myAttrs.put("sambaPasswordHistory", ReplaceVariables(lp.getSambaPasswordHistory(), inUser,
-                    inUidNumber));
+            this.myAttrs.put("sambaPasswordHistory",
+                    ReplaceVariables(lp.getSambaPasswordHistory(), inUser, inUidNumber));
             this.myAttrs.put("sambaLogonHours", ReplaceVariables(lp.getSambaLogonHours(), inUser, inUidNumber));
             this.myAttrs.put("sambaKickoffTime", ReplaceVariables(lp.getSambaKickoffTime(), inUser, inUidNumber));
             this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000l));
@@ -140,17 +142,20 @@ public class LdapUser implements DirContext {
             MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
             String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.myAttrs.put("userPassword", "{"
-                    + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+            this.myAttrs.put("userPassword",
+                    "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
         }
     }
 
     /**
      * Replace Variables with current user details.
      *
-     * @param inString String
-     * @param inUser User object
-     * @param inUidNumber String
+     * @param inString
+     *            String
+     * @param inUser
+     *            User object
+     * @param inUidNumber
+     *            String
      * @return String with replaced variables
      */
     private String ReplaceVariables(String inString, User inUser, String inUidNumber) {
@@ -159,10 +164,10 @@ public class LdapUser implements DirContext {
         }
         String result = inString.replaceAll("\\{login\\}", inUser.getLogin());
         result = result.replaceAll("\\{user full name\\}", inUser.getName() + " " + inUser.getSurname());
-        result = result.replaceAll("\\{uidnumber\\*2\\+1000\\}", String.valueOf(Integer.parseInt(inUidNumber)
-                * 2 + 1000));
-        result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}", String.valueOf(Integer.parseInt(inUidNumber)
-                * 2 + 1001));
+        result = result.replaceAll("\\{uidnumber\\*2\\+1000\\}",
+                String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
+        result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}",
+                String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
         if (myLogger.isDebugEnabled()) {
             myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
             myLogger.debug("Replace outstring: " + result);
@@ -175,7 +180,8 @@ public class LdapUser implements DirContext {
      *
      * @param password
      *            The password.
-     * @return The LM Hash of the given password, used in the calculation of the LM Response.
+     * @return The LM Hash of the given password, used in the calculation of the
+     *         LM Response.
      */
     public static byte[] lmHash(String password) throws Exception {
         byte[] oemPassword = password.toUpperCase().getBytes("US-ASCII");
@@ -202,9 +208,10 @@ public class LdapUser implements DirContext {
      * @param bytes
      *            A byte array containing the DES key material.
      * @param offset
-     *            The offset in the given byte array at which the 7-byte key material starts.
-     * @return A DES encryption key created from the key material starting at the specified offset in
-     *            the given byte array.
+     *            The offset in the given byte array at which the 7-byte key
+     *            material starts.
+     * @return A DES encryption key created from the key material starting at
+     *         the specified offset in the given byte array.
      */
     private static Key createDESKey(byte[] bytes, int offset) {
         byte[] keyBytes = new byte[7];
@@ -244,7 +251,8 @@ public class LdapUser implements DirContext {
     /**
      * To HEX String.
      *
-     * @param bytes byte
+     * @param bytes
+     *            byte
      * @return String
      */
     public static String toHexString(byte bytes[]) {
@@ -516,7 +524,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public NamingEnumeration<SearchResult> search(String name, Attributes matchingAttributes,
-                                                  String[] attributesToReturn) throws NamingException {
+            String[] attributesToReturn) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
@@ -544,13 +552,13 @@ public class LdapUser implements DirContext {
 
     @Override
     public NamingEnumeration<SearchResult> search(Name name, String filterExpr, Object[] filterArgs,
-                                                  SearchControls cons) throws NamingException {
+            SearchControls cons) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
     @Override
     public NamingEnumeration<SearchResult> search(String name, String filterExpr, Object[] filterArgs,
-                                                  SearchControls cons) throws NamingException {
+            SearchControls cons) throws NamingException {
         throw new OperationNotSupportedException();
     }
 

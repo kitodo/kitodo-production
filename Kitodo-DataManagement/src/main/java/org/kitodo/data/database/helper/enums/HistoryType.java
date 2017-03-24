@@ -19,9 +19,10 @@ package org.kitodo.data.database.helper.enums;
  */
 public enum HistoryType {
     /**
-     * Default type is unknown for all properties, which still don't have a specific type.
+     * Default type is unknown for all properties, which still don't have a
+     * specific type.
      */
-    unknown(0, "unknown",false, false, null),
+    unknown(0, "unknown", false, false, null),
 
     /**
      * storageDifference.
@@ -34,7 +35,7 @@ public enum HistoryType {
     imagesWorkDiff(2, "imagesWorkDiff", true, false, null),
 
     /**
-     imagesMasterDiff.
+     * imagesMasterDiff.
      */
     imagesMasterDiff(3, "imagesMasterDiff", true, false, null),
 
@@ -61,7 +62,7 @@ public enum HistoryType {
     /**
      * taskInWork, order number and title.
      */
-    taskInWork(8, "stepInWork", true, true, null ),
+    taskInWork(8, "stepInWork", true, true, null),
 
     /**
      * taskError, step order number, step title.
@@ -75,7 +76,7 @@ public enum HistoryType {
 
     /**
      * bitonal Difference - without function yet.
-     * */
+     */
     bitonal(11, "imagesBitonalDiff", true, false, null),
 
     /**
@@ -95,10 +96,11 @@ public enum HistoryType {
     private String groupingExpression;
 
     /**
-     * Private constructor, initializes integer value, title and sets boolean, if EventType contains string
-     * and/or numeric content.
+     * Private constructor, initializes integer value, title and sets boolean,
+     * if EventType contains string and/or numeric content.
      */
-    private HistoryType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString, String groupingExpression) {
+    private HistoryType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
+            String groupingExpression) {
         this.value = inValue;
         this.title = inTitle;
         this.isNumeric = inIsNumeric;
@@ -122,7 +124,7 @@ public enum HistoryType {
      */
     public String getTitle() {
         return this.title;
-        //return Helper.getTranslation(this.title);
+        // return Helper.getTranslation(this.title);
     }
 
     /**
@@ -154,8 +156,8 @@ public enum HistoryType {
     }
 
     /**
-     * Retrieve history event type by integer value, necessary for database handlings, where only integer is saved
-     * but not type safe.
+     * Retrieve history event type by integer value, necessary for database
+     * handlings, where only integer is saved but not type safe.
      *
      * @param inType
      *            as integer value

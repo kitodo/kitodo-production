@@ -23,9 +23,12 @@ public class UserPropertyDAO extends BaseDAO {
     /**
      * Find user property object by id.
      *
-     * @param id of searched object
+     * @param id
+     *            of searched object
      * @return result
-     * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
      */
     public UserProperty find(Integer id) throws DAOException {
         UserProperty result = (UserProperty) retrieveObject(UserProperty.class, id);
@@ -53,9 +56,11 @@ public class UserPropertyDAO extends BaseDAO {
     /**
      * The function remove() removes a user property
      *
-     * @param userProperty to be removed
-     * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-     * 				failure.
+     * @param userProperty
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
      */
     public void remove(UserProperty userProperty) throws DAOException {
         removeObject(userProperty);

@@ -21,16 +21,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
-
 import org.goobi.production.flow.statistics.hibernate.FilterString;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -214,8 +211,8 @@ public class SearchForm {
     }
 
     /**
-	 * Constructor.
-	 */
+     * Constructor.
+     */
     public SearchForm() {
         initStepStatus();
         initProjects();
@@ -395,7 +392,7 @@ public class SearchForm {
         String search = "";
         if (!this.processTitle.isEmpty()) {
 
-            search += "\"" + this.processOperand +  this.processTitle + "\" ";
+            search += "\"" + this.processOperand + this.processTitle + "\" ";
         }
         if (!this.idin.isEmpty()) {
             search += "\"" + FilterString.ID + this.idin + "\" ";
@@ -435,10 +432,9 @@ public class SearchForm {
         }
 
         if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
-            search += "\"" + this.stepOperand +  this.status + ":" + this.stepname + "\" ";
+            search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
-        if (!this.stepdonetitle.isEmpty()
-                && !this.stepdoneuser.isEmpty()
+        if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
                 && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
                 && ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
             search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE

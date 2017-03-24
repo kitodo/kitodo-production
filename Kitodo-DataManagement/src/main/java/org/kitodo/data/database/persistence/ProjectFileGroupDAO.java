@@ -20,12 +20,15 @@ public class ProjectFileGroupDAO extends BaseDAO {
     private static final long serialVersionUID = -5506252462891480484L;
 
     /**
-	 * Find project file group object by id.
-	 *
-	 * @param id of searched object
-	 * @return result
-	 * @throws DAOException an exception that can be thrown from the underlying find() procedure failure.
-	 */
+     * Find project file group object by id.
+     *
+     * @param id
+     *            of searched object
+     * @return result
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying find()
+     *             procedure failure.
+     */
     public ProjectFileGroup find(Integer id) throws DAOException {
         ProjectFileGroup result = (ProjectFileGroup) retrieveObject(ProjectFileGroup.class, id);
         if (result == null) {
@@ -35,7 +38,8 @@ public class ProjectFileGroupDAO extends BaseDAO {
     }
 
     /**
-     * The function findAll() retrieves all projects' file groups from the database.
+     * The function findAll() retrieves all projects' file groups from the
+     * database.
      *
      * @return all persisted projects
      */
@@ -50,12 +54,14 @@ public class ProjectFileGroupDAO extends BaseDAO {
     }
 
     /**
-	 * The function remove() removes a project file group from database.
-	 *
-	 * @param projectFileGroup to be removed
-	 * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-	 * 				failure.
-	 */
+     * The function remove() removes a project file group from database.
+     *
+     * @param projectFileGroup
+     *            to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
+     */
     public void remove(ProjectFileGroup projectFileGroup) throws DAOException {
         if (projectFileGroup.getId() != null) {
             removeObject(projectFileGroup);
@@ -63,12 +69,14 @@ public class ProjectFileGroupDAO extends BaseDAO {
     }
 
     /**
-	 * The function remove() removes a project file group from database.
-	 *
-	 * @param id of the task to be removed
-	 * @throws DAOException an exception that can be thrown from the underlying save() procedure upon database
-	 * 				failure.
-	 */
+     * The function remove() removes a project file group from database.
+     *
+     * @param id
+     *            of the task to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
+     */
     public void remove(Integer id) throws DAOException {
         @SuppressWarnings("unused")
         ProjectFileGroup workpiece = (ProjectFileGroup) retrieveObject(ProjectFileGroup.class, id);

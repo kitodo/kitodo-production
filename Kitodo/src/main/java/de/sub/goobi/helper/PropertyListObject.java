@@ -24,7 +24,8 @@ public class PropertyListObject implements Serializable {
     private List<ProcessProperty> propertyList = new ArrayList<ProcessProperty>();
     private int containerNumber = 0;
 
-    public PropertyListObject() {}
+    public PropertyListObject() {
+    }
 
     public PropertyListObject(int container) {
         this.containerNumber = container;

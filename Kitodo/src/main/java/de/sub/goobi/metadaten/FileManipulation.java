@@ -35,7 +35,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.io.SafeFile;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -141,10 +140,11 @@ public class FileManipulation {
             if (logger.isTraceEnabled()) {
                 logger.trace(filename + " was imported");
             }
-            // if file was uploaded into media folder, update pagination sequence
-            if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getMyProzess()).equals(
-                    serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess()) + currentFolder
-                            + File.separator)) {
+            // if file was uploaded into media folder, update pagination
+            // sequence
+            if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getMyProzess())
+                    .equals(serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess())
+                            + currentFolder + File.separator)) {
                 if (logger.isTraceEnabled()) {
                     logger.trace("update pagination for " + metadataBean.getMyProzess().getTitle());
                 }
@@ -198,9 +198,8 @@ public class FileManipulation {
         this.uploadedFileName = uploadedFileName;
     }
 
-    private void updatePagination(String filename)
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException,
-            DAOException, MetadataTypeNotAllowedException {
+    private void updatePagination(String filename) throws TypeNotAllowedForParentException, IOException,
+            InterruptedException, SwapException, DAOException, MetadataTypeNotAllowedException {
         if (!matchesFileConfiguration(filename)) {
             return;
         }
@@ -235,7 +234,8 @@ public class FileManipulation {
                     oldPage.getAllMetadataByType(physicalPageNoType).get(0).setValue(String.valueOf(indexToImport + 2));
 
                     // logical page no
-                    // logicalPageNoType = prefs.getMetadataTypeByName("logicalPageNumber");
+                    // logicalPageNoType =
+                    // prefs.getMetadataTypeByName("logicalPageNumber");
                     mdTemp = new Metadata(logicalPageNoType);
 
                     if (insertMode.equalsIgnoreCase("uncounted")) {
@@ -271,8 +271,8 @@ public class FileManipulation {
                             currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue("uncounted");
                         } else {
                             DocStruct followingPage = pageList.get(index + 1);
-                            currentPage.getAllMetadataByType(logicalPageNoType).get(0).setValue(
-                                    followingPage.getAllMetadataByType(logicalPageNoType).get(0).getValue());
+                            currentPage.getAllMetadataByType(logicalPageNoType).get(0)
+                                    .setValue(followingPage.getAllMetadataByType(logicalPageNoType).get(0).getValue());
                         }
                     }
                 }
@@ -328,8 +328,9 @@ public class FileManipulation {
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         try {
-            SafeFile[] filesInFolder = new SafeFile(serviceManager.getProcessService().getImagesDirectory(
-                    metadataBean.getMyProzess()) + currentFolder).listFiles();
+            SafeFile[] filesInFolder = new SafeFile(
+                    serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess()) + currentFolder)
+                            .listFiles();
             for (SafeFile currentFile : filesInFolder) {
                 String currentFileName = currentFile.getName();
                 String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
@@ -350,7 +351,7 @@ public class FileManipulation {
 
         if (downloadFile == null || !downloadFile.exists()) {
             List<String> paramList = new ArrayList<String>();
-            //           paramList.add(metadataBean.getMyProzess().getTitel());
+            // paramList.add(metadataBean.getMyProzess().getTitel());
             paramList.add(filenamePrefix);
             paramList.add(currentFolder);
             Helper.setFehlerMeldung(Helper.getTranslation("MetsEditorMissingFile", paramList));
@@ -425,8 +426,8 @@ public class FileManipulation {
         if (!fileuploadFolder.exists()) {
             fileuploadFolder.mkdir();
         }
-        SafeFile destination = new SafeFile(fileuploadFolder.getAbsolutePath() + File.separator
-                + metadataBean.getMyProzess().getTitle());
+        SafeFile destination = new SafeFile(
+                fileuploadFolder.getAbsolutePath() + File.separator + metadataBean.getMyProzess().getTitle());
         if (!destination.exists()) {
             destination.mkdir();
         }
@@ -436,28 +437,28 @@ public class FileManipulation {
             String processTitle = metadataBean.getMyProzess().getTitle();
             for (String folder : metadataBean.getAllTifFolders()) {
                 try {
-                    SafeFile[] filesInFolder = new SafeFile(serviceManager.getProcessService().getImagesDirectory(
-                            metadataBean.getMyProzess()) + folder).listFiles();
+                    SafeFile[] filesInFolder = new SafeFile(
+                            serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess()) + folder)
+                                    .listFiles();
                     for (SafeFile currentFile : filesInFolder) {
 
                         String filenameInFolder = currentFile.getName();
                         String filenamePrefix = filenameInFolder.replace(Metadaten.getFileExtension(filenameInFolder),
                                 "");
                         if (filenamePrefix.equals(prefix)) {
-                            SafeFile tempFolder = new SafeFile(destination.getAbsolutePath()
-                                    + File.separator + folder);
+                            SafeFile tempFolder = new SafeFile(destination.getAbsolutePath() + File.separator + folder);
                             if (!tempFolder.exists()) {
                                 tempFolder.mkdir();
                             }
 
-                            SafeFile destinationFile = new SafeFile(tempFolder, processTitle + "_"
-                                    + currentFile.getName());
+                            SafeFile destinationFile = new SafeFile(tempFolder,
+                                    processTitle + "_" + currentFile.getName());
 
-                            //if (deleteFilesAfterMove) {
-                            //   currentFile.renameTo(destinationFile);
-                            //} else {
+                            // if (deleteFilesAfterMove) {
+                            // currentFile.renameTo(destinationFile);
+                            // } else {
                             currentFile.copyFile(destinationFile);
-                            //}
+                            // }
                             break;
 
                         }
@@ -568,8 +569,8 @@ public class FileManipulation {
                     // check if current import folder is master folder
                     if (subfolder.getName().startsWith(masterPrefix)) {
                         try {
-                            String masterFolderName = serviceManager.getProcessService()
-                                    .getImagesOrigDirectory(false, currentProcess);
+                            String masterFolderName = serviceManager.getProcessService().getImagesOrigDirectory(false,
+                                    currentProcess);
                             SafeFile masterDirectory = new SafeFile(masterFolderName);
                             if (!masterDirectory.exists()) {
                                 masterDirectory.mkdir();
@@ -592,10 +593,10 @@ public class FileManipulation {
                         }
                     } else {
                         if (subfolder.getName().contains("_")) {
-                            String folderSuffix = subfolder.getName().substring(subfolder.getName().lastIndexOf("_")
-                                    + 1);
-                            String folderName = serviceManager.getProcessService()
-                                    .getMethodFromName(folderSuffix, currentProcess);
+                            String folderSuffix = subfolder.getName()
+                                    .substring(subfolder.getName().lastIndexOf("_") + 1);
+                            String folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
+                                    currentProcess);
                             if (folderName != null) {
                                 try {
                                     SafeFile directory = new SafeFile(folderName);
@@ -627,8 +628,8 @@ public class FileManipulation {
                 } else {
                     if (subfolder.getName().contains("_")) {
                         String folderSuffix = subfolder.getName().substring(subfolder.getName().lastIndexOf("_") + 1);
-                        String folderName = serviceManager.getProcessService()
-                                .getMethodFromName(folderSuffix, currentProcess);
+                        String folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
+                                currentProcess);
                         if (folderName != null) {
                             SafeFile directory = new SafeFile(folderName);
                             SafeFile[] objectInFolder = subfolder.listFiles();

@@ -1,19 +1,19 @@
-/* 
- * The Fascinator - ReDBox/Mint SRU Client - NLA Identity
- * Copyright (C) 2012 Queensland Cyber Infrastructure Foundation (http://www.qcif.edu.au/)
+/*
+ * The Fascinator - ReDBox/Mint SRU Client - NLA Identity Copyright (C) 2012
+ * Queensland Cyber Infrastructure Foundation (http://www.qcif.edu.au/)
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.redbox.sru;
@@ -29,9 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>A basic wrapper for handling EAC-CPF formatted identities that return for the National Library of Australia.
- * This is neither a complete EAC-CPF handling class, nor a complete implementation of NLA identities.
- * It is just a utility for access the things ReDBox/Mint cares about in common node.</p>
+ * <p>
+ * A basic wrapper for handling EAC-CPF formatted identities that return for the
+ * National Library of Australia. This is neither a complete EAC-CPF handling
+ * class, nor a complete implementation of NLA identities. It is just a utility
+ * for access the things ReDBox/Mint cares about in common node.
+ * </p>
  *
  * @author Greg Pendlebury
  */
@@ -51,17 +54,21 @@ public class NLAIdentity {
     private List<Map<String, String>> knownIds;
 
     /**
-     * <p>Default Constructor. Extract some basic information.</p>
+     * <p>
+     * Default Constructor. Extract some basic information.
+     * </p>
      *
-     * @param node searchResponse A parsed DOM4J Document
-     * @throws SRUException If any of the XML structure does not look like expected
+     * @param node
+     *            searchResponse A parsed DOM4J Document
+     * @throws SRUException
+     *             If any of the XML structure does not look like expected
      */
     public NLAIdentity(Node node) throws SRUException {
         eac = node;
 
         // Identity
         @SuppressWarnings("unchecked")
-		List<Node> otherIds = eac.selectNodes("eac:eac-cpf/eac:control/eac:otherRecordId");
+        List<Node> otherIds = eac.selectNodes("eac:eac-cpf/eac:control/eac:otherRecordId");
         for (Node idNode : otherIds) {
             String otherId = idNode.getText();
             if (otherId.startsWith("http://nla.gov.au")) {
@@ -74,11 +81,13 @@ public class NLAIdentity {
 
         knownIds = getSourceIdentities();
 
-        // Cosmetically we want to use the first row (should be the longest top-level name we found)
+        // Cosmetically we want to use the first row (should be the longest
+        // top-level name we found)
         firstName = knownIds.get(0).get("firstName");
         surname = knownIds.get(0).get("surname");
         displayName = knownIds.get(0).get("displayName");
-        // For institution we want the first one we find that isn't NLA or Libraries Australia
+        // For institution we want the first one we find that isn't NLA or
+        // Libraries Australia
         for (Map<String, String> id : knownIds) {
             if (institution == null
                     // But we'll settle for those in a pinch
@@ -105,8 +114,7 @@ public class NLAIdentity {
             String oldDisplayName = idMap.get("displayName");
             String thisDisplayName = name.get("displayName");
             if (oldDisplayName == null
-                    || (thisDisplayName != null
-                        && thisDisplayName.length() > oldDisplayName.length())) {
+                    || (thisDisplayName != null && thisDisplayName.length() > oldDisplayName.length())) {
                 // Clear any old data
                 idMap.clear();
                 // Store this ID
@@ -119,7 +127,7 @@ public class NLAIdentity {
 
         // All name entities from contributing institutions
         @SuppressWarnings("unchecked")
-		List<Node> sourceIdentities = eac.selectNodes("eac:eac-cpf/eac:cpfDescription//eac:eac-cpf");
+        List<Node> sourceIdentities = eac.selectNodes("eac:eac-cpf/eac:cpfDescription//eac:eac-cpf");
         for (Node identity : sourceIdentities) {
             // Institution for this ID
             institutionNode = identity.selectSingleNode("*//eac:maintenanceAgency/eac:agencyName");
@@ -127,7 +135,7 @@ public class NLAIdentity {
 
             // Any names for this ID
             @SuppressWarnings("unchecked")
-			List<Node> idNodes = identity.selectNodes("*//eac:identity");
+            List<Node> idNodes = identity.selectNodes("*//eac:identity");
             for (Node idNode : idNodes) {
                 // A Map for each name
                 idMap = new HashMap<String, String>();
@@ -144,10 +152,11 @@ public class NLAIdentity {
         }
 
         // Debugging
-        //for (Map<String, String> id : returnList) {
-        //    String display = id.get("displayName") + " (" + id.get("institution") + ")";
-        //    log.debug("Identity: {}", display);
-        //}
+        // for (Map<String, String> id : returnList) {
+        // String display = id.get("displayName") + " (" + id.get("institution")
+        // + ")";
+        // log.debug("Identity: {}", display);
+        // }
 
         return returnList;
     }
@@ -157,7 +166,7 @@ public class NLAIdentity {
 
         // Any names for this ID
         @SuppressWarnings("unchecked")
-		List<Node> names = node.selectNodes("eac:nameEntry");
+        List<Node> names = node.selectNodes("eac:nameEntry");
         for (Node name : names) {
             Map<String, String> nameMap = new HashMap<String, String>();
 
@@ -167,15 +176,15 @@ public class NLAIdentity {
             String title = null;
 
             // First name
-            Node firstNameNode = name.selectSingleNode("eac:part[(@localType=\"forename\") "
-                    + "or (@localType=\"givenname\")]");
+            Node firstNameNode = name
+                    .selectSingleNode("eac:part[(@localType=\"forename\") " + "or (@localType=\"givenname\")]");
             if (firstNameNode != null) {
                 thisFirstName = firstNameNode.getText();
             }
 
             // Surname
-            Node surnameNode = name.selectSingleNode("eac:part[(@localType=\"surname\") "
-                    + "or (@localType=\"familyname\")]");
+            Node surnameNode = name
+                    .selectSingleNode("eac:part[(@localType=\"surname\") " + "or (@localType=\"familyname\")]");
             if (surnameNode != null) {
                 thisSurname = surnameNode.getText();
             }
@@ -200,12 +209,13 @@ public class NLAIdentity {
                 nameMap.put("displayName", thisDisplay);
             }
 
-            // Last ditch effort... we couldn't find simple name information from
-            //  recommended values. So just concatenate what we can see.
+            // Last ditch effort... we couldn't find simple name information
+            // from
+            // recommended values. So just concatenate what we can see.
             if (thisDisplay == null) {
                 // Find every part
                 @SuppressWarnings("unchecked")
-				List<Node> parts = name.selectNodes("eac:part");
+                List<Node> parts = name.selectNodes("eac:part");
                 for (Node part : parts) {
                     // Grab the value and type of this value
                     Element element = (Element) part;
@@ -232,7 +242,9 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>Getter for the NLA Identifier in use by this Identity.</p>
+     * <p>
+     * Getter for the NLA Identifier in use by this Identity.
+     * </p>
      *
      * @return String The ID from the NLA for this Identity
      */
@@ -241,7 +253,9 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>Getter for our best estimation on a display name for this Identity.</p>
+     * <p>
+     * Getter for our best estimation on a display name for this Identity.
+     * </p>
      *
      * @return String The display name for this Identity
      */
@@ -250,7 +264,9 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>Getter for the first name for this Identity.</p>
+     * <p>
+     * Getter for the first name for this Identity.
+     * </p>
      *
      * @return String The first name for this Identity
      */
@@ -259,7 +275,9 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>Getter for the surname for this Identity.</p>
+     * <p>
+     * Getter for the surname for this Identity.
+     * </p>
      *
      * @return String The surname for this Identity
      */
@@ -268,7 +286,9 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>Getter for the institution for this Identity.</p>
+     * <p>
+     * Getter for the institution for this Identity.
+     * </p>
      *
      * @return String The institution for this Identity
      */
@@ -277,50 +297,64 @@ public class NLAIdentity {
     }
 
     /**
-     * <p>Getter for the List of Identities observed for this person. The return
+     * <p>
+     * Getter for the List of Identities observed for this person. The return
      * Objects are Maps containing keys very similar to the methods found on the
-     * top-level NLAIdentity Object.</p>
+     * top-level NLAIdentity Object.
+     * </p>
      * <ul>
-     *   <li>'displayName'</li>
-     *   <li>'firstName'</li>
-     *   <li>'surname'</li>
-     *   <li>'institution'</li>
+     * <li>'displayName'</li>
+     * <li>'firstName'</li>
+     * <li>'surname'</li>
+     * <li>'institution'</li>
      * </ul>
      *
-     * @return List&lt;Map&lt;String, String&gt;&gt; A List Object containing identities
+     * @return List&lt;Map&lt;String, String&gt;&gt; A List Object containing
+     *         identities
      */
     public List<Map<String, String>> getKnownIdentities() {
         return knownIds;
     }
 
     /**
-     * <p>Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
-     * Individual Nodes that fail to process will be skipped.</p>
+     * <p>
+     * Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
+     * Individual Nodes that fail to process will be skipped.
+     * </p>
      *
-     * @param nodes A List of Nodes to process
+     * @param nodes
+     *            A List of Nodes to process
      * @return List&lt;NLAIdentity&gt; A List of processed Identities
      */
     public static List<NLAIdentity> convertNodesToIdentities(List<Node> nodes) {
         try {
             return convertNodesToIdentities(nodes, false);
         } catch (SRUException ex) {
-            // Will never execute because 'false' is set above, but trapping this here allows users
-            // to call this method with greater ease, since they wan't need to trap.
+            // Will never execute because 'false' is set above, but trapping
+            // this here allows users
+            // to call this method with greater ease, since they wan't need to
+            // trap.
             return null;
         }
     }
 
     /**
-     * <p>Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
-     * Must indicate whether or not errors should cause processing to halt.</p>
+     * <p>
+     * Converts a List of DOM4J Nodes into a List of processed NLAIdentity(s).
+     * Must indicate whether or not errors should cause processing to halt.
+     * </p>
      *
-     * @param nodes A List of Nodes to process
-     * @param haltOnErrors Flag if a single Node failing to process should halt execution.
+     * @param nodes
+     *            A List of Nodes to process
+     * @param haltOnErrors
+     *            Flag if a single Node failing to process should halt
+     *            execution.
      * @return List&lt;NLAIdentity&gt; A List of processed Identities
-     * @throws SRUException If 'haltOnErrors' is set to TRUE and a Node fails to process.
+     * @throws SRUException
+     *             If 'haltOnErrors' is set to TRUE and a Node fails to process.
      */
-    public static List<NLAIdentity> convertNodesToIdentities(List<Node> nodes,
-            boolean haltOnErrors) throws SRUException {
+    public static List<NLAIdentity> convertNodesToIdentities(List<Node> nodes, boolean haltOnErrors)
+            throws SRUException {
         List<NLAIdentity> response = new ArrayList<NLAIdentity>();
         // Sanity check
         if (nodes == null || nodes.isEmpty()) {
@@ -331,7 +365,7 @@ public class NLAIdentity {
             try {
                 NLAIdentity newId = new NLAIdentity(node);
                 response.add(newId);
-            // Only halt if requested
+                // Only halt if requested
             } catch (SRUException ex) {
                 log.error("Unable to process identity: ", ex);
                 if (haltOnErrors) {
