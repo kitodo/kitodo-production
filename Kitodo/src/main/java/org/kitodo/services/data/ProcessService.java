@@ -59,8 +59,8 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.ProcessType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.ProcessType;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;

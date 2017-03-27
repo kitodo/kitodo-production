@@ -19,8 +19,8 @@ import java.util.List;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.DocketType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.DocketType;
 
 public class DocketService {
     private DocketDAO docketDao = new DocketDAO();

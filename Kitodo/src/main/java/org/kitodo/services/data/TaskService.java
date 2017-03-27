@@ -28,8 +28,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.TaskType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.TaskType;
 
 public class TaskService {
     private TaskDAO taskDao = new TaskDAO();

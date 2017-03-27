@@ -23,8 +23,8 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.BatchType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.BatchType;
 
 public class BatchService {
 

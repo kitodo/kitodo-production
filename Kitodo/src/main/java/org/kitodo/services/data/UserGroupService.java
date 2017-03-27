@@ -19,8 +19,8 @@ import java.util.List;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.UserGroupType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 
 public class UserGroupService {
     private UserGroupDAO userGroupDao = new UserGroupDAO();

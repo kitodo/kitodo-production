@@ -26,8 +26,8 @@ import org.goobi.webapi.beans.Field;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.ProjectType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.ProjectType;
 
 public class ProjectService {
 

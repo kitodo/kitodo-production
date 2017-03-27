@@ -22,8 +22,8 @@ import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.RulesetType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.RulesetType;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;

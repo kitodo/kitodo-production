@@ -31,9 +31,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.encryption.DesEncrypter;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.UserType;
 
 public class UserService {
 

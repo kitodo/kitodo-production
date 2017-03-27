@@ -19,8 +19,8 @@ import java.util.List;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
-import org.kitodo.data.index.Indexer;
-import org.kitodo.data.index.elasticsearch.type.HistoryType;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.HistoryType;
 
 /**
  * HistoryService.
