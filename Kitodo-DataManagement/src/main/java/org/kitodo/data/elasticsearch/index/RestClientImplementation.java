@@ -26,12 +26,12 @@ import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
-import org.kitodo.data.elasticsearch.api.ClientInterface;
+import org.kitodo.data.elasticsearch.api.RestClientInterface;
 
 /**
  * Implementation of Elastic Search REST Client for Index Module.
  */
-public class RestClientImplementation implements ClientInterface {
+public class RestClientImplementation implements RestClientInterface {
 
     private String index;
     private String type;

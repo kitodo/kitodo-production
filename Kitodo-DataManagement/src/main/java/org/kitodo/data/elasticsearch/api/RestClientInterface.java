@@ -14,10 +14,9 @@ package org.kitodo.data.elasticsearch.api;
 import java.io.IOException;
 
 /**
- * Interface for different types of clients (actually only elasticsearch is
- * used).
+ * Interface for REST clients.
  */
-public interface ClientInterface {
+public interface RestClientInterface {
 
     void initiateClient(String host, Integer port, String protocol);
 
