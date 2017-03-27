@@ -25,7 +25,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 
 /**
- * Implementation of Elastic Search Indexer for Index Module.
+ * Implementation of Elastic Search Indexer for index package.
  */
 public class Indexer<T extends BaseBean, S extends BaseType> {
 
@@ -51,7 +51,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      */
     @SuppressWarnings("unchecked")
     public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException {
-        RestClientImplementation restClient = new RestClientImplementation();
+        IndexRestClient restClient = new IndexRestClient();
         String response;
 
         restClient.initiateClient("localhost", 9200, "http");
@@ -79,7 +79,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      *            response from the server
      */
     public String performSingleRequest(Integer beanId) throws IOException {
-        RestClientImplementation restClient = new RestClientImplementation();
+        IndexRestClient restClient = new IndexRestClient();
         String response;
 
         restClient.initiateClient("localhost", 9200, "http");
@@ -107,7 +107,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
             throws DAOException, IOException, InterruptedException {
-        RestClientImplementation restClient = new RestClientImplementation();
+        IndexRestClient restClient = new IndexRestClient();
         String response;
 
         restClient.initiateClient("localhost", 9200, "http");
