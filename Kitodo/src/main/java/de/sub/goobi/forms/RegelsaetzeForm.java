@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
@@ -46,7 +46,7 @@ public class RegelsaetzeForm extends BasisForm {
      */
     public String Speichern() {
         try {
-            if (hasValidRulesetFilePath(myRegelsatz, ConfigMain.getParameter("RegelsaetzeVerzeichnis"))) {
+            if (hasValidRulesetFilePath(myRegelsatz, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(myRegelsatz);
                 return "RegelsaetzeAlle";
             } else {

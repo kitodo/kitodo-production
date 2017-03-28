@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.ldap;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -77,7 +77,7 @@ public class LdapUser implements DirContext {
      */
     public void configure(User inUser, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
-        if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
+        if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
 
             this.type = inUser.getLogin();
             LdapGroup lp = inUser.getLdapGroup();
@@ -139,11 +139,11 @@ public class LdapUser implements DirContext {
              * Encryption of password und Base64-Enconding
              */
 
-            MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
+            MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
             String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
             this.myAttrs.put("userPassword",
-                    "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                    "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
         }
     }
 

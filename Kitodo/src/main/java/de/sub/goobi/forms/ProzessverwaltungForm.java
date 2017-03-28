@@ -18,7 +18,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.export.download.ExportPdf;
@@ -157,7 +157,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
 
     }
 
@@ -218,7 +218,7 @@ public class ProzessverwaltungForm extends BasisForm {
          */
         if (this.myProzess != null && this.myProzess.getTitle() != null) {
             if (!this.myProzess.getTitle().equals(this.myNewProcessTitle)) {
-                String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+                String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
                 if (!this.myNewProcessTitle.matches(validateRegEx)) {
                     this.modusBearbeiten = "prozess";
                     Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
@@ -283,7 +283,7 @@ public class ProzessverwaltungForm extends BasisForm {
                         }
                         {
                             // renaming defined direcories
-                            String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+                            String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
                             for (String processDir : processDirs) {
 
                                 String processDirAbsolut = FilenameUtils.concat(

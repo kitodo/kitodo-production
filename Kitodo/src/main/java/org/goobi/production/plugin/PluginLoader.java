@@ -11,7 +11,7 @@
 
 package org.goobi.production.plugin;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -144,8 +144,8 @@ public class PluginLoader {
     private static HashMap<String, String> getPluginConfiguration() {
         short ENRIES = 2;
         HashMap<String, String> conf = new HashMap<String, String>((int) Math.ceil(ENRIES / 0.75));
-        conf.put("configDir", ConfigMain.getParameter(Parameters.CONFIG_DIR));
-        conf.put("tempDir", ConfigMain.getParameter(Parameters.PLUGIN_TEMP_DIR));
+        conf.put("configDir", ConfigCore.getParameter(Parameters.CONFIG_DIR));
+        conf.put("tempDir", ConfigCore.getParameter(Parameters.PLUGIN_TEMP_DIR));
         return conf;
     }
 
@@ -222,7 +222,7 @@ public class PluginLoader {
      */
     private static PluginManagerUtil getPluginLoader(PluginType type) {
         PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-        String path = FilenameUtils.concat(ConfigMain.getParameter(Parameters.PLUGIN_FOLDER), type.getName());
+        String path = FilenameUtils.concat(ConfigCore.getParameter(Parameters.PLUGIN_FOLDER), type.getName());
         pluginManager.addPluginsFrom(new File(path).toURI());
         return new PluginManagerUtil(pluginManager);
     }

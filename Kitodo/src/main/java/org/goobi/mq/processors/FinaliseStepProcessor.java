@@ -11,7 +11,7 @@
 
 package org.goobi.mq.processors;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * ActiveMQDirector.registerListeners() from starting this service.
      */
     public FinaliseStepProcessor() {
-        super(ConfigMain.getParameter("activeMQ.finaliseStep.queue", null));
+        super(ConfigCore.getParameter("activeMQ.finaliseStep.queue", null));
     }
 
     /**

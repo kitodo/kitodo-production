@@ -28,7 +28,7 @@ public class IndexRestClientTest {
     private static IndexRestClient initializeRestClient() {
         IndexRestClient restClient = new IndexRestClient();
 
-        restClient.initiateClient("localhost", 9200, "http");
+        restClient.initiateClient();
         restClient.setIndex("kitodo");
         restClient.setType("test");
 

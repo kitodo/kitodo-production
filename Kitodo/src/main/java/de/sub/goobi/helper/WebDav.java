@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.download.TiffHeader;
 
 import java.io.BufferedWriter;
@@ -44,7 +44,7 @@ public class WebDav implements Serializable {
     private static String DONEDIRECTORYNAME = "fertig/";
 
     public WebDav() {
-        DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /**
@@ -230,10 +230,10 @@ public class WebDav implements Serializable {
             return;
         }
 
-        String command = ConfigMain.getParameter("script_createSymLink") + " ";
+        String command = ConfigCore.getParameter("script_createSymLink") + " ";
         command += imagePfad + " " + benutzerHome + " ";
         if (inNurLesen) {
-            command += ConfigMain.getParameter("UserForImageReading", "root");
+            command += ConfigCore.getParameter("UserForImageReading", "root");
         } else {
             command += aktuellerBenutzer.getLogin();
         }

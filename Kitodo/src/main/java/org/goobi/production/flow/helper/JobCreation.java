@@ -11,7 +11,7 @@
 
 package org.goobi.production.flow.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
@@ -173,7 +173,7 @@ public class JobCreation {
     @SuppressWarnings("static-access")
     public static void moveFiles(SafeFile metsfile, String basepath, Process p)
             throws SwapException, DAOException, IOException, InterruptedException {
-        if (ConfigMain.getBooleanParameter("importUseOldConfiguration", false)) {
+        if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
             SafeFile imagesFolder = new SafeFile(basepath);
             if (!imagesFolder.exists()) {
                 imagesFolder = new SafeFile(basepath + "_" + p.DIRECTORY_SUFFIX);

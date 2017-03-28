@@ -11,7 +11,7 @@
 
 package org.goobi.production.cli.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.LoginForm;
@@ -472,7 +472,7 @@ public class CopyProcess extends ProzesskopieForm {
                     + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
         }
 
-        String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
             valide = false;
             Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
@@ -541,7 +541,7 @@ public class CopyProcess extends ProzesskopieForm {
     public boolean testTitle() {
         boolean valide = true;
 
-        if (ConfigMain.getBooleanParameter("MassImportUniqueTitle", true)) {
+        if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
             /*
              * grundsätzlich den Vorgangstitel prüfen
              */
@@ -552,7 +552,7 @@ public class CopyProcess extends ProzesskopieForm {
                         + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
             }
 
-            String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
             if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
                 valide = false;
                 Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");

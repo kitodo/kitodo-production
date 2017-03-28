@@ -11,7 +11,7 @@
 
 package org.goobi.production.flow.jobs;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
@@ -67,7 +67,7 @@ public class HotfolderJob extends AbstractGoobiJob {
     @Override
     public void execute() {
         // logger.error("TEST123");
-        if (ConfigMain.getBooleanParameter("runHotfolder", false)) {
+        if (ConfigCore.getBooleanParameter("runHotfolder", false)) {
             logger.trace("1");
             List<GoobiHotfolder> hotlist = GoobiHotfolder.getInstances();
             logger.trace("2");

@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
@@ -128,7 +128,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /*
@@ -506,7 +506,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (this.mySchritt.isTypeCloseVerify()) {
             /* Metadatenvalidierung */
-            if (this.mySchritt.isTypeMetadata() && ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+            if (this.mySchritt.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
                 MetadatenVerifizierung mv = new MetadatenVerifizierung();
                 mv.setAutoSave(true);
                 if (!mv.validate(this.mySchritt.getProcess())) {

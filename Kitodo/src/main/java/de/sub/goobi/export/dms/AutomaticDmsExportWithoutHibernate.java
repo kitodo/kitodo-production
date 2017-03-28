@@ -11,7 +11,7 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMetsWithoutHibernate;
 import de.sub.goobi.helper.FilesystemHelper;
@@ -127,7 +127,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             return false;
         }
 
-        String rules = ConfigMain.getParameter("copyData.onExport");
+        String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(new CopierData(newfile, process));
@@ -152,7 +152,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
          * Metadaten validieren
          */
 
-        if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
             MetadatenVerifizierungWithoutHibernate mv = new MetadatenVerifizierungWithoutHibernate();
             if (!mv.validate(gdzfile, this.myPrefs, process.getId(), process.getTitle())) {
                 return false;
@@ -250,7 +250,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
+            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
                 /* Success-Ordner wieder löschen */
                 if (this.project.isDmsImportCreateProcessFolder()) {
                     SafeFile successFile = new SafeFile(
@@ -421,7 +421,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      *            the destination directory
      */
     private void directoryDownload(ProcessObject myProcess, String zielVerzeichnis) throws IOException {
-        String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
 

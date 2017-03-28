@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
@@ -69,7 +69,7 @@ public class AdministrationForm implements Serializable {
      */
     public String Weiter() {
         this.passwort = new MD5(this.passwort).getMD5();
-        String adminMd5 = ConfigMain.getParameter("superadminpassword");
+        String adminMd5 = ConfigCore.getParameter("superadminpassword");
         this.istPasswortRichtig = (this.passwort.equals(adminMd5));
         if (!this.istPasswortRichtig) {
             Helper.setFehlerMeldung("wrong password", "");

@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.IOException;
 import java.util.List;
@@ -105,7 +105,7 @@ public class RulesetService {
     public Prefs getPreferences(Ruleset ruleset) {
         Prefs myPreferences = new Prefs();
         try {
-            myPreferences.loadPrefs(ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
+            myPreferences.loadPrefs(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
         } catch (PreferencesException e) {
             logger.error(e);
         }

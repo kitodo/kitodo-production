@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
@@ -664,7 +664,7 @@ public class CalendarForm {
      * </p>
      */
     public CalendarForm() {
-        ISSUE_COLOURS = ConfigMain
+        ISSUE_COLOURS = ConfigCore
                 .getParameter("issue.colours",
                         "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
                 .split(";");

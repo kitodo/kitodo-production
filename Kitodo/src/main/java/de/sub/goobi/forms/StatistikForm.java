@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -241,6 +241,6 @@ public class StatistikForm {
     }
 
     public boolean getShowStatistics() {
-        return ConfigMain.getBooleanParameter("showStatisticsOnStartPage", true);
+        return ConfigCore.getBooleanParameter("showStatisticsOnStartPage", true);
     }
 }

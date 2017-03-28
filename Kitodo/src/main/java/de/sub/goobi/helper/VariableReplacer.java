@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
@@ -123,7 +123,7 @@ public class VariableReplacer {
             // TODO name ändern?
             String sourcePath = serviceManager.getProcessService().getSourceDirectory(this.process).replace("\\", "/");
             String importPath = serviceManager.getProcessService().getImportDirectory(this.process).replace("\\", "/");
-            String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
+            String myprefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
 
             /*
              * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben

@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
@@ -170,7 +170,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     process = processesIterator.next();
                     DigitalDocument out = buildExportDocument(process, pointers);
                     ExportDms exporter = new ExportDms(
-                            ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
+                            ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
                     exporter.startExport(process, LoginForm.getCurrentUserHomeDir(), out);
                     stepcounter++;

@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
@@ -925,7 +925,7 @@ public class BatchStepHelper {
             }
 
             if (s.isTypeCloseVerify()) {
-                if (s.isTypeMetadata() && ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+                if (s.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
                     MetadatenVerifizierung mv = new MetadatenVerifizierung();
                     mv.setAutoSave(true);
                     if (!mv.validate(s.getProcess())) {

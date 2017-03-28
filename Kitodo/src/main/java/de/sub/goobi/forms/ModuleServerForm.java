@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.modul.ExtendedDataImpl;
 import de.sub.goobi.modul.ExtendedProzessImpl;
@@ -93,7 +93,7 @@ public class ModuleServerForm {
         if (modulmanager == null) {
             synchronized (ModuleServerForm.class) {
                 if (modulmanager == null) {
-                    int port = ConfigMain.getIntParameter("goobiModuleServerPort");
+                    int port = ConfigCore.getIntParameter("goobiModuleServerPort");
                     final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
                             new ExtendedDataImpl());
 
@@ -285,7 +285,7 @@ public class ModuleServerForm {
         GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID,
                 null);
 
-        String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
+        String applicationUrl = ConfigCore.getParameter("ApplicationWebsiteUrl");
 
         gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId=" + tempID);
         gmp.put("type", "PRODUCE");

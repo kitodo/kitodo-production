@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 import de.sub.goobi.helper.tasks.TaskManager;
@@ -98,7 +98,7 @@ public class LongRunningTasksForm {
      *         the configuration
      */
     public boolean isDemoTasksLinkShowing() {
-        return ConfigMain.getBooleanParameter("taskManager.showSampleTask", false);
+        return ConfigCore.getBooleanParameter("taskManager.showSampleTask", false);
     }
 
     /**

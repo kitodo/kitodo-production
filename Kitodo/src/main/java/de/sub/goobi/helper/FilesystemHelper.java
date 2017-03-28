@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,7 +47,7 @@ public class FilesystemHelper {
 
     public static void createDirectory(String dirName) throws IOException, InterruptedException {
         if (!new File(dirName).exists()) {
-            ShellScript createDirScript = new ShellScript(new File(ConfigMain.getParameter("script_createDirMeta")));
+            ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
             createDirScript.run(Arrays.asList(new String[] {dirName }));
         }
     }
@@ -72,7 +72,7 @@ public class FilesystemHelper {
             throws IOException, InterruptedException {
         if (!new File(dirName).exists()) {
             ShellScript createDirScript = new ShellScript(
-                    new File(ConfigMain.getParameter("script_createDirUserHome")));
+                    new File(ConfigCore.getParameter("script_createDirUserHome")));
             createDirScript.run(Arrays.asList(new String[] {userName, dirName }));
         }
     }
@@ -84,7 +84,7 @@ public class FilesystemHelper {
      *            String
      */
     public static void deleteSymLink(String symLink) {
-        String command = ConfigMain.getParameter("script_deleteSymLink");
+        String command = ConfigCore.getParameter("script_deleteSymLink");
         ShellScript deleteSymLinkScript;
         try {
             deleteSymLinkScript = new ShellScript(new File(command));

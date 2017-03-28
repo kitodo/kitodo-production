@@ -11,7 +11,7 @@
 
 package org.goobi.mq.processors;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
@@ -69,7 +69,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = Logger.getLogger(CreateNewProcessProcessor.class);
 
     public CreateNewProcessProcessor() {
-        super(ConfigMain.getParameter("activeMQ.createNewProcess.queue", null));
+        super(ConfigCore.getParameter("activeMQ.createNewProcess.queue", null));
     }
 
     @Override

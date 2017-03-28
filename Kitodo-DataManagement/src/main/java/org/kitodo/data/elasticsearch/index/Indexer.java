@@ -54,7 +54,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
         IndexRestClient restClient = new IndexRestClient();
         String response;
 
-        restClient.initiateClient("localhost", 9200, "http");
+        restClient.initiateClient();
         restClient.setIndex(index);
         restClient.setType(type);
 
@@ -82,7 +82,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
         IndexRestClient restClient = new IndexRestClient();
         String response;
 
-        restClient.initiateClient("localhost", 9200, "http");
+        restClient.initiateClient();
         restClient.setIndex(index);
         restClient.setType(type);
 
@@ -110,7 +110,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
         IndexRestClient restClient = new IndexRestClient();
         String response;
 
-        restClient.initiateClient("localhost", 9200, "http");
+        restClient.initiateClient();
         restClient.setIndex(index);
         restClient.setType(type);
 

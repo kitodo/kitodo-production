@@ -14,7 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.IOException;
@@ -187,7 +187,7 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         User user = userService.find(1);
-        String homeDirectory = ConfigMain.getParameter("dir_Users");
+        String homeDirectory = ConfigCore.getParameter("dir_Users");
         boolean condition = userService.getHomeDirectory(user).equals(homeDirectory + "kowal" + File.separator);
         System.out.println("1. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);

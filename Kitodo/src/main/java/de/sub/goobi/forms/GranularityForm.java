@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
@@ -223,7 +223,7 @@ public class GranularityForm {
      * @return an error message, or the empty string if everything is okay.
      */
     public String getLockMessage() {
-        long perProcess = ConfigMain.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
+        long perProcess = ConfigCore.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
         if (getNumberOfProcesses() < 1 || perProcess < 1
                 || (numberOfPages != null && numberOfPages / getNumberOfProcesses() >= perProcess)) {
             return "";

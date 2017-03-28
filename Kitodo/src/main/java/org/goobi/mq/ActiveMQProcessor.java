@@ -54,7 +54,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * 
      * <pre>
      * public MyServiceProcessor() {
-     *     super(ConfigMain.getParameter("activeMQ.myService.queue", null));
+     *     super(ConfigCore.getParameter("activeMQ.myService.queue", null));
      * }
      * </pre>
      *

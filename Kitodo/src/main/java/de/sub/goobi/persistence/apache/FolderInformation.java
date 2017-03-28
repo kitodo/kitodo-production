@@ -11,7 +11,7 @@
 
 package de.sub.goobi.persistence.apache;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 
@@ -32,9 +32,9 @@ public class FolderInformation {
 
     private int id;
     private String title;
-    public static final String metadataPath = ConfigMain.getParameter("MetadatenVerzeichnis");
-    public static String DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-    public static String DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+    public static final String metadataPath = ConfigCore.getParameter("MetadatenVerzeichnis");
+    public static String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+    public static String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
 
     public FolderInformation(int id, String goobititle) {
         this.id = id;
@@ -50,8 +50,8 @@ public class FolderInformation {
      */
     public String getImagesTifDirectory(boolean useFallBack) {
         SafeFile dir = new SafeFile(getImagesDirectory());
-        DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-        DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+        DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+        DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
@@ -70,7 +70,7 @@ public class FolderInformation {
         }
 
         if (tifOrdner.equals("") && useFallBack) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 String[] folderList = dir.list();
                 for (String folder : folderList) {
@@ -82,7 +82,7 @@ public class FolderInformation {
             }
         }
         if (!tifOrdner.equals("") && useFallBack) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 SafeFile tif = new SafeFile(tifOrdner);
                 String[] files = tif.list();
@@ -139,10 +139,10 @@ public class FolderInformation {
      * @return String
      */
     public String getImagesOrigDirectory(boolean useFallBack) {
-        if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
+        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             SafeFile dir = new SafeFile(getImagesDirectory());
-            DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-            DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+            DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+            DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
             FilenameFilter filterVerz = new FilenameFilter() {
                 @Override
@@ -158,7 +158,7 @@ public class FolderInformation {
             }
 
             if (origOrdner.equals("") && useFallBack) {
-                String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     String[] folderList = dir.list();
                     for (String folder : folderList) {
@@ -170,7 +170,7 @@ public class FolderInformation {
                 }
             }
             if (!origOrdner.equals("") && useFallBack) {
-                String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     SafeFile tif = new SafeFile(origOrdner);
                     String[] files = tif.list();
@@ -265,7 +265,7 @@ public class FolderInformation {
         String[] verzeichnisse = dir.list(filterVerz);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
             sourceFolder = new SafeFile(dir, title + "_source");
-            if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
+            if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                 sourceFolder.mkdir();
             }
         } else {
@@ -407,7 +407,7 @@ public class FolderInformation {
 
         @Override
         public int compare(String s1, String s2) {
-            String imageSorting = ConfigMain.getParameter("ImageSorting", "number");
+            String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             s1 = s1.substring(0, s1.lastIndexOf("."));
             s2 = s2.substring(0, s2.lastIndexOf("."));
 

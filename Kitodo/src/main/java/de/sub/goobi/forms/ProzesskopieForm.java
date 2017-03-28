@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
@@ -530,7 +530,7 @@ public class ProzesskopieForm {
      *            data to process
      */
     private void applyCopyingRules(CopierData data) {
-        String rules = ConfigMain.getParameter("copyData.onCatalogueQuery");
+        String rules = ConfigCore.getParameter("copyData.onCatalogueQuery");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(data);
@@ -697,7 +697,7 @@ public class ProzesskopieForm {
                         + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
             }
 
-            String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
             if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
                 valide = false;
                 Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
@@ -916,7 +916,7 @@ public class ProzesskopieForm {
             /*
              * Metadata inheritance and enrichment
              */
-            if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+            if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
                 DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
                 Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
                 while (enricher.getAllChildren() != null) {
@@ -1430,7 +1430,7 @@ public class ProzesskopieForm {
         this.possibleDigitalCollection = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
 
-        String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+        String filename = FilenameUtils.concat(ConfigCore.getParameter(Parameters.CONFIG_DIR),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
@@ -1989,7 +1989,7 @@ public class ProzesskopieForm {
      *         configuration
      */
     private int getPageSize() {
-        return ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
+        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
     }
 
     /**

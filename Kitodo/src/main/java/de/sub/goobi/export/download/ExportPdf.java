@@ -11,7 +11,7 @@
 
 package de.sub.goobi.export.download;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
@@ -82,7 +82,7 @@ public class ExportPdf extends ExportMets {
         String servletpath = context.getExternalContext().getRequestServletPath();
         String myBasisUrl = fullpath.substring(0, fullpath.indexOf(servletpath));
 
-        if (!ConfigMain.getBooleanParameter("pdfAsDownload")) {
+        if (!ConfigCore.getBooleanParameter("pdfAsDownload")) {
             /*
              * use contentserver api for creation of pdf-file
              */
@@ -104,8 +104,8 @@ public class ExportPdf extends ExportMets {
                  * define path for mets and pdfs
                  */
                 URL goobiContentServerUrl = null;
-                String contentServerUrl = ConfigMain.getParameter("goobiContentServerUrl");
-                Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
+                String contentServerUrl = ConfigCore.getParameter("goobiContentServerUrl");
+                Integer contentServerTimeOut = ConfigCore.getIntParameter("goobiContentServerTimeOut", 60000);
 
                 /*
                  * using mets file

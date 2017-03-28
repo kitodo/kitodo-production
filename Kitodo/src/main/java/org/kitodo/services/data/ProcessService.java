@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
@@ -278,8 +278,8 @@ public class ProcessService {
     public String getImagesTifDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
         SafeFile dir = new SafeFile(getImagesDirectory(process));
-        DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-        DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+        DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+        DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
@@ -298,7 +298,7 @@ public class ProcessService {
         }
 
         if (tifOrdner.equals("") && useFallBack) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 String[] folderList = dir.list();
                 for (String folder : folderList) {
@@ -311,7 +311,7 @@ public class ProcessService {
         }
 
         if (!tifOrdner.equals("") && useFallBack) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 SafeFile tif = new SafeFile(tifOrdner);
                 String[] files = tif.list();
@@ -336,8 +336,8 @@ public class ProcessService {
         if (!result.endsWith(File.separator)) {
             result += File.separator;
         }
-        if (!ConfigMain.getBooleanParameter("useOrigFolder", true)
-                && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+        if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
+                && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
             FilesystemHelper.createDirectory(result);
         }
         return result;
@@ -371,10 +371,10 @@ public class ProcessService {
      */
     public String getImagesOrigDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
+        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             SafeFile dir = new SafeFile(getImagesDirectory(process));
-            DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-            DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+            DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+            DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
             FilenameFilter filterVerz = new FilenameFilter() {
                 @Override
@@ -390,7 +390,7 @@ public class ProcessService {
             }
 
             if (origOrdner.equals("") && useFallBack) {
-                String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     String[] folderList = dir.list();
                     for (String folder : folderList) {
@@ -403,7 +403,7 @@ public class ProcessService {
             }
 
             if (!origOrdner.equals("") && useFallBack) {
-                String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     SafeFile tif = new SafeFile(origOrdner);
                     String[] files = tif.list();
@@ -423,7 +423,7 @@ public class ProcessService {
                 origOrdner = DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX;
             }
             String rueckgabe = getImagesDirectory(process) + origOrdner + File.separator;
-            if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)
+            if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
                 FilesystemHelper.createDirectory(rueckgabe);
             }
@@ -467,7 +467,7 @@ public class ProcessService {
         String[] verzeichnisse = dir.list(filterVerz);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
             sourceFolder = new SafeFile(dir, process.getTitle() + "_source");
-            if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
+            if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                 sourceFolder.mkdir();
             }
         } else {
@@ -841,8 +841,8 @@ public class ProcessService {
             throws IOException, InterruptedException, SwapException, DAOException {
         int numberOfBackups = 0;
 
-        if (ConfigMain.getIntParameter("numberOfMetaBackups") != 0) {
-            numberOfBackups = ConfigMain.getIntParameter("numberOfMetaBackups");
+        if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
+            numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
         }
 
         if (numberOfBackups != 0) {
@@ -1030,7 +1030,7 @@ public class ProcessService {
         if (myLogger.isDebugEnabled()) {
             myLogger.debug("generate docket for process " + process.getId());
         }
-        String rootPath = ConfigMain.getParameter("xsltFolder");
+        String rootPath = ConfigCore.getParameter("xsltFolder");
         SafeFile xsltFile = new SafeFile(rootPath, "docket.xsl");
         if (process.getDocket() != null) {
             xsltFile = new SafeFile(rootPath, process.getDocket().getFile());
@@ -1192,7 +1192,7 @@ public class ProcessService {
     public void createProcessDirs(Process process)
             throws SwapException, DAOException, IOException, InterruptedException {
 
-        String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
             FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(process),

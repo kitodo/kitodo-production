@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 import java.util.ConcurrentModificationException;
@@ -162,12 +162,12 @@ public class TaskSitter implements Runnable, ServletContextListener {
         LinkedList<EmptyTask> failedThreads = new LinkedList<EmptyTask>();
         int availableClearance = autoRunLimit;
 
-        int successfulMaxCount = ConfigMain.getIntParameter("taskManager.keepThreads.successful.count",
+        int successfulMaxCount = ConfigCore.getIntParameter("taskManager.keepThreads.successful.count",
                 KEEP_SUCCESSFUL);
-        int failedMaxCount = ConfigMain.getIntParameter("taskManager.keepThreads.failed.count", KEEP_FAILED);
-        Duration successfulMaxAge = ConfigMain.getDurationParameter("taskManager.keepThreads.successful.minutes",
+        int failedMaxCount = ConfigCore.getIntParameter("taskManager.keepThreads.failed.count", KEEP_FAILED);
+        Duration successfulMaxAge = ConfigCore.getDurationParameter("taskManager.keepThreads.successful.minutes",
                 TimeUnit.MINUTES, KEEP_SUCCESSFUL_MINS);
-        Duration failedMaxAge = ConfigMain.getDurationParameter("taskManager.keepThreads.failed.minutes",
+        Duration failedMaxAge = ConfigCore.getDurationParameter("taskManager.keepThreads.failed.minutes",
                 TimeUnit.MINUTES, KEEP_FAILED_MINS);
 
         ListIterator<EmptyTask> position = taskManager.taskList.listIterator();
@@ -251,7 +251,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     public static void setAutoRunningThreads(boolean on) {
         if (on) {
             int cores = Runtime.getRuntime().availableProcessors();
-            autoRunLimit = ConfigMain.getIntParameter("taskManager.autoRunLimit", cores);
+            autoRunLimit = ConfigCore.getIntParameter("taskManager.autoRunLimit", cores);
         } else {
             autoRunLimit = 0;
         }
