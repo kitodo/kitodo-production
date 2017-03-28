@@ -38,9 +38,6 @@ public class UserTypeTest {
         List<UserGroup> userGroups = new ArrayList<>();
         List<UserProperty> userProperties = new ArrayList<>();
 
-        LdapGroup ldapGroup = new LdapGroup();
-        ldapGroup.setId(1);
-
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setId(1);
         userGroups.add(firstUserGroup);
@@ -66,7 +63,6 @@ public class UserTypeTest {
         firstUser.setLogin("jkowalski");
         firstUser.setActive(true);
         firstUser.setLocation("Dresden");
-        firstUser.setLdapGroup(ldapGroup);
         users.add(firstUser);
 
         User secondUser = new User();
@@ -100,25 +96,25 @@ public class UserTypeTest {
         HttpEntity document = userType.createDocument(user);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],"
-                + "\"ldapGroup\":\"1\",\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":null,"
-                + "\"active\":\"true\",\"location\":\"Dresden\",\"login\":\"jkowalski\",\"properties\":[]}");
+                + "\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":null,\"login\":\"jkowalski\","
+                + "\"active\":\"true\",\"location\":\"Dresden\",\"properties\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(1);
         document = userType.createDocument(user);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
-                + "\"ldapGroup\":\"null\",\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,"
-                + "\"active\":\"true\",\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":"
-                + "\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+                + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
+                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
+                + "{\"title\":\"second\",\"value\":\"2\"}]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
         document = userType.createDocument(user);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],\"ldapGroup\":\"null\","
+        expected = (JSONObject) parser.parse("{\"login\":\"pmueller\",\"ldapLogin\":null,\"userGroups\":[],"
                 + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":null,\"login\":\"pmueller\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
+                + "\"location\":null,\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
                 + "{\"title\":\"second\",\"value\":\"2\"}]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
