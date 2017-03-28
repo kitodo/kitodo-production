@@ -11,6 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,5 +36,18 @@ public abstract class BaseType<T extends BaseBean> implements TypeInterface<T> {
             documents.put(bean.getId(), createDocument(bean));
         }
         return documents;
+    }
+
+    /**
+     * Method used for formatting Date as String. It will help to change fast a
+     * way of Date formatting or expected String format.
+     * 
+     * @param date
+     *            as Date
+     * @return formatted date as String
+     */
+    protected String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(date);
     }
 }
