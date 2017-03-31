@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.helper.ProjectHelper;
+import de.sub.kitodo.helper.ProjectHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,14 +21,14 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.goobi.production.flow.statistics.StepInformation;
-import org.goobi.webapi.beans.Field;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
+import org.kitodo.production.flow.statistics.StepInformation;
+import org.kitodo.webapi.beans.Field;
 
 public class ProjectService {
 

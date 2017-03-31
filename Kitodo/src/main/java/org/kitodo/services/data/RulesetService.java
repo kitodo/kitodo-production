@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigCore;
+import de.sub.kitodo.config.ConfigCore;
 
 import java.io.IOException;
 import java.util.List;

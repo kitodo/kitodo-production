@@ -400,36 +400,36 @@
     <!-- RuleSet Converter for Select-Boxes -->
     <converter>
         <converter-id>RegelsatzConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.RegelsatzConverter</converter-class>
+        <converter-class>de.sub.kitodo.converter.RegelsatzConverter</converter-class>
     </converter>
 
     <!-- Docket Converter for Select-Boxes -->
     <converter>
         <converter-id>DocketConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.DocketConverter</converter-class>
+        <converter-class>de.sub.kitodo.converter.DocketConverter</converter-class>
     </converter>
 
     <!-- Process Converter for Select-Boxes -->
     <converter>
         <converter-id>ProcessConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.ProcessConverter</converter-class>
+        <converter-class>de.sub.kitodo.converter.ProcessConverter</converter-class>
     </converter>
     <!-- StatisticsTimeUnitConverter for Select-Boxes -->
     <converter>
         <converter-id>StatisticsTimeUnitConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.StatisticsTimeUnitConverter</converter-class>
+        <converter-class>de.sub.kitodo.converter.StatisticsTimeUnitConverter</converter-class>
     </converter>
 
     <!-- StatisticResultOutputConverter for Select-Boxes -->
     <converter>
         <converter-id>StatisticsResultOutputConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.StatisticsResultOutputConverter</converter-class>
+        <converter-class>de.sub.kitodo.converter.StatisticsResultOutputConverter</converter-class>
     </converter>
 
     <!-- StatisticCalculationUnitConverter for Select-Boxes -->
     <converter>
         <converter-id>StatisticsCalculationUnitConverter</converter-id>
-        <converter-class>de.sub.goobi.converter.StatisticsCalculationUnitConverter</converter-class>
+        <converter-class>de.sub.kitodo.converter.StatisticsCalculationUnitConverter</converter-class>
     </converter>
 
     <!-- Beans (formerly known as config_Beans.xml) -->
@@ -437,13 +437,13 @@
     <!-- BenutzerverwaltungForm -->
     <managed-bean>
         <managed-bean-name>BenutzerverwaltungForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.BenutzerverwaltungForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.BenutzerverwaltungForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <managed-bean>
         <managed-bean-name>MassImportForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.MassImportForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.MassImportForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -451,96 +451,96 @@
     <!-- PreferencesForm -->
     <managed-bean>
         <managed-bean-name>RegelsaetzeForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.RegelsaetzeForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.RegelsaetzeForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <!-- PreferencesForm -->
     <managed-bean>
         <managed-bean-name>DocketForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.DocketForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.DocketForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <!-- LdapGruppenForm -->
     <managed-bean>
         <managed-bean-name>LdapGruppenForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.LdapGruppenForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.LdapGruppenForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <!-- BenutzergruppenForm -->
     <managed-bean>
         <managed-bean-name>BenutzergruppenForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.BenutzergruppenForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.BenutzergruppenForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- LoginForm -->
     <managed-bean>
         <managed-bean-name>LoginForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.LoginForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.LoginForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- SpracheForm -->
     <managed-bean>
         <managed-bean-name>SpracheForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.SpracheForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.SpracheForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- NavigationForm -->
     <managed-bean>
         <managed-bean-name>NavigationForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.NavigationForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.NavigationForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- StatistikForm -->
     <managed-bean>
         <managed-bean-name>StatistikForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.StatistikForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.StatistikForm</managed-bean-class>
         <managed-bean-scope>application</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für Administrationsaufgaben -->
     <managed-bean>
         <managed-bean-name>AdministrationForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.AdministrationForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.AdministrationForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für Prozessverwaltung -->
     <managed-bean>
         <managed-bean-name>ProzessverwaltungForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.ProzessverwaltungForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.ProzessverwaltungForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für Projekte -->
     <managed-bean>
         <managed-bean-name>ProjekteForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.ProjekteForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.ProjekteForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für Prozesskopie -->
     <managed-bean>
         <managed-bean-name>ProzesskopieForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.ProzesskopieForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.ProzesskopieForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- Beans for Calendar -->
     <managed-bean>
         <managed-bean-name>CalendarForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.CalendarForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.CalendarForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>GranularityForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.GranularityForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.GranularityForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
         <managed-property>
             <property-name>course</property-name>
@@ -551,14 +551,14 @@
     <!-- Bean für Aktuelle Schritte -->
     <managed-bean>
         <managed-bean-name>AktuelleSchritteForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.AktuelleSchritteForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.AktuelleSchritteForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- Helper-Bean -->
     <managed-bean>
         <managed-bean-name>HelperForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.HelperForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.HelperForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -572,21 +572,21 @@
     <!-- BatchForm -->
     <managed-bean>
         <managed-bean-name>BatchForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.BatchForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.BatchForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
     <!-- SearchForm -->
     <managed-bean>
         <managed-bean-name>SearchForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.SearchForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.SearchForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <!-- ModuleServer-Bean -->
     <managed-bean>
         <managed-bean-name>ModuleServerForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.ModuleServerForm</managed-bean-class>
+        <managed-bean-class>de.sub.kitodo.forms.ModuleServerForm</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 

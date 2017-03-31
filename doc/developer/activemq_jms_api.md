@@ -44,15 +44,15 @@ configured, it will return null which will prevent the ActiveMQDirector from
 registering it to the server. Inside the class, the queue name is available in
 the global variable “queueName” which is set by the parent class.  The
 implementation may use arbitrary “activeMQ.myService.*” entries in
-goobi_config.properties for configuration.
+kitodo_config.properties for configuration.
 
 ### Service processor skeleton sample
 
 	package org.goobi.mq.processores;
 
 	import org.goobi.mq.*;
-	import de.sub.goobi.config.ConfigCore;
-	import de.sub.goobi.helper.enums.ReportLevel;
+	import de.sub.kitodo.config.ConfigCore;
+	import de.sub.kitodo.helper.enums.ReportLevel;
 
 	public class MyServiceProcessor extends ActiveMQProcessor {
 
@@ -102,7 +102,7 @@ http://activemq.apache.org/ for details) which needs to be downloaded and
 started. Without further configuration, it provides everything necessary on
 port 61616 of the machine in question.
 
-The “activeMQ.hostURL” must be set in goobi_config.properties to point to this
+The “activeMQ.hostURL” must be set in kitodo_config.properties to point to this
 server. The “activeMQ.createNewProcess.queue” must be set to point to a queue
 of your choice where Kitodo.Production shall pick up orders to create new
 processes.
@@ -210,7 +210,7 @@ http://activemq.apache.org/ for details) which needs to be downloaded and
 started. Without further configuration, it provides everything necessary on
 port 61616 of the machine in question.
 
-The “activeMQ.hostURL” must be set in goobi_config.properties to point to this
+The “activeMQ.hostURL” must be set in kitodo_config.properties to point to this
 server. The “activeMQ.finaliseStep.queue” must be set to point to a queue
 of your choice where Kitodo.Production shall pick up orders to finalize steps.
 

@@ -11,7 +11,7 @@
 
 package org.kitodo.production.plugin.importer.massimport;
 
-import de.sub.goobi.config.ConfigCore;
+import de.sub.kitodo.config.ConfigCore;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.goobi.production.constants.Parameters;
+import org.kitodo.production.constants.Parameters;
 
 public class UghUtils {
     private static final Logger myLogger = Logger.getLogger(UghUtils.class);
@@ -36,7 +36,7 @@ public class UghUtils {
      */
     // TODO: Try to replace this with an external library
     public static String convertUmlaut(String line) {
-        try (BufferedReader in = open("goobi_opacUmlaut.txt")) {
+        try (BufferedReader in = open("kitodo_opacUmlaut.txt")) {
             String str;
             while ((str = in.readLine()) != null) {
                 if (str.length() > 0) {

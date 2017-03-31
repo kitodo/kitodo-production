@@ -119,22 +119,22 @@
 
     <filter>
         <filter-name>requestControlFilter</filter-name>
-        <filter-class>de.sub.goobi.helper.servletfilter.RequestControlFilter</filter-class>
+        <filter-class>de.sub.kitodo.helper.servletfilter.RequestControlFilter</filter-class>
     </filter>
 
     <filter>
         <filter-name>SecurityCheckFilter</filter-name>
-        <filter-class>de.sub.goobi.helper.servletfilter.SecurityCheckFilter</filter-class>
+        <filter-class>de.sub.kitodo.helper.servletfilter.SecurityCheckFilter</filter-class>
     </filter>
 
     <filter>
         <filter-name>HibernateFilter</filter-name>
-        <filter-class>de.sub.goobi.helper.servletfilter.HibernateSessionFilter2</filter-class>
+        <filter-class>de.sub.kitodo.helper.servletfilter.HibernateSessionFilter2</filter-class>
     </filter>
 
     <filter>
         <filter-name>sessionCounterFilter</filter-name>
-        <filter-class>de.sub.goobi.helper.servletfilter.SessionCounterFilter</filter-class>
+        <filter-class>de.sub.kitodo.helper.servletfilter.SessionCounterFilter</filter-class>
     </filter>
 
     <context-param>
@@ -202,21 +202,21 @@
 
     <!-- Listener for ImageIO initialization (Tomcat workaround) -->
     <listener>
-        <listener-class>org.goobi.production.ImageIOInitializer</listener-class>
+        <listener-class>org.kitodo.production.ImageIOInitializer</listener-class>
     </listener>
 
     <listener>
-        <listener-class>org.goobi.mq.ActiveMQDirector</listener-class>
+        <listener-class>org.kitodo.mq.ActiveMQDirector</listener-class>
     </listener>
 
     <!--
         xml-Rpc-Server starten <listener> <listener-class>
-        de.sub.goobi.XmlRpc.Listener </listener-class> </listener>
+        de.sub.kitodo.XmlRpc.Listener </listener-class> </listener>
     -->
 
     <!--
         Listener für die Modularisierung <listener> <listener-class>
-        de.sub.goobi.Modul.ModulListener </listener-class> </listener>
+        de.sub.kitodo.Modul.ModulListener </listener-class> </listener>
     -->
     <!-- Listener for JobManager
     <listener>
@@ -231,11 +231,11 @@
 -->
 
     <listener>
-        <listener-class>de.sub.goobi.helper.tasks.TaskSitter</listener-class>
+        <listener-class>de.sub.kitodo.helper.tasks.TaskSitter</listener-class>
     </listener>
 
     <listener>
-        <listener-class>org.goobi.production.GoobiVersionListener</listener-class>
+        <listener-class>org.kitodo.production.GoobiVersionListener</listener-class>
     </listener>
 
     <!-- Faces Servlet -->
@@ -276,7 +276,7 @@
         <description></description>
         <display-name>WebInterface</display-name>
         <servlet-name>WebInterface</servlet-name>
-        <servlet-class>org.goobi.production.cli.WebInterface</servlet-class>
+        <servlet-class>org.kitodo.production.cli.WebInterface</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>WebInterface</servlet-name>

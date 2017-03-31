@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.kitodo.helper.Helper;
 
 import java.io.IOException;
 import java.util.ArrayList;

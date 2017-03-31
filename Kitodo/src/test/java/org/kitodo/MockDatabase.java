@@ -15,7 +15,7 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
 import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.kitodo.helper.Helper;
 
 import java.io.IOException;
 import java.util.ArrayList;
