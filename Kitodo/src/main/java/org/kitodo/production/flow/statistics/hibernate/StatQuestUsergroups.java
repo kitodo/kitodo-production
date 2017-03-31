@@ -113,7 +113,7 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
      * 
      * @see
      * org.kitodo.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
-     * org .kitodo.production.flow.statistics.enums.TimeUnit)
+     * org.kitodo.production.flow.statistics.enums.TimeUnit)
      */
     @Override
     public void setTimeUnit(TimeUnit timeUnit) {

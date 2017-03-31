@@ -71,7 +71,7 @@ public class CopierData {
      * @param fileformat
      *            the document to modify
      * @param process
-     *            the related gookitodobi process
+     *            the related kitodo process
      */
     public CopierData(Fileformat fileformat, Object process) {
         this.fileformat = fileformat;

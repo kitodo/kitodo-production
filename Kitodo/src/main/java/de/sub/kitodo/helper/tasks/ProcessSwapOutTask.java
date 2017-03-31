@@ -38,7 +38,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * will be created.
      */
 
-    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int kitodoPathlength, Element inRoot)
+    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int kitodoPathLenght, Element inRoot)
             throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
@@ -48,12 +48,12 @@ public class ProcessSwapOutTask extends LongRunningTask {
             String[] children = srcDir.list();
             for (int i = 0; i < children.length; i++) {
                 copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
-                        kitodoPathlength, inRoot);
+                        kitodoPathLenght, inRoot);
             }
         } else {
             Long crc = CopyFile.start(srcDir, dstDir);
             Element file = new Element("file");
-            file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathlength));
+            file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLenght));
             file.setAttribute("crc32", String.valueOf(crc));
             inRoot.addContent(file);
         }
