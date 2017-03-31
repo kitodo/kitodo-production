@@ -26,12 +26,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.kitodo.data.database.beans.property.GoobiPropertyInterface;
+import org.kitodo.data.database.beans.property.KitodoPropertyInterface;
 import org.kitodo.data.database.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "processProperty")
-public class ProcessProperty implements Serializable, GoobiPropertyInterface, Comparable<ProcessProperty> {
+public class ProcessProperty implements Serializable, KitodoPropertyInterface, Comparable<ProcessProperty> {
     private static final long serialVersionUID = -2356566712752716107L;
 
     @Id

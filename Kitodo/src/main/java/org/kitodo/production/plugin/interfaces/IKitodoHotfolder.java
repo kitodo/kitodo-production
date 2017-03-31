@@ -16,11 +16,11 @@ import java.io.FilenameFilter;
 import java.net.URI;
 import java.util.List;
 
-public interface IGoobiHotfolder {
+public interface IKitodoHotfolder {
 
     /**
      * 
-     * @return a list with all xml files in GoobiHotfolder
+     * @return a list with all xml files in KitodoHotfolder
      */
 
     public List<File> getCurrentFiles();
@@ -28,7 +28,7 @@ public interface IGoobiHotfolder {
     /**
      * 
      * @param name
-     * @return a list with all filenames containing the name in GoobiHotfolder
+     * @return a list with all filenames containing the name in KitodoHotfolder
      */
 
     public List<String> getFilesByName(String name);

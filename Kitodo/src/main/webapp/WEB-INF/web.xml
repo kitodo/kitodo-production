@@ -235,7 +235,7 @@
     </listener>
 
     <listener>
-        <listener-class>org.kitodo.production.GoobiVersionListener</listener-class>
+        <listener-class>org.kitodo.production.KitodoVersionListener</listener-class>
     </listener>
 
     <!-- Faces Servlet -->

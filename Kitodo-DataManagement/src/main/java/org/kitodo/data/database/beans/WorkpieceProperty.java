@@ -26,12 +26,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.kitodo.data.database.beans.property.GoobiPropertyInterface;
+import org.kitodo.data.database.beans.property.KitodoPropertyInterface;
 import org.kitodo.data.database.helper.enums.PropertyType;
 
 @Entity
 @Table(name = "workpieceProperty")
-public class WorkpieceProperty implements Serializable, GoobiPropertyInterface {
+public class WorkpieceProperty implements Serializable, KitodoPropertyInterface {
     private static final long serialVersionUID = -88407008893258729L;
 
     @Id

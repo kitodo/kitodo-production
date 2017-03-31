@@ -17,46 +17,46 @@ import java.util.jar.Manifest;
 
 import org.junit.Test;
 
-public class GoobiVersionTest {
+public class KitodoVersionTest {
 
     private static final String VERSION = "1.2.3";
     private static final String BUILDDATE = "17-Februrary-2011";
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfGoobiSectionIsMissingInManifest() {
-        GoobiVersion.setupFromManifest(new Manifest());
+        KitodoVersion.setupFromManifest(new Manifest());
     }
 
     @Test
     public void attributeVersionShouldBeEqualToImplementationVersion() {
         Manifest manifest = createManifestWithValues();
 
-        GoobiVersion.setupFromManifest(manifest);
+        KitodoVersion.setupFromManifest(manifest);
 
         assertEquals("Version attribute should be equal to Implementation-Version as specified in the given Manifest.",
-                VERSION, GoobiVersion.getVersion());
+                VERSION, KitodoVersion.getVersion());
     }
 
     @Test
     public void attributeBuildversionShouldBeEqualToImplementationVersion() {
         Manifest manifest = createManifestWithValues();
 
-        GoobiVersion.setupFromManifest(manifest);
+        KitodoVersion.setupFromManifest(manifest);
 
         assertEquals(
                 "Buildversion attribute should be equal to Implementation-Version as specified in the given Manifest.",
-                VERSION, GoobiVersion.getBuildversion());
+                VERSION, KitodoVersion.getBuildversion());
     }
 
     @Test
     public void attributeBuilddateShouldBeEqualToImplementationBuildDate() {
         Manifest manifest = createManifestWithValues();
 
-        GoobiVersion.setupFromManifest(manifest);
+        KitodoVersion.setupFromManifest(manifest);
 
         assertEquals(
                 "Builddate attribute should be equal to Implementation-Build-Date as specified in the given Manifest.",
-                BUILDDATE, GoobiVersion.getBuilddate());
+                BUILDDATE, KitodoVersion.getBuilddate());
     }
 
     private Manifest createManifestWithValues() {

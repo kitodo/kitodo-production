@@ -267,7 +267,7 @@
                                 </htm:tr>
                                 <htm:tr>
                                     <htm:td>
-                                        <%-- GoobiScript für selektierte Treffer der Seite --%>
+                                        <%-- KitodoScript für selektierte Treffer der Seite --%>
                                         <h:commandLink id="script1"
                                                        rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                        action="#{ProzessverwaltungForm.GoobiScriptSelection}"
@@ -277,7 +277,7 @@
                                     </htm:td>
 
                                     <htm:td>
-                                        <%-- GoobiScript für Treffer der Seite --%>
+                                        <%-- KitodoScript für Treffer der Seite --%>
                                         <h:commandLink id="script2" action="#{ProzessverwaltungForm.GoobiScriptPage}"
                                                        title="#{msgs.trefferDieserSeite}">
                                             <h:outputText value="#{msgs.trefferDieserSeite}"/>
@@ -285,7 +285,7 @@
                                     </htm:td>
 
                                     <htm:td align="right">
-                                        <%-- GoobiScript für alle Treffer --%>
+                                        <%-- KitodoScript für alle Treffer --%>
                                         <h:commandLink id="script3" action="#{ProzessverwaltungForm.GoobiScriptHits}"
                                                        title="#{msgs.gesamtesTrefferset}"
                                                        onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">

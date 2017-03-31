@@ -42,7 +42,7 @@ import org.kitodo.services.ServiceManager;
  * @author Igor Toker
  * @version 15.06.2009
  */
-public class HistoryAnalyserJob extends AbstractGoobiJob {
+public class HistoryAnalyserJob extends AbstractKitodoJob {
     private static final Logger logger = Logger.getLogger(HistoryAnalyserJob.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 

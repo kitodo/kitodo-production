@@ -24,9 +24,9 @@ import de.sub.kitodo.export.download.ExportMets;
 import de.sub.kitodo.export.download.ExportPdf;
 import de.sub.kitodo.export.download.Multipage;
 import de.sub.kitodo.export.download.TiffHeader;
-import de.sub.kitodo.helper.GoobiScript;
 import de.sub.kitodo.helper.Helper;
 import de.sub.kitodo.helper.HelperSchritteWithoutHibernate;
+import de.sub.kitodo.helper.KitodoScript;
 import de.sub.kitodo.helper.Page;
 import de.sub.kitodo.helper.PropertyListObject;
 import de.sub.kitodo.helper.WebDav;
@@ -307,7 +307,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
                     if (!this.myProzess.isTemplate()) {
                         /* Tiffwriter-Datei löschen */
-                        GoobiScript gs = new GoobiScript();
+                        KitodoScript gs = new KitodoScript();
                         ArrayList<Process> pro = new ArrayList<Process>();
                         pro.add(this.myProzess);
                         gs.deleteTiffHeaderFile(pro);
@@ -1547,11 +1547,11 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Starte GoobiScript über alle Treffer.
+     * Starte KitodoScript über alle Treffer.
      */
     @SuppressWarnings("unchecked")
     public void GoobiScriptHits() {
-        GoobiScript gs = new GoobiScript();
+        KitodoScript gs = new KitodoScript();
         try {
             gs.execute(this.page.getCompleteList(), this.goobiScript);
         } catch (IOException | ResponseException e) {
@@ -1560,11 +1560,11 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Starte GoobiScript über alle Treffer der Seite.
+     * Starte KitodoScript über alle Treffer der Seite.
      */
     @SuppressWarnings("unchecked")
     public void GoobiScriptPage() {
-        GoobiScript gs = new GoobiScript();
+        KitodoScript gs = new KitodoScript();
         try {
             gs.execute(this.page.getListReload(), this.goobiScript);
         } catch (IOException | ResponseException e) {
@@ -1573,7 +1573,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Starte GoobiScript über alle selectierten Treffer.
+     * Starte KitodoScript über alle selectierten Treffer.
      */
     @SuppressWarnings("unchecked")
     public void GoobiScriptSelection() {
@@ -1583,7 +1583,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 auswahl.add(p);
             }
         }
-        GoobiScript gs = new GoobiScript();
+        KitodoScript gs = new KitodoScript();
         try {
             gs.execute(auswahl, this.goobiScript);
         } catch (IOException | ResponseException e) {

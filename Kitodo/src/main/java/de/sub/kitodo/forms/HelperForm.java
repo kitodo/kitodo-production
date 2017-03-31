@@ -31,7 +31,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.io.SafeFile;
-import org.kitodo.production.GoobiVersion;
+import org.kitodo.production.KitodoVersion;
 import org.kitodo.production.enums.PluginType;
 import org.kitodo.production.plugin.PluginLoader;
 import org.kitodo.services.ServiceManager;
@@ -47,11 +47,11 @@ public class HelperForm {
     public static final String CSS_PATH = "/css";
 
     public String getBuildVersion() {
-        return GoobiVersion.getBuildversion();
+        return KitodoVersion.getBuildversion();
     }
 
     public String getVersion() {
-        return GoobiVersion.getBuildversion();
+        return KitodoVersion.getBuildversion();
     }
 
     public String getApplicationLogo() {

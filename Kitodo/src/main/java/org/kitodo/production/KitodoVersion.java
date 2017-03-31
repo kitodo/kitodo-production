@@ -14,7 +14,7 @@ package org.kitodo.production;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-public class GoobiVersion {
+public class KitodoVersion {
 
     private static String version = "N/A";
     private static String buildversion = "N/A";

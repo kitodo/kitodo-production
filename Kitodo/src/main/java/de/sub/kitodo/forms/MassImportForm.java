@@ -51,8 +51,8 @@ import org.kitodo.production.enums.PluginType;
 import org.kitodo.production.export.ExportDocket;
 import org.kitodo.production.flow.helper.JobCreation;
 import org.kitodo.production.importer.DocstructElement;
-import org.kitodo.production.importer.GoobiHotfolder;
 import org.kitodo.production.importer.ImportObject;
+import org.kitodo.production.importer.KitodoHotfolder;
 import org.kitodo.production.importer.Record;
 import org.kitodo.production.plugin.PluginLoader;
 import org.kitodo.production.plugin.interfaces.IImportPlugin;
@@ -436,7 +436,7 @@ public class MassImportForm {
      * @return String
      */
     public String getHotfolderPathForPlugin(int pluginId) {
-        for (GoobiHotfolder hotfolder : GoobiHotfolder.getInstances()) {
+        for (KitodoHotfolder hotfolder : KitodoHotfolder.getInstances()) {
             if (hotfolder.getTemplate() == pluginId) {
                 return hotfolder.getFolderAsString();
             }

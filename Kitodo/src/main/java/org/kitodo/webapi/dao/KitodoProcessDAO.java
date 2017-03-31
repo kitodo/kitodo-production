@@ -26,17 +26,17 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.webapi.beans.GoobiProcess;
-import org.kitodo.webapi.beans.GoobiProcessStep;
 import org.kitodo.webapi.beans.IdentifierPPN;
+import org.kitodo.webapi.beans.KitodoProcess;
+import org.kitodo.webapi.beans.KitodoProcessStep;
 
-public class GoobiProcessDAO {
+public class KitodoProcessDAO {
 
-    private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
+    private static final Logger myLogger = Logger.getLogger(KitodoProcessDAO.class);
 
-    public static GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
+    public static KitodoProcess getProcessByPPN(IdentifierPPN PPN) {
         Session session;
-        GoobiProcess result = null;
+        KitodoProcess result = null;
 
         session = Helper.getHibernateSession();
 
@@ -51,9 +51,9 @@ public class GoobiProcessDAO {
                     .addOrder(Order.asc("we.value"))
                     .setProjection(Projections.projectionList().add(Projections.property("we.value"), "identifier")
                             .add(Projections.property("ve.value"), "title"))
-                    .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
+                    .setResultTransformer(Transformers.aliasToBean(KitodoProcess.class));
 
-            result = (GoobiProcess) criteria.uniqueResult();
+            result = (KitodoProcess) criteria.uniqueResult();
 
         } catch (HibernateException he) {
             myLogger.error("Catched Hibernate exception: " + he.getMessage());
@@ -62,11 +62,11 @@ public class GoobiProcessDAO {
         return result;
     }
 
-    public static List<GoobiProcess> getAllProcesses() {
+    public static List<KitodoProcess> getAllProcesses() {
         Session session;
-        List<GoobiProcess> result;
+        List<KitodoProcess> result;
 
-        result = new ArrayList<GoobiProcess>();
+        result = new ArrayList<KitodoProcess>();
         session = Helper.getHibernateSession();
 
         try {
@@ -79,10 +79,10 @@ public class GoobiProcessDAO {
                     .add(Restrictions.eq("ve.title", "Titel")).addOrder(Order.asc("we.value"))
                     .setProjection(Projections.projectionList().add(Projections.property("we.value"), "identifier")
                             .add(Projections.property("ve.value"), "title"))
-                    .setResultTransformer(Transformers.aliasToBean(GoobiProcess.class));
+                    .setResultTransformer(Transformers.aliasToBean(KitodoProcess.class));
 
             @SuppressWarnings(value = "unchecked")
-            List<GoobiProcess> list = criteria.list();
+            List<KitodoProcess> list = criteria.list();
 
             if ((list != null) && (list.size() > 0)) {
                 result.addAll(list);
@@ -94,11 +94,11 @@ public class GoobiProcessDAO {
         return result;
     }
 
-    public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN PPN) {
-        List<GoobiProcessStep> result;
+    public static List<KitodoProcessStep> getAllProcessSteps(IdentifierPPN PPN) {
+        List<KitodoProcessStep> result;
         Session session;
 
-        result = new ArrayList<GoobiProcessStep>();
+        result = new ArrayList<KitodoProcessStep>();
         session = Helper.getHibernateSession();
 
         try {
@@ -111,10 +111,10 @@ public class GoobiProcessDAO {
                     .setProjection(Projections.projectionList().add(Projections.property("ordering"), "sequence")
                             .add(Projections.property("processingStatus"), "state").add(Projections.property("title"),
                                     "title"))
-                    .setResultTransformer(Transformers.aliasToBean(GoobiProcessStep.class));
+                    .setResultTransformer(Transformers.aliasToBean(KitodoProcessStep.class));
 
             @SuppressWarnings(value = "unchecked")
-            List<GoobiProcessStep> list = criteria.list();
+            List<KitodoProcessStep> list = criteria.list();
 
             if ((list != null) && (!list.isEmpty())) {
                 result.addAll(list);

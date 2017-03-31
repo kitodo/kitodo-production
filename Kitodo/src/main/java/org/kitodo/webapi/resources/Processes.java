@@ -22,10 +22,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.kitodo.webapi.beans.GoobiProcess;
-import org.kitodo.webapi.beans.GoobiProcessStep;
 import org.kitodo.webapi.beans.IdentifierPPN;
-import org.kitodo.webapi.dao.GoobiProcessDAO;
+import org.kitodo.webapi.beans.KitodoProcess;
+import org.kitodo.webapi.beans.KitodoProcessStep;
+import org.kitodo.webapi.dao.KitodoProcessDAO;
 
 @Path("/processes")
 public class Processes {
@@ -33,14 +33,14 @@ public class Processes {
     /**
      * Get Processes.
      *
-     * @return list of GoobiProcess objects
+     * @return list of KitodoProcess objects
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public List<GoobiProcess> getProcesses() {
-        List<GoobiProcess> processes = new ArrayList<GoobiProcess>();
+    public List<KitodoProcess> getProcesses() {
+        List<KitodoProcess> processes = new ArrayList<KitodoProcess>();
 
-        processes.addAll(GoobiProcessDAO.getAllProcesses());
+        processes.addAll(KitodoProcessDAO.getAllProcesses());
 
         return processes;
     }
@@ -50,13 +50,13 @@ public class Processes {
      *
      * @param ippn
      *            IdentifierPPN object
-     * @return GoobiProcess object
+     * @return KitodoProcess object
      */
     @GET
     @Path("{ppnIdentifier}")
-    public GoobiProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
+    public KitodoProcess getProcess(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-        GoobiProcess process = GoobiProcessDAO.getProcessByPPN(ippn);
+        KitodoProcess process = KitodoProcessDAO.getProcessByPPN(ippn);
 
         if (process == null) {
             throw new NotFoundException("No such process.");
@@ -70,13 +70,13 @@ public class Processes {
      *
      * @param ippn
      *            IdentifierPPN object
-     * @return GoobiProcessStep object
+     * @return KitodoProcessStep object
      */
     @GET
     @Path("{ppnIdentifier}/steps")
-    public List<GoobiProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
+    public List<KitodoProcessStep> getProcessSteps(@PathParam("ppnIdentifier") IdentifierPPN ippn) {
 
-        List<GoobiProcessStep> resultList = GoobiProcessDAO.getAllProcessSteps(ippn);
+        List<KitodoProcessStep> resultList = KitodoProcessDAO.getAllProcessSteps(ippn);
 
         if (resultList.isEmpty()) {
             throw new NotFoundException("No such process.");

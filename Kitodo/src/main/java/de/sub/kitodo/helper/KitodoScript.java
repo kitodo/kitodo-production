@@ -58,9 +58,9 @@ import ugh.exceptions.WriteException;
 // TODO: add funny observer pattern here for more complexity
 // TODO: add some general mechanism for string-output of goobi scripts in jsp
 
-public class GoobiScript {
+public class KitodoScript {
     HashMap<String, String> myParameters;
-    private static final Logger logger = Logger.getLogger(GoobiScript.class);
+    private static final Logger logger = Logger.getLogger(KitodoScript.class);
     private final ServiceManager serviceManager = new ServiceManager();
     public static final String DIRECTORY_SUFFIX = "_tif";
 
@@ -165,7 +165,7 @@ public class GoobiScript {
             return;
         }
 
-        Helper.setMeldung("goobiScriptfield", "", "GoobiScript finished");
+        Helper.setMeldung("goobiScriptfield", "", "KitodoScript finished");
     }
 
     private void updateContentFiles(List<Process> inProzesse) {
@@ -828,8 +828,8 @@ public class GoobiScript {
                 return;
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Error in GoobiScript.adduser", e);
-            logger.error("goobiScriptfield" + "Error in GoobiScript.adduser: ", e);
+            Helper.setFehlerMeldung("goobiScriptfield", "Error in KitodoScript.adduser", e);
+            logger.error("goobiScriptfield" + "Error in KitodoScript.adduser: ", e);
             return;
         }
 
@@ -889,7 +889,7 @@ public class GoobiScript {
                 return;
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Error in GoobiScript.addusergroup", e);
+            Helper.setFehlerMeldung("goobiScriptfield", "Error in KitodoScript.addusergroup", e);
             return;
         }
 

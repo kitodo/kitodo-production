@@ -27,9 +27,10 @@ import javax.servlet.http.HttpSessionListener;
  * Listener to set up Goobi versioning information from Manifest on application
  * startup.
  */
-public class GoobiVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
+public class KitodoVersionListener
+        implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
-    public GoobiVersionListener() {
+    public KitodoVersionListener() {
     }
 
     @Override
@@ -42,7 +43,7 @@ public class GoobiVersionListener implements ServletContextListener, HttpSession
         if (rs != null) {
             try {
                 Manifest m = new Manifest(rs);
-                GoobiVersion.setupFromManifest(m);
+                KitodoVersion.setupFromManifest(m);
             } catch (IOException e) {
                 context.log(e.getMessage());
             }

@@ -25,12 +25,12 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.kitodo.io.SafeFile;
-import org.kitodo.production.plugin.interfaces.IGoobiHotfolder;
+import org.kitodo.production.plugin.interfaces.IKitodoHotfolder;
 
-public class GoobiHotfolder implements IGoobiHotfolder {
+public class KitodoHotfolder implements IKitodoHotfolder {
 
     /** Logger for this class. */
-    private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
+    private static final Logger logger = Logger.getLogger(KitodoHotfolder.class);
 
     private String name;
     private SafeFile folder;
@@ -52,7 +52,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @param collection
      *            String
      */
-    public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
+    public KitodoHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
         this.setName(name);
         this.folder = folder;
         this.setTemplate(template);
@@ -63,7 +63,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     /**
      * Get current files.
      *
-     * @return a list with all xml files in GoobiHotfolder
+     * @return a list with all xml files in KitodoHotfolder
      */
     @Override
     public List<java.io.File> getCurrentFiles() {
@@ -75,7 +75,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      *
      * @param name
      *            String
-     * @return a list with all filenames containing the name in GoobiHotfolder
+     * @return a list with all filenames containing the name in KitodoHotfolder
      */
 
     @Override
@@ -146,11 +146,11 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     /**
      * Get instances.
      *
-     * @return list of GoobiHotfolder objects
+     * @return list of KitodoHotfolder objects
      */
-    public static List<GoobiHotfolder> getInstances() {
+    public static List<KitodoHotfolder> getInstances() {
         logger.trace("config 1");
-        List<GoobiHotfolder> answer = new ArrayList<GoobiHotfolder>();
+        List<KitodoHotfolder> answer = new ArrayList<KitodoHotfolder>();
         logger.trace("config 2");
 
         try {
@@ -196,7 +196,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
                     collection = null;
                 }
                 logger.trace("config 17");
-                answer.add(new GoobiHotfolder(name, folder, template, updateStrategy, collection));
+                answer.add(new KitodoHotfolder(name, folder, template, updateStrategy, collection));
             }
             logger.trace("config 18");
 
@@ -204,7 +204,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
             if (logger.isTraceEnabled()) {
                 logger.trace("config 19" + e.getMessage());
             }
-            return new ArrayList<GoobiHotfolder>();
+            return new ArrayList<KitodoHotfolder>();
         }
         logger.trace("config 20");
         return answer;

@@ -15,7 +15,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-public interface IGoobiJob {
+public interface IKitodoJob {
 
     /**
      * execute this {@link Job} for all database and metadata content don't

@@ -31,8 +31,8 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.io.SafeFile;
 import org.kitodo.production.cli.helper.CopyProcess;
 import org.kitodo.production.flow.helper.JobCreation;
-import org.kitodo.production.importer.GoobiHotfolder;
 import org.kitodo.production.importer.ImportObject;
+import org.kitodo.production.importer.KitodoHotfolder;
 import org.kitodo.services.ServiceManager;
 
 import ugh.exceptions.PreferencesException;
@@ -45,7 +45,7 @@ import ugh.exceptions.WriteException;
  * @author Robert Sehr
  */
 @Deprecated
-public class HotfolderJob extends AbstractGoobiJob {
+public class HotfolderJob extends AbstractKitodoJob {
     private static final Logger logger = Logger.getLogger(HotfolderJob.class);
 
     private static final ServiceManager serviceManager = new ServiceManager();
@@ -70,9 +70,9 @@ public class HotfolderJob extends AbstractGoobiJob {
         // logger.error("TEST123");
         if (ConfigCore.getBooleanParameter("runHotfolder", false)) {
             logger.trace("1");
-            List<GoobiHotfolder> hotlist = GoobiHotfolder.getInstances();
+            List<KitodoHotfolder> hotlist = KitodoHotfolder.getInstances();
             logger.trace("2");
-            for (GoobiHotfolder hotfolder : hotlist) {
+            for (KitodoHotfolder hotfolder : hotlist) {
                 logger.trace("3");
                 List<SafeFile> list = SafeFile.createAll(hotfolder.getCurrentFiles());
                 logger.trace("4");
@@ -93,7 +93,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 Process template = serviceManager.getProcessService().find(hotfolder.getTemplate());
                                 serviceManager.getProcessService().refresh(template);
                                 logger.trace("10");
-                                List<String> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
+                                List<String> metsfiles = hotfolder.getFileNamesByFilter(KitodoHotfolder.filter);
                                 logger.trace("11");
                                 HashMap<String, Integer> failedData = new HashMap<String, Integer>();
                                 logger.trace("12");

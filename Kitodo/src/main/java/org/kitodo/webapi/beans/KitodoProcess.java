@@ -14,16 +14,16 @@ package org.kitodo.webapi.beans;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class GoobiProcess {
+public class KitodoProcess {
 
     private String identifier;
 
     private String title;
 
-    public GoobiProcess() {
+    public KitodoProcess() {
     }
 
-    public GoobiProcess(String identifier, String title) {
+    public KitodoProcess(String identifier, String title) {
         this.identifier = identifier;
         this.title = title;
     }

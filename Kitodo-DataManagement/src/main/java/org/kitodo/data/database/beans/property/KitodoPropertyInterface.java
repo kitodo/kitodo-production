@@ -15,7 +15,7 @@ import java.util.Date;
 
 import org.kitodo.data.database.helper.enums.PropertyType;
 
-public interface GoobiPropertyInterface {
+public interface KitodoPropertyInterface {
 
     Integer getId();
 

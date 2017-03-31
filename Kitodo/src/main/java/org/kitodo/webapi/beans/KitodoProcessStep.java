@@ -14,16 +14,16 @@ package org.kitodo.webapi.beans;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class GoobiProcessStep {
+public class KitodoProcessStep {
 
     private Integer sequence;
     private Integer state;
     private String title;
 
-    public GoobiProcessStep() {
+    public KitodoProcessStep() {
     }
 
-    public GoobiProcessStep(Integer sequence, Integer state, String title) {
+    public KitodoProcessStep(Integer sequence, Integer state, String title) {
         this.sequence = sequence;
         this.state = state;
         this.title = title;

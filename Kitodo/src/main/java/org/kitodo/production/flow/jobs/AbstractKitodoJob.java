@@ -22,17 +22,17 @@ import org.quartz.JobExecutionException;
  * @author Steffen Hankiewicz
  * @version 21.10.2009
  */
-public abstract class AbstractGoobiJob implements Job, IGoobiJob {
-    private static final Logger logger = Logger.getLogger(AbstractGoobiJob.class);
+public abstract class AbstractKitodoJob implements Job, IKitodoJob {
+    private static final Logger logger = Logger.getLogger(AbstractKitodoJob.class);
     private static Boolean isRunning = false;
 
-    protected AbstractGoobiJob() {
+    protected AbstractKitodoJob() {
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IGoobiJob#execute(org.quartz.
+     * @see org.goobi.production.flow.jobs.IKitodoJob#execute(org.quartz.
      * JobExecutionContext)
      */
     @Override
@@ -56,7 +56,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IGoobiJob#execute()
+     * @see org.goobi.production.flow.jobs.IKitodoJob#execute()
      */
     @Override
     public void execute() {
@@ -66,7 +66,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
      * (non-Javadoc)
      * 
      * @see
-     * org.goobi.production.flow.jobs.IGoobiJob#setIsRunning(java.lang.Boolean)
+     * org.goobi.production.flow.jobs.IKitodoJob#setIsRunning(java.lang.Boolean)
      */
     @Override
     public void setIsRunning(Boolean inisRunning) {
@@ -76,7 +76,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IGoobiJob#getIsRunning()
+     * @see org.goobi.production.flow.jobs.IKitodoJob#getIsRunning()
      */
     @Override
     public Boolean getIsRunning() {
@@ -86,7 +86,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IGoobiJob#getJobName()
+     * @see org.goobi.production.flow.jobs.IKitodoJob#getJobName()
      */
     @Override
     public String getJobName() {
