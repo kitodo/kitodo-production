@@ -87,11 +87,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              * define path for mets and pdfs
              */
             URL goobiContentServerUrl = null;
-            String contentServerUrl = ConfigCore.getParameter("goobiContentServerUrl");
+            String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
             new SafeFile("");
             SafeFile tempPdf = SafeFile.createTempFile(this.getProcess().getTitle(), ".pdf");
             SafeFile finalPdf = new SafeFile(this.targetFolder, this.getProcess().getTitle() + ".pdf");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter("goobiContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 
             /*
              * using mets file

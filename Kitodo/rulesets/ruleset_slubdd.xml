@@ -49,7 +49,7 @@
 
     <!--
 		metadata for physical document structures - these metadata types are
-		still hardcoded in GOOBI.
+		still hardcoded in Kitodo.
 		DO NOT MODIFY!
 	-->
 
@@ -96,14 +96,14 @@
 
     <!--
 		metadata for logical document structures - these metadata types are
-		fully configurable. Make sure that modules within GOOBI will be
+		fully configurable. Make sure that modules within Kitodo will be
 		reconfigured accordingly if any changes are made here.
 	-->
 
     <MetadataType>
         <Name>ProcessID</Name>
-        <language name="de">Goobi-Vorgangsnummer</language>
-        <language name="en">Goobi Process ID</language>
+        <language name="de">Kitodo-Vorgangsnummer</language>
+        <language name="en">Kitodo Process ID</language>
     </MetadataType>
     <MetadataType>
         <Name>Sponsorship</Name>
@@ -716,7 +716,7 @@
 				structure entities are periodicals (Pica b-records) and
 				multivolumes (Pica c-records) as they just group different
 				volumes into a larger entity.
-				topmost: (not working in GOOBI yet)
+				topmost: (not working in Kitodo yet)
 	-->
 
     <DocStrctType>
@@ -2926,7 +2926,7 @@
 		above can be read from/written to a specific format. The format
 		needs to be implemented by special classes. The appropriate section
 		of the configuration file are read by those file format specific
-		classes. The workflow component of GOOBI uses the RDF format only.
+		classes. The workflow component of Kitodo uses the RDF format only.
 		For that reason METS/MODS information is not defined yet completely.
 	-->
 
@@ -3327,7 +3327,7 @@
 			-->
             <Metadata>
                 <InternalName>ProcessID</InternalName>
-                <WriteXPath>./mods:mods/#mods:identifier[@type='goobi']</WriteXPath>
+                <WriteXPath>./mods:mods/#mods:identifier[@type='kitodo']</WriteXPath>
             </Metadata>
             <Metadata>
                 <InternalName>shelfmarksource</InternalName>

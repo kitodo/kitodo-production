@@ -62,7 +62,7 @@
                             </fo:table-row>
                             <fo:table-row>
                                 <fo:table-cell>
-                                    <fo:block>Goobi Identifier:</fo:block>
+                                    <fo:block>Kitodo Identifier:</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell>
                                     <fo:block>

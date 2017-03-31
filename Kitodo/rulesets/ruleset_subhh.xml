@@ -53,7 +53,7 @@
          ##  Metadata types for the logical structure							 ##
          ########################################################################## -->
 
-    <!-- They are fully configurable; make sure, that modules within GOOBI will be
+    <!-- They are fully configurable; make sure, that modules within Kitodo will be
          reconfigured accordingly, if any changes are made here! -->
     <MetadataType>
         <Name>Sponsorship</Name>
@@ -1513,7 +1513,7 @@
                 <InternalName>PlaceOfPublication</InternalName>
                 <WriteXPath>./mods:mods/mods:originInfo/#mods:place/mods:placeTerm[@type='text']</WriteXPath>
             </Metadata>
-            <!-- TODO: TitleDocMainShort is NOT an abbreviated title. Use <nonsort>in the near future, Goobi metadata GUI changes may be necesarry.
+            <!-- TODO: TitleDocMainShort is NOT an abbreviated title. Use <nonsort>in the near future, Kitodo metadata GUI changes may be necesarry.
                                                             <Metadata>
                                                               <InternalName>TitleDocMainShort</InternalName>
                                                               <WriteXPath>./mods:mods/mods:titleInfo[@type='abbreviated']/#mods:title</WriteXPath>

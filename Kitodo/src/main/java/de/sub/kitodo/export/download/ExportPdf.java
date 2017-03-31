@@ -104,8 +104,8 @@ public class ExportPdf extends ExportMets {
                  * define path for mets and pdfs
                  */
                 URL goobiContentServerUrl = null;
-                String contentServerUrl = ConfigCore.getParameter("goobiContentServerUrl");
-                Integer contentServerTimeOut = ConfigCore.getIntParameter("goobiContentServerTimeOut", 60000);
+                String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
+                Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 
                 /*
                  * using mets file

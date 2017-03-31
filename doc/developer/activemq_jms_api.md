@@ -48,9 +48,9 @@ kitodo_config.properties for configuration.
 
 ### Service processor skeleton sample
 
-	package org.goobi.mq.processores;
+	package org.kitodo.mq.processores;
 
-	import org.goobi.mq.*;
+	import org.kitodo.mq.*;
 	import de.sub.kitodo.config.ConfigCore;
 	import de.sub.kitodo.helper.enums.ReportLevel;
 

@@ -203,10 +203,10 @@
 
                 <h:panelGroup
                         rendered="#{LoginForm.maximaleBerechtigung == 1 && ProzessverwaltungForm.modusAnzeige=='aktuell'  && ProzessverwaltungForm.page.totalResults > 0 }">
-                    <jd:hideableController for="goobiScript" id="scriptswitcher" title="#{msgs.goobiScriptAusfuehren}">
+                    <jd:hideableController for="goobiScript" id="scriptswitcher" title="#{msgs.kitodoScriptAusfuehren}">
                         <h:graphicImage value="/newpages/images/buttons/admin4b.gif"
                                         style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
-                        <h:outputText value="#{msgs.goobiScriptAusfuehren}"/>
+                        <h:outputText value="#{msgs.kitodoScriptAusfuehren}"/>
                     </jd:hideableController>
 
                     <jd:hideableArea id="goobiScript" saveState="view">

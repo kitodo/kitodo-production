@@ -12,8 +12,8 @@
  *
 -->
 
-<!--<displayRules xmlns="http://meta.goobi.org/displayRules" xmlns:tns="http://meta.goobi.org/displayRules" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://meta.goobi.org/displayRules http://meta.goobi.org/displayRules.xsd">-->
-<displayRules xmlns="http://meta.goobi.org/displayRules" xmlns:tns="http://meta.goobi.org/displayRules">
+<!--<displayRules xmlns="http://meta.kitodo.org/displayRules" xmlns:tns="http://meta.goobi.org/displayRules" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://meta.goobi.org/displayRules http://meta.goobi.org/displayRules.xsd">-->
+<displayRules xmlns="http://meta.kitodo.org/displayRules" xmlns:tns="http://meta.kitodo.org/displayRules">
     <ruleSet>
         <!--#########################################################-->
         <!--#### LIZENZEN START #####################################-->
