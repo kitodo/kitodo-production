@@ -99,7 +99,6 @@
                         <phase>compile</phase>
                         <configuration>
                             <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
                             <failOnViolation>false</failOnViolation>
                             <failsOnError>false</failsOnError>
                             <maxAllowedViolations>3000</maxAllowedViolations>
@@ -115,10 +114,10 @@
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.4</version>
                 <configuration>
+                    <xmlOutputDirectory>target/findbugsreports</xmlOutputDirectory>
                     <effort>Max</effort>
                     <failOnError>false</failOnError>
-                    <threshold>Low</threshold>
-                    <xmlOutput>true</xmlOutput>
+                    <threshold>medium</threshold>
                 </configuration>
                 <executions>
                     <execution>
