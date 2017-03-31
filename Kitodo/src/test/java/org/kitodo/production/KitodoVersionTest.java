@@ -23,7 +23,7 @@ public class KitodoVersionTest {
     private static final String BUILDDATE = "17-Februrary-2011";
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfGoobiSectionIsMissingInManifest() {
+    public void shouldThrowExceptionIfKitodoSectionIsMissingInManifest() {
         KitodoVersion.setupFromManifest(new Manifest());
     }
 

@@ -19,7 +19,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
 
 /**
- * A data copier is a class that can be parametrised to copy data in goobi
+ * A data copier is a class that can be parametrised to copy data in kitodo
  * processes depending on rules.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;

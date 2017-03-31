@@ -103,7 +103,7 @@ public class ExportPdf extends ExportMets {
                 /*
                  * define path for mets and pdfs
                  */
-                URL goobiContentServerUrl = null;
+                URL kitodoContentServerUrl = null;
                 String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
                 Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 
@@ -114,12 +114,12 @@ public class ExportPdf extends ExportMets {
                 if (new MetadatenVerifizierung().validate(myProcess) && metsTempFile.toURI().toURL() != null) {
                     /*
                      * if no contentserverurl defined use internal
-                     * goobiContentServerServlet
+                     * kitodoContentServerServlet
                      */
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
                     }
-                    goobiContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL()
+                    kitodoContentServerUrl = new URL(contentServerUrl + metsTempFile.toURI().toURL()
                             + AND_TARGET_FILE_NAME_IS + myProcess.getTitle() + PDF_EXTENSION);
                     /*
                      * mets data does not exist or is invalid
@@ -155,13 +155,13 @@ public class ExportPdf extends ExportMets {
                     url.append(AND_TARGET_FILE_NAME_IS);
                     url.append(myProcess.getTitle());
                     url.append(PDF_EXTENSION);
-                    goobiContentServerUrl = new URL(url.toString());
+                    kitodoContentServerUrl = new URL(url.toString());
                 }
 
                 /*
                  * get pdf from servlet and forward response to file
                  */
-                method = new GetMethod(goobiContentServerUrl.toString());
+                method = new GetMethod(kitodoContentServerUrl.toString());
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
 
                 if (!context.getResponseComplete()) {
@@ -171,7 +171,7 @@ public class ExportPdf extends ExportMets {
                     String contentType = servletContext.getMimeType(fileName);
                     response.setContentType(contentType);
                     response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-                    response.sendRedirect(goobiContentServerUrl.toString());
+                    response.sendRedirect(kitodoContentServerUrl.toString());
                     context.responseComplete();
                 }
                 if (metsTempFile.toURI().toURL() != null) {

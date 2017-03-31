@@ -802,22 +802,22 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Set Goobi config directory.
+     * Set kitodo config directory.
      *
      * @param configDir
-     *            the goobi config directory
+     *            the kitodo config directory
      */
     @Override
-    public void setGoobiConfigDirectory(String configDir) {
+    public void setKitodoConfigDirectory(String configDir) {
         this.configDir = configDir;
     }
 
     /**
-     * Get Goobi config directory.
+     * Get kitodo config directory.
      *
-     * @return the goobi config directory
+     * @return the kitodo config directory
      */
-    private String getGoobiConfigDirectory() {
+    private String getKitodoConfigDirectory() {
         return configDir;
     }
 
@@ -831,7 +831,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         String address = "";
 
         try (FileInputStream istream = new FileInputStream(
-                FilenameUtils.concat(this.getGoobiConfigDirectory(), "kitodo_opac.xml"))) {
+                FilenameUtils.concat(this.getKitodoConfigDirectory(), "kitodo_opac.xml"))) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

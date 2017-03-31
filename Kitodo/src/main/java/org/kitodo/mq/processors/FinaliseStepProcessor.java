@@ -71,7 +71,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 
     /**
      * The method updateProperties() transfers the properties to set into
-     * Goobi’s data model.
+     * kitodo’s data model.
      *
      * @param dialog
      *            The AktuelleSchritteForm that we work with

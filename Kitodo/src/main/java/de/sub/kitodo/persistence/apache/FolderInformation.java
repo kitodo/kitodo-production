@@ -36,9 +36,9 @@ public class FolderInformation {
     public static String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     public static String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
 
-    public FolderInformation(int id, String goobititle) {
+    public FolderInformation(int id, String kitodoTitle) {
         this.id = id;
-        this.title = goobititle;
+        this.title = kitodoTitle;
     }
 
     /**
@@ -395,7 +395,7 @@ public class FolderInformation {
             }
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                Collections.sort(dataList, new KitodoImageFileComparator());
             }
             return dataList;
         } else {
@@ -403,7 +403,7 @@ public class FolderInformation {
         }
     }
 
-    public static class GoobiImageFileComparator implements Comparator<String> {
+    public static class KitodoImageFileComparator implements Comparator<String> {
 
         @Override
         public int compare(String s1, String s2) {

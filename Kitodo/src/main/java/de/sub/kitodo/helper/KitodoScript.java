@@ -56,7 +56,7 @@ import ugh.exceptions.WriteException;
 // TODO: Delete me, this should be part of the Plugins...
 // TODO: Break this up into multiple classes with a common interface
 // TODO: add funny observer pattern here for more complexity
-// TODO: add some general mechanism for string-output of goobi scripts in jsp
+// TODO: add some general mechanism for string-output of kitodo scripts in jsp
 
 public class KitodoScript {
     HashMap<String, String> myParameters;
@@ -76,7 +76,7 @@ public class KitodoScript {
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
             if (tok.indexOf(":") == -1) {
-                Helper.setFehlerMeldung("goobiScriptfield", "missing delimiter / unknown parameter: ", tok);
+                Helper.setFehlerMeldung("kitodoScriptfield", "missing delimiter / unknown parameter: ", tok);
             } else {
                 String myKey = tok.substring(0, tok.indexOf(":"));
                 String myValue = tok.substring(tok.indexOf(":") + 1);
@@ -88,7 +88,7 @@ public class KitodoScript {
          * die passende Methode mit den richtigen Parametern übergeben
          */
         if (this.myParameters.get("action") == null) {
-            Helper.setFehlerMeldung("goobiScriptfield", "missing action",
+            Helper.setFehlerMeldung("kitodoScriptfield", "missing action",
                     " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
@@ -146,7 +146,7 @@ public class KitodoScript {
             String stepname = this.myParameters.get("stepname");
             String scriptname = this.myParameters.get("script");
             if (stepname == null) {
-                Helper.setFehlerMeldung("goobiScriptfield", "", "Missing parameter");
+                Helper.setFehlerMeldung("kitodoScriptfield", "", "Missing parameter");
             } else {
                 runScript(inProzesse, stepname, scriptname);
             }
@@ -158,14 +158,14 @@ public class KitodoScript {
             }
             deleteProcess(inProzesse, contentOnly);
         } else {
-            Helper.setFehlerMeldung("goobiScriptfield", "Unknown action",
+            Helper.setFehlerMeldung("kitodoScriptfield", "Unknown action",
                     " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
             return;
         }
 
-        Helper.setMeldung("goobiScriptfield", "", "KitodoScript finished");
+        Helper.setMeldung("kitodoScriptfield", "", "KitodoScript finished");
     }
 
     private void updateContentFiles(List<Process> inProzesse) {
@@ -174,15 +174,15 @@ public class KitodoScript {
                 Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
                 myRdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getProcessService().writeMetadataFile(myRdf, proz);
-                Helper.setMeldung("goobiScriptfield", "ContentFiles updated: ", proz.getTitle());
+                Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
 
             } catch (Exception e) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Error while updating content files", e);
+                Helper.setFehlerMeldung("kitodoScriptfield", "Error while updating content files", e);
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "updateContentFiles finished");
+        Helper.setMeldung("kitodoScriptfield", "", "updateContentFiles finished");
     }
 
     private void deleteProcess(List<Process> inProzesse, boolean contentOnly) throws ResponseException {
@@ -281,13 +281,13 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("sourcefolder") == null || this.myParameters.get("sourcefolder").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "missing parameter: ", "sourcefolder");
+            Helper.setFehlerMeldung("kitodoScriptfield", "missing parameter: ", "sourcefolder");
             return;
         }
 
         SafeFile sourceFolder = new SafeFile(this.myParameters.get("sourcefolder"));
         if (!sourceFolder.isDirectory()) {
-            Helper.setFehlerMeldung("goobiScriptfield",
+            Helper.setFehlerMeldung("kitodoScriptfield",
                     "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
         }
@@ -296,19 +296,19 @@ public class KitodoScript {
                 SafeFile imagesFolder = new SafeFile(
                         serviceManager.getProcessService().getImagesOrigDirectory(false, p));
                 if (imagesFolder.list().length > 0) {
-                    Helper.setFehlerMeldung("goobiScriptfield", "", "The process " + p.getTitle() + " ["
+                    Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
                             + p.getId().intValue() + "] has already data in image folder");
                 } else {
                     SafeFile sourceFolderProzess = new SafeFile(sourceFolder, p.getTitle());
                     if (!sourceFolder.isDirectory()) {
-                        Helper.setFehlerMeldung("goobiScriptfield", "", "The directory for process " + p.getTitle()
+                        Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
                                 + " [" + p.getId().intValue() + "] is not existing");
                     } else {
                         sourceFolderProzess.copyDir(imagesFolder);
-                        Helper.setMeldung("goobiScriptfield", "", "The directory for process " + p.getTitle() + " ["
+                        Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
                                 + p.getId().intValue() + "] is copied");
                     }
-                    Helper.setMeldung("goobiScriptfield", "",
+                    Helper.setMeldung("kitodoScriptfield", "",
                             "The process " + p.getTitle() + " [" + p.getId().intValue() + "] is copied");
                 }
             }
@@ -326,7 +326,7 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("ruleset") == null || this.myParameters.get("ruleset").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "ruleset");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "ruleset");
             return;
         }
 
@@ -334,7 +334,7 @@ public class KitodoScript {
             List<Ruleset> rulesets = serviceManager.getRulesetService()
                     .search("from Ruleset where title='" + this.myParameters.get("ruleset") + "'");
             if (rulesets == null || rulesets.size() == 0) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Could not find ruleset: ", "ruleset");
+                Helper.setFehlerMeldung("kitodoScriptfield", "Could not find ruleset: ", "ruleset");
                 return;
             }
             Ruleset regelsatz = rulesets.get(0);
@@ -357,19 +357,19 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("swap1nr") == null || this.myParameters.get("swap1nr").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1nr");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "swap1nr");
             return;
         }
         if (this.myParameters.get("swap2nr") == null || this.myParameters.get("swap2nr").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2nr");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "swap2nr");
             return;
         }
         if (this.myParameters.get("swap1title") == null || this.myParameters.get("swap1title").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap1title");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "swap1title");
             return;
         }
         if (this.myParameters.get("swap2title") == null || this.myParameters.get("swap2title").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2title");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "swap2title");
             return;
         }
         int reihenfolge1;
@@ -378,7 +378,7 @@ public class KitodoScript {
             reihenfolge1 = Integer.parseInt(this.myParameters.get("swap1nr"));
             reihenfolge2 = Integer.parseInt(this.myParameters.get("swap2nr"));
         } catch (NumberFormatException e1) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ",
+            Helper.setFehlerMeldung("kitodoScriptfield", "Invalid order number used: ",
                     this.myParameters.get("swap1nr") + " - " + this.myParameters.get("swap2nr"));
             return;
         }
@@ -411,22 +411,22 @@ public class KitodoScript {
                     serviceManager.getTaskService().save(s1);
                     serviceManager.getTaskService().save(s2);
                 } catch (DAOException e) {
-                    Helper.setFehlerMeldung("goobiScriptfield", "Error on save while swapping steps in process: ",
+                    Helper.setFehlerMeldung("kitodoScriptfield", "Error on save while swapping steps in process: ",
                             proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
                     logger.error("Error on save while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
                             + " : " + s2.getTitle(), e);
                 } catch (IOException e) {
-                    Helper.setFehlerMeldung("goobiScriptfield", "Error on insert while swapping steps in process: ",
+                    Helper.setFehlerMeldung("kitodoScriptfield", "Error on insert while swapping steps in process: ",
                             proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
                     logger.error("Error on insert while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
                             + " : " + s2.getTitle(), e);
                 }
 
-                Helper.setMeldung("goobiScriptfield", "Swapped steps in: ", proz.getTitle());
+                Helper.setMeldung("kitodoScriptfield", "Swapped steps in: ", proz.getTitle());
             }
 
         }
-        Helper.setMeldung("goobiScriptfield", "swapsteps finished: ");
+        Helper.setMeldung("kitodoScriptfield", "swapsteps finished: ");
     }
 
     /**
@@ -437,7 +437,7 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
 
@@ -453,23 +453,23 @@ public class KitodoScript {
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DAOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                         } catch (IOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while inserting to index process: " + proz.getTitle(), e);
                             logger.error(
-                                    "goobiScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
+                                    "kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
                                     e);
                         }
-                        Helper.setMeldung("goobiScriptfield", "Removed step from process: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Removed step from process: ", proz.getTitle());
                         break;
                     }
                 }
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "deleteStep finished: ");
+        Helper.setMeldung("kitodoScriptfield", "", "deleteStep finished: ");
     }
 
     /**
@@ -480,16 +480,16 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
         if (this.myParameters.get("number") == null || this.myParameters.get("number").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "number");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "number");
             return;
         }
 
         if (!StringUtils.isNumeric(this.myParameters.get("number"))) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Wrong number parameter", "(only numbers allowed)");
             return;
         }
 
@@ -508,16 +508,16 @@ public class KitodoScript {
             try {
                 serviceManager.getProcessService().save(proz);
             } catch (DAOException e) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitle(), e);
-                logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(), e);
+                logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
             } catch (IOException e) {
-                Helper.setFehlerMeldung("goobiScriptfield",
+                Helper.setFehlerMeldung("kitodoScriptfield",
                         "Error while inserting to index process: " + proz.getTitle(), e);
-                logger.error("goobiScriptfield" + "Error while inserting to index process: " + proz.getTitle(), e);
+                logger.error("kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(), e);
             }
-            Helper.setMeldung("goobiScriptfield", "Added step to process: ", proz.getTitle());
+            Helper.setMeldung("kitodoScriptfield", "Added step to process: ", proz.getTitle());
         }
-        Helper.setMeldung("goobiScriptfield", "", "addStep finished: ");
+        Helper.setMeldung("kitodoScriptfield", "", "addStep finished: ");
     }
 
     /**
@@ -528,17 +528,17 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Fehlender Parameter: ", "steptitle");
             return;
         }
 
         if (this.myParameters.get("label") == null || this.myParameters.get("label").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "label");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Fehlender Parameter: ", "label");
             return;
         }
 
         if (this.myParameters.get("script") == null || this.myParameters.get("script").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Fehlender Parameter: ", "script");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Fehlender Parameter: ", "script");
             return;
         }
 
@@ -556,23 +556,23 @@ public class KitodoScript {
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DAOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                         } catch (IOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while inserting to index process: " + proz.getTitle(), e);
                             logger.error(
-                                    "goobiScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
+                                    "kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
                                     e);
                         }
-                        Helper.setMeldung("goobiScriptfield", "Added script to step: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Added script to step: ", proz.getTitle());
                         break;
                     }
                 }
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "addShellScriptToStep finished: ");
+        Helper.setMeldung("kitodoScriptfield", "", "addShellScriptToStep finished: ");
     }
 
     /**
@@ -583,12 +583,12 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
 
         if (this.myParameters.get("module") == null || this.myParameters.get("module").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "module");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "module");
             return;
         }
 
@@ -604,23 +604,23 @@ public class KitodoScript {
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DAOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                         } catch (IOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while inserting to index process: " + proz.getTitle(), e);
                             logger.error(
-                                    "goobiScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
+                                    "kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
                                     e);
                         }
-                        Helper.setMeldung("goobiScriptfield", "Added module to step: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Added module to step: ", proz.getTitle());
                         break;
                     }
                 }
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "addModuleToStep finished: ");
+        Helper.setMeldung("kitodoScriptfield", "", "addModuleToStep finished: ");
     }
 
     /**
@@ -631,17 +631,17 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
 
         if (this.myParameters.get("property") == null || this.myParameters.get("property").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "property");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "property");
             return;
         }
 
         if (this.myParameters.get("value") == null || this.myParameters.get("value").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "value");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "value");
             return;
         }
 
@@ -651,14 +651,14 @@ public class KitodoScript {
         if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages")
                 && !property.equals("validate") && !property.equals("exportdms") && !property.equals("batch")
                 && !property.equals("automatic")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "",
+            Helper.setFehlerMeldung("kitodoScriptfield", "",
                     "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
                             + "validate, exportdms");
             return;
         }
 
         if (!value.equals("true") && !value.equals("false")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "wrong parameter 'value'; possible " + "values: true, false");
+            Helper.setFehlerMeldung("kitodoScriptfield", "wrong parameter 'value'; possible " + "values: true, false");
             return;
         }
 
@@ -696,17 +696,17 @@ public class KitodoScript {
                         try {
                             serviceManager.getProcessService().save(proz);
                         } catch (DAOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield",
+                            Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                         }
-                        Helper.setMeldung("goobiScriptfield", "Error while saving process: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Error while saving process: ", proz.getTitle());
                         break;
                     }
                 }
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "setTaskProperty abgeschlossen: ");
+        Helper.setMeldung("kitodoScriptfield", "", "setTaskProperty abgeschlossen: ");
     }
 
     /**
@@ -717,18 +717,18 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
 
         if (this.myParameters.get("status") == null || this.myParameters.get("status").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "status");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "status");
             return;
         }
 
         if (!this.myParameters.get("status").equals("0") && !this.myParameters.get("status").equals("1")
                 && !this.myParameters.get("status").equals("2") && !this.myParameters.get("status").equals("3")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Wrong status parameter: status ",
+            Helper.setFehlerMeldung("kitodoScriptfield", "Wrong status parameter: status ",
                     "(possible: 0=closed, 1=open, 2=in work, 3=finished");
             return;
         }
@@ -744,16 +744,16 @@ public class KitodoScript {
                     try {
                         serviceManager.getTaskService().save(s);
                     } catch (DAOException e) {
-                        Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitle(),
+                        Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
                                 e);
-                        logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                        logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                     }
-                    Helper.setMeldung("goobiScriptfield", "stepstatus set in process: ", proz.getTitle());
+                    Helper.setMeldung("kitodoScriptfield", "stepstatus set in process: ", proz.getTitle());
                     break;
                 }
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "setStepStatus finished: ");
+        Helper.setMeldung("kitodoScriptfield", "", "setStepStatus finished: ");
     }
 
     /**
@@ -764,17 +764,17 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
 
         if (this.myParameters.get("number") == null || this.myParameters.get("number").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "number");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "number");
             return;
         }
 
         if (!StringUtils.isNumeric(this.myParameters.get("number"))) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Wrong number parameter", "(only numbers allowed)");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Wrong number parameter", "(only numbers allowed)");
             return;
         }
 
@@ -789,16 +789,16 @@ public class KitodoScript {
                     try {
                         serviceManager.getTaskService().save(s);
                     } catch (DAOException e) {
-                        Helper.setFehlerMeldung("goobiScriptfield", "Error while saving process: " + proz.getTitle(),
+                        Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
                                 e);
-                        logger.error("goobiScriptfield" + "Error while saving process: " + proz.getTitle(), e);
+                        logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
                     }
-                    Helper.setMeldung("goobiScriptfield", "step order changed in process: ", proz.getTitle());
+                    Helper.setMeldung("kitodoScriptfield", "step order changed in process: ", proz.getTitle());
                     break;
                 }
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "setStepNumber finished ");
+        Helper.setMeldung("kitodoScriptfield", "", "setStepNumber finished ");
     }
 
     /**
@@ -809,11 +809,11 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
         if (this.myParameters.get("username") == null || this.myParameters.get("username").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "username");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "username");
             return;
         }
         /* prüfen, ob ein solcher Benutzer existiert */
@@ -824,12 +824,12 @@ public class KitodoScript {
             if (treffer != null && treffer.size() > 0) {
                 myUser = treffer.get(0);
             } else {
-                Helper.setFehlerMeldung("goobiScriptfield", "Unknown user: ", this.myParameters.get("username"));
+                Helper.setFehlerMeldung("kitodoScriptfield", "Unknown user: ", this.myParameters.get("username"));
                 return;
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Error in KitodoScript.adduser", e);
-            logger.error("goobiScriptfield" + "Error in KitodoScript.adduser: ", e);
+            Helper.setFehlerMeldung("kitodoScriptfield", "Error in KitodoScript.adduser", e);
+            logger.error("kitodoScriptfield" + "Error in KitodoScript.adduser: ", e);
             return;
         }
 
@@ -850,16 +850,16 @@ public class KitodoScript {
                         try {
                             serviceManager.getTaskService().save(s);
                         } catch (DAOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitle(), e);
-                            logger.error("goobiScriptfield" + "Error while saving - " + proz.getTitle(), e);
+                            Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving - " + proz.getTitle(), e);
+                            logger.error("kitodoScriptfield" + "Error while saving - " + proz.getTitle(), e);
                             return;
                         }
                     }
                 }
             }
-            Helper.setMeldung("goobiScriptfield", "Added user to step: ", proz.getTitle());
+            Helper.setMeldung("kitodoScriptfield", "Added user to step: ", proz.getTitle());
         }
-        Helper.setMeldung("goobiScriptfield", "", "adduser finished.");
+        Helper.setMeldung("kitodoScriptfield", "", "adduser finished.");
     }
 
     /**
@@ -870,11 +870,11 @@ public class KitodoScript {
          * Validierung der Actionparameter
          */
         if (this.myParameters.get("steptitle") == null || this.myParameters.get("steptitle").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "steptitle");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "steptitle");
             return;
         }
         if (this.myParameters.get("group") == null || this.myParameters.get("group").equals("")) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "group");
+            Helper.setFehlerMeldung("kitodoScriptfield", "Missing parameter: ", "group");
             return;
         }
         /* prüfen, ob ein solcher Benutzer existiert */
@@ -885,11 +885,11 @@ public class KitodoScript {
             if (treffer != null && treffer.size() > 0) {
                 myGroup = treffer.get(0);
             } else {
-                Helper.setFehlerMeldung("goobiScriptfield", "Unknown group: ", this.myParameters.get("group"));
+                Helper.setFehlerMeldung("kitodoScriptfield", "Unknown group: ", this.myParameters.get("group"));
                 return;
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("goobiScriptfield", "Error in KitodoScript.addusergroup", e);
+            Helper.setFehlerMeldung("kitodoScriptfield", "Error in KitodoScript.addusergroup", e);
             return;
         }
 
@@ -910,15 +910,15 @@ public class KitodoScript {
                         try {
                             serviceManager.getTaskService().save(s);
                         } catch (DAOException e) {
-                            Helper.setFehlerMeldung("goobiScriptfield", "Error while saving - " + proz.getTitle(), e);
+                            Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving - " + proz.getTitle(), e);
                             return;
                         }
                     }
                 }
             }
-            Helper.setMeldung("goobiScriptfield", "added usergroup to step: ", proz.getTitle());
+            Helper.setMeldung("kitodoScriptfield", "added usergroup to step: ", proz.getTitle());
         }
-        Helper.setMeldung("goobiScriptfield", "", "addusergroup finished");
+        Helper.setMeldung("kitodoScriptfield", "", "addusergroup finished");
     }
 
     /**
@@ -932,12 +932,12 @@ public class KitodoScript {
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();
                 }
-                Helper.setMeldung("goobiScriptfield", "TiffHeaderFile deleted: ", proz.getTitle());
+                Helper.setMeldung("kitodoScriptfield", "TiffHeaderFile deleted: ", proz.getTitle());
             } catch (Exception e) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Error while deleting TiffHeader", e);
+                Helper.setFehlerMeldung("kitodoScriptfield", "Error while deleting TiffHeader", e);
             }
         }
-        Helper.setMeldung("goobiScriptfield", "", "deleteTiffHeaderFile finished");
+        Helper.setMeldung("kitodoScriptfield", "", "deleteTiffHeaderFile finished");
     }
 
     /**
@@ -966,7 +966,7 @@ public class KitodoScript {
                 }
                 myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
                 serviceManager.getProcessService().writeMetadataFile(myRdf, proz);
-                Helper.setMeldung("goobiScriptfield", "ImagePath updated: ", proz.getTitle());
+                Helper.setMeldung("kitodoScriptfield", "ImagePath updated: ", proz.getTitle());
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
@@ -976,11 +976,11 @@ public class KitodoScript {
                 Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
 
             } catch (Exception e) {
-                Helper.setFehlerMeldung("goobiScriptfield", "Error while updating imagepath", e);
+                Helper.setFehlerMeldung("kitodoScriptfield", "Error while updating imagepath", e);
             }
 
         }
-        Helper.setMeldung("goobiScriptfield", "", "updateImagePath finished");
+        Helper.setMeldung("kitodoScriptfield", "", "updateImagePath finished");
 
     }
 

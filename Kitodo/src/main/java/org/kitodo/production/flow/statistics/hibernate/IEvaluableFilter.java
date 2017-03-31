@@ -18,7 +18,7 @@ import org.hibernate.Criteria;
 import org.kitodo.production.flow.statistics.IDataSource;
 
 /**
- * This interface defines a filter, which can be used in the goobi/hibernate
+ * This interface defines a filter, which can be used in the kitodo/hibernate
  * context. It may be implemented serializable so it could be saved and loaded.
  * It manages the creation and building of a criteria according to the users or
  * programmers input, holding the result.

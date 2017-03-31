@@ -67,12 +67,12 @@ public class JobManager implements ServletContextListener {
     }
 
     /**
-     * initializes given SimpleGoobiJob at given time.
+     * initializes given SimpleKitodoJob at given time.
      */
-    private static void initializeJob(IKitodoJob goobiJob, String configuredStartTimeProperty, Scheduler sched)
+    private static void initializeJob(IKitodoJob kitodoJob, String configuredStartTimeProperty, Scheduler sched)
             throws SchedulerException {
-        logger.debug(goobiJob.getJobName());
-        JobDetail jobDetail = new JobDetail(goobiJob.getJobName(), null, goobiJob.getClass());
+        logger.debug(kitodoJob.getJobName());
+        JobDetail jobDetail = new JobDetail(kitodoJob.getJobName(), null, kitodoJob.getClass());
 
         if (ConfigCore.getLongParameter(configuredStartTimeProperty, -1) != -1) {
             long msOfToday = ConfigCore.getLongParameter(configuredStartTimeProperty, -1);
@@ -87,27 +87,27 @@ public class JobManager implements ServletContextListener {
 
             Trigger trigger = TriggerUtils.makeDailyTrigger(hour, min);
             trigger.setStartTime(new Date());
-            trigger.setName(goobiJob.getJobName() + "_trigger");
+            trigger.setName(kitodoJob.getJobName() + "_trigger");
 
             if (logger.isInfoEnabled()) {
-                logger.info("daily Job " + goobiJob.getJobName() + " start time: " + hour + ":" + min);
+                logger.info("daily Job " + kitodoJob.getJobName() + " start time: " + hour + ":" + min);
             }
             sched.scheduleJob(jobDetail, trigger);
         }
     }
 
     /**
-     * initializes given SimpleGoobiJob at given time.
+     * initializes given SimpleKitodoJob at given time.
      */
-    private static void initializeJobNonConfigured(IKitodoJob goobiJob, int myTime, Scheduler sched)
+    private static void initializeJobNonConfigured(IKitodoJob kitodoJob, int myTime, Scheduler sched)
             throws SchedulerException {
-        logger.debug(goobiJob.getJobName());
-        JobDetail jobDetail = new JobDetail(goobiJob.getJobName(), null, goobiJob.getClass());
+        logger.debug(kitodoJob.getJobName());
+        JobDetail jobDetail = new JobDetail(kitodoJob.getJobName(), null, kitodoJob.getClass());
 
         // hier alle 60 sek. oder so
         Trigger trigger = TriggerUtils.makeMinutelyTrigger(myTime);
         trigger.setStartTime(new Date());
-        trigger.setName(goobiJob.getJobName() + "_trigger");
+        trigger.setName(kitodoJob.getJobName() + "_trigger");
         sched.scheduleJob(jobDetail, trigger);
     }
 

@@ -1,5 +1,5 @@
 --
--- Remove old indexes of Goobi.Production CE 1.11.2
+-- Remove old indexes of kitodo.Production CE 1.11.2
 --
 ALTER TABLE `batchesprozesse`
   DROP KEY `FK_73ljen2jowf97kh4v4p1hlo8r`,

@@ -26,9 +26,9 @@ import org.jdom.input.SAXBuilder;
 public class SqlConfiguration {
 
     private String dbDriverName = "com.mysql.jdbc.Driver";
-    private String dbUser = "goobi";
+    private String dbUser = "kitodo";
     private String dbPassword = "CHANGEIT";
-    private String dbURI = "jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true";
+    private String dbURI = "jdbc:mysql://localhost/kitodo?autoReconnect=true&amp;autoReconnectForPools=true";
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
     private int dbPoolMinSize = 1;

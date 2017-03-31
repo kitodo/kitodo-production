@@ -172,7 +172,7 @@ public class ModuleServerForm {
     @SuppressWarnings("unchecked")
     private List<ModuleDesc> getModulesFromConfigurationFile() {
         List<ModuleDesc> rueckgabe = new ArrayList<ModuleDesc>();
-        String filename = help.getGoobiConfigDirectory() + "modules.xml";
+        String filename = help.getKitodoConfigDirectory() + "modules.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return rueckgabe;

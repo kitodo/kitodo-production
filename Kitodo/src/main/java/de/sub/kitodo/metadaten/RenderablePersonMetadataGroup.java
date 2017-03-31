@@ -33,7 +33,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
 /**
  * Specialised RenderableMetadataGroup with fixed fields to edit the internal
  * metadata group type &ldquo;person&rdquo;. A person is a fixed data structure
- * in Goobi with the fields normdata record, first name and last name.
+ * in Kitodo with the fields normdata record, first name and last name.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */

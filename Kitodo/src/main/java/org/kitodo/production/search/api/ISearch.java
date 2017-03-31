@@ -14,7 +14,7 @@ package org.kitodo.production.search.api;
 import java.util.ArrayList;
 
 /**
- * This interface defines a search engine for goobi.
+ * This interface defines a search engine for kitodo.
  * 
  * @author Robert Sehr
  */

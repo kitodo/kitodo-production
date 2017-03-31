@@ -34,7 +34,7 @@ public class ConfigPlugins {
         String file = "plugin_" + inPlugin.getClass().getSimpleName() + ".xml";
         XMLConfiguration config;
         try {
-            config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + file);
+            config = new XMLConfiguration(new Helper().getKitodoConfigDirectory() + file);
         } catch (ConfigurationException e) {
             logger.error(e);
             config = new XMLConfiguration();

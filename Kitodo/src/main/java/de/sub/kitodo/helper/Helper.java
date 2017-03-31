@@ -106,11 +106,11 @@ public class Helper implements Serializable, Observer {
     }
 
     /**
-     * Get Goobi data directory.
+     * Get Kitodo data directory.
      *
      * @return String
      */
-    public String getGoobiDataDirectory() {
+    public String getKitodoDataDirectory() {
         if (this.myMetadatenVerzeichnis == null) {
             this.myMetadatenVerzeichnis = ConfigCore.getParameter("MetadatenVerzeichnis");
         }
@@ -118,11 +118,11 @@ public class Helper implements Serializable, Observer {
     }
 
     /**
-     * Get Goobi config directory.
+     * Get Kitodo config directory.
      *
      * @return String
      */
-    public String getGoobiConfigDirectory() {
+    public String getKitodoConfigDirectory() {
         if (this.myConfigVerzeichnis == null) {
             this.myConfigVerzeichnis = ConfigCore.getParameter(Parameters.CONFIG_DIR);
         }
@@ -380,7 +380,7 @@ public class Helper implements Serializable, Observer {
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-                File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/goobi/messages/"));
+                File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/kitodo/messages/"));
                 if (file.exists()) {
                     // Load local message bundle from file system only if file
                     // exists;

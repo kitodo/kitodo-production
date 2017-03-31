@@ -151,7 +151,7 @@ public class WebInterface extends HttpServlet {
             ICommandPlugin icp = (ICommandPlugin) iPlugin;
             allHelp += "<h4>" + icp.help().getTitle() + "</h4>" + icp.help().getMessage() + "<br/><br/>";
         }
-        generateAnswer(resp, 200, "Goobi Web API Help", allHelp);
+        generateAnswer(resp, 200, "Kitodo Web API Help", allHelp);
     }
 
     private void generateAnswer(HttpServletResponse resp, int status, String title, String message) throws IOException {

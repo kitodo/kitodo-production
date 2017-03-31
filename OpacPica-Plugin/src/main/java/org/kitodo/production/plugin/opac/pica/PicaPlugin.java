@@ -44,18 +44,18 @@ import ugh.fileformats.mets.XStream;
 import ugh.fileformats.opac.PicaPlus;
 
 /**
- * The class PicaPlugin is the main class of the Goobi PICA catalogue plugin
+ * The class PicaPlugin is the main class of the kitodo PICA catalogue plugin
  * implementation. It provides the public methods void configure(Map) [*] Object
  * find(String, long) String getDescription() [*] Map getHit(Object, long, long)
  * long getNumberOfHits(Object, long) String getTitle() [*] void
  * setPreferences(Prefs) boolean supportsCatalogue(String) void
  * useCatalogue(String)
  *
- * as specified by org.goobi.production.plugin.UnspecificPlugin [*] and
- * org.goobi.production.plugin.CataloguePlugin.CataloguePlugin.
+ * as specified by org.kitodo.production.plugin.UnspecificPlugin [*] and
+ * org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin.
  *
  * Parts of the code of this class have been ported from ancient class
- * <kbd>org.goobi.production.plugin.opac.PicaOpacImport</kbd>.
+ * <kbd>org.kitodo.production.plugin.opac.PicaOpacImport</kbd>.
  *
  * @author Partly based on previous works of other authors who didn’t leave
  *         their names
@@ -125,7 +125,7 @@ public class PicaPlugin implements Plugin {
      *
      * @param configuration
      *            a Map with configuration parameters
-     * @see org.goobi.production.plugin.UnspecificPlugin#configure(Map)
+     * @see org.kitodo.production.plugin.UnspecificPlugin#configure(Map)
      */
     public void configure(Map<String, String> configuration) {
         configDir = configuration.get("configDir");
@@ -139,12 +139,12 @@ public class PicaPlugin implements Plugin {
      *
      * @param query
      *            a query String. See
-     *            {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}
+     *            {@link org.kitodo.production.plugin.CataloguePlugin.QueryBuilder}
      *            for the semantics of the query.
      * @param timeout
      *            timeout in milliseconds after which the operation shall return
      * @return a FindResult that may be used for future operations on the query
-     * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#find(String,
+     * @see org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin#find(String,
      *      long)
      */
     public Object find(String query, long timeout) {
@@ -181,7 +181,7 @@ public class PicaPlugin implements Plugin {
      *            desired language of the human-readable description (support is
      *            optional)
      * @return a human-readable description of the plug-in’s functionality
-     * @see org.goobi.production.plugin.UnspecificPlugin#getDescription(Locale)
+     * @see org.kitodo.production.plugin.UnspecificPlugin#getDescription(Locale)
      */
     public static String getDescription(Locale language) {
         return "The PICA plugin can be used to access PICA library catalogue systems.";
@@ -192,7 +192,7 @@ public class PicaPlugin implements Plugin {
      * search result as a Map&lt;String, Object&gt;. The map contains the full
      * hit as "fileformat", the docType as "type" and some bibliographic
      * metadata for Production to be able to show a short hit display as
-     * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
+     * supposed in {@link org.kitodo.production.plugin.CataloguePlugin.Hit}.
      *
      * @param searchResult
      *            a FindResult created by {@link #find(String, long)}
@@ -202,7 +202,7 @@ public class PicaPlugin implements Plugin {
      *            a timeout in milliseconds after which the operation shall
      *            return
      * @return a Map with the hit
-     * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getHit(Object,
+     * @see org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin#getHit(Object,
      *      long, long)
      */
     public Map<String, Object> getHit(Object searchResult, long index, long timeout) {
@@ -763,7 +763,7 @@ public class PicaPlugin implements Plugin {
      * of getHit(). The map contains the full hit as "fileformat", the docType
      * as "type" and some bibliographic metadata for Production to be able to
      * show a short hit display as supposed in
-     * {@link org.goobi.production.plugin.CataloguePlugin.Hit}
+     * {@link org.kitodo.production.plugin.CataloguePlugin.Hit}
      *
      * @param docType
      *            the DocType of the hit
@@ -890,7 +890,7 @@ public class PicaPlugin implements Plugin {
      * @param timeout
      *            ignored because there is no network acceess in this step
      * @return the number of hits
-     * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#getNumberOfHits(Object,
+     * @see org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin#getNumberOfHits(Object,
      *      long)
      */
     public static long getNumberOfHits(Object searchResult, long timeout) {
@@ -919,7 +919,7 @@ public class PicaPlugin implements Plugin {
      *            desired language of the human-readable name (support is
      *            optional)
      * @return a human-readable name for the plug-in
-     * @see org.goobi.production.plugin.UnspecificPlugin#getTitle(Locale)
+     * @see org.kitodo.production.plugin.UnspecificPlugin#getTitle(Locale)
      */
     public static String getTitle(Locale language) {
         return "PICA Catalogue Plugin";
@@ -931,7 +931,7 @@ public class PicaPlugin implements Plugin {
      *
      * @param preferences
      *            the UGH preferences
-     * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
+     * @see org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
      */
     public void setPreferences(Prefs preferences) {
         this.preferences = preferences;
@@ -945,7 +945,7 @@ public class PicaPlugin implements Plugin {
      * @param catalogue
      *            a String indentifying the catalogue
      * @return whether the plug-in is able to acceess that catalogue
-     * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
+     * @see org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin#supportsCatalogue(String)
      */
     public static boolean supportsCatalogue(String catalogue) {
         return ConfigOpac.getCatalogueByName(catalogue) != null;
@@ -959,7 +959,7 @@ public class PicaPlugin implements Plugin {
      * @throws ParserConfigurationException
      *             if a DocumentBuilder cannot be created which satisfies the
      *             configuration requested
-     * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
+     * @see org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin#useCatalogue(String)
      */
     public void useCatalogue(String catalogueID) throws ParserConfigurationException {
         this.configuration = ConfigOpac.getCatalogueByName(catalogueID);

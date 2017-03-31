@@ -63,7 +63,7 @@ public class HelperForm {
 
     public String getApplicationHeaderBackground() {
         String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-        logo += ConfigCore.getParameter("ApplicationHeaderBackground", "goobi_meta_verlauf.jpg");
+        logo += ConfigCore.getParameter("ApplicationHeaderBackground", "kitodo_meta_verlauf.jpg");
         /* wenn ein Background angegeben wurde, dann diesen jetzt strecken */
         if (logo.length() > 0) {
             logo = "background: url(" + logo + ") repeat-x;";

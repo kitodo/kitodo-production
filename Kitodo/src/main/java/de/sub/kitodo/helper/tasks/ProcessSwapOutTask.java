@@ -38,7 +38,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * will be created.
      */
 
-    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
+    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int kitodoPathlength, Element inRoot)
             throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
@@ -48,12 +48,12 @@ public class ProcessSwapOutTask extends LongRunningTask {
             String[] children = srcDir.list();
             for (int i = 0; i < children.length; i++) {
                 copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
-                        goobipathlength, inRoot);
+                        kitodoPathlength, inRoot);
             }
         } else {
             Long crc = CopyFile.start(srcDir, dstDir);
             Element file = new Element("file");
-            file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
+            file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathlength));
             file.setAttribute("crc32", String.valueOf(crc));
             inRoot.addContent(file);
         }
@@ -165,7 +165,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
          * Xml-Datei vorbereiten
          */
         Document doc = new Document();
-        Element root = new Element("goobiArchive");
+        Element root = new Element("kitodoArchive");
         doc.setRootElement(root);
         Element source = new Element("source").setText(fileIn.getAbsolutePath());
         Element target = new Element("target").setText(fileOut.getAbsolutePath());
@@ -183,7 +183,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
         setStatusProgress(50);
         try {
             setStatusMessage("copying process folder");
-            copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
+            copyDirectoryWithCrc32Check(fileIn, fileOut, help.getKitodoDataDirectory().length(), root);
         } catch (IOException e) {
             logger.warn("IOException:", e);
             setStatusMessage("IOException in copyDirectory: " + e.getMessage());

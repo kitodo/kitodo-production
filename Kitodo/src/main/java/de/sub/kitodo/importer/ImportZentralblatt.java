@@ -203,7 +203,7 @@ public class ImportZentralblatt {
             /*
              * Datei am richtigen Ort speichern
              */
-            gdzfile.write(this.help.getGoobiDataDirectory() + prozessID + File.separator + "meta.xml");
+            gdzfile.write(this.help.getKitodoDataDirectory() + prozessID + File.separator + "meta.xml");
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
             myLogger.error(e);

@@ -40,7 +40,7 @@ class Query {
     /**
      * Query constructor. Constructs a query from a String. For the query
      * semantics, see
-     * {@link org.goobi.production.plugin.CataloguePlugin.QueryBuilder}.
+     * {@link org.kitodo.production.plugin.CataloguePlugin.QueryBuilder}.
      *
      * @param queryString
      *            Query string to parse

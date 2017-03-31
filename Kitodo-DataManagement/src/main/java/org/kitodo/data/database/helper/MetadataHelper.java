@@ -26,7 +26,7 @@ import java.util.Map;
 public class MetadataHelper {
 
     /**
-     * This method is copied from de.sub.goobi.metadaten.MetadatenHelper. It
+     * This method is copied from de.sub.kitodo.metadaten.MetadatenHelper. It
      * check whether this is a rdf or mets file.
      *
      * @return meta file type

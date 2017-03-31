@@ -155,7 +155,7 @@ public class KitodoHotfolder implements IKitodoHotfolder {
 
         try {
             XMLConfiguration config = new XMLConfiguration(
-                    new Helper().getGoobiConfigDirectory() + "kitodo_hotfolder.xml");
+                    new Helper().getKitodoConfigDirectory() + "kitodo_hotfolder.xml");
 
             logger.trace("config 3");
 

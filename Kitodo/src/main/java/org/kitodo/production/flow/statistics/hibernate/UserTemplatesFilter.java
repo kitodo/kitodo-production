@@ -37,7 +37,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * @see org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#
      * getCriteria ()
      */
     @Override
@@ -54,7 +54,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getName()
+     * org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#getName(
+     * )
      */
     @Override
     public String getName() {
@@ -65,9 +66,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setFilter
-     * (java.lang.String)
+     * @see org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#
+     * setFilter (java.lang.String)
      */
     @Override
     public void setFilter(String Filter) {
@@ -79,7 +79,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setName
+     * org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#setName
      * (java.lang.String)
      */
     @Override
@@ -93,7 +93,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
+     * org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#setSQL
      * (java.lang.String)
      */
     @Override
@@ -115,7 +115,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IDataSource#getSourceData()
+     * @see org.kitodo.production.flow.statistics.IDataSource#getSourceData()
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -126,9 +126,8 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#getIDList
-     * ()
+     * @see org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#
+     * getIDList ()
      */
     @Override
     public List<Integer> getIDList() {
@@ -139,7 +138,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * @see org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#
      * getObservable ()
      */
     @Override
@@ -152,7 +151,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
+     * org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#stepDone
      * ()
      */
     @Override

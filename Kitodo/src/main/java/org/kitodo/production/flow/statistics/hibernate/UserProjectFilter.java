@@ -102,7 +102,7 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.hibernate.IEvaluableFilter#
+     * @see org.kitodo.production.flow.statistics.hibernate.IEvaluableFilter#
      * getObservable ()
      */
     @Override

@@ -17,7 +17,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /**
- * SimpleGoobiJob as basis class for all big jobs
+ * SimpleKitodoJob as basis class for all big jobs
  * 
  * @author Steffen Hankiewicz
  * @version 21.10.2009
@@ -32,7 +32,7 @@ public abstract class AbstractKitodoJob implements Job, IKitodoJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IKitodoJob#execute(org.quartz.
+     * @see org.kitodo.production.flow.jobs.IKitodoJob#execute(org.quartz.
      * JobExecutionContext)
      */
     @Override
@@ -56,7 +56,7 @@ public abstract class AbstractKitodoJob implements Job, IKitodoJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IKitodoJob#execute()
+     * @see org.kitodo.production.flow.jobs.IKitodoJob#execute()
      */
     @Override
     public void execute() {
@@ -65,8 +65,8 @@ public abstract class AbstractKitodoJob implements Job, IKitodoJob {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.goobi.production.flow.jobs.IKitodoJob#setIsRunning(java.lang.Boolean)
+     * @see org.kitodo.production.flow.jobs.IKitodoJob#setIsRunning(java.lang.
+     * Boolean)
      */
     @Override
     public void setIsRunning(Boolean inisRunning) {
@@ -76,7 +76,7 @@ public abstract class AbstractKitodoJob implements Job, IKitodoJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IKitodoJob#getIsRunning()
+     * @see org.kitodo.production.flow.jobs.IKitodoJob#getIsRunning()
      */
     @Override
     public Boolean getIsRunning() {
@@ -86,7 +86,7 @@ public abstract class AbstractKitodoJob implements Job, IKitodoJob {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.jobs.IKitodoJob#getJobName()
+     * @see org.kitodo.production.flow.jobs.IKitodoJob#getJobName()
      */
     @Override
     public String getJobName() {

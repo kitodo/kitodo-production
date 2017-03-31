@@ -70,7 +70,7 @@ class SQLProduction extends SQLGenerator {
      * (non-Javadoc)
      * 
      * @see
-     * org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL(java.
+     * org.kitodo.production.flow.statistics.hibernate.SQLGenerator#getSQL(java.
      * lang.Integer)
      */
     public String getSQL(Integer stepDone) {

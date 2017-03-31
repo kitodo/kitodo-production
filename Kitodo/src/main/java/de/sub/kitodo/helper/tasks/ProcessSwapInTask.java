@@ -152,7 +152,7 @@ public class ProcessSwapInTask extends LongRunningTask {
          * Dateien kopieren und Checksummen ermitteln
          */
         Document doc = new Document();
-        Element root = new Element("goobiArchive");
+        Element root = new Element("kitodoArchive");
         doc.setRootElement(root);
 
         /*

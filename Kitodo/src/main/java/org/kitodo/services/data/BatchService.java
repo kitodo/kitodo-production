@@ -245,7 +245,7 @@ public class BatchService {
     }
 
     /**
-     * Goobi does not keep objects around from Hibernate session to Hibernate
+     * Kitodo does not keep objects around from Hibernate session to Hibernate
      * session, so this is the working approach here.
      *
      * @see "https://developer.jboss.org/wiki/EqualsandHashCode"

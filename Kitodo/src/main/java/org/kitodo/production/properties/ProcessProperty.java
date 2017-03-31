@@ -53,7 +53,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getName()
+     * @see org.kitodo.production.properties.IProperty#getName()
      */
     @Override
     public String getName() {
@@ -63,7 +63,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setName(java.lang.String)
+     * @see org.kitodo.production.properties.IProperty#setName(java.lang.String)
      */
     @Override
     public void setName(String name) {
@@ -73,7 +73,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getContainer()
+     * @see org.kitodo.production.properties.IProperty#getContainer()
      */
     @Override
     public int getContainer() {
@@ -83,7 +83,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setContainer(int)
+     * @see org.kitodo.production.properties.IProperty#setContainer(int)
      */
     @Override
     public void setContainer(int container) {
@@ -93,7 +93,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getValidation()
+     * @see org.kitodo.production.properties.IProperty#getValidation()
      */
     @Override
     public String getValidation() {
@@ -103,8 +103,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.goobi.production.properties.IProperty#setValidation(java.lang.String)
+     * @see org.kitodo.production.properties.IProperty#setValidation(java.lang.
+     * String)
      */
     @Override
     public void setValidation(String validation) {
@@ -114,7 +114,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getType()
+     * @see org.kitodo.production.properties.IProperty#getType()
      */
     @Override
     public Type getType() {
@@ -125,7 +125,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.properties.IProperty#setType(org.goobi.production.
+     * org.kitodo.production.properties.IProperty#setType(org.kitodo.production.
      * properties.Type)
      */
     @Override
@@ -136,7 +136,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getValue()
+     * @see org.kitodo.production.properties.IProperty#getValue()
      */
     @Override
     public String getValue() {
@@ -146,7 +146,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setValue(java.lang.String)
+     * @see
+     * org.kitodo.production.properties.IProperty#setValue(java.lang.String)
      */
     @Override
     public void setValue(String value) {
@@ -156,7 +157,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getPossibleValues()
+     * @see org.kitodo.production.properties.IProperty#getPossibleValues()
      */
     @Override
     public List<String> getPossibleValues() {
@@ -167,7 +168,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.properties.IProperty#setPossibleValues(java.util.
+     * org.kitodo.production.properties.IProperty#setPossibleValues(java.util.
      * ArrayList)
      */
     @Override
@@ -199,7 +200,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getProjects()
+     * @see org.kitodo.production.properties.IProperty#getProjects()
      */
     @Override
     public List<String> getProjects() {
@@ -209,7 +210,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#setProjects(java.util.
+     * @see org.kitodo.production.properties.IProperty#setProjects(java.util.
      * ArrayList)
      */
     @Override
@@ -220,7 +221,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getShowStepConditions()
+     * @see org.kitodo.production.properties.IProperty#getShowStepConditions()
      */
     @Override
     public List<ShowStepCondition> getShowStepConditions() {
@@ -231,8 +232,8 @@ public class ProcessProperty implements IProperty, Serializable {
      * (non-Javadoc)
      *
      * @see
-     * org.goobi.production.properties.IProperty#setShowStepConditions(java.util
-     * .ArrayList)
+     * org.kitodo.production.properties.IProperty#setShowStepConditions(java.
+     * util .ArrayList)
      */
     @Override
     public void setShowStepConditions(List<ShowStepCondition> showStepConditions) {
@@ -242,7 +243,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#
+     * @see org.kitodo.production.properties.IProperty#
      * getShowProcessGroupAccessCondition()
      */
     @Override
@@ -253,8 +254,8 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty
-     * #setShowProcessGroupAccessCondition(org.goobi.production.properties.
+     * @see org.kitodo.production.properties.IProperty
+     * #setShowProcessGroupAccessCondition(org.kitodo.production.properties.
      * AccessCondition)
      */
     @Override
@@ -265,7 +266,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#isValid()
+     * @see org.kitodo.production.properties.IProperty#isValid()
      */
     @Override
     public boolean isValid() {
@@ -281,7 +282,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
+     * @see org.kitodo.production.properties.IProperty#getProzesseigenschaft()
      */
 
     public org.kitodo.data.database.beans.ProcessProperty getProzesseigenschaft() {
@@ -291,7 +292,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty
+     * @see org.kitodo.production.properties.IProperty
      * #setProzesseigenschaft(org.kitodo.data.database.beans.Prozesseigenschaft)
      */
 
@@ -302,7 +303,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#getClone()
+     * @see org.kitodo.production.properties.IProperty#getClone()
      */
     @Override
     public ProcessProperty getClone(int containerNumber) {
@@ -323,7 +324,7 @@ public class ProcessProperty implements IProperty, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.properties.IProperty#transfer()
+     * @see org.kitodo.production.properties.IProperty#transfer()
      */
     @Override
     public void transfer() {

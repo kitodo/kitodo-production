@@ -53,7 +53,7 @@ public class HotfolderJob extends AbstractKitodoJob {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.jobs.SimpleGoobiJob#initialize()
+     * @see org.kitodo.production.flow.jobs.SimpleGoobiJob#initialize()
      */
     @Override
     public String getJobName() {
@@ -63,7 +63,7 @@ public class HotfolderJob extends AbstractKitodoJob {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.jobs.SimpleGoobiJob#execute()
+     * @see org.kitodo.production.flow.jobs.SimpleGoobiJob#execute()
      */
     @Override
     public void execute() {
@@ -299,7 +299,7 @@ public class HotfolderJob extends AbstractKitodoJob {
                             new SafeFile(dir.getAbsolutePath() + File.separator + processTitle).forceDelete();
                         } catch (Exception e) {
                             logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
-                                    + " into goobi", e);
+                                    + " into kitodo", e);
                             return 30;
                         }
                         SafeFile anchor = new SafeFile(dir.getAbsolutePath() + File.separator

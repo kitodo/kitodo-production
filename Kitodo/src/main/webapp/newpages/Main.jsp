@@ -49,7 +49,7 @@
                     <%-- // Breadcrumb --%>
 
                     <%-- Inhalt --%>
-                    <%-- goobi logo for version 151 --%>
+                    <%-- kitodo logo for version 151 --%>
                     <h:panelGrid id="id511" columns="2" width="100%" cellpadding="15"
                                  cellspacing="0" align="center" border="0" rowClasses="rowTop">
 

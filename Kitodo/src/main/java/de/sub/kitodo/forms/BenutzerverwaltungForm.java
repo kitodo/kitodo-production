@@ -212,7 +212,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * The function Loeschen() deletes a user account.
      *
      * <p>
-     * Please note that deleting a user in goobi.production will not delete the
+     * Please note that deleting a user in kitodo.production will not delete the
      * user from a connected LDAP service.
      * </p>
      *

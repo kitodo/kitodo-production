@@ -46,7 +46,7 @@ public class CopierData {
     private final Fileformat fileformat;
 
     /**
-     * The Goobi process corresponding to the workspace file.
+     * The kitodo process corresponding to the workspace file.
      */
     private final Object process;
 
@@ -71,7 +71,7 @@ public class CopierData {
      * @param fileformat
      *            the document to modify
      * @param process
-     *            the related goobi process
+     *            the related gookitodobi process
      */
     public CopierData(Fileformat fileformat, Object process) {
         this.fileformat = fileformat;

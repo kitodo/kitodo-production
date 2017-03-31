@@ -223,7 +223,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.
+     * @see org.kitodo.production.flow.statistics.
      * IStatisticalQuestionLimitedTimeframe# setTimeFrame(java.util.Date,
      * java.util.Date)
      */
@@ -236,8 +236,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
-     * setTimeUnit(org.goobi.production.flow.statistics.enums.TimeUnit)
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
+     * setTimeUnit(org.kitodo.production.flow.statistics.enums.TimeUnit)
      */
     @Override
     public void setTimeUnit(TimeUnit timeGrouping) {
@@ -247,8 +247,8 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
-     * setCalculationUnit(org.goobi.production.flow.statistics.enums.
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
+     * setCalculationUnit(org.kitodo.production.flow.statistics.enums.
      * CalculationUnit)
      */
     @Override
@@ -259,7 +259,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
      * isRendererInverted(de.intranda.commons.chart.renderer.IRenderer)
      */
     @Override
@@ -270,7 +270,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
      * getNumberFormatPattern()
      */
     @Override

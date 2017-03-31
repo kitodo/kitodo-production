@@ -20,7 +20,7 @@ import java.util.Date;
 /**
  * This class provides the tools it takes to generate a configurable Error
  * message for Errors which are unexpected An example for the area in
- * GoobiProperties.config is given after the class declaration in the source
+ * kitodo_properties.config is given after the class declaration in the source
  * code.
  *
  * <p>
@@ -33,11 +33,11 @@ import java.util.Date;
  *
  *          Variables in Messages Bundle: err_emailBody -> message in the email
  *          before the stack trace err_emailMessage -> message displayed if
- *          email is enabled in GoobiConfig: err_userHandling=true
+ *          email is enabled in KitodoConfig: err_userHandling=true
  *          err_fallBackMessage -> messgae displayed if feature is turned off in
- *          GoobiConfig err_linkText -> message in which the link from
- *          GoobiConfig: err_linkToPage= err_noMailService -> message if email
- *          is disabled in GoobiConfig: err_emailEnabled=false err_subjectLine
+ *          KitodoConfig err_linkText -> message in which the link from
+ *          KitodoConfig: err_linkToPage= err_noMailService -> message if email
+ *          is disabled in KitodoConfig: err_emailEnabled=false err_subjectLine
  *          -> message in Subject Line of email
  *
  */
@@ -205,13 +205,13 @@ public class GUIExceptionWrapper extends Exception {
         Integer counter = 0;
         for (StackTraceElement itStackTrace : stackTrace) {
             // only taking those elements from the stack trace, which contain
-            // goobi and the top level element
+            // kitodo and the top level element
             if (counter++ == 1 || itStackTrace.toString().toLowerCase().contains("goobi")) {
                 stackTraceReturn = stackTraceReturn + "<br/>" + itStackTrace.toString();
                 tempTraceReturn = "";
             } else {
                 if (tempTraceReturn.length() < 1) {
-                    stackTraceReturn = stackTraceReturn + "<br/> ---- skipping non goobi class(es) .";
+                    stackTraceReturn = stackTraceReturn + "<br/> ---- skipping non kitodo class(es) .";
                 } else {
                     stackTraceReturn = stackTraceReturn + " .";
                 }

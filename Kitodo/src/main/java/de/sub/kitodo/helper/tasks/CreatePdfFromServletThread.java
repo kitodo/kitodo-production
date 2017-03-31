@@ -35,7 +35,7 @@ import org.kitodo.io.SafeFile;
 import org.kitodo.services.ServiceManager;
 
 /**
- * Creation of PDF-Files as long running task for GoobiContentServerServlet.
+ * Creation of PDF-Files as long running task for KitodoContentServerServlet.
  * First of all the variables have to be set via the setters after that you can
  * initialize and run it
  *
@@ -86,7 +86,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             /*
              * define path for mets and pdfs
              */
-            URL goobiContentServerUrl = null;
+            URL kitodoContentServerUrl = null;
             String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
             new SafeFile("");
             SafeFile tempPdf = SafeFile.createTempFile(this.getProcess().getTitle(), ".pdf");
@@ -99,12 +99,12 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             if (new MetadatenVerifizierung().validate(this.getProcess()) && (this.metsURL != null)) {
                 /*
                  * if no contentserverurl defined use internal
-                 * goobiContentServerServlet
+                 * kitodoContentServerServlet
                  */
                 if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
                     contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
                 }
-                goobiContentServerUrl = new URL(contentServerUrl + this.metsURL);
+                kitodoContentServerUrl = new URL(contentServerUrl + this.metsURL);
 
                 /*
                  * mets data does not exist or is invalid
@@ -130,7 +130,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
                 String imageString = url.substring(0, url.length() - 1);
                 String targetFileName = "&targetFileName=" + this.getProcess().getTitle() + ".pdf";
-                goobiContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
+                kitodoContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
             }
 
             /*
@@ -139,9 +139,9 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
             HttpClient httpclient = new HttpClient();
             if (logger.isDebugEnabled()) {
-                logger.debug("Retrieving: " + goobiContentServerUrl.toString());
+                logger.debug("Retrieving: " + kitodoContentServerUrl.toString());
             }
-            method = new GetMethod(goobiContentServerUrl.toString());
+            method = new GetMethod(kitodoContentServerUrl.toString());
             try {
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
                 int statusCode = httpclient.executeMethod(method);

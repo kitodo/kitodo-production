@@ -465,7 +465,7 @@ public class MetadatenImagesHelper {
         return false;
     }
 
-    public static class GoobiImageFileComparator implements Comparator<String> {
+    public static class KitodoImageFileComparator implements Comparator<String> {
 
         @Override
         public int compare(String s1, String s2) {
@@ -515,7 +515,7 @@ public class MetadatenImagesHelper {
             }
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                Collections.sort(dataList, new KitodoImageFileComparator());
             }
             return dataList;
         } else {
@@ -571,7 +571,7 @@ public class MetadatenImagesHelper {
                 return orderedFilenameList;
 
             } else {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                Collections.sort(dataList, new KitodoImageFileComparator());
                 return dataList;
             }
         } else {
@@ -626,7 +626,7 @@ public class MetadatenImagesHelper {
             }
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                Collections.sort(dataList, new KitodoImageFileComparator());
             }
             return dataList;
         } else {

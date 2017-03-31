@@ -34,7 +34,8 @@ public class SQLStorage extends SQLGenerator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.hibernate.SQLGenerator#getSQL()
+     * @see
+     * org.kitodo.production.flow.statistics.hibernate.SQLGenerator#getSQL()
      */
     @Override
     public String getSQL() {

@@ -73,5 +73,5 @@ public interface IImportPlugin extends IPlugin {
 
     public void setOpacCatalogue(String opacCatalogue);
 
-    public void setGoobiConfigDirectory(String configDir);
+    public void setKitodoConfigDirectory(String configDir);
 }

@@ -117,7 +117,7 @@ public class Course extends ArrayList<Block> {
      *
      * <p>
      * Each <code>&lt;process&gt;</code> element represents one process to be
-     * generated in Goobi Production. It can hold <code>&lt;title&gt;</code>
+     * generated in Kitodo Production. It can hold <code>&lt;title&gt;</code>
      * elements (of any quantity).
      * </p>
      */
@@ -129,7 +129,7 @@ public class Course extends ArrayList<Block> {
      *
      * <p>
      * Each <code>&lt;processes&gt;</code> element represents the processes to
-     * be generated in Goobi Production. It can hold
+     * be generated in Kitodo Production. It can hold
      * <code>&lt;process&gt;</code> elements (of any quantity).
      * </p>
      */

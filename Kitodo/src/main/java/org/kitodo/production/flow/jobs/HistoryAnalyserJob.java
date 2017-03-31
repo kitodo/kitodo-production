@@ -49,7 +49,7 @@ public class HistoryAnalyserJob extends AbstractKitodoJob {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.jobs.SimpleGoobiJob#initialize()
+     * @see org.kitodo.production.flow.jobs.SimpleGoobiJob#initialize()
      */
     @Override
     public String getJobName() {
@@ -59,7 +59,7 @@ public class HistoryAnalyserJob extends AbstractKitodoJob {
     /*
      * (non-Javadoc)
      *
-     * @see org.goobi.production.flow.jobs.SimpleGoobiJob#execute()
+     * @see org.kitodo.production.flow.jobs.SimpleGoobiJob#execute()
      */
     @Override
     public void execute() {

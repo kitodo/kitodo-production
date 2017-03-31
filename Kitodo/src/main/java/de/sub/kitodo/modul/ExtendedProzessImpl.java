@@ -26,8 +26,8 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 /**
- * Das ist die Implementierung von ProcessInterface. Wird auf Goobi-Seiten
- * Ausgeführt Ist auch vorläufer für GoobiEngine Erweitert um die individuellen
+ * Das ist die Implementierung von ProcessInterface. Wird auf kitodo-Seiten
+ * Ausgeführt Ist auch vorläufer für kitodoEngine Erweitert um die individuellen
  * Api-Aufrufe
  *
  * @author Igor Toker

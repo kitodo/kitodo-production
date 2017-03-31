@@ -47,8 +47,8 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
      * (non-Javadoc)
      * 
      * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
-     * org.goobi.production.flow.statistics.enums.TimeUnit)
+     * org.kitodo.production.flow.statistics.IStatisticalQuestion#setTimeUnit(
+     * org.kitodo.production.flow.statistics.enums.TimeUnit)
      */
     @Override
     public void setTimeUnit(TimeUnit timeGrouping) {
@@ -59,8 +59,8 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
      * (non-Javadoc)
      * 
      * @see
-     * org.goobi.production.flow.statistics.IStatisticalQuestion#getDataTables(
-     * org.goobi.production.flow.statistics.IDataSource)
+     * org.kitodo.production.flow.statistics.IStatisticalQuestion#getDataTables(
+     * org.kitodo.production.flow.statistics.IDataSource)
      */
     @Override
     public List<DataTable> getDataTables(IDataSource dataSource) {
@@ -140,9 +140,9 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
      * setCalculationUnit(
-     * org.goobi.production.flow.statistics.enums.CalculationUnit)
+     * org.kitodo.production.flow.statistics.enums.CalculationUnit)
      */
     @Override
     public void setCalculationUnit(CalculationUnit cu) {
@@ -151,7 +151,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.
+     * @see org.kitodo.production.flow.statistics.
      * IStatisticalQuestionLimitedTimeframe# setTimeFrame(java.util.Date,
      * java.util.Date)
      */
@@ -164,7 +164,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
      * isRendererInverted( de.intranda.commons.chart.renderer.IRenderer)
      */
     @Override
@@ -176,7 +176,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
     /*
      * (non-Javadoc)
      * 
-     * @see org.goobi.production.flow.statistics.IStatisticalQuestion#
+     * @see org.kitodo.production.flow.statistics.IStatisticalQuestion#
      * getNumberFormatPattern()
      */
     @Override

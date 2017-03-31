@@ -18,7 +18,7 @@ import java.util.zip.CRC32;
 
 import org.kitodo.io.SafeFile;
 
-// Only usage: in de.sub.goobi.helper.tasks.ProcessSwapOutTask
+// Only usage: in de.sub.kitodo.helper.tasks.ProcessSwapOutTask
 public class CopyFile {
 
     // program options initialized to default values

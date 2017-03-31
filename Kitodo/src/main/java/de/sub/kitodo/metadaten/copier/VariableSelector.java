@@ -14,7 +14,7 @@ package de.sub.kitodo.metadaten.copier;
 import java.lang.reflect.Field;
 
 /**
- * A VariableSelector provides methods to retrieve variables used in Goobi.
+ * A VariableSelector provides methods to retrieve variables used in kitodo.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
