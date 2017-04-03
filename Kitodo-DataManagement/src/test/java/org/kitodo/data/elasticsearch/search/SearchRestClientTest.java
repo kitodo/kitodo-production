@@ -11,12 +11,10 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
-
-import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -57,6 +55,7 @@ public class SearchRestClientTest {
         assertTrue("Get of document has failed!", condition);
     }
 
+    @Ignore("Entities are not inserted in this method...")
     @Test
     public void shouldGetDocumentByQuery() throws Exception {
         IndexRestClient indexRestClient = initializeIndexRestClient();
