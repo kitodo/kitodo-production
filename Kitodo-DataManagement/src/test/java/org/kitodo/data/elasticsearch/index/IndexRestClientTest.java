@@ -21,12 +21,12 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.junit.Test;
 
 /**
- * Test class for RestClientImplementation.
+ * Test class for IndexRestClient.
  */
-public class RestClientImplementationTest {
+public class IndexRestClientTest {
 
-    private static RestClientImplementation initializeRestClient() {
-        RestClientImplementation restClient = new RestClientImplementation();
+    private static IndexRestClient initializeRestClient() {
+        IndexRestClient restClient = new IndexRestClient();
 
         restClient.initiateClient("localhost", 9200, "http");
         restClient.setIndex("kitodo");
@@ -51,7 +51,7 @@ public class RestClientImplementationTest {
 
     @Test
     public void shouldAddDocument() throws Exception {
-        RestClientImplementation restClient = initializeRestClient();
+        IndexRestClient restClient = initializeRestClient();
         String result = restClient.addDocument(createEntities().get(1), 1);
 
         boolean created = result.contains("\"created\":true");
@@ -64,7 +64,7 @@ public class RestClientImplementationTest {
 
     @Test
     public void shouldAddType() throws Exception {
-        RestClientImplementation restClient = initializeRestClient();
+        IndexRestClient restClient = initializeRestClient();
         String result = restClient.addType(createEntities());
 
         boolean created = result.contains(
@@ -84,7 +84,7 @@ public class RestClientImplementationTest {
 
     @Test
     public void shouldDeleteDocument() throws Exception {
-        RestClientImplementation restClient = initializeRestClient();
+        IndexRestClient restClient = initializeRestClient();
         restClient.addType(createEntities());
 
         String result = restClient.deleteDocument(1);
@@ -94,7 +94,7 @@ public class RestClientImplementationTest {
 
     @Test
     public void shouldDeleteType() throws Exception {
-        RestClientImplementation restClient = initializeRestClient();
+        IndexRestClient restClient = initializeRestClient();
         restClient.addType(createEntities());
 
         String result = restClient.deleteType();
