@@ -20,16 +20,16 @@ import org.apache.log4j.Logger;
 public class ConfigMain {
     private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
     private static volatile PropertiesConfiguration config;
-    private static final String CONFIG_FILE = "elasticsearch.properties";
+    private static final String CONFIG_FILE = "goobi_config.properties";
 
-    public static PropertiesConfiguration getConfig(String configFile) {
+    public static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (ConfigMain.class) {
                 PropertiesConfiguration initialized = config;
                 if (initialized == null) {
                     PropertiesConfiguration.setDefaultListDelimiter('&');
                     try {
-                        initialized = new PropertiesConfiguration(configFile);
+                        initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
                         if (myLogger.isEnabledFor(Level.WARN)) {
                             myLogger.warn(
@@ -54,7 +54,7 @@ public class ConfigMain {
      */
     public static String getParameter(String inParameter) {
         try {
-            return getConfig(CONFIG_FILE).getString(inParameter);
+            return getConfig().getString(inParameter);
         } catch (RuntimeException e) {
             myLogger.error(e);
             return "- keine Konfiguration gefunden -";
@@ -68,7 +68,7 @@ public class ConfigMain {
      */
     public static String getParameter(String inParameter, String inDefaultIfNull) {
         try {
-            return getConfig(CONFIG_FILE).getString(inParameter, inDefaultIfNull);
+            return getConfig().getString(inParameter, inDefaultIfNull);
         } catch (RuntimeException e) {
             return inDefaultIfNull;
         }
@@ -90,7 +90,7 @@ public class ConfigMain {
      */
     public static int getIntParameter(String inParameter, int inDefault) {
         try {
-            return getConfig(CONFIG_FILE).getInt(inParameter, inDefault);
+            return getConfig().getInt(inParameter, inDefault);
         } catch (Exception e) {
             return 0;
         }

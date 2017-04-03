@@ -20,16 +20,13 @@ import java.util.concurrent.TimeUnit;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.ConfigMain;
 
 public class ConfigCore extends ConfigMain {
     private static final Logger myLogger = Logger.getLogger(ConfigCore.class);
-    private static volatile PropertiesConfiguration config;
     private static String imagesPath = null;
-    private static final String CONFIG_FILE = "goobi_config.properties";
 
     /**
      * Request selected parameter from configuration.
@@ -38,7 +35,7 @@ public class ConfigCore extends ConfigMain {
      */
     public static String getParameter(String inParameter) {
         try {
-            return getConfig(CONFIG_FILE).getString(inParameter);
+            return getConfig().getString(inParameter);
         } catch (RuntimeException e) {
             myLogger.error(e);
             return "- keine Konfiguration gefunden -";
@@ -52,7 +49,7 @@ public class ConfigCore extends ConfigMain {
      */
     public static String getParameter(String inParameter, String inDefaultIfNull) {
         try {
-            return getConfig(CONFIG_FILE).getString(inParameter, inDefaultIfNull);
+            return getConfig().getString(inParameter, inDefaultIfNull);
         } catch (RuntimeException e) {
             return inDefaultIfNull;
         }
@@ -65,7 +62,7 @@ public class ConfigCore extends ConfigMain {
      */
     public static int getIntParameter(String inParameter, int inDefault) {
         try {
-            return getConfig(CONFIG_FILE).getInt(inParameter, inDefault);
+            return getConfig().getInt(inParameter, inDefault);
         } catch (Exception e) {
             return 0;
         }
@@ -120,7 +117,7 @@ public class ConfigCore extends ConfigMain {
      * @return Parameter as String
      */
     public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
-        return getConfig(CONFIG_FILE).getBoolean(inParameter, inDefault);
+        return getConfig().getBoolean(inParameter, inDefault);
     }
 
     /**
@@ -129,7 +126,7 @@ public class ConfigCore extends ConfigMain {
      * @return Parameter as Long
      */
     public static long getLongParameter(String inParameter, long inDefault) {
-        return getConfig(CONFIG_FILE).getLong(inParameter, inDefault);
+        return getConfig().getLong(inParameter, inDefault);
     }
 
     /**
@@ -148,6 +145,6 @@ public class ConfigCore extends ConfigMain {
      * @return Parameter as String[]
      */
     public static String[] getStringArrayParameter(String inParameter) {
-        return getConfig(CONFIG_FILE).getStringArray(inParameter);
+        return getConfig().getStringArray(inParameter);
     }
 }
