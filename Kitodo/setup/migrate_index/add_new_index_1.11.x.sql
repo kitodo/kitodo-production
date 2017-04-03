@@ -1,5 +1,5 @@
 --
--- Add new indexes for kitodo.Production CE newer than 1.11.2
+-- Add new indexes for Kitodo.Production CE newer than 1.11.2
 --
 ALTER TABLE `batchesprozesse`
   ADD KEY `FK_ProzesseID` (`ProzesseID`),
