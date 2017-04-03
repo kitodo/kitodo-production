@@ -62,13 +62,18 @@ public class KitodoRestClient implements RestClientInterface {
         restClient.close();
     }
 
+    /**
+     * Getter for index.
+     * 
+     * @return index name
+     */
     public String getIndex() {
         return index;
     }
 
     /**
      * Setter for index.
-     *
+     * 
      * @param index
      *            - equal to the name of database, default kitodo
      */
@@ -76,6 +81,11 @@ public class KitodoRestClient implements RestClientInterface {
         this.index = index;
     }
 
+    /**
+     * Getter for type.
+     * 
+     * @return type name
+     */
     public String getType() {
         return type;
     }
