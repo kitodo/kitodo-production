@@ -171,54 +171,54 @@ class ResolveRule {
      *            element to write to
      */
     private void applyMapping(Element in, Element resultField) {
-        boolean debugEnabledAndNoMappingRuleMatches = logger.isDebugEnabled();
-        Set<String> fieldsInResult = logger.isDebugEnabled() ? new TreeSet<String>() : null;
         for (Element field : new GetChildElements(in)) {
-            if (field.getNodeName().equals("field")) {
-                String tag = field.getAttributeNode("tag").getTextContent();
-                for (Element subfield : new GetChildElements(field)) {
-                    if (subfield.getNodeName().equals("subfield")) {
-                        String subtag = subfield.getAttributeNode("code").getTextContent();
-                        String mappingID = ResolveRule.getIdentifier(tag, subtag);
-                        if (mapping.containsKey(mappingID)) {
-                            debugEnabledAndNoMappingRuleMatches = false;
-                            Element newChild = resultField.getOwnerDocument().createElement("subfield");
-                            newChild.setAttribute("code", mapping.get(mappingID).asSubtag);
-                            newChild.setTextContent(subfield.getTextContent());
-                            resultField.appendChild(newChild);
-                        } else if (debugEnabledAndNoMappingRuleMatches) {
-                            fieldsInResult.add(mappingID);
-                        }
+            if (!field.getNodeName().equals("field")) {
+                applyMapping(field, resultField);
+                continue;
+            }
+            boolean debugEnabledAndNoMappingRuleMatches = logger.isDebugEnabled();
+            Set<String> fieldsInResult = logger.isDebugEnabled() ? new TreeSet<String>() : null;
+            String tag = field.getAttributeNode("tag").getTextContent();
+            for (Element subfield : new GetChildElements(field)) {
+                if (subfield.getNodeName().equals("subfield")) {
+                    String subtag = subfield.getAttributeNode("code").getTextContent();
+                    String mappingID = ResolveRule.getIdentifier(tag, subtag);
+                    if (mapping.containsKey(mappingID)) {
+                        debugEnabledAndNoMappingRuleMatches = false;
+                        Element newChild = resultField.getOwnerDocument().createElement("subfield");
+                        newChild.setAttribute("code", mapping.get(mappingID).asSubtag);
+                        newChild.setTextContent(subfield.getTextContent());
+                        resultField.appendChild(newChild);
+                    } else if (debugEnabledAndNoMappingRuleMatches) {
+                        fieldsInResult.add(mappingID);
                     }
                 }
-            } else {
-                applyMapping(field, resultField);
             }
-        }
-        if (debugEnabledAndNoMappingRuleMatches) {
-            StringBuilder debugLogMessage = new StringBuilder(13 * mapping.size() + 8 * fieldsInResult.size() + 71);
-            debugLogMessage.append("No import mapping for any of the result fields ");
-            boolean addAComma = false;
-            for (String fieldInResult : fieldsInResult) {
-                debugLogMessage.append(fieldInResult);
-                if (addAComma) {
-                    debugLogMessage.append(", ");
-                } else {
-                    addAComma = true;
+            if (debugEnabledAndNoMappingRuleMatches) {
+                StringBuilder debugLogMessage = new StringBuilder(13 * mapping.size() + 8 * fieldsInResult.size() + 71);
+                debugLogMessage.append("No import mapping for any of the result fields ");
+                boolean addAComma = false;
+                for (String fieldInResult : fieldsInResult) {
+                    debugLogMessage.append(fieldInResult);
+                    if (addAComma) {
+                        debugLogMessage.append(", ");
+                    } else {
+                        addAComma = true;
+                    }
                 }
-            }
-            debugLogMessage.append(". Configured mappings: ");
-            addAComma = false;
-            for (Entry<String, MapRule> mappingEntry : mapping.entrySet()) {
-                debugLogMessage.append(mappingEntry.getValue());
-                if (addAComma) {
-                    debugLogMessage.append(", ");
-                } else {
-                    addAComma = true;
+                debugLogMessage.append(". Configured mappings: ");
+                addAComma = false;
+                for (Entry<String, MapRule> mappingEntry : mapping.entrySet()) {
+                    debugLogMessage.append(mappingEntry.getValue());
+                    if (addAComma) {
+                        debugLogMessage.append(", ");
+                    } else {
+                        addAComma = true;
+                    }
                 }
+                debugLogMessage.append('.');
+                logger.debug(debugLogMessage);
             }
-            debugLogMessage.append('.');
-            logger.debug(debugLogMessage);
         }
     }
 
