@@ -11,8 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -33,9 +31,6 @@ public class TaskType extends BaseType<Task> {
     @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(Task task) {
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
         LinkedHashMap<String, String> orderedTaskMap = new LinkedHashMap<>();
         orderedTaskMap.put("title", task.getTitle());
         String priority = task.getPriority() != null ? task.getPriority().toString() : "null";
@@ -45,12 +40,11 @@ public class TaskType extends BaseType<Task> {
         String processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().toString()
                 : "null";
         orderedTaskMap.put("processingStatus", processingStatus);
-        String processingTime = task.getProcessingTime() != null ? dateFormat.format(task.getProcessingTime()) : null;
+        String processingTime = task.getProcessingTime() != null ? formatDate(task.getProcessingTime()) : null;
         orderedTaskMap.put("processingTime", processingTime);
-        String processingBegin = task.getProcessingBegin() != null ? dateFormat.format(task.getProcessingBegin())
-                : null;
+        String processingBegin = task.getProcessingBegin() != null ? formatDate(task.getProcessingBegin()) : null;
         orderedTaskMap.put("processingBegin", processingBegin);
-        String processingEnd = task.getProcessingEnd() != null ? dateFormat.format(task.getProcessingEnd()) : null;
+        String processingEnd = task.getProcessingEnd() != null ? formatDate(task.getProcessingEnd()) : null;
         orderedTaskMap.put("processingEnd", processingEnd);
         orderedTaskMap.put("homeDirectory", String.valueOf(task.getHomeDirectory()));
         orderedTaskMap.put("typeMetadata", String.valueOf(task.isTypeMetadata()));
