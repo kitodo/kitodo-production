@@ -13,12 +13,8 @@ package org.kitodo.data.elasticsearch.index;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.junit.Test;
+import org.kitodo.data.elasticsearch.MockEntity;
 
 /**
  * Test class for IndexRestClient.
@@ -35,24 +31,10 @@ public class IndexRestClientTest {
         return restClient;
     }
 
-    private static HashMap<Integer, HttpEntity> createEntities() {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
-
-        String jsonString = "{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}]}";
-        HttpEntity entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-        documents.put(1, entity);
-
-        jsonString = "{\"title\":\"Batch2\",\"type\":\"null\",\"processes\":[]}";
-        entity = new NStringEntity(jsonString, ContentType.APPLICATION_JSON);
-        documents.put(2, entity);
-
-        return documents;
-    }
-
     @Test
     public void shouldAddDocument() throws Exception {
         IndexRestClient restClient = initializeRestClient();
-        String result = restClient.addDocument(createEntities().get(1), 1);
+        String result = restClient.addDocument(MockEntity.createEntities().get(1), 1);
 
         boolean created = result.contains("\"created\":true");
         // if document already exists it is updated and in that case check if
@@ -65,7 +47,7 @@ public class IndexRestClientTest {
     @Test
     public void shouldAddType() throws Exception {
         IndexRestClient restClient = initializeRestClient();
-        String result = restClient.addType(createEntities());
+        String result = restClient.addType(MockEntity.createEntities());
 
         boolean created = result.contains(
                 "requestLine=PUT /kitodo/test/1 HTTP/1.1, host=http://localhost:9200, response=HTTP/1.1 201 Created");
@@ -85,7 +67,7 @@ public class IndexRestClientTest {
     @Test
     public void shouldDeleteDocument() throws Exception {
         IndexRestClient restClient = initializeRestClient();
-        restClient.addType(createEntities());
+        restClient.addType(MockEntity.createEntities());
 
         String result = restClient.deleteDocument(1);
         boolean condition = result.contains("HTTP/1.1 200 OK");
@@ -95,7 +77,7 @@ public class IndexRestClientTest {
     @Test
     public void shouldDeleteType() throws Exception {
         IndexRestClient restClient = initializeRestClient();
-        restClient.addType(createEntities());
+        restClient.addType(MockEntity.createEntities());
 
         String result = restClient.deleteType();
         boolean condition = result.contains("HTTP/1.1 200 OK");
