@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 
 /**
@@ -72,15 +73,15 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * @return response from the server
      */
     @SuppressWarnings("unchecked")
-    public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException {
+    public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException, ResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
         if (method == HTTPMethods.PUT) {
             HttpEntity document = baseType.createDocument(baseBean);
-            response = restClient.addDocument(document, baseBean.getId());
+            response = String.valueOf(restClient.addDocument(document, baseBean.getId()));
         } else if (method == HTTPMethods.DELETE) {
-            response = restClient.deleteDocument(baseBean.getId());
+            response = String.valueOf(restClient.deleteDocument(baseBean.getId()));
         } else {
             response = "Incorrect HTTP method!";
         }
@@ -96,12 +97,12 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * @param beanId
      *            response from the server
      */
-    public String performSingleRequest(Integer beanId) throws IOException {
+    public String performSingleRequest(Integer beanId) throws IOException, ResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
         if (method == HTTPMethods.DELETE) {
-            response = restClient.deleteDocument(beanId);
+            response = String.valueOf(restClient.deleteDocument(beanId));
         } else {
             response = "Incorrect HTTP method!";
         }
@@ -120,7 +121,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      */
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
-            throws DAOException, IOException, InterruptedException {
+            throws DAOException, IOException, InterruptedException, ResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
@@ -128,7 +129,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
             HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseBeans);
             response = restClient.addType(documents);
         } else if (method == HTTPMethods.DELETE) {
-            response = restClient.deleteType();
+            response = String.valueOf(restClient.deleteType());
         } else {
             response = "Incorrect HTTP method!";
         }
