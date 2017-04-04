@@ -11,10 +11,13 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
@@ -23,31 +26,15 @@ import static org.junit.Assert.assertTrue;
  */
 public class SearchRestClientTest {
 
-    private static SearchRestClient initializeSearchRestClient() {
-        SearchRestClient restClient = new SearchRestClient();
-
-        restClient.initiateClient("localhost", 9200, "http");
-        restClient.setIndex("kitodo");
-        restClient.setType("testget");
-
-        return restClient;
-    }
-
-    private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-
-        restClient.initiateClient("localhost", 9200, "http");
-        restClient.setIndex("kitodo");
-        restClient.setType("testget");
-
-        return restClient;
+    @BeforeClass
+    public static void prepareIndex() throws IOException, ResponseException {
+        IndexRestClient indexRestClient = initializeIndexRestClient();
+        indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
+        indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
     }
 
     @Test
     public void shouldGetDocumentById() throws Exception {
-        IndexRestClient indexRestClient = initializeIndexRestClient();
-        indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
-        indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
         SearchRestClient searchRestClient = initializeSearchRestClient();
         String result = searchRestClient.getDocument(1);
 
@@ -55,18 +42,30 @@ public class SearchRestClientTest {
         assertTrue("Get of document has failed!", condition);
     }
 
-    @Ignore("Entities are not inserted in this method...")
     @Test
     public void shouldGetDocumentByQuery() throws Exception {
-        IndexRestClient indexRestClient = initializeIndexRestClient();
-        indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
-        indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
+        Thread.sleep(2000);
         SearchRestClient searchRestClient = initializeSearchRestClient();
         String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
         String result = searchRestClient.getDocument(query);
-        System.out.println(result);
 
         boolean condition = result.contains("\"total\" : 2");
         assertTrue("Get of document has failed!", condition);
+    }
+
+    private static SearchRestClient initializeSearchRestClient() {
+        SearchRestClient restClient = new SearchRestClient();
+        restClient.initiateClient();
+        restClient.setIndex("kitodo");
+        restClient.setType("testGet");
+        return restClient;
+    }
+
+    private static IndexRestClient initializeIndexRestClient() {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.setIndex("kitodo");
+        restClient.setType("testGet");
+        return restClient;
     }
 }
