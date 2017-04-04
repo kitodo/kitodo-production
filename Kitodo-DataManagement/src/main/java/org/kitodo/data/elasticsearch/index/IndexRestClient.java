@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.client.Response;
@@ -44,14 +45,7 @@ public class IndexRestClient extends KitodoRestClient {
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.<String, String>emptyMap(),
                 entity);
-        int statusCode = indexResponse.getStatusLine().getStatusCode();
-
-        if (statusCode >= 400 && statusCode < 452) {
-            throw new ResponseException("Client error!");
-        } else if (statusCode >= 500 && statusCode < 512) {
-            throw new ResponseException("Server error!");
-        }
-
+        int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
 
@@ -98,14 +92,7 @@ public class IndexRestClient extends KitodoRestClient {
     public boolean deleteDocument(Integer id) throws IOException, ResponseException {
         Response indexResponse = restClient.performRequest("DELETE",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id);
-        int statusCode = indexResponse.getStatusLine().getStatusCode();
-
-        if (statusCode >= 400 && statusCode < 452) {
-            throw new ResponseException("Client error!");
-        } else if (statusCode >= 500 && statusCode < 512) {
-            throw new ResponseException("Server error!");
-        }
-        return statusCode == 200;
+        return processStatusCode(indexResponse.getStatusLine()) == 200;
     }
 
     /**
@@ -119,13 +106,16 @@ public class IndexRestClient extends KitodoRestClient {
         Response indexResponse = restClient.performRequest("POST",
                 "/" + this.getIndex() + "/" + this.getType() + "/_delete_by_query?conflicts=proceed",
                 Collections.<String, String>emptyMap(), entity);
-        int statusCode = indexResponse.getStatusLine().getStatusCode();
+        return processStatusCode(indexResponse.getStatusLine()) == 200;
+    }
 
+    private int processStatusCode(StatusLine statusLine)  throws ResponseException {
+        int statusCode = statusLine.getStatusCode();
         if (statusCode >= 400 && statusCode < 452) {
-            throw new ResponseException("Client error!");
+            throw new ResponseException("Client error: " + statusLine.toString());
         } else if (statusCode >= 500 && statusCode < 512) {
-            throw new ResponseException("Server error!");
+            throw new ResponseException("Server error: " + statusLine.toString());
         }
-        return statusCode == 200;
+        return statusCode;
     }
 }
