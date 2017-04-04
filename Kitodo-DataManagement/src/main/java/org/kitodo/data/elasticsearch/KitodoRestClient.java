@@ -24,7 +24,7 @@ import org.kitodo.data.elasticsearch.api.RestClientInterface;
 /**
  * Implementation of Elastic Search REST Client for Index Module.
  */
-public class KitodoRestClient implements RestClientInterface {
+public abstract class KitodoRestClient implements RestClientInterface {
 
     protected String index;
     protected String type;
@@ -107,7 +107,7 @@ public class KitodoRestClient implements RestClientInterface {
      * Setter for type.
      *
      * @param type
-     *            - equal to the name of table in database
+     *            - equal to the name of table in database, but not necessary
      */
     public void setType(String type) {
         this.type = type;
