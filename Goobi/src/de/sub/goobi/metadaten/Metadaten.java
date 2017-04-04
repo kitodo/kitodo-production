@@ -1155,13 +1155,17 @@ public class Metadaten {
                 }
 
                 // Build a new list of children for the edited element
-                List<DocStruct> newChildren = new ArrayList<>(edited.getAllChildren().size() + 1);
+                List<DocStruct> childrenBefore = edited.getAllChildren();
+                if (childrenBefore == null) {
+                    childrenBefore = Collections.emptyList();
+                }
+                List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
                 if (mode.equals(TreeInsertionMode.AS_FIRST_CHILD)) {
                     for (DocStruct createdElement : createdElements) {
                         selection.addChild(createdElement);
                     }
                 }
-                for (DocStruct child : edited.getAllChildren()) {
+                for (DocStruct child : childrenBefore) {
                     if (child == selection && mode.equals(TreeInsertionMode.BEFORE_ELEMENT)) {
                         for (DocStruct element : createdElements) {
                             selection.addChild(element);
