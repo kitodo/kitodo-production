@@ -114,6 +114,7 @@
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.4</version>
                 <configuration>
+                    <xmlOutput>true</xmlOutput>
                     <xmlOutputDirectory>target/findbugsreports</xmlOutputDirectory>
                     <effort>Max</effort>
                     <failOnError>false</failOnError>
@@ -121,6 +122,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
