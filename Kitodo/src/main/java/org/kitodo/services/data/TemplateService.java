@@ -27,7 +27,7 @@ public class TemplateService {
 
     private TemplateDAO templateDao = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
-    private Indexer<Template, TemplateType> indexer = new Indexer<>("kitodo", Template.class);
+    private Indexer<Template, TemplateType> indexer = new Indexer<>(Template.class);
 
     /**
      * Method saves object to database and insert document to the index of

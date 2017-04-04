@@ -35,7 +35,7 @@ import org.kitodo.data.elasticsearch.index.type.TaskType;
 public class TaskService {
     private TaskDAO taskDao = new TaskDAO();
     private TaskType taskType = new TaskType();
-    private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
+    private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
 
     /**
      * Method saves object to database and insert document to the index of

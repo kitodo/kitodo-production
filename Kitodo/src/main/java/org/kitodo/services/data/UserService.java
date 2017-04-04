@@ -42,7 +42,7 @@ public class UserService {
 
     private UserDAO userDao = new UserDAO();
     private UserType userType = new UserType();
-    private Indexer<User, UserType> indexer = new Indexer<>("kitodo", User.class);
+    private Indexer<User, UserType> indexer = new Indexer<>(User.class);
 
     /**
      * Method saves object to database and insert document to the index of

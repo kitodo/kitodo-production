@@ -36,7 +36,7 @@ public class ProjectService {
 
     private ProjectDAO projectDao = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
-    private Indexer<Project, ProjectType> indexer = new Indexer<>("kitodo", Project.class);
+    private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
 
     /**
      * Method saves object to database and insert document to the index of

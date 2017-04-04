@@ -30,7 +30,7 @@ public class HistoryService {
 
     private HistoryDAO historyDao = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
-    private Indexer<History, HistoryType> indexer = new Indexer<>("kitodo", History.class);
+    private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
 
     /**
      * Method saves object to database and insert document to the index of
