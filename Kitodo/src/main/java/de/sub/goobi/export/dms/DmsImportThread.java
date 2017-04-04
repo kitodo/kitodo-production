@@ -11,7 +11,7 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -103,7 +103,7 @@ public class DmsImportThread extends Thread {
                 myLogger.error("Unexception exception", t);
             }
         }
-        if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
+        if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
             /* Images wieder löschen */
             this.folderImages.deleteDir();
         }

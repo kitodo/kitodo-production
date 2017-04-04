@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
@@ -221,7 +221,7 @@ public class Metadaten {
     public String HinzufuegenPerson() {
         this.modusHinzufuegenPerson = true;
         this.tempPersonNachname = "";
-        this.tempPersonRecord = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+        this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
         if (!SperrungAktualisieren()) {
             return "SperrungAbgelaufen";
@@ -456,7 +456,7 @@ public class Metadaten {
             } else {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {
-                    authority = ConfigMain
+                    authority = ConfigCore
                             .getParameter(Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
                 }
             }
@@ -758,7 +758,7 @@ public class Metadaten {
 
         BildErmitteln(0);
         retrieveAllImages();
-        if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.mydocument.getPhysicalDocStruct() == null
                         || this.mydocument.getPhysicalDocStruct().getAllChildren() == null
                         || this.mydocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
@@ -795,7 +795,7 @@ public class Metadaten {
     }
 
     private void createDefaultValues(DocStruct element) {
-        if (ConfigMain.getBooleanParameter("MetsEditorEnableDefaultInitialisation", true)) {
+        if (ConfigCore.getBooleanParameter("MetsEditorEnableDefaultInitialisation", true)) {
             MetadatenalsBeanSpeichern(element);
             if (element.getAllChildren() != null && element.getAllChildren().size() > 0) {
                 for (DocStruct ds : element.getAllChildren()) {
@@ -1664,7 +1664,7 @@ public class Metadaten {
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        return ConfigMain.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
+        return ConfigCore.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
     }
 
     public List<String> getAllTifFolders() {
@@ -1693,8 +1693,8 @@ public class Metadaten {
             this.allTifFolders.add(verzeichnisse[i]);
         }
 
-        if (ConfigMain.getParameter("MetsEditorDefaultSuffix", null) != null) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix");
+        if (ConfigCore.getParameter("MetsEditorDefaultSuffix", null) != null) {
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix");
             for (String directory : this.allTifFolders) {
                 if (directory.endsWith(suffix)) {
                     this.currentTifFolder = directory;
@@ -1731,7 +1731,7 @@ public class Metadaten {
         myLogger.trace("dataList");
         List<String> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
         myLogger.trace("dataList 2");
-        if (ConfigMain.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (dataList == null || dataList.isEmpty())) {
             try {
                 createPagination();
@@ -1812,7 +1812,7 @@ public class Metadaten {
                         myLogger.trace("myBildNummer: " + this.myBildNummer);
                     }
                     /* Pages-Verzeichnis ermitteln */
-                    String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
+                    String myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
                     if (myLogger.isTraceEnabled()) {
                         myLogger.trace("myPfad: " + myPfad);
                     }
@@ -2153,7 +2153,7 @@ public class Metadaten {
     private int pageNumber = 0;
 
     private SelectOne<Separator> paginierungSeparators = new SelectOne<Separator>(
-            Separator.factory(ConfigMain.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
+            Separator.factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
 
     public int getPageNumber() {
         return this.pageNumber;
@@ -2364,7 +2364,7 @@ public class Metadaten {
      * OCR.
      */
     public boolean isShowOcrButton() {
-        return ConfigMain.getBooleanParameter("showOcrButton");
+        return ConfigCore.getBooleanParameter("showOcrButton");
     }
 
     /**
@@ -2418,7 +2418,7 @@ public class Metadaten {
     }
 
     private String getOcrBasisUrl(int... seiten) {
-        String url = ConfigMain.getParameter("ocrUrl");
+        String url = ConfigCore.getParameter("ocrUrl");
         VariableReplacer replacer = new VariableReplacer(this.mydocument, this.myPrefs, this.myProzess, null);
         url = replacer.replace(url);
         url += "/&imgrange=" + seiten[0];
@@ -3295,7 +3295,7 @@ public class Metadaten {
     }
 
     public Boolean getDisplayFileManipulation() {
-        return ConfigMain.getBooleanParameter("MetsEditorDisplayFileManipulation", false);
+        return ConfigCore.getBooleanParameter("MetsEditorDisplayFileManipulation", false);
     }
 
     /**

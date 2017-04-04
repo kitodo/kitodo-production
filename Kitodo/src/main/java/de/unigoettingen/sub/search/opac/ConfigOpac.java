@@ -11,7 +11,7 @@
 
 package de.unigoettingen.sub.search.opac;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -44,7 +44,7 @@ public class ConfigOpac {
         if (config != null) {
             return config;
         }
-        String configPfad = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+        String configPfad = FilenameUtils.concat(ConfigCore.getParameter(Parameters.CONFIG_DIR),
                 FileNames.OPAC_CONFIGURATION_FILE);
 
         if (!new File(configPfad).exists()) {

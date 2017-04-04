@@ -18,15 +18,28 @@ import org.apache.http.HttpHost;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.api.RestClientInterface;
 
 /**
  * Implementation of Elastic Search REST Client for Index Module.
  */
 public class KitodoRestClient implements RestClientInterface {
+
     protected String index;
     protected String type;
     protected RestClient restClient;
+
+    /**
+     * Create REST client.
+     *
+     */
+    public void initiateClient() {
+        String host = ConfigMain.getParameter("elasticsearch.host", "localhost");
+        int port = ConfigMain.getIntParameter("elasticsearch.port", 9200);
+        String protocol = ConfigMain.getParameter("elasticsearch.protocol", "http");
+        initiateClient(host, port, protocol);
+    }
 
     /**
      * Create REST client.

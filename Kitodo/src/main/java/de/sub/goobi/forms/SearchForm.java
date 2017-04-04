@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -436,7 +436,7 @@ public class SearchForm {
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
                 && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
-                && ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
+                && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
             search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE
                     + this.stepdonetitle + "\" ";
         }

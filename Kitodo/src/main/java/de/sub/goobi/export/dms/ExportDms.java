@@ -11,7 +11,7 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.FilesystemHelper;
@@ -92,7 +92,7 @@ public class ExportDms extends ExportMets {
 
         Hibernate.initialize(process.getProject().getProjectFileGroups());
         if (process.getProject().isUseDmsImport()
-                && ConfigMain.getBooleanParameter("asynchronousAutomaticExport", false)) {
+                && ConfigCore.getBooleanParameter("asynchronousAutomaticExport", false)) {
             Hibernate.initialize(process.getRuleset());
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
             Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
@@ -205,7 +205,7 @@ public class ExportDms extends ExportMets {
             return false;
         }
 
-        String rules = ConfigMain.getParameter("copyData.onExport");
+        String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(new CopierData(gdzfile, process));
@@ -232,7 +232,7 @@ public class ExportDms extends ExportMets {
          * Metadaten validieren
          */
 
-        if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
             MetadatenVerifizierung mv = new MetadatenVerifizierung();
             if (!mv.validate(gdzfile, this.myPrefs, process)) {
                 return false;
@@ -339,7 +339,7 @@ public class ExportDms extends ExportMets {
             }
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
-            if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
+            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
                 DmsImportThread agoraThread = new DmsImportThread(process, atsPpnBand);
                 agoraThread.start();
                 try {
@@ -582,7 +582,7 @@ public class ExportDms extends ExportMets {
     private void directoryDownload(Process process, String zielVerzeichnis)
             throws SwapException, DAOException, IOException, InterruptedException {
 
-        String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
             SafeFile srcDir = new SafeFile(

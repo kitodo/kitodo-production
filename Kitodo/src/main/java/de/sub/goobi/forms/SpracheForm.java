@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.text.DecimalFormatSymbols;
@@ -37,7 +37,7 @@ public class SpracheForm {
      * The constructor of this class loads the required MessageBundle.
      */
     public SpracheForm() {
-        String p = ConfigMain.getParameter("language.force-default");
+        String p = ConfigCore.getParameter("language.force-default");
         if (p != null && p.length() > 0) {
             FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(p));
         }

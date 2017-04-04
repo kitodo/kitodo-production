@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import de.schlichtherle.io.File;
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -121,7 +121,7 @@ public class StatisticsManagerTest {
     @Ignore("Crashing")
     @Test
     public final void testCalculate() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testManager.calculate();
     }
 
@@ -261,7 +261,7 @@ public class StatisticsManagerTest {
 
     @Test
     public final void testGetRenderingElements() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testManager.getRenderingElements();
     }
 

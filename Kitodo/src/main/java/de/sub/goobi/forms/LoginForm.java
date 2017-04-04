@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.metadaten.MetadatenSperrung;
@@ -249,7 +249,7 @@ public class LoginForm {
 
     private void AlteBilderAufraeumen() {
         /* Pages-Verzeichnis mit den temporären Images ermitteln */
-        String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
+        String myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
         /* Verzeichnis einlesen */
         FilenameFilter filter = new FilenameFilter() {

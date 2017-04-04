@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 public class NavigationForm {
     private String aktuell = "0";
@@ -41,10 +41,10 @@ public class NavigationForm {
      * @return true if show_taskmanager in file goobi_config.properties is =true
      */
     public Boolean getShowTaskManager() {
-        return ConfigMain.getBooleanParameter("taskManager.showInSidebar", true);
+        return ConfigCore.getBooleanParameter("taskManager.showInSidebar", true);
     }
 
     public Boolean getShowModuleManager() {
-        return ConfigMain.getBooleanParameter("show_modulemanager", false);
+        return ConfigCore.getBooleanParameter("show_modulemanager", false);
     }
 }

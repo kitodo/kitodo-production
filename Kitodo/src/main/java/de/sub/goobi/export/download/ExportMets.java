@@ -11,7 +11,7 @@
 
 package de.sub.goobi.export.download;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
@@ -100,7 +100,7 @@ public class ExportMets {
         String atsPpnBand = myProcess.getTitle();
         Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
 
-        String rules = ConfigMain.getParameter("copyData.onExport");
+        String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(new CopierData(gdzfile, myProcess));
@@ -299,7 +299,7 @@ public class ExportMets {
         String metsPointer = vp.replace(metsPointerToReplace);
         mm.setMptrAnchorUrl(metsPointer);
 
-        if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
+        if (ConfigCore.getBooleanParameter("ExportValidateImages", true)) {
             try {
                 // TODO andere Dateigruppen nicht mit image Namen ersetzen
                 List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProcess);

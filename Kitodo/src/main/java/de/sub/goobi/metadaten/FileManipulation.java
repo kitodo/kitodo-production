@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.ByteArrayInputStream;
@@ -421,7 +421,7 @@ public class FileManipulation {
 
             }
         }
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/tmp/");
         SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
         if (!fileuploadFolder.exists()) {
             fileuploadFolder.mkdir();
@@ -519,7 +519,7 @@ public class FileManipulation {
      */
     public List<String> getAllImportFolder() {
 
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/tmp/");
         SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
 
         allImportFolder = new ArrayList<String>();
@@ -550,13 +550,13 @@ public class FileManipulation {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/tmp/");
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
-        if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
+        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             useMasterFolder = true;
-            masterPrefix = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+            masterPrefix = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         }
         Process currentProcess = metadataBean.getMyProzess();
         List<String> importedFilenames = new ArrayList<String>();
@@ -709,7 +709,7 @@ public class FileManipulation {
         String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
 
-        String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
+        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
         if (!afterLastBackslash.matches(prefix + "\\..+")) {
             return false;
         }

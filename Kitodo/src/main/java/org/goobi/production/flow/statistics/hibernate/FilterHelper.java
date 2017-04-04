@@ -11,7 +11,7 @@
 
 package org.goobi.production.flow.statistics.hibernate;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.PaginatingCriteria;
@@ -527,7 +527,7 @@ public class FilterHelper {
     public static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
             Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly, boolean clearSession) {
 
-        if (ConfigMain.getBooleanParameter("DatabaseAutomaticRefreshList", true) && clearSession) {
+        if (ConfigCore.getBooleanParameter("DatabaseAutomaticRefreshList", true) && clearSession) {
             session.clear();
         }
         // for ordering the lists there are some
@@ -673,7 +673,7 @@ public class FilterHelper {
 
             } else if ((tokLowerCase.startsWith(FilterString.STEPDONEUSER)
                     || tokLowerCase.startsWith(FilterString.ABGESCHLOSSENERSCHRITTBENUTZER))
-                    && ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
+                    && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
                 if (conjUsers == null) {
                     conjUsers = Restrictions.conjunction();
                 }

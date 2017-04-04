@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
@@ -141,7 +141,7 @@ public class MetadatenImagesHelper {
             return;
         }
 
-        String defaultPagination = ConfigMain.getParameter("MetsEditorDefaultPagination", "uncounted");
+        String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
         Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
         List<DocStruct> pageElementsWithoutImages = new ArrayList<DocStruct>();
         List<String> imagesWithoutPageElements = new ArrayList<String>();
@@ -358,7 +358,7 @@ public class MetadatenImagesHelper {
         if (logger.isTraceEnabled()) {
             logger.trace("tmpSize: " + tmpSize);
         }
-        if (ConfigMain.getParameter("goobiContentServerUrl", "").equals("")) {
+        if (ConfigCore.getParameter("goobiContentServerUrl", "").equals("")) {
             logger.trace("api");
             ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
             logger.trace("im");
@@ -373,7 +373,7 @@ public class MetadatenImagesHelper {
             outputFileStream.close();
             logger.trace("close stream");
         } else {
-            String cs = ConfigMain.getParameter("goobiContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate="
+            String cs = ConfigCore.getParameter("goobiContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate="
                     + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
             if (logger.isTraceEnabled()) {
@@ -383,7 +383,7 @@ public class MetadatenImagesHelper {
             HttpClient httpclient = new HttpClient();
             GetMethod method = new GetMethod(csUrl.toString());
             logger.trace("get");
-            Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter("goobiContentServerTimeOut", 60000);
             method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
             int statusCode = httpclient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
@@ -435,7 +435,7 @@ public class MetadatenImagesHelper {
             }
 
             this.myLastImage = dateien.length;
-            if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+            if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
                 List<String> filesDirs = Arrays.asList(dateien);
                 Collections.sort(filesDirs);
                 int counter = 1;
@@ -469,7 +469,7 @@ public class MetadatenImagesHelper {
 
         @Override
         public int compare(String s1, String s2) {
-            String imageSorting = ConfigMain.getParameter("ImageSorting", "number");
+            String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             s1 = s1.substring(0, s1.lastIndexOf("."));
             s2 = s2.substring(0, s2.lastIndexOf("."));
 

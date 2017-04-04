@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -56,14 +56,14 @@ public class HelperForm {
 
     public String getApplicationLogo() {
         String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-        logo += ConfigMain.getParameter("ApplicationLogo", "kitodo-header-logo.svg");
+        logo += ConfigCore.getParameter("ApplicationLogo", "kitodo-header-logo.svg");
 
         return logo;
     }
 
     public String getApplicationHeaderBackground() {
         String logo = getServletPathWithHostAsUrl() + IMAGE_PATH + "/template/";
-        logo += ConfigMain.getParameter("ApplicationHeaderBackground", "goobi_meta_verlauf.jpg");
+        logo += ConfigCore.getParameter("ApplicationHeaderBackground", "goobi_meta_verlauf.jpg");
         /* wenn ein Background angegeben wurde, dann diesen jetzt strecken */
         if (logo.length() > 0) {
             logo = "background: url(" + logo + ") repeat-x;";
@@ -73,17 +73,17 @@ public class HelperForm {
 
     // TODO: Change the defaults
     public String getApplicationHeaderTitle() {
-        String rueck = ConfigMain.getParameter("ApplicationHeaderTitle", "Goobi - Universitätsbibliothek Göttingen");
+        String rueck = ConfigCore.getParameter("ApplicationHeaderTitle", "Goobi - Universitätsbibliothek Göttingen");
         return rueck;
     }
 
     public String getApplicationTitle() {
-        String rueck = ConfigMain.getParameter("ApplicationTitle", "http://goobi.gdz.uni-goettingen.de");
+        String rueck = ConfigCore.getParameter("ApplicationTitle", "http://goobi.gdz.uni-goettingen.de");
         return rueck;
     }
 
     public String getApplicationTitleStyle() {
-        String rueck = ConfigMain.getParameter("ApplicationTitleStyle",
+        String rueck = ConfigCore.getParameter("ApplicationTitleStyle",
                 "font-size:17; font-family:verdana; color: black;");
         return rueck;
     }
@@ -93,32 +93,32 @@ public class HelperForm {
     }
 
     public String getApplicationWebsiteMsg() {
-        String rueck = ConfigMain.getParameter("ApplicationWebsiteMsg", getApplicationWebsiteUrl());
+        String rueck = ConfigCore.getParameter("ApplicationWebsiteMsg", getApplicationWebsiteUrl());
         return Helper.getTranslation(rueck);
     }
 
     public String getApplicationHomepageMsg() {
-        String rueck = ConfigMain.getParameter("ApplicationHomepageMsg", getApplicationWebsiteUrl());
+        String rueck = ConfigCore.getParameter("ApplicationHomepageMsg", getApplicationWebsiteUrl());
         return Helper.getTranslation(rueck);
     }
 
     public String getApplicationTechnicalBackgroundMsg() {
-        String rueck = ConfigMain.getParameter("ApplicationTechnicalBackgroundMsg", getApplicationWebsiteUrl());
+        String rueck = ConfigCore.getParameter("ApplicationTechnicalBackgroundMsg", getApplicationWebsiteUrl());
         return Helper.getTranslation(rueck);
     }
 
     public String getApplicationImpressumMsg() {
-        String rueck = ConfigMain.getParameter("ApplicationImpressumMsg", getApplicationWebsiteUrl());
+        String rueck = ConfigCore.getParameter("ApplicationImpressumMsg", getApplicationWebsiteUrl());
         return Helper.getTranslation(rueck);
     }
 
     public String getApplicationIndividualHeader() {
-        String rueck = ConfigMain.getParameter("ApplicationIndividualHeader", "");
+        String rueck = ConfigCore.getParameter("ApplicationIndividualHeader", "");
         return rueck;
     }
 
     public boolean getAnonymized() {
-        return ConfigMain.getBooleanParameter("anonymize");
+        return ConfigCore.getBooleanParameter("anonymize");
     }
 
     public List<SelectItem> getRegelsaetze() throws DAOException {
@@ -248,7 +248,7 @@ public class HelperForm {
 
     public boolean getMassImportAllowed() {
         boolean value = false;
-        if (ConfigMain.getBooleanParameter("massImportAllowed", false)) {
+        if (ConfigCore.getBooleanParameter("massImportAllowed", false)) {
             return !PluginLoader.getPluginList(PluginType.Import).isEmpty();
         }
         return value;
@@ -278,6 +278,6 @@ public class HelperForm {
      * @return boolean
      */
     public boolean getUserStepDoneSearchEnabled() {
-        return ConfigMain.getBooleanParameter("withUserStepDoneSearch");
+        return ConfigCore.getBooleanParameter("withUserStepDoneSearch");
     }
 }

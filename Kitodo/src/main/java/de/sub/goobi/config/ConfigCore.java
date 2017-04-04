@@ -20,41 +20,52 @@ import java.util.concurrent.TimeUnit;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.goobi.production.constants.FileNames;
 import org.joda.time.Duration;
+import org.kitodo.config.ConfigMain;
 
-public class ConfigMain {
-    private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
-    private static volatile PropertiesConfiguration config;
+public class ConfigCore extends ConfigMain {
+    private static final Logger myLogger = Logger.getLogger(ConfigCore.class);
     private static String imagesPath = null;
 
-    private static PropertiesConfiguration getConfig() {
-        if (config == null) {
-            synchronized (ConfigMain.class) {
-                PropertiesConfiguration initialized = config;
-                if (initialized == null) {
-                    PropertiesConfiguration.setDefaultListDelimiter('&');
-                    try {
-                        initialized = new PropertiesConfiguration(FileNames.CONFIG_FILE);
-                    } catch (ConfigurationException e) {
-                        if (myLogger.isEnabledFor(Level.WARN)) {
-                            myLogger.warn("Loading of " + FileNames.CONFIG_FILE
-                                    + " failed. Trying to start with empty configuration.", e);
-                        }
-                        initialized = new PropertiesConfiguration();
-                    }
-                    initialized.setListDelimiter('&');
-                    initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
-                    config = initialized;
-                }
-            }
+    /**
+     * Request selected parameter from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static String getParameter(String inParameter) {
+        try {
+            return getConfig().getString(inParameter);
+        } catch (RuntimeException e) {
+            myLogger.error(e);
+            return "- keine Konfiguration gefunden -";
         }
-        return config;
+    }
+
+    /**
+     * Request selected parameter with given default value from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static String getParameter(String inParameter, String inDefaultIfNull) {
+        try {
+            return getConfig().getString(inParameter, inDefaultIfNull);
+        } catch (RuntimeException e) {
+            return inDefaultIfNull;
+        }
+    }
+
+    /**
+     * Request int-parameter from Configuration with default-value.
+     *
+     * @return Parameter as Int
+     */
+    public static int getIntParameter(String inParameter, int inDefault) {
+        try {
+            return getConfig().getInt(inParameter, inDefault);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     /**
@@ -92,34 +103,6 @@ public class ConfigMain {
     }
 
     /**
-     * Request selected parameter from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static String getParameter(String inParameter) {
-        try {
-            return getConfig().getString(inParameter);
-        } catch (RuntimeException e) {
-            myLogger.error(e);
-            return "- keine Konfiguration gefunden -";
-        }
-    }
-
-    /**
-     * Request selected parameter with given default value from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static String getParameter(String inParameter, String inDefaultIfNull) {
-        try {
-            return getConfig().getString(inParameter, inDefaultIfNull);
-            // return config.getProperty(inParameter).toString();
-        } catch (RuntimeException e) {
-            return inDefaultIfNull;
-        }
-    }
-
-    /**
      * Request boolean parameter from configuration, default if missing: false.
      *
      * @return Parameter as String
@@ -154,28 +137,6 @@ public class ConfigMain {
     public static Duration getDurationParameter(String inParameter, TimeUnit timeUnit, long inDefault) {
         long duration = getLongParameter(inParameter, inDefault);
         return new Duration(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
-    }
-
-    /**
-     * Request int-parameter from Configuration.
-     *
-     * @return Parameter as Int
-     */
-    public static int getIntParameter(String inParameter) {
-        return getIntParameter(inParameter, 0);
-    }
-
-    /**
-     * Request int-parameter from Configuration with default-value.
-     *
-     * @return Parameter as Int
-     */
-    public static int getIntParameter(String inParameter, int inDefault) {
-        try {
-            return getConfig().getInt(inParameter, inDefault);
-        } catch (Exception e) {
-            return 0;
-        }
     }
 
     /**

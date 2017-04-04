@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
@@ -228,7 +228,7 @@ public class MassImportForm {
 
             // found list with ids
             Prefs prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
-            String tempfolder = ConfigMain.getParameter("tempfolder");
+            String tempfolder = ConfigCore.getParameter("tempfolder");
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
@@ -355,7 +355,7 @@ public class MassImportForm {
                 basename = basename.substring(basename.lastIndexOf("\\") + 1);
             }
 
-            String filename = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/temp/") + basename;
+            String filename = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/temp/") + basename;
 
             inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
             outputStream = new FileOutputStream(filename);
@@ -845,7 +845,7 @@ public class MassImportForm {
      */
     public String downloadDocket() {
         logger.debug("generate docket for process list");
-        String rootpath = ConfigMain.getParameter("xsltFolder");
+        String rootpath = ConfigCore.getParameter("xsltFolder");
         File xsltfile = new File(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {

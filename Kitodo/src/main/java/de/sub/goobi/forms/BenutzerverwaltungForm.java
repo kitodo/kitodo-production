@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.ldap.Ldap;
@@ -400,7 +400,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     public boolean getLdapUsage() {
-        return ConfigMain.getBooleanParameter("ldap_use");
+        return ConfigCore.getBooleanParameter("ldap_use");
     }
 
 }

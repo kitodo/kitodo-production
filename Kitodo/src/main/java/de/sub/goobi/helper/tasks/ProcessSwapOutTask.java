@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
 
@@ -122,8 +122,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
         String swapPath = null;
         String processDirectory = "";
 
-        if (ConfigMain.getBooleanParameter("useSwapping")) {
-            swapPath = ConfigMain.getParameter("swapPath", "");
+        if (ConfigCore.getBooleanParameter("useSwapping")) {
+            swapPath = ConfigCore.getParameter("swapPath", "");
         } else {
             setStatusMessage("swapping not activated");
             setStatusProgress(-1);

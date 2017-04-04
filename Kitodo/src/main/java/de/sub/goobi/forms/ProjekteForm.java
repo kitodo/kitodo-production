@@ -13,7 +13,7 @@ package de.sub.goobi.forms;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
@@ -651,7 +651,7 @@ public class ProjekteForm extends BasisForm {
             cr.setDataTable(this.projectProgressData.getSelectedTable());
             BufferedImage bi = (BufferedImage) cr.getRendering();
             this.projectProgressImage = System.currentTimeMillis() + ".png";
-            String localImagePath = ConfigMain.getTempImagesPathAsCompleteDirectory();
+            String localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
             File outputfile = new File(localImagePath + this.projectProgressImage);
             try {
@@ -719,7 +719,7 @@ public class ProjekteForm extends BasisForm {
         projectStatusDraw.paint();
 
         // write image to temporary file
-        String localImagePath = ConfigMain.getTempImagesPathAsCompleteDirectory();
+        String localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
         File outputfile = new File(localImagePath + inName);
         ImageIO.write(image, "png", outputfile);
     }

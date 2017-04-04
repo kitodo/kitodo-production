@@ -11,7 +11,7 @@
 
 package de.sub.goobi.modul;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.ModuleServerForm;
 import de.sub.goobi.helper.Helper;
 import de.unigoettingen.goobi.module.api.dataprovider.process.ProcessImpl;
@@ -157,7 +157,7 @@ public class ExtendedProzessImpl extends ProcessImpl {
         super.getParams(sessionId);
         HashMap<String, String> myMap = new HashMap<String, String>();
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
-        myMap.put("ruleset", ConfigMain.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile());
+        myMap.put("ruleset", ConfigCore.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile());
         try {
             myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p));
         } catch (IOException e) {

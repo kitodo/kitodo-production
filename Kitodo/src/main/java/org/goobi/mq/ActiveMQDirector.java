@@ -11,7 +11,7 @@
 
 package org.goobi.mq;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
@@ -75,13 +75,13 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      */
     @Override
     public void contextInitialized(ServletContextEvent initialisation) {
-        String activeMQHost = ConfigMain.getParameter("activeMQ.hostURL", null);
+        String activeMQHost = ConfigCore.getParameter("activeMQ.hostURL", null);
         if (activeMQHost != null) {
             session = connectToServer(activeMQHost);
             if (session != null) {
                 registerListeners(services);
-                if (ConfigMain.getParameter("activeMQ.results.topic", null) != null) {
-                    resultsTopic = setUpReportChannel(ConfigMain.getParameter("activeMQ.results.topic"));
+                if (ConfigCore.getParameter("activeMQ.results.topic", null) != null) {
+                    resultsTopic = setUpReportChannel(ConfigCore.getParameter("activeMQ.results.topic"));
                 }
             }
         }
@@ -156,7 +156,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             Destination channel = session.createTopic(topic);
             result = session.createProducer(channel);
             result.setDeliveryMode(DeliveryMode.PERSISTENT);
-            result.setTimeToLive(ConfigMain.getLongParameter("activeMQ.results.timeToLive", 604800000));
+            result.setTimeToLive(ConfigCore.getLongParameter("activeMQ.results.timeToLive", 604800000));
             return result;
         } catch (Exception e) {
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);

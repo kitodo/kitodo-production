@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
@@ -87,11 +87,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              * define path for mets and pdfs
              */
             URL goobiContentServerUrl = null;
-            String contentServerUrl = ConfigMain.getParameter("goobiContentServerUrl");
+            String contentServerUrl = ConfigCore.getParameter("goobiContentServerUrl");
             new SafeFile("");
             SafeFile tempPdf = SafeFile.createTempFile(this.getProcess().getTitle(), ".pdf");
             SafeFile finalPdf = new SafeFile(this.targetFolder, this.getProcess().getTitle() + ".pdf");
-            Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter("goobiContentServerTimeOut", 60000);
 
             /*
              * using mets file

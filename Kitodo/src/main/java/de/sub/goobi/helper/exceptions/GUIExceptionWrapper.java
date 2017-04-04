@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.exceptions;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -91,12 +91,12 @@ public class GUIExceptionWrapper extends Exception {
     private void init() {
 
         try {
-            if (ConfigMain.getBooleanParameter("err_userHandling")) {
+            if (ConfigCore.getBooleanParameter("err_userHandling")) {
                 this.err_linkText = Helper.getTranslation("err_linkText");
                 this.err_linkText = this.err_linkText.replace("{0}",
-                        ConfigMain.getParameter("err_linkToPage", "./Main.jsf"));
+                        ConfigCore.getParameter("err_linkToPage", "./Main.jsf"));
 
-                if (ConfigMain.getBooleanParameter("err_emailEnabled")) {
+                if (ConfigCore.getBooleanParameter("err_emailEnabled")) {
 
                     this.err_emailMessage = Helper.getTranslation("err_emailMessage");
                     this.err_subjectLine = Helper.getTranslation("err_subjectLine");
@@ -108,7 +108,7 @@ public class GUIExceptionWrapper extends Exception {
                     // indefinite emails can be added
                     while (!email.equals("end")) {
                         emailCounter++;
-                        email = ConfigMain.getParameter("err_emailAddress" + emailCounter.toString(), "end");
+                        email = ConfigCore.getParameter("err_emailAddress" + emailCounter.toString(), "end");
                         if (!email.equals("end")) {
                             this.emailAddresses.add(email);
                         }

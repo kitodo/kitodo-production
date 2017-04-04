@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
@@ -261,7 +261,7 @@ public class UserService {
         if (inputPassword == null || inputPassword.length() == 0) {
             return false;
         } else {
-            if (ConfigMain.getBooleanParameter("ldap_use")) {
+            if (ConfigCore.getBooleanParameter("ldap_use")) {
                 Ldap ldap = new Ldap();
                 return ldap.isUserPasswordCorrect(user, inputPassword);
             } else {
@@ -289,11 +289,11 @@ public class UserService {
      */
     public String getHomeDirectory(User user) throws IOException, InterruptedException {
         String result;
-        if (ConfigMain.getBooleanParameter("ldap_use")) {
+        if (ConfigCore.getBooleanParameter("ldap_use")) {
             Ldap ldap = new Ldap();
             result = ldap.getUserHomeDirectory(user);
         } else {
-            result = ConfigMain.getParameter("dir_Users") + user.getLogin();
+            result = ConfigCore.getParameter("dir_Users") + user.getLogin();
         }
 
         if (result.equals("")) {

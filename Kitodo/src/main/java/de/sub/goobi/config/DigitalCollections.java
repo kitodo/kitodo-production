@@ -40,7 +40,7 @@ public class DigitalCollections {
     public static List<String> possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
 
         List<String> result = new ArrayList<String>();
-        String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+        String filename = FilenameUtils.concat(ConfigCore.getParameter(Parameters.CONFIG_DIR),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("File not found: " + filename);

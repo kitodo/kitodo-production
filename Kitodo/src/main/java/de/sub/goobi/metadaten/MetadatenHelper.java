@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 
@@ -662,7 +662,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
     @Override
     public int compare(Object o1, Object o2) {
-        String imageSorting = ConfigMain.getParameter("ImageSorting", "number");
+        String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
         String s1 = (String) o1;
         String s2 = (String) o2;
         // comparing only prefixes of files:

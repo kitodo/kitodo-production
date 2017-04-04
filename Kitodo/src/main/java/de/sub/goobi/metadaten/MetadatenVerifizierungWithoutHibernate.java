@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
@@ -107,7 +107,7 @@ public class MetadatenVerifizierungWithoutHibernate {
             Metadata identifierTopStruct = logical.getAllIdentifierMetadata().get(0);
             try {
                 if (!identifierTopStruct.getValue()
-                        .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                        .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                     Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                             + identifierTopStruct.getType().getNameByLanguage(metadataLanguage) + " in DocStruct "
                             + logical.getType().getNameByLanguage(metadataLanguage)
@@ -124,7 +124,7 @@ public class MetadatenVerifizierungWithoutHibernate {
                     ergebnis = false;
                 }
                 if (!identifierFirstChild.getValue()
-                        .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                        .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                     Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                             + identifierFirstChild.getType().getName() + " in DocStruct "
                             + firstChild.getType().getName() + Helper.getTranslation("MetadataInvalidCharacter"));
@@ -592,7 +592,7 @@ public class MetadatenVerifizierungWithoutHibernate {
                         return false;
                     }
                     if (!identifierTopStruct.getValue()
-                            .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                            .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                         Helper.setFehlerMeldung(Helper.getTranslation("MetadataIdentifierError")
                                 + identifierTopStruct.getType().getNameByLanguage(language) + " in DocStruct "
                                 + uppermostStruct.getType().getNameByLanguage(language)
@@ -605,7 +605,7 @@ public class MetadatenVerifizierungWithoutHibernate {
                         return false;
                     }
                     if (!identifierFirstChild.getValue()
-                            .replaceAll(ConfigMain.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
+                            .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
                         Helper.setFehlerMeldung(identifierTopStruct.getType().getNameByLanguage(language) + " in "
                                 + uppermostStruct.getType().getNameByLanguage(language) + " "
                                 + Helper.getTranslation("MetadataIsEmpty"));

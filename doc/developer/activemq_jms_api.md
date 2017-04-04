@@ -51,7 +51,7 @@ goobi_config.properties for configuration.
 	package org.goobi.mq.processores;
 
 	import org.goobi.mq.*;
-	import de.sub.goobi.config.ConfigMain;
+	import de.sub.goobi.config.ConfigCore;
 	import de.sub.goobi.helper.enums.ReportLevel;
 
 	public class MyServiceProcessor extends ActiveMQProcessor {

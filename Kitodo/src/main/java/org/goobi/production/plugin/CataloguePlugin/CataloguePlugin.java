@@ -11,7 +11,7 @@
 
 package org.goobi.production.plugin.CataloguePlugin;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -281,7 +281,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @return the timeout for catalogue access
      */
     public static long getTimeout() {
-        return ConfigMain.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
+        return ConfigCore.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
     }
 
     /**

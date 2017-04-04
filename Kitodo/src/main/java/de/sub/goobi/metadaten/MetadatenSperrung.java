@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class MetadatenSperrung implements Serializable {
      * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
      * behalten (30 min)
      */
-    private static final long sperrzeit = ConfigMain.getLongParameter("MetsEditorLockingTime", 30 * 60 * 1000);
+    private static final long sperrzeit = ConfigCore.getLongParameter("MetsEditorLockingTime", 30 * 60 * 1000);
 
     /**
      * Metadaten eines bestimmten Prozesses wieder freigeben.

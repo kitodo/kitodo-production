@@ -11,7 +11,7 @@
 
 package org.kitodo.production.plugin.importer.massimport;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -69,7 +69,7 @@ public class UghUtils {
      *             If the named charset is not supported
      */
     private static BufferedReader open(String fileName) throws IOException {
-        String path = ConfigMain.getParameter(Parameters.CONFIG_DIR);
+        String path = ConfigCore.getParameter(Parameters.CONFIG_DIR);
         FacesContext context = FacesContext.getCurrentInstance();
         if (context != null) {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);

@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.AutomaticDmsExportWithoutHibernate;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.tasks.EmptyTask;
@@ -200,10 +200,10 @@ public class HelperSchritteWithoutHibernate {
         // TODO remove this later
         try {
             logger.debug("update hibernate cache");
-            if (requestFromGUI && ConfigMain.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)) {
+            if (requestFromGUI && ConfigCore.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)) {
                 RefreshObject.refreshProcess_GUI(processId);
             } else {
-                if (ConfigMain.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
+                if (ConfigCore.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
                     RefreshObject.refreshProcess(processId);
                 }
             }
@@ -384,8 +384,8 @@ public class HelperSchritteWithoutHibernate {
      */
     public void executeDmsExport(StepObject step, boolean automatic) {
         AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(
-                ConfigMain.getBooleanParameter("automaticExportWithImages", true));
-        if (!ConfigMain.getBooleanParameter("automaticExportWithOcr", true)) {
+                ConfigCore.getBooleanParameter("automaticExportWithImages", true));
+        if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
             dms.setExportFulltext(false);
         }
         dms.setTask(task);
