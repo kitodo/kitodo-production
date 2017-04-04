@@ -35,9 +35,31 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
 
     private String type;
 
+    /**
+     * Constructor.
+     *
+     * @param index
+     *            as String
+     * @param beanClass
+     *            as Class
+     */
     public Indexer(String index, Class<?> beanClass) {
+        Table table = beanClass.getAnnotation(Table.class);
         this.setIndex(index);
-        this.setType(beanClass);
+        this.setType(table.name());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param index
+     *            as String
+     * @param type
+     *            as String
+     */
+    public Indexer(String index, String type) {
+        this.setIndex(index);
+        this.setType(type);
     }
 
     /**
@@ -51,12 +73,8 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      */
     @SuppressWarnings("unchecked")
     public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException {
-        IndexRestClient restClient = new IndexRestClient();
+        IndexRestClient restClient = initiateRestClient();
         String response;
-
-        restClient.initiateClient();
-        restClient.setIndex(index);
-        restClient.setType(type);
 
         if (method == HTTPMethods.PUT) {
             HttpEntity document = baseType.createDocument(baseBean);
@@ -79,12 +97,8 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      *            response from the server
      */
     public String performSingleRequest(Integer beanId) throws IOException {
-        IndexRestClient restClient = new IndexRestClient();
+        IndexRestClient restClient = initiateRestClient();
         String response;
-
-        restClient.initiateClient();
-        restClient.setIndex(index);
-        restClient.setType(type);
 
         if (method == HTTPMethods.DELETE) {
             response = restClient.deleteDocument(beanId);
@@ -107,12 +121,8 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
             throws DAOException, IOException, InterruptedException {
-        IndexRestClient restClient = new IndexRestClient();
+        IndexRestClient restClient = initiateRestClient();
         String response;
-
-        restClient.initiateClient();
-        restClient.setIndex(index);
-        restClient.setType(type);
 
         if (method == HTTPMethods.PUT) {
             HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseBeans);
@@ -126,6 +136,14 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
         restClient.closeClient();
 
         return response;
+    }
+
+    private IndexRestClient initiateRestClient() {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.setIndex(index);
+        restClient.setType(type);
+        return restClient;
     }
 
     /**
@@ -177,13 +195,12 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     }
 
     /**
-     * Set up type name. It could be private if it would for generic type (T)
+     * Set type name.
      *
-     * @param beanClass
-     *            beans' class
+     * @param type
+     *            as String
      */
-    public void setType(Class<?> beanClass) {
-        Table table = beanClass.getAnnotation(Table.class);
-        this.type = table.name();
+    public void setType(String type) {
+        this.type = type;
     }
 }
