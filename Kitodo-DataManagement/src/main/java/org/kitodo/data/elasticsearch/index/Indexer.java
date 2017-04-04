@@ -17,27 +17,22 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Table;
-
 import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 
 /**
  * Implementation of Elastic Search Indexer for index package.
  */
-public class Indexer<T extends BaseBean, S extends BaseType> {
-
-    private String index;
+public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
 
     private HTTPMethods method;
 
-    private String type;
-
     /**
-     * Constructor.
+     * Constructor for indexer with type names equal to table names.
      *
      * @param index
      *            as String
@@ -45,13 +40,11 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      *            as Class
      */
     public Indexer(String index, Class<?> beanClass) {
-        Table table = beanClass.getAnnotation(Table.class);
-        this.setIndex(index);
-        this.setType(table.name());
+        super(index, beanClass);
     }
 
     /**
-     * Constructor.
+     * Constructor for indexer with type names not equal to table names.
      *
      * @param index
      *            as String
@@ -59,8 +52,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      *            as String
      */
     public Indexer(String index, String type) {
-        this.setIndex(index);
-        this.setType(type);
+        super(index, type);
     }
 
     /**
@@ -148,25 +140,6 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
     }
 
     /**
-     * Get name of the index.
-     *
-     * @return index's name
-     */
-    public String getIndex() {
-        return index;
-    }
-
-    /**
-     * Set name of the index.
-     *
-     * @param index
-     *            name
-     */
-    public void setIndex(String index) {
-        this.index = index;
-    }
-
-    /**
      * Get type of method which will be used during performing request.
      *
      * @return method for request
@@ -184,24 +157,5 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      */
     public void setMethod(HTTPMethods method) {
         this.method = method;
-    }
-
-    /**
-     * Get name of the type.
-     *
-     * @return type's name
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Set type name.
-     *
-     * @param type
-     *            as String
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 }

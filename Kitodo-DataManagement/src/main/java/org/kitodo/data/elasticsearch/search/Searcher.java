@@ -23,14 +23,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.kitodo.data.elasticsearch.Index;
 
 /**
  * Implementation of Elastic Search Searcher for Kitodo - Data Management
  * Module.
  */
-public class Searcher {
-    private String index;
-    private String type;
+public class Searcher extends Index {
 
     /**
      * Constructor for searcher with type names equal to table names.
@@ -41,9 +40,7 @@ public class Searcher {
      *            as Class
      */
     public Searcher(String index, Class<?> beanClass) {
-        Table table = beanClass.getAnnotation(Table.class);
-        this.setIndex(index);
-        this.setType(table.name());
+        super(index, beanClass);
     }
 
     /**
@@ -55,8 +52,7 @@ public class Searcher {
      *            as String
      */
     public Searcher(String index, String type) {
-        this.setIndex(index);
-        this.setType(type);
+        super(index, type);
     }
 
     /**
@@ -148,43 +144,5 @@ public class Searcher {
         restClient.setIndex(index);
         restClient.setType(type);
         return restClient;
-    }
-
-    /**
-     * Get name of the index.
-     *
-     * @return index's name
-     */
-    public String getIndex() {
-        return index;
-    }
-
-    /**
-     * Set name of the index.
-     *
-     * @param index
-     *            name
-     */
-    public void setIndex(String index) {
-        this.index = index;
-    }
-
-    /**
-     * Get type name.
-     *
-     * @return type's name
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Set type's name as String.
-     *
-     * @param type
-     *            as String
-     */
-    public void setType(String type) {
-        this.type = type;
     }
 }
