@@ -37,7 +37,7 @@ public class SearcherTest {
 
     @Test
     public void shouldGetDocumentById() throws Exception {
-        Searcher searcher = new Searcher("kitodo", "testget");
+        Searcher searcher = new Searcher("testget");
         SearchResult result = searcher.findDocument(1);
 
         boolean condition = result.getId().equals(1) == result.getProperties().get("title").equals("Batch1");
@@ -47,7 +47,7 @@ public class SearcherTest {
     @Test
     public void shouldGetDocumentByQuery() throws Exception {
         Thread.sleep(2000);
-        Searcher searcher = new Searcher("kitodo", "testget");
+        Searcher searcher = new Searcher("testget");
 
         String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
         SearchResult result = searcher.findDocument(query);
@@ -67,7 +67,7 @@ public class SearcherTest {
     @Test
     public void shouldGetDocumentsByQuery() throws Exception {
         Thread.sleep(2000);
-        Searcher searcher = new Searcher("kitodo", "testget");
+        Searcher searcher = new Searcher("testget");
 
         String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
         ArrayList<SearchResult> result = searcher.findDocuments(query);

@@ -13,6 +13,8 @@ package org.kitodo.data.elasticsearch;
 
 import javax.persistence.Table;
 
+import org.kitodo.config.ConfigMain;
+
 /**
  * Super class for Indexer and Searcher.
  */
@@ -24,47 +26,24 @@ public abstract class Index {
     /**
      * Constructor with type names equal to table names.
      *
-     * @param index
-     *            as String
      * @param beanClass
      *            as Class
      */
-    public Index(String index, Class<?> beanClass) {
+    public Index(Class<?> beanClass) {
         Table table = beanClass.getAnnotation(Table.class);
-        this.setIndex(index);
+        this.index = ConfigMain.getParameter("elasticsearch.index", "kitodo");
         this.setType(table.name());
     }
 
     /**
      * Constructor with type names not equal to table names.
      *
-     * @param index
-     *            as String
      * @param type
      *            as String
      */
-    public Index(String index, String type) {
-        this.setIndex(index);
+    public Index(String type) {
+        this.index = ConfigMain.getParameter("elasticsearch.index", "kitodo");
         this.setType(type);
-    }
-
-    /**
-     * Getter for index.
-     *
-     * @return index name
-     */
-    public String getIndex() {
-        return index;
-    }
-
-    /**
-     * Setter for index.
-     *
-     * @param index
-     *            - equal to the name of database, default kitodo
-     */
-    public void setIndex(String index) {
-        this.index = index;
     }
 
     /**
