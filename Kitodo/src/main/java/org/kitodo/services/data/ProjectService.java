@@ -26,6 +26,7 @@ import org.goobi.webapi.beans.Field;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
 
@@ -44,7 +45,7 @@ public class ProjectService {
      * @param project
      *            object
      */
-    public void save(Project project) throws DAOException, IOException {
+    public void save(Project project) throws DAOException, IOException, ResponseException {
         projectDao.save(project);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(project, projectType);
@@ -65,7 +66,7 @@ public class ProjectService {
      * @param project
      *            object
      */
-    public void remove(Project project) throws DAOException, IOException {
+    public void remove(Project project) throws DAOException, IOException, ResponseException {
         projectDao.remove(project);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(project, projectType);
@@ -78,7 +79,7 @@ public class ProjectService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
+    public void remove(Integer id) throws DAOException, IOException, ResponseException {
         projectDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -91,7 +92,7 @@ public class ProjectService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), projectType);
     }

@@ -19,6 +19,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.DocketType;
 
@@ -42,7 +43,7 @@ public class DocketService {
      * @param docket
      *            object
      */
-    public void save(Docket docket) throws DAOException, IOException {
+    public void save(Docket docket) throws DAOException, IOException, ResponseException {
         docketDao.save(docket);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(docket, docketType);
@@ -55,7 +56,7 @@ public class DocketService {
      * @param docket
      *            object
      */
-    public void remove(Docket docket) throws DAOException, IOException {
+    public void remove(Docket docket) throws DAOException, IOException, ResponseException {
         docketDao.remove(docket);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(docket, docketType);
@@ -72,7 +73,7 @@ public class DocketService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), docketType);
     }

@@ -45,6 +45,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class BenutzerverwaltungForm extends BasisForm {
@@ -166,7 +167,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
             return "";
-        } catch (IOException e) {
+        } catch (IOException | ResponseException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             logger.error(e);
             return "";
@@ -225,7 +226,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
             return "";
-        } catch (IOException e) {
+        } catch (IOException | ResponseException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             logger.error(e);
             return "";
