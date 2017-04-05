@@ -38,4 +38,4 @@ Most probably, you will have to adjust these four files:
 * hibernate.cfg.xml
 * log4j.properties
 
-Setting up a Kitodo instance can be quite tricky. For more help on how to configure Kitodo, please check the web sites above, the GitHub Wiki or ask questions on the mailing lists.
+Setting up a Kitodo instance can be quite tricky. For more help on how to configure Kitodo, please check the [installation guides](https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung), the [GitHub Wiki](https://github.com/kitodo/kitodo-production/wiki) or ask questions on the (mailing lists)[https://github.com/kitodo/kitodo-production/wiki#Mailingliste].
