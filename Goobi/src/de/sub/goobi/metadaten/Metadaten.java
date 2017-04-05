@@ -1133,7 +1133,7 @@ public class Metadaten {
     private static DocStruct addNodes(DocStruct selection, DigitalDocument factory, DocStructType type,
             TreeInsertionMode mode, int quantity, String field, String value) {
         try {
-            Paginator enumeratingLabel = !field.isEmpty() && !value.isEmpty() ? new Paginator(value) : null;
+            Paginator enumeratingLabel = field != null && !field.isEmpty() && value != null && !value.isEmpty() ? new Paginator(value) : null;
             ArrayList<DocStruct> createdElements = new ArrayList<>(quantity);
             for (int i = 0; i < quantity; i++) {
                 DocStruct createdElement = factory.createDocStruct(type);
