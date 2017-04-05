@@ -9,18 +9,16 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.elasticsearch.api;
-
-import java.io.IOException;
+package org.kitodo.data.elasticsearch.exceptions;
 
 /**
- * Interface for REST clients.
+ * Exception for checking code statuses from server responses.
  */
-public interface RestClientInterface {
+public class ResponseException extends Exception {
 
-    void initiateClient();
+    private static final long serialVersionUID = 1997753363232807009L;
 
-    String getServerInformation() throws IOException;
-
-    void closeClient() throws IOException;
+    public ResponseException(String message) {
+        super(message);
+    }
 }

@@ -76,6 +76,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -810,6 +811,10 @@ public class ProzesskopieForm {
             myLogger.error(e);
             myLogger.error("error on save: ", e);
             return "";
+        } catch (ResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+            myLogger.error(e);
+            return "";
         }
 
         /*
@@ -1056,6 +1061,10 @@ public class ProzesskopieForm {
             } catch (DAOException e) {
                 myLogger.error(e);
                 myLogger.error("error on save: ", e);
+                return "";
+            } catch (ResponseException e) {
+                Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+                myLogger.error(e);
                 return "";
             }
         }

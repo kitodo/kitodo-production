@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
 
@@ -39,7 +40,7 @@ public class BatchService {
      * @param batch
      *            object
      */
-    public void save(Batch batch) throws DAOException, IOException {
+    public void save(Batch batch) throws DAOException, IOException, ResponseException {
         batchDao.save(batch);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
@@ -60,7 +61,7 @@ public class BatchService {
      * @param batch
      *            object
      */
-    public void remove(Batch batch) throws DAOException, IOException {
+    public void remove(Batch batch) throws DAOException, IOException, ResponseException {
         batchDao.remove(batch);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
@@ -73,7 +74,7 @@ public class BatchService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
+    public void remove(Integer id) throws DAOException, IOException, ResponseException {
         batchDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -86,7 +87,7 @@ public class BatchService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), batchType);
     }

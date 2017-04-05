@@ -59,6 +59,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProjekteForm extends BasisForm {
@@ -166,6 +167,10 @@ public class ProjekteForm extends BasisForm {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
             myLogger.error(e);
             return "";
+        } catch (ResponseException e) {
+            Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+            myLogger.error(e);
+            return "";
         }
     }
 
@@ -187,6 +192,10 @@ public class ProjekteForm extends BasisForm {
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+            myLogger.error(e);
+            return "";
+        } catch (ResponseException e) {
+            Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
             myLogger.error(e);
             return "";
         }
@@ -211,6 +220,10 @@ public class ProjekteForm extends BasisForm {
             } catch (IOException e) {
                 Helper.setFehlerMeldung("could not delete from index", e.getMessage());
                 myLogger.error(e);
+            } catch (ResponseException e) {
+                Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+                myLogger.error(e);
+                return "";
             }
         }
         return "ProjekteAlle";

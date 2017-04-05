@@ -46,6 +46,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
@@ -320,13 +321,16 @@ public class BatchForm extends BasisForm {
         } catch (IOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+        } catch (ResponseException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
         }
     }
 
     /**
      * Remove processes from Batch.
      */
-    public void removeProcessesFromBatch() throws DAOException, IOException {
+    public void removeProcessesFromBatch() throws DAOException, IOException, ResponseException {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
             return;
@@ -381,6 +385,9 @@ public class BatchForm extends BasisForm {
             } catch (IOException e) {
                 Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
                 logger.error(e);
+            } catch (ResponseException e) {
+                logger.error(e);
+                Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
             }
         }
     }
@@ -388,7 +395,7 @@ public class BatchForm extends BasisForm {
     /**
      * Create new Batch.
      */
-    public void createNewBatch() throws DAOException, IOException {
+    public void createNewBatch() throws DAOException, IOException, ResponseException {
         if (selectedProcesses.size() > 0) {
             Batch batch = null;
             if (batchTitle != null && batchTitle.trim().length() > 0) {
@@ -555,6 +562,9 @@ public class BatchForm extends BasisForm {
         } catch (IOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("errorElasticSearch");
+        } catch (ResponseException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
         }
     }
 }

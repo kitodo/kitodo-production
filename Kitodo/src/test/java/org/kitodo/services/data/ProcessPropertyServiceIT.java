@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 
 /**
  * Tests for ProcessPropertyService class.
@@ -30,7 +31,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class ProcessPropertyServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
         MockDatabase.insertProcessesFull();
     }
 

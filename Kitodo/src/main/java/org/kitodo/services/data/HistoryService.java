@@ -19,6 +19,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.HistoryType;
 
@@ -38,7 +39,7 @@ public class HistoryService {
      * @param history
      *            object
      */
-    public void save(History history) throws DAOException, IOException {
+    public void save(History history) throws DAOException, IOException, ResponseException {
         historyDao.save(history);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(history, historyType);
@@ -59,7 +60,7 @@ public class HistoryService {
      * @param history
      *            object
      */
-    public void remove(History history) throws DAOException, IOException {
+    public void remove(History history) throws DAOException, IOException, ResponseException {
         historyDao.remove(history);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(history, historyType);
@@ -72,7 +73,7 @@ public class HistoryService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
+    public void remove(Integer id) throws DAOException, IOException, ResponseException {
         historyDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -81,7 +82,7 @@ public class HistoryService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), historyType);
     }

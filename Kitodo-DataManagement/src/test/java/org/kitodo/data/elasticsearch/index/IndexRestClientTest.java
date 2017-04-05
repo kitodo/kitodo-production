@@ -21,27 +21,10 @@ import org.kitodo.data.elasticsearch.MockEntity;
  */
 public class IndexRestClientTest {
 
-    private static IndexRestClient initializeRestClient() {
-        IndexRestClient restClient = new IndexRestClient();
-
-        restClient.initiateClient();
-        restClient.setIndex("kitodo");
-        restClient.setType("test");
-
-        return restClient;
-    }
-
     @Test
     public void shouldAddDocument() throws Exception {
         IndexRestClient restClient = initializeRestClient();
-        String result = restClient.addDocument(MockEntity.createEntities().get(1), 1);
-
-        boolean created = result.contains("\"created\":true");
-        // if document already exists it is updated and in that case check if
-        // update successful
-        boolean ok = result.contains("\"successful\":1");
-        boolean condition = created || ok;
-        assertTrue("Add of document has failed!", condition);
+        assertTrue("Add of document has failed!", restClient.addDocument(MockEntity.createEntities().get(1), 1));
     }
 
     @Test
@@ -68,19 +51,21 @@ public class IndexRestClientTest {
     public void shouldDeleteDocument() throws Exception {
         IndexRestClient restClient = initializeRestClient();
         restClient.addType(MockEntity.createEntities());
-
-        String result = restClient.deleteDocument(1);
-        boolean condition = result.contains("HTTP/1.1 200 OK");
-        assertTrue("Delete of document has failed!", condition);
+        assertTrue("Delete of document has failed!", restClient.deleteDocument(1));
     }
 
     @Test
     public void shouldDeleteType() throws Exception {
         IndexRestClient restClient = initializeRestClient();
         restClient.addType(MockEntity.createEntities());
+        assertTrue("Delete of type has failed!", restClient.deleteType());
+    }
 
-        String result = restClient.deleteType();
-        boolean condition = result.contains("HTTP/1.1 200 OK");
-        assertTrue("Delete of type has failed!", condition);
+    private static IndexRestClient initializeRestClient() {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.setIndex("kitodo");
+        restClient.setType("test");
+        return restClient;
     }
 }

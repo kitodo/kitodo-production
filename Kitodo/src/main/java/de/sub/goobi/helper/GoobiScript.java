@@ -40,6 +40,7 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Fileformat;
@@ -66,7 +67,7 @@ public class GoobiScript {
     /**
      * Starten des Scripts.
      */
-    public void execute(List<Process> inProzesse, String inScript) throws IOException {
+    public void execute(List<Process> inProzesse, String inScript) throws IOException, ResponseException {
         this.myParameters = new HashMap<String, String>();
         /*
          * alle Suchparameter zerlegen und erfassen
@@ -184,7 +185,7 @@ public class GoobiScript {
         Helper.setMeldung("goobiScriptfield", "", "updateContentFiles finished");
     }
 
-    private void deleteProcess(List<Process> inProzesse, boolean contentOnly) {
+    private void deleteProcess(List<Process> inProzesse, boolean contentOnly) throws ResponseException {
         for (Process p : inProzesse) {
             String title = p.getTitle();
             if (contentOnly) {
@@ -351,7 +352,7 @@ public class GoobiScript {
     /**
      * Tauschen zweier Schritte gegeneinander.
      */
-    private void swapSteps(List<Process> inProzesse) {
+    private void swapSteps(List<Process> inProzesse) throws ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -431,7 +432,7 @@ public class GoobiScript {
     /**
      * Schritte löschen.
      */
-    private void deleteStep(List<Process> inProzesse) {
+    private void deleteStep(List<Process> inProzesse) throws ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -474,7 +475,7 @@ public class GoobiScript {
     /**
      * Schritte hinzufuegen.
      */
-    private void addStep(List<Process> inProzesse) {
+    private void addStep(List<Process> inProzesse) throws ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -522,7 +523,7 @@ public class GoobiScript {
     /**
      * ShellScript an Schritt hängen.
      */
-    private void addShellScriptToStep(List<Process> inProzesse) {
+    private void addShellScriptToStep(List<Process> inProzesse) throws ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -577,7 +578,7 @@ public class GoobiScript {
     /**
      * ShellScript an Schritt hängen.
      */
-    private void addModuleToStep(List<Process> inProzesse) {
+    private void addModuleToStep(List<Process> inProzesse) throws ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -625,7 +626,7 @@ public class GoobiScript {
     /**
      * Flag von Schritten setzen.
      */
-    private void setTaskProperty(List<Process> inProzesse) throws IOException {
+    private void setTaskProperty(List<Process> inProzesse) throws IOException, ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -711,7 +712,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Status setzen.
      */
-    private void setStepStatus(List<Process> inProzesse) throws IOException {
+    private void setStepStatus(List<Process> inProzesse) throws IOException, ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -758,7 +759,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Reihenfolge setzen.
      */
-    private void setStepNumber(List<Process> inProzesse) throws IOException {
+    private void setStepNumber(List<Process> inProzesse) throws IOException, ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -803,7 +804,7 @@ public class GoobiScript {
     /**
      * Benutzer zu Schritt hinzufügen.
      */
-    private void adduser(List<Process> inProzesse) throws IOException {
+    private void adduser(List<Process> inProzesse) throws IOException, ResponseException {
         /*
          * Validierung der Actionparameter
          */
@@ -864,7 +865,7 @@ public class GoobiScript {
     /**
      * Benutzergruppe zu Schritt hinzufügen.
      */
-    private void addusergroup(List<Process> inProzesse) throws IOException {
+    private void addusergroup(List<Process> inProzesse) throws IOException, ResponseException {
         /*
          * Validierung der Actionparameter
          */

@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
 
@@ -43,7 +44,7 @@ public class RulesetService {
      * @param ruleset
      *            object
      */
-    public void save(Ruleset ruleset) throws DAOException, IOException {
+    public void save(Ruleset ruleset) throws DAOException, IOException, ResponseException {
         rulesetDao.save(ruleset);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(ruleset, rulesetType);
@@ -68,7 +69,7 @@ public class RulesetService {
      * @param ruleset
      *            object
      */
-    public void remove(Ruleset ruleset) throws DAOException, IOException {
+    public void remove(Ruleset ruleset) throws DAOException, IOException, ResponseException {
         rulesetDao.remove(ruleset);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(ruleset, rulesetType);
@@ -81,7 +82,7 @@ public class RulesetService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
+    public void remove(Integer id) throws DAOException, IOException, ResponseException {
         rulesetDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -90,7 +91,7 @@ public class RulesetService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), rulesetType);
     }

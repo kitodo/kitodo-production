@@ -42,20 +42,6 @@ public class KitodoRestClient implements RestClientInterface {
     }
 
     /**
-     * Create REST client.
-     *
-     * @param host
-     *            default host is localhost
-     * @param port
-     *            default port ist 9200
-     * @param protocol
-     *            default protocol is http
-     */
-    public void initiateClient(String host, Integer port, String protocol) {
-        restClient = RestClient.builder(new HttpHost(host, port, protocol)).build();
-    }
-
-    /**
      * Get information about client server.
      *
      * @return information about the server
@@ -73,6 +59,20 @@ public class KitodoRestClient implements RestClientInterface {
      */
     public void closeClient() throws IOException {
         restClient.close();
+    }
+
+    /**
+     * Create REST client.
+     *
+     * @param host
+     *            default host is localhost
+     * @param port
+     *            default port ist 9200
+     * @param protocol
+     *            default protocol is http
+     */
+    private void initiateClient(String host, Integer port, String protocol) {
+        restClient = RestClient.builder(new HttpHost(host, port, protocol)).build();
     }
 
     /**

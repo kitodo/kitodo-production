@@ -26,6 +26,7 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class DocketForm extends BasisForm {
@@ -61,6 +62,10 @@ public class DocketForm extends BasisForm {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
             logger.error(e);
             return "";
+        }  catch (ResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+            logger.error(e);
+            return "";
         }
     }
 
@@ -87,6 +92,10 @@ public class DocketForm extends BasisForm {
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+            return "";
+        } catch (ResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+            logger.error(e);
             return "";
         }
         return "DocketList";
