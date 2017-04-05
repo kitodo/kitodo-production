@@ -31,7 +31,7 @@ public class BatchService {
 
     private BatchDAO batchDao = new BatchDAO();
     private BatchType batchType = new BatchType();
-    private Indexer<Batch, BatchType> indexer = new Indexer<>("kitodo", Batch.class);
+    private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
 
     /**
      * Method saves object to database and insert document to the index of

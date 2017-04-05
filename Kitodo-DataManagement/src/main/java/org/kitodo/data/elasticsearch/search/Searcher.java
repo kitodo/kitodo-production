@@ -34,25 +34,21 @@ public class Searcher extends Index {
     /**
      * Constructor for searcher with type names equal to table names.
      *
-     * @param index
-     *            as String
      * @param beanClass
      *            as Class
      */
-    public Searcher(String index, Class<?> beanClass) {
-        super(index, beanClass);
+    public Searcher(Class<?> beanClass) {
+        super(beanClass);
     }
 
     /**
      * Constructor for searcher with type names not equal to table names.
      *
-     * @param index
-     *            as String
      * @param type
      *            as String
      */
-    public Searcher(String index, String type) {
-        super(index, type);
+    public Searcher(String type) {
+        super(type);
     }
 
     /**

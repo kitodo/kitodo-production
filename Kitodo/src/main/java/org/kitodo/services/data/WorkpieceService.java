@@ -27,7 +27,7 @@ public class WorkpieceService {
 
     private WorkpieceDAO workpieceDao = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
-    private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>("kitodo", Workpiece.class);
+    private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>(Workpiece.class);
 
     /**
      * Method saves object to database and insert document to the index of

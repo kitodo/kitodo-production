@@ -90,7 +90,7 @@ public class ProcessService {
 
     private ProcessDAO processDao = new ProcessDAO();
     private ProcessType processType = new ProcessType();
-    private Indexer<Process, ProcessType> indexer = new Indexer<>("kitodo", Process.class);
+    private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
     private UserService userService = new UserService();
 
     public Process find(Integer id) throws DAOException {

@@ -35,7 +35,7 @@ public class RulesetService {
 
     private RulesetDAO rulesetDao = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();
-    private Indexer<Ruleset, RulesetType> indexer = new Indexer<>("kitodo", Ruleset.class);
+    private Indexer<Ruleset, RulesetType> indexer = new Indexer<>(Ruleset.class);
 
     /**
      * Method saves object to database and insert document to the index of

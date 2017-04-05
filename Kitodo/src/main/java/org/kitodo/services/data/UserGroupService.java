@@ -26,7 +26,7 @@ import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 public class UserGroupService {
     private UserGroupDAO userGroupDao = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
-    private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>("kitodo", UserGroup.class);
+    private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
 
     public UserGroup find(Integer id) throws DAOException {
         return userGroupDao.find(id);

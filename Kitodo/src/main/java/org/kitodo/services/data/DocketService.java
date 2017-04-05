@@ -26,7 +26,7 @@ import org.kitodo.data.elasticsearch.index.type.DocketType;
 public class DocketService {
     private DocketDAO docketDao = new DocketDAO();
     private DocketType docketType = new DocketType();
-    private Indexer<Docket, DocketType> indexer = new Indexer<>("kitodo", Docket.class);
+    private Indexer<Docket, DocketType> indexer = new Indexer<>(Docket.class);
 
     public Docket find(Integer id) throws DAOException {
         return docketDao.find(id);

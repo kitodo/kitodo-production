@@ -34,25 +34,21 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
     /**
      * Constructor for indexer with type names equal to table names.
      *
-     * @param index
-     *            as String
      * @param beanClass
      *            as Class
      */
-    public Indexer(String index, Class<?> beanClass) {
-        super(index, beanClass);
+    public Indexer(Class<?> beanClass) {
+        super(beanClass);
     }
 
     /**
      * Constructor for indexer with type names not equal to table names.
      *
-     * @param index
-     *            as String
      * @param type
      *            as String
      */
-    public Indexer(String index, String type) {
-        super(index, type);
+    public Indexer(String type) {
+        super(type);
     }
 
     /**
