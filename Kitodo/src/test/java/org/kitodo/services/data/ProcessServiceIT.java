@@ -31,8 +31,8 @@ import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+
 import ugh.dl.DigitalDocument;
 
 /**

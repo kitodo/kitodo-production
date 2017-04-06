@@ -13,13 +13,23 @@ package org.kitodo.data.elasticsearch.index;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+
+import java.io.IOException;
 
 /**
  * Test class for IndexRestClient.
  */
 public class IndexRestClientTest {
+
+    @AfterClass
+    public static void cleanIndex() throws IOException, ResponseException {
+        IndexRestClient restClient = initializeRestClient();
+        restClient.deleteIndex();
+    }
 
     @Test
     public void shouldAddDocument() throws Exception {

@@ -3,13 +3,22 @@ package org.kitodo;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
  * Mock entities.
  */
 public class MockEntity {
+
+    public static void cleanIndex() throws IOException, ResponseException {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.deleteIndex();
+    }
 
     public static HashMap<Integer, HttpEntity> createBatchEntities() {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();

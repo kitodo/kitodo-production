@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
@@ -33,6 +34,12 @@ public class SearcherTest {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
+    }
+
+    @AfterClass
+    public static void cleanIndex() throws IOException, ResponseException {
+        IndexRestClient restClient = initializeIndexRestClient();
+        restClient.deleteIndex();
     }
 
     @Test
