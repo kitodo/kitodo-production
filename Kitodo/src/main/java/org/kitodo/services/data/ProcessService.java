@@ -59,7 +59,6 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
 
@@ -108,7 +107,7 @@ public class ProcessService {
      * @param process
      *            object
      */
-    public void save(Process process) throws DAOException, IOException, ResponseException {
+    public void save(Process process) throws DAOException, IOException {
         processDao.save(process, getProgress(process));
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(process, processType);
@@ -125,7 +124,7 @@ public class ProcessService {
      * @param process
      *            object
      */
-    public void remove(Process process) throws DAOException, IOException, ResponseException {
+    public void remove(Process process) throws DAOException, IOException {
         processDao.remove(process);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(process, processType);
@@ -138,7 +137,7 @@ public class ProcessService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws DAOException, IOException {
         processDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -159,7 +158,7 @@ public class ProcessService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), processType);
     }

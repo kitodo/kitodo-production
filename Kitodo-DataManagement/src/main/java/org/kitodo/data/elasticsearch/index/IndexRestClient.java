@@ -24,7 +24,6 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 
 /**
  * Implementation of Elastic Search REST Client for index package.
@@ -41,11 +40,11 @@ public class IndexRestClient extends KitodoRestClient {
      *            of document - equal to the id from table in database
      * @return status code of the response from the server
      */
-    public boolean addDocument(HttpEntity entity, Integer id) throws IOException, ResponseException {
+    public boolean addDocument(HttpEntity entity, Integer id) throws IOException {
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.<String, String>emptyMap(),
                 entity);
-        int statusCode = processStatusCode(indexResponse.getStatusLine());
+        int statusCode = indexResponse.getStatusLine().getStatusCode();
         return statusCode == 200 || statusCode == 201;
     }
 
@@ -89,10 +88,10 @@ public class IndexRestClient extends KitodoRestClient {
      *            of the document
      * @return status code of the response from server
      */
-    public boolean deleteDocument(Integer id) throws IOException, ResponseException {
+    public boolean deleteDocument(Integer id) throws IOException {
         Response indexResponse = restClient.performRequest("DELETE",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id);
-        return processStatusCode(indexResponse.getStatusLine()) == 200;
+        return indexResponse.getStatusLine().getStatusCode() == 200;
     }
 
     /**
@@ -100,22 +99,12 @@ public class IndexRestClient extends KitodoRestClient {
      *
      * @return response from server
      */
-    public boolean deleteType() throws IOException, ResponseException {
+    public boolean deleteType() throws IOException {
         String query = "{\n" + "  \"query\": {\n" + "    \"match_all\": {}\n" + "  }\n" + "}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest("POST",
                 "/" + this.getIndex() + "/" + this.getType() + "/_delete_by_query?conflicts=proceed",
                 Collections.<String, String>emptyMap(), entity);
-        return processStatusCode(indexResponse.getStatusLine()) == 200;
-    }
-
-    private int processStatusCode(StatusLine statusLine)  throws ResponseException {
-        int statusCode = statusLine.getStatusCode();
-        if (statusCode >= 400 && statusCode < 452) {
-            throw new ResponseException("Client error: " + statusLine.toString());
-        } else if (statusCode >= 500 && statusCode < 512) {
-            throw new ResponseException("Server error: " + statusLine.toString());
-        }
-        return statusCode;
+        return indexResponse.getStatusLine().getStatusCode() == 200;
     }
 }

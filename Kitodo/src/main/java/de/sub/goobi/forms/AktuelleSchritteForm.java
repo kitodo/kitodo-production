@@ -75,7 +75,6 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class AktuelleSchritteForm extends BasisForm {
@@ -258,8 +257,6 @@ public class AktuelleSchritteForm extends BasisForm {
                         myLogger.error("step couldn't get saved", e);
                     } catch (IOException e) {
                         myLogger.error("process couldn't get inserted", e);
-                    } catch (ResponseException e) {
-                        myLogger.error("Elastic Search incorrect server response", e);
                     } finally {
                         this.flagWait = false;
                     }
@@ -377,7 +374,7 @@ public class AktuelleSchritteForm extends BasisForm {
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
                 myLogger.error("task couldn't get saved", e);
-            } catch (IOException | ResponseException e) {
+            } catch (IOException e) {
                 myLogger.error("task couldn't get inserted", e);
             }
         }
@@ -462,7 +459,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * gespeichert wird
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException | ResponseException e) {
+        } catch (DAOException | IOException e) {
             myLogger.error("task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
@@ -645,7 +642,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * gespeichert wird
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException | ResponseException e) {
+        } catch (DAOException | IOException e) {
             myLogger.error("task couldn't get saved/inserted", e);
         }
 
@@ -737,7 +734,7 @@ public class AktuelleSchritteForm extends BasisForm {
             this.mySchritt.getProcess().getProperties().add(pe);
 
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException | ResponseException e) {
+        } catch (DAOException | IOException e) {
             myLogger.error("task couldn't get saved/inserted", e);
         }
 
@@ -850,8 +847,6 @@ public class AktuelleSchritteForm extends BasisForm {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
                 } catch (IOException e) {
                     Helper.setMeldung("errorElasticSearch" + proz.getTitle());
-                } catch (ResponseException e) {
-                    Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
                 this.myDav.DownloadToHome(proz, step.getId(), false);
             }
@@ -887,8 +882,6 @@ public class AktuelleSchritteForm extends BasisForm {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
                 } catch (IOException e) {
                     Helper.setMeldung("errorElasticSearch" + proz.getTitle());
-                } catch (ResponseException e) {
-                    Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
                 this.myDav.DownloadToHome(proz, step.getId(), false);
             }
@@ -1205,7 +1198,7 @@ public class AktuelleSchritteForm extends BasisForm {
             this.addToWikiField = "";
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-            } catch (DAOException | IOException | ResponseException e) {
+            } catch (DAOException | IOException e) {
                 myLogger.error(e);
             }
         }
@@ -1295,9 +1288,6 @@ public class AktuelleSchritteForm extends BasisForm {
                 Helper.setFehlerMeldung("propertiesNotSaved");
             } catch (IOException e) {
                 myLogger.error(e);
-            } catch (ResponseException e) {
-                myLogger.error(e);
-                Helper.setMeldung("ElasticSearch server incorrect response");
             }
         }
     }
@@ -1344,7 +1334,7 @@ public class AktuelleSchritteForm extends BasisForm {
             } catch (DAOException e) {
                 myLogger.error(e);
                 Helper.setFehlerMeldung("propertyNotSaved");
-            } catch (IOException | ResponseException e) {
+            } catch (IOException e) {
                 myLogger.error(e);
             }
         }
@@ -1404,7 +1394,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             myLogger.error(e);
             Helper.setFehlerMeldung("propertiesNotDeleted");
-        } catch (IOException | ResponseException e) {
+        } catch (IOException e) {
             myLogger.error(e);
         }
         // saveWithoutValidation();
@@ -1531,7 +1521,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             myLogger.error(e);
             Helper.setFehlerMeldung("propertiesNotSaved");
-        } catch (IOException | ResponseException e) {
+        } catch (IOException e) {
             myLogger.error(e);
         }
         loadProcessProperties();

@@ -19,7 +19,6 @@ import java.util.List;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkpieceDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
 
@@ -36,7 +35,7 @@ public class WorkpieceService {
      * @param workpiece
      *            object
      */
-    public void save(Workpiece workpiece) throws DAOException, IOException, ResponseException {
+    public void save(Workpiece workpiece) throws DAOException, IOException {
         workpieceDao.save(workpiece);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(workpiece, workpieceType);
@@ -57,7 +56,7 @@ public class WorkpieceService {
      * @param workpiece
      *            object
      */
-    public void remove(Workpiece workpiece) throws DAOException, IOException, ResponseException {
+    public void remove(Workpiece workpiece) throws DAOException, IOException {
         workpieceDao.remove(workpiece);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(workpiece, workpieceType);
@@ -70,7 +69,7 @@ public class WorkpieceService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws DAOException, IOException {
         workpieceDao.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
@@ -79,7 +78,7 @@ public class WorkpieceService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), workpieceType);
     }

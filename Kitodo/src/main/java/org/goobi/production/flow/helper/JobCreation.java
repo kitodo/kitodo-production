@@ -30,7 +30,6 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.exceptions.PreferencesException;
@@ -132,9 +131,6 @@ public class JobCreation {
                 logger.error(e);
             } catch (InterruptedException e) {
                 Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (ResponseException e) {
-                Helper.setFehlerMeldung("ElasticSearch server response incorrect", e);
                 logger.error(e);
             }
         } else {

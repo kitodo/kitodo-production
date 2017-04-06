@@ -31,7 +31,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.encryption.DesEncrypter;
@@ -51,7 +50,7 @@ public class UserService {
      * @param user
      *            object
      */
-    public void save(User user) throws DAOException, IOException, ResponseException {
+    public void save(User user) throws DAOException, IOException {
         userDao.save(user);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(user, userType);
@@ -72,7 +71,7 @@ public class UserService {
      * @param user
      *            object
      */
-    public void remove(User user) throws DAOException, IOException, ResponseException {
+    public void remove(User user) throws DAOException, IOException {
         userDao.remove(user);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(user, userType);
@@ -97,7 +96,7 @@ public class UserService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userType);
     }

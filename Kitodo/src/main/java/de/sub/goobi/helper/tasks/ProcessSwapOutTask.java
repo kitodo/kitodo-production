@@ -27,7 +27,6 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapOutTask extends LongRunningTask {
@@ -223,8 +222,6 @@ public class ProcessSwapOutTask extends LongRunningTask {
             setStatusProgress(-1);
         } catch (IOException e) {
             logger.warn("IOException:", e);
-        } catch (ResponseException e) {
-            logger.warn("ResponseException:", e);
         }
 
         setStatusMessage("done");

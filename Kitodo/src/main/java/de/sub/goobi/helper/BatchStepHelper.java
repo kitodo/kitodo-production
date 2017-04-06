@@ -53,7 +53,6 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class BatchStepHelper {
@@ -162,7 +161,7 @@ public class BatchStepHelper {
     /**
      * Save current property.
      */
-    public void saveCurrentProperty() throws IOException, ResponseException {
+    public void saveCurrentProperty() throws IOException {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
@@ -205,7 +204,7 @@ public class BatchStepHelper {
     /**
      * Save current property for all.
      */
-    public void saveCurrentPropertyForAll() throws IOException, ResponseException {
+    public void saveCurrentPropertyForAll() throws IOException {
         boolean error = false;
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
@@ -401,7 +400,7 @@ public class BatchStepHelper {
      *
      * @return empty String
      */
-    public String duplicateContainerForSingle() throws IOException, ResponseException {
+    public String duplicateContainerForSingle() throws IOException {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container
@@ -435,7 +434,7 @@ public class BatchStepHelper {
         return "";
     }
 
-    private void saveStep() throws IOException, ResponseException {
+    private void saveStep() throws IOException {
         Process p = this.currentStep.getProcess();
         List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
         for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
@@ -455,7 +454,7 @@ public class BatchStepHelper {
      *
      * @return empty String
      */
-    public String duplicateContainerForAll() throws IOException, ResponseException {
+    public String duplicateContainerForAll() throws IOException {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container
@@ -491,7 +490,7 @@ public class BatchStepHelper {
     /**
      * Error management for single.
      */
-    public String ReportProblemForSingle() throws IOException, ResponseException {
+    public String ReportProblemForSingle() throws IOException {
 
         this.myDav.UploadFromHome(this.currentStep.getProcess());
         reportProblem();
@@ -505,7 +504,7 @@ public class BatchStepHelper {
     /**
      * Error management for all.
      */
-    public String ReportProblemForAll() throws IOException, ResponseException {
+    public String ReportProblemForAll() throws IOException {
         for (Task s : this.steps) {
             this.currentStep = s;
             this.myDav.UploadFromHome(this.currentStep.getProcess());
@@ -518,7 +517,7 @@ public class BatchStepHelper {
         return asf.FilterAlleStart();
     }
 
-    private void reportProblem() throws IOException, ResponseException {
+    private void reportProblem() throws IOException {
         Date myDate = new Date();
         this.currentStep.setProcessingStatusEnum(TaskStatus.LOCKED);
         this.currentStep.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -605,7 +604,7 @@ public class BatchStepHelper {
      * @return list of selected items
      */
     @SuppressWarnings("unchecked")
-    public List<SelectItem> getNextStepsForProblemSolution() throws ResponseException {
+    public List<SelectItem> getNextStepsForProblemSolution() {
         List<SelectItem> answer = new ArrayList<SelectItem>();
         List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
                 .add(Restrictions.gt("ordering", this.currentStep.getOrdering())).add(Restrictions.eq("priority", 10))
@@ -622,7 +621,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String SolveProblemForSingle() throws IOException, ResponseException {
+    public String SolveProblemForSingle() throws IOException {
         try {
             solveProblem();
             saveStep();
@@ -642,7 +641,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String SolveProblemForAll() throws IOException, ResponseException {
+    public String SolveProblemForAll() throws IOException {
         try {
             for (Task s : this.steps) {
                 this.currentStep = s;
@@ -660,7 +659,7 @@ public class BatchStepHelper {
         }
     }
 
-    private void solveProblem() throws AuthenticationException, IOException, ResponseException {
+    private void solveProblem() throws AuthenticationException, IOException {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             throw new AuthenticationException("userNotFound");
@@ -784,7 +783,7 @@ public class BatchStepHelper {
     /**
      * Add to wiki field.
      */
-    public void addToWikiField() throws IOException, ResponseException {
+    public void addToWikiField() throws IOException {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
@@ -802,7 +801,7 @@ public class BatchStepHelper {
     /**
      * Add to wiki field for all.
      */
-    public void addToWikiFieldForAll() throws IOException, ResponseException {
+    public void addToWikiFieldForAll() throws IOException {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
@@ -864,7 +863,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String BatchDurchBenutzerZurueckgeben() throws IOException, ResponseException {
+    public String BatchDurchBenutzerZurueckgeben() throws IOException {
 
         for (Task s : this.steps) {
 
