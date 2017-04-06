@@ -16,7 +16,6 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -40,7 +39,7 @@ public class XmlArtikelZaehlen {
      * @param myProcess
      *            process object
      */
-    public int getNumberOfUghElements(Process myProcess, CountType inType) throws IOException, ResponseException {
+    public int getNumberOfUghElements(Process myProcess, CountType inType) throws IOException {
         int rueckgabe = 0;
 
         /*

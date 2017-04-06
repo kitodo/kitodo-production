@@ -43,7 +43,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.services.ServiceManager;
 import org.quartz.SchedulerException;
@@ -122,7 +121,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Run process.
      */
-    public void ProzesseDurchlaufen() throws DAOException, IOException, ResponseException {
+    public void ProzesseDurchlaufen() throws DAOException, IOException {
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
             serviceManager.getProcessService().save(auf);
@@ -134,7 +133,7 @@ public class AdministrationForm implements Serializable {
      * Anzahlen ermitteln.
      */
     public void AnzahlenErmitteln()
-            throws DAOException, IOException, InterruptedException, ResponseException, SwapException {
+            throws DAOException, IOException, InterruptedException, SwapException {
         XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
@@ -157,7 +156,7 @@ public class AdministrationForm implements Serializable {
     /**
      * //TODO: Remove this.
      */
-    public void SiciKorr() throws DAOException, IOException, ResponseException {
+    public void SiciKorr() throws DAOException, IOException {
         UserGroup gruppe = serviceManager.getUserGroupService().find(15);
         List<UserGroup> neueGruppen = new ArrayList<>();
         neueGruppen.add(gruppe);
@@ -175,7 +174,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Set standard ruleset.
      */
-    public void StandardRegelsatzSetzen() throws DAOException, IOException, ResponseException {
+    public void StandardRegelsatzSetzen() throws DAOException, IOException {
         Ruleset mk = serviceManager.getRulesetService().find(1);
 
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
@@ -210,7 +209,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Set up process' date.
      */
-    public void ProzesseDatumSetzen() throws DAOException, IOException, ResponseException {
+    public void ProzesseDatumSetzen() throws DAOException, IOException {
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
 
@@ -586,7 +585,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Get all data stored in database and insert it to ElasticSearch index.
      */
-    public void addTypesToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addTypesToIndex() throws DAOException, InterruptedException, IOException {
         serviceManager.getBatchService().addAllObjectsToIndex();
         serviceManager.getDocketService().addAllObjectsToIndex();
         serviceManager.getHistoryService().addAllObjectsToIndex();

@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 
 /**
  * Tests for TaskService class.
@@ -31,7 +30,7 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 public class ProjectFileGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
     }
 

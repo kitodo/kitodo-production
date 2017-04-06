@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 
 /**
  * Tests for UserService class.
@@ -35,7 +34,7 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 public class UserServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
     }
 

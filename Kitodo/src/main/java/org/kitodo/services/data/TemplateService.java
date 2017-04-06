@@ -19,7 +19,6 @@ import java.util.List;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TemplateDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
 
@@ -36,7 +35,7 @@ public class TemplateService {
      * @param template
      *            object
      */
-    public void save(Template template) throws DAOException, IOException, ResponseException {
+    public void save(Template template) throws DAOException, IOException {
         templateDao.save(template);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(template, templateType);
@@ -57,7 +56,7 @@ public class TemplateService {
      * @param template
      *            object
      */
-    public void remove(Template template) throws DAOException, IOException, ResponseException {
+    public void remove(Template template) throws DAOException, IOException {
         templateDao.remove(template);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(template, templateType);
@@ -70,7 +69,7 @@ public class TemplateService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws DAOException, IOException {
         templateDao.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
@@ -79,7 +78,7 @@ public class TemplateService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), templateType);
     }

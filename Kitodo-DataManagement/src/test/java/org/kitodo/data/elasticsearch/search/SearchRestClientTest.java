@@ -14,7 +14,6 @@ package org.kitodo.data.elasticsearch.search;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 public class SearchRestClientTest {
 
     @BeforeClass
-    public static void prepareIndex() throws IOException, ResponseException {
+    public static void prepareIndex() throws IOException {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);

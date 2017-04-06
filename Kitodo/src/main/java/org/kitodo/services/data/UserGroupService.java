@@ -19,7 +19,6 @@ import java.util.List;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 
@@ -43,7 +42,7 @@ public class UserGroupService {
      * @param userGroup
      *            object
      */
-    public void save(UserGroup userGroup) throws DAOException, IOException, ResponseException {
+    public void save(UserGroup userGroup) throws DAOException, IOException {
         userGroupDao.save(userGroup);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(userGroup, userGroupType);
@@ -56,7 +55,7 @@ public class UserGroupService {
      * @param userGroup
      *            object
      */
-    public void remove(UserGroup userGroup) throws DAOException, IOException, ResponseException {
+    public void remove(UserGroup userGroup) throws DAOException, IOException {
         userGroupDao.remove(userGroup);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(userGroup, userGroupType);
@@ -73,7 +72,7 @@ public class UserGroupService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userGroupType);
     }

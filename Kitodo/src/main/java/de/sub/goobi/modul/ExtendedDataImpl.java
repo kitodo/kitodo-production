@@ -30,7 +30,6 @@ import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -149,9 +148,6 @@ public class ExtendedDataImpl extends DataImpl {
                     + Helper.getStacktraceAsString(e));
         } catch (IOException e) {
             throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (ResponseException e) {
-            throw new GoobiException(1400, "******** wrapped ResponseException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return 0;
@@ -377,9 +373,6 @@ public class ExtendedDataImpl extends DataImpl {
                     + Helper.getStacktraceAsString(e));
         } catch (IOException e) {
             throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (ResponseException e) {
-            throw new GoobiException(1400, "******** wrapped ResponseException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return 0;

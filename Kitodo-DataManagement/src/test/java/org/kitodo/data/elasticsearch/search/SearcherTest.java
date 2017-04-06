@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
 /**
@@ -29,7 +28,7 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 public class SearcherTest {
 
     @BeforeClass
-    public static void prepareIndex() throws IOException, ResponseException {
+    public static void prepareIndex() throws IOException {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);

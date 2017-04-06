@@ -28,7 +28,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
 
@@ -44,7 +43,7 @@ public class TaskService {
      * @param task
      *            object
      */
-    public void save(Task task) throws DAOException, IOException, ResponseException {
+    public void save(Task task) throws DAOException, IOException {
         taskDao.save(task);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(task, taskType);
@@ -65,7 +64,7 @@ public class TaskService {
      * @param task
      *            object
      */
-    public void remove(Task task) throws DAOException, IOException, ResponseException {
+    public void remove(Task task) throws DAOException, IOException {
         taskDao.remove(task);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(task, taskType);
@@ -78,7 +77,7 @@ public class TaskService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws DAOException, IOException {
         taskDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -95,7 +94,7 @@ public class TaskService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), taskType);
     }

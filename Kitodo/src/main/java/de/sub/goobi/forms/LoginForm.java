@@ -29,7 +29,6 @@ import javax.servlet.http.HttpSession;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class LoginForm {
@@ -223,8 +222,6 @@ public class LoginForm {
                 Helper.setFehlerMeldung("ldap errror", e.getMessage());
             } catch (IOException e) {
                 Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-            } catch (ResponseException e) {
-                Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
             }
         }
         return "";
@@ -246,8 +243,6 @@ public class LoginForm {
             Helper.setFehlerMeldung("could not save", e.getMessage());
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-        } catch (ResponseException e) {
-            Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
         }
         return "";
     }

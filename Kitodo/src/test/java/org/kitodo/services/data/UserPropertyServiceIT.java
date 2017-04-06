@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.UserProperty;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 
 /**
  * Tests for UserPropertyService class.
@@ -31,7 +30,7 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 public class UserPropertyServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertProcessesFull();
         MockDatabase.insertUserProperties();
     }

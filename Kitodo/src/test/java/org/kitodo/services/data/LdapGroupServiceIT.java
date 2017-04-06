@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 
 /**
  * Tests for LdapGroupService class.
@@ -29,7 +28,7 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 public class LdapGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException {
         MockDatabase.insertLdapGroups();
     }
 
