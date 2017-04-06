@@ -12,7 +12,6 @@
 package de.sub.kitodo.export.download;
 
 import de.sub.kitodo.config.ConfigCore;
-import de.sub.kitodo.helper.FileUtils;
 import de.sub.kitodo.helper.Helper;
 import de.sub.kitodo.helper.exceptions.ExportFileException;
 import de.sub.kitodo.helper.exceptions.UghHelperException;
@@ -35,6 +34,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.io.FileListFilter;
 import org.kitodo.io.SafeFile;
 import org.kitodo.services.ServiceManager;
 
@@ -129,7 +129,7 @@ public class ExportPdf extends ExportMets {
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
-                    FilenameFilter filter = new FileUtils.FileListFilter("\\d*\\.tif");
+                    FilenameFilter filter = new FileListFilter("\\d*\\.tif");
                     SafeFile imagesDir = new SafeFile(
                             serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
                     SafeFile[] meta = imagesDir.listFiles(filter);

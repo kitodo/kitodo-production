@@ -358,7 +358,7 @@ public class MetadatenImagesHelper {
         if (logger.isTraceEnabled()) {
             logger.trace("tmpSize: " + tmpSize);
         }
-        if (ConfigCore.getParameter("goobiContentServerUrl", "").equals("")) {
+        if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
             logger.trace("api");
             ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
             logger.trace("im");
@@ -373,8 +373,8 @@ public class MetadatenImagesHelper {
             outputFileStream.close();
             logger.trace("close stream");
         } else {
-            String cs = ConfigCore.getParameter("goobiContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate="
-                    + intRotation + "&format=jpg";
+            String cs = ConfigCore.getParameter("kitodoContentServerUrl") + inFileName + "&scale=" + tmpSize
+                    + "&rotate=" + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
             if (logger.isTraceEnabled()) {
                 logger.trace("url: " + cs);
@@ -383,7 +383,7 @@ public class MetadatenImagesHelper {
             HttpClient httpclient = new HttpClient();
             GetMethod method = new GetMethod(csUrl.toString());
             logger.trace("get");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter("goobiContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
             method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
             int statusCode = httpclient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {

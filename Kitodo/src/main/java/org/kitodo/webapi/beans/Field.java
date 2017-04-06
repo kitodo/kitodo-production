@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.webapi.beans.Label.KeyAttribute;
 
 @XmlType(propOrder = {"required", "from", "option", "ughbinding", "docstruct" })
 public class Field {
@@ -74,7 +75,7 @@ public class Field {
                     String value = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")[@label]");
                     selectConfig.put(key, value);
                 }
-                fieldConfig.option = Label.toListOfLabels(selectConfig, Label.KeyAttribute.LABEL);
+                fieldConfig.option = Label.toListOfLabels(selectConfig, KeyAttribute.LABEL);
             }
             fieldConfig.required = projectConfig.getParamBoolean(fieldRef + "[@required]");
             fields.add(fieldConfig);

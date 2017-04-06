@@ -69,6 +69,14 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.production.cli.helper.WikiFieldHelper;
+import org.kitodo.production.constants.FileNames;
+import org.kitodo.production.constants.Parameters;
+import org.kitodo.production.flow.jobs.HistoryAnalyserJob;
+import org.kitodo.production.plugin.PluginLoader;
+import org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin;
+import org.kitodo.production.plugin.CataloguePlugin.Hit;
+import org.kitodo.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;

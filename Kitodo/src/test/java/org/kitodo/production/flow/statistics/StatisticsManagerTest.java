@@ -26,7 +26,6 @@ import java.util.Locale;
 
 import org.jfree.data.general.DefaultValueDataset;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -101,10 +100,10 @@ public class StatisticsManagerTest {
     public void testStatisticsManager() {
         StatisticsManager testProjects = new StatisticsManager(StatisticsMode.PROJECTS, testFilter, locale);
         StatisticsManager testStorage = new StatisticsManager(StatisticsMode.STORAGE, testFilter, locale);
-        Assert.assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
-        Assert.assertEquals(StatisticsMode.PRODUCTION, testManager2.getStatisticMode());
-        Assert.assertEquals(StatisticsMode.PROJECTS, testProjects.getStatisticMode());
-        Assert.assertEquals(StatisticsMode.STORAGE, testStorage.getStatisticMode());
+        assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
+        assertEquals(StatisticsMode.PRODUCTION, testManager2.getStatisticMode());
+        assertEquals(StatisticsMode.PROJECTS, testProjects.getStatisticMode());
+        assertEquals(StatisticsMode.STORAGE, testStorage.getStatisticMode());
         assertNotSame(testManager, testManager2);
     }
 
@@ -115,7 +114,7 @@ public class StatisticsManagerTest {
 
     @Test
     public final void testGetStatisticMode() {
-        Assert.assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
+        assertEquals(StatisticsMode.THROUGHPUT, testManager.getStatisticMode());
         assertNotSame(StatisticsMode.PRODUCTION, testManager.getStatisticMode());
     }
 
@@ -227,25 +226,25 @@ public class StatisticsManagerTest {
     @Test
     public final void testGetTargetResultOutput() {
         testManager.setTargetResultOutput(ResultOutput.chart);
-        Assert.assertEquals(ResultOutput.chart, testManager.getTargetResultOutput());
+        assertEquals(ResultOutput.chart, testManager.getTargetResultOutput());
     }
 
     @Test
     public final void testSetTargetResultOutput() {
         testManager.setTargetResultOutput(ResultOutput.chart);
-        Assert.assertEquals(ResultOutput.chart, testManager.getTargetResultOutput());
+        assertEquals(ResultOutput.chart, testManager.getTargetResultOutput());
     }
 
     @Test
     public final void testGetTargetCalculationUnit() {
         testManager.setTargetCalculationUnit(CalculationUnit.volumes);
-        Assert.assertEquals(CalculationUnit.volumes, testManager.getTargetCalculationUnit());
+        assertEquals(CalculationUnit.volumes, testManager.getTargetCalculationUnit());
     }
 
     @Test
     public final void testSetTargetCalculationUnit() {
         testManager.setTargetCalculationUnit(CalculationUnit.volumes);
-        Assert.assertEquals(CalculationUnit.volumes, testManager.getTargetCalculationUnit());
+        assertEquals(CalculationUnit.volumes, testManager.getTargetCalculationUnit());
     }
 
     @Test
