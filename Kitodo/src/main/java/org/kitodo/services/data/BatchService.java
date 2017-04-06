@@ -13,7 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.kitodo.helper.Helper;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -245,7 +245,7 @@ public class BatchService {
     }
 
     /**
-     * Goobi does not keep objects around from Hibernate session to Hibernate
+     * Kitodo does not keep objects around from Hibernate session to Hibernate
      * session, so this is the working approach here.
      *
      * @see "https://developer.jboss.org/wiki/EqualsandHashCode"

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
-import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.kitodo.helper.FilesystemHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;

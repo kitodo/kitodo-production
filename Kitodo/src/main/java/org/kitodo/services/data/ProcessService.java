@@ -13,12 +13,12 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.tasks.ProcessSwapInTask;
-import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.kitodo.config.ConfigCore;
+import de.sub.kitodo.helper.FilesystemHelper;
+import de.sub.kitodo.helper.Helper;
+import de.sub.kitodo.helper.tasks.ProcessSwapInTask;
+import de.sub.kitodo.metadaten.MetadatenHelper;
+import de.sub.kitodo.metadaten.MetadatenSperrung;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -40,10 +40,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
-import org.goobi.io.BackupFileRotation;
-import org.goobi.io.SafeFile;
-import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -62,6 +58,10 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.io.BackupFileRotation;
+import org.kitodo.io.SafeFile;
+import org.kitodo.production.cli.helper.WikiFieldHelper;
+import org.kitodo.production.export.ExportDocket;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
@@ -546,7 +546,7 @@ public class ProcessService {
      */
     public String getProcessDataDirectoryIgnoreSwapping(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = this.help.getGoobiDataDirectory() + process.getId() + File.separator;
+        String pfad = this.help.getKitodoDataDirectory() + process.getId() + File.separator;
         pfad = pfad.replaceAll(" ", "__");
         FilesystemHelper.createDirectory(pfad);
         return pfad;
@@ -1188,7 +1188,7 @@ public class ProcessService {
 
     /**
      * The method createProcessDirs() starts creation of directories configured
-     * by parameter processDirs within goobi_config.properties
+     * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process)
             throws SwapException, DAOException, IOException, InterruptedException {

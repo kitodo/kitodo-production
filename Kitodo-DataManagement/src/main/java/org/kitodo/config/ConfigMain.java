@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 public class ConfigMain {
     private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
     private static volatile PropertiesConfiguration config;
-    private static final String CONFIG_FILE = "goobi_config.properties";
+    private static final String CONFIG_FILE = "kitodo_config.properties";
 
     public static PropertiesConfiguration getConfig() {
         if (config == null) {

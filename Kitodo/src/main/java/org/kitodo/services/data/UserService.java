@@ -13,10 +13,10 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FilesystemHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ldap.Ldap;
+import de.sub.kitodo.config.ConfigCore;
+import de.sub.kitodo.helper.FilesystemHelper;
+import de.sub.kitodo.helper.Helper;
+import de.sub.kitodo.helper.ldap.Ldap;
 
 import java.io.File;
 import java.io.IOException;

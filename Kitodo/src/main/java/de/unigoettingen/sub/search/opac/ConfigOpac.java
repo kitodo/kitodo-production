@@ -11,8 +11,8 @@
 
 package de.unigoettingen.sub.search.opac;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
+import de.sub.kitodo.config.ConfigCore;
+import de.sub.kitodo.helper.Helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,8 +31,8 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.goobi.production.constants.FileNames;
-import org.goobi.production.constants.Parameters;
+import org.kitodo.production.constants.FileNames;
+import org.kitodo.production.constants.Parameters;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
@@ -160,7 +160,7 @@ public class ConfigOpac {
      * The function getRestrictionsForCatalogue() returns the content of all
      * <kbd>&lt;restriction&gt;</kbd> elements from the
      * <kbd>&lt;catalogue&gt;</kbd> entry with the given <kbd>title</kbd> from
-     * <kbd>goobi_opac.xml</kbd>.
+     * <kbd>kitodo_opac.xml</kbd>.
      *
      * <p>
      * The function will return an empty list if there are no such entries for

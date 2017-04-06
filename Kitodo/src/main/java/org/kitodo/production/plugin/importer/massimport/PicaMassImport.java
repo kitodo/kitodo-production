@@ -17,7 +17,7 @@
 
 package org.kitodo.production.plugin.importer.massimport;
 
-import de.sub.goobi.helper.exceptions.ImportPluginException;
+import de.sub.kitodo.helper.exceptions.ImportPluginException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,15 +51,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.goobi.production.enums.ImportReturnValue;
-import org.goobi.production.enums.ImportType;
-import org.goobi.production.enums.PluginType;
-import org.goobi.production.importer.DocstructElement;
-import org.goobi.production.importer.ImportObject;
-import org.goobi.production.importer.Record;
-import org.goobi.production.plugin.interfaces.IImportPlugin;
-import org.goobi.production.plugin.interfaces.IPlugin;
-import org.goobi.production.properties.ImportProperty;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
@@ -67,7 +58,16 @@ import org.jdom.output.DOMOutputter;
 import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.production.enums.ImportReturnValue;
+import org.kitodo.production.enums.ImportType;
+import org.kitodo.production.enums.PluginType;
+import org.kitodo.production.importer.DocstructElement;
+import org.kitodo.production.importer.ImportObject;
+import org.kitodo.production.importer.Record;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
+import org.kitodo.production.plugin.interfaces.IImportPlugin;
+import org.kitodo.production.plugin.interfaces.IPlugin;
+import org.kitodo.production.properties.ImportProperty;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -802,22 +802,22 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Set Goobi config directory.
+     * Set kitodo config directory.
      *
      * @param configDir
-     *            the goobi config directory
+     *            the kitodo config directory
      */
     @Override
-    public void setGoobiConfigDirectory(String configDir) {
+    public void setKitodoConfigDirectory(String configDir) {
         this.configDir = configDir;
     }
 
     /**
-     * Get Goobi config directory.
+     * Get kitodo config directory.
      *
-     * @return the goobi config directory
+     * @return the kitodo config directory
      */
-    private String getGoobiConfigDirectory() {
+    private String getKitodoConfigDirectory() {
         return configDir;
     }
 
@@ -831,7 +831,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         String address = "";
 
         try (FileInputStream istream = new FileInputStream(
-                FilenameUtils.concat(this.getGoobiConfigDirectory(), "goobi_opac.xml"))) {
+                FilenameUtils.concat(this.getKitodoConfigDirectory(), "kitodo_opac.xml"))) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

@@ -13,7 +13,7 @@
  * Contains a plug-in required to access a PICA library catalogue system. The
  * main class implementing the plug-in is PicaPlugin. It provides the following
  * public methods which are specified in
- * {@link org.goobi.production.plugin.UnspecificPlugin}:
+ * {@link org.kitodo.production.plugin.UnspecificPlugin}:
  * 
  * <pre>
  *    void    configure(Map)
@@ -21,7 +21,7 @@
  *   String  getTitle()
  * </pre>
  * 
- * and in {@link org.goobi.production.plugin.CataloguePlugin.CataloguePlugin}:
+ * and in {@link org.kitodo.production.plugin.CataloguePlugin.CataloguePlugin}:
  *
  * <pre>
  *    Object  find(String, long)
@@ -35,7 +35,8 @@
  * Most of the code originates form the package
  * <kbd>de.unigoettingen.sub.search.opac</kbd> created by “Ludwig” and maybe
  * others in 2005. To compile, the plug-in requires the libraries from
- * /Goobi/WEB-INF/lib and the Tomcat server runtime libraries on the class path.
+ * /kitodo/WEB-INF/lib and the Tomcat server runtime libraries on the class
+ * path.
  *
  * @author Matthias Ronge
  */

@@ -14,7 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.sub.goobi.config.ConfigCore;
+import de.sub.kitodo.config.ConfigCore;
 
 import java.io.File;
 import java.io.IOException;

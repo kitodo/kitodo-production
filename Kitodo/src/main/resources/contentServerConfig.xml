@@ -115,7 +115,7 @@
   * sample: <defaultRepositoryPath value="file:/home/kitodo/config/pdftitlepage.xml" />
   *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     <pdfTitlePage use="false"
-                  configFile="file:/C:/Eclipse/workspace/GoobiContentServerServlet/WebContent/WEB-INF/classes/pdftitlepage.xml"/>
+                  configFile="file:/C:/Eclipse/workspace/KitodoContentServerServlet/WebContent/WEB-INF/classes/pdftitlepage.xml"/>
 
     <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    * path to contentCache and maximum size in MB

@@ -203,90 +203,91 @@
 
                 <h:panelGroup
                         rendered="#{LoginForm.maximaleBerechtigung == 1 && ProzessverwaltungForm.modusAnzeige=='aktuell'  && ProzessverwaltungForm.page.totalResults > 0 }">
-                    <jd:hideableController for="goobiScript" id="scriptswitcher" title="#{msgs.goobiScriptAusfuehren}">
+                    <jd:hideableController for="kitodoScript" id="scriptswitcher"
+                                           title="#{msgs.kitodoScriptAusfuehren}">
                         <h:graphicImage value="/newpages/images/buttons/admin4b.gif"
                                         style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
-                        <h:outputText value="#{msgs.goobiScriptAusfuehren}"/>
+                        <h:outputText value="#{msgs.kitodoScriptAusfuehren}"/>
                     </jd:hideableController>
 
-                    <jd:hideableArea id="goobiScript" saveState="view">
+                    <jd:hideableArea id="kitodoScript" saveState="view">
                         <h:panelGrid columns="1" style="margin-left:40px">
 
-                            <h:message for="goobiScriptfield" errorClass="text_red" infoClass="text_blue"
+                            <h:message for="kitodoScriptfield" errorClass="text_red" infoClass="text_blue"
                                        showDetail="true" showSummary="true" tooltip="true"/>
 
                             <htm:table>
                                 <htm:tr>
                                     <htm:td colspan="3">
-                                        <h:outputText styleClass="goobiScriptLink" value="addUser"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:addUser \"steptitle:TITLE_STEP\" username:USER_NAME'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="addUserGroup"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:addUserGroup \"steptitle:TITLE_STEP\" group:GROUP_NAME'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="deleteTiffHeaderFile"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:deleteTiffHeaderFile'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="swapSteps"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:swapSteps swap1nr:ORDER_NUMBER_FIRST_STEP \"swap1title:TITLE_FIRST_STEP\"swap2nr:ORDER_NUMBER_SECOND_STEP \"swap2title:TITLE_SECOND_STEP\"'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="importFromFileSystem"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="swapProzessesOut"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:swapProzessesOut'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="setRuleset"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:setRuleset \"ruleset:TITLE_RULESET\"'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="addUser"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:addUser \"steptitle:TITLE_STEP\" username:USER_NAME'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="addUserGroup"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:addUserGroup \"steptitle:TITLE_STEP\" group:GROUP_NAME'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="deleteTiffHeaderFile"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:deleteTiffHeaderFile'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="swapSteps"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:swapSteps swap1nr:ORDER_NUMBER_FIRST_STEP \"swap1title:TITLE_FIRST_STEP\"swap2nr:ORDER_NUMBER_SECOND_STEP \"swap2title:TITLE_SECOND_STEP\"'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="importFromFileSystem"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="swapProzessesOut"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:swapProzessesOut'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="setRuleset"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:setRuleset \"ruleset:TITLE_RULESET\"'"/>
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
                                     <htm:td colspan="3">
-                                        <h:outputText styleClass="goobiScriptLink" value="swapProzessesIn"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:swapProzessesIn'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="deleteStep"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:deleteStep \"steptitle:TITLE_STEP\"'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="addStep"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:addStep \"steptitle:TITLE_STEP\" number:NUMBER_1_TO_?'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="setStepStatus"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:setStepStatus \"steptitle:TITLE_STEP\" status:NUMBER_0_TO_3'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="setStepNumber"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:setStepNumber \"steptitle:TITLE_STEP\" number:NUMBER_1_TO_?'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="addModuleToStep"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:addModuleToStep \"steptitle:TITLE_STEP\" \"module:MODULE_NAME\"'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="addShellScriptToStep"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:addShellScriptToStep \"steptitle:TITLE_STEP\" \"label:LABEL_FOR_SCRIPT\" \"script:PATH_TO_SCRIPT\"'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="setTaskProperty"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:setTaskProperty \"steptitle:TITLE_STEP\" property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="tiffWriter"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:tiffWriter'"/>
-                                        <h:outputText styleClass="goobiScriptLink" value="exportDms"
-                                                      onclick="document.getElementById('goobiScriptfield').value='action:exportDms exportImages:false'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="swapProzessesIn"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:swapProzessesIn'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="deleteStep"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:deleteStep \"steptitle:TITLE_STEP\"'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="addStep"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:addStep \"steptitle:TITLE_STEP\" number:NUMBER_1_TO_?'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="setStepStatus"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:setStepStatus \"steptitle:TITLE_STEP\" status:NUMBER_0_TO_3'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="setStepNumber"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:setStepNumber \"steptitle:TITLE_STEP\" number:NUMBER_1_TO_?'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="addModuleToStep"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:addModuleToStep \"steptitle:TITLE_STEP\" \"module:MODULE_NAME\"'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="addShellScriptToStep"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:addShellScriptToStep \"steptitle:TITLE_STEP\" \"label:LABEL_FOR_SCRIPT\" \"script:PATH_TO_SCRIPT\"'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="setTaskProperty"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:setTaskProperty \"steptitle:TITLE_STEP\" property:metadata_readimages_writeimages_validate_exportdms_automatic_batch value:true_OR_false'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="tiffWriter"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:tiffWriter'"/>
+                                        <h:outputText styleClass="kitodoScriptLink" value="exportDms"
+                                                      onclick="document.getElementById('kitodoScriptfield').value='action:exportDms exportImages:false'"/>
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
                                     <htm:td colspan="3">
-                                        <x:inputTextarea id="goobiScriptfield" forceId="true"
+                                        <x:inputTextarea id="kitodoScriptfield" forceId="true"
                                                          style="width:450px;height:100px"
-                                                         value="#{ProzessverwaltungForm.goobiScript}"/>
+                                                         value="#{ProzessverwaltungForm.kitodoScript}"/>
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
                                     <htm:td>
-                                        <%-- GoobiScript für selektierte Treffer der Seite --%>
+                                        <%-- KitodoScript für selektierte Treffer der Seite --%>
                                         <h:commandLink id="script1"
                                                        rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
-                                                       action="#{ProzessverwaltungForm.GoobiScriptSelection}"
+                                                       action="#{ProzessverwaltungForm.kitodoScriptSelection}"
                                                        title="#{msgs.auswahl2}">
                                             <h:outputText value="#{msgs.auswahl2}"/>
                                         </h:commandLink>
                                     </htm:td>
 
                                     <htm:td>
-                                        <%-- GoobiScript für Treffer der Seite --%>
-                                        <h:commandLink id="script2" action="#{ProzessverwaltungForm.GoobiScriptPage}"
+                                        <%-- KitodoScript für Treffer der Seite --%>
+                                        <h:commandLink id="script2" action="#{ProzessverwaltungForm.kitodoScriptPage}"
                                                        title="#{msgs.trefferDieserSeite}">
                                             <h:outputText value="#{msgs.trefferDieserSeite}"/>
                                         </h:commandLink>
                                     </htm:td>
 
                                     <htm:td align="right">
-                                        <%-- GoobiScript für alle Treffer --%>
-                                        <h:commandLink id="script3" action="#{ProzessverwaltungForm.GoobiScriptHits}"
+                                        <%-- KitodoScript für alle Treffer --%>
+                                        <h:commandLink id="script3" action="#{ProzessverwaltungForm.kitodoScriptHits}"
                                                        title="#{msgs.gesamtesTrefferset}"
                                                        onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                             <h:outputText value="#{msgs.gesamtesTrefferset}"/>

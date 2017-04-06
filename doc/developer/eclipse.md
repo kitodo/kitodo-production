@@ -15,9 +15,9 @@ Example content:
 /.project
 /.classpath
 /.settings/
-/Goobi/META-INF/
-/Goobi/src/*.properties
-/Goobi/src/*.txt
-/Goobi/src/*.xml
-/Goobi/src/*.xsl
+/Kitodo/META-INF/
+/Kitodo/src/*.properties
+/Kitodo/src/*.txt
+/Kitodo/src/*.xml
+/Kitodo/src/*.xsl
 ```

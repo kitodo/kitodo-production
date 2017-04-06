@@ -8,7 +8,7 @@ Processes, Projects and CatalogConfiguration under the URL root /rest.
 Implementation and Configuration
 --------------------------------
 
-The web resources belong to the org.goobi.webapi package and use standard Java
+The web resources belong to the org.kitodo.webapi package and use standard Java
 JAX-RS API annotations to denote resource routing. Coming from different people,
 data access is implemented in different ways. The Processes resources uses a DAO
 to query Hibernate and deliver POJO Bean instances, whereas Projects and
@@ -25,7 +25,7 @@ applications web.xml file by default:
         <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>com.sun.jersey.config.property.packages</param-name>
-            <param-value>org.goobi.webapi.resources; org.goobi.webapi.provider</param-value>
+            <param-value>org.kitodo.webapi.resources; org.kitodo.webapi.provider</param-value>
         </init-param>
         <!-- explanation of load-on-startup: http://stackoverflow.com/a/1298984 -->
         <load-on-startup>1</load-on-startup>
@@ -50,7 +50,7 @@ request to /rest/processes:
 $ curl http://localhost:8080/kitodo/rest/processes
 
     {
-        "goobiProcess":
+        "kitodoProcess":
         [ 
             {
                 "identifier":"1118749846",
@@ -66,16 +66,16 @@ $ curl http://localhost:8080/kitodo/rest/processes
 $ curl -H 'Accept: application/xml' http://localhost:8080/kitodo/rest/processes
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?> 
-    <goobiProcesses>
-        <goobiProcess>
+    <kitodoProcesses>
+        <kitodoProcess>
             <identifier>118749846</identifier>
             <title>Abbildungen von Dresdens alten und neuen Pracht-Gebäuden, Volks- und Hof-Festen</title>
-        </goobiProcess>
-        <goobiProcess>
+        </kitodoProcess>
+        <kitodoProcess>
              <identifier>118765094</identifier>
              <title>Dresden mit seinen Prachtgebäuden und schönsten Umgebungen</title>
-        </goobiProcess>
-    </goobiProcesses>
+        </kitodoProcess>
+    </kitodoProcesses>
 
 Note that the amount of data returned can be very big depending on the number of
 processes in your system. The output appears to be more performant.
@@ -84,37 +84,37 @@ processes in your system. The output appears to be more performant.
 Get XML formatted information about a single process:
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <goobiProcess>
+    <kitodoProcess>
         <identifier>319329496</identifier>
         <title>An das Königliche Ministerium des Innern, Abteilung für Ackerbau, Gewerbe und Handel zu Dresden</title>
-    </goobiProcess>
+    </kitodoProcess>
 
 ### /process/\<Identifier\>/steps
 Get XML formatted information about the steps of a specific process and their current state.
 
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <goobiProcessSteps>
-        <goobiProcessStep>
+    <kitodoProcessSteps>
+        <kitodoProcessStep>
             <sequence>1</sequence>
             <state>3</state>
             <title>Anlegen eines Vorganges</title>
-        </goobiProcessStep>
-         <goobiProcessStep>
+        </kitodoProcessStep>
+         <kitodoProcessStep>
             <sequence>2</sequence>
             <state>3</state>
             <title>Scannen</title> 
-        </goobiProcessStep>
-        <goobiProcessStep>
+        </kitodoProcessStep>
+        <kitodoProcessStep>
              <sequence>3</sequence>
              <state>3</state>
              <title>Erfassen der Meta- und Strukturdaten</title>
-        </goobiProcessStep>
-         <goobiProcessStep>
+        </kitodoProcessStep>
+         <kitodoProcessStep>
             <sequence>4</sequence>
             <state>3</state>
             <title>Export / Import in das DMS</title>
-        </goobiProcessStep>
-    </goobiProcessSteps>
+        </kitodoProcessStep>
+    </kitodoProcessSteps>
 
 CatalogConfiguration
 --------------------
