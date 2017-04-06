@@ -109,6 +109,17 @@ public class IndexRestClient extends KitodoRestClient {
         return processStatusCode(indexResponse.getStatusLine()) == 200;
     }
 
+    /**
+     * Delete the whole index. Used for cleaning after tests!
+     *
+     * @return status code of the response from server
+     */
+    public boolean deleteIndex() throws IOException, ResponseException {
+        Response indexResponse = restClient.performRequest("DELETE",
+                "/kitodo");
+        return processStatusCode(indexResponse.getStatusLine()) == 200;
+    }
+
     private int processStatusCode(StatusLine statusLine)  throws ResponseException {
         int statusCode = statusLine.getStatusCode();
         if (statusCode >= 400 && statusCode < 452) {
