@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +36,8 @@ public class IndexRestClient extends KitodoRestClient {
      * Add document to the index. This method will be used for add or update of
      * single document.
      *
-     * @param entity
-     *            with document which is going to be indexed
-     * @param id
-     *            of document - equal to the id from table in database
+     * @param entity with document which is going to be indexed
+     * @param id     of document - equal to the id from table in database
      * @return status code of the response from the server
      */
     public boolean addDocument(HttpEntity entity, Integer id) throws IOException, ResponseException {
@@ -53,40 +52,38 @@ public class IndexRestClient extends KitodoRestClient {
      * Add list of documents to the index. This method will be used for add
      * whole table to the index. It performs asynchronous request.
      *
-     * @param documentsToIndex
-     *            list of json documents to the index
+     * @param documentsToIndex list of json documents to the index
      */
-    public String addType(HashMap<Integer, HttpEntity> documentsToIndex) throws InterruptedException {
+    public String addType(HashMap<Integer, HttpEntity> documentsToIndex)
+            throws InterruptedException, ResponseException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
-        final StringBuilder output = new StringBuilder();
+        final ArrayList<String> output = new ArrayList<>();
 
         for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
             restClient.performRequestAsync("PUT", "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
                     Collections.<String, String>emptyMap(), entry.getValue(), new ResponseListener() {
                         @Override
-                        // problem with return type - it should be String
-                        // dirty hack private variable ArrayResult
                         public void onSuccess(Response response) {
-                            output.append(response.toString());
+                            output.add(response.toString());
                             latch.countDown();
                         }
 
                         @Override
                         public void onFailure(Exception exception) {
+                            output.add(exception.getMessage());
                             latch.countDown();
                         }
                     });
         }
         latch.await();
-
+        filterAsynchronousResponses(output);
         return output.toString();
     }
 
     /**
      * Delete document from the index.
      *
-     * @param id
-     *            of the document
+     * @param id of the document
      * @return status code of the response from server
      */
     public boolean deleteDocument(Integer id) throws IOException, ResponseException {
@@ -120,7 +117,15 @@ public class IndexRestClient extends KitodoRestClient {
         return processStatusCode(indexResponse.getStatusLine()) == 200;
     }
 
-    private int processStatusCode(StatusLine statusLine)  throws ResponseException {
+    private void filterAsynchronousResponses(ArrayList<String> responses) throws ResponseException {
+        for (String response : responses) {
+            if (!(response.contains("HTTP/1.1 200") || response.contains("HTTP/1.1 201"))) {
+                throw new ResponseException("ElasticSearch failed to add one or more documents! Reason: " + response);
+            }
+        }
+    }
+
+    private int processStatusCode(StatusLine statusLine) throws ResponseException {
         int statusCode = statusLine.getStatusCode();
         if (statusCode >= 400 && statusCode < 452) {
             throw new ResponseException("Client error: " + statusLine.toString());
