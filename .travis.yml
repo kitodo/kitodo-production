@@ -21,6 +21,7 @@ before_install:
 
 before_script:
   - cp config/database.yml.travis config/database.yml
+  - cp Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.travis Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
   - mysql -u root -e 'CREATE DATABASE kitodo;'
   - mysql -u root -e "CREATE USER 'kitodo'@'localhost' IDENTIFIED BY 'kitodo';"
   - mysql -u root -e "GRANT ALL ON kitodo.* TO 'kitodo'@'localhost';"
