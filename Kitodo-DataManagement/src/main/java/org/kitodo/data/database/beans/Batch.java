@@ -287,13 +287,13 @@ public class Batch extends BaseBean {
                 }
                 result.append(" (");
                 String extent = "{0} processes";
-                String size = this.getProcesses() != null ? Integer.toString(this.getProcesses().size()) : "−";
+                String size = Integer.toString(this.getProcesses().size());
                 result.append(extent.replaceFirst("\\{0\\}", size));
             } catch (RuntimeException unexpected) {
                 result.setLength(0);
                 result.append(this.getTitle() != null ? this.getTitle() : this.getId());
                 result.append(" (");
-                result.append(this.getProcesses() != null ? this.getProcesses().size() : null);
+                result.append(this.getProcesses().size());
             }
             result.append(')');
             if (this.getType() != null) {

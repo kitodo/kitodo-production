@@ -399,27 +399,15 @@ public class Process extends BaseBean {
     }
 
     public int getTasksSize() {
-        if (this.getTasks() == null) {
-            return 0;
-        } else {
-            return this.getTasks().size();
-        }
+        return this.getTasks().size();
     }
 
     public int getHistorySize() {
-        if (this.getHistory() == null) {
-            return 0;
-        } else {
-            return this.getHistory().size();
-        }
+        return this.getHistory().size();
     }
 
     public int getPropertiesSize() {
-        if (this.getProperties() == null) {
-            return 0;
-        } else {
-            return this.getProperties().size();
-        }
+        return this.getProperties().size();
     }
 
     public int getWorkpiecesSize() {
@@ -431,11 +419,7 @@ public class Process extends BaseBean {
     }
 
     public int getTemplatesSize() {
-        if (this.getTemplates() == null) {
-            return 0;
-        } else {
-            return this.getTemplates().size();
-        }
+        return this.getTemplates().size();
     }
 
     /**
@@ -445,7 +429,7 @@ public class Process extends BaseBean {
      * @return the batches the process is in
      */
     public String getBatchID() {
-        if (this.getBatches() == null || this.getBatches().size() == 0) {
+        if (this.getBatches().size() == 0) {
             return null;
         }
         StringBuilder result = new StringBuilder();

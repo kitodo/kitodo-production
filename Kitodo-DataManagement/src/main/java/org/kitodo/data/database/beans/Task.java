@@ -624,21 +624,22 @@ public class Task extends BaseBean {
         // return Helper.getTranslation(task.getTitle());
     }
 
+    /**
+     * Get user size.
+     * 
+     * @return the size of the user list
+     */
     public int getUsersSize() {
-        if (this.getUsers() == null) {
-            return 0;
-
-        } else {
-            return this.getUsers().size();
-        }
+        return this.getUsers().size();
     }
 
+    /**
+     * Get usergroup size.
+     * 
+     * @return The size of the userGroup list
+     */
     public int getUserGroupsSize() {
-        if (this.getUserGroups() == null) {
-            return 0;
-        } else {
-            return this.getUserGroups().size();
-        }
+        return this.getUserGroups().size();
     }
 
     public String getProcessingStatusAsString() {
