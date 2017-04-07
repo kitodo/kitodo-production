@@ -145,7 +145,8 @@ public class FilesystemHelper {
             if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
                 if (logger.isEnabledFor(Level.WARN)) {
                     logger.warn("Renaming " + oldFileName
-                            + " failed. This is Windows. Running the garbage collector may yield good results. Forcing immediate garbage collection now!");
+                            + " failed. This is Windows. Running the garbage collector may yield good results. "
+                            + "Forcing immediate garbage collection now!");
                 }
                 System.gc();
             }

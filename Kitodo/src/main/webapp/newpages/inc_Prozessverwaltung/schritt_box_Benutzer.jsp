@@ -52,7 +52,7 @@
     </h:column>
 </x:dataTable>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:panelGroup>
     <%-- Benutzergruppen mittels IFrame zuweisen --%>
     <jp:popupFrame scrolling="auto" height="380px" width="430px"
@@ -60,7 +60,7 @@
                    styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"
                    styleClass="standardlink"
                    style="margin-top:2px;display:block; text-decoration:none"
-                   actionOpen="#{BenutzerverwaltungForm.FilterKeinMitZurueck}"
+                   actionOpen="#{BenutzerverwaltungForm.filterKeinMitZurueck}"
                    actionClose="#{NavigationForm.Reload}" center="true"
                    title="#{msgs.benutzergruppen}" immediate="true">
         <x:updateActionListener property="#{BenutzerverwaltungForm.zurueck}"

@@ -126,11 +126,11 @@
                                         </htm:td>
                                         <htm:td styleClass="eingabeBoxen_row3" align="right">
                                             <h:commandButton id="id22" value="#{msgs.loeschen}"
-                                                             action="#{DocketForm.Loeschen}"
+                                                             action="#{DocketForm.deleteDocket}"
                                                              onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                                              rendered="#{DocketForm.myDocket.id != null}"/>
                                             <h:commandButton id="absenden" value="#{msgs.speichern}"
-                                                             action="#{DocketForm.Speichern}"/>
+                                                             action="#{DocketForm.save}"/>
                                         </htm:td>
                                     </htm:tr>
                                 </htm:table>

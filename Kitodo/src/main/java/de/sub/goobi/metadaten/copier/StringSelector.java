@@ -22,7 +22,7 @@ import org.apache.commons.configuration.ConfigurationException;
 public class StringSelector extends DataSelector {
 
     /**
-     * Static string value
+     * Static string value.
      */
     private final String text;
 

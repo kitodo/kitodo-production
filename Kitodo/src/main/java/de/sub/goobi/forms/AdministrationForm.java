@@ -70,8 +70,8 @@ public class AdministrationForm implements Serializable {
      */
     public String Weiter() {
         this.passwort = new MD5(this.passwort).getMD5();
-        String adminMd5 = ConfigCore.getParameter("superadminpassword");
-        this.istPasswortRichtig = (this.passwort.equals(adminMd5));
+        String adminMdFive = ConfigCore.getParameter("superadminpassword");
+        this.istPasswortRichtig = (this.passwort.equals(adminMdFive));
         if (!this.istPasswortRichtig) {
             Helper.setFehlerMeldung("wrong password", "");
         }
@@ -122,7 +122,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Run process.
      */
-    public void ProzesseDurchlaufen() throws DAOException, IOException, ResponseException {
+    public void prozesseDurchlaufen() throws DAOException, IOException, ResponseException {
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
             serviceManager.getProcessService().save(auf);
@@ -133,7 +133,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Anzahlen ermitteln.
      */
-    public void AnzahlenErmitteln()
+    public void anzahlenErmitteln()
             throws DAOException, IOException, InterruptedException, ResponseException, SwapException {
         XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
@@ -157,7 +157,7 @@ public class AdministrationForm implements Serializable {
     /**
      * //TODO: Remove this.
      */
-    public void SiciKorr() throws DAOException, IOException, ResponseException {
+    public void siciKorr() throws DAOException, IOException, ResponseException {
         UserGroup gruppe = serviceManager.getUserGroupService().find(15);
         List<UserGroup> neueGruppen = new ArrayList<>();
         neueGruppen.add(gruppe);
@@ -175,7 +175,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Set standard ruleset.
      */
-    public void StandardRegelsatzSetzen() throws DAOException, IOException, ResponseException {
+    public void standardRegelsatzSetzen() throws DAOException, IOException, ResponseException {
         Ruleset mk = serviceManager.getRulesetService().find(1);
 
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
@@ -192,7 +192,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Password cipher.
      */
-    public void PasswoerterVerschluesseln() {
+    public void passwoerterVerschluesseln() {
         try {
             DesEncrypter encrypter = new DesEncrypter();
             List<User> myBenutzer = serviceManager.getUserService().search("from User");
@@ -210,7 +210,7 @@ public class AdministrationForm implements Serializable {
     /**
      * Set up process' date.
      */
-    public void ProzesseDatumSetzen() throws DAOException, IOException, ResponseException {
+    public void prozesseDatumSetzen() throws DAOException, IOException, ResponseException {
         List<Process> auftraege = serviceManager.getProcessService().search("from Process");
         for (Process auf : auftraege) {
 
@@ -229,7 +229,7 @@ public class AdministrationForm implements Serializable {
      * Correct image path.
      */
     @SuppressWarnings("unchecked")
-    public void ImagepfadKorrigieren() throws DAOException {
+    public void imagepfadKorrigieren() throws DAOException {
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);
 
@@ -297,7 +297,7 @@ public class AdministrationForm implements Serializable {
      * Correct PPNs.
      */
     @SuppressWarnings("unchecked")
-    public void PPNsKorrigieren() throws DAOException {
+    public void ppnsKorrigieren() throws DAOException {
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);
         crit.add(Restrictions.eq("template", Boolean.FALSE));
@@ -344,10 +344,10 @@ public class AdministrationForm implements Serializable {
                         /* analoge PPN korrigieren */
                         alleMetadaten = dsFirst.getAllMetadataByType(mdtPpnAnalog);
                         if (alleMetadaten != null && alleMetadaten.size() > 0) {
-                            Metadata md1 = alleMetadaten.get(0);
-                            myLogger.debug(md1.getValue());
-                            if (!md1.getValue().endsWith(myBandnr)) {
-                                md1.setValue(md1.getValue() + myBandnr);
+                            Metadata metadata = alleMetadaten.get(0);
+                            myLogger.debug(metadata.getValue());
+                            if (!metadata.getValue().endsWith(myBandnr)) {
+                                metadata.setValue(metadata.getValue() + myBandnr);
                                 Helper.setMeldung(null, "PPN analog adjusted: ", p.getTitle());
                             }
                         }
@@ -417,7 +417,7 @@ public class AdministrationForm implements Serializable {
      * //TODO: Remove this.
      */
     @SuppressWarnings("unchecked")
-    public static void PPNsFuerStatistischesJahrbuchKorrigieren2() {
+    public static void ppnsFuerStatistischesJahrbuchKorrigierenTwo() {
         ServiceManager serviceManager = new ServiceManager();
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);
@@ -477,7 +477,7 @@ public class AdministrationForm implements Serializable {
      * Correct PPNs for statistic.
      */
     @SuppressWarnings("unchecked")
-    public void PPNsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
+    public void ppnsFuerStatistischesJahrbuchKorrigieren() throws DAOException {
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);
         crit.add(Restrictions.eq("template", Boolean.FALSE));

@@ -64,8 +64,8 @@ public class DigitalCollections {
                  */
                 if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
                     List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
+                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                        Element col = secondIterator.next();
                         result.add(col.getText());
                     }
                 }
@@ -74,12 +74,12 @@ public class DigitalCollections {
         // If result is empty, get „default“
         if (result.size() == 0) {
             List<Element> primaryChildrenIterator = root.getChildren();
-            for (Iterator<Element> iter = primaryChildrenIterator.iterator(); iter.hasNext();) {
-                Element child = iter.next();
+            for (Iterator<Element> iterator = primaryChildrenIterator.iterator(); iterator.hasNext();) {
+                Element child = iterator.next();
                 if (child.getName().equals("default")) {
                     List<Element> myCols = child.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
+                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                        Element col = secondIterator.next();
                         result.add(col.getText());
                     }
                 }

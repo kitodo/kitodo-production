@@ -372,11 +372,11 @@ public class GoobiScript {
             Helper.setFehlerMeldung("goobiScriptfield", "Missing parameter: ", "swap2title");
             return;
         }
-        int reihenfolge1;
-        int reihenfolge2;
+        int firstOrder;
+        int secondOrder;
         try {
-            reihenfolge1 = Integer.parseInt(this.myParameters.get("swap1nr"));
-            reihenfolge2 = Integer.parseInt(this.myParameters.get("swap2nr"));
+            firstOrder = Integer.parseInt(this.myParameters.get("swap1nr"));
+            secondOrder = Integer.parseInt(this.myParameters.get("swap2nr"));
         } catch (NumberFormatException e1) {
             Helper.setFehlerMeldung("goobiScriptfield", "Invalid order number used: ",
                     this.myParameters.get("swap1nr") + " - " + this.myParameters.get("swap2nr"));
@@ -394,10 +394,10 @@ public class GoobiScript {
             Task s2 = null;
             for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
                 Task s = iterator.next();
-                if (s.getTitle().equals(this.myParameters.get("swap1title")) && s.getOrdering() == reihenfolge1) {
+                if (s.getTitle().equals(this.myParameters.get("swap1title")) && s.getOrdering() == firstOrder) {
                     s1 = s;
                 }
-                if (s.getTitle().equals(this.myParameters.get("swap2title")) && s.getOrdering() == reihenfolge2) {
+                if (s.getTitle().equals(this.myParameters.get("swap2title")) && s.getOrdering() == secondOrder) {
                     s2 = s;
                 }
             }
@@ -405,8 +405,8 @@ public class GoobiScript {
                 TaskStatus statustemp = s1.getProcessingStatusEnum();
                 s1.setProcessingStatusEnum(s2.getProcessingStatusEnum());
                 s2.setProcessingStatusEnum(statustemp);
-                s1.setOrdering(reihenfolge2);
-                s2.setOrdering(reihenfolge1);
+                s1.setOrdering(secondOrder);
+                s2.setOrdering(firstOrder);
                 try {
                     serviceManager.getTaskService().save(s1);
                     serviceManager.getTaskService().save(s2);

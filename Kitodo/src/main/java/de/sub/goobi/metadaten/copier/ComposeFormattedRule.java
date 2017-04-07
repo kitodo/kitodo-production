@@ -101,9 +101,10 @@ public class ComposeFormattedRule extends DataCopyrule {
                     case 'x':
                         result[i] = Long.parseLong(elements.get(i));
                 }
-            } catch (RuntimeException e) { // ArrayIndexOutOfBoundsException,
-                                           // ClassCastException,
-                                           // NumberFormatException
+            } catch (RuntimeException e) {
+                // ArrayIndexOutOfBoundsException,
+                // ClassCastException,
+                // NumberFormatException
                 continue;
             }
         }
@@ -188,7 +189,8 @@ public class ComposeFormattedRule extends DataCopyrule {
         format = DataSelector.create(listOfObjects.next());
         do {
             source.add(DataSelector.create(listOfObjects.next()));
-        } while (listOfObjects.hasNext());
+        }
+        while (listOfObjects.hasNext());
     }
 
     /**

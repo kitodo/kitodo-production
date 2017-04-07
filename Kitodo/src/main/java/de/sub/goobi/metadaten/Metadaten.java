@@ -831,7 +831,7 @@ public class Metadaten {
 
     private void cleanupMetadata() {
         /*
-         * vor dem Speichern alle ungenutzen Docstructs rauswerfen
+         * vor dem save alle ungenutzen Docstructs rauswerfen
          */
         this.metahelper.deleteAllUnusedElements(this.mydocument.getLogicalDocStruct());
 

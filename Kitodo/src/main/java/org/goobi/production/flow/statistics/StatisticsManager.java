@@ -459,6 +459,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * setShowAverage.
+     * 
      * @param showAverage
      *            the showAverage to set
      *************************************************************************************/
@@ -467,6 +469,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * isIncludeLoops.
+     * 
      * @return includeLoops flag
      */
     public boolean isIncludeLoops() {
@@ -481,6 +485,8 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
+     * setIncludeLoops.
+     * 
      * @param includeLoops
      */
     public void setIncludeLoops(boolean includeLoops) {
@@ -488,7 +494,7 @@ public class StatisticsManager implements Serializable {
     }
 
     /**
-     * get List of RenderingElements
+     * get List of RenderingElements.
      *
      * @return List of {@link StatisticsRenderingElement} of calculated results
      *************************************************************************************/

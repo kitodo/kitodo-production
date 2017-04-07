@@ -34,7 +34,7 @@ public class GoobiProcessDAO {
 
     private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
 
-    public static GoobiProcess getProcessByPPN(IdentifierPPN PPN) {
+    public static GoobiProcess getProcessByPPN(IdentifierPPN ppn) {
         Session session;
         GoobiProcess result = null;
 
@@ -47,7 +47,7 @@ public class GoobiProcessDAO {
                     .createAlias("workpieces.properties", "we")
                     .add(Restrictions.or(Restrictions.eq("we.title", "PPN digital a-Satz"),
                             Restrictions.eq("we.title", "PPN digital f-Satz")))
-                    .add(Restrictions.eq("ve.title", "Titel")).add(Restrictions.eq("we.value", PPN.toString()))
+                    .add(Restrictions.eq("ve.title", "Titel")).add(Restrictions.eq("we.value", ppn.toString()))
                     .addOrder(Order.asc("we.value"))
                     .setProjection(Projections.projectionList().add(Projections.property("we.value"), "identifier")
                             .add(Projections.property("ve.value"), "title"))
@@ -94,7 +94,7 @@ public class GoobiProcessDAO {
         return result;
     }
 
-    public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN PPN) {
+    public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN ppn) {
         List<GoobiProcessStep> result;
         Session session;
 
@@ -107,7 +107,7 @@ public class GoobiProcessDAO {
                     .createAlias("process.workpieces", "w").createAlias("process.workpieces.properties", "we")
                     .add(Restrictions.or(Restrictions.eq("we.title", "PPN digital a-Satz"),
                             Restrictions.eq("we.title", "PPN digital f-Satz")))
-                    .add(Restrictions.eq("we.wert", PPN.toString())).addOrder(Order.asc("reihenfolge"))
+                    .add(Restrictions.eq("we.wert", ppn.toString())).addOrder(Order.asc("reihenfolge"))
                     .setProjection(Projections.projectionList().add(Projections.property("ordering"), "sequence")
                             .add(Projections.property("processingStatus"), "state").add(Projections.property("title"),
                                     "title"))

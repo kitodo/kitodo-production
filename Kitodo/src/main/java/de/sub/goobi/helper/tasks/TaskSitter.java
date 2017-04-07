@@ -67,7 +67,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
     @Override
-    public void contextDestroyed(ServletContextEvent arg0) {
+    public void contextDestroyed(ServletContextEvent arg) {
         TaskManager.shutdownNow();
     }
 

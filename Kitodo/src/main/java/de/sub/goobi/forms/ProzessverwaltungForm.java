@@ -1680,7 +1680,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     public void DownloadTiffHeader() throws IOException {
         TiffHeader tiff = new TiffHeader(this.myProzess);
-        tiff.ExportStart();
+        tiff.exportStart();
     }
 
     public void DownloadMultiTiff() throws IOException, InterruptedException, SwapException, DAOException {

@@ -766,7 +766,7 @@ public class ProzesskopieForm {
     }
 
     /**
-     * Anlegen des Prozesses und Speichern der Metadaten.
+     * Anlegen des Prozesses und save der Metadaten.
      */
     public String NeuenProzessAnlegen() throws ReadException, IOException, InterruptedException, PreferencesException,
             SwapException, DAOException, WriteException {

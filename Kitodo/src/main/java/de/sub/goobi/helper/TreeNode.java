@@ -60,17 +60,17 @@ public class TreeNode {
     }
 
     @SuppressWarnings({"unused", "unchecked", "rawtypes" })
-    private List getChildrenAsList(List inList, int niveau, List inStriche, boolean VaterIstLetzter) {
+    private List getChildrenAsList(List inList, int niveau, List inStriche, boolean vaterIstLetzter) {
         for (Iterator<TreeNode> it = this.children.iterator(); it.hasNext();) {
             TreeNode kind = it.next();
             HashMap map = new HashMap();
             map.put("node", kind);
-            map.put("niveau", Integer.valueOf(niveau));
-            map.put("islast", Boolean.valueOf(!it.hasNext()));
+            map.put("niveau", niveau);
+            map.put("islast", !it.hasNext());
 
             // die Striche vorbereiten
             List striche = new ArrayList(inStriche);
-            striche.add(Boolean.valueOf(VaterIstLetzter));
+            striche.add(vaterIstLetzter);
             map.put("striche", striche);
 
             inList.add(map);

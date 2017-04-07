@@ -406,23 +406,23 @@ public class FolderInformation {
     public static class GoobiImageFileComparator implements Comparator<String> {
 
         @Override
-        public int compare(String s1, String s2) {
+        public int compare(String firstString, String secondString) {
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
-            s1 = s1.substring(0, s1.lastIndexOf("."));
-            s2 = s2.substring(0, s2.lastIndexOf("."));
+            firstString = firstString.substring(0, firstString.lastIndexOf("."));
+            secondString = secondString.substring(0, secondString.lastIndexOf("."));
 
             if (imageSorting.equalsIgnoreCase("number")) {
                 try {
-                    Integer i1 = Integer.valueOf(s1);
-                    Integer i2 = Integer.valueOf(s2);
-                    return i1.compareTo(i2);
+                    Integer firstInteger = Integer.valueOf(firstString);
+                    Integer secondInteger = Integer.valueOf(secondString);
+                    return firstInteger.compareTo(secondInteger);
                 } catch (NumberFormatException e) {
-                    return s1.compareToIgnoreCase(s2);
+                    return firstString.compareToIgnoreCase(secondString);
                 }
             } else if (imageSorting.equalsIgnoreCase("alphanumeric")) {
-                return s1.compareToIgnoreCase(s2);
+                return firstString.compareToIgnoreCase(secondString);
             } else {
-                return s1.compareToIgnoreCase(s2);
+                return firstString.compareToIgnoreCase(secondString);
             }
         }
 

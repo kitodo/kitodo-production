@@ -35,7 +35,7 @@ import org.kitodo.data.database.beans.Process;
  * solution for the purpose of creating robust extended statistical functions in
  * goobi
  * 
- * It uses code formerly used in ProzessverwaltungForm.FilterAlleStart and it
+ * It uses code formerly used in ProzessverwaltungForm.filterAlleStart and it
  * creates a Criteria which can be thrown into the Page Object. At the same time
  * it can now be used in order to provide statistical evaluations on the
  * filtered dataset without destroying the criteria used in the Page object

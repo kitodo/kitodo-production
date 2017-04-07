@@ -22,7 +22,7 @@ import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 
 /**
- * This class of IEvaluable filter implements the template filter
+ * This class of IEvaluable filter implements the template filter.
  * 
  * @author Wulf Riebensahm
  */

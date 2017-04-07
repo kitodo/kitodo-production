@@ -43,33 +43,33 @@ public class BatchDisplayHelper {
      * Auswertung des Fortschritts.
      */
     public String getFortschritt() {
-        int offen = 0;
-        int inBearbeitung = 0;
-        int abgeschlossen = 0;
+        int open = 0;
+        int inProgress = 0;
+        int completed = 0;
 
         for (BatchDisplayItem bdi : this.stepList) {
             if (bdi.getStepStatus() == TaskStatus.DONE) {
-                abgeschlossen++;
+                completed++;
             } else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
-                offen++;
+                open++;
             } else {
-                inBearbeitung++;
+                inProgress++;
             }
         }
-        double offen2 = 0;
-        double inBearbeitung2 = 0;
-        double abgeschlossen2 = 0;
+        double openTwo = 0;
+        double inProgressTwo = 0;
+        double completedTwo = 0;
 
-        if ((offen + inBearbeitung + abgeschlossen) == 0) {
-            offen = 1;
+        if ((open + inProgress + completed) == 0) {
+            open = 1;
         }
 
-        offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-        inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-        abgeschlossen2 = 100 - offen2 - inBearbeitung2;
-        // (abgeschlossen * 100) / (offen + inBearbeitung + abgeschlossen);
+        openTwo = (open * 100) / (double) (open + inProgress + completed);
+        inProgressTwo = (inProgress * 100) / (double) (open + inProgress + completed);
+        completedTwo = 100 - openTwo - inProgressTwo;
+        // (completed * 100) / (open + inProgress + completed);
         java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
-        return df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
+        return df.format(completedTwo) + df.format(inProgressTwo) + df.format(openTwo);
     }
 
     /**
@@ -77,24 +77,24 @@ public class BatchDisplayHelper {
      *
      * @return int
      */
-    public int getFortschritt1() {
-        int offen = 0;
-        int inBearbeitung = 0;
-        int abgeschlossen = 0;
+    public int getProcess() {
+        int open = 0;
+        int inProgress = 0;
+        int completed = 0;
 
         for (BatchDisplayItem bdi : this.stepList) {
             if (bdi.getStepStatus() == TaskStatus.DONE) {
-                abgeschlossen++;
+                completed++;
             } else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
-                offen++;
+                open++;
             } else {
-                inBearbeitung++;
+                inProgress++;
             }
         }
-        if ((offen + inBearbeitung + abgeschlossen) == 0) {
-            offen = 1;
+        if ((open + inProgress + completed) == 0) {
+            open = 1;
         }
-        return (offen * 100) / (offen + inBearbeitung + abgeschlossen);
+        return (open * 100) / (open + inProgress + completed);
     }
 
     /**
@@ -102,24 +102,24 @@ public class BatchDisplayHelper {
      *
      * @return int
      */
-    public int getFortschritt2() {
-        int offen = 0;
-        int inBearbeitung = 0;
-        int abgeschlossen = 0;
+    public int getProgressTwo() {
+        int open = 0;
+        int inProgress = 0;
+        int completed = 0;
 
         for (BatchDisplayItem bdi : this.stepList) {
             if (bdi.getStepStatus() == TaskStatus.DONE) {
-                abgeschlossen++;
+                completed++;
             } else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
-                offen++;
+                open++;
             } else {
-                inBearbeitung++;
+                inProgress++;
             }
         }
-        if ((offen + inBearbeitung + abgeschlossen) == 0) {
-            offen = 1;
+        if ((open + inProgress + completed) == 0) {
+            open = 1;
         }
-        return (inBearbeitung * 100) / (offen + inBearbeitung + abgeschlossen);
+        return (inProgress * 100) / (open + inProgress + completed);
     }
 
     /**
@@ -127,30 +127,30 @@ public class BatchDisplayHelper {
      *
      * @return int
      */
-    public int getFortschritt3() {
-        int offen = 0;
-        int inBearbeitung = 0;
-        int abgeschlossen = 0;
+    public int getProgressThree() {
+        int open = 0;
+        int inProgress = 0;
+        int completed = 0;
 
         for (BatchDisplayItem bdi : this.stepList) {
             if (bdi.getStepStatus() == TaskStatus.DONE) {
-                abgeschlossen++;
+                completed++;
             } else if (bdi.getStepStatus() == TaskStatus.LOCKED) {
-                offen++;
+                open++;
             } else {
-                inBearbeitung++;
+                inProgress++;
             }
         }
-        if ((offen + inBearbeitung + abgeschlossen) == 0) {
-            offen = 1;
+        if ((open + inProgress + completed) == 0) {
+            open = 1;
         }
-        double offen2 = 0;
-        double inBearbeitung2 = 0;
-        double abgeschlossen2 = 0;
+        double openTwo = 0;
+        double inProgressTwo = 0;
+        double completedTwo = 0;
 
-        offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-        inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
-        abgeschlossen2 = 100 - offen2 - inBearbeitung2;
-        return (int) abgeschlossen2;
+        openTwo = (open * 100) / (double) (open + inProgress + completed);
+        inProgressTwo = (inProgress * 100) / (double) (open + inProgress + completed);
+        completedTwo = 100 - openTwo - inProgressTwo;
+        return (int) completedTwo;
     }
 }

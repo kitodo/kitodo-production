@@ -240,7 +240,7 @@
                                                     <h:column id="id48">
                                                         <%-- Löschen-Schaltknopf --%>
                                                         <h:commandLink
-                                                                action="#{BenutzerverwaltungForm.AusGruppeLoeschen}"
+                                                                action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                                                 title="#{msgs.ausGruppeLoeschen}">
                                                             <h:graphicImage id="id49"
                                                                             value="images/buttons/waste1a_20px.gif"/>
@@ -298,11 +298,11 @@
 
                                         <htm:td styleClass="eingabeBoxen_row3" align="right">
                                             <h:commandButton id="id59" value="#{msgs.loeschen}"
-                                                             action="#{BenutzerverwaltungForm.Loeschen}"
+                                                             action="#{BenutzerverwaltungForm.delete}"
                                                              onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                                              rendered="#{BenutzerverwaltungForm.myClass.id != null}"/>
                                             <h:commandButton id="absenden" value="#{msgs.speichern}"
-                                                             action="#{BenutzerverwaltungForm.Speichern}"/>
+                                                             action="#{BenutzerverwaltungForm.save}"/>
                                         </htm:td>
                                     </htm:tr>
 

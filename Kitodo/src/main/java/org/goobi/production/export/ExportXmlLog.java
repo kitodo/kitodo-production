@@ -473,7 +473,7 @@ public class ExportXmlLog implements IProcessDataExport {
      *            the filename of the xslt
      */
 
-    public void XmlTransformation(OutputStream out, Document doc, String filename)
+    public void xmlTransformation(OutputStream out, Document doc, String filename)
             throws XSLTransformException, IOException {
         Document docTrans;
         if (filename != null && filename.equals("")) {
@@ -499,7 +499,7 @@ public class ExportXmlLog implements IProcessDataExport {
     public void startTransformation(Process p, OutputStream out, String filename)
             throws ConfigurationException, XSLTransformException, IOException {
         Document doc = createDocument(p, true);
-        XmlTransformation(out, doc, filename);
+        xmlTransformation(out, doc, filename);
     }
 
     private String replacer(String in) {

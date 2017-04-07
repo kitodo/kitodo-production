@@ -188,7 +188,7 @@
 
                         <%-- Menu Administration / Users --%>
                         <h:commandLink styleClass="mlink" id="users"
-                                       action="#{BenutzerverwaltungForm.FilterKein}"
+                                       action="#{BenutzerverwaltungForm.filterKein}"
                                        style="#{NavigationForm.aktuell == '30' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '30'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -236,7 +236,7 @@
 
                         <%-- Dockets --%>
                         <h:commandLink styleClass="mlink" id="navigation"
-                                       action="#{DocketForm.FilterKein}"
+                                       action="#{DocketForm.filterKein}"
                                        style="#{NavigationForm.aktuell == '45' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '45'}">
                                 <f:verbatim>&#8250; </f:verbatim>

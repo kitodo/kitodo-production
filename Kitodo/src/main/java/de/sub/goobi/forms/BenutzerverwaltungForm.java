@@ -60,7 +60,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return page
      */
-    public String Neu() {
+    public String newUser() {
         this.myClass = new User();
         this.myClass.setName("");
         this.myClass.setSurname("");
@@ -75,7 +75,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         this.filter = null;
         try {
             Session session = Helper.getHibernateSession();
@@ -95,15 +95,15 @@ public class BenutzerverwaltungForm extends BasisForm {
         return "BenutzerAlle";
     }
 
-    public String FilterKeinMitZurueck() {
-        FilterKein();
+    public String filterKeinMitZurueck() {
+        filterKein();
         return this.zurueck;
     }
 
     /**
      * Anzeige der gefilterten Nutzer.
      */
-    public String FilterAlleStart() {
+    public String filterAlleStart() {
         try {
             Session session = Helper.getHibernateSession();
             session.clear();
@@ -141,12 +141,12 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Speichern() {
+    public String save() {
         Session session = Helper.getHibernateSession();
         session.evict(this.myClass);
         String bla = this.myClass.getLogin();
 
-        if (!LoginValide(bla)) {
+        if (!isLoginValid(bla)) {
             return "";
         }
 
@@ -174,7 +174,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         }
     }
 
-    private boolean LoginValide(String inLogin) {
+    private boolean isLoginValid(String inLogin) {
         boolean valide = true;
         String patternStr = "[A-Za-z0-9@_\\-.]*";
         Pattern pattern = Pattern.compile(patternStr);
@@ -209,7 +209,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * The function Loeschen() deletes a user account.
+     * The function delete() deletes a user account.
      *
      * <p>
      * Please note that deleting a user in goobi.production will not delete the
@@ -219,7 +219,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return a string indicating the screen showing up after the command has
      *         been performed.
      */
-    public String Loeschen() {
+    public String delete() {
         try {
             serviceManager.getUserService().remove(myClass);
         } catch (DAOException e) {
@@ -239,7 +239,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String AusGruppeLoeschen() {
+    public String deleteFromGroup() {
         int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
 
         List<UserGroup> neu = new ArrayList<>();
@@ -258,7 +258,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String or null
      */
-    public String ZuGruppeHinzufuegen() {
+    public String addToGroup() {
         Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
             UserGroup usergroup = serviceManager.getUserGroupService().find(gruppenID);

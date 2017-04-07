@@ -240,7 +240,7 @@
                         <h:outputText value="#{msgs.ocr}"/>
                     </h:outputLink>
 
-                    <%-- Neu-Schaltknopf
+                    <%-- newUser-Schaltknopf
                     <h:panelGroup rendered="#{Metadaten.showOcrButton}">
                         <jp:popupFrame scrolling="auto" height="380px" width="430px"
                             topStyle="background: #1874CD;" bottomStyleClass="popup_unten"

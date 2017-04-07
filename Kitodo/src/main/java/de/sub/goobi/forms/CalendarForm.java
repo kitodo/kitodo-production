@@ -72,8 +72,8 @@ public class CalendarForm {
          * by the currently showing block (or otherwise needs to be greyed-out
          * in the front end).
          */
-        protected boolean onBlock = true; // do not grey out dates which aren’t
-                                          // defined by the calendar system
+        // do not grey out dates which aren't defined by the calendar system
+        protected boolean onBlock = true;
 
         /**
          * The function getDay() returns the day of month (that is a number in

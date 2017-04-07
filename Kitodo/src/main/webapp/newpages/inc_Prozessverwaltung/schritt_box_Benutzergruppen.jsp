@@ -55,7 +55,7 @@
     </h:column>
 </x:dataTable>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:panelGroup>
     <%-- Benutzergruppen mittels IFrame zuweisen --%>
     <jp:popupFrame scrolling="auto" height="380px" width="430px"

@@ -291,15 +291,15 @@ public class MetadatenVerifizierung {
         }
 
         /* alle Seiten durchlaufen und prüfen ob References existieren */
-        for (Iterator<DocStruct> iter = boundbook.getAllChildren().iterator(); iter.hasNext();) {
-            DocStruct ds = iter.next();
+        for (Iterator<DocStruct> firstIterator = boundbook.getAllChildren().iterator(); firstIterator.hasNext();) {
+            DocStruct ds = firstIterator.next();
             List<Reference> refs = ds.getAllFromReferences();
             String physical = "";
             String logical = "";
             if (refs.size() == 0) {
 
-                for (Iterator<Metadata> iter2 = ds.getAllMetadata().iterator(); iter2.hasNext();) {
-                    Metadata md = iter2.next();
+                for (Iterator<Metadata> secondIterator = ds.getAllMetadata().iterator(); secondIterator.hasNext();) {
+                    Metadata md = secondIterator.next();
                     if (md.getType().getName().equals("logicalPageNumber")) {
                         logical = " (" + md.getValue() + ")";
                     }
@@ -375,24 +375,24 @@ public class MetadatenVerifizierung {
         for (int i = 0; i < count; i++) {
 
             /* Attribute auswerten */
-            String prop_metadatatype = cp.getParamString("validate.metadata(" + i + ")[@metadata]");
-            String prop_doctype = cp.getParamString("validate.metadata(" + i + ")[@docstruct]");
-            String prop_startswith = cp.getParamString("validate.metadata(" + i + ")[@startswith]");
-            String prop_endswith = cp.getParamString("validate.metadata(" + i + ")[@endswith]");
-            String prop_createElementFrom = cp.getParamString("validate.metadata(" + i + ")[@createelementfrom]");
+            String propMetadatatype = cp.getParamString("validate.metadata(" + i + ")[@metadata]");
+            String propDoctype = cp.getParamString("validate.metadata(" + i + ")[@docstruct]");
+            String propStartswith = cp.getParamString("validate.metadata(" + i + ")[@startswith]");
+            String propEndswith = cp.getParamString("validate.metadata(" + i + ")[@endswith]");
+            String propCreateElementFrom = cp.getParamString("validate.metadata(" + i + ")[@createelementfrom]");
             DocStruct myStruct = inStruct;
             MetadataType mdt = null;
             try {
-                mdt = UghHelper.getMetadataType(inPrefs, prop_metadatatype);
+                mdt = UghHelper.getMetadataType(inPrefs, propMetadatatype);
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung("[" + this.myProcess.getTitle() + "] " + "Metadatatype does not exist: ",
-                        prop_metadatatype);
+                        propMetadatatype);
             }
             /*
              * wenn das Metadatum des FirstChilds überprüfen werden soll, dann
              * dieses jetzt (sofern vorhanden) übernehmen
              */
-            if (prop_doctype != null && prop_doctype.equals("firstchild")) {
+            if (propDoctype != null && propDoctype.equals("firstchild")) {
                 if (myStruct.getAllChildren() != null && myStruct.getAllChildren().size() > 0) {
                     myStruct = myStruct.getAllChildren().get(0);
                 } else {
@@ -406,9 +406,9 @@ public class MetadatenVerifizierung {
              */
             if (mdt != null) {
                 /* ein CreatorsAllOrigin soll erzeugt werden */
-                if (prop_createElementFrom != null) {
+                if (propCreateElementFrom != null) {
                     ArrayList<MetadataType> listOfFromMdts = new ArrayList<MetadataType>();
-                    StringTokenizer tokenizer = new StringTokenizer(prop_createElementFrom, "|");
+                    StringTokenizer tokenizer = new StringTokenizer(propCreateElementFrom, "|");
                     while (tokenizer.hasMoreTokens()) {
                         String tok = tokenizer.nextToken();
                         try {
@@ -427,7 +427,7 @@ public class MetadatenVerifizierung {
                         checkCreateElementFrom(inFehlerList, listOfFromMdts, myStruct, mdt, language);
                     }
                 } else {
-                    checkStartsEndsWith(inFehlerList, prop_startswith, prop_endswith, myStruct, mdt, language);
+                    checkStartsEndsWith(inFehlerList, propStartswith, propEndswith, myStruct, mdt, language);
                 }
             }
         }
@@ -489,8 +489,7 @@ public class MetadatenVerifizierung {
 
                     myStruct.addMetadata(createdElement);
                 }
-            } catch (DocStructHasNoTypeException e) {
-            } catch (MetadataTypeNotAllowedException e) {
+            } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
             }
 
         }
@@ -500,8 +499,8 @@ public class MetadatenVerifizierung {
          */
         List<DocStruct> children = myStruct.getAllChildren();
         if (children != null && children.size() > 0) {
-            for (Iterator<DocStruct> iter = children.iterator(); iter.hasNext();) {
-                checkCreateElementFrom(inFehlerList, inListOfFromMdts, iter.next(), mdt, language);
+            for (DocStruct aChildren : children) {
+                checkCreateElementFrom(inFehlerList, inListOfFromMdts, aChildren, mdt, language);
             }
         }
     }
@@ -509,18 +508,16 @@ public class MetadatenVerifizierung {
     /**
      * Metadatum soll mit bestimmten String beginnen oder enden.
      */
-    private void checkStartsEndsWith(List<String> inFehlerList, String prop_startswith, String prop_endswith,
+    private void checkStartsEndsWith(List<String> inFehlerList, String propStartswith, String propEndswith,
             DocStruct myStruct, MetadataType mdt, String language) {
         /* startswith oder endswith */
         List<? extends Metadata> alleMetadaten = myStruct.getAllMetadataByType(mdt);
         if (alleMetadaten != null && alleMetadaten.size() > 0) {
-            for (Iterator<? extends Metadata> iter = alleMetadaten.iterator(); iter.hasNext();) {
-                Metadata md = iter.next();
-
+            for (Metadata md : alleMetadaten) {
                 /* prüfen, ob es mit korrekten Werten beginnt */
-                if (prop_startswith != null) {
+                if (propStartswith != null) {
                     boolean isOk = false;
-                    StringTokenizer tokenizer = new StringTokenizer(prop_startswith, "|");
+                    StringTokenizer tokenizer = new StringTokenizer(propStartswith, "|");
                     while (tokenizer.hasMoreTokens()) {
                         String tok = tokenizer.nextToken();
                         if (md.getValue() != null && md.getValue().startsWith(tok)) {
@@ -530,16 +527,16 @@ public class MetadatenVerifizierung {
                     if (!isOk && !this.autoSave) {
                         inFehlerList.add(md.getType().getNameByLanguage(language) + " "
                                 + Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
-                                + Helper.getTranslation("MetadataDoesNotStartWith") + " " + prop_startswith);
+                                + Helper.getTranslation("MetadataDoesNotStartWith") + " " + propStartswith);
                     }
                     if (!isOk && this.autoSave) {
-                        md.setValue(new StringTokenizer(prop_startswith, "|").nextToken() + md.getValue());
+                        md.setValue(new StringTokenizer(propStartswith, "|").nextToken() + md.getValue());
                     }
                 }
                 /* prüfen, ob es mit korrekten Werten endet */
-                if (prop_endswith != null) {
+                if (propEndswith != null) {
                     boolean isOk = false;
-                    StringTokenizer tokenizer = new StringTokenizer(prop_endswith, "|");
+                    StringTokenizer tokenizer = new StringTokenizer(propEndswith, "|");
                     while (tokenizer.hasMoreTokens()) {
                         String tok = tokenizer.nextToken();
                         if (md.getValue() != null && md.getValue().endsWith(tok)) {
@@ -549,10 +546,10 @@ public class MetadatenVerifizierung {
                     if (!isOk && !this.autoSave) {
                         inFehlerList.add(md.getType().getNameByLanguage(language) + " "
                                 + Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
-                                + Helper.getTranslation("MetadataDoesNotEndWith") + " " + prop_endswith);
+                                + Helper.getTranslation("MetadataDoesNotEndWith") + " " + propEndswith);
                     }
                     if (!isOk && this.autoSave) {
-                        md.setValue(md.getValue() + new StringTokenizer(prop_endswith, "|").nextToken());
+                        md.setValue(md.getValue() + new StringTokenizer(propEndswith, "|").nextToken());
                     }
                 }
             }

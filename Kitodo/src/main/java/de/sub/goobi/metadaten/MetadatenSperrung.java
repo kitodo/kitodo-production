@@ -32,44 +32,34 @@ public class MetadatenSperrung implements Serializable {
     /**
      * Metadaten eines bestimmten Prozesses wieder freigeben.
      */
-    public void setFree(int ProzessID) {
-        if (sperrungen.containsKey(ProzessID)) {
-            sperrungen.remove(ProzessID);
+    public void setFree(int prozessID) {
+        if (sperrungen.containsKey(prozessID)) {
+            sperrungen.remove(prozessID);
         }
     }
 
     /**
      * Metadaten eines bestimmten Prozesses für einen Benutzer sperren.
      */
-    public void setLocked(int ProzessID, String BenutzerID) {
+    public void setLocked(int prozessID, String benutzerID) {
         HashMap<String, String> map = new HashMap<String, String>();
-        map.put("Benutzer", BenutzerID);
+        map.put("Benutzer", benutzerID);
         map.put("Lebenszeichen", String.valueOf(System.currentTimeMillis()));
-        sperrungen.put(ProzessID, map);
+        sperrungen.put(prozessID, map);
     }
 
     /**
      * prüfen, ob bestimmte Metadaten noch durch anderen Benutzer gesperrt sind.
      */
-    public static boolean isLocked(int ProzessID) {
-        HashMap<String, String> temp = sperrungen.get(Integer.valueOf(ProzessID));
+    public static boolean isLocked(int prozessID) {
+        HashMap<String, String> temp = sperrungen.get(prozessID);
         /* wenn der Prozess nicht in der Hashpmap ist, ist er nicht gesperrt */
         if (temp == null) {
             return false;
         } else {
             /* wenn er in der Hashmap ist, muss die Zeit geprüft werden */
             long lebenszeichen = Long.parseLong(temp.get("Lebenszeichen"));
-            if (lebenszeichen < System.currentTimeMillis() - sperrzeit) {
-                /*
-                 * wenn die Zeit Größer ist als erlaubt, ist Metadatum nicht
-                 * gesperrt
-                 */
-                return false;
-            }
-            /* wenn Zeit nicht Größer ist, ist er noch gesperrt */
-            else {
-                return true;
-            }
+            return lebenszeichen >= System.currentTimeMillis() - sperrzeit;
         }
     }
 
@@ -94,9 +84,9 @@ public class MetadatenSperrung implements Serializable {
     /**
      * Benutzer zurückgeben, der Metadaten gesperrt hat.
      */
-    public String getLockBenutzer(int ProzessID) {
+    public String getLockBenutzer(int prozessID) {
         String rueckgabe = "-1";
-        HashMap<String, String> temp = sperrungen.get(ProzessID);
+        HashMap<String, String> temp = sperrungen.get(prozessID);
         /*
          * wenn der Prozess nicht in der Hashpmap ist, gibt es keinen Benutzer
          */
@@ -109,22 +99,22 @@ public class MetadatenSperrung implements Serializable {
     /**
      * Remove lock for process.
      *
-     * @param ProzessID
+     * @param prozessID
      *            Id of process to unlock
      */
-    public static void UnlockProcess(int ProzessID) {
-        HashMap<String, String> temp = sperrungen.get(ProzessID);
+    public static void unlockProcess(int prozessID) {
+        HashMap<String, String> temp = sperrungen.get(prozessID);
         /* wenn der Prozess in der Hashpmap ist, dort rausnehmen */
         if (temp != null) {
-            sperrungen.remove(ProzessID);
+            sperrungen.remove(prozessID);
         }
     }
 
     /**
      * Sekunden zurückgeben, seit der letzten Bearbeitung der Metadaten.
      */
-    public long getLockSekunden(int ProzessID) {
-        HashMap<String, String> temp = sperrungen.get(ProzessID);
+    public long getLockSekunden(int prozessID) {
+        HashMap<String, String> temp = sperrungen.get(prozessID);
         /* wenn der Prozess nicht in der Hashmap ist, gibt es keine Zeit */
         if (temp == null) {
             return 0;
