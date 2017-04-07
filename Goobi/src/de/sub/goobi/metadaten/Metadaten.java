@@ -1154,39 +1154,42 @@ public class Metadaten {
                     return null;
                 }
 
-                // Build a new list of children for the edited element
                 List<DocStruct> childrenBefore = edited.getAllChildren();
                 if (childrenBefore == null) {
-                    childrenBefore = Collections.emptyList();
-                }
-                List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
-                if (mode.equals(TreeInsertionMode.AS_FIRST_CHILD)) {
-                    for (DocStruct createdElement : createdElements) {
-                        selection.addChild(createdElement);
+                    for (DocStruct element : createdElements) {
+                        edited.addChild(element);
                     }
-                }
-                for (DocStruct child : childrenBefore) {
-                    if (child == selection && mode.equals(TreeInsertionMode.BEFORE_ELEMENT)) {
-                        for (DocStruct element : createdElements) {
-                            selection.addChild(element);
+                } else {
+                    // Build a new list of children for the edited element
+                    List<DocStruct> newChildren = new ArrayList<>(childrenBefore.size() + 1);
+                    if (mode.equals(TreeInsertionMode.AS_FIRST_CHILD)) {
+                        for (DocStruct createdElement : createdElements) {
+                            newChildren.add(createdElement);
                         }
                     }
-                    newChildren.add(child);
-                    if (child == selection && mode.equals(TreeInsertionMode.AFTER_ELEMENT)) {
-                        for (DocStruct element : createdElements) {
-                            selection.addChild(element);
+                    for (DocStruct child : childrenBefore) {
+                        if (child == selection && mode.equals(TreeInsertionMode.BEFORE_ELEMENT)) {
+                            for (DocStruct element : createdElements) {
+                                newChildren.add(element);
+                            }
+                        }
+                        newChildren.add(child);
+                        if (child == selection && mode.equals(TreeInsertionMode.AFTER_ELEMENT)) {
+                            for (DocStruct element : createdElements) {
+                                newChildren.add(element);
+                            }
                         }
                     }
-                }
 
-                // Remove the existing children
-                for (DocStruct child : newChildren) {
-                    edited.removeChild(child);
-                }
+                    // Remove the existing children
+                    for (DocStruct child : newChildren) {
+                        edited.removeChild(child);
+                    }
 
-                // Set the new children on the edited element
-                for (DocStruct child : newChildren) {
-                    edited.addChild(child);
+                    // Set the new children on the edited element
+                    for (DocStruct child : newChildren) {
+                        edited.addChild(child);
+                    }
                 }
             }
             return createdElements.iterator().next();
