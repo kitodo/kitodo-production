@@ -11,6 +11,7 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
@@ -31,6 +32,12 @@ public class SearchRestClientTest {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
+    }
+
+    @AfterClass
+    public static void cleanIndex() throws IOException, ResponseException {
+        IndexRestClient restClient = initializeIndexRestClient();
+        restClient.deleteIndex();
     }
 
     @Test

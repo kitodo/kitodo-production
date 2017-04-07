@@ -20,6 +20,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.MockEntity;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
@@ -35,8 +36,9 @@ public class UserGroupServiceIT {
     }
 
     @AfterClass
-    public static void cleanDatabase() {
+    public static void cleanDatabaseAndIndex() throws IOException, ResponseException{
         // MockDatabase.cleanDatabase();
+        MockEntity.cleanIndex();
     }
 
     @Test
