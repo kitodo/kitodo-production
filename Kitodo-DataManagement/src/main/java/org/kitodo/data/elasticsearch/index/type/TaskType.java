@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -31,35 +30,31 @@ public class TaskType extends BaseType<Task> {
     @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(Task task) {
-        LinkedHashMap<String, String> orderedTaskMap = new LinkedHashMap<>();
-        orderedTaskMap.put("title", task.getTitle());
-        String priority = task.getPriority() != null ? task.getPriority().toString() : "null";
-        orderedTaskMap.put("priority", priority);
-        String ordering = task.getOrdering() != null ? task.getOrdering().toString() : "null";
-        orderedTaskMap.put("ordering", ordering);
+        JSONObject taskObject = new JSONObject();
+        taskObject.put("title", task.getTitle());
+        taskObject.put("priority", task.getPriority());
+        taskObject.put("ordering", task.getOrdering());
         String processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().toString()
-                : "null";
-        orderedTaskMap.put("processingStatus", processingStatus);
+                : null;
+        taskObject.put("processingStatus", processingStatus);
         String processingTime = task.getProcessingTime() != null ? formatDate(task.getProcessingTime()) : null;
-        orderedTaskMap.put("processingTime", processingTime);
+        taskObject.put("processingTime", processingTime);
         String processingBegin = task.getProcessingBegin() != null ? formatDate(task.getProcessingBegin()) : null;
-        orderedTaskMap.put("processingBegin", processingBegin);
+        taskObject.put("processingBegin", processingBegin);
         String processingEnd = task.getProcessingEnd() != null ? formatDate(task.getProcessingEnd()) : null;
-        orderedTaskMap.put("processingEnd", processingEnd);
-        orderedTaskMap.put("homeDirectory", String.valueOf(task.getHomeDirectory()));
-        orderedTaskMap.put("typeMetadata", String.valueOf(task.isTypeMetadata()));
-        orderedTaskMap.put("typeAutomatic", String.valueOf(task.isTypeAutomatic()));
-        orderedTaskMap.put("typeImportFileUpload", String.valueOf(task.isTypeImportFileUpload()));
-        orderedTaskMap.put("typeExportRussian", String.valueOf(task.isTypeExportRussian()));
-        orderedTaskMap.put("typeImagesRead", String.valueOf(task.isTypeImagesRead()));
-        orderedTaskMap.put("typeImagesWrite", String.valueOf(task.isTypeImagesWrite()));
-        orderedTaskMap.put("batchStep", String.valueOf(task.isBatchStep()));
-        String processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId().toString() : "null";
-        orderedTaskMap.put("processingUser", processingUser);
-        String process = task.getProcess() != null ? task.getProcess().getId().toString() : "null";
-        orderedTaskMap.put("process", process);
-
-        JSONObject taskObject = new JSONObject(orderedTaskMap);
+        taskObject.put("processingEnd", processingEnd);
+        taskObject.put("homeDirectory", String.valueOf(task.getHomeDirectory()));
+        taskObject.put("typeMetadata", String.valueOf(task.isTypeMetadata()));
+        taskObject.put("typeAutomatic", String.valueOf(task.isTypeAutomatic()));
+        taskObject.put("typeImportFileUpload", String.valueOf(task.isTypeImportFileUpload()));
+        taskObject.put("typeExportRussian", String.valueOf(task.isTypeExportRussian()));
+        taskObject.put("typeImagesRead", String.valueOf(task.isTypeImagesRead()));
+        taskObject.put("typeImagesWrite", String.valueOf(task.isTypeImagesWrite()));
+        taskObject.put("batchStep", String.valueOf(task.isBatchStep()));
+        Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : null;
+        taskObject.put("processingUser", processingUser);
+        Integer process = task.getProcess() != null ? task.getProcess().getId() : null;
+        taskObject.put("process", process);
 
         JSONArray users = new JSONArray();
         List<User> taskUsers = task.getUsers();
@@ -74,7 +69,7 @@ public class TaskType extends BaseType<Task> {
         List<UserGroup> taskUserGroups = task.getUserGroups();
         for (UserGroup userGroup : taskUserGroups) {
             JSONObject userGroupObject = new JSONObject();
-            userGroupObject.put("id", userGroup.getId().toString());
+            userGroupObject.put("id", userGroup.getId());
             userGroups.add(userGroupObject);
         }
         taskObject.put("userGroups", userGroups);

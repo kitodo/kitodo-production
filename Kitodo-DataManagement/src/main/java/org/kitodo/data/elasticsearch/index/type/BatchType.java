@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -31,20 +30,18 @@ public class BatchType extends BaseType<Batch> {
     @Override
     public HttpEntity createDocument(Batch batch) {
 
-        LinkedHashMap<String, String> orderedBatchMap = new LinkedHashMap<>();
-        orderedBatchMap.put("title", batch.getTitle());
-        String type = batch.getType() != null ? batch.getType().toString() : "null";
-        orderedBatchMap.put("type", type);
+        JSONObject batchObject = new JSONObject();
+        batchObject.put("title", batch.getTitle());
+        String type = batch.getType() != null ? batch.getType().toString() : null;
+        batchObject.put("type", type);
 
         JSONArray processes = new JSONArray();
         List<Process> batchProcesses = batch.getProcesses();
         for (Process process : batchProcesses) {
             JSONObject processObject = new JSONObject();
-            processObject.put("id", process.getId().toString());
+            processObject.put("id", process.getId());
             processes.add(processObject);
         }
-
-        JSONObject batchObject = new JSONObject(orderedBatchMap);
         batchObject.put("processes", processes);
 
         return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);

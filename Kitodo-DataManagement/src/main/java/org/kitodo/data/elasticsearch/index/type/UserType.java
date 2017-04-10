@@ -32,22 +32,20 @@ public class UserType extends BaseType<User> {
     @Override
     public HttpEntity createDocument(User user) {
 
-        LinkedHashMap<String, String> orderedUserMap = new LinkedHashMap<>();
-        orderedUserMap.put("name", user.getName());
-        orderedUserMap.put("surname", user.getSurname());
-        orderedUserMap.put("login", user.getLogin());
-        orderedUserMap.put("ldapLogin", user.getLdapLogin());
-        orderedUserMap.put("active", String.valueOf(user.isActive()));
-        orderedUserMap.put("location", user.getLocation());
-        orderedUserMap.put("metadataLanguage", user.getMetadataLanguage());
-
-        JSONObject userObject = new JSONObject(orderedUserMap);
+        JSONObject userObject = new JSONObject();
+        userObject.put("name", user.getName());
+        userObject.put("surname", user.getSurname());
+        userObject.put("login", user.getLogin());
+        userObject.put("ldapLogin", user.getLdapLogin());
+        userObject.put("active", String.valueOf(user.isActive()));
+        userObject.put("location", user.getLocation());
+        userObject.put("metadataLanguage", user.getMetadataLanguage());
 
         JSONArray userGroups = new JSONArray();
         List<UserGroup> userUserGroups = user.getUserGroups();
         for (UserGroup userGroup : userUserGroups) {
             JSONObject userGroupObject = new JSONObject();
-            userGroupObject.put("id", userGroup.getId().toString());
+            userGroupObject.put("id", userGroup.getId());
             userGroups.add(userGroupObject);
         }
         userObject.put("userGroups", userGroups);

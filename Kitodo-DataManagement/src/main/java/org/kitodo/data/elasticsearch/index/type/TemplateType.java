@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -31,11 +30,9 @@ public class TemplateType extends BaseType<Template> {
     @Override
     public HttpEntity createDocument(Template template) {
 
-        LinkedHashMap<String, String> orderedTemplateMap = new LinkedHashMap<>();
-        String process = template.getProcess() != null ? template.getProcess().getId().toString() : "null";
-        orderedTemplateMap.put("process", process);
-
-        JSONObject processObject = new JSONObject(orderedTemplateMap);
+        JSONObject processObject = new JSONObject();
+        Integer process = template.getProcess() != null ? template.getProcess().getId() : null;
+        processObject.put("process", process);
 
         JSONArray properties = new JSONArray();
         List<TemplateProperty> templateProperties = template.getProperties();

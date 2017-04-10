@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -33,27 +32,22 @@ public class ProjectType extends BaseType<Project> {
     @Override
     public HttpEntity createDocument(Project project) {
 
-        LinkedHashMap<String, String> orderedProjectMap = new LinkedHashMap<>();
-        orderedProjectMap.put("name", project.getTitle());
+        JSONObject projectObject = new JSONObject();
+        projectObject.put("name", project.getTitle());
         String startDate = project.getStartDate() != null ? formatDate(project.getStartDate()) : null;
-        orderedProjectMap.put("startDate", startDate);
+        projectObject.put("startDate", startDate);
         String endDate = project.getEndDate() != null ? formatDate(project.getEndDate()) : null;
-        orderedProjectMap.put("endDate", endDate);
-        String numberOfPages = project.getNumberOfPages() != null ? project.getNumberOfPages().toString() : "null";
-        orderedProjectMap.put("numberOfPages", numberOfPages);
-        String numberOfVolumes = project.getNumberOfVolumes() != null ? project.getNumberOfVolumes().toString()
-                : "null";
-        orderedProjectMap.put("numberOfVolumes", numberOfVolumes);
-        String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : "null";
-        orderedProjectMap.put("archived", archived);
-
-        JSONObject projectObject = new JSONObject(orderedProjectMap);
+        projectObject.put("endDate", endDate);
+        projectObject.put("numberOfPages", project.getNumberOfPages());
+        projectObject.put("numberOfVolumes", project.getNumberOfVolumes());
+        String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : null;
+        projectObject.put("archived", archived);
 
         JSONArray processes = new JSONArray();
         List<Process> projectProcesses = project.getProcesses();
         for (Process process : projectProcesses) {
             JSONObject processObject = new JSONObject();
-            processObject.put("id", process.getId().toString());
+            processObject.put("id", process.getId());
             processes.add(processObject);
         }
         projectObject.put("processes", processes);
@@ -62,7 +56,7 @@ public class ProjectType extends BaseType<Project> {
         List<User> projectUsers = project.getUsers();
         for (User user : projectUsers) {
             JSONObject userObject = new JSONObject();
-            userObject.put("id", user.getId().toString());
+            userObject.put("id", user.getId());
             users.add(userObject);
         }
         projectObject.put("users", users);
