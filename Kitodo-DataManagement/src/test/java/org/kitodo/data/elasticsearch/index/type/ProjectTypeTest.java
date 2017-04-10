@@ -144,9 +144,8 @@ public class ProjectTypeTest {
         HttpEntity document = processType.createDocument(project);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"name\":\"Testing\",\"archived\":\"false\","
-                + "\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],\"numberOfPages\":\"100\","
-                + "\"endDate\":\"2017-03-01\",\"numberOfVolumes\":\"10\","
-                + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
+                + "\"processes\":[{\"id\":1},{\"id\":2}],\"numberOfPages\":100, \"endDate\":\"2017-03-01\","
+                + "\"numberOfVolumes\":10,\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
                 + "(meta.CatalogIDDigital)\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":"
                 + "\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
                 + "CatalogIDDigital)\\/jpgs\\/default\\/\",\"folder\":null,\"name\":\"DEFAULT\",\"mimeType\":"
@@ -156,35 +155,33 @@ public class ProjectTypeTest {
                 + "CatalogIDDigital)\\/ocr\\/alto\\/\",\"folder\":null,\"name\":\"FULLTEXT\",\"mimeType\":\"text\\/"
                 + "xml\",\"suffix\":\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta."
                 + "CatalogIDDigital)\\/pdf\\/\",\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/"
-                + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"users\":[{\"id\":\"1\"},{\"id\":\"2\"}]}");
+                + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"users\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(1);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        ;
-        expected = (JSONObject) parser.parse("{\"archived\":\"false\",\"processes\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
-                + "\"numberOfPages\":\"2000\",\"endDate\":\"2017-09-10\",\"numberOfVolumes\":\"20\","
-                + "\"name\":\"Rendering\",\"projectFileGroups\":"
-                + "[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/jpgs\\/max\\/\","
-                + "\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":"
-                + "\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/jpgs\\/default\\/\",\"folder\":"
-                + "null,\"name\":\"DEFAULT\",\"mimeType\":\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":"
-                + "\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/jpgs\\/thumbs\\/\",\"folder\":"
-                + "null,\"name\":\"THUMBS\",\"mimeType\":\"image\\/jpeg\",\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/"
-                + "www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/ocr\\/alto\\/\",\"folder\":null,\"name\":"
-                + "\"FULLTEXT\",\"mimeType\":\"text\\/xml\",\"suffix\":\"xml\"},{\"path\":\"http:\\/\\/www.example."
-                + "com\\/content\\/$(meta.CatalogIDDigital)\\/pdf\\/\",\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType"
-                + "\":\"application\\/pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-10\",\"users\":[{\"id\":\"1\"},"
-                + "{\"id\":\"2\"}]}");
+        expected = (JSONObject) parser.parse("{\"archived\":\"false\",\"processes\":[{\"id\":1},{\"id\":2}],"
+                + "\"numberOfPages\":2000,\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,\"name\":\"Rendering\","
+                + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital"
+                + ")\\/jpgs\\/max\\/\",\"folder\":null,\"name\":\"MAX\",\"mimeType\":\"image\\/jpeg\",\"suffix\":"
+                + "\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
+                + "\\/jpgs\\/default\\/\","+ "\"folder\":null,\"name\":\"DEFAULT\",\"mimeType\":\"image\\/jpeg\","
+                + "\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
+                + "\\/jpgs\\/thumbs\\/\",\"folder\":null,\"name\":\"THUMBS\",\"mimeType\":\"image\\/jpeg\","
+                + "\"suffix\":\"jpg\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)"
+                + "\\/ocr\\/alto\\/\",\"folder\":null,\"name\":\"FULLTEXT\",\"mimeType\":\"text\\/xml\",\"suffix\":"
+                + "\"xml\"},{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital)\\/pdf\\/\","
+                + "\"folder\":null,\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/pdf\",\"suffix\":\"pdf\"}],"
+                + "\"startDate\":\"2017-01-10\",\"users\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"archived\":\"false\",\"processes\":[],"
-                + "\"numberOfPages\":\"0\",\"endDate\":\"" + dateFormat.format(project.getEndDate())
-                + "\",\"numberOfVolumes\":\"0\",\"projectFileGroups\":[],\"startDate\":\""
+                + "\"numberOfPages\":0,\"endDate\":\"" + dateFormat.format(project.getEndDate())
+                + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"users\":[]}");
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
     }

@@ -103,7 +103,7 @@ public class UserTypeTest {
         user = prepareData().get(1);
         document = userType.createDocument(user);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
+        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1},{\"id\":2}],"
                 + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
                 + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
                 + "{\"title\":\"second\",\"value\":\"2\"}]}");

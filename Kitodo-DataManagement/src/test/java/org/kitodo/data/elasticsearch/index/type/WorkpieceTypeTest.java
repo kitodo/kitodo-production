@@ -74,14 +74,14 @@ public class WorkpieceTypeTest {
         Workpiece workpiece = prepareData().get(0);
         HttpEntity document = workpieceType.createDocument(workpiece);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"process\":\"1\",\"properties\":[{\"title\":\"first\","
+        JSONObject expected = (JSONObject) parser.parse("{\"process\":1,\"properties\":[{\"title\":\"first\","
                 + "\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
         assertEquals("Workpiece value for process key doesn't match to given plain text!", expected, actual);
 
         workpiece = prepareData().get(1);
         document = workpieceType.createDocument(workpiece);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"process\":\"2\",\"properties\":[]}");
+        expected = (JSONObject) parser.parse("{\"process\":2,\"properties\":[]}");
         assertEquals("Workpiece value for process key doesn't match to given plain text!", expected, actual);
     }
 
