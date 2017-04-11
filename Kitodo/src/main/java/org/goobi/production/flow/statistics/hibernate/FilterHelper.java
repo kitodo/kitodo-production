@@ -1005,6 +1005,9 @@ public class FilterHelper {
                 break;
             case unknown:
                 message = message + ("Filter '" + filterPart + "' is not known!\n");
+                break;
+            default:
+                break;
         }
         return message;
     }

@@ -322,6 +322,9 @@ public class VariableReplacerWithoutHibernate {
                         }
                     }
                     break;
+
+                default:
+                    break;
             }
             return result;
         } else {
