@@ -69,7 +69,7 @@ public class MetadatenHelper implements Comparator<Object> {
      *            String
      * @return DocStruct object
      */
-    public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
+    public DocStruct changeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
             TypeNotAllowedForParentException {
         // inOldDocstruct.getType().getName()
@@ -252,7 +252,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void KnotenDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
+    public void setNodeDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
         if (parent == null) {
             return;

@@ -450,7 +450,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
 
         // adding time restrictions
         String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
-                this.timeGrouping, this.myIDlist).SQLMaxStepOrder(requestedType);
+                this.timeGrouping, this.myIDlist).getSQLMaxStepOrder(requestedType);
 
         Session session = Helper.getHibernateSession();
         SQLQuery query = session.createSQLQuery(natSQL);
@@ -478,7 +478,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
     private Integer getMinStepCount(HistoryType requestedType) {
         // adding time restrictions
         String natSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo,
-                this.timeGrouping, this.myIDlist).SQLMinStepOrder(requestedType);
+                this.timeGrouping, this.myIDlist).getSQLMinStepOrder(requestedType);
 
         Session session = Helper.getHibernateSession();
         SQLQuery query = session.createSQLQuery(natSQL);

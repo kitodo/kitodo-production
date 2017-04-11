@@ -192,7 +192,7 @@ public class Metadaten {
      */
     public String AnsichtAendern() {
         this.modusAnsicht = Helper.getRequestParameter("Ansicht");
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -207,7 +207,7 @@ public class Metadaten {
         this.modusHinzufuegen = true;
         Modes.setBindState(BindState.create);
         getMetadatum().setValue("");
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -223,7 +223,7 @@ public class Metadaten {
         this.tempPersonNachname = "";
         this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -239,7 +239,7 @@ public class Metadaten {
         this.modusHinzufuegenPerson = false;
         Modes.setBindState(BindState.edit);
         getMetadatum().setValue("");
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -251,7 +251,7 @@ public class Metadaten {
      * @return String
      */
     public String Reload() {
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         } else {
             calculateMetadataAndImages();
@@ -277,8 +277,8 @@ public class Metadaten {
         } catch (MetadataTypeNotAllowedException e) {
             myLogger.error("Fehler beim Kopieren von Metadaten (MetadataTypeNotAllowedException): " + e.getMessage());
         }
-        MetadatenalsBeanSpeichern(this.myDocStruct);
-        if (!SperrungAktualisieren()) {
+        saveMetadataAsBean(this.myDocStruct);
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -303,8 +303,8 @@ public class Metadaten {
         } catch (MetadataTypeNotAllowedException e) {
             myLogger.error("Fehler beim Kopieren von Personen (MetadataTypeNotAllowedException): " + e.getMessage());
         }
-        MetadatenalsBeanSpeichern(this.myDocStruct);
-        if (!SperrungAktualisieren()) {
+        saveMetadataAsBean(this.myDocStruct);
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -319,9 +319,9 @@ public class Metadaten {
 
         if (this.myDocStruct != null && this.tempWert != null) {
             try {
-                DocStruct rueckgabe = this.metahelper.ChangeCurrentDocstructType(this.myDocStruct, this.tempWert);
-                MetadatenalsBeanSpeichern(rueckgabe);
-                MetadatenalsTree3Einlesen1();
+                DocStruct rueckgabe = this.metahelper.changeCurrentDocstructType(this.myDocStruct, this.tempWert);
+                saveMetadataAsBean(rueckgabe);
+                readMetadataAsTree1();
             } catch (DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("Error while changing DocStructTypes (DocStructHasNoTypeException): ",
                         e.getMessage());
@@ -379,8 +379,8 @@ public class Metadaten {
         Modes.setBindState(BindState.edit);
         this.selectedMetadatum.setValue("");
         this.tempWert = "";
-        MetadatenalsBeanSpeichern(this.myDocStruct);
-        if (!SperrungAktualisieren()) {
+        saveMetadataAsBean(this.myDocStruct);
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -421,8 +421,8 @@ public class Metadaten {
             return "";
         }
         this.modusHinzufuegenPerson = false;
-        MetadatenalsBeanSpeichern(this.myDocStruct);
-        if (!SperrungAktualisieren()) {
+        saveMetadataAsBean(this.myDocStruct);
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -471,8 +471,8 @@ public class Metadaten {
      */
     public String Loeschen() {
         this.myDocStruct.removeMetadata(this.curMetadatum.getMd());
-        MetadatenalsBeanSpeichern(this.myDocStruct);
-        if (!SperrungAktualisieren()) {
+        saveMetadataAsBean(this.myDocStruct);
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -485,8 +485,8 @@ public class Metadaten {
      */
     public String LoeschenPerson() {
         this.myDocStruct.removePerson(this.curPerson.getP());
-        MetadatenalsBeanSpeichern(this.myDocStruct);
-        if (!SperrungAktualisieren()) {
+        saveMetadataAsBean(this.myDocStruct);
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -784,8 +784,8 @@ public class Metadaten {
         }
 
         createDefaultValues(this.logicalTopstruct);
-        MetadatenalsBeanSpeichern(this.logicalTopstruct);
-        MetadatenalsTree3Einlesen1();
+        saveMetadataAsBean(this.logicalTopstruct);
+        readMetadataAsTree1();
 
         if (!this.nurLesenModus) {
             // inserted to make Paginierung the starting view
@@ -796,7 +796,7 @@ public class Metadaten {
 
     private void createDefaultValues(DocStruct element) {
         if (ConfigCore.getBooleanParameter("MetsEditorEnableDefaultInitialisation", true)) {
-            MetadatenalsBeanSpeichern(element);
+            saveMetadataAsBean(element);
             if (element.getAllChildren() != null && element.getAllChildren().size() > 0) {
                 for (DocStruct ds : element.getAllChildren()) {
                     createDefaultValues(ds);
@@ -889,7 +889,7 @@ public class Metadaten {
             return "Metadaten";
         }
 
-        SperrungAufheben();
+        disableReturn();
         return this.zurueck;
     }
 
@@ -913,7 +913,7 @@ public class Metadaten {
      *            DocStruct object
      */
 
-    private void MetadatenalsBeanSpeichern(DocStruct inStrukturelement) {
+    private void saveMetadataAsBean(DocStruct inStrukturelement) {
         this.myDocStruct = inStrukturelement;
         LinkedList<MetadatumImpl> lsMeta = new LinkedList<MetadatumImpl>();
         LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
@@ -948,7 +948,7 @@ public class Metadaten {
         /*
          * die zugehörigen Seiten ermitteln
          */
-        StructSeitenErmitteln(this.myDocStruct);
+        determinePagesStructure(this.myDocStruct);
     }
 
     /*
@@ -956,7 +956,7 @@ public class Metadaten {
      */
 
     @SuppressWarnings("rawtypes")
-    private String MetadatenalsTree3Einlesen1() {
+    private String readMetadataAsTree1() {
         HashMap map;
         TreeNodeStruct3 knoten;
         List<DocStruct> status = new ArrayList<DocStruct>();
@@ -987,7 +987,7 @@ public class Metadaten {
         }
 
         this.tree3 = new TreeNodeStruct3(label, this.logicalTopstruct);
-        MetadatenalsTree3Einlesen2(this.logicalTopstruct, this.tree3);
+        readMetadataAsTree2(this.logicalTopstruct, this.tree3);
 
         /*
          * den Ausklappzustand nach dem neu-Einlesen wieder herstellen
@@ -1005,7 +1005,7 @@ public class Metadaten {
             }
         }
 
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "Metadaten3links";
@@ -1019,17 +1019,17 @@ public class Metadaten {
      * @param OberKnoten
      *            TreeNodeStruct3 object
      */
-    private void MetadatenalsTree3Einlesen2(DocStruct inStrukturelement, TreeNodeStruct3 OberKnoten) {
-        OberKnoten.setMainTitle(MetadatenErmitteln(inStrukturelement, "TitleDocMain"));
-        OberKnoten.setZblNummer(MetadatenErmitteln(inStrukturelement, "ZBLIdentifier"));
-        OberKnoten.setZblSeiten(MetadatenErmitteln(inStrukturelement, "ZBLPageNumber"));
-        OberKnoten.setPpnDigital(MetadatenErmitteln(inStrukturelement, "IdentifierDigital"));
+    private void readMetadataAsTree2(DocStruct inStrukturelement, TreeNodeStruct3 OberKnoten) {
+        OberKnoten.setMainTitle(determineMetadata(inStrukturelement, "TitleDocMain"));
+        OberKnoten.setZblNummer(determineMetadata(inStrukturelement, "ZBLIdentifier"));
+        OberKnoten.setZblSeiten(determineMetadata(inStrukturelement, "ZBLPageNumber"));
+        OberKnoten.setPpnDigital(determineMetadata(inStrukturelement, "IdentifierDigital"));
         OberKnoten.setFirstImage(this.metahelper.getImageNumber(inStrukturelement, MetadatenHelper.PAGENUMBER_FIRST));
         OberKnoten.setLastImage(this.metahelper.getImageNumber(inStrukturelement, MetadatenHelper.PAGENUMBER_LAST));
         // wenn es ein Heft ist, die Issue-Number mit anzeigen
         if (inStrukturelement.getType().getName().equals("PeriodicalIssue")) {
             OberKnoten.setDescription(
-                    OberKnoten.getDescription() + " " + MetadatenErmitteln(inStrukturelement, "CurrentNo"));
+                    OberKnoten.getDescription() + " " + determineMetadata(inStrukturelement, "CurrentNo"));
         }
 
         // wenn es ein Periodical oder PeriodicalVolume ist, dann ausklappen
@@ -1052,7 +1052,7 @@ public class Metadaten {
                 }
                 TreeNodeStruct3 tns = new TreeNodeStruct3(label, kind);
                 OberKnoten.addChild(tns);
-                MetadatenalsTree3Einlesen2(kind, tns);
+                readMetadataAsTree2(kind, tns);
             }
         }
     }
@@ -1065,7 +1065,7 @@ public class Metadaten {
      * @param inTyp
      *            String
      */
-    private String MetadatenErmitteln(DocStruct inStrukturelement, String inTyp) {
+    private String determineMetadata(DocStruct inStrukturelement, String inTyp) {
         String rueckgabe = "";
         List<Metadata> allMDs = inStrukturelement.getAllMetadata();
         if (allMDs != null) {
@@ -1089,7 +1089,7 @@ public class Metadaten {
         this.modusHinzufuegen = false;
         this.modusHinzufuegenPerson = false;
         Modes.setBindState(BindState.edit);
-        MetadatenalsBeanSpeichern(inStruct);
+        saveMetadataAsBean(inStruct);
 
         /*
          * die Selektion kenntlich machen
@@ -1105,7 +1105,7 @@ public class Metadaten {
             }
         }
 
-        SperrungAktualisieren();
+        updateBlocked();
     }
 
     /**
@@ -1119,7 +1119,7 @@ public class Metadaten {
                 myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
             }
         }
-        return MetadatenalsTree3Einlesen1();
+        return readMetadataAsTree1();
     }
 
     /**
@@ -1127,13 +1127,13 @@ public class Metadaten {
      */
     public String KnotenDown() {
         try {
-            this.metahelper.KnotenDown(this.myDocStruct);
+            this.metahelper.setNodeDown(this.myDocStruct);
         } catch (TypeNotAllowedAsChildException e) {
             if (myLogger.isDebugEnabled()) {
                 myLogger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
             }
         }
-        return MetadatenalsTree3Einlesen1();
+        return readMetadataAsTree1();
     }
 
     /**
@@ -1142,7 +1142,7 @@ public class Metadaten {
     public String KnotenVerschieben() throws TypeNotAllowedAsChildException {
         this.myDocStruct.getParent().removeChild(this.myDocStruct);
         this.tempStrukturelement.addChild(this.myDocStruct);
-        MetadatenalsTree3Einlesen1();
+        readMetadataAsTree1();
         myLogger.debug(this.modusStrukturelementVerschieben);
         this.neuesElementWohin = "1";
         return "Metadaten3links";
@@ -1158,7 +1158,7 @@ public class Metadaten {
             this.myDocStruct = tempParent;
         }
         // den Tree neu einlesen
-        return MetadatenalsTree3Einlesen1();
+        return readMetadataAsTree1();
     }
 
     /**
@@ -1291,7 +1291,7 @@ public class Metadaten {
             this.myDocStruct = temp;
         }
 
-        return MetadatenalsTree3Einlesen1();
+        return readMetadataAsTree1();
     }
 
     /**
@@ -1379,7 +1379,7 @@ public class Metadaten {
             for (Metadata meineSeite : mySeitenDocStructMetadaten) {
                 this.alleSeitenNeu[zaehler] = new MetadatumImpl(meineSeite, zaehler, this.myPrefs, this.myProzess);
                 this.alleSeiten[zaehler] = new SelectItem(String.valueOf(zaehler),
-                        MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
+                        determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
                                 + meineSeite.getValue());
             }
             zaehler++;
@@ -1389,7 +1389,7 @@ public class Metadaten {
     /**
      * alle Seiten des aktuellen Strukturelements ermitteln.
      */
-    private void StructSeitenErmitteln(DocStruct inStrukturelement) {
+    private void determinePagesStructure(DocStruct inStrukturelement) {
         if (inStrukturelement == null) {
             return;
         }
@@ -1430,9 +1430,9 @@ public class Metadaten {
             /* alle Referenzen durchlaufen und deren Metadaten ermitteln */
             for (Reference ref : listReferenzen) {
                 DocStruct target = ref.getTarget();
-                StructSeitenErmitteln2(target, zaehler);
+                determinePagesStructure2(target, zaehler);
                 if (imageNr == 0) {
-                    imageNr = StructSeitenErmitteln3(target);
+                    imageNr = determinePagesStructure3(target);
                 }
                 zaehler++;
             }
@@ -1451,7 +1451,7 @@ public class Metadaten {
     /**
      * alle Seiten des aktuellen Strukturelements ermitteln 2.
      */
-    private void StructSeitenErmitteln2(DocStruct inStrukturelement, int inZaehler) {
+    private void determinePagesStructure2(DocStruct inStrukturelement, int inZaehler) {
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         List<? extends Metadata> listMetadaten = inStrukturelement.getAllMetadataByType(mdt);
         if (listMetadaten == null || listMetadaten.size() == 0) {
@@ -1460,7 +1460,7 @@ public class Metadaten {
         for (Metadata meineSeite : listMetadaten) {
             this.structSeitenNeu[inZaehler] = new MetadatumImpl(meineSeite, inZaehler, this.myPrefs, this.myProzess);
             this.structSeiten[inZaehler] = new SelectItem(String.valueOf(inZaehler),
-                    MetadatenErmitteln(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
+                    determineMetadata(meineSeite.getDocStruct(), "physPageNumber").trim() + ": "
                             + meineSeite.getValue());
         }
     }
@@ -1468,7 +1468,7 @@ public class Metadaten {
     /**
      * noch für Testzweck zum direkten öffnen der richtigen Startseite 3.
      */
-    private int StructSeitenErmitteln3(DocStruct inStrukturelement) {
+    private int determinePagesStructure3(DocStruct inStrukturelement) {
         MetadataType mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         List<? extends Metadata> listMetadaten = inStrukturelement.getAllMetadataByType(mdt);
         if (listMetadaten == null || listMetadaten.size() == 0) {
@@ -1553,7 +1553,7 @@ public class Metadaten {
          */
         alleSeitenAuswahl = null;
         retrieveAllImages();
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
 
@@ -1660,7 +1660,7 @@ public class Metadaten {
      * @return String
      */
     public String getBild() {
-        BildPruefen();
+        checkImage();
         /* Session ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
@@ -1857,10 +1857,10 @@ public class Metadaten {
                 }
             }
         }
-        BildPruefen();
+        checkImage();
     }
 
-    private void BildPruefen() {
+    private void checkImage() {
         /* wenn bisher noch kein Bild da ist, das erste nehmen */
         boolean exists = false;
         try {
@@ -1882,7 +1882,7 @@ public class Metadaten {
      * Sperrung der Metadaten aktualisieren oder prüfen
      */
 
-    private boolean SperrungAktualisieren() {
+    private boolean updateBlocked() {
         /*
          * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer
          * gilt, Sperrung aktualisieren
@@ -1896,7 +1896,7 @@ public class Metadaten {
         }
     }
 
-    private void SperrungAufheben() {
+    private void disableReturn() {
         if (MetadatenSperrung.isLocked(this.myProzess.getId().intValue())
                 && this.sperrung.getLockBenutzer(this.myProzess.getId().intValue()).equals(this.myBenutzerID)) {
             this.sperrung.setFree(this.myProzess.getId().intValue());
@@ -1911,7 +1911,7 @@ public class Metadaten {
      * zurück zur Startseite, Metadaten vorher freigeben.
      */
     public String goMain() {
-        SperrungAufheben();
+        disableReturn();
         return "newMain";
     }
 
@@ -1919,7 +1919,7 @@ public class Metadaten {
      * zurück gehen.
      */
     public String goZurueck() {
-        SperrungAufheben();
+        disableReturn();
         return this.zurueck;
     }
 
@@ -1939,8 +1939,8 @@ public class Metadaten {
                 MetadataType mdt = this.myPrefs.getMetadataTypeByName("MainTitleTransliterated");
                 Metadata mdDin = new Metadata(mdt);
                 Metadata mdIso = new Metadata(mdt);
-                mdDin.setValue(trans.transliterate_din(md.getValue()));
-                mdIso.setValue(trans.transliterate_iso(md.getValue()));
+                mdDin.setValue(trans.transliterateDin(md.getValue()));
+                mdIso.setValue(trans.transliterateIso(md.getValue()));
 
                 this.myDocStruct.addMetadata(mdDin);
                 this.myDocStruct.addMetadata(mdIso);
@@ -1949,10 +1949,10 @@ public class Metadaten {
                         + e.getMessage());
             }
         }
-        MetadatenalsBeanSpeichern(this.myDocStruct);
+        saveMetadataAsBean(this.myDocStruct);
 
         /* zum Schluss die Sperrung aktualisieren */
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -1977,10 +1977,10 @@ public class Metadaten {
                 Person mdDin = new Person(mdtDin);
                 Person mdIso = new Person(mdtIso);
 
-                mdDin.setFirstname(trans.transliterate_din(md.getFirstname()));
-                mdDin.setLastname(trans.transliterate_din(md.getLastname()));
-                mdIso.setFirstname(trans.transliterate_iso(md.getFirstname()));
-                mdIso.setLastname(trans.transliterate_iso(md.getLastname()));
+                mdDin.setFirstname(trans.transliterateDin(md.getFirstname()));
+                mdDin.setLastname(trans.transliterateDin(md.getLastname()));
+                mdIso.setFirstname(trans.transliterateIso(md.getFirstname()));
+                mdIso.setLastname(trans.transliterateIso(md.getLastname()));
                 mdDin.setRole("AuthorTransliteratedDIN");
                 mdIso.setRole("AuthorTransliteratedISO");
 
@@ -1991,10 +1991,10 @@ public class Metadaten {
                         + e.getMessage());
             }
         }
-        MetadatenalsBeanSpeichern(this.myDocStruct);
+        saveMetadataAsBean(this.myDocStruct);
 
         /* zum Schluss die Sperrung aktualisieren */
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return "";
@@ -2018,7 +2018,7 @@ public class Metadaten {
                         QueryBuilder.restrictToField(opacSuchfeld, tok), myPrefs);
                 if (addrdf != null) {
                     this.myDocStruct.addChild(addrdf.getDigitalDocument().getLogicalDocStruct());
-                    MetadatenalsTree3Einlesen1();
+                    readMetadataAsTree1();
                 } else {
                     Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
                 }
@@ -2069,7 +2069,7 @@ public class Metadaten {
                         }
                     }
 
-                    MetadatenalsTree3Einlesen1();
+                    readMetadataAsTree1();
                 } else {
                     Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
                 }
@@ -2077,7 +2077,7 @@ public class Metadaten {
 
             }
         }
-        MetadatenalsBeanSpeichern(this.myDocStruct);
+        saveMetadataAsBean(this.myDocStruct);
         this.modusAnsicht = "Metadaten";
         return "";
     }
@@ -2088,7 +2088,7 @@ public class Metadaten {
     public void Validate() {
         MetadatenVerifizierung mv = new MetadatenVerifizierung();
         mv.validate(this.gdzfile, this.myPrefs, this.myProzess);
-        MetadatenalsBeanSpeichern(this.myDocStruct);
+        saveMetadataAsBean(this.myDocStruct);
     }
 
     /**
@@ -2220,7 +2220,7 @@ public class Metadaten {
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      */
     public String SeitenStartUndEndeSetzen() {
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         int anzahlAuswahl = Integer.parseInt(this.alleSeitenAuswahl_letzteSeite)
@@ -2237,7 +2237,7 @@ public class Metadaten {
                 zaehler++;
             }
         }
-        StructSeitenErmitteln(this.myDocStruct);
+        determinePagesStructure(this.myDocStruct);
         return null;
     }
 
@@ -2245,7 +2245,7 @@ public class Metadaten {
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      */
     public String SeitenVonChildrenUebernehmen() {
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
 
@@ -2270,7 +2270,7 @@ public class Metadaten {
                 }
             }
         }
-        StructSeitenErmitteln(this.myDocStruct);
+        determinePagesStructure(this.myDocStruct);
         return null;
     }
 
@@ -2336,9 +2336,9 @@ public class Metadaten {
                         "logical_physical");
             }
         }
-        StructSeitenErmitteln(this.myDocStruct);
+        determinePagesStructure(this.myDocStruct);
         this.alleSeitenAuswahl = null;
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return null;
@@ -2352,9 +2352,9 @@ public class Metadaten {
             int aktuelleID = Integer.parseInt(this.structSeitenAuswahl[i]);
             this.myDocStruct.removeReferenceTo(this.structSeitenNeu[aktuelleID].getMd().getDocStruct());
         }
-        StructSeitenErmitteln(this.myDocStruct);
+        determinePagesStructure(this.myDocStruct);
         this.structSeitenAuswahl = null;
-        if (!SperrungAktualisieren()) {
+        if (!updateBlocked()) {
             return "SperrungAbgelaufen";
         }
         return null;
@@ -2776,12 +2776,12 @@ public class Metadaten {
         // DocStructs prüfen
         // ob das aktuelle Strukturelement dort eingefügt werden darf
         if (this.modusStrukturelementVerschieben) {
-            TreeDurchlaufen(this.tree3);
+            runThroughTree(this.tree3);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private void TreeDurchlaufen(TreeNodeStruct3 inTreeStruct) {
+    private void runThroughTree(TreeNodeStruct3 inTreeStruct) {
         DocStruct temp = inTreeStruct.getStruct();
         if (inTreeStruct.getStruct() == this.myDocStruct) {
             inTreeStruct.setSelected(true);
@@ -2800,7 +2800,7 @@ public class Metadaten {
 
         for (Iterator iter = inTreeStruct.getChildren().iterator(); iter.hasNext();) {
             TreeNodeStruct3 kind = (TreeNodeStruct3) iter.next();
-            TreeDurchlaufen(kind);
+            runThroughTree(kind);
         }
     }
 
@@ -3412,7 +3412,7 @@ public class Metadaten {
         modusHinzufuegen = false;
         modusHinzufuegenPerson = false;
         addMetadataGroupMode = true;
-        return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+        return !updateBlocked() ? "SperrungAbgelaufen" : "";
     }
 
     /**
@@ -3434,7 +3434,7 @@ public class Metadaten {
         modusHinzufuegen = false;
         modusHinzufuegenPerson = false;
         addMetadataGroupMode = true;
-        return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+        return !updateBlocked() ? "SperrungAbgelaufen" : "";
     }
 
     /**
@@ -3450,7 +3450,7 @@ public class Metadaten {
         modusHinzufuegenPerson = false;
         addMetadataGroupMode = false;
         newMetadataGroup = null;
-        return !SperrungAktualisieren() ? "SperrungAbgelaufen" : "";
+        return !updateBlocked() ? "SperrungAbgelaufen" : "";
     }
 
     /**

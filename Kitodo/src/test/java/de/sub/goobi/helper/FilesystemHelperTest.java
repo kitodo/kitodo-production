@@ -41,7 +41,7 @@ public class FilesystemHelperTest {
     }
 
     @Test(expected = java.io.FileNotFoundException.class)
-    public void RenamingOfNonExistingFileShouldThrowFileNotFoundException() throws IOException {
+    public void renamingOfNonExistingFileShouldThrowFileNotFoundException() throws IOException {
         String oldFileName = "old.xml";
         String newFileName = "new.xml";
 

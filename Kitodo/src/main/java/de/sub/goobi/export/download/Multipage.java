@@ -97,7 +97,7 @@ public class Multipage {
      * @param process
      *            object
      */
-    public void ExportStart(Process process) throws IOException, InterruptedException, SwapException, DAOException {
+    public void startExport(Process process) throws IOException, InterruptedException, SwapException, DAOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();

@@ -86,7 +86,7 @@ public class ExportDms_CorrectRusdml {
         /*
          * DocStruct rukursiv durchlaufen und die Metadaten prüfen
          */
-        RusdmlDocStructPagesAuswerten(logicalTopstruct);
+        evaluateRusdmlDocStructPages(logicalTopstruct);
         rusdmlPathImageFilesKorrigieren(myDocument.getPhysicalDocStruct(), "./" + atsPpnBand + "_tif");
         rusdmlAddMissingMetadata(logicalTopstruct, myProcess);
 
@@ -100,9 +100,9 @@ public class ExportDms_CorrectRusdml {
      * @param inStruct
      *            DocStruct object
      */
-    private void RusdmlDocStructPagesAuswerten(DocStruct inStruct)
+    private void evaluateRusdmlDocStructPages(DocStruct inStruct)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
-        RusdmlDropMetadata(inStruct);
+        dropRusdmlMetadata(inStruct);
         rusdmlDropPersons(inStruct);
         rusdmlUmlauteDemaskieren(inStruct);
         rusdmlCheckMetadata(inStruct);
@@ -116,7 +116,7 @@ public class ExportDms_CorrectRusdml {
         if (inStruct.getAllChildren() != null) {
             for (Iterator<DocStruct> iter = inStruct.getAllChildren().iterator(); iter.hasNext();) {
                 DocStruct child = iter.next();
-                RusdmlDocStructPagesAuswerten(child);
+                evaluateRusdmlDocStructPages(child);
             }
         }
     }
@@ -128,7 +128,7 @@ public class ExportDms_CorrectRusdml {
      *            DocStruct
      */
 
-    private void RusdmlDropMetadata(DocStruct inStruct)
+    private void dropRusdmlMetadata(DocStruct inStruct)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException {
         String titleRu = "";
         String titleOther = "";

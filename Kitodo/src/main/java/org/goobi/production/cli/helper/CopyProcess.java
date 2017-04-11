@@ -262,7 +262,7 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return empty String
      */
-    public String OpacAuswerten(ImportObject io) {
+    public String evaluateOpac(ImportObject io) {
         clearValues();
         readProjectConfigs();
         try {
