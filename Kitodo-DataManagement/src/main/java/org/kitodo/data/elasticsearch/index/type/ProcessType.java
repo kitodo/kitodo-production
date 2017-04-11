@@ -19,6 +19,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.ProcessProperty;
 
@@ -45,6 +46,15 @@ public class ProcessType extends BaseType<Process> {
         orderedProcessMap.put("ldapGroup", ldapGroup);
 
         JSONObject processObject = new JSONObject(orderedProcessMap);
+
+        JSONArray batches = new JSONArray();
+        List<Batch> processBatches = process.getBatches();
+        for (Batch batch : processBatches) {
+            JSONObject batchObject = new JSONObject();
+            batchObject.put("id", batch.getId());
+            batches.add(batchObject);
+        }
+        processObject.put("batches", batches);
 
         JSONArray properties = new JSONArray();
         List<ProcessProperty> processProperties = process.getProperties();
