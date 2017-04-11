@@ -35,7 +35,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
 import org.kitodo.data.database.helper.enums.HistoryType;
 
-/*****************************************************************************
+/**
  * Imlpementation of {@link IStatisticalQuestion}. This is used for the
  * generation of a Datatable relfecting the progress of a project, based on it's
  * processes workflow. Only the workflow common to all processes is used. A
@@ -44,7 +44,7 @@ import org.kitodo.data.database.helper.enums.HistoryType;
  * project.
  * 
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class StatQuestProjectProgressData implements IStatisticalQuestionLimitedTimeframe, Serializable {
 
     private static final long serialVersionUID = 5488469945490611200L;
