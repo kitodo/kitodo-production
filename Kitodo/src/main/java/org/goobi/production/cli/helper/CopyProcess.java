@@ -84,8 +84,8 @@ public class CopyProcess extends ProzesskopieForm {
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
-    private String tifHeader_imagedescription = "";
-    private String tifHeader_documentname = "";
+    private String tifHeaderImageDescription = "";
+    private String tifHeaderDocumentName = "";
     private String naviFirstPage;
     private Integer auswahl;
     private String docType;
@@ -392,8 +392,8 @@ public class CopyProcess extends ProzesskopieForm {
         this.standardFields.put("doctype", true);
         this.standardFields.put("regelsatz", true);
         this.additionalFields = new ArrayList<AdditionalField>();
-        this.tifHeader_documentname = "";
-        this.tifHeader_imagedescription = "";
+        this.tifHeaderDocumentName = "";
+        this.tifHeaderImageDescription = "";
     }
 
     /**
@@ -838,13 +838,13 @@ public class CopyProcess extends ProzesskopieForm {
             /* Doctype */
             BeanHelper.addProperty(werk, "DocType", this.docType);
             /* Tiffheader */
-            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addProperty(werk, "DocType", this.docType);
             /* Tiffheader */
-            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (ProcessProperty pe : io.getProcessProperties()) {
                 addProperty(this.prozessKopie, pe);
@@ -1041,22 +1041,22 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public String getTifHeader_documentname() {
-        return this.tifHeader_documentname;
+        return this.tifHeaderDocumentName;
     }
 
     @Override
-    public void setTifHeader_documentname(String tifHeader_documentname) {
-        this.tifHeader_documentname = tifHeader_documentname;
+    public void setTifHeader_documentname(String tifHeaderDocumentName) {
+        this.tifHeaderDocumentName = tifHeaderDocumentName;
     }
 
     @Override
     public String getTifHeader_imagedescription() {
-        return this.tifHeader_imagedescription;
+        return this.tifHeaderImageDescription;
     }
 
     @Override
-    public void setTifHeader_imagedescription(String tifHeader_imagedescription) {
-        this.tifHeader_imagedescription = tifHeader_imagedescription;
+    public void setTifHeader_imagedescription(String tifHeaderImageDescription) {
+        this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 
     @Override
@@ -1247,8 +1247,8 @@ public class CopyProcess extends ProzesskopieForm {
         /*
          * Documentname ist im allgemeinen = Prozesstitel
          */
-        this.tifHeader_documentname = this.prozessKopie.getTitle();
-        this.tifHeader_imagedescription = "";
+        this.tifHeaderDocumentName = this.prozessKopie.getTitle();
+        this.tifHeaderImageDescription = "";
         /*
          * Imagedescription
          */
@@ -1261,10 +1261,10 @@ public class CopyProcess extends ProzesskopieForm {
              * übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-                this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
+                this.tifHeaderImageDescription += myString.substring(1, myString.length() - 1);
             } else if (myString.equals("$Doctype")) {
 
-                this.tifHeader_imagedescription += this.docType;
+                this.tifHeaderImageDescription += this.docType;
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
@@ -1283,7 +1283,7 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitle(),
+                        this.tifHeaderImageDescription += calcProcessTitleCheck(myField.getTitle(),
                                 myField.getValue());
                     }
                 }

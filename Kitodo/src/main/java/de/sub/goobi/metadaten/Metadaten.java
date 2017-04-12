@@ -367,9 +367,9 @@ public class Metadaten {
          */
         if (this.tempTyp.equals("TitleDocMain") && this.myPrefs.getMetadataTypeByName("TitleDocMainShort") != null) {
             try {
-                Metadata md2 = new Metadata(this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
-                md2.setValue(this.selectedMetadatum.getValue());
-                this.myDocStruct.addMetadata(md2);
+                Metadata secondMetadata = new Metadata(this.myPrefs.getMetadataTypeByName("TitleDocMainShort"));
+                secondMetadata.setValue(this.selectedMetadatum.getValue());
+                this.myDocStruct.addMetadata(secondMetadata);
             } catch (MetadataTypeNotAllowedException e) {
                 myLogger.error("Error while adding title (MetadataTypeNotAllowedException): " + e.getMessage());
             }
@@ -1402,24 +1402,24 @@ public class Metadaten {
              */
             Collections.sort(listReferenzen, new Comparator<Reference>() {
                 @Override
-                public int compare(final Reference o1, final Reference o2) {
-                    final Reference r1 = o1;
-                    final Reference r2 = o2;
-                    Integer page1 = 0;
-                    Integer page2 = 0;
+                public int compare(final Reference firstObject, final Reference secondObject) {
+                    final Reference firstReference = firstObject;
+                    final Reference secondReference = secondObject;
+                    Integer firstPage = 0;
+                    Integer secondPage = 0;
 
                     MetadataType mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
-                    List<? extends Metadata> listMetadaten = r1.getTarget().getAllMetadataByType(mdt);
+                    List<? extends Metadata> listMetadaten = firstReference.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         Metadata meineSeite = listMetadaten.get(0);
-                        page1 = Integer.parseInt(meineSeite.getValue());
+                        firstPage = Integer.parseInt(meineSeite.getValue());
                     }
-                    listMetadaten = r2.getTarget().getAllMetadataByType(mdt);
+                    listMetadaten = secondReference.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         Metadata meineSeite = listMetadaten.get(0);
-                        page2 = Integer.parseInt(meineSeite.getValue());
+                        secondPage = Integer.parseInt(meineSeite.getValue());
                     }
-                    return page1.compareTo(page2);
+                    return firstPage.compareTo(secondPage);
                 }
             });
 
@@ -1939,8 +1939,8 @@ public class Metadaten {
                 MetadataType mdt = this.myPrefs.getMetadataTypeByName("MainTitleTransliterated");
                 Metadata mdDin = new Metadata(mdt);
                 Metadata mdIso = new Metadata(mdt);
-                mdDin.setValue(trans.transliterateDin(md.getValue()));
-                mdIso.setValue(trans.transliterateIso(md.getValue()));
+                mdDin.setValue(trans.transliterateDIN(md.getValue()));
+                mdIso.setValue(trans.transliterateISO(md.getValue()));
 
                 this.myDocStruct.addMetadata(mdDin);
                 this.myDocStruct.addMetadata(mdIso);
@@ -1972,15 +1972,15 @@ public class Metadaten {
         if (md.getRole().equals("Author")) {
             Transliteration trans = new Transliteration();
             try {
-                MetadataType mdtDin = this.myPrefs.getMetadataTypeByName("AuthorTransliteratedDIN");
-                MetadataType mdtIso = this.myPrefs.getMetadataTypeByName("AuthorTransliteratedISO");
-                Person mdDin = new Person(mdtDin);
-                Person mdIso = new Person(mdtIso);
+                MetadataType metadataTypeDIN = this.myPrefs.getMetadataTypeByName("AuthorTransliteratedDIN");
+                MetadataType metadataTypeISO = this.myPrefs.getMetadataTypeByName("AuthorTransliteratedISO");
+                Person mdDin = new Person(metadataTypeDIN);
+                Person mdIso = new Person(metadataTypeISO);
 
-                mdDin.setFirstname(trans.transliterateDin(md.getFirstname()));
-                mdDin.setLastname(trans.transliterateDin(md.getLastname()));
-                mdIso.setFirstname(trans.transliterateIso(md.getFirstname()));
-                mdIso.setLastname(trans.transliterateIso(md.getLastname()));
+                mdDin.setFirstname(trans.transliterateDIN(md.getFirstname()));
+                mdDin.setLastname(trans.transliterateDIN(md.getLastname()));
+                mdIso.setFirstname(trans.transliterateISO(md.getFirstname()));
+                mdIso.setLastname(trans.transliterateISO(md.getLastname()));
                 mdDin.setRole("AuthorTransliteratedDIN");
                 mdIso.setRole("AuthorTransliteratedISO");
 

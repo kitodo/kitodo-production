@@ -112,7 +112,7 @@ public class JobManager implements ServletContextListener {
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent arg0) {
+    public void contextDestroyed(ServletContextEvent argument) {
         logger.debug("Stop daily JobManager scheduler");
         try {
             stopTimedJobs();
@@ -122,7 +122,7 @@ public class JobManager implements ServletContextListener {
     }
 
     @Override
-    public void contextInitialized(ServletContextEvent arg0) {
+    public void contextInitialized(ServletContextEvent argument) {
         logger.debug("Start daily JobManager scheduler");
         try {
             startTimedJobs();

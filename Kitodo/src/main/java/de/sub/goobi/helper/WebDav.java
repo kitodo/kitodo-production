@@ -54,17 +54,17 @@ public class WebDav implements Serializable {
     public List<String> uploadAllFromHome(String inVerzeichnis) {
         List<String> rueckgabe = new ArrayList<String>();
         User aktuellerBenutzer = Helper.getCurrentUser();
-        String verzeichnisAlle;
+        String directoryName;
 
         try {
-            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception UploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return rueckgabe;
         }
 
-        SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
+        SafeFile benutzerHome = new SafeFile(directoryName);
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -279,9 +279,9 @@ public class WebDav implements Serializable {
     public int getAnzahlBaende(String inVerzeichnis) {
         try {
             User aktuellerBenutzer = Helper.getCurrentUser();
-            String VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
+            String verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     + inVerzeichnis;
-            SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
+            SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {

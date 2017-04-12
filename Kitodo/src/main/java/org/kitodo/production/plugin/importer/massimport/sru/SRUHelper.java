@@ -99,15 +99,15 @@ public class SRUHelper {
         // srw:searchRetrieveResponse
         Element root = doc.getRootElement();
         // <srw:records>
-        Element srw_records = root.getChild("records", SRW);
-        if (srw_records == null) {
+        Element srwRecords = root.getChild("records", SRW);
+        if (srwRecords == null) {
             return null;
         }
         // <srw:record>
-        Element srw_record = srw_records.getChild("record", SRW);
+        Element srwRecord = srwRecords.getChild("record", SRW);
         // <srw:recordData>
-        if (srw_record != null) {
-            Element recordData = srw_record.getChild("recordData", SRW);
+        if (srwRecord != null) {
+            Element recordData = srwRecord.getChild("recordData", SRW);
             Element record = recordData.getChild("record", PICA);
 
             // generate an answer document

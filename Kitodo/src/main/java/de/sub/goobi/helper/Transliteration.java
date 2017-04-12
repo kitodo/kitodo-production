@@ -20,7 +20,7 @@ public class Transliteration {
      *            String
      * @return String
      */
-    public String transliterateIso(String inString) {
+    public String transliterateISO(String inString) {
         String s = "";
         char[] arr = inString.toCharArray();
         for (int i = 0; i < arr.length; i++) {
@@ -228,7 +228,7 @@ public class Transliteration {
      *            String
      * @return String
      */
-    public String transliterateDin(String inString) {
+    public String transliterateDIN(String inString) {
         String s = "";
         char[] arr = inString.toCharArray();
         for (int i = 0; i < arr.length; i++) {

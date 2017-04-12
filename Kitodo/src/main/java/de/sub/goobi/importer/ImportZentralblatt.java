@@ -49,7 +49,7 @@ import ugh.fileformats.mets.XStream;
  */
 public class ImportZentralblatt {
     private static final Logger myLogger = Logger.getLogger(ImportZentralblatt.class);
-    String Trennzeichen;
+    String separator;
     private final Helper help;
     private Prefs myPrefs;
     private final ServiceManager serviceManager = new ServiceManager();
@@ -76,7 +76,7 @@ public class ImportZentralblatt {
         this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         String prozessID = String.valueOf(inProzess.getId().intValue());
         String line;
-        this.Trennzeichen = ":";
+        this.separator = ":";
         boolean istAbsatz = false;
         boolean istErsterTitel = true;
         LinkedList<DocStruct> listArtikel = new LinkedList<DocStruct>();
@@ -127,7 +127,7 @@ public class ImportZentralblatt {
                 }
 
                 /* Position des Trennzeichens ermitteln */
-                int posTrennzeichen = line.indexOf(this.Trennzeichen);
+                int posTrennzeichen = line.indexOf(this.separator);
                 /* wenn kein Trennzeichen vorhanden, Parsingfehler */
                 if (posTrennzeichen == -1) {
                     myLogger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"

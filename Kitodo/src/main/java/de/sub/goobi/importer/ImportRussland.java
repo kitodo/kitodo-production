@@ -232,9 +232,9 @@ public class ImportRussland {
          * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der
          * selben ZBL-ID finden
          */
-        MetadataType mdt_id = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+        MetadataType metadataTypeId = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
                 .getMetadataTypeByName("ZBLIdentifier");
-        MetadataType mdt_tempId = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
+        MetadataType metadataTypeTempId = serviceManager.getRulesetService().getPreferences(this.prozess.getRuleset())
                 .getMetadataTypeByName("ZBLTempID");
         DocStruct band = this.logicalTopstruct.getAllChildren().get(0);
         // myLogger.info(band.getType().getName());
@@ -248,16 +248,16 @@ public class ImportRussland {
                      * jetzt alle Artikel durchlaufen, bis der richtige Artikel
                      * gefunden wurde
                      */
-                    for (Iterator<DocStruct> iter1 = listArtikel.iterator(); iter1.hasNext();) {
-                        DocStruct artikel = iter1.next();
+                    for (Iterator<DocStruct> firstIterator = listArtikel.iterator(); firstIterator.hasNext();) {
+                        DocStruct artikel = firstIterator.next();
                         // myLogger.info(artikel.getType().getName());
-                        if (artikel.getAllMetadataByType(mdt_id).size() > 0
-                                || artikel.getAllMetadataByType(mdt_tempId).size() > 0) {
+                        if (artikel.getAllMetadataByType(metadataTypeId).size() > 0
+                                || artikel.getAllMetadataByType(metadataTypeTempId).size() > 0) {
                             Metadata md;
-                            if (artikel.getAllMetadataByType(mdt_id).size() > 0) {
-                                md = artikel.getAllMetadataByType(mdt_id).get(0);
+                            if (artikel.getAllMetadataByType(metadataTypeId).size() > 0) {
+                                md = artikel.getAllMetadataByType(metadataTypeId).get(0);
                             } else {
-                                md = artikel.getAllMetadataByType(mdt_tempId).get(0);
+                                md = artikel.getAllMetadataByType(metadataTypeTempId).get(0);
                             }
                             // myLogger.debug(md.getValue());
                             if (md.getValue().equals(zblID)) {
@@ -268,8 +268,8 @@ public class ImportRussland {
                                  * jetzt alle Details durchlaufen und dem
                                  * Artikel hinzufügenl
                                  */
-                                for (Iterator<String> iter2 = inListe.iterator(); iter2.hasNext();) {
-                                    String meinDetail = iter2.next();
+                                for (Iterator<String> secondIterator = inListe.iterator(); secondIterator.hasNext();) {
+                                    String meinDetail = secondIterator.next();
                                     String meineDetailNr = meinDetail.substring(0, 3);
 
                                     /* Artikel Autor russisch (wiederholbar) */
@@ -398,8 +398,8 @@ public class ImportRussland {
             //
             // /* jetzt alle Artikel durchlaufen, bis der richtige Artikel
             // gefunden wurde */
-            // for (Iterator iter1 = listArtikel.iterator(); iter1.hasNext();) {
-            // DocStruct artikel = (DocStruct) iter1.next();
+            // for (Iterator firstIterator = listArtikel.iterator(); firstIterator.hasNext();) {
+            // DocStruct artikel = (DocStruct) firstIterator.next();
             // Metadata md = (Metadata)
             // artikel.getAllMetadataByType(mdt).getFirst();
             // myLogger.debug(md.getValue());
