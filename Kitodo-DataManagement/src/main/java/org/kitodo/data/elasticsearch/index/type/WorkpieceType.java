@@ -31,11 +31,9 @@ public class WorkpieceType extends BaseType<Workpiece> {
     @Override
     public HttpEntity createDocument(Workpiece workpiece) {
 
-        LinkedHashMap<String, String> orderedWorkpieceMap = new LinkedHashMap<>();
-        String process = workpiece.getProcess() != null ? workpiece.getProcess().getId().toString() : "null";
-        orderedWorkpieceMap.put("process", process);
-
-        JSONObject processObject = new JSONObject(orderedWorkpieceMap);
+        JSONObject processObject = new JSONObject();
+        Integer process = workpiece.getProcess() != null ? workpiece.getProcess().getId() : null;
+        processObject.put("process", process);
 
         JSONArray properties = new JSONArray();
         List<WorkpieceProperty> workpieceProperties = workpiece.getProperties();

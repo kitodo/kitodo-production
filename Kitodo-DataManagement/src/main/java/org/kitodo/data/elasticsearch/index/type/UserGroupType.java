@@ -31,19 +31,18 @@ public class UserGroupType extends BaseType<UserGroup> {
     @Override
     public HttpEntity createDocument(UserGroup userGroup) {
 
-        LinkedHashMap<String, String> orderedUserGroupMap = new LinkedHashMap<>();
-        orderedUserGroupMap.put("title", userGroup.getTitle());
-        orderedUserGroupMap.put("permission", userGroup.getPermission().toString());
+        JSONObject userGroupObject = new JSONObject();
+        userGroupObject.put("title", userGroup.getTitle());
+        userGroupObject.put("permission", userGroup.getPermission());
 
         JSONArray users = new JSONArray();
         List<User> userGroupUsers = userGroup.getUsers();
         for (User user : userGroupUsers) {
             JSONObject userObject = new JSONObject();
-            userObject.put("id", user.getId().toString());
+            userObject.put("id", user.getId());
             users.add(userObject);
         }
 
-        JSONObject userGroupObject = new JSONObject(orderedUserGroupMap);
         userGroupObject.put("users", users);
 
         return new NStringEntity(userGroupObject.toJSONString(), ContentType.APPLICATION_JSON);
