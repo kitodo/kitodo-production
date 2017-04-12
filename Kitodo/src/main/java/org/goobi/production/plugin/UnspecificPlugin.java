@@ -477,8 +477,9 @@ public abstract class UnspecificPlugin {
             }
             if (wrappedException instanceof RuntimeException) {
                 throw (RuntimeException) wrappedException;
-            } else
+            } else {
                 throw new RuntimeException(wrappedException.getMessage(), wrappedException);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

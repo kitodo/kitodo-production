@@ -67,8 +67,9 @@ public class SessionCounterFilter implements Filter {
     private FacesContext getFacesContext(ServletRequest request, ServletResponse response) {
         // Try to get it first
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (facesContext != null)
+        if (facesContext != null) {
             return facesContext;
+        }
 
         FacesContextFactory contextFactory = (FacesContextFactory) FactoryFinder
                 .getFactory(FactoryFinder.FACES_CONTEXT_FACTORY);
