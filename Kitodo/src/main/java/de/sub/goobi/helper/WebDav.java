@@ -51,20 +51,20 @@ public class WebDav implements Serializable {
      * Retrieve all folders from one directory.
      */
 
-    public List<String> UploadFromHomeAlle(String inVerzeichnis) {
+    public List<String> uploadAllFromHome(String inVerzeichnis) {
         List<String> rueckgabe = new ArrayList<String>();
         User aktuellerBenutzer = Helper.getCurrentUser();
-        String verzeichnisAlle;
+        String directoryName;
 
         try {
-            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception UploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return rueckgabe;
         }
 
-        SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
+        SafeFile benutzerHome = new SafeFile(directoryName);
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -93,7 +93,7 @@ public class WebDav implements Serializable {
      * Remove Folders from Directory.
      */
     // TODO: Use generic types
-    public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
+    public void removeAllFromHome(List<String> inList, String inVerzeichnis) {
         String verzeichnisAlle;
         User aktuellerBenutzer = Helper.getCurrentUser();
         try {
@@ -116,10 +116,10 @@ public class WebDav implements Serializable {
      * @param myProcess
      *            Process object
      */
-    public void UploadFromHome(Process myProcess) {
+    public void uploadFromHome(Process myProcess) {
         User aktuellerBenutzer = Helper.getCurrentUser();
         if (aktuellerBenutzer != null) {
-            UploadFromHome(aktuellerBenutzer, myProcess);
+            uploadFromHome(aktuellerBenutzer, myProcess);
         }
     }
 
@@ -131,13 +131,13 @@ public class WebDav implements Serializable {
      * @param myProcess
      *            Process object
      */
-    public void UploadFromHome(User inBenutzer, Process myProcess) {
+    public void uploadFromHome(User inBenutzer, Process myProcess) {
         String nach = "";
 
         try {
             nach = serviceManager.getUserService().getHomeDirectory(inBenutzer);
         } catch (Exception ioe) {
-            myLogger.error("Exception UploadFromHome(...)", ioe);
+            myLogger.error("Exception uploadFromHome(...)", ioe);
             Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
             return;
         }
@@ -173,7 +173,7 @@ public class WebDav implements Serializable {
      * @param inNurLesen
      *            boolean
      */
-    public void DownloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
+    public void downloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
         saveTiffHeader(myProcess);
         User aktuellerBenutzer = Helper.getCurrentUser();
         String von = "";
@@ -279,9 +279,9 @@ public class WebDav implements Serializable {
     public int getAnzahlBaende(String inVerzeichnis) {
         try {
             User aktuellerBenutzer = Helper.getCurrentUser();
-            String VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
+            String verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     + inVerzeichnis;
-            SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
+            SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {

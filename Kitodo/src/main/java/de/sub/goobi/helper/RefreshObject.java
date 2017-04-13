@@ -67,7 +67,7 @@ public class RefreshObject {
      * @param processID
      *            int
      */
-    public static void refreshProcess_GUI(int processID) {
+    public static void refreshProcessGUI(int processID) {
         if (logger.isDebugEnabled()) {
             logger.debug("refreshing process with id " + processID);
         }

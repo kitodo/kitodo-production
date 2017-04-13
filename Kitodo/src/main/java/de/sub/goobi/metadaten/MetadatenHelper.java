@@ -69,7 +69,7 @@ public class MetadatenHelper implements Comparator<Object> {
      *            String
      * @return DocStruct object
      */
-    public DocStruct ChangeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
+    public DocStruct changeCurrentDocstructType(DocStruct inOldDocstruct, String inNewType)
             throws DocStructHasNoTypeException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException,
             TypeNotAllowedForParentException {
         // inOldDocstruct.getType().getName()
@@ -252,7 +252,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @param inStruct
      *            DocStruct object
      */
-    public void KnotenDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
+    public void setNodeDown(DocStruct inStruct) throws TypeNotAllowedAsChildException {
         DocStruct parent = inStruct.getParent();
         if (parent == null) {
             return;
@@ -386,23 +386,23 @@ public class MetadatenHelper implements Comparator<Object> {
              */
             Collections.sort(listReferenzen, new Comparator<Reference>() {
                 @Override
-                public int compare(final Reference o1, final Reference o2) {
-                    final Reference r1 = o1;
-                    final Reference r2 = o2;
-                    Integer page1 = 0;
-                    Integer page2 = 0;
+                public int compare(final Reference firstObject, final Reference secondObject) {
+                    final Reference firstReference = firstObject;
+                    final Reference secondReference = secondObject;
+                    Integer firstPage = 0;
+                    Integer secondPage = 0;
                     final MetadataType mdt = MetadatenHelper.this.myPrefs.getMetadataTypeByName("physPageNumber");
-                    List<? extends Metadata> listMetadaten = r1.getTarget().getAllMetadataByType(mdt);
+                    List<? extends Metadata> listMetadaten = firstReference.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         final Metadata meineSeite = listMetadaten.get(0);
-                        page1 = Integer.parseInt(meineSeite.getValue());
+                        firstPage = Integer.parseInt(meineSeite.getValue());
                     }
-                    listMetadaten = r2.getTarget().getAllMetadataByType(mdt);
+                    listMetadaten = secondReference.getTarget().getAllMetadataByType(mdt);
                     if (listMetadaten != null && listMetadaten.size() > 0) {
                         final Metadata meineSeite = listMetadaten.get(0);
-                        page2 = Integer.parseInt(meineSeite.getValue());
+                        secondPage = Integer.parseInt(meineSeite.getValue());
                     }
-                    return page1.compareTo(page2);
+                    return firstPage.compareTo(secondPage);
                 }
             });
 
@@ -566,43 +566,43 @@ public class MetadatenHelper implements Comparator<Object> {
         }
 
         @Override
-        public int compare(Object o1, Object o2) {
-            Metadata s1 = (Metadata) o1;
-            Metadata s2 = (Metadata) o2;
-            if (s1 == null) {
+        public int compare(Object firstObject, Object secondObject) {
+            Metadata firstMetadata = (Metadata) firstObject;
+            Metadata secondMetadata = (Metadata) secondObject;
+            if (firstMetadata == null) {
                 return -1;
             }
-            if (s2 == null) {
+            if (secondMetadata == null) {
                 return 1;
             }
-            String name1 = "";
-            String name2 = "";
+            String firstName = "";
+            String secondName = "";
             try {
-                MetadataType mdt1 = s1.getType();
-                MetadataType mdt2 = s2.getType();
-                name1 = mdt1.getNameByLanguage(this.language);
-                name2 = mdt2.getNameByLanguage(this.language);
+                MetadataType firstMetadataType = firstMetadata.getType();
+                MetadataType secondMetadataType = secondMetadata.getType();
+                firstName = firstMetadataType.getNameByLanguage(this.language);
+                secondName = secondMetadataType.getNameByLanguage(this.language);
             } catch (java.lang.NullPointerException e) {
                 if (myLogger.isDebugEnabled()) {
-                    myLogger.debug("Language " + language + " for metadata " + s1.getType() + " or " + s2.getType()
+                    myLogger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or " + secondMetadata.getType()
                             + " is missing in ruleset");
                 }
                 return 0;
             }
-            if (name1 == null || name1.length() == 0) {
-                name1 = s1.getType().getName();
-                if (name1 == null) {
+            if (firstName == null || firstName.length() == 0) {
+                firstName = firstMetadata.getType().getName();
+                if (firstName == null) {
                     return -1;
                 }
             }
-            if (name2 == null || name2.length() == 0) {
-                name2 = s2.getType().getName();
-                if (name2 == null) {
+            if (secondName == null || secondName.length() == 0) {
+                secondName = secondMetadata.getType().getName();
+                if (secondName == null) {
                     return 1;
                 }
             }
 
-            return name1.compareToIgnoreCase(name2);
+            return firstName.compareToIgnoreCase(secondName);
         }
     }
 
@@ -661,26 +661,26 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     @Override
-    public int compare(Object o1, Object o2) {
+    public int compare(Object firstObject, Object secondObject) {
         String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
-        String s1 = (String) o1;
-        String s2 = (String) o2;
+        String firstString = (String) firstObject;
+        String secondString = (String) secondObject;
         // comparing only prefixes of files:
-        s1 = s1.substring(0, s1.lastIndexOf("."));
-        s2 = s2.substring(0, s2.lastIndexOf("."));
+        firstString = firstString.substring(0, firstString.lastIndexOf("."));
+        secondString = secondString.substring(0, secondString.lastIndexOf("."));
 
         if (imageSorting.equalsIgnoreCase("number")) {
             try {
-                Integer i1 = Integer.valueOf(s1);
-                Integer i2 = Integer.valueOf(s2);
-                return i1.compareTo(i2);
+                Integer firstIterator = Integer.valueOf(firstString);
+                Integer secondIterator = Integer.valueOf(secondString);
+                return firstIterator.compareTo(secondIterator);
             } catch (NumberFormatException e) {
-                return s1.compareToIgnoreCase(s2);
+                return firstString.compareToIgnoreCase(secondString);
             }
         } else if (imageSorting.equalsIgnoreCase("alphanumeric")) {
-            return s1.compareToIgnoreCase(s2);
+            return firstString.compareToIgnoreCase(secondString);
         } else {
-            return s1.compareToIgnoreCase(s2);
+            return firstString.compareToIgnoreCase(secondString);
         }
     }
 

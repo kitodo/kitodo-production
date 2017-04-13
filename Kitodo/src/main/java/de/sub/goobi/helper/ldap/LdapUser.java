@@ -477,12 +477,12 @@ public class LdapUser implements DirContext {
 
     // -- DirContext
     @Override
-    public void modifyAttributes(Name name, int mod_op, Attributes attrs) throws NamingException {
+    public void modifyAttributes(Name name, int modOp, Attributes attrs) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
     @Override
-    public void modifyAttributes(String name, int mod_op, Attributes attrs) throws NamingException {
+    public void modifyAttributes(String name, int modOp, Attributes attrs) throws NamingException {
         throw new OperationNotSupportedException();
     }
 

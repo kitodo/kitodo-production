@@ -307,7 +307,7 @@ public class ModuleServerForm {
         Message message = null;
         while (MessageContainer.size() > 0) {
             message = MessageContainer.pop();
-            handle_message(message, modules);
+            handleMessage(message, modules);
         }
     }
 
@@ -319,7 +319,7 @@ public class ModuleServerForm {
      * @param modules
      *            GoobiModuleManager
      */
-    private static void handle_message(Message message, GoobiModuleManager modules) {
+    private static void handleMessage(Message message, GoobiModuleManager modules) {
         if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
             String in_session = message.from;
             /*

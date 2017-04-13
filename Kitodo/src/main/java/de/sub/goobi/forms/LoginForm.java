@@ -172,9 +172,9 @@ public class LoginForm {
             return "newMain";
         }
         this.myBenutzer = null;
-        Integer LoginID = Integer.valueOf(Helper.getRequestParameter("ID"));
+        Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            this.myBenutzer = serviceManager.getUserService().find(LoginID);
+            this.myBenutzer = serviceManager.getUserService().find(loginId);
             /* in der Session den Login speichern */
             SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
             temp.sessionBenutzerAktualisieren(

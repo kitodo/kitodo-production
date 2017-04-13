@@ -162,7 +162,7 @@ public class SQLStepRequests extends SQLGenerator {
      * @return SQL String to retrieve the highest numericvalue (stepOrder) for
      *         the event defined in eventSelection
      */
-    public String SQLMaxStepOrder(HistoryType eventSelection) {
+    public String getSQLMaxStepOrder(HistoryType eventSelection) {
 
         String timeRestriction;
         String innerWhereClause = null;
@@ -189,7 +189,7 @@ public class SQLStepRequests extends SQLGenerator {
      * @return SQL String to retrieve the lowest numericValue (stepOrder) for
      *         the event defined in eventSelection
      */
-    public String SQLMinStepOrder(HistoryType eventSelection) {
+    public String getSQLMinStepOrder(HistoryType eventSelection) {
 
         String timeRestriction;
         String innerWhereClause = null;

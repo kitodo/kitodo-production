@@ -348,6 +348,8 @@ public class VariableReplacer {
                     }
                     break;
 
+                default:
+                    break;
             }
             return result;
         } else {

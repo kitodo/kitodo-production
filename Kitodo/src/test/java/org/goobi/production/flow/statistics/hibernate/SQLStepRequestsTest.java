@@ -60,7 +60,7 @@ public class SQLStepRequestsTest {
 
     @Test
     public final void testSQLMaxStepOrder() {
-        String answer = request.SQLMaxStepOrder(typeSelection);
+        String answer = request.getSQLMaxStepOrder(typeSelection);
         assertNotNull(answer);
     }
 

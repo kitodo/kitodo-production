@@ -128,8 +128,9 @@ public class SafeFile implements Comparable<SafeFile> {
 
     private SafeFile[] createAll(File[] files) {
         SafeFile[] result = new SafeFile[files.length];
-        for (int i = 0; i < files.length; i++)
+        for (int i = 0; i < files.length; i++) {
             result[i] = new SafeFile(files[i]);
+        }
         return result;
     }
 

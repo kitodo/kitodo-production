@@ -178,6 +178,8 @@ public class GranularityForm {
                 case QUARTERS:
                     result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
                     break;
+                default:
+                    assert false : granularity;
             }
         }
         return result;

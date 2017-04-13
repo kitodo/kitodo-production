@@ -36,7 +36,7 @@ public class UserGroupServiceIT {
     }
 
     @AfterClass
-    public static void cleanDatabaseAndIndex() throws IOException, ResponseException{
+    public static void cleanDatabaseAndIndex() throws IOException, ResponseException {
         // MockDatabase.cleanDatabase();
         MockEntity.cleanIndex();
     }

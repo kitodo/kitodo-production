@@ -63,7 +63,7 @@ public class HelperSchritteWithoutHibernate {
      * Schritt abschliessen und dabei parallele Schritte berücksichtigen.
      */
 
-    public void CloseStepObjectAutomatic(StepObject currentStep) {
+    public void closeStepObjectAutomatic(StepObject currentStep) {
         closeStepObject(currentStep, currentStep.getProcessId(), false);
     }
 
@@ -195,13 +195,13 @@ public class HelperSchritteWithoutHibernate {
             if (logger.isDebugEnabled()) {
                 logger.debug("closing task " + finish.getTitle());
             }
-            CloseStepObjectAutomatic(finish);
+            closeStepObjectAutomatic(finish);
         }
         // TODO remove this later
         try {
             logger.debug("update hibernate cache");
             if (requestFromGUI && ConfigCore.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)) {
-                RefreshObject.refreshProcess_GUI(processId);
+                RefreshObject.refreshProcessGUI(processId);
             } else {
                 if (ConfigCore.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
                     RefreshObject.refreshProcess(processId);
@@ -348,10 +348,10 @@ public class HelperSchritteWithoutHibernate {
                             step.setProcessingStatus(TaskStatus.OPEN.getValue());
                             StepManager.updateStep(step);
                         } else {
-                            CloseStepObjectAutomatic(step);
+                            closeStepObjectAutomatic(step);
                         }
                     } else {
-                        CloseStepObjectAutomatic(step);
+                        closeStepObjectAutomatic(step);
                     }
 
                 } else {
@@ -393,7 +393,7 @@ public class HelperSchritteWithoutHibernate {
         try {
             boolean validate = dms.startExport(po);
             if (validate) {
-                CloseStepObjectAutomatic(step);
+                closeStepObjectAutomatic(step);
             } else {
                 abortStep(step);
             }

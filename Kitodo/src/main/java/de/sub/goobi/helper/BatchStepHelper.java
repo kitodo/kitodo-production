@@ -493,7 +493,7 @@ public class BatchStepHelper {
      */
     public String reportProblemForSingle() throws IOException, ResponseException {
 
-        this.myDav.UploadFromHome(this.currentStep.getProcess());
+        this.myDav.uploadFromHome(this.currentStep.getProcess());
         reportProblem();
         this.problemMessage = "";
         this.myProblemStep = "";
@@ -508,7 +508,7 @@ public class BatchStepHelper {
     public String reportProblemForAll() throws IOException, ResponseException {
         for (Task s : this.steps) {
             this.currentStep = s;
-            this.myDav.UploadFromHome(this.currentStep.getProcess());
+            this.myDav.uploadFromHome(this.currentStep.getProcess());
             reportProblem();
             saveStep();
         }
@@ -666,7 +666,7 @@ public class BatchStepHelper {
             throw new AuthenticationException("userNotFound");
         }
         Date now = new Date();
-        this.myDav.UploadFromHome(this.currentStep.getProcess());
+        this.myDav.uploadFromHome(this.currentStep.getProcess());
         this.currentStep.setProcessingStatusEnum(TaskStatus.DONE);
         this.currentStep.setProcessingEnd(now);
         this.currentStep.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -868,7 +868,7 @@ public class BatchStepHelper {
 
         for (Task s : this.steps) {
 
-            this.myDav.UploadFromHome(s.getProcess());
+            this.myDav.uploadFromHome(s.getProcess());
             s.setProcessingStatusEnum(TaskStatus.OPEN);
             if (serviceManager.getTaskService().isCorrectionStep(s)) {
                 s.setProcessingBegin(null);
@@ -966,7 +966,7 @@ public class BatchStepHelper {
                 }
             }
             if (!error) {
-                this.myDav.UploadFromHome(s.getProcess());
+                this.myDav.uploadFromHome(s.getProcess());
                 StepObject so = StepManager.getStepById(s.getId());
                 so.setEditType(TaskEditType.MANUAL_MULTI.getValue());
                 helper.CloseStepObjectAutomatic(so, true);

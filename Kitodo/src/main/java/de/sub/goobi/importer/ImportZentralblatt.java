@@ -49,7 +49,7 @@ import ugh.fileformats.mets.XStream;
  */
 public class ImportZentralblatt {
     private static final Logger myLogger = Logger.getLogger(ImportZentralblatt.class);
-    String Trennzeichen;
+    String separator;
     private final Helper help;
     private Prefs myPrefs;
     private final ServiceManager serviceManager = new ServiceManager();
@@ -69,14 +69,14 @@ public class ImportZentralblatt {
      * @param inProzess
      *            Process object
      */
-    protected void Parsen(BufferedReader reader, Process inProzess)
+    protected void parse(BufferedReader reader, Process inProzess)
             throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
         myLogger.debug("ParsenZentralblatt() - Start");
         this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         String prozessID = String.valueOf(inProzess.getId().intValue());
         String line;
-        this.Trennzeichen = ":";
+        this.separator = ":";
         boolean istAbsatz = false;
         boolean istErsterTitel = true;
         LinkedList<DocStruct> listArtikel = new LinkedList<DocStruct>();
@@ -106,7 +106,7 @@ public class ImportZentralblatt {
             } else {
 
                 /* prüfen ob der String korrekte xml-Zeichen enthält */
-                String xmlTauglich = xmlTauglichkeitPruefen(line);
+                String xmlTauglich = checkXmlSuitability(line);
                 if (xmlTauglich.length() > 0) {
                     throw new WrongImportFileException("Parsingfehler (nicht druckbares Zeichen) der Importdatei "
                             + "in der Zeile <br/>" + xmlTauglich);
@@ -127,17 +127,17 @@ public class ImportZentralblatt {
                 }
 
                 /* Position des Trennzeichens ermitteln */
-                int posTrennzeichen = line.indexOf(this.Trennzeichen);
+                int posTrennzeichen = line.indexOf(this.separator);
                 /* wenn kein Trennzeichen vorhanden, Parsingfehler */
                 if (posTrennzeichen == -1) {
                     myLogger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
-                            + HtmlTagsMaskieren(line));
+                            + maskHtmlTags(line));
                     throw new WrongImportFileException("Parsingfehler (kein Doppelpunkt) der Importdatei in "
-                            + "der Zeile <br/>" + HtmlTagsMaskieren(line));
+                            + "der Zeile <br/>" + maskHtmlTags(line));
                 } else {
                     String myLeft = line.substring(0, posTrennzeichen).trim();
                     String myRight = line.substring(posTrennzeichen + 1, line.length()).trim();
-                    ParsenArtikel(listArtikel.getLast(), myLeft, myRight, istErsterTitel);
+                    parseArticle(listArtikel.getLast(), myLeft, myRight, istErsterTitel);
 
                     /*
                      * wenn es ein Titel war, ist der nächste nicht mehr der
@@ -152,7 +152,7 @@ public class ImportZentralblatt {
                      * benennen
                      */
                     if (myLeft.equals("J")) {
-                        ParsenAllgemein(dsPeriodical, myLeft, myRight);
+                        parseGeneral(dsPeriodical, myLeft, myRight);
                     }
 
                     /*
@@ -160,7 +160,7 @@ public class ImportZentralblatt {
                      * aktuellen Band
                      */
                     if (myLeft.equals("Y")) {
-                        ParsenAllgemein(dsPeriodicalVolume, myLeft, myRight);
+                        parseGeneral(dsPeriodicalVolume, myLeft, myRight);
                     }
 
                     /*
@@ -168,7 +168,7 @@ public class ImportZentralblatt {
                      * aktuellen Band
                      */
                     if (myLeft.equals("V")) {
-                        ParsenAllgemein(dsPeriodicalVolume, myLeft, myRight);
+                        parseGeneral(dsPeriodicalVolume, myLeft, myRight);
                     }
 
                     /*
@@ -177,7 +177,7 @@ public class ImportZentralblatt {
                      * anlegen
                      */
                     if (myLeft.equals("I")) {
-                        DocStruct dsPeriodicalIssue = ParsenHeftzuordnung(dsPeriodicalVolume, myRight, dd);
+                        DocStruct dsPeriodicalIssue = parsenIssueAssignment(dsPeriodicalVolume, myRight, dd);
                         dsPeriodicalIssue.addChild(listArtikel.getLast());
                     }
                 }
@@ -211,16 +211,16 @@ public class ImportZentralblatt {
         myLogger.debug("ParsenZentralblatt() - Ende");
     }
 
-    private String xmlTauglichkeitPruefen(String text) {
+    private String checkXmlSuitability(String text) {
         int laenge = text.length();
         String rueckgabe = "";
         for (int i = 0; i < laenge; i++) {
             char c = text.charAt(i);
 
             if (!isValidXMLChar(c)) {
-                rueckgabe = HtmlTagsMaskieren(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
+                rueckgabe = maskHtmlTags(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
                 if (laenge > i) {
-                    rueckgabe += HtmlTagsMaskieren(text.substring(i + 1, laenge));
+                    rueckgabe += maskHtmlTags(text.substring(i + 1, laenge));
                 }
                 break;
             }
@@ -239,7 +239,7 @@ public class ImportZentralblatt {
         }
     }
 
-    private String HtmlTagsMaskieren(String in) {
+    private String maskHtmlTags(String in) {
         return (in.replaceAll("<", "&lt;")).replaceAll(">", "&gt");
     }
 
@@ -254,7 +254,7 @@ public class ImportZentralblatt {
      *            String
      * @return DocStruct of periodical
      */
-    private DocStruct ParsenHeftzuordnung(DocStruct dsPeriodicalVolume, String myRight,
+    private DocStruct parsenIssueAssignment(DocStruct dsPeriodicalVolume, String myRight,
             DigitalDocument inDigitalDocument)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         DocStructType dst;
@@ -288,7 +288,7 @@ public class ImportZentralblatt {
     /**
      * General parsing.
      */
-    private void ParsenAllgemein(DocStruct inStruct, String myLeft, String myRight)
+    private void parseGeneral(DocStruct inStruct, String myLeft, String myRight)
             throws WrongImportFileException, TypeNotAllowedForParentException, MetadataTypeNotAllowedException {
 
         // myLogger.debug(myLeft);
@@ -391,7 +391,7 @@ public class ImportZentralblatt {
     /**
      * Parse article.
      */
-    private void ParsenArtikel(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel)
+    private void parseArticle(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
         // myLogger.debug(myLeft);
         // myLogger.debug(myRight);

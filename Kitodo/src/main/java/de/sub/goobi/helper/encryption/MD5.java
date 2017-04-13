@@ -118,6 +118,9 @@ public class MD5 {
                 case 8: // get the correct substring
                     swap = (Integer.toHexString(encryptMsg[i])).substring(6, 8);
                     break;
+
+                default:
+                    break;
             }
             strBuf.append(swap); // appending swap to get complete hash-key
         }

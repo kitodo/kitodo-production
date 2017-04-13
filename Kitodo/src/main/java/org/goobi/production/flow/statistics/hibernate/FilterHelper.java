@@ -489,11 +489,11 @@ public class FilterHelper {
      * @param crit PaginatingCriteria object
      * @param isTemplate Boolean
      * @param returnParameters Object containing values which need to be set and returned to
-     * UserDefinedFilter
+     *      UserDefinedFilter
      * @param userAssignedStepsOnly Boolean
      * @param stepOpenOnly boolean
      * @return String used to pass on error messages about errors in the filter
-     * expression
+     *      expression
      */
     public static String criteriaBuilder(Session session, String inFilter, PaginatingCriteria crit, Boolean isTemplate,
                                          Parameters returnParameters, Boolean stepOpenOnly, Boolean userAssignedStepsOnly, boolean clearSession) {
@@ -1005,6 +1005,9 @@ public class FilterHelper {
                 break;
             case unknown:
                 message = message + ("Filter '" + filterPart + "' is not known!\n");
+                break;
+            default:
+                break;
         }
         return message;
     }

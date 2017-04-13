@@ -697,7 +697,7 @@ public class ProzessverwaltungForm extends BasisForm {
         /* alle Benutzer */
         for (User b : this.mySchritt.getUsers()) {
             try {
-                myDav.UploadFromHome(b, this.mySchritt.getProcess());
+                myDav.uploadFromHome(b, this.mySchritt.getProcess());
             } catch (RuntimeException e) {
             }
         }
@@ -705,7 +705,7 @@ public class ProzessverwaltungForm extends BasisForm {
         for (UserGroup bg : this.mySchritt.getUserGroups()) {
             for (User b : bg.getUsers()) {
                 try {
-                    myDav.UploadFromHome(b, this.mySchritt.getProcess());
+                    myDav.uploadFromHome(b, this.mySchritt.getProcess());
                 } catch (RuntimeException e) {
                 }
             }
@@ -933,8 +933,8 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String UploadFromHomeAlle() {
         WebDav myDav = new WebDav();
-        List<String> folder = myDav.UploadFromHomeAlle(DONEDIRECTORYNAME);
-        myDav.removeFromHomeAlle(folder, DONEDIRECTORYNAME);
+        List<String> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
+        myDav.removeAllFromHome(folder, DONEDIRECTORYNAME);
         Helper.setMeldung(null, "directoryRemovedAll", DONEDIRECTORYNAME);
         return "";
     }
@@ -946,7 +946,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String UploadFromHome() {
         WebDav myDav = new WebDav();
-        myDav.UploadFromHome(this.myProzess);
+        myDav.uploadFromHome(this.myProzess);
         Helper.setMeldung(null, "directoryRemoved", this.myProzess.getTitle());
         return "";
     }
@@ -962,7 +962,7 @@ public class ProzessverwaltungForm extends BasisForm {
          */
         if (!serviceManager.getProcessService().isImageFolderInUse(this.myProzess)) {
             WebDav myDav = new WebDav();
-            myDav.DownloadToHome(this.myProzess, 0, false);
+            myDav.downloadToHome(this.myProzess, 0, false);
         } else {
             Helper.setMeldung(null,
                     Helper.getTranslation("directory ") + " " + this.myProzess.getTitle() + " "
@@ -970,7 +970,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.myProzess)));
             WebDav myDav = new WebDav();
-            myDav.DownloadToHome(this.myProzess, 0, true);
+            myDav.downloadToHome(this.myProzess, 0, true);
         }
     }
 
@@ -987,14 +987,14 @@ public class ProzessverwaltungForm extends BasisForm {
              * ansonsten Download
              */
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
-                myDav.DownloadToHome(proz, 0, false);
+                myDav.downloadToHome(proz, 0, false);
             } else {
                 Helper.setMeldung(null,
                         Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
                                 + Helper.getTranslation("isInUse"),
                         serviceManager.getUserService()
                                 .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
-                myDav.DownloadToHome(proz, 0, true);
+                myDav.downloadToHome(proz, 0, true);
             }
         }
         Helper.setMeldung(null, "createdInUserHome", "");
@@ -1009,14 +1009,14 @@ public class ProzessverwaltungForm extends BasisForm {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
-                    myDav.DownloadToHome(proz, 0, false);
+                    myDav.downloadToHome(proz, 0, false);
                 } else {
                     Helper.setMeldung(null,
                             Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
                                     + Helper.getTranslation("isInUse"),
                             serviceManager.getUserService()
                                     .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
-                    myDav.DownloadToHome(proz, 0, true);
+                    myDav.downloadToHome(proz, 0, true);
                 }
             }
         }
@@ -1031,14 +1031,14 @@ public class ProzessverwaltungForm extends BasisForm {
         WebDav myDav = new WebDav();
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             if (!serviceManager.getProcessService().isImageFolderInUse(proz)) {
-                myDav.DownloadToHome(proz, 0, false);
+                myDav.downloadToHome(proz, 0, false);
             } else {
                 Helper.setMeldung(null,
                         Helper.getTranslation("directory ") + " " + proz.getTitle() + " "
                                 + Helper.getTranslation("isInUse"),
                         serviceManager.getUserService()
                                 .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(proz)));
-                myDav.DownloadToHome(proz, 0, true);
+                myDav.downloadToHome(proz, 0, true);
             }
         }
         Helper.setMeldung(null, "createdInUserHomeAll", "");
@@ -1685,7 +1685,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     public void DownloadMultiTiff() throws IOException, InterruptedException, SwapException, DAOException {
         Multipage mp = new Multipage();
-        mp.ExportStart(this.myProzess);
+        mp.startExport(this.myProzess);
     }
 
     public String getGoobiScript() {

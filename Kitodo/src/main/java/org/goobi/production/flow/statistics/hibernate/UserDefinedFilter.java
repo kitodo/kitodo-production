@@ -45,7 +45,7 @@ import org.kitodo.data.database.beans.Process;
  * 
  * 
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     private static final long serialVersionUID = 4715772407607416975L;
     private WeakReference<Criteria> myCriteria = null;
@@ -58,7 +58,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     /**
      * Constructor using an Array of Integers representing the ids of the
      * Objects that need to be selected
-     ****************************************************************************/
+     */
     public UserDefinedFilter(List<Integer> selectIDs) {
         myIds = new ArrayList<Integer>(selectIDs);
     }
@@ -66,7 +66,7 @@ public class UserDefinedFilter implements IEvaluableFilter, Cloneable {
     /**
      * Constructor using the user generated search string
      *
-     ****************************************************************************/
+     */
     public UserDefinedFilter(String filter) {
         myFilterExpression = filter;
     }

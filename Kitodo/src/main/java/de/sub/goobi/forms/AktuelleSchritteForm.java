@@ -367,7 +367,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (ben != null) {
                         s.setProcessingUser(ben);
                     }
-                    this.myDav.DownloadToHome(s.getProcess(), s.getId(), !s.isTypeImagesWrite());
+                    this.myDav.downloadToHome(s.getProcess(), s.getId(), !s.isTypeImagesWrite());
 
                 }
             }
@@ -442,7 +442,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String SchrittDurchBenutzerZurueckgeben() {
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setProcessingStatusEnum(TaskStatus.OPEN);
         // mySchritt.setBearbeitungsbenutzer(null);
         // if we have a correction-step here then never remove startdate
@@ -549,7 +549,7 @@ public class AktuelleSchritteForm extends BasisForm {
          * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten
          * schon vorher draussen
          */
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         // it returns null! - not possible to close task
         StepObject so = StepManager.getStepById(this.mySchritt.getId());
@@ -594,7 +594,7 @@ public class AktuelleSchritteForm extends BasisForm {
             myLogger.debug("mySchritt.ID: " + this.mySchritt.getId());
             myLogger.debug("Korrekturschritt.ID: " + this.myProblemID);
         }
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         Date myDate = new Date();
         this.mySchritt.setProcessingStatusEnum(TaskStatus.LOCKED);
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -683,7 +683,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return "";
         }
         Date now = new Date();
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setProcessingStatusEnum(TaskStatus.DONE);
         this.mySchritt.setProcessingEnd(now);
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -755,7 +755,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (ben != null) {
             mySchritt.setProcessingUser(ben);
         }
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProcess().getTitle());
         return "";
     }
@@ -776,7 +776,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (ben != null) {
             mySchritt.setProcessingUser(ben);
         }
-        this.myDav.DownloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId(),
+        this.myDav.downloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId(),
                 !this.mySchritt.isTypeImagesWrite());
 
         return "";
@@ -789,7 +789,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public String UploadFromHomeAlle() throws NumberFormatException, DAOException {
-        List<String> fertigListe = this.myDav.UploadFromHomeAlle(DONEDIRECTORYNAME);
+        List<String> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<String> geprueft = new ArrayList<String>();
         /*
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
@@ -820,7 +820,7 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
 
-        this.myDav.removeFromHomeAlle(geprueft, DONEDIRECTORYNAME);
+        this.myDav.removeAllFromHome(geprueft, DONEDIRECTORYNAME);
         Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", DONEDIRECTORYNAME);
         return "";
     }
@@ -853,7 +853,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 } catch (ResponseException e) {
                     Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
-                this.myDav.DownloadToHome(proz, step.getId(), false);
+                this.myDav.downloadToHome(proz, step.getId(), false);
             }
         }
         // calcHomeImages();
@@ -890,7 +890,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 } catch (ResponseException e) {
                     Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
-                this.myDav.DownloadToHome(proz, step.getId(), false);
+                this.myDav.downloadToHome(proz, step.getId(), false);
             }
         }
         // calcHomeImages();

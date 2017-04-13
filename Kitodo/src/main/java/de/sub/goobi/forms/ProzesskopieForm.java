@@ -1948,6 +1948,8 @@ public class ProzesskopieForm {
                     case 4:
                         result.append(word.length() > 1 ? word.substring(0, 1) : word);
                         break;
+                    default:
+                        assert false : wordNo;
                 }
                 wordNo++;
             }

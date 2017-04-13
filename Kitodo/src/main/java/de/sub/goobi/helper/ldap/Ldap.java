@@ -82,7 +82,7 @@ public class Ldap {
             throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
 
         if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
-            Hashtable<String, String> env = LdapConnectionSettings();
+            Hashtable<String, String> env = getLdapConnectionSettings();
             env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
             env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
 
@@ -122,7 +122,7 @@ public class Ldap {
      */
     public boolean isUserPasswordCorrect(User inBenutzer, String inPasswort) {
         myLogger.debug("start login session with ldap");
-        Hashtable<String, String> env = LdapConnectionSettings();
+        Hashtable<String, String> env = getLdapConnectionSettings();
 
         // Start TLS
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
@@ -232,7 +232,7 @@ public class Ldap {
         if (ConfigCore.getBooleanParameter("useLocalDirectory", false)) {
             return ConfigCore.getParameter("dir_Users") + inBenutzer.getLogin();
         }
-        Hashtable<String, String> env = LdapConnectionSettings();
+        Hashtable<String, String> env = getLdapConnectionSettings();
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
 
             env = new Hashtable<String, String>();
@@ -317,7 +317,7 @@ public class Ldap {
      * @return path as string
      */
     public boolean isUserAlreadyExists(String inLogin) {
-        Hashtable<String, String> env = LdapConnectionSettings();
+        Hashtable<String, String> env = getLdapConnectionSettings();
         env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
         env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
         DirContext ctx;
@@ -386,7 +386,7 @@ public class Ldap {
      * @return next free uidNumber
      */
     private String getNextUidNumber() {
-        Hashtable<String, String> env = LdapConnectionSettings();
+        Hashtable<String, String> env = getLdapConnectionSettings();
         env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
         env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
         DirContext ctx;
@@ -408,7 +408,7 @@ public class Ldap {
      * Set next free uidNumber.
      */
     private void setNextUidNumber() {
-        Hashtable<String, String> env = LdapConnectionSettings();
+        Hashtable<String, String> env = getLdapConnectionSettings();
         env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
         env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
         DirContext ctx;
@@ -445,7 +445,7 @@ public class Ldap {
      */
     public boolean changeUserPassword(User inUser, String inOldPassword, String inNewPassword)
             throws NoSuchAlgorithmException {
-        Hashtable<String, String> env = LdapConnectionSettings();
+        Hashtable<String, String> env = getLdapConnectionSettings();
         if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
             env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
             env.put(Context.SECURITY_CREDENTIALS, ConfigCore.getParameter("ldap_adminPassword"));
@@ -512,7 +512,7 @@ public class Ldap {
         return false;
     }
 
-    private Hashtable<String, String> LdapConnectionSettings() {
+    private Hashtable<String, String> getLdapConnectionSettings() {
         // Set up environment for creating initial context
         Hashtable<String, String> env = new Hashtable<String, String>(11);
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
