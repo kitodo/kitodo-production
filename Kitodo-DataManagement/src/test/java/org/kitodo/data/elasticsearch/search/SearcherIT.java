@@ -27,7 +27,7 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 /**
  * Test class for Searcher.
  */
-public class SearcherTest {
+public class SearcherIT {
 
     @BeforeClass
     public static void prepareIndex() throws IOException, ResponseException {
