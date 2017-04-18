@@ -519,7 +519,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
         HashMap<String, String> fields = new HashMap<String, String>();
         try {
-            File file = new File(new Helper().getGoobiConfigDirectory() + "goobi_exportXml.xml");
+            File file = new File(new Helper().getKitodoConfigDirectory() + "goobi_exportXml.xml");
             if (file.exists() && file.canRead()) {
                 XMLConfiguration config = new XMLConfiguration(file);
                 config.setListDelimiter('&');
@@ -541,7 +541,7 @@ public class ExportXmlLog implements IProcessDataExport {
     private HashMap<String, String> getNamespacesFromConfig() {
         HashMap<String, String> nss = new HashMap<String, String>();
         try {
-            File file = new File(new Helper().getGoobiConfigDirectory() + "goobi_exportXml.xml");
+            File file = new File(new Helper().getKitodoConfigDirectory() + "goobi_exportXml.xml");
             if (file.exists() && file.canRead()) {
                 XMLConfiguration config = new XMLConfiguration(file);
                 config.setListDelimiter('&');

@@ -36,7 +36,7 @@ public final class ConfigDispayRules {
      */
 
     private ConfigDispayRules() {
-        configPfad = this.helper.getGoobiConfigDirectory() + "kitodo_metadataDisplayRules.xml";
+        configPfad = this.helper.getKitodoConfigDirectory() + "kitodo_metadataDisplayRules.xml";
         try {
             config = new XMLConfiguration(configPfad);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());

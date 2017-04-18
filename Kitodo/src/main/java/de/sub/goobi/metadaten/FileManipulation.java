@@ -421,7 +421,7 @@ public class FileManipulation {
 
             }
         }
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
         SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
         if (!fileuploadFolder.exists()) {
             fileuploadFolder.mkdir();
@@ -519,7 +519,7 @@ public class FileManipulation {
      */
     public List<String> getAllImportFolder() {
 
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
         SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
 
         allImportFolder = new ArrayList<String>();
@@ -550,7 +550,7 @@ public class FileManipulation {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
 
         String masterPrefix = "";
         boolean useMasterFolder = false;

@@ -808,7 +808,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      *            the goobi config directory
      */
     @Override
-    public void setGoobiConfigDirectory(String configDir) {
+    public void setKitodoConfigDirectory(String configDir) {
         this.configDir = configDir;
     }
 

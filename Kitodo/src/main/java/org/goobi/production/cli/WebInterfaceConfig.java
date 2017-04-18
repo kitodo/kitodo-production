@@ -34,7 +34,7 @@ public class WebInterfaceConfig {
         ArrayList<String> allowed = new ArrayList<String>();
         try {
             XMLConfiguration config = new XMLConfiguration(
-                    new Helper().getGoobiConfigDirectory() + "kitodo_webapi.xml");
+                    new Helper().getKitodoConfigDirectory() + "kitodo_webapi.xml");
             config.setListDelimiter('&');
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
 

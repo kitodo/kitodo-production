@@ -127,7 +127,7 @@ public class MassImportForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollections = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
-        String filename = this.help.getGoobiConfigDirectory() + "kitodo_digitalCollections.xml";
+        String filename = this.help.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
@@ -232,7 +232,7 @@ public class MassImportForm {
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
-            this.plugin.setGoobiConfigDirectory(new Helper().getGoobiConfigDirectory());
+            this.plugin.setKitodoConfigDirectory(new Helper().getKitodoConfigDirectory());
 
             if (StringUtils.isNotEmpty(this.idList)) {
                 List<String> ids = this.plugin.splitIds(this.idList);

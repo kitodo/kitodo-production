@@ -122,7 +122,7 @@ public class Helper implements Serializable, Observer {
      *
      * @return String
      */
-    public String getGoobiConfigDirectory() {
+    public String getKitodoConfigDirectory() {
         if (this.myConfigVerzeichnis == null) {
             this.myConfigVerzeichnis = ConfigCore.getParameter(Parameters.CONFIG_DIR);
         }
