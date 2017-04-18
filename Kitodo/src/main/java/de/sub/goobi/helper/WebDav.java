@@ -59,8 +59,8 @@ public class WebDav implements Serializable {
         try {
             directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
-            myLogger.error("Exception UploadFromHomeAlle()", ioe);
-            Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
+            myLogger.error("Exception uploadFromHomeAlle()", ioe);
+            Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return rueckgabe;
         }
 
@@ -197,7 +197,7 @@ public class WebDav implements Serializable {
             }
 
         } catch (Exception ioe) {
-            myLogger.error("Exception DownloadToHome()", ioe);
+            myLogger.error("Exception downloadToHome()", ioe);
             Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
             return;
         }
@@ -240,10 +240,10 @@ public class WebDav implements Serializable {
         try {
             ShellScript.legacyCallShell2(command);
         } catch (java.io.IOException ioe) {
-            myLogger.error("IOException DownloadToHome()", ioe);
+            myLogger.error("IOException downloadToHome()", ioe);
             Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
         } catch (InterruptedException e) {
-            myLogger.error("InterruptedException DownloadToHome()", e);
+            myLogger.error("InterruptedException downloadToHome()", e);
             Helper.setFehlerMeldung("Download aborted, InterruptedException", e.getMessage());
             myLogger.error(e);
         }

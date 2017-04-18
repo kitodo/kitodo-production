@@ -139,7 +139,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Anzeige der Schritte.
      */
-    public String FilterAlleStart() {
+    public String filterAlleStart() {
         try {
             this.myFilteredDataSource = new UserDefinedStepFilter(true);
 
@@ -218,7 +218,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
-    public String SchrittDurchBenutzerUebernehmen() {
+    public String schrittDurchBenutzerUebernehmen() {
         this.flagWaitLock.lock();
         try {
             if (!this.flagWait) {
@@ -269,7 +269,7 @@ public class AktuelleSchritteForm extends BasisForm {
                      */
 
                     if (this.mySchritt.isTypeImagesRead() || this.mySchritt.isTypeImagesWrite()) {
-                        DownloadToHome();
+                        downloadToHome();
                     }
                 }
             } else {
@@ -288,7 +288,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String EditStep() {
+    public String editStep() {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
@@ -301,7 +301,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     @SuppressWarnings("unchecked")
-    public String TakeOverBatch() {
+    public String takeOverBatch() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch = new ArrayList<Task>();
 
@@ -326,7 +326,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
             currentStepsOfBatch = crit.list();
         } else {
-            return SchrittDurchBenutzerUebernehmen();
+            return schrittDurchBenutzerUebernehmen();
         }
         // if only one step is assigned for this batch, use the single
 
@@ -336,7 +336,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return "";
         }
         if (currentStepsOfBatch.size() == 1) {
-            return SchrittDurchBenutzerUebernehmen();
+            return schrittDurchBenutzerUebernehmen();
         }
 
         for (Task s : currentStepsOfBatch) {
@@ -383,7 +383,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "BatchesEdit";
+        return "batchesEdit";
     }
 
     /**
@@ -392,7 +392,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     @SuppressWarnings("unchecked")
-    public String BatchesEdit() {
+    public String batchesEdit() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch = new ArrayList<Task>();
 
@@ -429,7 +429,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return "AktuelleSchritteBearbeiten";
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "BatchesEdit";
+        return "batchesEdit";
     }
 
     @Deprecated
@@ -441,7 +441,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String SchrittDurchBenutzerZurueckgeben() {
+    public String schrittDurchBenutzerZurueckgeben() {
         this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setProcessingStatusEnum(TaskStatus.OPEN);
         // mySchritt.setBearbeitungsbenutzer(null);
@@ -474,7 +474,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String SchrittDurchBenutzerAbschliessen() {
+    public String schrittDurchBenutzerAbschliessen() {
 
         if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
             IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
@@ -555,10 +555,10 @@ public class AktuelleSchritteForm extends BasisForm {
         StepObject so = StepManager.getStepById(this.mySchritt.getId());
         new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
         // new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
-        return FilterAlleStart();
+        return filterAlleStart();
     }
 
-    public String SperrungAufheben() {
+    public String sperrungAufheben() {
         MetadatenSperrung.unlockProcess(this.mySchritt.getProcess().getId());
         return "";
     }
@@ -584,7 +584,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return problem as String
      */
     @SuppressWarnings("unchecked")
-    public String ReportProblem() {
+    public String reportProblem() {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             Helper.setFehlerMeldung("userNotFound");
@@ -651,7 +651,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         this.problemMessage = "";
         this.myProblemID = 0;
-        return FilterAlleStart();
+        return filterAlleStart();
     }
 
     /**
@@ -676,7 +676,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String SolveProblem() {
+    public String solveProblem() {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             Helper.setFehlerMeldung("userNotFound");
@@ -743,13 +743,13 @@ public class AktuelleSchritteForm extends BasisForm {
 
         this.solutionMessage = "";
         this.mySolutionID = 0;
-        return FilterAlleStart();
+        return filterAlleStart();
     }
 
     /**
      * Upload und Download der Images.
      */
-    public String UploadFromHome() {
+    public String uploadFromHome() {
         mySchritt.setProcessingTime(new Date());
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben != null) {
@@ -765,7 +765,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return String
      */
-    public String DownloadToHome() {
+    public String downloadToHome() {
         try {
             new File(serviceManager.getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()));
         } catch (Exception e1) {
@@ -788,7 +788,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String UploadFromHomeAlle() throws NumberFormatException, DAOException {
+    public String uploadFromHomeAlle() throws NumberFormatException, DAOException {
         List<String> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<String> geprueft = new ArrayList<String>();
         /*
@@ -797,7 +797,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (fertigListe != null && fertigListe.size() > 0 && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
-            FilterAlleStart();
+            filterAlleStart();
         }
         for (Iterator<String> iter = fertigListe.iterator(); iter.hasNext();) {
             String element = iter.next();
@@ -812,7 +812,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 if (step.getProcess().getId() == Integer.parseInt(myID)
                         && step.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.mySchritt = step;
-                    if (!SchrittDurchBenutzerAbschliessen().isEmpty()) {
+                    if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
                         geprueft.add(element);
                     }
                     this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
@@ -867,7 +867,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String DownloadToHomeHits() {
+    public String downloadToHomeHits() {
 
         for (Iterator<Task> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
             Task step = iter.next();
@@ -1090,7 +1090,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
              */
             if (this.page == null && (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
-                FilterAlleStart();
+                filterAlleStart();
             }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
@@ -1103,7 +1103,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Auswahl mittels Selectboxen.
      */
     @SuppressWarnings("unchecked")
-    public void SelectionAll() {
+    public void selectionAll() {
         for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
             Task s = iter.next();
             s.setSelected(true);
@@ -1114,7 +1114,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Selection none.
      */
     @SuppressWarnings("unchecked")
-    public void SelectionNone() {
+    public void selectionNone() {
         for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
             Task s = iter.next();
             s.setSelected(false);
@@ -1124,7 +1124,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Downloads.
      */
-    public void DownloadTiffHeader() throws IOException {
+    public void downloadTiffHeader() throws IOException {
         TiffHeader tiff = new TiffHeader(this.mySchritt.getProcess());
         tiff.exportStart();
     }
@@ -1132,7 +1132,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Export DMS.
      */
-    public void ExportDMS() {
+    public void exportDMS() {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.mySchritt.getProcess());

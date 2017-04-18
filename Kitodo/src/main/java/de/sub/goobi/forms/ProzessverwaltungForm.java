@@ -854,7 +854,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (Exception e) {
             Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.myProzess.getTitle(),
                     e);
-            logger.error("ExportDMS error", e);
+            logger.error("exportDMS error", e);
         }
     }
 

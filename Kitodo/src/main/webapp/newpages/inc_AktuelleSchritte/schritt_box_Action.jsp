@@ -106,7 +106,7 @@
                             <%-- Bei Sperrung durch eigenen Benutzer: Sperrung aufheben können --%>
                             <h:commandLink id="action1"
                                            rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUsers != null) && (AktuelleSchritteForm.mySchritt.process.blockedUsers.id == LoginForm.myBenutzer.id)}"
-                                           action="#{AktuelleSchritteForm.SperrungAufheben}"
+                                           action="#{AktuelleSchritteForm.sperrungAufheben}"
                                            title="#{msgs.oderSperrungAufheben}">
                                 <h:graphicImage value="/newpages/images/buttons/key2a.gif"
                                                 style="margin-left:10px;margin-right:3px;vertical-align:middle"/>
@@ -219,7 +219,7 @@
                         <%-- tiffHeaderDownload-Schaltknopf --%>
                         <h:commandLink id="action8"
                                        rendered="#{0==1 && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                       action="#{AktuelleSchritteForm.DownloadTiffHeader}"
+                                       action="#{AktuelleSchritteForm.downloadTiffHeader}"
                                        title="#{msgs.dateiMitTiffHeaderSpeichern}">
                             <h:graphicImage value="/newpages/images/buttons/tif.gif"
                                             style="margin-right:3px;vertical-align:middle"/>
@@ -236,7 +236,7 @@
                         <%-- Upload-Schaltknopf --%>
                         <h:commandLink id="action9"
                                        rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                       action="#{AktuelleSchritteForm.ExportDMS}"
+                                       action="#{AktuelleSchritteForm.exportDMS}"
                                        title="#{msgs.importDms}">
                             <h:graphicImage value="/newpages/images/buttons/dms.png"
                                             style="margin-right:3px;vertical-align:middle"/>
@@ -262,7 +262,7 @@
 
                         <%-- Bearbeitung abbrechen-Schaltknopf --%>
                         <h:commandLink id="action11"
-                                       action="#{AktuelleSchritteForm.SchrittDurchBenutzerZurueckgeben}"
+                                       action="#{AktuelleSchritteForm.schrittDurchBenutzerZurueckgeben}"
                                        title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
                                        onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
                             <h:graphicImage value="/newpages/images/buttons/cancel3.gif"
@@ -299,7 +299,7 @@
                                     <%-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset --%>
                                     <h:outputText value=""/>
                                     <h:commandLink id="action13"
-                                                   action="#{AktuelleSchritteForm.ReportProblem}"
+                                                   action="#{AktuelleSchritteForm.reportProblem}"
                                                    title="#{msgs.korrekturmeldungSenden}"
                                                    onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                         <h:outputText value="#{msgs.korrekturmeldungSenden}"/>
@@ -338,7 +338,7 @@
                                     <%-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset --%>
                                     <h:outputText value=""/>
                                     <h:commandLink id="action14"
-                                                   action="#{AktuelleSchritteForm.SolveProblem}"
+                                                   action="#{AktuelleSchritteForm.solveProblem}"
                                                    title="#{msgs.meldungUeberProblemloesungSenden}"
                                                    onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                         <h:outputText value="#{msgs.meldungUeberProblemloesungSenden}"/>
@@ -349,7 +349,7 @@
 
                         <%-- Abschliessen-Schaltknopf --%>
                         <h:commandLink id="action15"
-                                       action="#{AktuelleSchritteForm.SchrittDurchBenutzerAbschliessen}"
+                                       action="#{AktuelleSchritteForm.schrittDurchBenutzerAbschliessen}"
                                        title="#{msgs.diesenSchrittAbschliessen}"
                                        onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
                             <h:graphicImage value="/newpages/images/buttons/ok.gif"

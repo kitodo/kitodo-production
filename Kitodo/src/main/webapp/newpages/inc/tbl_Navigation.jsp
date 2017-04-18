@@ -93,7 +93,7 @@
 
                         <%-- aktuelle Schritte --%>
                         <h:commandLink styleClass="mlink" id="myTasks"
-                                       action="#{AktuelleSchritteForm.FilterAlleStart}"
+                                       action="#{AktuelleSchritteForm.filterAlleStart}"
                                        style="#{NavigationForm.aktuell == '20' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '20'}">
                                 <f:verbatim>&#8250; </f:verbatim>

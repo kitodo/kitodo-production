@@ -66,7 +66,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
             serviceManager.getProcessService().addToWikiField(ticket.getString("message"),
                     dialog.getMySchritt().getProcess());
         }
-        dialog.SchrittDurchBenutzerAbschliessen();
+        dialog.schrittDurchBenutzerAbschliessen();
     }
 
     /**

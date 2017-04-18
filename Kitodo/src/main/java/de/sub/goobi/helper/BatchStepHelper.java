@@ -499,7 +499,7 @@ public class BatchStepHelper {
         this.myProblemStep = "";
         saveStep();
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     /**
@@ -515,7 +515,7 @@ public class BatchStepHelper {
         this.problemMessage = "";
         this.myProblemStep = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     private void reportProblem() throws IOException, ResponseException {
@@ -630,7 +630,7 @@ public class BatchStepHelper {
             this.mySolutionStep = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.FilterAlleStart();
+            return asf.filterAlleStart();
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
@@ -653,7 +653,7 @@ public class BatchStepHelper {
             this.mySolutionStep = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.FilterAlleStart();
+            return asf.filterAlleStart();
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
@@ -887,7 +887,7 @@ public class BatchStepHelper {
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     /**
@@ -973,7 +973,7 @@ public class BatchStepHelper {
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     /**
