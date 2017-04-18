@@ -1267,7 +1267,8 @@ public class CopyProcess extends ProzesskopieForm {
                 this.tifHeaderImageDescription += this.docType;
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
+                for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator
+                        .hasNext();) {
                     AdditionalField myField = secondIterator.next();
 
                     /*
@@ -1283,8 +1284,7 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        this.tifHeaderImageDescription += calcProcessTitleCheck(myField.getTitle(),
-                                myField.getValue());
+                        this.tifHeaderImageDescription += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
                     }
                 }
             }
