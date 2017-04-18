@@ -411,11 +411,7 @@ public class Process extends BaseBean {
     }
 
     public int getWorkpiecesSize() {
-        if (this.getWorkpieces() == null) {
-            return 0;
-        } else {
-            return this.getWorkpieces().size();
-        }
+        return this.getWorkpieces().size();
     }
 
     public int getTemplatesSize() {
