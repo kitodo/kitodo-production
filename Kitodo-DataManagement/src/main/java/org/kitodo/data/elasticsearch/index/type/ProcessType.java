@@ -32,7 +32,7 @@ public class ProcessType extends BaseType<Process> {
     public HttpEntity createDocument(Process process) {
 
         JSONObject processObject = new JSONObject();
-        processObject.put("name", process.getTitle());
+        processObject.put("title", process.getTitle());
         processObject.put("outputName", process.getOutputName());
         String creationDate = process.getCreationDate() != null ? formatDate(process.getCreationDate()) : null;
         processObject.put("creationDate", creationDate);

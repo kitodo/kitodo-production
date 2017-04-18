@@ -105,7 +105,7 @@ public class ProcessTypeTest {
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"name\":\"Testing\",\"outputName\":\"Test\","
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
                 + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project\":1,\"creationDate\":"
                 + "\"2017-01-01\",\"batches\":[{\"id\":1}],\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
@@ -113,16 +113,16 @@ public class ProcessTypeTest {
         process = prepareData().get(1);
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"name\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
-                + "\"wikiField\":\"Field\",\"docket\":1,\"name\":\"Rendering\",\"ruleset\":null,"
-                + "\"project\":1,\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
+                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project\":1,\"creationDate\":\""
+                + dateFormat.format(process.getCreationDate())+ "\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"}"
+                + ",{\"title\":\"second\",\"value\":\"2\"}]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
+        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
                 + "\"docket\":null,\"ruleset\":null,\"project\":null," + "\"creationDate\":\""
                 + dateFormat.format(process.getCreationDate()) + "\",\"properties\":[],\"batches\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
