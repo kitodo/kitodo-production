@@ -116,10 +116,6 @@ public class UserService {
             current = (User) session.load(User.class, user.getId());
         }
         if (!hasOpen) {
-            current.getProjects().size();
-            current.getProcessingTasks().size();
-            current.getTasks().size();
-            current.getUserGroups().size();
             session.close();
         }
         return current;

@@ -383,8 +383,6 @@ public class TaskService {
             current = (Task) session.load(Task.class, task.getId());
         }
         if (!hasOpen) {
-            current.getUsers().size();
-            current.getUserGroups().size();
             session.close();
         }
         return current;

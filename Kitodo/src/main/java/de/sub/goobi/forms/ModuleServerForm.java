@@ -396,11 +396,9 @@ public class ModuleServerForm {
 
             return tempProz;
         } catch (NumberFormatException e) {
-            new Helper();
             throw new GoobiException(5, "******** wrapped NumberFormatException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
-            new Helper();
             throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
