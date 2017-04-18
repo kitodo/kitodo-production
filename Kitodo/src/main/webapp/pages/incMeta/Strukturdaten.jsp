@@ -75,7 +75,7 @@
                     </h:panelGroup>
 
 
-                    <a4j:commandLink action="#{Metadaten.CurrentStartpage}" reRender="pageStartGroup">
+                    <a4j:commandLink action="#{Metadaten.currentStartpage}" reRender="pageStartGroup">
                         <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
                                         style="border: 0px;vertical-align:middle;"/>
                         <x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
@@ -92,7 +92,7 @@
                             </h:column>
                         </rich:suggestionbox>
                     </h:panelGroup>
-                    <a4j:commandLink action="#{Metadaten.CurrentEndpage}" reRender="pageEndGroup">
+                    <a4j:commandLink action="#{Metadaten.currentEndpage}" reRender="pageEndGroup">
                         <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
                                         style="border: 0px;vertical-align:middle;"/>
                         <x:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
@@ -102,7 +102,7 @@
         </htm:tr>
         <htm:tr>
             <htm:td styleClass="eingabeBoxen_row3" align="right">
-                <h:commandLink action="#{Metadaten.KnotenAdd}" value="#{msgs.strukturelementHinzufuegen}"
+                <h:commandLink action="#{Metadaten.addNode}" value="#{msgs.strukturelementHinzufuegen}"
                                target="links"/>
             </htm:td>
         </htm:tr>
@@ -122,7 +122,7 @@
                 <h:panelGrid id="mygrid2" columns="1">
 
                     <%-- Knoten nach oben --%>
-                    <h:commandLink action="#{Metadaten.KnotenUp}" title="#{msgs.docstructNachObenSchieben}"
+                    <h:commandLink action="#{Metadaten.nodeUp}" title="#{msgs.docstructNachObenSchieben}"
                                    target="links">
                         <h:graphicImage value="/newpages/images/buttons/sort_up_20px.gif"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
@@ -130,7 +130,7 @@
                     </h:commandLink>
 
                     <%-- Knoten nach unten --%>
-                    <h:commandLink action="#{Metadaten.KnotenDown}" title="#{msgs.docstructNachUntenSchieben}"
+                    <h:commandLink action="#{Metadaten.nodeDown}" title="#{msgs.docstructNachUntenSchieben}"
                                    target="links">
                         <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
@@ -162,7 +162,7 @@
                                     <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
                                 </x:selectOneMenu>
                                 <%-- Action --%>
-                                <h:commandLink action="#{Metadaten.ChangeCurrentDocstructType}"
+                                <h:commandLink action="#{Metadaten.changeCurrentDocstructType}"
                                                title="#{msgs.uebernehmen}" target="links"
                                                onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                     <h:outputText value="#{msgs.uebernehmen}"/>
@@ -215,14 +215,14 @@
 
                                 <h:panelGroup>
                                     <h:commandLink target="rechts" immediate="false" style="margin-right:10px"
-                                                   action="#{Metadaten.AddMetadaFromOpacPpn}"
+                                                   action="#{Metadaten.addMetadaFromOpacPpn}"
                                                    title="#{msgs.uebernehmen}"
                                                    onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                         <h:outputText value="#{msgs.nurMetadaten}"/>
                                     </h:commandLink>
 
                                     <h:commandLink target="links" immediate="false"
-                                                   action="#{Metadaten.AddAdditionalOpacPpns}"
+                                                   action="#{Metadaten.addAdditionalOpacPpns}"
                                                    title="#{msgs.uebernehmen}"
                                                    onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                         <h:outputText value="#{msgs.alsUnterelemente}"/>
@@ -257,7 +257,7 @@
                     </h:panelGroup>--%>
 
                     <%-- Knoten löschen --%>
-                    <h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.KnotenDelete}"
+                    <h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.deleteNode}"
                                    title="#{msgs.strukturelementLoeschen}" target="links">
                         <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif"
                                         style="margin-left:4px;margin-right:7px;vertical-align:middle"/>
@@ -297,7 +297,7 @@
                     <h:panelGrid id="mygrid5" columns="2" width="100%"
                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
 
-                        <a4j:commandLink action="#{Metadaten.BildErsteSeiteAnzeigen}" reRender="BildArea,myBild">
+                        <a4j:commandLink action="#{Metadaten.imageShowFirstPage}" reRender="BildArea,myBild">
                             <h:outputText value="#{msgs.ersteSeite}"/>
                         </a4j:commandLink>
                         <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
@@ -323,7 +323,7 @@
                         </h:selectOneMenu>
 
 
-                        <a4j:commandLink action="#{Metadaten.BildLetzteSeiteAnzeigen}" reRender="BildArea,myBild">
+                        <a4j:commandLink action="#{Metadaten.imageShowLastPage}" reRender="BildArea,myBild">
                             <h:outputText value="#{msgs.letzteSeite}"/>
                         </a4j:commandLink>
                         <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
@@ -359,7 +359,7 @@
                                          rendered="#{Metadaten.treeProperties.showpagesasajax==false}">
                             <h:outputText value="#{msgs.seitenZuweisen}"/>
                         </a4j:commandLink>
-                        <a4j:commandLink action="#{Metadaten.AjaxSeitenStartUndEndeSetzen}"
+                        <a4j:commandLink action="#{Metadaten.ajaxSeitenStartUndEndeSetzen}"
                                          reRender="menuZugehoerigeSeiten,BildArea,myBild"
                                          rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
                             <h:outputText value="#{msgs.seitenZuweisen}"/>
@@ -389,13 +389,13 @@
             <%-- Pfeile zum Verschieben der Seiten --%>
             <h:panelGroup>
                 <%-- nach rechts --%>
-                <a4j:commandLink id="s1" action="#{Metadaten.SeitenHinzu}"
+                <a4j:commandLink id="s1" action="#{Metadaten.addPages}"
                                  reRender="menuZugehoerigeSeiten,BildArea,myBild"
                                  style="margin-top:175px;margin-left:10px;margin-right:10px;display:block">
                     <h:graphicImage value="/newpages/images/buttons/order_right.gif"/>
                 </a4j:commandLink>
                 <%-- nach links --%>
-                <a4j:commandLink id="s2" action="#{Metadaten.SeitenWeg}"
+                <a4j:commandLink id="s2" action="#{Metadaten.removePages}"
                                  reRender="menuZugehoerigeSeiten,BildArea,myBild"
                                  style="margin-top:7px;margin-left:10px;margin-right:10px;display:block">
                     <h:graphicImage value="/newpages/images/buttons/order_left.gif"/>

@@ -108,7 +108,7 @@
                                                                activeSubStyleClass="activeSub"
                                                                inactiveSubStyleClass="inactiveSub"
                                                                tabContentStyleClass="tabContent">
-                                                <%--<htm:div id="demo" styleClass="yui-navset"> <%--YUI obere Navigation Start --%>
+                                                <%--<htm:div id="demo" styleClass="yui-navset"> <%--YUI obere Navigation start --%>
                                                 <%--
                                                 <ul class="yui-nav">
                                                 --%>
@@ -117,7 +117,7 @@
                                                     <%--
                                                     <htm:li
                                                         styleClass="#{ProjekteForm.currentTab =='tab1'?'selected':''}">
-                                                        <h:commandLink id="id13" action="#{ProjekteForm.Apply}">
+                                                        <h:commandLink id="id13" action="#{ProjekteForm.apply}">
                                                             <h:outputText id="id14" value="<em>" escape="false" />
                                                             <h:outputText id="id15" value="Details" />
                                                             <h:outputText id="id16" value="</em>" escape="false" />
@@ -165,7 +165,7 @@
                                                                     <%--		<a4j:support id="vwid10" event="onkeyup" reRender="projectForm:calcs" />  --%>
                                                                 </h:inputText>
                                                                 <h:commandLink
-                                                                        action="#{ProjekteForm.GenerateValuesForStatistics}">
+                                                                        action="#{ProjekteForm.generateValuesForStatistics}">
                                                                     <h:graphicImage alt="#{msgs.generateValues}"
                                                                                     value="/newpages/images/buttons/reload.gif"
                                                                                     style="margin-right:10px"/>
@@ -357,7 +357,7 @@
                                                     <%--
                                                     <htm:li
                                                         styleClass="#{ProjekteForm.currentTab =='tab2'?'selected':''}">
-                                                        <h:commandLink id="id30" action="#{ProjekteForm.Apply}">
+                                                        <h:commandLink id="id30" action="#{ProjekteForm.apply}">
                                                             <h:outputText id="id31" value="<em>" escape="false" />
                                                             <h:outputText id="id32" value="DMS Import" />
                                                             <h:outputText id="id33" value="</em>" escape="false" />
@@ -454,7 +454,7 @@
                                                     <%--
                                                     <htm:li
                                                         styleClass="#{ProjekteForm.currentTab =='tab3'?'selected':''}">
-                                                        <h:commandLink id="id53" action="#{ProjekteForm.Apply}">
+                                                        <h:commandLink id="id53" action="#{ProjekteForm.apply}">
                                                             <h:outputText id="id54" value="<em>" escape="false" />
                                                             <h:outputText id="id55" value="Mets Parameter" />
                                                             <h:outputText id="id56" value="</em>" escape="false" />
@@ -634,7 +634,7 @@
                                                     <%--
                                                     <htm:li
                                                         styleClass="#{ProjekteForm.currentTab =='tab4'?'selected':''}">
-                                                        <h:commandLink id="id88" action="#{ProjekteForm.Apply}">
+                                                        <h:commandLink id="id88" action="#{ProjekteForm.apply}">
                                                             <h:outputText id="id89" value="<em>" escape="false" />
                                                             <h:outputText id="id90" value="Statistik" />
                                                             <h:outputText id="id91" value="</em>" escape="false" />
@@ -784,7 +784,7 @@
                                                             <x:panelTab label="#{msgs.projektstand}">
                                                                 <%-- <htm:li
                                                                         styleClass="#{ProjekteForm.currentStatisticTab =='stab1'?'selected':''}">
-                                                                        <h:commandLink id="id97" action="#{ProjekteForm.Apply}">
+                                                                        <h:commandLink id="id97" action="#{ProjekteForm.apply}">
                                                                             <h:outputText id="id98" value="<em>" escape="false" />
                                                                             <h:outputText id="id99" value="#{msgs.projektstand}" />
                                                                             <h:outputText id="id100" value="</em>" escape="false" />
@@ -825,7 +825,7 @@
                                                             <x:panelTab label="#{msgs.projectProgress}">
                                                                 <%-- 		<htm:li
                                                                         styleClass="#{ProjekteForm.currentStatisticTab =='stab2'?'selected':''}">
-                                                                        <h:commandLink id="id101" action="#{ProjekteForm.Apply}">
+                                                                        <h:commandLink id="id101" action="#{ProjekteForm.apply}">
                                                                             <h:outputText id="id102" value="<em>" escape="false" />
                                                                             <h:outputText id="id103" value="#{msgs.projectProgress}" />
                                                                             <h:outputText id="id104" value="</em>" escape="false" />
@@ -885,7 +885,7 @@
                                                                                         rendered="#{ProjekteForm.projectProgressImage != ''}"
                                                                                         value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectProgressImage}"/>
 
-                                                                        <%--  		<h:commandLink action="#{Form.CreateExcel}" title="#{msgs.createExcel}">
+                                                                        <%--  		<h:commandLink action="#{Form.createExcel}" title="#{msgs.createExcel}">
             <h:graphicImage value="/newpages/images/buttons/excel20.png" />
             <h:outputText value="  #{msgs.createExcel}" />
             <x:updateActionListener value="#{ProjekteForm.projectProgressInterface}" property="#{ProjekteForm.myCurrentTable}" />
@@ -899,7 +899,7 @@
                                                                 <%--
                                                                     <htm:li
                                                                         styleClass="#{ProjekteForm.currentStatisticTab =='stab3'?'selected':''}">
-                                                                        <h:commandLink id="id105" action="#{ProjekteForm.Apply}">
+                                                                        <h:commandLink id="id105" action="#{ProjekteForm.apply}">
                                                                             <h:outputText id="id106" value="<em>" escape="false" />
                                                                             <h:outputText id="id107" value="#{msgs.productionStatistics}" />
                                                                             <h:outputText id="id108" value="</em>" escape="false" />
@@ -923,7 +923,7 @@
                                                                 <%--
                                                                     <htm:li
                                                                         styleClass="#{ProjekteForm.currentStatisticTab =='stab4'?'selected':''}">
-                                                                        <h:commandLink id="id109" action="#{ProjekteForm.Apply}">
+                                                                        <h:commandLink id="id109" action="#{ProjekteForm.apply}">
                                                                             <h:outputText id="id110" value="<em>" escape="false" />
                                                                             <h:outputText id="id111" value="#{msgs.productionThroughput}" />
                                                                             <h:outputText id="id112" value="</em>" escape="false" />
@@ -947,7 +947,7 @@
                                                                 <%--
                                                                     <htm:li
                                                                         styleClass="#{ProjekteForm.currentStatisticTab =='stab5'?'selected':''}">
-                                                                        <h:commandLink id="id113" action="#{ProjekteForm.Apply}">
+                                                                        <h:commandLink id="id113" action="#{ProjekteForm.apply}">
                                                                             <h:outputText id="id114" value="<em>" escape="false" />
                                                                             <h:outputText id="id115" value="#{msgs.errorTracking}" />
                                                                             <h:outputText id="id116" value="</em>" escape="false" />
@@ -971,7 +971,7 @@
                                                                 <%--
                                                                     <htm:li
                                                                         styleClass="#{ProjekteForm.currentStatisticTab =='stab6'?'selected':''}">
-                                                                        <h:commandLink id="id117" action="#{ProjekteForm.Apply}">
+                                                                        <h:commandLink id="id117" action="#{ProjekteForm.apply}">
                                                                             <h:outputText id="id118" value="<em>" escape="false" />
                                                                             <h:outputText id="id119" value="#{msgs.storageCalculator}" />
                                                                             <h:outputText id="id120" value="</em>" escape="false" />
@@ -1038,14 +1038,14 @@
                                         </htm:td>
                                         <htm:td styleClass="eingabeBoxen_row3" align="right">
                                             <h:commandButton id="id122" value="#{msgs.loeschen}"
-                                                             action="#{ProjekteForm.Loeschen}"
+                                                             action="#{ProjekteForm.delete}"
                                                              onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                                              rendered="#{ProjekteForm.myProjekt.id != null && ProjekteForm.myProjekt.deleteAble}"/>
                                             <h:commandButton id="id123" value="#{msgs.uebernehmen}"
-                                                             action="#{ProjekteForm.Apply}"/>
+                                                             action="#{ProjekteForm.apply}"/>
 
                                             <h:commandButton id="id124" value="#{msgs.speichern}"
-                                                             action="#{ProjekteForm.Speichern}"/>
+                                                             action="#{ProjekteForm.save}"/>
 
                                         </htm:td>
 

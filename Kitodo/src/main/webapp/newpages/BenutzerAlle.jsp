@@ -182,7 +182,7 @@
 
                                         <%-- LdapKonfiguration schreiben-Schaltknopf --%>
                                         <%-- 										<h:commandLink id="id34" title="#{msgs.ldapKonfigurationSchreiben}"
-                                        action="#{BenutzerverwaltungForm.LdapKonfigurationSchreiben}">
+                                        action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}">
                                         <h:graphicImage id="id35" value="/newpages/images/buttons/key3.gif" />
                                         <x:updateActionListener
                                             property="#{BenutzerverwaltungForm.myClass}" value="#{item}" />

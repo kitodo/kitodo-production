@@ -51,12 +51,12 @@ public class Import {
     }
 
     /**
-     * Start.
+     * start.
      *
      * @return String
      */
-    public String Start() {
-        myLogger.info("Import Start - start");
+    public String start() {
+        myLogger.info("Import start - start");
         this.importFehler = "";
         this.importMeldung = "";
         try {
@@ -66,14 +66,14 @@ public class Import {
             this.importFehler = "An error occurred: " + e.getMessage();
             myLogger.error(e);
         }
-        myLogger.info("Import Start - ende");
+        myLogger.info("Import start - ende");
         return "";
     }
 
     private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
             PreferencesException, SwapException, DAOException, WriteException {
-        myLogger.debug("Einlesen() - Start");
+        myLogger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {
 

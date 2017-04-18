@@ -55,7 +55,7 @@
 
                         <h:commandLink id="action9"
                                        rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typeExportDMS}"
-                                       action="#{AktuelleSchritteForm.batchHelper.ExportDMS}" title="#{msgs.importDms}">
+                                       action="#{AktuelleSchritteForm.batchHelper.exportDMS}" title="#{msgs.importDms}">
                             <h:graphicImage value="/newpages/images/buttons/dms.png"
                                             style="margin-right:3px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.importDms}"/>

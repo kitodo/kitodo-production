@@ -180,7 +180,7 @@ public class SRUClient {
             throw ex;
         }
 
-        // Start with the default NLA parameters if nothing has been configured
+        // start with the default NLA parameters if nothing has been configured
         // NLA = EAC-CPF
         if (schema != null) {
             recordSchema = schema;

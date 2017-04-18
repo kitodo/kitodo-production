@@ -47,7 +47,7 @@ public class BackupFileRotation {
     private String processDataDirectory;
 
     /**
-     * Start the configured backup.
+     * start the configured backup.
      *
      * <p>
      * If the maximum backup count is less then 1, nothing happens.

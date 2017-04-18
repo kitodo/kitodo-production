@@ -280,7 +280,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String
      */
-    public String AusProjektLoeschen() {
+    public String ausProjektLoeschen() {
         int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
         List<Project> neu = new ArrayList<>();
         for (Iterator<Project> iter = this.myClass.getProjects().iterator(); iter.hasNext();) {
@@ -298,7 +298,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      *
      * @return empty String or null
      */
-    public String ZuProjektHinzufuegen() {
+    public String zuProjektHinzufuegen() {
         Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
             Project project = serviceManager.getProjectService().find(projektID);
@@ -379,7 +379,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     /**
      * Ldap-Konfiguration für den Benutzer schreiben.
      */
-    public String LdapKonfigurationSchreiben() {
+    public String ldapKonfigurationSchreiben() {
         Ldap myLdap = new Ldap();
         try {
             myLdap.createNewUser(this.myClass, this.myClass.getPasswordDecrypted());

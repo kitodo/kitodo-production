@@ -69,7 +69,7 @@
                                                 property="#{Metadaten.treeProperties.showfirstpagenumber}"/>
                                     </h:commandLink>
                                     <h:commandLink value="#{msgs.treeExpand} " style="padding-left: 5px;"
-                                                   action="#{Metadaten.TreeExpand}" target="links"
+                                                   action="#{Metadaten.expandTree}" target="links"
                                                    styleClass="metadataHeaderLinks">
                                         <x:updateActionListener
                                                 value="#{Metadaten.treeProperties.fullexpanded?false:true}"

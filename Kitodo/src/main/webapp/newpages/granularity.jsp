@@ -81,7 +81,7 @@
                                            action="ProzessverwaltungAlle"/>
                             <f:verbatim> &#8250;&#8250; </f:verbatim>
                             <h:commandLink value="#{msgs.einenNeuenProzessAnlegen}"
-                                           action="#{ProzesskopieForm.GoToSeite1}"/>
+                                           action="#{ProzesskopieForm.goToPageOne}"/>
                             <f:verbatim> &#8250;&#8250; </f:verbatim>
                             <h:commandLink value="#{msgs['calendar.header']}"
                                            action="ShowCalendarEditor"/>

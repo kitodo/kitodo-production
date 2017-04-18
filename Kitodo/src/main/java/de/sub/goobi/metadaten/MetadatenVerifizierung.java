@@ -47,7 +47,7 @@ public class MetadatenVerifizierung {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Validate.
+     * validate.
      *
      * @param process
      *            object
@@ -69,7 +69,7 @@ public class MetadatenVerifizierung {
     }
 
     /**
-     * Validate.
+     * validate.
      *
      * @param gdzfile
      *            Fileformat object

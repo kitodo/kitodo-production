@@ -122,13 +122,13 @@ public class SpracheForm {
     }
 
     /**
-     * The procedure SpracheUmschalten is called from /pages/Metadaten2oben.jsp
-     * to switch the language.
+     * The procedure switchLanguage is called from /pages/Metadaten2oben.jsp to
+     * switch the language.
      *
      * @return the empty String to point to the JSF framework to remain on the
      *         current page
      */
-    public String SpracheUmschalten() {
+    public String switchLanguage() {
         String languageCodeCombined = Helper.getRequestParameter("locale");
         switchLanguage(languageCodeCombined);
         return Helper.getRequestParameter("ziel");

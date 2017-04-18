@@ -253,7 +253,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     col.add(digitalCollection);
                     form.setDigitalCollections(col);
                 }
-                form.OpacAuswerten();
+                form.evaluateOpac();
 
                 try {
                     Process p = form.NeuenProzessAnlegen2();
@@ -404,7 +404,7 @@ public class HotfolderJob extends AbstractGoobiJob {
         logger.trace("testing title");
         if (cp.testTitle()) {
             logger.trace("title is valid");
-            cp.OpacAuswerten();
+            cp.evaluateOpac();
             try {
                 p = cp.createProcess(io);
                 JobCreation.moveFiles(metsfile, basepath, p);

@@ -216,7 +216,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     if (isInterrupted()) {
                         return;
                     }
-                    String state = newProcess.NeuenProzessAnlegen();
+                    String state = newProcess.createNewProcess();
                     if (!state.equals("ProzessverwaltungKopie3")) {
                         throw new RuntimeException(String.valueOf(Helper.getLastMessage()).replaceFirst(":\\?*$", ""));
                     }
@@ -235,7 +235,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         } catch (Exception e) {
             // ReadException, PreferencesException, SwapException, DAOException,
             // WriteException, IOException,
-            // InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
+            // InterruptedException from ProzesskopieForm.createNewProcess()
             String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null)
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
                             Arrays.asList(new String[] {currentTitle }))

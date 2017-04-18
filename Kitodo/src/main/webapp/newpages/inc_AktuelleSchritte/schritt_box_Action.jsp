@@ -56,7 +56,7 @@
                                                value="#{Import.upDatei}" storage="file"
                                                styleClass="fileUploadInput" required="false"/>
                             <h:commandButton value="#{msgs.metadatenImportieren}" id="button1"
-                                             action="#{Import.Start}">
+                                             action="#{Import.start}">
                                 <x:updateActionListener property="#{Import.mySchritt}"
                                                         value="#{AktuelleSchritteForm.mySchritt}"/>
                             </h:commandButton>
@@ -246,7 +246,7 @@
                         <%-- Metadaten-Schaltknopf --%>
                         <h:commandLink id="action10"
                                        rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
-                                       action="#{Metadaten.XMLlesen}"
+                                       action="#{Metadaten.readXml}"
                                        title="#{msgs.metadatenBearbeiten}">
                             <h:graphicImage value="/newpages/images/buttons/view1.gif"
                                             style="margin-left:7px;margin-right:10px;vertical-align:middle"/>

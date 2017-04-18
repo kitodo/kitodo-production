@@ -32,7 +32,7 @@
                      style="margin-left:10px;margin-right:10px; width:200px">
         <f:selectItems value="#{ProzesskopieForm.prozessTemplates}"/>
     </h:selectOneMenu>
-    <h:commandLink action="#{ProzesskopieForm.TemplateAuswahlAuswerten}" rendered="#{ProzesskopieForm.useTemplates}"
+    <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}" rendered="#{ProzesskopieForm.useTemplates}"
                    title="#{msgs.AuswaehlenAusVorhandenenProzessen}">
         <h:graphicImage value="/newpages/images/buttons/copy.gif" style="vertical-align:middle; margin-right:3px"/>
         <h:outputText value="#{msgs.uebernehmen}"/>
@@ -62,7 +62,7 @@
     <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}"
                  style="margin-left:7px;margin-right:7px; width:200px"
                  onkeypress="return checkOpac('OpacRequest',event)"/>
-    <h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery"
+    <h:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery"
                    rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
         <h:graphicImage value="/newpages/images/buttons/opac.gif" style="vertical-align:middle; margin-right:3px"/>
         <h:outputText value="#{msgs.uebernehmen}"/>
@@ -91,7 +91,7 @@
     <h:outputText value="#{msgs.prozessTitel}"/>
     <h:panelGroup>
         <h:inputText value="#{ProzesskopieForm.prozessKopie.title}" styleClass="prozessKopieFeldbreite"/>
-        <h:commandLink action="#{ProzesskopieForm.CalcProzesstitel}" value="#{msgs.generieren}"/>
+        <h:commandLink action="#{ProzesskopieForm.calculateProcessTitle}" value="#{msgs.generieren}"/>
     </h:panelGroup>
 
     <%-- DocType --%>

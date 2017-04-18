@@ -106,7 +106,7 @@ public class TiffHeader {
     }
 
     /**
-     * Start export.
+     * start export.
      */
     public void exportStart() throws IOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();

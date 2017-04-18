@@ -122,7 +122,7 @@
                             <htm:td>
                                 <h:panelGroup id="vdid3" rendered="#{not Metadaten.nurLesenModus}">
 
-                                    <h:commandLink id="vdid4" action="#{Metadaten.AnsichtAendern}"
+                                    <h:commandLink id="vdid4" action="#{Metadaten.changeView}"
                                                    value="#{msgs.paginierung}" style="font-size: 11px;"
                                                    rendered="#{Metadaten.modusAnsicht != 'Paginierung'}" accesskey="P">
                                         <f:param id="vdid5" name="Ansicht" value="Paginierung"/>
@@ -132,7 +132,7 @@
                                                   rendered="#{Metadaten.modusAnsicht == 'Paginierung'}"/>
                                     <h:outputText id="vdid7" value=" | " style="font-size: 11px;"/>
 
-                                    <h:commandLink id="vdid8" action="#{Metadaten.AnsichtAendern}"
+                                    <h:commandLink id="vdid8" action="#{Metadaten.changeView}"
                                                    value="#{msgs.strukturdaten}" style="font-size: 11px;"
                                                    rendered="#{Metadaten.modusAnsicht != 'Strukturdaten'}"
                                                    accesskey="S">
@@ -144,7 +144,7 @@
                                                   rendered="#{Metadaten.modusAnsicht == 'Strukturdaten'}"/>
                                     <h:outputText id="vdid11" value=" | " style="font-size: 11px;"/>
 
-                                    <h:commandLink id="vdid12" action="#{Metadaten.AnsichtAendern}"
+                                    <h:commandLink id="vdid12" action="#{Metadaten.changeView}"
                                                    value="#{msgs.metadaten}" style="font-size: 11px;"
                                                    rendered="#{Metadaten.modusAnsicht != 'Metadaten'}" accesskey="M">
                                         <f:param id="vdid13" name="Ansicht" value="Metadaten"/>
@@ -156,7 +156,7 @@
                                     <h:outputText value=" | " style="font-size: 11px;"
                                                   rendered="#{Metadaten.displayFileManipulation}"/>
 
-                                    <h:commandLink id="vdid16" action="#{Metadaten.AnsichtAendern}"
+                                    <h:commandLink id="vdid16" action="#{Metadaten.changeView}"
                                                    value="#{msgs.fileManipulation}" style="font-size: 11px;"
                                                    rendered="#{Metadaten.modusAnsicht != 'File' && Metadaten.displayFileManipulation}">
                                         <f:param id="vdid17" name="Ansicht" value="File"/>
@@ -170,17 +170,17 @@
                             </htm:td>
 
                             <htm:td align="right">
-                                <h:commandLink action="#{Metadaten.BildAnzeigen}"
+                                <h:commandLink action="#{Metadaten.showImage}"
                                                rendered="#{Metadaten.bildAnzeigen==true}"
                                                value="#{msgs.metadatenBildAusblenden}"
                                                style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}"/>
-                                <h:commandLink action="#{Metadaten.BildAnzeigen}"
+                                <h:commandLink action="#{Metadaten.showImage}"
                                                rendered="#{Metadaten.bildAnzeigen==false}"
                                                value="#{msgs.metadatenBildAnzeigen}"
                                                style="#{Metadaten.nurLesenModus ? 'font-size:11px':'font-size:11px;'}"/>
                                 <h:outputText value=" | " style="font-size: 11px;"/>
                                 <%-- Metadaten validieren --%>
-                                <h:commandLink style="font-size:11px" action="#{Metadaten.Validate}"
+                                <h:commandLink style="font-size:11px" action="#{Metadaten.validate}"
                                                value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}"/>
                                 <h:outputText value=" | " style="font-size: 11px;"
                                               rendered="#{not Metadaten.nurLesenModus}"/>
@@ -198,7 +198,7 @@
                                               rendered="#{not Metadaten.nurLesenModus}"/>
                                 <%-- Metadaten nicht schreiben, nur zurueck gehen--%>
                                 <h:commandLink style="font-size:11px" target="_parent"
-                                               action="#{Metadaten.XMLschreiben}" value="#{msgs.speichernZurueck}"
+                                               action="#{Metadaten.writeXml}" value="#{msgs.speichernZurueck}"
                                                rendered="#{not Metadaten.nurLesenModus}" immediate="false"/>
                             </htm:td>
                         </htm:tr>
@@ -286,7 +286,7 @@
                         <htm:tr>
                             <htm:td align="right" style="padding-right:5px;">
                                 <%-- Metadaten validieren --%>
-                                <h:commandLink style="font-size:11px" action="#{Metadaten.Validate}"
+                                <h:commandLink style="font-size:11px" action="#{Metadaten.validate}"
                                                value="#{msgs.validieren}" rendered="#{not Metadaten.nurLesenModus}"/>
                                 <h:outputText value=" | " style="font-size: 11px;"
                                               rendered="#{not Metadaten.nurLesenModus}"/>
@@ -302,7 +302,7 @@
                                 <h:outputText value=" | " style="font-size: 11px;"
                                               rendered="#{not Metadaten.nurLesenModus}"/>
                                 <%-- Metadaten nicht schreiben, nur zurueck gehen--%>
-                                <h:commandLink style="font-size:11px" action="#{Metadaten.XMLschreiben}"
+                                <h:commandLink style="font-size:11px" action="#{Metadaten.writeXml}"
                                                rendered="#{not Metadaten.nurLesenModus}"
                                                value="#{msgs.speichernZurueck}" target="_parent"/>
                             </htm:td>

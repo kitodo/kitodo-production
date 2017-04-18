@@ -79,7 +79,7 @@ public class ExportDocket implements IProcessDataExport {
     }
 
     /**
-     * Start export.
+     * start export.
      *
      * @param processList
      *            list of process' objects

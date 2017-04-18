@@ -847,7 +847,7 @@ public class BatchStepHelper {
     /**
      * Export DMS.
      */
-    public void ExportDMS() {
+    public void exportDMS() {
         for (Task step : this.steps) {
             ExportDms export = new ExportDms();
             try {
@@ -969,7 +969,7 @@ public class BatchStepHelper {
                 this.myDav.uploadFromHome(s.getProcess());
                 StepObject so = StepManager.getStepById(s.getId());
                 so.setEditType(TaskEditType.MANUAL_MULTI.getValue());
-                helper.CloseStepObjectAutomatic(so, true);
+                helper.closeStepObjectAutomatic(so, true);
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");

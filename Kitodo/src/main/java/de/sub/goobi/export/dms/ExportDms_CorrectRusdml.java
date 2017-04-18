@@ -58,7 +58,7 @@ public class ExportDms_CorrectRusdml {
     }
 
     /**
-     * Start correction.
+     * start correction.
      *
      * @return String
      */

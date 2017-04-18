@@ -99,7 +99,7 @@ public class JobCreation {
         logger.trace("testing title");
         if (cp.testTitle()) {
             logger.trace("title is valid");
-            cp.OpacAuswerten();
+            cp.evaluateOpac();
             try {
                 p = cp.createProcess(io);
                 if (p != null && p.getId() != null) {

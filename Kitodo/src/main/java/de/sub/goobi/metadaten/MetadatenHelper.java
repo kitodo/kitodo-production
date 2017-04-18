@@ -484,7 +484,7 @@ public class MetadatenHelper implements Comparator<Object> {
     /** TODO: Replace it, after Maven is kicked :). */
     private List<Metadata> getAllVisibleMetadataHack(DocStruct inStruct) {
 
-        // Start with the list of all metadata.
+        // start with the list of all metadata.
         List<Metadata> result = new LinkedList<Metadata>();
 
         // Iterate over all metadata.
@@ -584,8 +584,8 @@ public class MetadatenHelper implements Comparator<Object> {
                 secondName = secondMetadataType.getNameByLanguage(this.language);
             } catch (java.lang.NullPointerException e) {
                 if (myLogger.isDebugEnabled()) {
-                    myLogger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or " + secondMetadata.getType()
-                            + " is missing in ruleset");
+                    myLogger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or "
+                            + secondMetadata.getType() + " is missing in ruleset");
                 }
                 return 0;
             }
