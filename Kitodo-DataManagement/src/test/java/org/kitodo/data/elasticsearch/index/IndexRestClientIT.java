@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * Test class for IndexRestClient.
  */
-public class IndexRestClientTest {
+public class IndexRestClientIT {
 
     @AfterClass
     public static void cleanIndex() throws IOException, ResponseException {

@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test class for SearchRestClient.
  */
-public class SearchRestClientTest {
+public class SearchRestClientIT {
 
     @BeforeClass
     public static void prepareIndex() throws IOException, ResponseException {
