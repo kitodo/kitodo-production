@@ -14,7 +14,7 @@ package org.goobi.production.search.api;
 import org.kitodo.data.database.beans.Process;
 
 /**
- * This interface can be used to implement a search index engine for goobi.
+ * This interface can be used to implement a search index engine for kitodo.
  * TODO: remove it
  * 
  * @author Robert Sehr

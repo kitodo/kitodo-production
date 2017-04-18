@@ -203,7 +203,8 @@
 
                 <h:panelGroup
                         rendered="#{LoginForm.maximaleBerechtigung == 1 && ProzessverwaltungForm.modusAnzeige=='aktuell'  && ProzessverwaltungForm.page.totalResults > 0 }">
-                    <jd:hideableController for="kitodoScript" id="scriptswitcher" title="#{msgs.kitodoScriptAusfuehren}">
+                    <jd:hideableController for="kitodoScript" id="scriptswitcher"
+                                           title="#{msgs.kitodoScriptAusfuehren}">
                         <h:graphicImage value="/newpages/images/buttons/admin4b.gif"
                                         style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                         <h:outputText value="#{msgs.kitodoScriptAusfuehren}"/>
@@ -262,7 +263,7 @@
                                     <htm:td colspan="3">
                                         <x:inputTextarea id="kitodoScriptfield" forceId="true"
                                                          style="width:450px;height:100px"
-                                                         value="#{ProzessverwaltungForm.goobiScript}"/>
+                                                         value="#{ProzessverwaltungForm.kitodoScript}"/>
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
@@ -270,7 +271,7 @@
                                         <%-- GoobiScript für selektierte Treffer der Seite --%>
                                         <h:commandLink id="script1"
                                                        rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
-                                                       action="#{ProzessverwaltungForm.GoobiScriptSelection}"
+                                                       action="#{ProzessverwaltungForm.kitodoScriptSelection}"
                                                        title="#{msgs.auswahl2}">
                                             <h:outputText value="#{msgs.auswahl2}"/>
                                         </h:commandLink>
@@ -278,7 +279,7 @@
 
                                     <htm:td>
                                         <%-- GoobiScript für Treffer der Seite --%>
-                                        <h:commandLink id="script2" action="#{ProzessverwaltungForm.GoobiScriptPage}"
+                                        <h:commandLink id="script2" action="#{ProzessverwaltungForm.kitodoScriptPage}"
                                                        title="#{msgs.trefferDieserSeite}">
                                             <h:outputText value="#{msgs.trefferDieserSeite}"/>
                                         </h:commandLink>
@@ -286,7 +287,7 @@
 
                                     <htm:td align="right">
                                         <%-- GoobiScript für alle Treffer --%>
-                                        <h:commandLink id="script3" action="#{ProzessverwaltungForm.GoobiScriptHits}"
+                                        <h:commandLink id="script3" action="#{ProzessverwaltungForm.kitodoScriptHits}"
                                                        title="#{msgs.gesamtesTrefferset}"
                                                        onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                             <h:outputText value="#{msgs.gesamtesTrefferset}"/>

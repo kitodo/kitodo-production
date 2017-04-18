@@ -96,7 +96,7 @@ public class BatchService {
     public boolean removeAll(Batch batch, Collection<?> processes) {
         return batch.getProcesses().removeAll(processes);
     }
-    
+
     /**
      * Method adds all object found in database to Elastic Search index.
      */
@@ -245,7 +245,7 @@ public class BatchService {
     }
 
     /**
-     * Goobi does not keep objects around from Hibernate session to Hibernate
+     * Kitodo does not keep objects around from Hibernate session to Hibernate
      * session, so this is the working approach here.
      *
      * @see "https://developer.jboss.org/wiki/EqualsandHashCode"

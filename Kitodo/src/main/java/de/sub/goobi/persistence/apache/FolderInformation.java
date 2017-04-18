@@ -36,9 +36,9 @@ public class FolderInformation {
     public static String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     public static String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
 
-    public FolderInformation(int id, String goobititle) {
+    public FolderInformation(int id, String kitodoTitle) {
         this.id = id;
-        this.title = goobititle;
+        this.title = kitodoTitle;
     }
 
     /**

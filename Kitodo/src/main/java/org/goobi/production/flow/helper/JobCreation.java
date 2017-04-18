@@ -224,7 +224,7 @@ public class JobCreation {
                 metsfile.forceDelete();
             } catch (Exception e) {
                 logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitle()
-                        + " into goobi", e);
+                        + " into kitodo", e);
 
             }
             SafeFile anchor = new SafeFile(basepath + "_anchor.xml");

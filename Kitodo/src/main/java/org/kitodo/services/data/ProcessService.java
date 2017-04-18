@@ -546,7 +546,7 @@ public class ProcessService {
      */
     public String getProcessDataDirectoryIgnoreSwapping(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = this.help.getGoobiDataDirectory() + process.getId() + File.separator;
+        String pfad = this.help.getKitodoDataDirectory() + process.getId() + File.separator;
         pfad = pfad.replaceAll(" ", "__");
         FilesystemHelper.createDirectory(pfad);
         return pfad;

@@ -47,7 +47,7 @@ public class StatistikForm {
 
     /**
      * The function getAnzahlBenutzer() counts the number of user accounts in
-     * the goobi.production environment. Since user accounts are not hard
+     * the kitodo.production environment. Since user accounts are not hard
      * deleted from the database when the delete button is pressed a where
      * clause is used in the SQL statement to exclude the deleted accounts from
      * the sum.

@@ -802,10 +802,10 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Set Goobi config directory.
+     * Set Kitodo config directory.
      *
      * @param configDir
-     *            the goobi config directory
+     *            the kitodo config directory
      */
     @Override
     public void setKitodoConfigDirectory(String configDir) {
@@ -813,9 +813,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     }
 
     /**
-     * Get Goobi config directory.
+     * Get Kitodo config directory.
      *
-     * @return the goobi config directory
+     * @return the kitodo config directory
      */
     private String getGoobiConfigDirectory() {
         return configDir;

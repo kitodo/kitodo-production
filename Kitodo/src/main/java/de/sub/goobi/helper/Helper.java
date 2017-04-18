@@ -110,7 +110,7 @@ public class Helper implements Serializable, Observer {
      *
      * @return String
      */
-    public String getGoobiDataDirectory() {
+    public String getKitodoDataDirectory() {
         if (this.myMetadatenVerzeichnis == null) {
             this.myMetadatenVerzeichnis = ConfigCore.getParameter("MetadatenVerzeichnis");
         }

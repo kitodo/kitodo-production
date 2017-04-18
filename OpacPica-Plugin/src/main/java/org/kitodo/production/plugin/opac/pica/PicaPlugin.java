@@ -121,7 +121,7 @@ public class PicaPlugin implements Plugin {
      *
      * configDir must point to a directory on the local file system where the
      * plug-in can read individual configuration files from. The configuration
-     * file, "goobi_opac.xml" is expected in that directory.
+     * file, "kitodo_opac.xml" is expected in that directory.
      *
      * @param configuration
      *            a Map with configuration parameters
