@@ -38,7 +38,7 @@ public class WebDav implements Serializable {
     private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
     /*
-     * copy bzw. symbolische Links für einen Prozess in das Benutzerhome
+     * Kopieren bzw. symbolische Links für einen Prozess in das Benutzerhome
      */
 
     private static String DONEDIRECTORYNAME = "fertig/";

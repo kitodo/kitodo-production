@@ -175,7 +175,7 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * apply.
+     * Apply.
      *
      * @return String
      */

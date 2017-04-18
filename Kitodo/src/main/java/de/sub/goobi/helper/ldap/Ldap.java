@@ -124,7 +124,7 @@ public class Ldap {
         myLogger.debug("start login session with ldap");
         Hashtable<String, String> env = getLdapConnectionSettings();
 
-        // start TLS
+        // Start TLS
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
             myLogger.debug("use TLS for auth");
             env = new Hashtable<String, String>();

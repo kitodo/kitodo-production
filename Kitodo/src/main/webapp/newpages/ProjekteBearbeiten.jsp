@@ -108,7 +108,7 @@
                                                                activeSubStyleClass="activeSub"
                                                                inactiveSubStyleClass="inactiveSub"
                                                                tabContentStyleClass="tabContent">
-                                                <%--<htm:div id="demo" styleClass="yui-navset"> <%--YUI obere Navigation start --%>
+                                                <%--<htm:div id="demo" styleClass="yui-navset"> <%--YUI obere Navigation Start --%>
                                                 <%--
                                                 <ul class="yui-nav">
                                                 --%>

@@ -52,7 +52,7 @@ public class MetadatenVerifizierungWithoutHibernate {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * validate.
+     * Validate.
      *
      * @param inProzess
      *            Process object
@@ -74,7 +74,7 @@ public class MetadatenVerifizierungWithoutHibernate {
     }
 
     /**
-     * validate.
+     * Validate.
      *
      * @param gdzfile
      *            Fileformat object
@@ -566,7 +566,7 @@ public class MetadatenVerifizierungWithoutHibernate {
     }
 
     /**
-     * validate identifier.
+     * Validate identifier.
      *
      * @param uppermostStruct
      *            DocStruct object

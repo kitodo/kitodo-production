@@ -79,7 +79,7 @@ public class ExportXmlLog implements IProcessDataExport {
     }
 
     /**
-     * start export.
+     * Start export.
      *
      * @param p
      *            Process object

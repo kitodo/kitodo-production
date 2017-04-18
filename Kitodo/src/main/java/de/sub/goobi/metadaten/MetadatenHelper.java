@@ -484,7 +484,7 @@ public class MetadatenHelper implements Comparator<Object> {
     /** TODO: Replace it, after Maven is kicked :). */
     private List<Metadata> getAllVisibleMetadataHack(DocStruct inStruct) {
 
-        // start with the list of all metadata.
+        // Start with the list of all metadata.
         List<Metadata> result = new LinkedList<Metadata>();
 
         // Iterate over all metadata.

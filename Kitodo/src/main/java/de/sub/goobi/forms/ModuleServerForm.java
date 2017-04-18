@@ -87,7 +87,7 @@ public class ModuleServerForm {
     }
 
     /**
-     * start module server.
+     * Start module server.
      */
     public void readAllModulesFromConfiguration() {
         if (modulmanager == null) {

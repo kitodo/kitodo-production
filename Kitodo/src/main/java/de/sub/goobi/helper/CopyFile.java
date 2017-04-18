@@ -54,7 +54,7 @@ public class CopyFile {
     }
 
     /**
-     * start copying of file.
+     * Start copying of file.
      *
      * @param srcFile
      *            source file
