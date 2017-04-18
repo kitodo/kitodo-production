@@ -355,7 +355,7 @@ public class MassImportForm {
                 basename = basename.substring(basename.lastIndexOf("\\") + 1);
             }
 
-            String filename = ConfigCore.getParameter("tempfolder", "/usr/local/goobi/temp/") + basename;
+            String filename = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
 
             inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
             outputStream = new FileOutputStream(filename);

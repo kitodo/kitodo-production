@@ -93,7 +93,7 @@ public class ModuleServerForm {
         if (modulmanager == null) {
             synchronized (ModuleServerForm.class) {
                 if (modulmanager == null) {
-                    int port = ConfigCore.getIntParameter("goobiModuleServerPort");
+                    int port = ConfigCore.getIntParameter("kitodoModuleServerPort");
                     final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
                             new ExtendedDataImpl());
 

@@ -102,8 +102,8 @@
 
     <MetadataType>
         <Name>ProcessID</Name>
-        <language name="de">Goobi-Vorgangsnummer</language>
-        <language name="en">Goobi Process ID</language>
+        <language name="de">Kitodo-Vorgangsnummer</language>
+        <language name="en">Kitodo Process ID</language>
     </MetadataType>
     <MetadataType>
         <Name>Sponsorship</Name>

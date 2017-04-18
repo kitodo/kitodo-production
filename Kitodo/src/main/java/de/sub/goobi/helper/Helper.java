@@ -380,7 +380,7 @@ public class Helper implements Serializable, Observer {
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-                File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/goobi/messages/"));
+                File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/kitodo/messages/"));
                 if (file.exists()) {
                     // Load local message bundle from file system only if file
                     // exists;
