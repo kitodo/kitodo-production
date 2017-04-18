@@ -933,7 +933,7 @@ public class CopyProcess extends ProzesskopieForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollection = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
-        String filename = new Helper().getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
+        String filename = new Helper().getGoobiConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;

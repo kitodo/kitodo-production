@@ -1188,7 +1188,7 @@ public class ProcessService {
 
     /**
      * The method createProcessDirs() starts creation of directories configured
-     * by parameter processDirs within goobi_config.properties
+     * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process)
             throws SwapException, DAOException, IOException, InterruptedException {

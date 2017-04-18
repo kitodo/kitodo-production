@@ -127,7 +127,7 @@ public class IndividualIssue {
 
     /**
      * The function getGenericFields() returns a map with generic fields that
-     * can be configured for process title creation in goobi_projects.xml. It
+     * can be configured for process title creation in kitodo_projects.xml. It
      * provides the issue information in the following fields:
      *
      * <dl>

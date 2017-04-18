@@ -33,7 +33,8 @@ public class WebInterfaceConfig {
     public static List<String> getCredentials(String requestIp, String requestPassword) {
         ArrayList<String> allowed = new ArrayList<String>();
         try {
-            XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_webapi.xml");
+            XMLConfiguration config = new XMLConfiguration(
+                    new Helper().getGoobiConfigDirectory() + "kitodo_webapi.xml");
             config.setListDelimiter('&');
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
 

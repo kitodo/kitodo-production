@@ -59,7 +59,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      * </pre>
      *
      * <p>
-     * If the parameter is not set in goobi_config.properties, it will return
+     * If the parameter is not set in kitodo_config.properties, it will return
      * “null” and so prevents it from being set up in ActiveMQDirector.
      * </p>
      *

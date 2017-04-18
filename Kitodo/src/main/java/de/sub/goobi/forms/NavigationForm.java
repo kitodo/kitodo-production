@@ -38,7 +38,8 @@ public class NavigationForm {
 
     /**
      * 
-     * @return true if show_taskmanager in file goobi_config.properties is =true
+     * @return true if show_taskmanager in file kitodo_config.properties is
+     *         =true
      */
     public Boolean getShowTaskManager() {
         return ConfigCore.getBooleanParameter("taskManager.showInSidebar", true);

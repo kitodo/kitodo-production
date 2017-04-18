@@ -38,7 +38,7 @@ import org.goobi.mq.processors.FinaliseStepProcessor;
  * <p>
  * The ActiveMQDirector should ALWAYS be declared in web.xml. The Active MQ
  * services are intended to be run in case that “activeMQ.hostURL” is configured
- * in the goobi_config.properties file. To disable the service, the entry there
+ * in the kitodo_config.properties file. To disable the service, the entry there
  * should be emptied or commented out. Otherwise, a valid configuration would
  * not start working and an administrator will hardly have a chance to find out
  * why without inspecting the source code.
@@ -139,7 +139,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      * The delivery mode is set so “persistent” to allow consumers not online
      * with the server in the moment of message submission to read the messages
      * later. The log messages are set to be kept on the server for 7 days. This
-     * value can be overridden from the goobi_config.properties parameter
+     * value can be overridden from the kitodo_config.properties parameter
      * “activeMQ.results.timeToLive”. The time to live must be specified in
      * milliseconds; 0 disables the oblivion. (See also:
      * http://docs.oracle.com/javaee/6/api/javax/jms/MessageProducer.html#setTimeToLive%28long%29
