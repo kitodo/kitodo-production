@@ -92,7 +92,7 @@ public class Multipage {
     }
 
     /**
-     * start export.
+     * Start export.
      *
      * @param process
      *            object

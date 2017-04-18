@@ -159,7 +159,7 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * start export.
+     * Start export.
      *
      * @param process
      *            object
