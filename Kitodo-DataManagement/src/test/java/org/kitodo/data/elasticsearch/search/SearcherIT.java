@@ -43,7 +43,18 @@ public class SearcherIT {
     }
 
     @Test
-    public void shouldFindDocumentById() throws Exception {
+    public void shouldCountDocuments() throws Exception {
+        Thread.sleep(2000);
+        Searcher searcher = new Searcher("testget");
+
+        String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
+        Long result = searcher.countDocuments(query);
+        Long expected = Long.valueOf("2");
+        assertEquals("Amount of documents doesn't match to given number!", expected, result);
+    }
+
+    @Test
+        public void shouldFindDocumentById() throws Exception {
         Searcher searcher = new Searcher("testget");
         SearchResult result = searcher.findDocument(1);
 
