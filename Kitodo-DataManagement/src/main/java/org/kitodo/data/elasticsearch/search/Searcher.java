@@ -52,6 +52,22 @@ public class Searcher extends Index {
     }
 
     /**
+     * Count amount of documents responding to given query.
+     * 
+     * @param query
+     *            of searched documents
+     * @return amount of documents as Long
+     */
+    public Long countDocuments(String query) throws IOException, ParseException {
+        SearchRestClient restClient = initiateRestClient();
+        JSONParser parser = new JSONParser();
+
+        String response = restClient.countDocuments(query);
+        JSONObject result = (JSONObject) parser.parse(response);
+        return (Long) result.get("count");
+    }
+
+    /**
      * Find document by id.
      *
      * @param id
