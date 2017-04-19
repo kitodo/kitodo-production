@@ -422,14 +422,14 @@ public class ProzesskopieForm {
     }
 
     /**
-     * The function OpacAuswerten() is executed if a user clicks the command
-     * link to start a catalogue search. It performs the search and loads the
-     * hit if it is unique. Otherwise, it will cause a hit list to show up for
-     * the user to select a hit.
+     * The function evaluateOpac() is executed if a user clicks the command link
+     * to start a catalogue search. It performs the search and loads the hit if
+     * it is unique. Otherwise, it will cause a hit list to show up for the user
+     * to select a hit.
      *
      * @return always "", telling JSF to stay on that page
      */
-    public String OpacAuswerten() {
+    public String evaluateOpac() {
         long timeout = CataloguePlugin.getTimeout();
         try {
             clearValues();
@@ -612,7 +612,7 @@ public class ProzesskopieForm {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    public String TemplateAuswahlAuswerten() throws DAOException {
+    public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
@@ -748,7 +748,7 @@ public class ProzesskopieForm {
         return valide;
     }
 
-    public String GoToSeite1() {
+    public String goToPageOne() {
         return NAVI_FIRST_PAGE;
     }
 
@@ -757,7 +757,7 @@ public class ProzesskopieForm {
      *
      * @return page
      */
-    public String GoToSeite2() {
+    public String goToPageTwo() {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         } else {
@@ -768,7 +768,7 @@ public class ProzesskopieForm {
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
-    public String NeuenProzessAnlegen() throws ReadException, IOException, InterruptedException, PreferencesException,
+    public String createNewProcess() throws ReadException, IOException, InterruptedException, PreferencesException,
             SwapException, DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
@@ -776,7 +776,7 @@ public class ProzesskopieForm {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         }
-        EigenschaftenHinzufuegen();
+        addProperties();
 
         for (Task step : this.prozessKopie.getTasks()) {
             /*
@@ -844,13 +844,13 @@ public class ProzesskopieForm {
                     }
                 }
             } catch (NullPointerException e) { // if
-                                               // getAllAllowedDocStructTypes()
-                                               // returns null
+                // getAllAllowedDocStructTypes()
+                // returns null
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
                         populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
             } catch (IndexOutOfBoundsException e) { // if
-                                                    // getAllAllowedDocStructTypes()
-                                                    // returns empty list
+                // getAllAllowedDocStructTypes()
+                // returns empty list
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
                         populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
             } catch (UGHException catchAll) {
@@ -1198,7 +1198,7 @@ public class ProzesskopieForm {
         }
     }
 
-    private void EigenschaftenHinzufuegen() {
+    private void addProperties() {
         /*
          * Vorlageneigenschaften initialisieren
          */
@@ -1619,7 +1619,7 @@ public class ProzesskopieForm {
     /**
      * Prozesstitel und andere Details generieren.
      */
-    public void CalcProzesstitel() {
+    public void calculateProcessTitle() {
         try {
             generateTitle(null);
         } catch (IOException e) {
@@ -1739,7 +1739,7 @@ public class ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        newTitle += CalcProzesstitelCheck(myField.getTitle(), myField.getValue());
+                        newTitle += calculateProcessTitleCheck(myField.getTitle(), myField.getValue());
                     }
                 }
             }
@@ -1751,11 +1751,11 @@ public class ProzesskopieForm {
         // remove non-ascii characters for the sake of TIFF header limits
         String filteredTitle = newTitle.replaceAll("[^\\p{ASCII}]", "");
         prozessKopie.setTitle(filteredTitle);
-        CalcTiffheader();
+        calculateTiffHeader();
         return filteredTitle;
     }
 
-    private String CalcProzesstitelCheck(String inFeldName, String inFeldWert) {
+    private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
         String rueckgabe = inFeldWert;
 
         /*
@@ -1786,7 +1786,7 @@ public class ProzesskopieForm {
     /**
      * Calculate tiff header.
      */
-    public void CalcTiffheader() {
+    public void calculateTiffHeader() {
         String tif_definition = "";
         ConfigProjects cp = null;
         try {
@@ -1851,7 +1851,7 @@ public class ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        this.tifHeader_imagedescription += CalcProzesstitelCheck(myField.getTitle(),
+                        this.tifHeader_imagedescription += calculateProcessTitleCheck(myField.getTitle(),
                                 myField.getValue());
                     }
 

@@ -67,7 +67,7 @@ public class HelperSchritteWithoutHibernate {
         closeStepObject(currentStep, currentStep.getProcessId(), false);
     }
 
-    public void CloseStepObjectAutomatic(StepObject currentStep, boolean requestFromGUI) {
+    public void closeStepObjectAutomatic(StepObject currentStep, boolean requestFromGUI) {
         closeStepObject(currentStep, currentStep.getProcessId(), requestFromGUI);
     }
 

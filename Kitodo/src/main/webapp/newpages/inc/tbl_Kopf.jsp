@@ -67,22 +67,22 @@
                 <htm:td valign="middle" align="right" style="padding-right: 3px">
                     <h:form style="margin:0px" id="headform">
                         <%--
-                            <h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang1"
+                            <h:commandLink action="#{SpracheForm.switchLanguage}" id="lang1"
                                 title="deutsche Version">
                                 <h:graphicImage value="/newpages/images/flag_de_ganzklein.gif" />
                                 <f:param name="locale" value="de" />
                             </h:commandLink>
-                            <h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang2"
+                            <h:commandLink action="#{SpracheForm.switchLanguage}" id="lang2"
                                 title="english version" >
                                 <h:graphicImage value="/newpages/images/flag_en_ganzklein.gif" />
                                 <f:param name="locale" value="en" />
                             </h:commandLink>
-                            <h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang4"
+                            <h:commandLink action="#{SpracheForm.switchLanguage}" id="lang4"
                                 title="spanish version" style="margin-left:0px;">
                                 <h:graphicImage value="/newpages/images/flag_es_ganzklein.gif" />
                                 <f:param name="locale" value="es" />
                             </h:commandLink>
-                            <h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang3"
+                            <h:commandLink action="#{SpracheForm.switchLanguage}" id="lang3"
                                 rendered="false" title="russian version">
                                 <h:graphicImage value="/newpages/images/flag_ru_ganzklein.gif" />
                                 <f:param name="locale" value="ru" />
@@ -98,7 +98,7 @@
                         <htm:div styleClass="languageSwitch">
                             <x:dataList var="availableLanguage" value="#{SpracheForm.supportedLocales}">
                                 <htm:span styleClass="alterLanguage" rendered="#{not availableLanguage.selected}">
-                                    <h:commandLink action="#{SpracheForm.SpracheUmschalten}"
+                                    <h:commandLink action="#{SpracheForm.switchLanguage}"
                                                    title="#{availableLanguage.displayLanguageTranslated}">
                                         <f:param name="locale" value="#{availableLanguage.id}"/>
                                         <h:outputText value="#{availableLanguage.displayLanguageSelf}"/>

@@ -132,11 +132,11 @@
                                         <htm:td styleClass="eingabeBoxen_row3" align="right">
                                             <h:commandButton value="#{msgs.weiter}"
                                                              rendered="#{ProzesskopieForm.prozessKopie.propertiesSize>0}"
-                                                             action="#{ProzesskopieForm.GoToSeite2}">
+                                                             action="#{ProzesskopieForm.goToPageTwo}">
                                             </h:commandButton>
                                             <h:commandButton value="#{msgs.speichern}"
                                                              rendered="#{ProzesskopieForm.prozessKopie.propertiesSize==0}"
-                                                             action="#{ProzesskopieForm.NeuenProzessAnlegen}">
+                                                             action="#{ProzesskopieForm.createNewProcess}">
                                             </h:commandButton>
                                             <h:commandButton value="#{msgs.weiter}"
                                                              rendered="#{ProzesskopieForm.calendarButtonShowing}"

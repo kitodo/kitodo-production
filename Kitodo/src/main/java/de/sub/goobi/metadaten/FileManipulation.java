@@ -187,7 +187,7 @@ public class FileManipulation {
             }
         }
         metadataBean.retrieveAllImages();
-        metadataBean.BildErmitteln(0);
+        metadataBean.identifyImage(0);
     }
 
     public String getUploadedFileName() {
@@ -486,7 +486,7 @@ public class FileManipulation {
         }
 
         metadataBean.retrieveAllImages();
-        metadataBean.BildErmitteln(0);
+        metadataBean.identifyImage(0);
     }
 
     public List<String> getSelectedFiles() {
@@ -689,7 +689,7 @@ public class FileManipulation {
             importfolder.deleteQuietly();
         }
         metadataBean.retrieveAllImages();
-        metadataBean.BildErmitteln(0);
+        metadataBean.identifyImage(0);
     }
 
     public String getCurrentFolder() {

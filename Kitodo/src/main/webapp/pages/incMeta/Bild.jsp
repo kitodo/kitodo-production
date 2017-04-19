@@ -23,32 +23,32 @@
 <%-- nur anzeigen, wenn es ein Bild gibt --%>
 <h:form id="formularBild">
     <a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack" style="display:none"
-                       action="#{Metadaten.BildBlaettern}" value="&lt;"
+                       action="#{Metadaten.scrollImage}" value="&lt;"
                        immediate="true">
         <f:param name="Anzahl" value="-1"/>
     </a4j:commandButton>
     <a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext" style="display:none"
-                       action="#{Metadaten.BildBlaettern}" value=">"
+                       action="#{Metadaten.scrollImage}" value=">"
                        immediate="true">
         <f:param name="Anzahl" value="1"/>
     </a4j:commandButton>
     <a4j:commandButton reRender="BildArea,myBild,imageform" id="imageBack20" style="display:none"
-                       action="#{Metadaten.BildBlaettern}" value="&lt;&lt;"
+                       action="#{Metadaten.scrollImage}" value="&lt;&lt;"
                        immediate="true">
         <f:param name="Anzahl" value="-20"/>
     </a4j:commandButton>
     <a4j:commandButton reRender="BildArea,myBild,imageform" id="imageNext20" style="display:none"
-                       action="#{Metadaten.BildBlaettern}" value=">>"
+                       action="#{Metadaten.scrollImage}" value=">>"
                        immediate="true">
         <f:param name="Anzahl" value="20"/>
     </a4j:commandButton>
     <a4j:commandButton reRender="BildArea,myBild,imageform" id="imageFirst" style="display:none"
-                       action="#{Metadaten.BildBlaettern}" value="|&lt;"
+                       action="#{Metadaten.scrollImage}" value="|&lt;"
                        immediate="true">
         <f:param name="Anzahl" value="-#{Metadaten.bildNummer}"/>
     </a4j:commandButton>
     <a4j:commandButton reRender="BildArea,myBild,imageform" id="imageLast" style="display:none"
-                       action="#{Metadaten.BildBlaettern}" value=">|"
+                       action="#{Metadaten.scrollImage}" value=">|"
                        immediate="true">
         <f:param name="Anzahl" value="#{Metadaten.bildLetztes}"/>
     </a4j:commandButton>
@@ -61,7 +61,7 @@
                 <htm:tr>
                     <htm:td rendered="#{Metadaten.bildNummer != '1'}">
                         <%-- zurueck-Schaltknopf--%>
-                        <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}"
+                        <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.scrollImage}"
                                          value="#{msgs.previous}" immediate="true">
                             <f:param name="Anzahl" value="-1"/>
                         </a4j:commandLink>
@@ -71,7 +71,7 @@
                     <htm:td align="center">
                         <h:panelGroup rendered="#{Metadaten.bildNummer != '1'}">
                             <%-- erstes-Schaltknopf --%>
-                            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}"
+                            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.scrollImage}"
                                              value="1" immediate="true">
                                 <f:param name="Anzahl" value="-#{Metadaten.bildNummer}"/>
                             </a4j:commandLink>
@@ -88,7 +88,7 @@
                                 <h:panelGroup rendered="#{Metadaten.bildNummer > '3'}">
                                     <%-- vorvorheriges Bild --%>
                                     <a4j:commandLink reRender="BildArea,myBild,imageform"
-                                                     action="#{Metadaten.BildBlaettern}"
+                                                     action="#{Metadaten.scrollImage}"
                                                      value="#{Metadaten.bildNummer -2}" immediate="true">
                                         <f:param name="Anzahl" value="-2"/>
                                     </a4j:commandLink>
@@ -98,7 +98,7 @@
 
                                 <%-- vorheriges Bild --%>
                                 <a4j:commandLink reRender="BildArea,myBild,imageform"
-                                                 action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer -1}"
+                                                 action="#{Metadaten.scrollImage}" value="#{Metadaten.bildNummer -1}"
                                                  immediate="true">
                                     <f:param name="Anzahl" value="-1"/>
                                 </a4j:commandLink>
@@ -118,7 +118,7 @@
                                 <h:outputText value=" | "/>
                                 <%-- naechste Seite --%>
                                 <a4j:commandLink reRender="BildArea,myBild,imageform"
-                                                 action="#{Metadaten.BildBlaettern}" value="#{Metadaten.bildNummer + 1}"
+                                                 action="#{Metadaten.scrollImage}" value="#{Metadaten.bildNummer + 1}"
                                                  immediate="true">
                                     <f:param name="Anzahl" value="1"/>
                                 </a4j:commandLink>
@@ -128,7 +128,7 @@
                                     <h:outputText value=" | "/>
                                     <%-- Uebernaechste Seite --%>
                                     <a4j:commandLink reRender="BildArea,myBild,imageform"
-                                                     action="#{Metadaten.BildBlaettern}"
+                                                     action="#{Metadaten.scrollImage}"
                                                      value="#{Metadaten.bildNummer + 2}"
                                                      immediate="true">
                                         <f:param name="Anzahl" value="2"/>
@@ -141,7 +141,7 @@
                             <%-- Trennzeichen --%>
                             <h:outputText value=" | "/>
                             <%-- letztes-Schaltknopf --%>
-                            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}"
+                            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.scrollImage}"
                                              value="#{Metadaten.bildLetztes}" immediate="true">
                                 <f:param name="Anzahl" value="#{Metadaten.bildLetztes}"/>
                             </a4j:commandLink>
@@ -152,7 +152,7 @@
                         <%-- vorwaerts-Schaltknopf --%>
                         <%-- Trennzeichen --%>
                         <h:outputText value=" | "/>
-                        <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildBlaettern}"
+                        <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.scrollImage}"
                                          value="#{msgs.seiteVor}" immediate="true">
                             <f:param name="Anzahl" value="1"/>
                         </a4j:commandLink>
@@ -165,7 +165,7 @@
 
         <h:panelGroup style="text-align: center">
             <%-- Zoom --%>
-            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildZoomMinus}" id="zoomMinus"
+            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.zoomImageOut}" id="zoomMinus"
                              style="margin-left: 0px;margin-right:5px">
                 <h:graphicImage value="/newpages/images/zoom-.gif" style="border: 0px;vertical-align:middle"/>
             </a4j:commandLink>
@@ -183,10 +183,10 @@
                          onblur="document.getElementById('txtZoom2').style.display='none';
       				 document.getElementById('txtZoom1').style.display='inline';"
                          onkeypress="return submitEnter('cmdZoom',event)"/>
-            <x:commandButton action="#{Metadaten.BildGeheZu}" id="cmdZoom" forceId="true" value="go"
+            <x:commandButton action="#{Metadaten.goToImage}" id="cmdZoom" forceId="true" value="go"
                              style="display:none"/>
 
-            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.BildZoomPlus}" id="zoomPlus"
+            <a4j:commandLink reRender="BildArea,myBild,imageform" action="#{Metadaten.zoomImageIn}" id="zoomPlus"
                              style="margin-left: 7px;margin-right:9px">
                 <h:graphicImage value="/newpages/images/zoom+.gif" style="border: 0px;vertical-align:middle"/>
             </a4j:commandLink>
@@ -211,7 +211,7 @@
                          onkeypress="return submitEnter('formularBild:goButton',event)"
                          style="width:30px;border-style: solid;border-color: silver;border-width: 1px"/>
             <a4j:commandButton reRender="BildArea,myBild,imageform" value="go" id="goButton"
-                               action="#{Metadaten.BildGeheZu}"
+                               action="#{Metadaten.goToImage}"
                                style="margin-left:5px; display:none"/>
 
             <%-- OCR --%>
@@ -259,7 +259,7 @@
         <h:selectOneMenu id="TifFolders" style="width: 200px" value="#{Metadaten.currentTifFolder}">
             <si:selectItems value="#{Metadaten.allTifFolders}" var="step" itemLabel="#{step}" itemValue="#{step}"/>
         </h:selectOneMenu>
-        <h:commandButton id="cmdOrdnerWechseln" action="#{Metadaten.BildBlaettern}" type="submit"
+        <h:commandButton id="cmdOrdnerWechseln" action="#{Metadaten.scrollImage}" type="submit"
                          value="#{msgs.ordnerWechseln}">
             <f:param name="Anzahl" value="0"/>
         </h:commandButton>

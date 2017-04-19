@@ -34,7 +34,7 @@ public class ExportDmsTask extends EmptyTask {
      * ExportDmsTask constructor. Creates a ExportDmsTask.
      *
      * @param exportDms
-     *            ExportDMS configuration
+     *            exportDMS configuration
      * @param process
      *            the process to export
      * @param userHome

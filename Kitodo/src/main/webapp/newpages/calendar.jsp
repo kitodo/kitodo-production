@@ -212,7 +212,7 @@
                                            action="ProzessverwaltungAlle" onclick="uploadWindow=true"/>
                             <f:verbatim> &#8250;&#8250; </f:verbatim>
                             <h:commandLink value="#{msgs.einenNeuenProzessAnlegen}"
-                                           action="#{ProzesskopieForm.GoToSeite1}"
+                                           action="#{ProzesskopieForm.goToPageOne}"
                                            onclick="uploadWindow=true"/>
                             <f:verbatim> &#8250;&#8250; </f:verbatim>
                             <h:outputText value="#{msgs['calendar.header']}"/>
@@ -531,7 +531,7 @@
 
                                 <htm:div styleClass="leftText">
                                     <h:commandButton value="#{msgs['goBack']}"
-                                                     action="#{ProzesskopieForm.GoToSeite1}"
+                                                     action="#{ProzesskopieForm.goToPageOne}"
                                                      onclick="uploadWindow=true"/>
                                 </htm:div>
                                 <htm:div styleClass="rightText">

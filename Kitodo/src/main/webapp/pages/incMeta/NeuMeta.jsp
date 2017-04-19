@@ -90,12 +90,12 @@
 
         <htm:tr>
             <htm:td styleClass="eingabeBoxen_row3">
-                <h:commandButton action="#{Metadaten.Abbrechen}" value="#{msgs.abbrechen}" immediate="false">
+                <h:commandButton action="#{Metadaten.cancel}" value="#{msgs.abbrechen}" immediate="false">
                     <x:updateActionListener value="huhu"
                                             property="#{Metadaten.metadatum.value}"></x:updateActionListener>
                 </h:commandButton>
 
-                <x:commandButton id="absenden" forceId="true" type="submit" action="#{Metadaten.Speichern}"
+                <x:commandButton id="absenden" forceId="true" type="submit" action="#{Metadaten.save}"
                                  value="#{msgs.dieAenderungenSpeichern}"></x:commandButton>
             </htm:td>
         </htm:tr>

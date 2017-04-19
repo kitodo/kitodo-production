@@ -60,7 +60,7 @@
                                 </htm:h3>
 
                                 <%-- newUser-Schaltknopf --%>
-                                <h:commandLink id="id5" action="#{ProjekteForm.Neu}"
+                                <h:commandLink id="id5" action="#{ProjekteForm.newProject}"
                                                immediate="true"
                                                rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                     <h:outputText id="id6" value="#{msgs.neuesProjektAnlegen}"/>
@@ -151,7 +151,7 @@
                                 </x:dataTable>
 
                                 <%-- newUser-Schaltknopf --%>
-                                <h:commandLink id="id52" action="#{ProjekteForm.Neu}"
+                                <h:commandLink id="id52" action="#{ProjekteForm.newProject}"
                                                immediate="true"
                                                rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (ProjekteForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
                                     <h:outputText id="id62" value="#{msgs.neuesProjektAnlegen}"/>

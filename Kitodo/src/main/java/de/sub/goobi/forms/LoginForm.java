@@ -104,7 +104,7 @@ public class LoginForm {
                     SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
                     HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
                             .getSession(false);
-                    if (!temp.BenutzerInAndererSessionAktiv(mySession, b)) {
+                    if (!temp.userActiveInOtherSession(mySession, b)) {
                         /* in der Session den Login speichern */
                         temp.sessionBenutzerAktualisieren(mySession, b);
                         this.myBenutzer = b;

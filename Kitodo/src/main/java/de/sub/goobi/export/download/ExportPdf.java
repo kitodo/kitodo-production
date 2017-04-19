@@ -13,8 +13,6 @@ package de.sub.goobi.export.download;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
@@ -39,8 +37,6 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Fileformat;
-import ugh.exceptions.DocStructHasNoTypeException;
-import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
@@ -53,9 +49,8 @@ public class ExportPdf extends ExportMets {
 
     @Override
     public boolean startExport(Process myProcess, String inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
-            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
-            DAOException, TypeNotAllowedForParentException {
+            throws InterruptedException, ReadException, IOException, SwapException, DAOException, PreferencesException,
+            TypeNotAllowedForParentException, WriteException {
 
         /*
          * Read Document

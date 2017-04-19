@@ -288,7 +288,7 @@ public class CopyProcess extends ProzesskopieForm {
      * OpacAnfrage.
      */
     @Override
-    public String OpacAuswerten() {
+    public String evaluateOpac() {
         clearValues();
         readProjectConfigs();
         try {
@@ -376,7 +376,7 @@ public class CopyProcess extends ProzesskopieForm {
 
             }
         }
-        CalcTiffheader();
+        calculateTiffHeader();
 
     }
 
@@ -400,7 +400,7 @@ public class CopyProcess extends ProzesskopieForm {
      * Auswahl des Prozesses auswerten.
      */
     @Override
-    public String TemplateAuswahlAuswerten() throws DAOException {
+    public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
@@ -521,12 +521,12 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public String GoToSeite1() {
+    public String goToPageOne() {
         return this.naviFirstPage;
     }
 
     @Override
-    public String GoToSeite2() {
+    public String goToPageTwo() {
         if (!isContentValid()) {
             return this.naviFirstPage;
         } else {
@@ -1108,7 +1108,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public void CalcProzesstitel() {
+    public void calculateProcessTitle() {
         String newTitle = "";
         String titeldefinition = "";
         ConfigProjects cp = null;
@@ -1200,7 +1200,7 @@ public class CopyProcess extends ProzesskopieForm {
             newTitle = newTitle.substring(0, newTitle.length() - 1);
         }
         this.prozessKopie.setTitle(newTitle);
-        CalcTiffheader();
+        calculateTiffHeader();
     }
 
     private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
@@ -1226,7 +1226,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public void CalcTiffheader() {
+    public void calculateTiffHeader() {
         String tifDefinition = "";
         ConfigProjects cp = null;
         try {
@@ -1267,7 +1267,8 @@ public class CopyProcess extends ProzesskopieForm {
                 this.tifHeaderImageDescription += this.docType;
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
+                for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator
+                        .hasNext();) {
                     AdditionalField myField = secondIterator.next();
 
                     /*
@@ -1283,8 +1284,7 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        this.tifHeaderImageDescription += calcProcessTitleCheck(myField.getTitle(),
-                                myField.getValue());
+                        this.tifHeaderImageDescription += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
                     }
                 }
             }

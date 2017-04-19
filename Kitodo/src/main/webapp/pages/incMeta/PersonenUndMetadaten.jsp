@@ -87,15 +87,15 @@
 
             <%-- Link fuer Details --%>
             <h:column rendered="#{not Metadaten.nurLesenModus}">
-                <%-- Kopieren-Schaltknopf --%>
-                <h:commandLink id="l7" action="#{Metadaten.KopierenPerson}" title="#{msgs.personendatenKopieren}">
+                <%-- copy-Schaltknopf --%>
+                <h:commandLink id="l7" action="#{Metadaten.copyPerson}" title="#{msgs.personendatenKopieren}">
                     <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
                     <x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}"/>
                 </h:commandLink>
 
                 <%-- delete-Schaltknopf --%>
-                <h:commandLink id="l6" action="#{Metadaten.LoeschenPerson}" title="#{msgs.personendatenLoeschen}">
+                <h:commandLink id="l6" action="#{Metadaten.deletePerson}" title="#{msgs.personendatenLoeschen}">
                     <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
                     <x:updateActionListener property="#{Metadaten.curPerson}" value="#{Item}"/>
@@ -299,21 +299,21 @@
 
             <%-- Link fuer Details --%>
             <h:column rendered="#{not Metadaten.nurLesenModus}">
-                <%-- Kopieren-Schaltknopf --%>
-                <h:commandLink id="l5" action="#{Metadaten.Kopieren}" title="#{msgs.metadatenKopieren}">
+                <%-- copy-Schaltknopf --%>
+                <h:commandLink id="l5" action="#{Metadaten.copy}" title="#{msgs.metadatenKopieren}">
                     <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
                     <x:updateActionListener property="#{Metadaten.curMetadatum}" value="#{Item}"/>
                 </h:commandLink>
-                <%-- Transliterieren-Schaltknopf --%>
-                <h:commandLink action="#{Metadaten.Transliterieren}" rendered="#{Item.typ=='russian Title'}"
+                <%-- transliterate-Schaltknopf --%>
+                <h:commandLink action="#{Metadaten.transliterate}" rendered="#{Item.typ=='russian Title'}"
                                title="#{msgs.diesesFeldTransliterieren}">
                     <h:graphicImage value="/newpages/images/buttons/translit.gif" style="margin-left:3px"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
                     <x:updateActionListener property="#{Metadaten.curMetadatum}" value="#{Item}"/>
                 </h:commandLink>
                 <%-- delete-Schaltknopf --%>
-                <h:commandLink id="l4" action="#{Metadaten.Loeschen}" title="#{msgs.metadatenLoeschen}">
+                <h:commandLink id="l4" action="#{Metadaten.delete}" title="#{msgs.metadatenLoeschen}">
                     <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" style="margin-left:3px"/>
                     <f:param name="ID" value="#{Item.identifier}"/>
                     <x:updateActionListener property="#{Metadaten.curMetadatum}" value="#{Item}"/>

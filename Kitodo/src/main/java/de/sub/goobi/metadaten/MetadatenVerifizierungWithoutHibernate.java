@@ -303,7 +303,7 @@ public class MetadatenVerifizierungWithoutHibernate {
             String logical = "";
             if (refs.size() == 0) {
 
-                for (Iterator<Metadata> secondIterator = ds.getAllMetadata().iterator(); secondIterator.hasNext(); ) {
+                for (Iterator<Metadata> secondIterator = ds.getAllMetadata().iterator(); secondIterator.hasNext();) {
                     Metadata md = secondIterator.next();
                     if (md.getType().getName().equals("logicalPageNumber")) {
                         logical = " (" + md.getValue() + ")";

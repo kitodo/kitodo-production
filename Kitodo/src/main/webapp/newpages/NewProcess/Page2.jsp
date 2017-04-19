@@ -99,10 +99,10 @@
                                         </htm:td>
                                         <htm:td styleClass="eingabeBoxen_row3" align="right">
                                             <h:commandButton value="#{msgs.zurueck}"
-                                                             action="#{ProzesskopieForm.GoToSeite1}">
+                                                             action="#{ProzesskopieForm.goToPageOne}">
                                             </h:commandButton>
                                             <h:commandButton value="#{msgs.speichern}"
-                                                             action="#{ProzesskopieForm.NeuenProzessAnlegen}">
+                                                             action="#{ProzesskopieForm.createNewProcess}">
                                             </h:commandButton>
                                         </htm:td>
                                     </htm:tr>

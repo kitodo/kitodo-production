@@ -499,7 +499,7 @@ public class BatchStepHelper {
         this.myProblemStep = "";
         saveStep();
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     /**
@@ -515,7 +515,7 @@ public class BatchStepHelper {
         this.problemMessage = "";
         this.myProblemStep = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     private void reportProblem() throws IOException, ResponseException {
@@ -630,7 +630,7 @@ public class BatchStepHelper {
             this.mySolutionStep = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.FilterAlleStart();
+            return asf.filterAlleStart();
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
@@ -653,7 +653,7 @@ public class BatchStepHelper {
             this.mySolutionStep = "";
 
             AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-            return asf.FilterAlleStart();
+            return asf.filterAlleStart();
         } catch (AuthenticationException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return "";
@@ -847,7 +847,7 @@ public class BatchStepHelper {
     /**
      * Export DMS.
      */
-    public void ExportDMS() {
+    public void exportDMS() {
         for (Task step : this.steps) {
             ExportDms export = new ExportDms();
             try {
@@ -887,7 +887,7 @@ public class BatchStepHelper {
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     /**
@@ -969,11 +969,11 @@ public class BatchStepHelper {
                 this.myDav.uploadFromHome(s.getProcess());
                 StepObject so = StepManager.getStepById(s.getId());
                 so.setEditType(TaskEditType.MANUAL_MULTI.getValue());
-                helper.CloseStepObjectAutomatic(so, true);
+                helper.closeStepObjectAutomatic(so, true);
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.FilterAlleStart();
+        return asf.filterAlleStart();
     }
 
     /**

@@ -72,7 +72,7 @@ public class ImportZentralblatt {
     protected void parse(BufferedReader reader, Process inProzess)
             throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
-        myLogger.debug("ParsenZentralblatt() - Start");
+        myLogger.debug("ParsenZentralblatt() - start");
         this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         String prozessID = String.valueOf(inProzess.getId().intValue());
         String line;

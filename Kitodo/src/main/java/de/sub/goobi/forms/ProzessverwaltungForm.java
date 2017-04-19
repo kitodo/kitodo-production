@@ -854,7 +854,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (Exception e) {
             Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.myProzess.getTitle(),
                     e);
-            logger.error("ExportDMS error", e);
+            logger.error("exportDMS error", e);
         }
     }
 
@@ -1084,7 +1084,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 so.setProcessingStatus(so.getProcessingStatus() + 1);
                 so.setEditType(TaskEditType.ADMIN.getValue());
                 if (so.getProcessingStatus() == TaskStatus.DONE.getValue()) {
-                    new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
+                    new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(so, true);
                 } else {
                     User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                     if (ben != null) {
@@ -1169,7 +1169,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
             StepObject so = StepManager.getStepById(this.mySchritt.getId());
             if (this.mySchritt.getProcessingStatusEnum() == TaskStatus.DONE) {
-                new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
+                new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(so, true);
             } else {
                 mySchritt.setProcessingTime(new Date());
                 User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");

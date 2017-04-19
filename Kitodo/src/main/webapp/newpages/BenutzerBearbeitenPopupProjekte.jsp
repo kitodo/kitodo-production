@@ -80,7 +80,7 @@
                             </f:facet>
                             <%-- Hinzufügen-Schaltknopf --%>
                             <h:commandLink
-                                    action="#{BenutzerverwaltungForm.ZuProjektHinzufuegen}"
+                                    action="#{BenutzerverwaltungForm.zuProjektHinzufuegen}"
                                     title="#{msgs.uebernehmen}">
                                 <h:graphicImage id="id14" value="/newpages/images/buttons/addUser.gif"/>
                                 <f:param id="id15" name="ID" value="#{item.id}"/>

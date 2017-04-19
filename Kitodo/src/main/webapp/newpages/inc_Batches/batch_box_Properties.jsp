@@ -159,7 +159,7 @@
                     </htm:td>
                     <htm:td styleClass="standardTable_ColumnCentered">
 
-                        <h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
+                        <h:commandLink action="batchesEdit" title="#{msgs.bearbeiten}"
                             rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
                             <h:graphicImage value="/newpages/images/buttons/edit.gif" />
                             <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
@@ -191,7 +191,7 @@
                     <htm:td styleClass="standardTable_ColumnCentered">
                         <h:panelGroup
                             rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id && propInd + 1 == propCount}">
-                            <h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
+                            <h:commandLink action="batchesEdit" title="#{msgs.bearbeiten}">
                                 <h:graphicImage value="/newpages/images/buttons/edit.gif" />
                                 <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
                                 <x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />

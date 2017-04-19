@@ -93,7 +93,7 @@
 
                         <%-- aktuelle Schritte --%>
                         <h:commandLink styleClass="mlink" id="myTasks"
-                                       action="#{AktuelleSchritteForm.FilterAlleStart}"
+                                       action="#{AktuelleSchritteForm.filterAlleStart}"
                                        style="#{NavigationForm.aktuell == '20' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '20'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -136,7 +136,7 @@
                         <%-- batches --%>
                         <h:commandLink styleClass="mlink"
                                        rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                       action="#{BatchForm.FilterAlleStart}"
+                                       action="#{BatchForm.filterAlleStart}"
                                        style="#{NavigationForm.aktuell == '44' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '44'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -212,7 +212,7 @@
 
                         <%-- Projekte --%>
                         <h:commandLink styleClass="mlink" id="projects"
-                                       action="#{ProjekteForm.FilterKein}"
+                                       action="#{ProjekteForm.filterKein}"
                                        style="#{NavigationForm.aktuell == '32' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '32'}">
                                 <f:verbatim>&#8250; </f:verbatim>

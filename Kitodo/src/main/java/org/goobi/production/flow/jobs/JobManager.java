@@ -123,7 +123,7 @@ public class JobManager implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent argument) {
-        logger.debug("Start daily JobManager scheduler");
+        logger.debug("start daily JobManager scheduler");
         try {
             startTimedJobs();
         } catch (SchedulerException e) {

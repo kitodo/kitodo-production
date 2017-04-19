@@ -255,9 +255,6 @@ public class MetadatenVerifizierung {
             MetadataType mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
             List<? extends Metadata> alleMetadaten = phys.getAllMetadataByType(mdt);
             if (alleMetadaten != null && alleMetadaten.size() > 0) {
-                @SuppressWarnings("unused")
-                Metadata mmm = alleMetadaten.get(0);
-
                 return true;
             } else {
                 Helper.setFehlerMeldung(this.myProcess.getTitle() + ": " + "Can not verify, image path is not set", "");

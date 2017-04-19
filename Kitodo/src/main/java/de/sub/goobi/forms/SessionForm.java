@@ -187,7 +187,7 @@ public class SessionForm {
      * prüfen, ob der Benutzer in einer anderen Session aktiv ist.
      */
     @SuppressWarnings("rawtypes")
-    public boolean BenutzerInAndererSessionAktiv(HttpSession insession, User inBenutzer) {
+    public boolean userActiveInOtherSession(HttpSession insession, User inBenutzer) {
         boolean rueckgabe = false;
         for (Iterator iter = this.alleSessions.iterator(); iter.hasNext();) {
             HashMap map = (HashMap) iter.next();

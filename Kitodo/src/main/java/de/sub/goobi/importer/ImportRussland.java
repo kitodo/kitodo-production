@@ -206,7 +206,8 @@ public class ImportRussland {
         }
     }
 
-    private void setArticleDetails(List<String> inListe) throws MetadataTypeNotAllowedException, WrongImportFileException {
+    private void setArticleDetails(List<String> inListe)
+            throws MetadataTypeNotAllowedException, WrongImportFileException {
         boolean artikelGefunden = false;
 
         /*
@@ -398,7 +399,8 @@ public class ImportRussland {
             //
             // /* jetzt alle Artikel durchlaufen, bis der richtige Artikel
             // gefunden wurde */
-            // for (Iterator firstIterator = listArtikel.iterator(); firstIterator.hasNext();) {
+            // for (Iterator firstIterator = listArtikel.iterator();
+            // firstIterator.hasNext();) {
             // DocStruct artikel = (DocStruct) firstIterator.next();
             // Metadata md = (Metadata)
             // artikel.getAllMetadataByType(mdt).getFirst();

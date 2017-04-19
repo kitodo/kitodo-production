@@ -584,8 +584,8 @@ public class MetadatenHelper implements Comparator<Object> {
                 secondName = secondMetadataType.getNameByLanguage(this.language);
             } catch (java.lang.NullPointerException e) {
                 if (myLogger.isDebugEnabled()) {
-                    myLogger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or " + secondMetadata.getType()
-                            + " is missing in ruleset");
+                    myLogger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or "
+                            + secondMetadata.getType() + " is missing in ruleset");
                 }
                 return 0;
             }
