@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -11,11 +11,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<!DOCTYPE faces-config PUBLIC
-        "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
-        "http://java.sun.com/dtd/web-facesconfig_1_0.dtd">
-
-<faces-config>
+<faces-config
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
+    version="2.1">
     <application>
         <locale-config>
             <default-locale>de</default-locale>

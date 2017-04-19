@@ -89,22 +89,22 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>1.12</version>
+            <version>1.19.3</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.12</version>
+            <version>1.19.3</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>1.12</version>
+            <version>1.19.3</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
-            <version>1.12</version>
+            <version>1.19.3</version>
         </dependency>
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
@@ -291,8 +291,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
-            <artifactId>tomahawk</artifactId>
-            <version>1.1.9</version>
+            <artifactId>tomahawk21</artifactId>
+            <version>1.1.14</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-collections</groupId>
@@ -449,6 +449,8 @@
             <artifactId>kitodo-contentserver</artifactId>
             <version>2.0.0</version>
         </dependency>
+        <!-- TODO: replace usages of rich:calendar with tag from more modern component library! -->
+        <!--
         <dependency>
             <groupId>org.richfaces.framework</groupId>
             <artifactId>richfaces-api</artifactId>
@@ -486,6 +488,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        -->
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9</artifactId>
@@ -513,6 +516,11 @@
             <version>1.2-daily</version>
         </dependency>
         <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        <dependency>
             <groupId>net.sf.jsfcomp.easysi</groupId>
             <artifactId>easysi</artifactId>
             <version>0.9.0</version>
@@ -527,15 +535,18 @@
             <artifactId>j2ep</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- TODO: replace usages of jp:popupFrame with tag from JSF 2 compatible component library! -->
+        <!--
         <dependency>
             <groupId>org.jenia.faces</groupId>
             <artifactId>jenia4faces</artifactId>
             <version>1.2.1</version>
         </dependency>
+        -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.1.2</version>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.marc4j</groupId>
@@ -554,9 +565,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.myfaces.tomahawk</groupId>
-            <artifactId>tomahawk-sandbox</artifactId>
-            <version>1.1.5</version>
-            <classifier>SNAPSHOT</classifier>
+            <artifactId>tomahawk-sandbox20</artifactId>
+            <version>1.1.10-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>xmlbeans</groupId>
