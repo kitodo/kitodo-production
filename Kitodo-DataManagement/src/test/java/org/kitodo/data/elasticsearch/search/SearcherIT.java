@@ -43,7 +43,7 @@ public class SearcherIT {
     }
 
     @Test
-    public void shouldGetDocumentById() throws Exception {
+    public void shouldFindDocumentById() throws Exception {
         Searcher searcher = new Searcher("testget");
         SearchResult result = searcher.findDocument(1);
 
@@ -52,7 +52,7 @@ public class SearcherIT {
     }
 
     @Test
-    public void shouldGetDocumentByQuery() throws Exception {
+    public void shouldFindDocumentByQuery() throws Exception {
         Thread.sleep(2000);
         Searcher searcher = new Searcher("testget");
 
@@ -69,10 +69,15 @@ public class SearcherIT {
         assertEquals("Incorrect result - id doesn't match to given plain text!", 1, id.intValue());
         title = result.getProperties().get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
+
+        query = "{\n\"query\" : {\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}\n}";
+        result = searcher.findDocument(query);
+        id = result.getId();
+        assertEquals("Incorrect result - id has another value than null!", null, id);
     }
 
     @Test
-    public void shouldGetDocumentsByQuery() throws Exception {
+    public void shouldFindDocumentsByQuery() throws Exception {
         Thread.sleep(2000);
         Searcher searcher = new Searcher("testget");
 
@@ -88,9 +93,13 @@ public class SearcherIT {
         result = searcher.findDocuments(query);
         id = result.get(0).getId();
         assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
-
         size = result.size();
         assertEquals("Incorrect result - size doesn't match to given int value!", 1, size);
+
+        query = "{\n\"query\" : {\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}\n}";
+        result = searcher.findDocuments(query);
+        size = result.size();
+        assertEquals("Incorrect result - size is bigger than 0!", 0, size);
     }
 
     private static IndexRestClient initializeIndexRestClient() {

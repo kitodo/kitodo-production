@@ -77,7 +77,7 @@ public class Searcher extends Index {
      */
     public SearchResult findDocument(String query) throws IOException, ParseException {
         SearchRestClient restClient = initiateRestClient();
-        SearchResult searchResult;
+        SearchResult searchResult = new SearchResult();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query);
@@ -85,7 +85,9 @@ public class Searcher extends Index {
         if (jsonObject.containsKey("hits")) {
             JSONObject hits = (JSONObject) jsonObject.get("hits");
             JSONArray inHits = (JSONArray) hits.get("hits");
-            searchResult = convertJsonStringToSearchResult((JSONObject) inHits.get(0));
+            if (!inHits.isEmpty()) {
+                searchResult = convertJsonStringToSearchResult((JSONObject) inHits.get(0));
+            }
         } else {
             searchResult = convertJsonStringToSearchResult(jsonObject);
         }
@@ -109,8 +111,10 @@ public class Searcher extends Index {
         if (jsonObject.containsKey("hits")) {
             JSONObject hits = (JSONObject) jsonObject.get("hits");
             JSONArray inHits = (JSONArray) hits.get("hits");
-            for (Object hit : inHits) {
-                searchResults.add(convertJsonStringToSearchResult((JSONObject) hit));
+            if (!inHits.isEmpty()) {
+                for (Object hit : inHits) {
+                    searchResults.add(convertJsonStringToSearchResult((JSONObject) hit));
+                }
             }
         } else {
             searchResults.add(convertJsonStringToSearchResult(jsonObject));
