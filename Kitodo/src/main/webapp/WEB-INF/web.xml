@@ -63,11 +63,6 @@
         <param-value>Development</param-value>
     </context-param>
 
-    <context-param>
-        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
-        <param-value>.jsp</param-value>
-    </context-param>
-
     <!-- WelcomeFile Filter -->
     <!--
         <filter> <filter-name>WelcomeFile Filter</filter-name>
