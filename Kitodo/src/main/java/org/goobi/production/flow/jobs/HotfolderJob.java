@@ -13,7 +13,6 @@ package org.goobi.production.flow.jobs;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +29,8 @@ import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -290,10 +288,10 @@ public class HotfolderJob extends AbstractGoobiJob {
                         URI anchorUri = fileService.createResource(dir,
                                 processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                         fileService.delete(anchorUri);
-                        List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
-                        for (StepObject s : steps) {
-                            if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
-                                ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+                        List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
+                        for (Task t : tasks) {
+                            if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
+                                ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(t);
                                 myThread.start();
                             }
                         }

@@ -13,7 +13,6 @@ package org.goobi.production.flow.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +25,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.apache.ProcessManager;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -108,9 +106,9 @@ public class JobCreation {
                 p = cp.createProcess(io);
                 if (p != null && p.getId() != null) {
                     moveFiles(metsfile, basepath, p);
-                    List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
-                    for (StepObject s : steps) {
-                        if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
+                    List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
+                    for (Task t : tasks) {
+                        if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
                             ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
                             myThread.start();
                         }
@@ -151,10 +149,10 @@ public class JobCreation {
      *            String
      * @return boolean
      */
-    public static boolean testTitle(String titel) {
+    public static boolean testTitle(String title) throws IOException, ParseException {
         if (titel != null) {
             int anzahl = 0;
-            anzahl = ProcessManager.getNumberOfProcessesWithTitle(titel);
+            anzahl = serviceManager.getProcessService().findby.findByTitle(title, true);
             if (anzahl > 0) {
                 Helper.setFehlerMeldung("processTitleAllreadyInUse");
                 return false;
