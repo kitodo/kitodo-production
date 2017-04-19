@@ -43,14 +43,12 @@ public class SearchRestClient extends KitodoRestClient {
     /**
      * Get document by id.
      *
-     * @param id of searched document
+     * @param id
+     *            of searched document
      * @return http entity as String
      */
-    public String getDocument(Integer id)
-            throws IOException {
-        Response response = restClient.performRequest(
-                "GET",
-                "/" + index + "/" + type + "/" + id.toString(),
+    public String getDocument(Integer id) throws IOException {
+        Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
                 Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
     }
@@ -58,17 +56,15 @@ public class SearchRestClient extends KitodoRestClient {
     /**
      * Get document by query.
      *
-     * @param query to find a document
+     * @param query
+     *            to find a document
      * @return http entity as String
      */
-    public String getDocument(String query)
-            throws IOException {
-        HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response response = restClient.performRequest(
-                "GET",
-                "/" + index + "/" + type + "/_search",
-                Collections.singletonMap("pretty", "true"),
-                entity);
+    public String getDocument(String query) throws IOException {
+        String wrappedQuery = "{\n \"query\": " + query + "\n}";
+        HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
+        Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search",
+                Collections.singletonMap("pretty", "true"), entity);
         return EntityUtils.toString(response.getEntity());
     }
 }

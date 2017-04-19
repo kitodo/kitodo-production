@@ -67,21 +67,21 @@ public class SearcherIT {
         Thread.sleep(2000);
         Searcher searcher = new Searcher("testget");
 
-        String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
+        String query = "{\n\"match_all\" : {}\n}";
         SearchResult result = searcher.findDocument(query);
         Integer id = result.getId();
         assertEquals("Incorrect result - id doesn't match to given number!", 2, id.intValue());
         String title = result.getProperties().get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch2", title);
 
-        query = "{\n\"query\" : {\n\"match\" : {\n\"title\" : \"Batch1\"}\n}\n}";
+        query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
         result = searcher.findDocument(query);
         id = result.getId();
         assertEquals("Incorrect result - id doesn't match to given plain text!", 1, id.intValue());
         title = result.getProperties().get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
 
-        query = "{\n\"query\" : {\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}\n}";
+        query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
         result = searcher.findDocument(query);
         id = result.getId();
         assertEquals("Incorrect result - id has another value than null!", null, id);
@@ -92,7 +92,7 @@ public class SearcherIT {
         Thread.sleep(2000);
         Searcher searcher = new Searcher("testget");
 
-        String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
+        String query = "{\n\"match_all\" : {}\n}";
         ArrayList<SearchResult> result = searcher.findDocuments(query);
         Integer id = result.get(0).getId();
         assertEquals("Incorrect result - id doesn't match to given int values!", 2, id.intValue());
@@ -100,14 +100,14 @@ public class SearcherIT {
         int size = result.size();
         assertEquals("Incorrect result - size doesn't match to given int value!", 2, size);
 
-        query = "{\n\"query\" : {\n\"match\" : {\n\"title\" : \"Batch1\"}\n}\n}";
+        query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
         result = searcher.findDocuments(query);
         id = result.get(0).getId();
         assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
         size = result.size();
         assertEquals("Incorrect result - size doesn't match to given int value!", 1, size);
 
-        query = "{\n\"query\" : {\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}\n}";
+        query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
         result = searcher.findDocuments(query);
         size = result.size();
         assertEquals("Incorrect result - size is bigger than 0!", 0, size);
