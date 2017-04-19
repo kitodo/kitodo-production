@@ -31,6 +31,7 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -42,7 +43,6 @@ public class MockDatabase {
 
     public static void insertProcessesFull() throws DAOException, IOException, ResponseException {
         if (serviceManager.getBatchService().find(1) == null) {
-            System.out.println(serviceManager.getBatchService().find(1));
             insertBatches();
             insertDockets();
             insertRulesets();
@@ -609,5 +609,11 @@ public class MockDatabase {
         session.createQuery("DELETE FROM UserProperty WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM WorkpieceProperty WHERE id !=null").executeUpdate();
         // session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+    }
+
+    public static void cleanIndex() throws IOException, ResponseException {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.deleteIndex();
     }
 }
