@@ -17,7 +17,6 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
-    xmlns:htm="http://jsftutorials.net/htmLib"
     >
 
     <h:panelGrid columns="1" width="100%"
@@ -25,7 +24,7 @@
 
         <h:commandLink action="#{LoginForm.Ausloggen}" styleClass="th_menu" id="logout">
             <h:outputText style="text-align:right" value="#{msgs.logout}:"/>
-            <htm:br/>
+            <br/>
 
             <!-- Mouse-Over für Benutzergruppenmitgliedschaft -->
             <t:popup
@@ -97,14 +96,14 @@
                 rendered="#{LoginForm.myBenutzer == null and LoginForm.schonEingeloggt}">
 
             <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
-            <htm:br/>
-            <htm:br/>
+            <br/>
+            <br/>
             <h:commandLink value="#{msgs.abbrechen}" id="login-cancel"
                            action="#{LoginForm.Ausloggen}"/>
-            <htm:br/>
+            <br/>
             <h:commandLink value="#{msgs.alteSessionsAufraeumen}" id="login-clean"
                            action="#{LoginForm.EigeneAlteSessionsAufraeumen}"/>
-            <htm:br/>
+            <br/>
             <h:commandLink value="#{msgs.dennochEinloggen}" id="login-go"
                            action="#{LoginForm.NochmalEinloggen}"/>
 

@@ -15,16 +15,15 @@
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:htm="http://jsftutorials.net/htmLib"
 >
 
-    <htm:tr>
-        <htm:td colspan="2">
+    <tr>
+        <td colspan="2">
             <h:form id="foot1">
-                <htm:table width="100%" cellpadding="0" cellspacing="0px"
+                <table width="100%" cellpadding="0" cellspacing="0px"
                            align="center" style="margin-top:0px">
-                    <htm:tr>
-                        <htm:td align="center" styleClass="layoutFuss">
+                    <tr>
+                        <td align="center" class="layoutFuss">
 
                             <h:outputLink value="#{HelperForm.applicationWebsiteMsg}">
                                 <h:outputText value="#{HelperForm.applicationWebsiteMsg}"/>
@@ -33,7 +32,7 @@
                             <h:outputText value=" | #{msgs.toolentwicklung} | "/>
 
                             <h:commandLink action="Impressum" value="#{msgs.impressum}" id="impr"/>
-                            <script language="javascript">
+                            <script type="javascript">
                                     function submitEnter(commandId, e) {
                                         var keycode;
                                         if (window.event) keycode = window.event.keyCode;
@@ -95,10 +94,10 @@
 
                                 </script>
 
-                        </htm:td>
-                    </htm:tr>
-                </htm:table>
+                        </td>
+                    </tr>
+                </table>
             </h:form>
-        </htm:td>
-    </htm:tr>
+        </td>
+    </tr>
 </ui:composition>

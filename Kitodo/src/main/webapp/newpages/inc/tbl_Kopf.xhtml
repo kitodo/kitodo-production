@@ -17,40 +17,31 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
-    xmlns:htm="http://jsftutorials.net/htmLib"
     >
-    <htm:tr rendered="#{SessionForm.bitteAusloggen!=''}">
-    <htm:td>
-        <t:div
+    <tr rendered="#{SessionForm.bitteAusloggen!=''}">
+    <td>
+        <div
                 style="border: 2px solid black; padding:7px; background-color: #ffd;position: fixed;top: 10px;left: 20px;">
             <h:outputText value="#{SessionForm.bitteAusloggen}"
                           style="color: red;font-weight: bold;font-size:30px"/>
-        </t:div>
-    </htm:td>
-    </htm:tr>
-    <htm:tr valign="top">
+        </div>
+    </td>
+    </tr>
+    <tr valign="top">
 
-    <htm:td colspan="2">
+    <td colspan="2">
 
-        <htm:table width="100%" styleClass="layoutKopf"
+        <table width="100%" class="layoutKopf"
                    style="#{HelperForm.applicationHeaderBackground}" cellpadding="0"
                    cellspacing="0" border="0">
-            <htm:tr valign="top">
-                <htm:td style="padding-left:1px;">
+            <tr valign="top">
+                <td style="padding-left:1px;">
                     <h:graphicImage value="#{HelperForm.applicationLogo}"/>
-                </htm:td>
-                <htm:td valign="middle" align="center">
+                </td>
+                <td valign="middle" align="center">
 
                     <h:outputText style="#{HelperForm.applicationTitleStyle}"
                                   value="#{HelperForm.applicationTitle}"/>
-                    <!--
-                    <a4j:status>
-                        <f:facet name="start">
-                            <h:graphicImage value="/newpages/images/ajaxload_small.gif"
-                                            style="position: fixed;top: 85px;right: 15px;"/>
-                        </f:facet>
-                    </a4j:status>
-                    -->
                     <!-- TODO: include the following paragraph after switching to facelets
                     <script type="text/javascript">
                             jsf.ajax.addOnEvent(function(data) {
@@ -60,21 +51,21 @@
                         </script>
                     -->
 
-                    <htm:noscript>
+                    <noscript>
                         <h:outputText style="color: red;font-weight: bold;"
                                       value="#{msgs.keinJavascript}"/>
-                    </htm:noscript>
+                    </noscript>
 
-                </htm:td>
+                </td>
 
-                <htm:td valign="middle" align="right" style="padding:3px"
+                <td valign="middle" align="right" style="padding:3px"
                         rendered="#{HelperForm.applicationIndividualHeader!=''}">
                     <h:outputText value="#{HelperForm.applicationIndividualHeader}"
                                   escape="false"/>
-                </htm:td>
+                </td>
 
 
-                <htm:td valign="middle" align="right" style="padding-right: 3px">
+                <td valign="middle" align="right" style="padding-right: 3px">
                     <h:form style="margin:0px" id="headform">
                         <!--
                         <h:commandLink action="#{SpracheForm.SpracheUmschalten}" id="lang1"
@@ -105,21 +96,21 @@
                         space after the first link. This empty link will fix that problem: -->
                         <h:commandLink/>
 
-                        <htm:div styleClass="languageSwitch">
+                        <div styleClass="languageSwitch">
                             <t:dataList var="availableLanguage" value="#{SpracheForm.supportedLocales}">
-                                <htm:span styleClass="alterLanguage" rendered="#{not availableLanguage.selected}">
+                                <span styleClass="alterLanguage" rendered="#{not availableLanguage.selected}">
                                     <h:commandLink action="#{SpracheForm.SpracheUmschalten}"
                                                    title="#{availableLanguage.displayLanguageTranslated}">
                                         <f:param name="locale" value="#{availableLanguage.id}"/>
                                         <h:outputText value="#{availableLanguage.displayLanguageSelf}"/>
                                     </h:commandLink>
-                                </htm:span>
-                                <htm:span styleClass="currentLanguage" rendered="#{availableLanguage.selected}"
+                                </span>
+                                <span styleClass="currentLanguage" rendered="#{availableLanguage.selected}"
                                           title="#{availableLanguage.displayLanguageTranslated}">
                                     <h:outputText value="#{availableLanguage.displayLanguageSelf}"/>
-                                </htm:span>
+                                </span>
                             </t:dataList>
-                        </htm:div>
+                        </div>
                         <!-- logout -->
                         <h:commandLink action="#{LoginForm.Ausloggen}" id="logout2"
                                        rendered="#{LoginForm.myBenutzer != null}"
@@ -162,9 +153,9 @@
                     </h:form>
 
 
-                </htm:td>
-            </htm:tr>
-        </htm:table>
-    </htm:td>
-    </htm:tr>
+                </td>
+            </tr>
+        </table>
+    </td>
+    </tr>
 </ui:composition>

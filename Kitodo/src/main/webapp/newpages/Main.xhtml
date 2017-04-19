@@ -24,22 +24,21 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
-    xmlns:htm="http://jsftutorials.net/htmLib"
     >
 
 <f:view locale="#{SpracheForm.locale}">
     <ui:include src="inc/head.xhtml" />
     <body>
-    <htm:table styleClass="headTable" cellspacing="0" cellpadding="0"
+    <table class="headTable" cellspacing="0" cellpadding="0"
                style="padding-left:5px;padding-right:5px;margin-top:5px;">
         <ui:include src="inc/tbl_Kopf.xhtml" />
-    </htm:table>
-    <htm:table cellspacing="5" cellpadding="0" styleClass="layoutTable"
+    </table>
+    <table cellspacing="5" cellpadding="0" class="layoutTable"
                align="center">
 
-        <htm:tr>
+        <tr>
             <ui:include src="inc/tbl_Navigation.xhtml" />
-            <htm:td valign="top" styleClass="layoutInhalt">
+            <td valign="top" class="layoutInhalt">
 
                 <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
                 <h:form id="useform">
@@ -59,33 +58,33 @@
                         <!-- Einführung -->
                         <t:panelGroup id="id6">
 
-                            <htm:noscript>
+                            <noscript>
                                 <h:outputText
                                         style="color: red;font-weight: bold;margin-bottom:20px;display:block"
                                         value="#{msgs.keinJavascript}"/>
-                            </htm:noscript>
+                            </noscript>
 
                             <!-- globale Warn- und Fehlermeldungen -->
                             <h:messages id="id5" globalOnly="true" errorClass="text_red"
                                         infoClass="text_blue" showDetail="true" showSummary="true"
                                         tooltip="true"/>
 
-                            <htm:img src="#{HelperForm.logoUrl}"/>
+                            <img src="#{HelperForm.logoUrl}"/>
 
-                            <htm:h3 style="margin-top:15px">
+                            <h3 style="margin-top:15px">
                                 <h:outputText id="id7" value="#{msgs.startseite}"/>
-                            </htm:h3>
+                            </h3>
 
                             <!-- globale Warn- und Fehlermeldungen -->
                             <h:messages id="id8" globalOnly="true" errorClass="text_red"
                                         infoClass="text_blue" showDetail="true" showSummary="true"
                                         tooltip="true"/>
 
-                            <htm:p style="text-align: justify;">
+                            <p style="text-align: justify;">
                                 <h:outputText id="id9" style="text-align: justify;"
                                               value="#{HelperForm.applicationHomepageMsg}"
                                               escape="false"></h:outputText>
-                            </htm:p>
+                            </p>
                         </t:panelGroup>
                         <!-- // Einführung -->
 
@@ -107,10 +106,10 @@
                 </h:form>
                 <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
 
-            </htm:td>
-        </htm:tr>
+            </td>
+        </tr>
         <ui:include src="inc/tbl_Fuss.xhtml" />
-    </htm:table>
+    </table>
 
     </body>
 </f:view>
