@@ -122,7 +122,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private WorkpieceProperty myWerkstueckEigenschaft;
     private String modusAnzeige = "aktuell";
     private String modusBearbeiten = "";
-    private String goobiScript;
+    private String kitodoScript;
     private HashMap<String, Boolean> anzeigeAnpassen;
     private String myNewProcessTitle;
     private String selectedXslt = "";
@@ -1550,10 +1550,10 @@ public class ProzessverwaltungForm extends BasisForm {
      * Starte GoobiScript über alle Treffer.
      */
     @SuppressWarnings("unchecked")
-    public void GoobiScriptHits() {
+    public void kitodoScriptHits() {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(this.page.getCompleteList(), this.goobiScript);
+            gs.execute(this.page.getCompleteList(), this.kitodoScript);
         } catch (IOException | ResponseException e) {
             logger.error("ElasticSearch", e);
         }
@@ -1563,10 +1563,10 @@ public class ProzessverwaltungForm extends BasisForm {
      * Starte GoobiScript über alle Treffer der Seite.
      */
     @SuppressWarnings("unchecked")
-    public void GoobiScriptPage() {
+    public void kitodoScriptPage() {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(this.page.getListReload(), this.goobiScript);
+            gs.execute(this.page.getListReload(), this.kitodoScript);
         } catch (IOException | ResponseException e) {
             logger.error("ElasticSearch", e);
         }
@@ -1576,7 +1576,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Starte GoobiScript über alle selectierten Treffer.
      */
     @SuppressWarnings("unchecked")
-    public void GoobiScriptSelection() {
+    public void kitodoScriptSelection() {
         ArrayList<Process> auswahl = new ArrayList<Process>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
@@ -1585,7 +1585,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(auswahl, this.goobiScript);
+            gs.execute(auswahl, this.kitodoScript);
         } catch (IOException | ResponseException e) {
             logger.error("ElasticSearch", e);
         }
@@ -1688,12 +1688,12 @@ public class ProzessverwaltungForm extends BasisForm {
         mp.startExport(this.myProzess);
     }
 
-    public String getGoobiScript() {
-        return this.goobiScript;
+    public String getKitodoScript() {
+        return this.kitodoScript;
     }
 
-    public void setGoobiScript(String goobiScript) {
-        this.goobiScript = goobiScript;
+    public void setKitodoScript(String kitodoScript) {
+        this.kitodoScript = kitodoScript;
     }
 
     public HashMap<String, Boolean> getAnzeigeAnpassen() {

@@ -33,7 +33,7 @@ Execute "mvn clean package" and put generated war file in Tomcat.
 Basic configuration files are located under `src/main/resources/` directory. To provide a custom (local) configuration, create a directory `config-local` and put there your specific configuration files just before you create a distribution via the `mvn` command. The build script will then replace every default configuration file with the configuration file it finds in your `config-local` directory.
 
 Most probably, you will have to adjust these four files:
-* goobi_config.properties
+* kitodo_config.properties
 * contentServerConfig.xml
 * hibernate.cfg.xml
 * log4j.properties

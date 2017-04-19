@@ -186,7 +186,7 @@
 
                                 <h:outputText value="#{msgs.katalog}"/>
 
-                                <%-- uses goobi_opac.xml --%>
+                                <%-- uses kitodo_opac.xml --%>
 
                                 <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacKatalog}"
                                                  style="display:inline; margin-left:7px">

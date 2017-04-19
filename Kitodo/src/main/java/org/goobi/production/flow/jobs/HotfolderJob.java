@@ -299,7 +299,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                             new SafeFile(dir.getAbsolutePath() + File.separator + processTitle).forceDelete();
                         } catch (Exception e) {
                             logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
-                                    + " into goobi", e);
+                                    + " into kitodo", e);
                             return 30;
                         }
                         SafeFile anchor = new SafeFile(dir.getAbsolutePath() + File.separator

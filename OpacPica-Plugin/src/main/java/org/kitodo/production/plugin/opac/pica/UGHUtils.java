@@ -163,7 +163,7 @@ class UGHUtils {
 
     /**
      * The function convertLanguage() uses one of the mapping files
-     * “goobi_opacLanguages.txt” to replace the passed-in value by a
+     * “kitodo_opacLanguages.txt” to replace the passed-in value by a
      * configurable replacement. The mapping file is expected to be a plain text
      * file, encoded as UTF-8, where each line defines a replacement pair as:
      * replacement—white space (U+0020) character—value to be replaced. If no

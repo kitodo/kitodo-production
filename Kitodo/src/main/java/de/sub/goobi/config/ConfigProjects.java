@@ -30,7 +30,7 @@ public class ConfigProjects {
     private static final Logger logger = Logger.getLogger(ConfigProjects.class);
 
     public ConfigProjects(String projectTitle) throws IOException {
-        this(projectTitle, new Helper().getGoobiConfigDirectory() + "goobi_projects.xml");
+        this(projectTitle, new Helper().getKitodoConfigDirectory() + "kitodo_projects.xml");
     }
 
     /**

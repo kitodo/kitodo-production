@@ -11,7 +11,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<goobiProjects>
+<kitodoProjects>
     <project name="default">
         <createNewProcess>
             <itemlist>
@@ -145,4 +145,4 @@
         </tifheader>
         <dmsImport/>
     </project>
-</goobiProjects>
+</kitodoProjects>
