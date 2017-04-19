@@ -29,14 +29,23 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
-public class ProjectService {
+public class ProjectService extends SearchService {
 
     private List<StepInformation> commonWorkFlow = null;
 
     private ProjectDAO projectDao = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
     private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public ProjectService() {
+        super(new Searcher(Project.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

@@ -22,15 +22,24 @@ import org.kitodo.data.database.persistence.HistoryDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.HistoryType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
 /**
  * HistoryService.
  */
-public class HistoryService {
+public class HistoryService extends SearchService {
 
     private HistoryDAO historyDao = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
     private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public HistoryService() {
+        super(new Searcher(History.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

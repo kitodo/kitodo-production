@@ -22,12 +22,21 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
-public class TemplateService {
+public class TemplateService extends SearchService {
 
     private TemplateDAO templateDao = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
     private Indexer<Template, TemplateType> indexer = new Indexer<>(Template.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public TemplateService() {
+        super(new Searcher(Template.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

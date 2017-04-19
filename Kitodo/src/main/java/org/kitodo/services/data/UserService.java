@@ -34,15 +34,24 @@ import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
+import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.services.data.base.SearchService;
 
-public class UserService {
+public class UserService extends SearchService {
 
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
     private UserDAO userDao = new UserDAO();
     private UserType userType = new UserType();
     private Indexer<User, UserType> indexer = new Indexer<>(User.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public UserService() {
+        super(new Searcher(User.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

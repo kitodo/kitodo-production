@@ -22,12 +22,21 @@ import org.kitodo.data.database.persistence.WorkpieceDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
-public class WorkpieceService {
+public class WorkpieceService extends SearchService {
 
     private WorkpieceDAO workpieceDao = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
     private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>(Workpiece.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public WorkpieceService() {
+        super(new Searcher(Workpiece.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

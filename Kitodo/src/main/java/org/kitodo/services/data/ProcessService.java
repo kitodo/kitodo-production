@@ -62,6 +62,8 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
@@ -73,7 +75,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService {
+public class ProcessService extends SearchService {
 
     private static final Logger myLogger = Logger.getLogger(ProcessService.class);
 
@@ -92,6 +94,13 @@ public class ProcessService {
     private ProcessType processType = new ProcessType();
     private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
     private UserService userService = new UserService();
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public ProcessService() {
+        super(new Searcher(Process.class));
+    }
 
     public Process find(Integer id) throws DAOException {
         return processDao.find(id);
