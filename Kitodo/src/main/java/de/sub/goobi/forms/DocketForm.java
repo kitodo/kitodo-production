@@ -62,7 +62,7 @@ public class DocketForm extends BasisForm {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
             logger.error(e);
             return "";
-        }  catch (ResponseException e) {
+        } catch (ResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
             logger.error(e);
             return "";
@@ -121,7 +121,7 @@ public class DocketForm extends BasisForm {
             // session.flush();
             session.clear();
             Criteria crit = session.createCriteria(Docket.class);
-            crit.addOrder(Order.asc("name"));
+            crit.addOrder(Order.asc("title"));
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());

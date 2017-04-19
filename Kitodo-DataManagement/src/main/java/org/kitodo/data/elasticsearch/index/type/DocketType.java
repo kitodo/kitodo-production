@@ -27,7 +27,7 @@ public class DocketType extends BaseType<Docket> {
     public HttpEntity createDocument(Docket docket) {
 
         JSONObject docketObject = new JSONObject();
-        docketObject.put("name", docket.getName());
+        docketObject.put("title", docket.getTitle());
         docketObject.put("file", docket.getFile());
 
         return new NStringEntity(docketObject.toJSONString(), ContentType.APPLICATION_JSON);

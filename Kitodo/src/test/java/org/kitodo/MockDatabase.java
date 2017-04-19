@@ -85,12 +85,12 @@ public class MockDatabase {
 
     public static void insertDockets() throws DAOException, IOException, ResponseException {
         Docket firstDocket = new Docket();
-        firstDocket.setName("default");
+        firstDocket.setTitle("default");
         firstDocket.setFile("docket.xsl");
         serviceManager.getDocketService().save(firstDocket);
 
         Docket secondDocket = new Docket();
-        secondDocket.setName("second");
+        secondDocket.setTitle("second");
         secondDocket.setFile("docket.xsl");
         serviceManager.getDocketService().save(secondDocket);
     }

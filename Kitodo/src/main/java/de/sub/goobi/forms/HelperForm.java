@@ -136,7 +136,7 @@ public class HelperForm {
         try {
             List<Docket> temp = serviceManager.getDocketService().search("from Docket ORDER BY name");
             for (Docket d : temp) {
-                answer.add(new SelectItem(d, d.getName(), null));
+                answer.add(new SelectItem(d, d.getTitle(), null));
             }
         } catch (DAOException e) {
 

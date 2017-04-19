@@ -99,7 +99,7 @@
                                                 <h:panelGroup id="id14">
                                                     <h:inputText id="titel"
                                                                  style="width: 300px;margin-right:15px"
-                                                                 value="#{DocketForm.myDocket.name}"
+                                                                 value="#{DocketForm.myDocket.title}"
                                                                  required="true"/>
                                                     <x:message id="id15" for="titel" style="color: red"
                                                                replaceIdWithLabel="true"/>
