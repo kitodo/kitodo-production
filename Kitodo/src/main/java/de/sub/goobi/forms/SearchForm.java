@@ -105,7 +105,7 @@ public class SearchForm {
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Project.class);
 
-        crit.addOrder(Order.asc("titel"));
+        crit.addOrder(Order.asc("title"));
         if (restriction > 2) {
             crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
         }
