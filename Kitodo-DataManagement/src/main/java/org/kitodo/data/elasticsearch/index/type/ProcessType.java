@@ -47,9 +47,7 @@ public class ProcessType extends BaseType<Process> {
         JSONArray batches = new JSONArray();
         List<Batch> processBatches = process.getBatches();
         for (Batch batch : processBatches) {
-            JSONObject batchObject = new JSONObject();
-            batchObject.put("id", batch.getId());
-            batches.add(batchObject);
+            batches.add(addIdForRelation(batch.getId()));
         }
         processObject.put("batches", batches);
 

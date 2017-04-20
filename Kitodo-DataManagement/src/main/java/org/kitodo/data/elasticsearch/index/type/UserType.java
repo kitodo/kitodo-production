@@ -42,9 +42,7 @@ public class UserType extends BaseType<User> {
         JSONArray userGroups = new JSONArray();
         List<UserGroup> userUserGroups = user.getUserGroups();
         for (UserGroup userGroup : userUserGroups) {
-            JSONObject userGroupObject = new JSONObject();
-            userGroupObject.put("id", userGroup.getId());
-            userGroups.add(userGroupObject);
+            userGroups.add(addIdForRelation(userGroup.getId()));
         }
         userObject.put("userGroups", userGroups);
 

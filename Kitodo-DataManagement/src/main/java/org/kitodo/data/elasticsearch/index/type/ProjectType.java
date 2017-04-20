@@ -55,9 +55,7 @@ public class ProjectType extends BaseType<Project> {
         JSONArray users = new JSONArray();
         List<User> projectUsers = project.getUsers();
         for (User user : projectUsers) {
-            JSONObject userObject = new JSONObject();
-            userObject.put("id", user.getId());
-            users.add(userObject);
+            users.add(addIdForRelation(user.getId()));
         }
         projectObject.put("users", users);
 

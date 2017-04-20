@@ -59,18 +59,14 @@ public class TaskType extends BaseType<Task> {
         JSONArray users = new JSONArray();
         List<User> taskUsers = task.getUsers();
         for (User user : taskUsers) {
-            JSONObject propertyObject = new JSONObject();
-            propertyObject.put("id", user.getId());
-            users.add(propertyObject);
+            users.add(addIdForRelation(user.getId()));
         }
         taskObject.put("users", users);
 
         JSONArray userGroups = new JSONArray();
         List<UserGroup> taskUserGroups = task.getUserGroups();
         for (UserGroup userGroup : taskUserGroups) {
-            JSONObject userGroupObject = new JSONObject();
-            userGroupObject.put("id", userGroup.getId());
-            userGroups.add(userGroupObject);
+            userGroups.add(addIdForRelation(userGroup.getId()));
         }
         taskObject.put("userGroups", userGroups);
 

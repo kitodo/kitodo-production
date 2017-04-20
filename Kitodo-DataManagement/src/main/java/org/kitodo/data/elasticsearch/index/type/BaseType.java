@@ -58,10 +58,15 @@ public abstract class BaseType<T extends BaseBean> implements TypeInterface<T> {
     protected JSONArray addPropertyRelation(List<Property> properties) {
         JSONArray jsonArrayProperties = new JSONArray();
         for (Property property : properties) {
-            JSONObject propertyObject = new JSONObject();
-            propertyObject.put("id", property.getId());
-            jsonArrayProperties.add(propertyObject);
+            jsonArrayProperties.add(addIdForRelation(property.getId()));
         }
         return jsonArrayProperties;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected JSONObject addIdForRelation(Integer id) {
+        JSONObject object = new JSONObject();
+        object.put("id", id);
+        return object;
     }
 }
