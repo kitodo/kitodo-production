@@ -21,12 +21,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -107,9 +109,11 @@ public class Process extends BaseBean {
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Template> templates;
 
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("title ASC")
-    private List<ProcessProperty> properties;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "process_x_property", joinColumns = {
+            @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
+    private List<Property> properties;
 
     @ManyToMany(mappedBy = "processes")
     private List<Batch> batches = new ArrayList<>();
@@ -346,14 +350,14 @@ public class Process extends BaseBean {
         this.batches = batches;
     }
 
-    public List<ProcessProperty> getProperties() {
+    public List<Property> getProperties() {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
         return this.properties;
     }
 
-    public void setProperties(List<ProcessProperty> properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = properties;
     }
 

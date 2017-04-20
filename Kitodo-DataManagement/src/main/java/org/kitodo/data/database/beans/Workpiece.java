@@ -16,10 +16,11 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,9 +33,11 @@ public class Workpiece extends BaseBean {
     @JoinColumn(name = "process_id")
     private Process process;
 
-    @OneToMany(mappedBy = "workpiece", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("title ASC")
-    private List<WorkpieceProperty> properties;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "workpiece_x_property", joinColumns = {
+            @JoinColumn(name = "workpiece_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_workpiece_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
+    private List<Property> properties;
 
     @Transient
     private boolean panelShown = true;
@@ -59,14 +62,14 @@ public class Workpiece extends BaseBean {
         this.panelShown = panelShown;
     }
 
-    public List<WorkpieceProperty> getProperties() {
+    public List<Property> getProperties() {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
         return this.properties;
     }
 
-    public void setProperties(List<WorkpieceProperty> properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = properties;
     }
 }

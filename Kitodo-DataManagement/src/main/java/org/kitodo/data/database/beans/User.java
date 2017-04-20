@@ -24,7 +24,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.apache.log4j.Logger;
@@ -97,9 +96,11 @@ public class User extends BaseBean {
     @ManyToMany(mappedBy = "users")
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("title ASC")
-    private List<UserProperty> properties;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_x_property", joinColumns = {
+            @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_property_user_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_user_x_property_property_id")) })
+    private List<Property> properties;
 
     /**
      * Constructor for User Entity.
@@ -279,14 +280,14 @@ public class User extends BaseBean {
         this.css = css;
     }
 
-    public List<UserProperty> getProperties() {
+    public List<Property> getProperties() {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
         return this.properties;
     }
 
-    public void setProperties(List<UserProperty> properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = properties;
     }
 
