@@ -52,7 +52,7 @@ public interface FileManagementInterface {
      *            the id of the process
      * @return a ProcessLocation
      */
-    ProcessLocation createProcessLocation(String processId) throws KitodoFileException, IOException;
+    ProcessLocation createProcessLocation(String processId) throws IOException;
 
     /**
      * Creates a directory with a given name at a given uri.

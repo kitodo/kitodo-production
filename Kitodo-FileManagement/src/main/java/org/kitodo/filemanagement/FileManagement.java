@@ -1,4 +1,3 @@
-
 /*
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
@@ -9,6 +8,8 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+
+package org.kitodo.filemanagement;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +22,12 @@ import java.net.URLConnection;
 import org.apache.commons.io.FileUtils;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessLocation;
+import org.kitodo.config.Config;
 
 public class FileManagement implements FileManagementInterface {
+
+    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
+
     @Override
     public OutputStream write(URI uri) throws IOException {
         URL url = uri.toURL();
@@ -50,17 +55,34 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public ProcessLocation createProcessLocation(String processId) {
-        File file = 
+    public ProcessLocation createProcessLocation(String processId) throws IOException {
+        File processRootDirectory = new File(
+                (Config.getConfig().getString(METADATA_DIRECTORY) + File.separator + processId));
+        if (!processRootDirectory.mkdir()) {
+            throw new IOException();
+        }
+
+        File processImageDirectory = new File(processRootDirectory.getPath() + File.separator + "images");
+        if (!processImageDirectory.mkdir()) {
+            throw new IOException();
+        }
+        URI processMetaFile = createResource(processRootDirectory.toURI(), "meta.xml");
+
+        return new ProcessLocation(processRootDirectory.toURI(), processImageDirectory.toURI(), processMetaFile);
+
     }
 
     @Override
-    public URI createUserHomeLocation(String userId) {
-        return null;
+    public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
+        File directory = new File(parentFolderUri.getPath() + File.separator + directoryName);
+        if (!directory.mkdir()) {
+            throw new IOException();
+        }
+        return directory.toURI();
     }
 
     @Override
-    public URI createResource(URI parentFolderUri, String fileEnding) {
-        return null;
+    public URI createResource(URI parentFolderUri, String fileName) {
+        return new File(parentFolderUri.getPath() + File.separator + fileName).toURI();
     }
 }
