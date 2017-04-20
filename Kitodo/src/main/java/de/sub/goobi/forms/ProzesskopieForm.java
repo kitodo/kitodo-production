@@ -62,14 +62,12 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -618,13 +616,13 @@ public class ProzesskopieForm {
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);
-            for (WorkpieceProperty eig : werk.getProperties()) {
+            for (Property workpieceProperty : werk.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(workpieceProperty.getTitle())) {
+                        field.setValue(workpieceProperty.getValue());
                     }
-                    if (eig.getTitle().equals("DocType")) {
-                        docType = eig.getValue();
+                    if (workpieceProperty.getTitle().equals("DocType")) {
+                        docType = workpieceProperty.getValue();
                     }
                 }
             }
@@ -633,19 +631,19 @@ public class ProzesskopieForm {
         if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
             /* erste Vorlage durchlaufen */
             Template vor = tempProzess.getTemplates().get(0);
-            for (TemplateProperty eig : vor.getProperties()) {
+            for (Property templateProperty : vor.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(templateProperty.getTitle())) {
+                        field.setValue(templateProperty.getValue());
                     }
                 }
             }
         }
 
         if (serviceManager.getProcessService().getPropertiesSize(tempProzess) > 0) {
-            for (ProcessProperty pe : serviceManager.getProcessService().getPropertiesInitialized(tempProzess)) {
-                if (pe.getTitle().equals("digitalCollection")) {
-                    digitalCollections.add(pe.getValue());
+            for (Property processProperty : serviceManager.getProcessService().getPropertiesInitialized(tempProzess)) {
+                if (processProperty.getTitle().equals("digitalCollection")) {
+                    digitalCollections.add(processProperty.getValue());
                 }
             }
         }

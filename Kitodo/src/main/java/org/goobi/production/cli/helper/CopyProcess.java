@@ -43,12 +43,10 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -406,10 +404,10 @@ public class CopyProcess extends ProzesskopieForm {
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);
-            for (WorkpieceProperty eig : werk.getProperties()) {
+            for (Property workpieceProperty : werk.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(workpieceProperty.getTitle())) {
+                        field.setValue(workpieceProperty.getValue());
                     }
                 }
             }
@@ -418,10 +416,10 @@ public class CopyProcess extends ProzesskopieForm {
         if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
             /* erste Vorlage durchlaufen */
             Template vor = tempProzess.getTemplates().get(0);
-            for (TemplateProperty eig : vor.getProperties()) {
+            for (Property templateProperty : vor.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(templateProperty.getTitle())) {
+                        field.setValue(templateProperty.getValue());
                     }
                 }
             }
@@ -846,15 +844,15 @@ public class CopyProcess extends ProzesskopieForm {
             BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
             BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
-            for (ProcessProperty pe : io.getProcessProperties()) {
-                addProperty(this.prozessKopie, pe);
+            for (Property processProperty : io.getProcessProperties()) {
+                addProperty(this.prozessKopie, processProperty);
             }
-            for (WorkpieceProperty we : io.getWorkProperties()) {
-                addProperty(werk, we);
+            for (Property workpieceProperty : io.getWorkProperties()) {
+                addProperty(werk, workpieceProperty);
             }
 
-            for (TemplateProperty ve : io.getTemplateProperties()) {
-                addProperty(vor, ve);
+            for (Property templateProperty : io.getTemplateProperties()) {
+                addProperty(vor, templateProperty);
             }
             BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
             BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
@@ -1292,69 +1290,64 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    private void addProperty(Template inVorlage, TemplateProperty property) {
+    private void addProperty(Template inVorlage, Property property) {
         if (property.getContainer() == 0) {
-            for (TemplateProperty ve : inVorlage.getProperties()) {
-                if (ve.getTitle().equals(property.getTitle()) && ve.getContainer() > 0) {
-                    ve.setValue(property.getValue());
+            for (Property templateProperty : inVorlage.getProperties()) {
+                if (templateProperty.getTitle().equals(property.getTitle()) && templateProperty.getContainer() > 0) {
+                    templateProperty.setValue(property.getValue());
                     return;
                 }
             }
         }
-        TemplateProperty eig = new TemplateProperty();
-        eig.setTitle(property.getTitle());
-        eig.setValue(property.getValue());
-        eig.setChoice(property.getChoice());
-        eig.setContainer(property.getContainer());
-        eig.setType(property.getType());
-        eig.setTemplate(inVorlage);
-        List<TemplateProperty> eigenschaften = inVorlage.getProperties();
-        if (eigenschaften != null) {
-            eigenschaften.add(eig);
+        Property templateProperty = insertDataToProperty(property);
+        templateProperty.getTemplates().add(inVorlage);
+        List<Property> properties = inVorlage.getProperties();
+        if (properties != null) {
+            properties.add(templateProperty);
         }
     }
 
-    private void addProperty(Process inProcess, ProcessProperty property) {
+    private void addProperty(Process inProcess, Property property) {
         if (property.getContainer() == 0) {
-            for (ProcessProperty pe : inProcess.getProperties()) {
-                if (pe.getTitle().equals(property.getTitle()) && pe.getContainer() > 0) {
-                    pe.setValue(property.getValue());
+            for (Property processProperty : inProcess.getProperties()) {
+                if (processProperty.getTitle().equals(property.getTitle()) && processProperty.getContainer() > 0) {
+                    processProperty.setValue(property.getValue());
                     return;
                 }
             }
         }
-        ProcessProperty eig = new ProcessProperty();
-        eig.setTitle(property.getTitle());
-        eig.setValue(property.getValue());
-        eig.setChoice(property.getChoice());
-        eig.setContainer(property.getContainer());
-        eig.setType(property.getType());
-        eig.setProcess(inProcess);
-        List<ProcessProperty> eigenschaften = serviceManager.getProcessService().getPropertiesInitialized(inProcess);
-        if (eigenschaften != null) {
-            eigenschaften.add(eig);
+        Property processProperty = insertDataToProperty(property);
+        processProperty.getProcesses().add(inProcess);
+        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(inProcess);
+        if (properties != null) {
+            properties.add(processProperty);
         }
     }
 
-    private void addProperty(Workpiece inWerk, WorkpieceProperty property) {
+    private void addProperty(Workpiece inWerk, Property property) {
         if (property.getContainer() == 0) {
-            for (WorkpieceProperty we : inWerk.getProperties()) {
-                if (we.getTitle().equals(property.getTitle()) && we.getContainer() > 0) {
-                    we.setValue(property.getValue());
+            for (Property workpieceProperty : inWerk.getProperties()) {
+                if (workpieceProperty.getTitle().equals(property.getTitle()) && workpieceProperty.getContainer() > 0) {
+                    workpieceProperty.setValue(property.getValue());
                     return;
                 }
             }
         }
-        WorkpieceProperty eig = new WorkpieceProperty();
-        eig.setTitle(property.getTitle());
-        eig.setValue(property.getValue());
-        eig.setChoice(property.getChoice());
-        eig.setContainer(property.getContainer());
-        eig.setType(property.getType());
-        eig.setWorkpiece(inWerk);
-        List<WorkpieceProperty> eigenschaften = inWerk.getProperties();
-        if (eigenschaften != null) {
-            eigenschaften.add(eig);
+        Property workpieceProperty = insertDataToProperty(property);
+        workpieceProperty.getWorkpieces().add(inWerk);
+        List<Property> properties = inWerk.getProperties();
+        if (properties != null) {
+            properties.add(workpieceProperty);
         }
+    }
+
+    private Property insertDataToProperty(Property property) {
+        Property newProperty = new Property();
+        newProperty.setTitle(property.getTitle());
+        newProperty.setValue(property.getValue());
+        newProperty.setChoice(property.getChoice());
+        newProperty.setContainer(property.getContainer());
+        newProperty.setType(property.getType());
+        return newProperty;
     }
 }

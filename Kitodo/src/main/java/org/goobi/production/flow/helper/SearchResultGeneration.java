@@ -25,7 +25,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 
 public class SearchResultGeneration {
 
@@ -145,11 +145,11 @@ public class SearchResultGeneration {
             HSSFCell cell8 = row.createCell(8);
             cell8.setCellValue("");
             if (p.getProperties().size() > 0) {
-                for (ProcessProperty pe : p.getProperties()) {
-                    if (pe.getTitle().equals("AltRefNo")) {
-                        cell7.setCellValue(pe.getValue());
-                    } else if (pe.getTitle().equals("b-number")) {
-                        cell8.setCellValue(pe.getValue());
+                for (Property property : p.getProperties()) {
+                    if (property.getTitle().equals("AltRefNo")) {
+                        cell7.setCellValue(property.getValue());
+                    } else if (property.getTitle().equals("b-number")) {
+                        cell8.setCellValue(property.getValue());
                     }
                 }
             }

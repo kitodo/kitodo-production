@@ -83,13 +83,12 @@ import org.jdom.transform.XSLTransformException;
 import org.jfree.chart.plot.PlotOrientation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -113,13 +112,13 @@ public class ProzessverwaltungForm extends BasisForm {
     private IEvaluableFilter myFilteredDataSource;
     private List<ProcessCounterObject> myAnzahlList;
     private HashMap<String, Integer> myAnzahlSummary;
-    private org.kitodo.data.database.beans.ProcessProperty myProzessEigenschaft;
+    private Property myProzessEigenschaft;
     private Template myVorlage;
-    private TemplateProperty myVorlageEigenschaft;
+    private Property myVorlageEigenschaft;
     private User myBenutzer;
     private UserGroup myBenutzergruppe;
     private Workpiece myWerkstueck;
-    private WorkpieceProperty myWerkstueckEigenschaft;
+    private Property myWerkstueckEigenschaft;
     private String modusAnzeige = "aktuell";
     private String modusBearbeiten = "";
     private String kitodoScript;
@@ -226,29 +225,29 @@ public class ProzessverwaltungForm extends BasisForm {
                     return "";
                 } else {
                     /* Prozesseigenschaften */
-                    for (org.kitodo.data.database.beans.ProcessProperty pe : this.myProzess.getProperties()) {
-                        if (pe != null && pe.getValue() != null) {
-                            if (pe.getValue().contains(this.myProzess.getTitle())) {
-                                pe.setValue(
-                                        pe.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                    for (Property processProperty : this.myProzess.getProperties()) {
+                        if (processProperty != null && processProperty.getValue() != null) {
+                            if (processProperty.getValue().contains(this.myProzess.getTitle())) {
+                                processProperty.setValue(
+                                        processProperty.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
                     /* Scanvorlageneigenschaften */
                     for (Template vl : this.myProzess.getTemplates()) {
-                        for (TemplateProperty ve : vl.getProperties()) {
-                            if (ve.getValue().contains(this.myProzess.getTitle())) {
-                                ve.setValue(
-                                        ve.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                        for (Property templateProperty : vl.getProperties()) {
+                            if (templateProperty.getValue().contains(this.myProzess.getTitle())) {
+                                templateProperty.setValue(
+                                        templateProperty.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
                     /* Werkstückeigenschaften */
                     for (Workpiece w : this.myProzess.getWorkpieces()) {
-                        for (WorkpieceProperty we : w.getProperties()) {
-                            if (we.getValue().contains(this.myProzess.getTitle())) {
-                                we.setValue(
-                                        we.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                        for (Property workpieceProperty : w.getProperties()) {
+                            if (workpieceProperty.getValue().contains(this.myProzess.getTitle())) {
+                                workpieceProperty.setValue(
+                                        workpieceProperty.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -606,17 +605,17 @@ public class ProzessverwaltungForm extends BasisForm {
      * New process property.
      */
     public String ProzessEigenschaftNeu() {
-        myProzessEigenschaft = new org.kitodo.data.database.beans.ProcessProperty();
+        myProzessEigenschaft = new Property();
         return "";
     }
 
     public String VorlageEigenschaftNeu() {
-        myVorlageEigenschaft = new TemplateProperty();
+        myVorlageEigenschaft = new Property();
         return "";
     }
 
     public String WerkstueckEigenschaftNeu() {
-        myWerkstueckEigenschaft = new WorkpieceProperty();
+        myWerkstueckEigenschaft = new Property();
         return "";
     }
 
@@ -627,7 +626,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String ProzessEigenschaftUebernehmen() {
         serviceManager.getProcessService().getPropertiesInitialized(myProzess).add(myProzessEigenschaft);
-        myProzessEigenschaft.setProcess(myProzess);
+        myProzessEigenschaft.getProcesses().add(myProzess);
         Speichern();
         return "";
     }
@@ -639,7 +638,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String VorlageEigenschaftUebernehmen() {
         myVorlage.getProperties().add(myVorlageEigenschaft);
-        myVorlageEigenschaft.setTemplate(myVorlage);
+        myVorlageEigenschaft.getTemplates().add(myVorlage);
         Speichern();
         return "";
     }
@@ -651,7 +650,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String WerkstueckEigenschaftUebernehmen() {
         myWerkstueck.getProperties().add(myWerkstueckEigenschaft);
-        myWerkstueckEigenschaft.setWorkpiece(myWerkstueck);
+        myWerkstueckEigenschaft.getWorkpieces().add(myWerkstueck);
         Speichern();
         return "";
     }
@@ -1240,11 +1239,11 @@ public class ProzessverwaltungForm extends BasisForm {
         loadProcessProperties();
     }
 
-    public org.kitodo.data.database.beans.ProcessProperty getMyProzessEigenschaft() {
+    public Property getMyProzessEigenschaft() {
         return this.myProzessEigenschaft;
     }
 
-    public void setMyProzessEigenschaft(org.kitodo.data.database.beans.ProcessProperty myProzessEigenschaft) {
+    public void setMyProzessEigenschaft(Property myProzessEigenschaft) {
         this.myProzessEigenschaft = myProzessEigenschaft;
     }
 
@@ -1272,11 +1271,11 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myVorlage = myVorlage;
     }
 
-    public TemplateProperty getMyVorlageEigenschaft() {
+    public Property getMyVorlageEigenschaft() {
         return this.myVorlageEigenschaft;
     }
 
-    public void setMyVorlageEigenschaft(TemplateProperty myVorlageEigenschaft) {
+    public void setMyVorlageEigenschaft(Property myVorlageEigenschaft) {
         this.myVorlageEigenschaft = myVorlageEigenschaft;
     }
 
@@ -1292,11 +1291,11 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myWerkstueck = myWerkstueck;
     }
 
-    public WorkpieceProperty getMyWerkstueckEigenschaft() {
+    public Property getMyWerkstueckEigenschaft() {
         return this.myWerkstueckEigenschaft;
     }
 
-    public void setMyWerkstueckEigenschaft(WorkpieceProperty myWerkstueckEigenschaft) {
+    public void setMyWerkstueckEigenschaft(Property myWerkstueckEigenschaft) {
         this.myWerkstueckEigenschaft = myWerkstueckEigenschaft;
     }
 
@@ -2112,10 +2111,10 @@ public class ProzessverwaltungForm extends BasisForm {
 
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(myProzess);
-                pt.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(myProzess).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(myProzess);
+                pt.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(myProzess).add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -2148,10 +2147,10 @@ public class ProzessverwaltungForm extends BasisForm {
         if (valid) {
             for (ProcessProperty p : this.processPropertyList) {
                 if (p.getProzesseigenschaft() == null) {
-                    org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                    pe.setProcess(this.myProzess);
-                    p.setProzesseigenschaft(pe);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(pe);
+                    Property processProperty = new Property();
+                    processProperty.getProcesses().add(this.myProzess);
+                    p.setProzesseigenschaft(processProperty);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(processProperty);
                 }
                 p.transfer();
                 if (!serviceManager.getProcessService().getPropertiesInitialized(this.myProzess)
@@ -2161,10 +2160,10 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
 
-            List<org.kitodo.data.database.beans.ProcessProperty> props = this.myProzess.getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
+            List<Property> props = this.myProzess.getProperties();
+            for (Property processProperty : props) {
+                if (processProperty.getTitle() == null) {
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(processProperty);
                 }
             }
 
@@ -2195,23 +2194,23 @@ public class ProzessverwaltungForm extends BasisForm {
                 return;
             }
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.myProzess);
-                this.processProperty.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.myProzess);
+                this.processProperty.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(processProperty);
             }
             this.processProperty.transfer();
 
-            List<org.kitodo.data.database.beans.ProcessProperty> props = this.myProzess.getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
+            List<Property> props = this.myProzess.getProperties();
+            for (Property processProperty : props) {
+                if (processProperty.getTitle() == null) {
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(processProperty);
                 }
             }
             // null exception
-            if (!this.processProperty.getProzesseigenschaft().getProcess().getProperties()
+            if (!this.processProperty.getProzesseigenschaft().getProcesses().getProperties()
                     .contains(this.processProperty.getProzesseigenschaft())) {
-                this.processProperty.getProzesseigenschaft().getProcess().getProperties()
+                this.processProperty.getProzesseigenschaft().getProcesses().getProperties()
                         .add(this.processProperty.getProzesseigenschaft());
             }
             try {
@@ -2282,10 +2281,10 @@ public class ProzessverwaltungForm extends BasisForm {
 
         }
 
-        List<org.kitodo.data.database.beans.ProcessProperty> props = this.myProzess.getProperties();
-        for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-            if (pe.getTitle() == null) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(pe);
+        List<Property> props = this.myProzess.getProperties();
+        for (Property processProperty : props) {
+            if (processProperty.getTitle() == null) {
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(processProperty);
             }
         }
         try {
@@ -2380,10 +2379,10 @@ public class ProzessverwaltungForm extends BasisForm {
             this.processPropertyList.add(newProp);
             this.processProperty = newProp;
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.myProzess);
-                this.processProperty.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.myProzess);
+                this.processProperty.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(processProperty);
             }
             this.processProperty.transfer();
 

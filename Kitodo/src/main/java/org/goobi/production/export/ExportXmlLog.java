@@ -40,12 +40,10 @@ import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -233,7 +231,7 @@ public class ExportXmlLog implements IProcessDataExport {
         }
 
         ArrayList<Element> processProperties = new ArrayList<Element>();
-        for (ProcessProperty prop : process.getProperties()) {
+        for (Property prop : process.getProperties()) {
             Element property = new Element("property", xmlns);
             property.setAttribute("propertyIdentifier", prop.getTitle());
             if (prop.getValue() != null) {
@@ -301,7 +299,7 @@ public class ExportXmlLog implements IProcessDataExport {
             template.setAttribute("originalID", String.valueOf(v.getId()));
 
             ArrayList<Element> templateProperties = new ArrayList<Element>();
-            for (TemplateProperty prop : v.getProperties()) {
+            for (Property prop : v.getProperties()) {
                 Element property = new Element("property", xmlns);
                 property.setAttribute("propertyIdentifier", prop.getTitle());
                 if (prop.getValue() != null) {
@@ -346,7 +344,7 @@ public class ExportXmlLog implements IProcessDataExport {
             dd.setAttribute("digitalDocumentID", String.valueOf(w.getId()));
 
             ArrayList<Element> docProperties = new ArrayList<Element>();
-            for (WorkpieceProperty prop : w.getProperties()) {
+            for (Property prop : w.getProperties()) {
                 Element property = new Element("property", xmlns);
                 property.setAttribute("propertyIdentifier", prop.getTitle());
                 if (prop.getValue() != null) {

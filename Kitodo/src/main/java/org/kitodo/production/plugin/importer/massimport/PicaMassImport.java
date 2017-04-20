@@ -64,9 +64,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
-import org.kitodo.data.database.beans.ProcessProperty;
-import org.kitodo.data.database.beans.TemplateProperty;
-import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -106,9 +104,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] {"036D", "9" };
 
     protected String ats;
-    protected List<ProcessProperty> processProperties = new ArrayList<ProcessProperty>();
-    protected List<WorkpieceProperty> workProperties = new ArrayList<WorkpieceProperty>();
-    protected List<TemplateProperty> templateProperties = new ArrayList<TemplateProperty>();
+    protected List<Property> processProperties = new ArrayList<>();
+    protected List<Property> workpieceProperties = new ArrayList<>();
+    protected List<Property> templateProperties = new ArrayList<>();
 
     protected String currentTitle;
     protected String docType;
@@ -241,14 +239,14 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
 
             {
-                TemplateProperty prop = new TemplateProperty();
+                Property prop = new Property();
                 prop.setTitle("Titel");
                 prop.setValue(currentTitle);
                 templateProperties.add(prop);
             }
             {
                 if (StringUtils.isNotBlank(volumeNumber) && multivolue) {
-                    TemplateProperty prop = new TemplateProperty();
+                    Property prop = new Property();
                     prop.setTitle("Bandnummer");
                     prop.setValue(volumeNumber);
                     templateProperties.add(prop);
@@ -260,7 +258,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 if (mdList != null && mdList.size() > 0) {
                     String analog = mdList.get(0).getValue();
 
-                    TemplateProperty prop = new TemplateProperty();
+                    Property prop = new Property();
                     prop.setTitle("Identifier");
                     prop.setValue(analog);
                     templateProperties.add(prop);
@@ -273,31 +271,31 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                     mdList = child.getAllMetadataByType(identifierType);
                     if (mdList != null && mdList.size() > 0) {
                         Metadata identifier = mdList.get(0);
-                        WorkpieceProperty prop = new WorkpieceProperty();
+                        Property prop = new Property();
                         prop.setTitle("Identifier Band");
                         prop.setValue(identifier.getValue());
-                        workProperties.add(prop);
+                        workpieceProperties.add(prop);
                     }
 
                 }
             }
             {
-                WorkpieceProperty prop = new WorkpieceProperty();
+                Property prop = new Property();
                 prop.setTitle("Artist");
                 prop.setValue(author);
-                workProperties.add(prop);
+                workpieceProperties.add(prop);
             }
             {
-                WorkpieceProperty prop = new WorkpieceProperty();
+                Property prop = new Property();
                 prop.setTitle("ATS");
                 prop.setValue(ats);
-                workProperties.add(prop);
+                workpieceProperties.add(prop);
             }
             {
-                WorkpieceProperty prop = new WorkpieceProperty();
+                Property prop = new Property();
                 prop.setTitle("Identifier");
                 prop.setValue(currentIdentifier);
-                workProperties.add(prop);
+                workpieceProperties.add(prop);
             }
 
             try {

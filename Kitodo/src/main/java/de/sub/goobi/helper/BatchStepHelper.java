@@ -44,6 +44,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -171,25 +172,26 @@ public class BatchStepHelper {
                 return;
             }
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.currentStep.getProcess());
-                this.processProperty.setProzesseigenschaft(pe);
-                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.currentStep.getProcess());
+                this.processProperty.setProzesseigenschaft(processProperty);
+                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess())
+                        .add(processProperty);
             }
             this.processProperty.transfer();
 
             Process p = this.currentStep.getProcess();
-            List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
+            List<Property> props = p.getProperties();
+            for (Property processProperty : props) {
+                if (processProperty.getTitle() == null) {
+                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
                 }
             }
             if (!this.serviceManager.getProcessService()
-                    .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess())
+                    .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcesses())
                     .contains(this.processProperty.getProzesseigenschaft())) {
                 this.serviceManager.getProcessService()
-                        .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcess())
+                        .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcesses())
                         .add(this.processProperty.getProzesseigenschaft());
             }
             try {
@@ -215,42 +217,43 @@ public class BatchStepHelper {
                 return;
             }
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.currentStep.getProcess());
-                this.processProperty.setProzesseigenschaft(pe);
-                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.currentStep.getProcess());
+                this.processProperty.setProzesseigenschaft(processProperty);
+                this.serviceManager.getProcessService().getPropertiesInitialized(this.currentStep.getProcess())
+                        .add(processProperty);
             }
             this.processProperty.transfer();
 
-            org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-            pe.setTitle(this.processProperty.getName());
-            pe.setValue(this.processProperty.getValue());
-            pe.setContainer(this.processProperty.getContainer());
+            Property processProperty = new Property();
+            processProperty.setTitle(this.processProperty.getName());
+            processProperty.setValue(this.processProperty.getValue());
+            processProperty.setContainer(this.processProperty.getContainer());
 
             for (Task s : this.steps) {
                 Process process = s.getProcess();
                 if (!s.equals(this.currentStep)) {
-                    if (pe.getTitle() != null) {
+                    if (processProperty.getTitle() != null) {
                         boolean match = false;
-                        for (org.kitodo.data.database.beans.ProcessProperty processPe : process.getProperties()) {
+                        for (Property processPe : process.getProperties()) {
                             if (processPe.getTitle() != null) {
-                                if (pe.getTitle().equals(processPe.getTitle()) && pe.getContainer() == null
-                                        ? processPe.getContainer() == null
-                                        : pe.getContainer().equals(processPe.getContainer())) {
-                                    processPe.setValue(pe.getValue());
+                                if (processProperty.getTitle().equals(processPe.getTitle())
+                                        && processProperty.getContainer() == null ? processPe.getContainer() == null
+                                                : processProperty.getContainer().equals(processPe.getContainer())) {
+                                    processPe.setValue(processProperty.getValue());
                                     match = true;
                                     break;
                                 }
                             }
                         }
                         if (!match) {
-                            org.kitodo.data.database.beans.ProcessProperty p = new org.kitodo.data.database.beans.ProcessProperty();
-                            p.setTitle(pe.getTitle());
-                            p.setValue(pe.getValue());
-                            p.setContainer(pe.getContainer());
-                            p.setType(pe.getType());
-                            p.setProcess(process);
-                            this.serviceManager.getProcessService().getPropertiesInitialized(process).add(p);
+                            Property property = new Property();
+                            property.setTitle(processProperty.getTitle());
+                            property.setValue(processProperty.getValue());
+                            property.setContainer(processProperty.getContainer());
+                            property.setType(processProperty.getType());
+                            property.getProcesses().add(process);
+                            this.serviceManager.getProcessService().getPropertiesInitialized(process).add(property);
                         }
                     }
                 } else {
@@ -260,10 +263,11 @@ public class BatchStepHelper {
                     }
                 }
 
-                List<org.kitodo.data.database.beans.ProcessProperty> props = process.getProperties();
-                for (org.kitodo.data.database.beans.ProcessProperty peig : props) {
-                    if (peig.getTitle() == null) {
-                        this.serviceManager.getProcessService().getPropertiesInitialized(process).remove(peig);
+                List<Property> props = process.getProperties();
+                for (Property nextProcessProperty : props) {
+                    if (nextProcessProperty.getTitle() == null) {
+                        this.serviceManager.getProcessService().getPropertiesInitialized(process)
+                                .remove(nextProcessProperty);
                     }
                 }
 
@@ -290,10 +294,10 @@ public class BatchStepHelper {
         }
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(s.getProcess());
-                pt.setProzesseigenschaft(pe);
-                this.serviceManager.getProcessService().getPropertiesInitialized(s.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(s.getProcess());
+                pt.setProzesseigenschaft(processProperty);
+                this.serviceManager.getProcessService().getPropertiesInitialized(s.getProcess()).add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -308,9 +312,9 @@ public class BatchStepHelper {
         }
 
         for (Process p : pList) {
-            for (org.kitodo.data.database.beans.ProcessProperty pe : p.getProperties()) {
-                if (!this.containers.keySet().contains(pe.getContainer())) {
-                    this.containers.put(pe.getContainer(), null);
+            for (Property processProperty : p.getProperties()) {
+                if (!this.containers.keySet().contains(processProperty.getContainer())) {
+                    this.containers.put(processProperty.getContainer(), null);
                 }
             }
         }
@@ -437,10 +441,10 @@ public class BatchStepHelper {
 
     private void saveStep() throws IOException, CustomResponseException {
         Process p = this.currentStep.getProcess();
-        List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
-        for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-            if (pe.getTitle() == null) {
-                this.serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
+        List<Property> props = p.getProperties();
+        for (Property processProperty : props) {
+            if (processProperty.getTitle() == null) {
+                this.serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
             }
         }
         try {
@@ -541,13 +545,13 @@ public class BatchStepHelper {
                 temp = serviceManager.getTaskService().setCorrectionStep(temp);
                 temp.setProcessingEnd(null);
 
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setTitle(Helper.getTranslation("Korrektur notwendig"));
-                pe.setValue("[" + this.formatter.format(new Date()) + ", "
+                Property processProperty = new Property();
+                processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
+                processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
                         + serviceManager.getUserService().getFullName(ben) + "] " + this.problemMessage);
-                pe.setType(PropertyType.messageError);
-                pe.setProcess(this.currentStep.getProcess());
-                this.currentStep.getProcess().getProperties().add(pe);
+                processProperty.setType(PropertyType.messageError);
+                processProperty.getProcesses().add(this.currentStep.getProcess());
+                this.currentStep.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": "
                         + this.problemMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
@@ -704,15 +708,15 @@ public class BatchStepHelper {
                     this.serviceManager.getTaskService().save(step);
                 }
 
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-                pe.setValue("[" + this.formatter.format(new Date()) + ", "
+                Property processProperty = new Property();
+                processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
+                processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
                         + serviceManager.getUserService().getFullName(ben) + "] "
                         + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
                         + this.solutionMessage);
-                pe.setProcess(this.currentStep.getProcess());
-                pe.setType(PropertyType.messageImportant);
-                this.currentStep.getProcess().getProperties().add(pe);
+                processProperty.getProcesses().add(this.currentStep.getProcess());
+                processProperty.setType(PropertyType.messageImportant);
+                this.currentStep.getProcess().getProperties().add(processProperty);
 
                 String message = Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
                         + this.solutionMessage + " (" + serviceManager.getUserService().getFullName(ben) + ")";
