@@ -27,6 +27,20 @@ import org.kitodo.data.elasticsearch.KitodoRestClient;
 public class SearchRestClient extends KitodoRestClient {
 
     /**
+     * Count amount of documents responding to given query.
+     *
+     * @param query
+     *            to find a document
+     * @return http entity as String
+     */
+    public String countDocuments(String query) throws IOException {
+        HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
+        Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_count",
+                Collections.singletonMap("pretty", "true"), entity);
+        return EntityUtils.toString(response.getEntity());
+    }
+
+    /**
      * Get document by id.
      *
      * @param id of searched document

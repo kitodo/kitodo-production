@@ -41,6 +41,17 @@ public class SearchRestClientIT {
     }
 
     @Test
+    public void shouldCountDocuments() throws Exception {
+        Thread.sleep(2000);
+        SearchRestClient searchRestClient = initializeSearchRestClient();
+        String query = "{\n\"query\" : {\n\"match_all\" : {}\n}\n}";
+        String result = searchRestClient.countDocuments(query);
+
+        boolean condition = result.contains("\"count\" : 2");
+        assertTrue("Count of documents has failed!", condition);
+    }
+
+    @Test
     public void shouldGetDocumentById() throws Exception {
         SearchRestClient searchRestClient = initializeSearchRestClient();
         String result = searchRestClient.getDocument(1);
