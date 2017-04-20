@@ -22,11 +22,20 @@ import org.kitodo.data.database.persistence.DocketDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.DocketType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
-public class DocketService {
+public class DocketService extends SearchService {
     private DocketDAO docketDao = new DocketDAO();
     private DocketType docketType = new DocketType();
     private Indexer<Docket, DocketType> indexer = new Indexer<>(Docket.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public DocketService() {
+        super(new Searcher(Docket.class));
+    }
 
     public Docket find(Integer id) throws DAOException {
         return docketDao.find(id);

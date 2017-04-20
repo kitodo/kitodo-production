@@ -25,17 +25,26 @@ import org.kitodo.data.database.persistence.RulesetDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
-public class RulesetService {
+public class RulesetService extends SearchService {
 
     private static final Logger logger = Logger.getLogger(RulesetService.class);
 
     private RulesetDAO rulesetDao = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();
     private Indexer<Ruleset, RulesetType> indexer = new Indexer<>(Ruleset.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public RulesetService() {
+        super(new Searcher(Ruleset.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

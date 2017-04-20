@@ -26,12 +26,21 @@ import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
-public class BatchService {
+public class BatchService extends SearchService {
 
     private BatchDAO batchDao = new BatchDAO();
     private BatchType batchType = new BatchType();
     private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public BatchService() {
+        super(new Searcher(Batch.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of

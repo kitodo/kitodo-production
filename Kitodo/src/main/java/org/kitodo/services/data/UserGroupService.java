@@ -22,11 +22,20 @@ import org.kitodo.data.database.persistence.UserGroupDAO;
 import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.SearchService;
 
-public class UserGroupService {
+public class UserGroupService extends SearchService {
     private UserGroupDAO userGroupDao = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
     private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public UserGroupService() {
+        super(new Searcher(UserGroup.class));
+    }
 
     public UserGroup find(Integer id) throws DAOException {
         return userGroupDao.find(id);
