@@ -45,7 +45,7 @@ public class DocketServiceIT {
         DocketService docketService = new DocketService();
 
         Docket docket = docketService.find(1);
-        boolean condition = docket.getName().equals("default") && docket.getFile().equals("docket.xsl");
+        boolean condition = docket.getTitle().equals("default") && docket.getFile().equals("docket.xsl");
         assertTrue("Docket was not found in database!", condition);
     }
 

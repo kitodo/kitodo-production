@@ -35,13 +35,13 @@ public class DocketTypeTest {
 
         Docket firstDocket = new Docket();
         firstDocket.setId(1);
-        firstDocket.setName("default");
+        firstDocket.setTitle("default");
         firstDocket.setFile("docket.xsl");
         dockets.add(firstDocket);
 
         Docket secondDocket = new Docket();
         secondDocket.setId(2);
-        secondDocket.setName("custom");
+        secondDocket.setTitle("custom");
         secondDocket.setFile("docket_custom.xsl");
         dockets.add(secondDocket);
 
@@ -56,7 +56,7 @@ public class DocketTypeTest {
         HttpEntity document = docketType.createDocument(docket);
         JSONParser parser = new JSONParser();
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{\"name\":\"default\",\"file\":\"docket.xsl\"}");
+        JSONObject excepted = (JSONObject) parser.parse("{\"title\":\"default\",\"file\":\"docket.xsl\"}");
         assertEquals("Docket JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 
