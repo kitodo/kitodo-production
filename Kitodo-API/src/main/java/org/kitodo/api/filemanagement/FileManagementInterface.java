@@ -11,6 +11,7 @@
 
 package org.kitodo.api.filemanagement;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
@@ -24,7 +25,7 @@ public interface FileManagementInterface {
      *            the uri to write to
      * @return an writable OutputStream
      */
-    OutputStream write(URI uri);
+    OutputStream write(URI uri) throws IOException;
 
     /**
      * Opens an InputStream to a given uri.
@@ -33,7 +34,7 @@ public interface FileManagementInterface {
      *            the uri to write from
      * @return a readable InputStream
      */
-    InputStream read(URI uri);
+    InputStream read(URI uri) throws IOException;
 
     /**
      * Delets content at a given uri.
@@ -42,7 +43,7 @@ public interface FileManagementInterface {
      *            the uri to delete
      * @return true if successfull, false otherwise
      */
-    boolean delete(URI uri);
+    boolean delete(URI uri) throws IOException;
 
     /**
      * Creates the FolderStructure needed for a process in kitodo.
