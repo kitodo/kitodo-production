@@ -19,7 +19,7 @@ import org.kitodo.api.validation.ValidationResult;
 public interface FileStructureValidationInterface {
 
     /**
-     * validates a given xml file against a xsd at a given location.
+     * validates a xml file at a given uri against a xsd at a given location.
      * 
      * @param xmlFileUri
      *            The file to validate.
