@@ -62,6 +62,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.elasticsearch.client.ResponseException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -1049,7 +1050,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenPage() throws DAOException {
+    public void BearbeitungsstatusHochsetzenPage() throws DAOException, IOException, CustomResponseException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             stepStatusUp(proz.getId());
         }
@@ -1059,7 +1060,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenSelection() throws DAOException {
+    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, IOException, CustomResponseException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 stepStatusUp(proz.getId());
@@ -1071,13 +1072,14 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenHits() throws DAOException {
+    public void BearbeitungsstatusHochsetzenHits() throws DAOException, IOException, CustomResponseException {
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             stepStatusUp(proz.getId());
         }
     }
 
-    private void stepStatusUp(int processId) throws DAOException, IOException, ResponseException {
+    private void stepStatusUp(int processId)
+            throws DAOException, IOException, ResponseException, CustomResponseException {
         List<Task> taskList = serviceManager.getProcessService().find(processId).getTasks();
 
         for (Task t : taskList) {

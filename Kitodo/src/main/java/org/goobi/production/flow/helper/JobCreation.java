@@ -53,7 +53,8 @@ public class JobCreation {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException, URISyntaxException {
+    public static Process generateProcess(ImportObject io, Process vorlage)
+            throws IOException, ParseException, URISyntaxException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -145,14 +146,15 @@ public class JobCreation {
     /**
      * Test title.
      *
-     * @param titel
+     * @param title
      *            String
      * @return boolean
      */
-    public static boolean testTitle(String title) throws IOException, ParseException {
-        if (titel != null) {
+    public static boolean testTitle(String title) throws IOException, ParseException, CustomResponseException {
+        if (title != null) {
             int anzahl = 0;
-            anzahl = serviceManager.getProcessService().findby.findByTitle(title, true);
+            anzahl = serviceManager.getProcessService().count(serviceManager.getProcessService().cre).findByTitle(title,
+                    true);
             if (anzahl > 0) {
                 Helper.setFehlerMeldung("processTitleAllreadyInUse");
                 return false;

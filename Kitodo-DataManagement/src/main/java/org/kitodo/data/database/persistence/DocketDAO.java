@@ -80,4 +80,5 @@ public class DocketDAO extends BaseDAO {
     public Long count(String query) throws DAOException {
         return retrieveAmount(query);
     }
+
 }
