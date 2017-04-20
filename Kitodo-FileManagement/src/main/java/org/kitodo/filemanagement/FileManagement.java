@@ -51,7 +51,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public ProcessLocation createProcessLocation(String processId) {
-        return null;
+        File file = 
     }
 
     @Override
