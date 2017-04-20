@@ -20,7 +20,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 
 /**
  * Implementation of Process Type.
@@ -53,15 +53,7 @@ public class ProcessType extends BaseType<Process> {
         }
         processObject.put("batches", batches);
 
-        JSONArray properties = new JSONArray();
-        List<ProcessProperty> processProperties = process.getProperties();
-        for (ProcessProperty property : processProperties) {
-            JSONObject propertyObject = new JSONObject();
-            propertyObject.put("title", property.getTitle());
-            propertyObject.put("value", property.getValue());
-            properties.add(propertyObject);
-        }
-        processObject.put("properties", properties);
+        processObject.put("properties", addPropertyRelation(process.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

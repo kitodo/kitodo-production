@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -21,7 +20,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.UserProperty;
 
 /**
  * Implementation of User Type.
@@ -50,15 +48,7 @@ public class UserType extends BaseType<User> {
         }
         userObject.put("userGroups", userGroups);
 
-        JSONArray properties = new JSONArray();
-        List<UserProperty> userProperties = user.getProperties();
-        for (UserProperty property : userProperties) {
-            JSONObject propertyObject = new JSONObject();
-            propertyObject.put("title", property.getTitle());
-            propertyObject.put("value", property.getValue());
-            properties.add(propertyObject);
-        }
-        userObject.put("properties", properties);
+        userObject.put("properties", addPropertyRelation(user.getProperties()));
 
         return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

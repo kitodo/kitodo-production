@@ -18,7 +18,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 
 /**
@@ -49,5 +52,16 @@ public abstract class BaseType<T extends BaseBean> implements TypeInterface<T> {
     protected String formatDate(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected JSONArray addPropertyRelation(List<Property> properties) {
+        JSONArray jsonArrayProperties = new JSONArray();
+        for (Property property : properties) {
+            JSONObject propertyObject = new JSONObject();
+            propertyObject.put("id", property.getId());
+            jsonArrayProperties.add(propertyObject);
+        }
+        return jsonArrayProperties;
     }
 }
