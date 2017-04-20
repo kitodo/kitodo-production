@@ -39,15 +39,19 @@ public class PropertyType extends BaseType<Property> {
 
         JSONArray templates = new JSONArray();
         List<Template> propertyTemplates = property.getTemplates();
-        for (Template template : propertyTemplates) {
-            templates.add(addIdForRelation(template.getId()));
+        if (propertyTemplates != null) {
+            for (Template template : propertyTemplates) {
+                templates.add(addIdForRelation(template.getId()));
+            }
         }
         propertyObject.put("templates", templates);
 
         JSONArray workpieces = new JSONArray();
         List<Workpiece> propertyWorkpieces = property.getWorkpieces();
-        for (Workpiece workpiece : propertyWorkpieces) {
-            workpieces.add(addIdForRelation(workpiece.getId()));
+        if (propertyWorkpieces != null) {
+            for (Workpiece workpiece : propertyWorkpieces) {
+                workpieces.add(addIdForRelation(workpiece.getId()));
+            }
         }
         propertyObject.put("workpieces", workpieces);
 

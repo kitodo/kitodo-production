@@ -55,20 +55,8 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("processingUser", processingUser);
         Integer process = task.getProcess() != null ? task.getProcess().getId() : null;
         taskObject.put("process", process);
-
-        JSONArray users = new JSONArray();
-        List<User> taskUsers = task.getUsers();
-        for (User user : taskUsers) {
-            users.add(addIdForRelation(user.getId()));
-        }
-        taskObject.put("users", users);
-
-        JSONArray userGroups = new JSONArray();
-        List<UserGroup> taskUserGroups = task.getUserGroups();
-        for (UserGroup userGroup : taskUserGroups) {
-            userGroups.add(addIdForRelation(userGroup.getId()));
-        }
-        taskObject.put("userGroups", userGroups);
+        taskObject.put("users", addUserRelation(task.getUsers()));
+        taskObject.put("userGroups", addUserGroupRelation(task.getUserGroups()));
 
         return new NStringEntity(taskObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

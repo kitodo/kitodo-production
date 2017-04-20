@@ -20,7 +20,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
 
 /**
  * Implementation of Process Type.

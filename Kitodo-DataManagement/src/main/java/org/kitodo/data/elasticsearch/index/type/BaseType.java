@@ -21,7 +21,10 @@ import org.apache.http.HttpEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 
 /**
@@ -42,31 +45,105 @@ public abstract class BaseType<T extends BaseBean> implements TypeInterface<T> {
     }
 
     /**
+     * Method for adding relationship between some object and list of process
+     * objects.
+     * 
+     * @param processes
+     *            list
+     * @return JSONArray
+     */
+    @SuppressWarnings("unchecked")
+    JSONArray addProcessRelation(List<Process> processes) {
+        JSONArray jsonArray = new JSONArray();
+        if (processes != null) {
+            for (Process process : processes) {
+                jsonArray.add(addIdForRelation(process.getId()));
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * Method for adding relationship between some object and list of property
+     * objects.
+     * 
+     * @param properties
+     *            list
+     * @return JSONArray
+     */
+    @SuppressWarnings("unchecked")
+    JSONArray addPropertyRelation(List<Property> properties) {
+        JSONArray jsonArray = new JSONArray();
+        if (properties != null) {
+            for (Property property : properties) {
+                jsonArray.add(addIdForRelation(property.getId()));
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * Method for adding relationship between some object and list of user
+     * objects.
+     * 
+     * @param users
+     *            list
+     * @return JSONArray
+     */
+    @SuppressWarnings("unchecked")
+    JSONArray addUserRelation(List<User> users) {
+        JSONArray jsonArray = new JSONArray();
+        if (users != null) {
+            for (User user : users) {
+                jsonArray.add(addIdForRelation(user.getId()));
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * Method for adding relationship between some object and list of user group
+     * objects.
+     *
+     * @param userGroups
+     *            list
+     * @return JSONArray
+     */
+    @SuppressWarnings("unchecked")
+    JSONArray addUserGroupRelation(List<UserGroup> userGroups) {
+        JSONArray jsonArray = new JSONArray();
+        if (userGroups != null) {
+            for (UserGroup userGroup : userGroups) {
+                jsonArray.add(addIdForRelation(userGroup.getId()));
+            }
+        }
+        return jsonArray;
+    }
+
+    /**
+     * Method for adding id to JSONObject.
+     *
+     * @param id
+     *            of object
+     * @return JSONObject
+     */
+    @SuppressWarnings("unchecked")
+    JSONObject addIdForRelation(Integer id) {
+        JSONObject object = new JSONObject();
+        object.put("id", id);
+        return object;
+    }
+
+    /**
      * Method used for formatting Date as String. It will help to change fast a
      * way of Date formatting or expected String format.
-     * 
+     *
      * @param date
      *            as Date
      * @return formatted date as String
      */
-    protected String formatDate(Date date) {
+    String formatDate(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected JSONArray addPropertyRelation(List<Property> properties) {
-        JSONArray jsonArrayProperties = new JSONArray();
-        for (Property property : properties) {
-            jsonArrayProperties.add(addIdForRelation(property.getId()));
-        }
-        return jsonArrayProperties;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected JSONObject addIdForRelation(Integer id) {
-        JSONObject object = new JSONObject();
-        object.put("id", id);
-        return object;
     }
 }
