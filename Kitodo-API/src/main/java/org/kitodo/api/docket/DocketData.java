@@ -28,11 +28,11 @@ public class DocketData {
     /** A comment. */
     private String comment;
     /** The template properties. */
-    private ArrayList<TemplateProperty> templateProperties;
+    private ArrayList<Property> templateProperties;
     /** The workpiece properties. */
-    private ArrayList<WorkpieceProperty> workpieceProperties;
+    private ArrayList<Property> workpieceProperties;
     /** The process properties. */
-    private ArrayList<ProcessProperty> processProperties;
+    private ArrayList<Property> processProperties;
 
     /**
      * Gets the processName.
@@ -153,7 +153,7 @@ public class DocketData {
      * 
      * @return The templateProperties.
      */
-    public ArrayList<TemplateProperty> getTemplateProperties() {
+    public ArrayList<Property> getTemplateProperties() {
         return templateProperties;
     }
 
@@ -163,7 +163,7 @@ public class DocketData {
      * @param templateProperties
      *            The templateProperties.
      */
-    public void setTemplateProperties(ArrayList<TemplateProperty> templateProperties) {
+    public void setTemplateProperties(ArrayList<Property> templateProperties) {
         this.templateProperties = templateProperties;
     }
 
@@ -172,7 +172,7 @@ public class DocketData {
      * 
      * @return The workpieceProperties.
      */
-    public ArrayList<WorkpieceProperty> getWorkpieceProperties() {
+    public ArrayList<Property> getWorkpieceProperties() {
         return workpieceProperties;
     }
 
@@ -182,7 +182,7 @@ public class DocketData {
      * @param workpieceProperties
      *            The workpieceProperties.
      */
-    public void setWorkpieceProperties(ArrayList<WorkpieceProperty> workpieceProperties) {
+    public void setWorkpieceProperties(ArrayList<Property> workpieceProperties) {
         this.workpieceProperties = workpieceProperties;
     }
 
@@ -191,7 +191,7 @@ public class DocketData {
      * 
      * @return The processProperties.
      */
-    public ArrayList<ProcessProperty> getProcessProperties() {
+    public ArrayList<Property> getProcessProperties() {
         return processProperties;
     }
 
@@ -201,7 +201,7 @@ public class DocketData {
      * @param processProperties
      *            The processProperties.
      */
-    public void setProcessProperties(ArrayList<ProcessProperty> processProperties) {
+    public void setProcessProperties(ArrayList<Property> processProperties) {
         this.processProperties = processProperties;
     }
 }
