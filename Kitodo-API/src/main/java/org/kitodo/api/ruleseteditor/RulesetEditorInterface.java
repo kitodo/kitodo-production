@@ -11,20 +11,19 @@
 
 package org.kitodo.api.ruleseteditor;
 
-import java.io.File;
+import java.net.URI;
 
 public interface RulesetEditorInterface {
 
     /** Creates a new rulesetFile. */
-    File createRulesetFile();
+    URI createRulesetFile();
 
     /**
      * Edits a given ruleset file.
      *
-     * @param rulesetFile
-     *            The rulesetfile to edit.
-     * @return an edited rulesetfile.
+     * @param rulesetFileUri
+     *            The uri to the rulesetfile to edit.
      */
-    File editRulesetfile(File rulesetFile);
+    void editRulesetFile(URI rulesetFileUri);
 
 }
