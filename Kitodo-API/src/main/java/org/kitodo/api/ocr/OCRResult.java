@@ -11,7 +11,6 @@
 
 package org.kitodo.api.ocr;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class OCRResult {
@@ -23,7 +22,7 @@ public class OCRResult {
     /** A result message. */
     private String message;
     /** The generated OCD Files. */
-    private ArrayList<File> outputFiles;
+    private ArrayList<FileResult> outputFiles;
 
     /**
      * Gets the processId.
@@ -87,7 +86,7 @@ public class OCRResult {
      * 
      * @return The outputFiles.
      */
-    public ArrayList<File> getOutputFiles() {
+    public ArrayList<FileResult> getOutputFiles() {
         return outputFiles;
     }
 
@@ -97,7 +96,7 @@ public class OCRResult {
      * @param outputFiles
      *            The outputFiles.
      */
-    public void setOutputFiles(ArrayList<File> outputFiles) {
+    public void setOutputFiles(ArrayList<FileResult> outputFiles) {
         this.outputFiles = outputFiles;
     }
 }

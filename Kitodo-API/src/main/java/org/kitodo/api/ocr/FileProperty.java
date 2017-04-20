@@ -11,33 +11,33 @@
 
 package org.kitodo.api.ocr;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 public class FileProperty {
 
     /** The input file path. */
-    private Path inputFilePath;
+    private URI inputFileUri;
 
     /** The name of the generated file. */
     private String outputFileName;
 
     /**
-     * Gets the inputFilePath.
+     * Gets the inputFileUri.
      * 
-     * @return The inputFilePath.
+     * @return The inputFileUri.
      */
-    public Path getInputFilePath() {
-        return inputFilePath;
+    public URI getInputFileUri() {
+        return inputFileUri;
     }
 
     /**
-     * Sets the inputFilePath.
+     * Sets the inputFileUri.
      * 
-     * @param inputFilePath
-     *            The inputFilePath.
+     * @param inputFileUri
+     *            The inputFileUri.
      */
-    public void setInputFilePath(Path inputFilePath) {
-        this.inputFilePath = inputFilePath;
+    public void setInputFileUri(URI inputFileUri) {
+        this.inputFileUri = inputFileUri;
     }
 
     /**
