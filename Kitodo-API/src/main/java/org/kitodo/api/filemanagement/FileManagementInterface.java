@@ -11,29 +11,66 @@
 
 package org.kitodo.api.filemanagement;
 
-import java.io.File;
-import java.nio.file.Path;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 
 public interface FileManagementInterface {
 
     /**
-     * Retrieves a File from a given path.
+     * Opens an OutputStream to a given uri.
      * 
-     * @param path
-     *            The path, to get the File from.
-     * @return The retrieved file.
+     * @param uri
+     *            the uri to write to
+     * @return an writable OutputStream
      */
-    File retrieve(Path path);
+    OutputStream write(URI uri);
 
     /**
-     * Saves a given File to a given Path.
-     *
-     * @param file
-     *            the file to be saved.
-     * @param path
-     *            the path, to save the file to.
-     * @return true, if saving was successfull, false if an error occured.
+     * Opens an InputStream to a given uri.
+     * 
+     * @param uri
+     *            the uri to write from
+     * @return a readable InputStream
      */
-    boolean save(File file, Path path);
+    InputStream read(URI uri);
+
+    /**
+     * Delets content at a given uri.
+     * 
+     * @param uri
+     *            the uri to delete
+     * @return true if successfull, false otherwise
+     */
+    boolean delete(URI uri);
+
+    /**
+     * Creates the FolderStructure needed for a process in kitodo.
+     * 
+     * @param processId
+     *            the id of the process
+     * @return a ProcessLocation
+     */
+    ProcessLocation createProcessLocation(String processId);
+
+    /**
+     * Creates a HomeLocation for a user with the given id.
+     * 
+     * @param userId
+     *            the id of the user
+     * @return the URI to the userHomeLocation
+     */
+    URI createUserHomeLocation(String userId);
+
+    /**
+     * Creates a resource with a given fileEnding.
+     * 
+     * @param parentFolderUri
+     *            the Location to create the resource
+     * @param fileEnding
+     *            the fileending of the new resource
+     * @return the URI of the new resource
+     */
+    URI createResource(URI parentFolderUri, String fileEnding);
 
 }
