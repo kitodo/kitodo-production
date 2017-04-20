@@ -187,12 +187,12 @@ public class BatchStepHelper {
                     serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
                 }
             }
-            if (!this.serviceManager.getProcessService()
-                    .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcesses())
-                    .contains(this.processProperty.getProzesseigenschaft())) {
-                this.serviceManager.getProcessService()
-                        .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcesses())
-                        .add(this.processProperty.getProzesseigenschaft());
+            for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
+                if (!this.serviceManager.getProcessService().getPropertiesInitialized(process)
+                        .contains(this.processProperty.getProzesseigenschaft())) {
+                    this.serviceManager.getProcessService().getPropertiesInitialized(process)
+                            .add(this.processProperty.getProzesseigenschaft());
+                }
             }
             try {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());

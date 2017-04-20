@@ -150,12 +150,12 @@ public class BatchProcessHelper {
                     serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
                 }
             }
-            if (!serviceManager.getProcessService()
-                    .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcesses())
-                    .contains(this.processProperty.getProzesseigenschaft())) {
-                serviceManager.getProcessService()
-                        .getPropertiesInitialized(this.processProperty.getProzesseigenschaft().getProcesses())
-                        .add(this.processProperty.getProzesseigenschaft());
+            for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
+                if (!serviceManager.getProcessService().getPropertiesInitialized(process)
+                        .contains(this.processProperty.getProzesseigenschaft())) {
+                    serviceManager.getProcessService().getPropertiesInitialized(process)
+                            .add(this.processProperty.getProzesseigenschaft());
+                }
             }
             try {
                 serviceManager.getProcessService().save(this.currentProcess);

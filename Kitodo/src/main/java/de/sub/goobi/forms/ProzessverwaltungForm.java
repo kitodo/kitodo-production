@@ -228,8 +228,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     for (Property processProperty : this.myProzess.getProperties()) {
                         if (processProperty != null && processProperty.getValue() != null) {
                             if (processProperty.getValue().contains(this.myProzess.getTitle())) {
-                                processProperty.setValue(
-                                        processProperty.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                                processProperty.setValue(processProperty.getValue()
+                                        .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -237,8 +237,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     for (Template vl : this.myProzess.getTemplates()) {
                         for (Property templateProperty : vl.getProperties()) {
                             if (templateProperty.getValue().contains(this.myProzess.getTitle())) {
-                                templateProperty.setValue(
-                                        templateProperty.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                                templateProperty.setValue(templateProperty.getValue()
+                                        .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -246,8 +246,8 @@ public class ProzessverwaltungForm extends BasisForm {
                     for (Workpiece w : this.myProzess.getWorkpieces()) {
                         for (Property workpieceProperty : w.getProperties()) {
                             if (workpieceProperty.getValue().contains(this.myProzess.getTitle())) {
-                                workpieceProperty.setValue(
-                                        workpieceProperty.getValue().replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
+                                workpieceProperty.setValue(workpieceProperty.getValue()
+                                        .replaceAll(this.myProzess.getTitle(), this.myNewProcessTitle));
                             }
                         }
                     }
@@ -2208,10 +2208,10 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
             // null exception
-            if (!this.processProperty.getProzesseigenschaft().getProcesses().getProperties()
-                    .contains(this.processProperty.getProzesseigenschaft())) {
-                this.processProperty.getProzesseigenschaft().getProcesses().getProperties()
-                        .add(this.processProperty.getProzesseigenschaft());
+            for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
+                if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
+                    process.getProperties().add(this.processProperty.getProzesseigenschaft());
+                }
             }
             try {
                 serviceManager.getProcessService().save(this.myProzess);
