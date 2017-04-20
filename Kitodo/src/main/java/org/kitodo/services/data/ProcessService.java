@@ -51,7 +51,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -241,7 +241,7 @@ public class ProcessService extends TitleSearchService {
      *
      * @return the properties field of the process which is loaded
      */
-    public List<ProcessProperty> getPropertiesInitialized(Process process) {
+    public List<Property> getPropertiesInitialized(Process process) {
         try {
             Hibernate.initialize(process.getProperties());
         } catch (HibernateException e) {
@@ -1246,8 +1246,8 @@ public class ProcessService extends TitleSearchService {
      *            List of process properties
      * @return List of filtered correction / solution messages
      */
-    protected List<ProcessProperty> filterForCorrectionSolutionMessages(List<ProcessProperty> lpe) {
-        ArrayList<ProcessProperty> filteredList = new ArrayList<ProcessProperty>();
+    protected List<Property> filterForCorrectionSolutionMessages(List<Property> lpe) {
+        ArrayList<Property> filteredList = new ArrayList<>();
         List<String> listOfTranslations = new ArrayList<String>();
         String propertyTitle = "";
 
@@ -1261,10 +1261,10 @@ public class ProcessService extends TitleSearchService {
         }
 
         // filtering for correction and solution messages
-        for (ProcessProperty pe : lpe) {
-            propertyTitle = pe.getTitle();
+        for (Property property : lpe) {
+            propertyTitle = property.getTitle();
             if (listOfTranslations.contains(propertyTitle)) {
-                filteredList.add(pe);
+                filteredList.add(property);
             }
         }
         return filteredList;
@@ -1276,9 +1276,9 @@ public class ProcessService extends TitleSearchService {
      *
      * @return list of ProcessProperty objects
      */
-    public List<ProcessProperty> getSortedCorrectionSolutionMessages(Process process) {
-        List<ProcessProperty> filteredList;
-        List<ProcessProperty> lpe = process.getProperties();
+    public List<Property> getSortedCorrectionSolutionMessages(Process process) {
+        List<Property> filteredList;
+        List<Property> lpe = process.getProperties();
 
         if (lpe.isEmpty()) {
             return new ArrayList<>();
@@ -1287,9 +1287,9 @@ public class ProcessService extends TitleSearchService {
         filteredList = filterForCorrectionSolutionMessages(lpe);
 
         // sorting after creation date
-        Collections.sort(filteredList, new Comparator<ProcessProperty>() {
+        Collections.sort(filteredList, new Comparator<Property>() {
             @Override
-            public int compare(ProcessProperty o1, ProcessProperty o2) {
+            public int compare(Property o1, Property o2) {
                 Date o1Date = o1.getCreationDate();
                 Date o2Date = o2.getCreationDate();
                 if (o1Date == null) {
