@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.filemanagement;
 
 import java.io.File;
@@ -22,10 +33,14 @@ public class FileManagementTest {
         int testContent = 8;
 
         File file = new File(testFolder + "test.txt");
-        FileOutputStream os = new FileOutputStream(file);
-        os.write(testContent);
-        os.flush();
-        os.close();
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            os.write(testContent);
+        } finally {
+            close(os);
+        }
+
         URI uri = file.toURI();
 
         FileManagement fileManagement = new FileManagement();
@@ -46,9 +61,12 @@ public class FileManagementTest {
 
         FileManagement fileManagement = new FileManagement();
         OutputStream outputStream = fileManagement.write(file.toURI());
-        outputStream.write(testContent);
-        outputStream.flush();
-        outputStream.close();
+        try {
+            outputStream.write(testContent);
+        } finally {
+            outputStream.flush();
+            outputStream.close();
+        }
 
         InputStream is = file.toURI().toURL().openStream();
         Assert.assertEquals("Did not write right content", testContent, is.read());
@@ -61,10 +79,13 @@ public class FileManagementTest {
     @Test
     public void testDeleteFile() throws IOException {
         File file = new File(testFolder + "testDelete.txt");
-        FileOutputStream os = new FileOutputStream(file);
-        os.write(5);
-        os.flush();
-        os.close();
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(file);
+            os.write(5);
+        } finally {
+            close(os);
+        }
         Assert.assertTrue("File not created", file.exists());
 
         FileManagement fileManagement = new FileManagement();
@@ -77,7 +98,9 @@ public class FileManagementTest {
     @Test
     public void testDeleteDirectory() throws IOException {
         File file = new File("src" + File.separator + "test" + File.separator + "testDelete");
-        file.mkdir();
+        if (!file.mkdir()) {
+            throw new IOException();
+        }
         Assert.assertTrue("Directory not created", file.exists());
         Assert.assertTrue("Directory is not a directory", file.isDirectory());
 
@@ -122,6 +145,13 @@ public class FileManagementTest {
         File testFolder = new File(processFolder);
         FileUtils.deleteDirectory(testFolder);
 
+    }
+
+    private void close(FileOutputStream os) throws IOException {
+        if (os == null) {
+            return;
+        }
+        os.close();
     }
 
 }

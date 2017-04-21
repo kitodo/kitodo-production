@@ -24,7 +24,7 @@ public class Config {
 
     /**
      * Gets the configuration.
-     * 
+     *
      * @return the PropertyConfiguration
      */
     public static PropertiesConfiguration getConfig() {

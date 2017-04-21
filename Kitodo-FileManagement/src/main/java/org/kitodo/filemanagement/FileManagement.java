@@ -30,8 +30,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public OutputStream write(URI uri) throws IOException {
-        OutputStream outputStream = new FileOutputStream(new File(uri));
-        return outputStream;
+        return new FileOutputStream(new File(uri));
     }
 
     @Override
@@ -67,8 +66,9 @@ public class FileManagement implements FileManagementInterface {
         }
         URI processMetaFileUri = createResource(processRootDirectory.toURI(), "meta.xml");
         File processMetaFile = new File(processMetaFileUri);
-        processMetaFile.getParentFile().mkdirs();
-        processMetaFile.createNewFile();
+        if (!processMetaFile.createNewFile()) {
+            throw new IOException();
+        }
 
         return new ProcessLocation(processRootDirectory.toURI(), processImageDirectory.toURI(), processMetaFileUri);
 
