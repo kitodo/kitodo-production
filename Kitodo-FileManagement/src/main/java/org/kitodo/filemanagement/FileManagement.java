@@ -59,12 +59,12 @@ public class FileManagement implements FileManagementInterface {
         File processRootDirectory = new File(
                 (Config.getConfig().getString(METADATA_DIRECTORY) + File.separator + processId));
         if (!processRootDirectory.mkdir()) {
-            throw new IOException();
+            throw new IOException("Could not create processRoot directory.");
         }
 
         File processImageDirectory = new File(processRootDirectory.getPath() + File.separator + "images");
         if (!processImageDirectory.mkdir()) {
-            throw new IOException();
+            throw new IOException("Could not create image directory");
         }
         URI processMetaFile = createResource(processRootDirectory.toURI(), "meta.xml");
 
@@ -76,7 +76,7 @@ public class FileManagement implements FileManagementInterface {
     public URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
         File directory = new File(parentFolderUri.getPath() + File.separator + directoryName);
         if (!directory.mkdir()) {
-            throw new IOException();
+            throw new IOException("Could not create directory.");
         }
         return directory.toURI();
     }

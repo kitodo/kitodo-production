@@ -22,6 +22,11 @@ public class Config {
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
 
+    /**
+     * Gets the configuration.
+     * 
+     * @return the PropertyConfiguration
+     */
     public static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (Config.class) {
