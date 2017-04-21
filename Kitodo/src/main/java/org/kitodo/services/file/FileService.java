@@ -42,7 +42,7 @@ public class FileService {
     public void createDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!new File(parentFolderUri + directoryName).exists()) {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
-            createDirScript.run(Arrays.asList(new String[]{parentFolderUri + directoryName}));
+            createDirScript.run(Arrays.asList(new String[] {parentFolderUri + directoryName }));
         }
 
     }
@@ -53,11 +53,14 @@ public class FileService {
      * permissions accordingly. This cannot be done from within java code before
      * version 1.7.
      *
-     * @param dirName Name of directory to create
-     * @throws InterruptedException If the thread running the script is interrupted by another
-     * thread while it is waiting, then the wait is ended and an
-     * InterruptedException is thrown.
-     * @throws IOException If an I/O error occurs.
+     * @param dirName
+     *            Name of directory to create
+     * @throws InterruptedException
+     *             If the thread running the script is interrupted by another
+     *             thread while it is waiting, then the wait is ended and an
+     *             InterruptedException is thrown.
+     * @throws IOException
+     *             If an I/O error occurs.
      */
 
     public void createDirectoryForUser(String dirName, String userName) throws IOException, InterruptedException {
@@ -73,11 +76,15 @@ public class FileService {
      * mischief under Windows which unaccountably holds locks on files.
      * Sometimes running the JVM’s garbage collector puts things right.
      *
-     * @param oldFileName File to move or rename
-     * @param newFileName New file name / destination
-     * @throws IOException is thrown if the rename fails permanently
-     * @throws FileNotFoundException is thrown if old file (source file of renaming) does not
-     * exists
+     * @param oldFileName
+     *            File to move or rename
+     * @param newFileName
+     *            New file name / destination
+     * @throws IOException
+     *             is thrown if the rename fails permanently
+     * @throws FileNotFoundException
+     *             is thrown if old file (source file of renaming) does not
+     *             exists
      */
     public void renameFile(String oldFileName, String newFileName) throws IOException {
         final int SLEEP_INTERVAL_MILLIS = 20;
@@ -141,7 +148,8 @@ public class FileService {
      * calculate all files with given file extension at specified directory
      * recursively.
      *
-     * @param inDir the directory to run through
+     * @param inDir
+     *            the directory to run through
      * @return number of files as Integer
      */
     public Integer getNumberOfFiles(SafeFile inDir) {
@@ -186,8 +194,10 @@ public class FileService {
     /**
      * Start copying of file.
      *
-     * @param srcFile source file
-     * @param destFile destination file
+     * @param srcFile
+     *            source file
+     * @param destFile
+     *            destination file
      * @return Long
      */
     public Long start(File srcFile, File destFile) throws IOException {
