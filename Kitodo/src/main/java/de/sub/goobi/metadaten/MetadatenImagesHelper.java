@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -365,7 +366,8 @@ public class MetadatenImagesHelper {
             logger.trace("ri");
             JpegInterpreter pi = new JpegInterpreter(ri);
             logger.trace("pi");
-            FileOutputStream outputFileStream = new FileOutputStream(outFileName);
+            FileOutputStream outputFileStream = (FileOutputStream) serviceManager.getFileService()
+                    .write(URI.create(outFileName));
             logger.trace("output");
             pi.writeToStream(null, outputFileStream);
             logger.trace("write stream");

@@ -539,7 +539,7 @@ public class Ldap {
         /* wenn die Zertifikate noch nicht im Keystore sind, jetzt einlesen */
         File myPfad = new File(path);
         if (!myPfad.exists()) {
-            try (FileOutputStream ksos = new FileOutputStream(path);
+            try (FileOutputStream ksos = (FileOutputStream) serviceManager.getFileService().write(myPfad.toURI());
                     // TODO: Rename parameters to something more meaningful,
                     // this is quite specific for the GDZ
                     FileInputStream cacertFile = new FileInputStream(ConfigCore.getParameter("ldap_cert_root"));

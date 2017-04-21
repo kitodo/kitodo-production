@@ -17,13 +17,16 @@ import de.sub.goobi.helper.ShellScript;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.zip.CRC32;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.goobi.io.SafeFile;
 import org.slf4j.Logger;
@@ -172,12 +175,12 @@ public class FileService {
         return getNumberOfFiles(new SafeFile(inDir));
     }
 
-    private static Long copyFile(SafeFile srcFile, SafeFile destFile) throws IOException {
+    private Long copyFile(File srcFile, File destFile) throws IOException {
         // TODO use a better checksumming algorithm like SHA-1
         CRC32 checksum = new CRC32();
         checksum.reset();
 
-        try (InputStream in = srcFile.createFileInputStream(); OutputStream out = destFile.createFileOutputStream();) {
+        try (InputStream in = read(srcFile.toURI()); OutputStream out = write(destFile.toURI())) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = in.read(buffer)) >= 0) {
@@ -197,7 +200,7 @@ public class FileService {
      *            destination file
      * @return Long
      */
-    public static Long start(SafeFile srcFile, SafeFile destFile) throws IOException {
+    public Long start(File srcFile, File destFile) throws IOException {
         // make sure the source file is indeed a readable file
         if (!srcFile.isFile() || !srcFile.canRead()) {
             System.err.println("Not a readable file: " + srcFile.getName());
@@ -220,10 +223,10 @@ public class FileService {
         }
     }
 
-    private static Long createChecksum(SafeFile file) throws IOException {
+    private Long createChecksum(File file) throws IOException {
         CRC32 checksum = new CRC32();
         checksum.reset();
-        try (InputStream in = file.createFileInputStream()) {
+        try (InputStream in = read(file.toURI())) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = in.read(buffer)) >= 0) {
@@ -233,4 +236,24 @@ public class FileService {
         return Long.valueOf(checksum.getValue());
     }
 
+    public OutputStream write(URI uri) throws IOException {
+        return new FileOutputStream(new File(uri));
+    }
+
+    public InputStream read(URI uri) throws IOException {
+        URL url = uri.toURL();
+        return url.openStream();
+    }
+
+    public boolean delete(URI uri) throws IOException {
+        File file = new File(uri);
+        if (file.isFile()) {
+            return file.delete();
+        }
+        if (file.isDirectory()) {
+            FileUtils.deleteDirectory(file);
+            return true;
+        }
+        return false;
+    }
 }

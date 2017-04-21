@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Helper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 import org.goobi.io.SafeFile;
@@ -37,7 +38,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * will be created.
      */
 
-    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int kitodoPathLength, Element inRoot)
+    static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int kitodoPathLength, Element inRoot)
             throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
@@ -46,7 +47,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
             }
             String[] children = srcDir.list();
             for (int i = 0; i < children.length; i++) {
-                copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
+                copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]),
                         kitodoPathLength, inRoot);
             }
         } else {
@@ -62,7 +63,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * Deletes all files and subdirectories under dir. But not the dir itself
      * and no metadata files.
      */
-    static boolean deleteDataInDir(SafeFile dir) {
+    static boolean deleteDataInDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (int i = 0; i < children.length; i++) {
@@ -151,8 +152,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
 
-        SafeFile fileIn = new SafeFile(processDirectory);
-        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
+        File fileIn = new File(processDirectory);
+        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
         if (fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget already exists");
             setStatusProgress(-1);
@@ -190,14 +191,15 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
         setStatusProgress(80);
-        deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
+        deleteDataInDir(new File(fileIn.getAbsolutePath()));
 
         /*
          * xml-Datei schreiben
          */
         Format format = Format.getPrettyFormat();
         format.setEncoding("UTF-8");
-        try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
+        try (FileOutputStream fos = (FileOutputStream) serviceManager.getFileService()
+                .write(URI.create(processDirectory + File.separator + "swapped.xml"))) {
             setStatusMessage("writing swapped.xml");
             XMLOutputter xmlOut = new XMLOutputter(format);
             xmlOut.output(doc, fos);

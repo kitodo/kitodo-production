@@ -68,7 +68,7 @@ public class LoginForm {
      *
      * @return String
      */
-    public String Einloggen() {
+    public String Einloggen() throws IOException {
         AlteBilderAufraeumen();
         this.myBenutzer = null;
         /* ohne Login gleich abbrechen */
@@ -252,7 +252,7 @@ public class LoginForm {
         return "";
     }
 
-    private void AlteBilderAufraeumen() {
+    private void AlteBilderAufraeumen() throws IOException {
         /* Pages-Verzeichnis mit den temporären Images ermitteln */
         String myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
@@ -271,7 +271,7 @@ public class LoginForm {
             for (int i = 0; i < dateien.length; i++) {
                 File file = new File(myPfad + dateien[i]);
                 if ((System.currentTimeMillis() - file.lastModified()) > 7200000) {
-                    file.delete();
+                    serviceManager.getFileService().delete(file.toURI());
                 }
             }
         }

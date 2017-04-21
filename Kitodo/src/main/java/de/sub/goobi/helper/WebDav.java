@@ -16,10 +16,10 @@ import de.sub.goobi.export.download.TiffHeader;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -260,8 +260,8 @@ public class WebDav implements Serializable {
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(
-                            serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf"),
+                    serviceManager.getFileService().write(URI.create(
+                            serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")),
                     StandardCharsets.UTF_8));) {
                 outfile.write(tif.getTiffAlles());
             }

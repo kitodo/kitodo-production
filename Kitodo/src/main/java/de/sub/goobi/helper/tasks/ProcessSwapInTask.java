@@ -105,8 +105,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             return;
         }
 
-        SafeFile fileIn = new SafeFile(processDirectory);
-        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
+        File fileIn = new File(processDirectory);
+        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
 
         if (!fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget does not exist");
@@ -202,8 +202,8 @@ public class ProcessSwapInTask extends LongRunningTask {
         setStatusProgress(90);
 
         /* in Prozess speichern */
-        fileOut.deleteDir();
         try {
+            serviceManager.getFileService().delete(fileOut.toURI());
             setStatusMessage("saving process");
             Process myProcess = serviceManager.getProcessService().find(getProcess().getId());
             myProcess.setSwappedOutGui(false);
