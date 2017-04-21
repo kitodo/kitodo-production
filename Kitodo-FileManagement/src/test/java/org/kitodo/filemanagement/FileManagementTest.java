@@ -50,7 +50,7 @@ public class FileManagementTest {
         Assert.assertEquals("Did not read right content", testContent, is.read());
 
         is.close();
-        System.out.println(file.delete());
+        file.delete();
 
     }
 
@@ -72,7 +72,7 @@ public class FileManagementTest {
         Assert.assertEquals("Did not write right content", testContent, is.read());
 
         is.close();
-        System.out.println(file.delete());
+        file.delete();
 
     }
 
