@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -93,7 +94,7 @@ public class SearcherIT {
         Searcher searcher = new Searcher("testget");
 
         String query = "{\n\"match_all\" : {}\n}";
-        ArrayList<SearchResult> result = searcher.findDocuments(query);
+        List<SearchResult> result = searcher.findDocuments(query);
         Integer id = result.get(0).getId();
         assertEquals("Incorrect result - id doesn't match to given int values!", 2, id.intValue());
 

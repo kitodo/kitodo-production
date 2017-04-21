@@ -12,10 +12,7 @@
 package org.kitodo.data.elasticsearch.search;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.Table;
 
@@ -117,9 +114,9 @@ public class Searcher extends Index {
      *            as String
      * @return list of SearchResult objects
      */
-    public ArrayList<SearchResult> findDocuments(String query) throws IOException, ParseException {
+    public List<SearchResult> findDocuments(String query) throws IOException, ParseException {
         SearchRestClient restClient = initiateRestClient();
-        ArrayList<SearchResult> searchResults = new ArrayList<>();
+        List<SearchResult> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query);
