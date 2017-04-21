@@ -60,6 +60,17 @@ public class WorkpieceService extends SearchService {
     }
 
     /**
+     * Search Batch objects by given query.
+     *
+     * @param query
+     *            as String
+     * @return list of Batch objects
+     */
+    public List<Workpiece> search(String query) throws DAOException {
+        return workpieceDao.search(query);
+    }
+
+    /**
      * Method removes object from database and document from the index of
      * Elastic Search.
      *

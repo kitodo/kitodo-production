@@ -63,6 +63,17 @@ public class HistoryService extends SearchService {
     }
 
     /**
+     * Search History objects by given query.
+     *
+     * @param query
+     *            as String
+     * @return list of History objects
+     */
+    public List<History> search(String query) throws DAOException {
+        return historyDao.search(query);
+    }
+
+    /**
      * Method removes object from database and document from the index of
      * Elastic Search.
      *

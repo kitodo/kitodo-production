@@ -65,6 +65,18 @@ public class BatchDAO extends BaseDAO {
     }
 
     /**
+     * Search Batch objects in database by given query.
+     * 
+     * @param query
+     *            as String
+     * @return list of Batch objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<Batch> search(String query) throws DAOException {
+        return retrieveObjects(query);
+    }
+
+    /**
      * The method remove() removes batch specified by the given ID from the
      * database.
      *

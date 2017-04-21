@@ -64,6 +64,17 @@ public class BatchService extends SearchService {
     }
 
     /**
+     * Search Batch objects by given query.
+     *
+     * @param query
+     *            as String
+     * @return list of Batch objects
+     */
+    public List<Batch> search(String query) throws DAOException {
+        return batchDao.search(query);
+    }
+
+    /**
      * Method removes object from database and document from the index of
      * Elastic Search.
      *

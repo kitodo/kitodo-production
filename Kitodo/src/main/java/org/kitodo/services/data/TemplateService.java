@@ -60,6 +60,17 @@ public class TemplateService extends SearchService {
     }
 
     /**
+     * Search Template objects by given query.
+     *
+     * @param query
+     *            as String
+     * @return list of Template objects
+     */
+    public List<Template> search(String query) throws DAOException {
+        return templateDao.search(query);
+    }
+
+    /**
      * Method removes object from database and document from the index of
      * Elastic Search.
      *
