@@ -11,6 +11,7 @@
 
 package de.sub.goobi.importer;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
@@ -203,7 +204,7 @@ public class ImportZentralblatt {
             /*
              * Datei am richtigen Ort speichern
              */
-            gdzfile.write(this.help.getKitodoDataDirectory() + prozessID + File.separator + "meta.xml");
+            gdzfile.write(ConfigCore.getKitodoDataDirectory() + prozessID + File.separator + "meta.xml");
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
             myLogger.error(e);

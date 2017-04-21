@@ -26,7 +26,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.goobi.production.constants.Parameters;
 
 public class UghUtils {
     private static final Logger myLogger = Logger.getLogger(UghUtils.class);
@@ -69,7 +68,7 @@ public class UghUtils {
      *             If the named charset is not supported
      */
     private static BufferedReader open(String fileName) throws IOException {
-        String path = ConfigCore.getParameter(Parameters.CONFIG_DIR);
+        String path = ConfigCore.getKitodoConfigDirectory();
         FacesContext context = FacesContext.getCurrentInstance();
         if (context != null) {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);

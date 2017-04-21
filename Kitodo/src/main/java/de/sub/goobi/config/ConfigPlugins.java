@@ -11,8 +11,6 @@
 
 package de.sub.goobi.config;
 
-import de.sub.goobi.helper.Helper;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -34,7 +32,7 @@ public class ConfigPlugins {
         String file = "plugin_" + inPlugin.getClass().getSimpleName() + ".xml";
         XMLConfiguration config;
         try {
-            config = new XMLConfiguration(new Helper().getKitodoConfigDirectory() + file);
+            config = new XMLConfiguration(ConfigCore.getKitodoConfigDirectory() + file);
         } catch (ConfigurationException e) {
             logger.error(e);
             config = new XMLConfiguration();

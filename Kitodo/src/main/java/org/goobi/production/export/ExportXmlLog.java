@@ -11,7 +11,7 @@
 
 package org.goobi.production.export;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -517,7 +517,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
         HashMap<String, String> fields = new HashMap<String, String>();
         try {
-            File file = new File(new Helper().getKitodoConfigDirectory() + "kitodo_exportXml.xml");
+            File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
                 XMLConfiguration config = new XMLConfiguration(file);
                 config.setListDelimiter('&');
@@ -539,7 +539,7 @@ public class ExportXmlLog implements IProcessDataExport {
     private HashMap<String, String> getNamespacesFromConfig() {
         HashMap<String, String> nss = new HashMap<String, String>();
         try {
-            File file = new File(new Helper().getKitodoConfigDirectory() + "kitodo_exportXml.xml");
+            File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
                 XMLConfiguration config = new XMLConfiguration(file);
                 config.setListDelimiter('&');

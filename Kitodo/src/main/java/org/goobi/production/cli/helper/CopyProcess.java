@@ -931,7 +931,7 @@ public class CopyProcess extends ProzesskopieForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollection = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
-        String filename = new Helper().getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
+        String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;

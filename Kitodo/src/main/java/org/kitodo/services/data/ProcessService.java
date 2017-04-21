@@ -556,7 +556,7 @@ public class ProcessService extends TitleSearchService {
      */
     public String getProcessDataDirectoryIgnoreSwapping(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = this.help.getKitodoDataDirectory();
+        String pfad = ConfigCore.getKitodoDataDirectory();
         pfad = pfad.replaceAll(" ", "__");
         String processId = process.getId().toString();
         processId = processId.replaceAll(" ", "__");

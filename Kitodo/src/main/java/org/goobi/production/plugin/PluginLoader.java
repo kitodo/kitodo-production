@@ -144,7 +144,7 @@ public class PluginLoader {
     private static HashMap<String, String> getPluginConfiguration() {
         short ENRIES = 2;
         HashMap<String, String> conf = new HashMap<String, String>((int) Math.ceil(ENRIES / 0.75));
-        conf.put("configDir", ConfigCore.getParameter(Parameters.CONFIG_DIR));
+        conf.put("configDir", ConfigCore.getKitodoConfigDirectory());
         conf.put("tempDir", ConfigCore.getParameter(Parameters.PLUGIN_TEMP_DIR));
         return conf;
     }

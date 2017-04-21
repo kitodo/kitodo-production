@@ -11,7 +11,7 @@
 
 package org.goobi.production.importer;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -155,7 +155,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
         try {
             XMLConfiguration config = new XMLConfiguration(
-                    new Helper().getKitodoConfigDirectory() + "kitodo_hotfolder.xml");
+                    ConfigCore.getKitodoConfigDirectory() + "kitodo_hotfolder.xml");
 
             logger.trace("config 3");
 

@@ -29,6 +29,8 @@ public class ConfigCore extends ConfigMain {
     private static final Logger myLogger = Logger.getLogger(ConfigCore.class);
     private static String imagesPath = null;
     private static ServiceManager serviceManager = new ServiceManager();
+    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
+    public static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
      * Request selected parameter from configuration.
@@ -148,5 +150,23 @@ public class ConfigCore extends ConfigMain {
      */
     public static String[] getStringArrayParameter(String inParameter) {
         return getConfig().getStringArray(inParameter);
+    }
+
+    /**
+     * Get Kitodo data directory.
+     *
+     * @return String
+     */
+    public static String getKitodoDataDirectory() {
+        return getParameter(METADATA_DIRECTORY);
+    }
+
+    /**
+     * Get Kitodo config directory.
+     *
+     * @return String
+     */
+    public static String getKitodoConfigDirectory() {
+        return ConfigCore.getParameter(CONFIG_DIR);
     }
 }

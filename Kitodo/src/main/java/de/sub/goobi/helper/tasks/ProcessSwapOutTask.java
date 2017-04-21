@@ -183,7 +183,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
         setStatusProgress(50);
         try {
             setStatusMessage("copying process folder");
-            copyDirectoryWithCrc32Check(fileIn, fileOut, help.getKitodoDataDirectory().length(), root);
+            copyDirectoryWithCrc32Check(fileIn, fileOut, ConfigCore.getKitodoDataDirectory().length(), root);
         } catch (IOException e) {
             logger.warn("IOException:", e);
             setStatusMessage("IOException in copyDirectory: " + e.getMessage());
