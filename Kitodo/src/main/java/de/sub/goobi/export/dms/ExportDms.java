@@ -14,7 +14,6 @@ package de.sub.goobi.export.dms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
@@ -527,7 +526,8 @@ public class ExportDms extends ExportMets {
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
-                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
+                    serviceManager.getFileService().createDirectoryForUser(zielTif.getAbsolutePath(),
+                            myUser.getLogin());
                 } catch (Exception e) {
                     if (exportDmsTask != null) {
                         exportDmsTask.setException(e);

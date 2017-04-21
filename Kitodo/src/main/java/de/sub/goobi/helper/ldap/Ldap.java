@@ -12,7 +12,6 @@
 package de.sub.goobi.helper.ldap;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -101,7 +100,7 @@ public class Ldap {
             String homePath = getUserHomeDirectory(inBenutzer);
             if (!new File(homePath).exists()) {
                 myLogger.debug("HomeVerzeichnis existiert noch nicht");
-                FilesystemHelper.createDirectoryForUser(homePath, inBenutzer.getLogin());
+                serviceManager.getFileService().createDirectoryForUser(homePath, inBenutzer.getLogin());
                 myLogger.debug("HomeVerzeichnis angelegt");
             } else {
                 myLogger.debug("HomeVerzeichnis existiert schon");

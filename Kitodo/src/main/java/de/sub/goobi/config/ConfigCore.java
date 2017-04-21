@@ -11,10 +11,10 @@
 
 package de.sub.goobi.config;
 
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -23,10 +23,12 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.ConfigMain;
+import org.kitodo.services.ServiceManager;
 
 public class ConfigCore extends ConfigMain {
     private static final Logger myLogger = Logger.getLogger(ConfigCore.class);
     private static String imagesPath = null;
+    private static ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Request selected parameter from configuration.
@@ -85,11 +87,11 @@ public class ConfigCore extends ConfigMain {
             filename = imagesPath;
         } else {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-            filename = session.getServletContext().getRealPath("/pages/imagesTemp") + File.separator;
+            filename = session.getServletContext().getRealPath("/pages") + File.separator;
 
             /* den Ordner neu anlegen, wenn er nicht existiert */
             try {
-                FilesystemHelper.createDirectory(filename);
+                serviceManager.getFileService().createDirectory(URI.create(filename), "imagesTemp");
             } catch (Exception ioe) {
                 myLogger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());

@@ -12,7 +12,6 @@
 package de.sub.goobi.export.download;
 
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -119,7 +118,7 @@ public class ExportMetsWithoutHibernate {
         String target = inTargetFolder;
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         try {
-            FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+            serviceManager.getFileService().createDirectoryForUser(target, myBenutzer.getLogin());
         } catch (Exception e) {
             Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
         }

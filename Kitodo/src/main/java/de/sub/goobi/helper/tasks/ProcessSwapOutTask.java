@@ -12,7 +12,6 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -31,7 +30,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapOutTask extends LongRunningTask {
-    private final ServiceManager serviceManager = new ServiceManager();
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Copies all files under srcDir to dstDir. If dstDir does not exist, it
@@ -51,7 +50,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
                         kitodoPathLength, inRoot);
             }
         } else {
-            Long crc = CopyFile.start(srcDir, dstDir);
+            Long crc = serviceManager.getFileService().start(srcDir, dstDir);
             Element file = new Element("file");
             file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLength));
             file.setAttribute("crc32", String.valueOf(crc));

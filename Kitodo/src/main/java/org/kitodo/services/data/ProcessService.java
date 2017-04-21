@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.metadaten.MetadatenHelper;
@@ -24,6 +23,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -63,6 +63,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 import ugh.dl.DigitalDocument;
@@ -93,7 +94,7 @@ public class ProcessService extends TitleSearchService {
     private ProcessDAO processDao = new ProcessDAO();
     private ProcessType processType = new ProcessType();
     private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
-    private UserService userService = new UserService();
+    private ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor with searcher's assigning.
@@ -260,7 +261,7 @@ public class ProcessService extends TitleSearchService {
         if (MetadatenSperrung.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
-                result = userService.find(Integer.valueOf(userID));
+                result = serviceManager.getUserService().find(Integer.valueOf(userID));
             } catch (Exception e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }
@@ -341,14 +342,14 @@ public class ProcessService extends TitleSearchService {
             tifOrdner = process.getTitle() + "_" + DIRECTORY_SUFFIX;
         }
 
-        String result = getImagesDirectory(process) + tifOrdner;
+        String result = getImagesDirectory(process);
 
         if (!result.endsWith(File.separator)) {
             result += File.separator;
         }
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            FilesystemHelper.createDirectory(result);
+            serviceManager.getFileService().createDirectory(URI.create(result), tifOrdner);
         }
         return result;
     }
@@ -432,10 +433,10 @@ public class ProcessService extends TitleSearchService {
             if (origOrdner.equals("")) {
                 origOrdner = DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX;
             }
-            String rueckgabe = getImagesDirectory(process) + origOrdner + File.separator;
+            String rueckgabe = getImagesDirectory(process);
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                FilesystemHelper.createDirectory(rueckgabe);
+                serviceManager.getFileService().createDirectory(URI.create(rueckgabe), origOrdner);
             }
             return rueckgabe;
         } else {
@@ -452,8 +453,8 @@ public class ProcessService extends TitleSearchService {
      */
     public String getImagesDirectory(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = getProcessDataDirectory(process) + "images" + File.separator;
-        FilesystemHelper.createDirectory(pfad);
+        String pfad = getProcessDataDirectory(process);
+        serviceManager.getFileService().createDirectory(URI.create(pfad), "images");
         return pfad;
     }
 
@@ -555,9 +556,11 @@ public class ProcessService extends TitleSearchService {
      */
     public String getProcessDataDirectoryIgnoreSwapping(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = this.help.getKitodoDataDirectory() + process.getId() + File.separator;
+        String pfad = this.help.getKitodoDataDirectory();
         pfad = pfad.replaceAll(" ", "__");
-        FilesystemHelper.createDirectory(pfad);
+        String processId = process.getId().toString();
+        processId = processId.replaceAll(" ", "__");
+        serviceManager.getFileService().createDirectory(URI.create(pfad), processId);
         return pfad;
     }
 
@@ -897,7 +900,7 @@ public class ProcessService extends TitleSearchService {
                         temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
                 temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
                         temporaryAnchorFileName);
-                FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+                serviceManager.getFileService().renameFile(temporaryAnchorFileName, anchorFileName);
             }
         }
     }
@@ -943,7 +946,7 @@ public class ProcessService extends TitleSearchService {
         backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
-            FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
+            serviceManager.getFileService().renameFile(temporaryMetadataFileName, metadataFileName);
             removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
         }
     }
@@ -1205,8 +1208,8 @@ public class ProcessService extends TitleSearchService {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(process),
-                    processDir.replace("(processtitle)", process.getTitle())));
+            serviceManager.getFileService().createDirectory(URI.create(this.getProcessDataDirectory(process)),
+                    processDir.replace("(processtitle)", process.getTitle()));
         }
 
     }
