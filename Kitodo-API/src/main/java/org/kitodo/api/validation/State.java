@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.generator;
+package org.kitodo.api.validation;
 
-public interface GeneratorInterface {
+public enum State {
+
+    SUCCESS, WARNING, ERROR;
 }

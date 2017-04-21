@@ -13,7 +13,11 @@ package org.kitodo.api.externaldatamanagement;
 
 import java.util.ArrayList;
 
+import javax.swing.event.EventListenerList;
+
 public interface ExternalDataManagementInterface {
+
+    EventListenerList externalDataListeners = new EventListenerList();
 
     /**
      * Searches for Data in a given source by term and field.
@@ -26,7 +30,18 @@ public interface ExternalDataManagementInterface {
      *            The source to search in.
      * @return A list of result data.
      */
-    ArrayList<ImportData> getData(String field, String term, Source source);
+    ArrayList<ImportData> getEntry(String field, String term, Source source);
+
+    /**
+     * Searches for Data in a given source by term and field.
+     *
+     * @param ids
+     *            The ids from the entries to get.
+     * @param source
+     *            The source to search in.
+     * @return A list of result data.
+     */
+    ArrayList<ImportData> getMultipleEntries(ArrayList<String> ids, Source source);
 
     /**
      * A method from the listener pattern, adds a listener.

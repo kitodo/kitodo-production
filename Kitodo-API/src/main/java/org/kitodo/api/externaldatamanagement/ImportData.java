@@ -11,7 +11,7 @@
 
 package org.kitodo.api.externaldatamanagement;
 
-import java.io.File;
+import java.net.URI;
 import java.util.HashMap;
 
 public class ImportData {
@@ -20,7 +20,7 @@ public class ImportData {
     private HashMap<String, String> data;
 
     /** The imported data as a file. */
-    private File resultFile;
+    private URI resultFileUri;
 
     /**
      * Gets the data.
@@ -42,21 +42,21 @@ public class ImportData {
     }
 
     /**
-     * Gets the resultFile.
+     * Gets the resultFileUri.
      * 
-     * @return The resultFile.
+     * @return The resultFileUri.
      */
-    public File getResultFile() {
-        return resultFile;
+    public URI getResultFileUri() {
+        return resultFileUri;
     }
 
     /**
-     * Sets the resultFile.
+     * Sets the resultFileUri.
      * 
-     * @param resultFile
-     *            The resultFile.
+     * @param resultFileUri
+     *            The resultFileUri.
      */
-    public void setResultFile(File resultFile) {
-        this.resultFile = resultFile;
+    public void setResultFileUri(URI resultFileUri) {
+        this.resultFileUri = resultFileUri;
     }
 }

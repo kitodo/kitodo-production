@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class ValidationResult {
 
     /** If the validation is valid. */
-    private boolean valid;
+    private State valid;
 
     /** A list of result messages. */
     private ArrayList<String> resultMessages;
@@ -26,7 +26,7 @@ public class ValidationResult {
      * 
      * @return The valid.
      */
-    public boolean isValid() {
+    public State isValid() {
         return valid;
     }
 
@@ -36,7 +36,7 @@ public class ValidationResult {
      * @param valid
      *            The valid.
      */
-    public void setValid(boolean valid) {
+    public void setValid(State valid) {
         this.valid = valid;
     }
 

@@ -11,7 +11,7 @@
 
 package org.kitodo.api.validation.longtimepreservation;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
@@ -21,12 +21,12 @@ public interface LongTimePreservationValidationInterface extends ValidationInter
     /**
      * Validates an image for longTimePreservation.
      *
-     * @param imageFilePath
-     *            The path to the image, which should be validated.
+     * @param imageFileUri
+     *            The uri to the image, which should be validated.
      * @param fileType
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    ValidationResult validate(Path imageFilePath, FileType fileType);
+    ValidationResult validate(URI imageFileUri, FileType fileType);
 
 }

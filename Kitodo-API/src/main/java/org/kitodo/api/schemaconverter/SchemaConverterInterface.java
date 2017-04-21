@@ -11,21 +11,21 @@
 
 package org.kitodo.api.schemaconverter;
 
-import java.io.File;
+import java.net.URI;
 
 public interface SchemaConverterInterface {
 
     /**
      * Converts a given file with given Format to a result format.
      *
-     * @param inputFile
-     *            The file to convert.
+     * @param inputFileUri
+     *            The uri to the file to convert.
      * @param baseFormat
      *            The Format of the given File.
      * @param resultFormat
      *            The Format of the resultFile.
-     * @return The converted File.
+     * @return The uri to the converted File.
      */
-    File convert(File inputFile, SchemaFormat baseFormat, SchemaFormat resultFormat);
+    URI convert(URI inputFileUri, SchemaFormat baseFormat, SchemaFormat resultFormat);
 
 }
