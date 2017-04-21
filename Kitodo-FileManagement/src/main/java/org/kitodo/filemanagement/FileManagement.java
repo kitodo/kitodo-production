@@ -12,12 +12,12 @@
 package org.kitodo.filemanagement;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.apache.commons.io.FileUtils;
 import org.kitodo.api.filemanagement.FileManagementInterface;
@@ -30,9 +30,8 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public OutputStream write(URI uri) throws IOException {
-        URL url = uri.toURL();
-        URLConnection urlConnection = url.openConnection();
-        return urlConnection.getOutputStream();
+        OutputStream outputStream = new FileOutputStream(new File(uri));
+        return outputStream;
     }
 
     @Override
@@ -66,9 +65,12 @@ public class FileManagement implements FileManagementInterface {
         if (!processImageDirectory.mkdir()) {
             throw new IOException("Could not create image directory");
         }
-        URI processMetaFile = createResource(processRootDirectory.toURI(), "meta.xml");
+        URI processMetaFileUri = createResource(processRootDirectory.toURI(), "meta.xml");
+        File processMetaFile = new File(processMetaFileUri);
+        processMetaFile.getParentFile().mkdirs();
+        processMetaFile.createNewFile();
 
-        return new ProcessLocation(processRootDirectory.toURI(), processImageDirectory.toURI(), processMetaFile);
+        return new ProcessLocation(processRootDirectory.toURI(), processImageDirectory.toURI(), processMetaFileUri);
 
     }
 
