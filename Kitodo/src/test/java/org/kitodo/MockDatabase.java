@@ -611,6 +611,9 @@ public class MockDatabase {
         // session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
     }
 
+    /**
+     * Clean index after tests.
+     */
     public static void cleanIndex() throws IOException, CustomResponseException {
         IndexRestClient restClient = new IndexRestClient();
         restClient.initiateClient();
