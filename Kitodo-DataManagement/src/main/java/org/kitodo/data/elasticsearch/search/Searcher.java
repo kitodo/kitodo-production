@@ -12,15 +12,18 @@
 package org.kitodo.data.elasticsearch.search;
 
 import java.io.IOException;
-import java.util.*;
-
-import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.elasticsearch.Index;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Implementation of Elastic Search Searcher for Kitodo - Data Management
@@ -55,7 +58,7 @@ public class Searcher extends Index {
      *            of searched documents
      * @return amount of documents as Long
      */
-    public Long countDocuments(String query) throws IOException, ParseException {
+    public Long countDocuments(String query) throws CustomResponseException, IOException, ParseException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
@@ -75,7 +78,7 @@ public class Searcher extends Index {
      *            of searched document
      * @return search result
      */
-    public SearchResult findDocument(Integer id) throws IOException, ParseException {
+    public SearchResult findDocument(Integer id) throws CustomResponseException, IOException, ParseException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
@@ -96,7 +99,7 @@ public class Searcher extends Index {
      *            as String
      * @return search result
      */
-    public SearchResult findDocument(String query) throws IOException, ParseException {
+    public SearchResult findDocument(String query) throws CustomResponseException, IOException, ParseException {
         SearchRestClient restClient = initiateRestClient();
         SearchResult searchResult = new SearchResult();
         JSONParser parser = new JSONParser();
@@ -122,7 +125,7 @@ public class Searcher extends Index {
      *            as String
      * @return list of SearchResult objects
      */
-    public List<SearchResult> findDocuments(String query) throws IOException, ParseException {
+    public List<SearchResult> findDocuments(String query) throws CustomResponseException, IOException, ParseException {
         SearchRestClient restClient = initiateRestClient();
         List<SearchResult> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();

@@ -23,7 +23,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -49,7 +49,7 @@ public class BatchService extends SearchService {
      * @param batch
      *            object
      */
-    public void save(Batch batch) throws DAOException, IOException, ResponseException {
+    public void save(Batch batch) throws CustomResponseException, DAOException, IOException {
         batchDao.save(batch);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
@@ -81,7 +81,7 @@ public class BatchService extends SearchService {
      * @param batch
      *            object
      */
-    public void remove(Batch batch) throws DAOException, IOException, ResponseException {
+    public void remove(Batch batch) throws CustomResponseException, DAOException, IOException {
         batchDao.remove(batch);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
@@ -94,7 +94,7 @@ public class BatchService extends SearchService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
         batchDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -120,7 +120,7 @@ public class BatchService extends SearchService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), batchType);
     }

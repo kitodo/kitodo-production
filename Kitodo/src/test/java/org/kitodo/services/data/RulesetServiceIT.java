@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
@@ -32,7 +32,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class RulesetServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -72,9 +72,9 @@ public class RulesetServiceIT {
     public void shouldFindByTitle() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        SearchResult ruleset = rulesetService.findByTitle("SLUBDD", true);
-        String actual = ruleset.getProperties().get("title");
-        String expected = "SLUBDD";
+        List<SearchResult> rulesets = rulesetService.findByTitle("SLUBDD", true);
+        Integer actual = rulesets.size();
+        Integer expected = 1;
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
 

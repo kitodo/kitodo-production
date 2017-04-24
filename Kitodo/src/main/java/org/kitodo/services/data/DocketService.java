@@ -17,13 +17,12 @@ import java.io.IOException;
 import java.util.List;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.DocketType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
@@ -57,7 +56,7 @@ public class DocketService extends TitleSearchService {
      * @param docket
      *            object
      */
-    public void save(Docket docket) throws DAOException, IOException, ResponseException {
+    public void save(Docket docket) throws CustomResponseException, DAOException, IOException {
         docketDao.save(docket);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(docket, docketType);
@@ -70,7 +69,7 @@ public class DocketService extends TitleSearchService {
      * @param docket
      *            object
      */
-    public void remove(Docket docket) throws DAOException, IOException, ResponseException {
+    public void remove(Docket docket) throws CustomResponseException, DAOException, IOException {
         docketDao.remove(docket);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(docket, docketType);
@@ -91,7 +90,7 @@ public class DocketService extends TitleSearchService {
      *            of the searched docket
      * @return search result
      */
-    public SearchResult findByFile(String file) throws IOException, ParseException {
+    public SearchResult findByFile(String file) throws CustomResponseException, IOException, ParseException {
         QueryBuilder query = createSimpleQuery("file", file, true);
         return searcher.findDocument(query.toString());
     }
@@ -105,7 +104,8 @@ public class DocketService extends TitleSearchService {
      *            of the searched docket
      * @return search result
      */
-    public SearchResult findByTitleAndFile(String title, String file) throws IOException, ParseException {
+    public SearchResult findByTitleAndFile(String title, String file)
+            throws CustomResponseException, IOException, ParseException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true));
         query.must(createSimpleQuery("file", file, true));
@@ -121,7 +121,8 @@ public class DocketService extends TitleSearchService {
      *            of the searched docket
      * @return search result
      */
-    public List<SearchResult> findByTitleOrFile(String title, String file) throws IOException, ParseException {
+    public List<SearchResult> findByTitleOrFile(String title, String file)
+            throws CustomResponseException, IOException, ParseException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true));
         query.should(createSimpleQuery("file", file, true));
@@ -132,7 +133,7 @@ public class DocketService extends TitleSearchService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), docketType);
     }

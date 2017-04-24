@@ -32,7 +32,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.exceptions.PreferencesException;
@@ -185,7 +185,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return int
      */
     public static int generateProcess(String processTitle, Process vorlage, SafeFile dir, String digitalCollection,
-            String updateStrategy) throws ResponseException {
+            String updateStrategy) throws CustomResponseException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -356,7 +356,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws ResponseException {
+    public static Process generateProcess(ImportObject io, Process vorlage) throws CustomResponseException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);

@@ -25,7 +25,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.SimpleDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class BenutzergruppenForm extends BasisForm {
@@ -53,7 +53,7 @@ public class BenutzergruppenForm extends BasisForm {
         } catch (IOException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             return "";
-        } catch (ResponseException e) {
+        } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
             return "";
         }
@@ -85,7 +85,7 @@ public class BenutzergruppenForm extends BasisForm {
         } catch (IOException e) {
             Helper.setFehlerMeldung("Error, could not delete from index", e.getMessage());
             return "";
-        } catch (ResponseException e) {
+        } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
             return "";
         }

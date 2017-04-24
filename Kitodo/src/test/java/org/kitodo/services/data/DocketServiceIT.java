@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
@@ -32,7 +32,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class DocketServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -72,9 +72,9 @@ public class DocketServiceIT {
     public void shouldFindByTitle() throws Exception {
         DocketService docketService = new DocketService();
 
-        SearchResult docket = docketService.findByTitle("default", true);
-        String actual = docket.getProperties().get("title");
-        String expected = "default";
+        List<SearchResult> dockets = docketService.findByTitle("default", true);
+        Integer actual = dockets.size();
+        Integer expected = 1;
         assertEquals("Docket was not found in index!", expected, actual);
     }
 

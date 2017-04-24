@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Tests for UserGroupService class.
@@ -30,12 +30,12 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 public class UserGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, ResponseException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
-    public static void cleanDatabaseAndIndex() throws IOException, ResponseException {
+    public static void cleanDatabaseAndIndex() throws IOException, CustomResponseException {
         // MockDatabase.cleanDatabase();
     }
 

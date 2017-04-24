@@ -14,11 +14,11 @@ package org.kitodo.data.elasticsearch.exceptions;
 /**
  * Exception for checking code statuses from server responses.
  */
-public class ResponseException extends Exception {
+public class CustomResponseException extends Exception {
 
     private static final long serialVersionUID = 1997753363232807009L;
 
-    public ResponseException(String message) {
+    public CustomResponseException(String message) {
         super(message);
     }
 }

@@ -17,7 +17,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
 import static org.junit.Assert.assertTrue;
@@ -28,14 +28,14 @@ import static org.junit.Assert.assertTrue;
 public class SearchRestClientIT {
 
     @BeforeClass
-    public static void prepareIndex() throws IOException, ResponseException {
+    public static void prepareIndex() throws IOException, CustomResponseException {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
     }
 
     @AfterClass
-    public static void cleanIndex() throws IOException, ResponseException {
+    public static void cleanIndex() throws IOException, CustomResponseException {
         IndexRestClient restClient = initializeIndexRestClient();
         restClient.deleteIndex();
     }

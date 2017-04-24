@@ -25,7 +25,7 @@ import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class BatchProcessHelper {
@@ -123,7 +123,7 @@ public class BatchProcessHelper {
     /**
      * Save current property.
      */
-    public void saveCurrentProperty() throws IOException, ResponseException {
+    public void saveCurrentProperty() throws IOException, CustomResponseException {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
@@ -169,7 +169,7 @@ public class BatchProcessHelper {
     /**
      * Save current property for all.
      */
-    public void saveCurrentPropertyForAll() throws IOException, ResponseException {
+    public void saveCurrentPropertyForAll() throws IOException, CustomResponseException {
         List<ProcessProperty> ppList = getContainerProperties();
         boolean error = false;
         for (ProcessProperty pp : ppList) {
@@ -373,7 +373,7 @@ public class BatchProcessHelper {
      *
      * @return String
      */
-    public String duplicateContainerForSingle() throws IOException, ResponseException {
+    public String duplicateContainerForSingle() throws IOException, CustomResponseException {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container
@@ -412,7 +412,7 @@ public class BatchProcessHelper {
      * 
      * @return String
      */
-    public String duplicateContainerForAll() throws IOException, ResponseException {
+    public String duplicateContainerForAll() throws IOException, CustomResponseException {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container

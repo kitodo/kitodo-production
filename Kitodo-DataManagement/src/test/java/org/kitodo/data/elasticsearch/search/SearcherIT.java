@@ -15,14 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
 /**
@@ -31,14 +30,14 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 public class SearcherIT {
 
     @BeforeClass
-    public static void prepareIndex() throws IOException, ResponseException {
+    public static void prepareIndex() throws IOException, CustomResponseException {
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
     }
 
     @AfterClass
-    public static void cleanIndex() throws IOException, ResponseException {
+    public static void cleanIndex() throws IOException, CustomResponseException {
         IndexRestClient restClient = initializeIndexRestClient();
         restClient.deleteIndex();
     }

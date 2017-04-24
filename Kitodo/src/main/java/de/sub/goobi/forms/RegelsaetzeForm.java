@@ -26,7 +26,7 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class RegelsaetzeForm extends BasisForm {
@@ -61,7 +61,7 @@ public class RegelsaetzeForm extends BasisForm {
         } catch (IOException e) {
             logger.error(e);
             return "";
-        } catch (ResponseException e) {
+        } catch (CustomResponseException e) {
             logger.error("ElasticSearch server incorrect response",e);
             return "";
         }
@@ -91,7 +91,7 @@ public class RegelsaetzeForm extends BasisForm {
         } catch (IOException e) {
             logger.error(e);
             return "";
-        } catch (ResponseException e) {
+        } catch (CustomResponseException e) {
             logger.error("ElasticSearch server incorrect response",e);
             return "";
         }

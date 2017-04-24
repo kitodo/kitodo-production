@@ -34,7 +34,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -414,7 +414,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             thrown while performing the rollback
      */
     private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle)
-            throws DAOException, IOException, ResponseException {
+            throws DAOException, IOException, CustomResponseException {
         if (createBatches != null) {
             int lastIndex = issues.size() - 1;
             int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
@@ -441,7 +441,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             if the current session can't be retrieved or an exception is
      *             thrown while performing the rollback
      */
-    private void flushLogisticsBatch(String processTitle) throws DAOException, IOException, ResponseException {
+    private void flushLogisticsBatch(String processTitle) throws DAOException, IOException, CustomResponseException {
         if (serviceManager.getBatchService().size(logisticsBatch) > 0) {
             logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
             serviceManager.getBatchService().save(logisticsBatch);
@@ -471,7 +471,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             if the current session can't be retrieved or an exception is
      *             thrown while performing the rollback
      */
-    private void saveFullBatch(String theProcessTitle) throws DAOException, IOException, ResponseException {
+    private void saveFullBatch(String theProcessTitle) throws DAOException, IOException, CustomResponseException {
         fullBatch.setTitle(firstGroupFrom(theProcessTitle));
         serviceManager.getBatchService().save(fullBatch);
     }

@@ -28,6 +28,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
@@ -64,7 +65,7 @@ public abstract class SearchService {
      *
      * @return list of all documents
      */
-    public List<SearchResult> findAllDocuments() throws IOException, ParseException {
+    public List<SearchResult> findAllDocuments() throws CustomResponseException, IOException, ParseException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -76,7 +77,7 @@ public abstract class SearchService {
      *            of the searched user
      * @return search result
      */
-    public SearchResult findById(Integer id) throws IOException, ParseException {
+    public SearchResult findById(Integer id) throws CustomResponseException, IOException, ParseException {
         return searcher.findDocument(id);
     }
 
@@ -87,8 +88,8 @@ public abstract class SearchService {
      *            list of results from ElasticSearch
      * @return list of users
      */
-    public List<? extends BaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults,
-                                                                     String table) throws DAOException, IOException {
+    public List<? extends BaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults, String table)
+            throws DAOException, IOException {
         StringBuilder query = new StringBuilder();
         query.append("FROM ");
         query.append(table);
@@ -109,7 +110,8 @@ public abstract class SearchService {
      * @param key
      *            JSON key for searched object
      * @param id
-     *            id value for searched object or some object related to searched object
+     *            id value for searched object or some object related to
+     *            searched object
      * @param contains
      *            determine if results should contain given value or should not
      *            contain given value

@@ -19,7 +19,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.HistoryType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -48,7 +48,7 @@ public class HistoryService extends SearchService {
      * @param history
      *            object
      */
-    public void save(History history) throws DAOException, IOException, ResponseException {
+    public void save(History history) throws CustomResponseException, DAOException, IOException {
         historyDao.save(history);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(history, historyType);
@@ -80,7 +80,7 @@ public class HistoryService extends SearchService {
      * @param history
      *            object
      */
-    public void remove(History history) throws DAOException, IOException, ResponseException {
+    public void remove(History history) throws CustomResponseException, DAOException, IOException {
         historyDao.remove(history);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(history, historyType);
@@ -93,7 +93,7 @@ public class HistoryService extends SearchService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
         historyDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -102,7 +102,7 @@ public class HistoryService extends SearchService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), historyType);
     }
