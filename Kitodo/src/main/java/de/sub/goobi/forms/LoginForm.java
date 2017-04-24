@@ -82,7 +82,7 @@ public class LoginForm {
                         this.login);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not read database", e.getMessage());
-                return "";
+                return null;
             }
             if (treffer != null && treffer.size() > 0) {
                 /* Login vorhanden, nun passwort prüfen */
@@ -93,7 +93,7 @@ public class LoginForm {
                  */
                 if (!b.isActive()) {
                     Helper.setFehlerMeldung("login", "", Helper.getTranslation("loginInactive"));
-                    return "";
+                    return null;
                 }
                 /* wenn passwort auch richtig ist, den benutzer übernehmen */
                 if (serviceManager.getUserService().isPasswordCorrect(b, this.password)) {
@@ -126,9 +126,9 @@ public class LoginForm {
             String tempCss = this.myBenutzer.getCss();
             String newCss = new HelperForm().getCssLinkIfExists(tempCss);
             this.myBenutzer.setCss(newCss);
-            return "";
+            return null;
         }
-        return "";
+        return null;
     }
 
     /**
