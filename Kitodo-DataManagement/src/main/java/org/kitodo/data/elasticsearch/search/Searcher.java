@@ -60,8 +60,12 @@ public class Searcher extends Index {
         JSONParser parser = new JSONParser();
 
         String response = restClient.countDocuments(query);
-        JSONObject result = (JSONObject) parser.parse(response);
-        return (Long) result.get("count");
+        if (!response.equals("")) {
+            JSONObject result = (JSONObject) parser.parse(response);
+            return (Long) result.get("count");
+        } else {
+            return new Long(0);
+        }
     }
 
     /**
@@ -76,8 +80,12 @@ public class Searcher extends Index {
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(id);
-        JSONObject result = (JSONObject) parser.parse(response);
-        return convertJsonStringToSearchResult(result);
+        if (!response.equals("")) {
+            JSONObject result = (JSONObject) parser.parse(response);
+            return convertJsonStringToSearchResult(result);
+        } else {
+            return new SearchResult();
+        }
     }
 
     /**
