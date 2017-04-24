@@ -18,13 +18,17 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
 
 /**
  * Extension of KitodoRestClient for search package.
  */
 public class SearchRestClient extends KitodoRestClient {
+
+    private static final Logger logger = Logger.getLogger(SearchRestClient.class);
 
     /**
      * Count amount of documents responding to given query.
@@ -34,10 +38,16 @@ public class SearchRestClient extends KitodoRestClient {
      * @return http entity as String
      */
     public String countDocuments(String query) throws IOException {
+        String output = "";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_count",
-                Collections.singletonMap("pretty", "true"), entity);
-        return EntityUtils.toString(response.getEntity());
+        try {
+            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_count",
+                    Collections.singletonMap("pretty", "true"), entity);
+            output = EntityUtils.toString(response.getEntity());
+        } catch (ResponseException e) {
+            logger.debug(e.getMessage());
+        }
+        return output;
     }
 
     /**
@@ -48,9 +58,15 @@ public class SearchRestClient extends KitodoRestClient {
      * @return http entity as String
      */
     public String getDocument(Integer id) throws IOException {
-        Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
-                Collections.singletonMap("pretty", "true"));
-        return EntityUtils.toString(response.getEntity());
+        String output = "";
+        try {
+            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
+                    Collections.singletonMap("pretty", "true"));
+            output = EntityUtils.toString(response.getEntity());
+        } catch (ResponseException e) {
+            logger.debug(e.getMessage());
+        }
+        return output;
     }
 
     /**
@@ -61,10 +77,16 @@ public class SearchRestClient extends KitodoRestClient {
      * @return http entity as String
      */
     public String getDocument(String query) throws IOException {
+        String output = "";
         String wrappedQuery = "{\n \"query\": " + query + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search",
-                Collections.singletonMap("pretty", "true"), entity);
-        return EntityUtils.toString(response.getEntity());
+        try {
+            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search",
+                    Collections.singletonMap("pretty", "true"), entity);
+            output = EntityUtils.toString(response.getEntity());
+        } catch (ResponseException e) {
+            logger.debug(e.getMessage());
+        }
+        return output;
     }
 }
