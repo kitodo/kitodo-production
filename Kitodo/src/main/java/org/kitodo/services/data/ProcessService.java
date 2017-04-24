@@ -63,7 +63,7 @@ import org.kitodo.data.elasticsearch.exceptions.ResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.services.data.base.SearchService;
+import org.kitodo.services.data.base.TitleSearchService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
@@ -75,7 +75,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService extends SearchService {
+public class ProcessService extends TitleSearchService {
 
     private static final Logger myLogger = Logger.getLogger(ProcessService.class);
 
