@@ -15,12 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
@@ -150,8 +145,11 @@ public class SpracheForm {
                 frame.setLocale(locale);
             }
             return locale;
-        } else {
+        } else if (!Objects.equals(frame, null)) {
             return frame.getLocale();
+        } else {
+            // workaround for session object not containing 'locale' value
+            return Locale.ENGLISH;
         }
     }
 
