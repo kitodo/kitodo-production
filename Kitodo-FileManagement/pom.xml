@@ -30,9 +30,9 @@
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.3.2</version>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
@@ -44,6 +44,39 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.21</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <!-- The resources will be placed in reversed order in the war
+              that means first entry will be added as last resource and may override other resources -->
+            <resource>
+                <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
+                <directory>../config-local</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+    </build>
 
 </project>
