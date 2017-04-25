@@ -41,7 +41,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
-import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
@@ -288,7 +287,7 @@ public class ProcessService extends TitleSearchService {
      */
     public String getImagesTifDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        SafeFile dir = new SafeFile(getImagesDirectory(process));
+        File dir = new File(getImagesDirectory(process));
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -324,7 +323,7 @@ public class ProcessService extends TitleSearchService {
         if (!tifOrdner.equals("") && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                SafeFile tif = new SafeFile(tifOrdner);
+                File tif = new File(tifOrdner);
                 String[] files = tif.list();
                 if (files == null || files.length == 0) {
                     String[] folderList = dir.list();
@@ -360,9 +359,9 @@ public class ProcessService extends TitleSearchService {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean checkIfTifDirectoryExists(Process process) {
-        SafeFile testMe;
+        File testMe;
         try {
-            testMe = new SafeFile(getImagesTifDirectory(true, process));
+            testMe = new File(getImagesTifDirectory(true, process));
         } catch (DAOException | IOException | InterruptedException | SwapException e) {
             return false;
         }
@@ -383,7 +382,7 @@ public class ProcessService extends TitleSearchService {
     public String getImagesOrigDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
-            SafeFile dir = new SafeFile(getImagesDirectory(process));
+            File dir = new File(getImagesDirectory(process));
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -416,7 +415,7 @@ public class ProcessService extends TitleSearchService {
             if (!origOrdner.equals("") && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    SafeFile tif = new SafeFile(origOrdner);
+                    File tif = new File(origOrdner);
                     String[] files = tif.list();
                     if (files == null || files.length == 0) {
                         String[] folderList = dir.list();
@@ -467,22 +466,22 @@ public class ProcessService extends TitleSearchService {
      */
     public String getSourceDirectory(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        SafeFile dir = new SafeFile(getImagesDirectory(process));
+        File dir = new File(getImagesDirectory(process));
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith("_" + "source"));
             }
         };
-        SafeFile sourceFolder = null;
+        File sourceFolder = null;
         String[] verzeichnisse = dir.list(filterVerz);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new SafeFile(dir, process.getTitle() + "_source");
+            sourceFolder = new File(dir, process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                 sourceFolder.mkdir();
             }
         } else {
-            sourceFolder = new SafeFile(dir, verzeichnisse[0]);
+            sourceFolder = new File(dir, verzeichnisse[0]);
         }
 
         return sourceFolder.getAbsolutePath();
@@ -506,7 +505,7 @@ public class ProcessService extends TitleSearchService {
             pst.setShowMessages(true);
             pst.run();
             if (pst.getException() != null) {
-                if (!new SafeFile(path, "images").exists() && !new SafeFile(path, "meta.xml").exists()) {
+                if (!new File(path, "images").exists() && !new File(path, "meta.xml").exists()) {
                     throw new SwapException(pst.getException().getMessage());
                 } else {
                     process.setSwappedOutGui(false);
@@ -872,7 +871,7 @@ public class ProcessService extends TitleSearchService {
     private boolean checkForMetadataFile(Process process)
             throws IOException, InterruptedException, SwapException, DAOException, PreferencesException {
         boolean result = true;
-        SafeFile f = new SafeFile(getMetadataFilePath(process));
+        File f = new File(getMetadataFilePath(process));
         if (!f.exists()) {
             result = false;
         }
@@ -882,7 +881,7 @@ public class ProcessService extends TitleSearchService {
 
     private String getTemporaryMetadataFileName(String fileName) {
 
-        SafeFile temporaryFile = new SafeFile(fileName);
+        File temporaryFile = new File(fileName);
         String directoryPath = temporaryFile.getParentFile().getPath();
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
@@ -890,9 +889,9 @@ public class ProcessService extends TitleSearchService {
     }
 
     private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
-        SafeFile temporaryFile = new SafeFile(temporaryMetadataFilename);
-        SafeFile directoryPath = new SafeFile(temporaryFile.getParentFile().getPath());
-        for (SafeFile temporaryAnchorFile : directoryPath.listFiles()) {
+        File temporaryFile = new File(temporaryMetadataFilename);
+        File directoryPath = new File(temporaryFile.getParentFile().getPath());
+        for (File temporaryAnchorFile : directoryPath.listFiles()) {
             String temporaryAnchorFileName = temporaryAnchorFile.toString();
             if (temporaryAnchorFile.isFile()
                     && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
@@ -918,7 +917,7 @@ public class ProcessService extends TitleSearchService {
         RulesetService rulesetService = new RulesetService();
         boolean backupCondition;
         boolean writeResult;
-        SafeFile temporaryMetadataFile;
+        File temporaryMetadataFile;
         Fileformat ff;
         String metadataFileName;
         String temporaryMetadataFileName;
@@ -942,7 +941,7 @@ public class ProcessService extends TitleSearchService {
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
         // ff.write(getMetadataFilePath());
         writeResult = ff.write(temporaryMetadataFileName);
-        temporaryMetadataFile = new SafeFile(temporaryMetadataFileName);
+        temporaryMetadataFile = new File(temporaryMetadataFileName);
         backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
@@ -967,7 +966,7 @@ public class ProcessService extends TitleSearchService {
             throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
         RulesetService rulesetService = new RulesetService();
         Hibernate.initialize(process.getRuleset());
-        if (new SafeFile(getTemplateFilePath(process)).exists()) {
+        if (new File(getTemplateFilePath(process)).exists()) {
             Fileformat ff = null;
             String type = MetadatenHelper.getMetaFileType(getTemplateFilePath(process));
             if (myLogger.isDebugEnabled()) {
@@ -1044,9 +1043,9 @@ public class ProcessService extends TitleSearchService {
             myLogger.debug("generate docket for process " + process.getId());
         }
         String rootPath = ConfigCore.getParameter("xsltFolder");
-        SafeFile xsltFile = new SafeFile(rootPath, "docket.xsl");
+        File xsltFile = new File(rootPath, "docket.xsl");
         if (process.getDocket() != null) {
-            xsltFile = new SafeFile(rootPath, process.getDocket().getFile());
+            xsltFile = new File(rootPath, process.getDocket().getFile());
             if (!xsltFile.exists()) {
                 Helper.setFehlerMeldung("docketMissing");
                 return "";
@@ -1118,7 +1117,7 @@ public class ProcessService extends TitleSearchService {
             String folder = this.getImagesTifDirectory(false, process);
             folder = folder.substring(0, folder.lastIndexOf("_"));
             folder = folder + "_" + methodName;
-            if (new SafeFile(folder).exists()) {
+            if (new File(folder).exists()) {
                 return folder;
             }
         } catch (DAOException | InterruptedException | IOException | SwapException ex) {

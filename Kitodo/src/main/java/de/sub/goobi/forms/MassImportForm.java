@@ -213,7 +213,7 @@ public class MassImportForm {
      *
      * @return String
      */
-    public String convertData() {
+    public String convertData() throws IOException {
         this.processList = new ArrayList<Process>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");
@@ -351,7 +351,7 @@ public class MassImportForm {
         }
         String filename = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
 
-        serviceManager.getFileService().start(new File(this.uploadedFile.getName()), new File(filename));
+        serviceManager.getFileService().copyFile(new File(this.uploadedFile.getName()), new File(filename));
 
     }
 

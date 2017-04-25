@@ -25,6 +25,7 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -163,7 +163,7 @@ public class ExportMets {
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
         String imageFolderPath = serviceManager.getProcessService().getImagesDirectory(myProcess);
-        SafeFile imageFolder = new SafeFile(imageFolderPath);
+        File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
          */
@@ -222,7 +222,7 @@ public class ExportMets {
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
+            File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
             cf.setLocation(f.toURI().toString());
         }
 
@@ -241,7 +241,7 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    SafeFile folder = new SafeFile(
+                    File folder = new File(
                             serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
                     if (folder.exists() && folder.list().length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();

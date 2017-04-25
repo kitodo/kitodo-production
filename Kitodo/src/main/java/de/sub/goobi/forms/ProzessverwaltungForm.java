@@ -31,6 +31,7 @@ import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -60,7 +61,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -256,12 +256,12 @@ public class ProzessverwaltungForm extends BasisForm {
                         {
                             // renaming image directories
                             String imageDirectory = serviceManager.getProcessService().getImagesDirectory(myProzess);
-                            SafeFile dir = new SafeFile(imageDirectory);
+                            File dir = new File(imageDirectory);
                             if (dir.isDirectory()) {
-                                SafeFile[] subdirs = dir.listFiles();
-                                for (SafeFile imagedir : subdirs) {
+                                File[] subdirs = dir.listFiles();
+                                for (File imagedir : subdirs) {
                                     if (imagedir.isDirectory()) {
-                                        imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath()
+                                        imagedir.renameTo(new File(imagedir.getAbsolutePath()
                                                 .replace(myProzess.getTitle(), myNewProcessTitle)));
                                     }
                                 }
@@ -270,12 +270,12 @@ public class ProzessverwaltungForm extends BasisForm {
                         {
                             // renaming ocr directories
                             String ocrDirectory = serviceManager.getProcessService().getOcrDirectory(myProzess);
-                            SafeFile dir = new SafeFile(ocrDirectory);
+                            File dir = new File(ocrDirectory);
                             if (dir.isDirectory()) {
-                                SafeFile[] subdirs = dir.listFiles();
-                                for (SafeFile imagedir : subdirs) {
+                                File[] subdirs = dir.listFiles();
+                                for (File imagedir : subdirs) {
                                     if (imagedir.isDirectory()) {
-                                        imagedir.renameTo(new SafeFile(imagedir.getAbsolutePath()
+                                        imagedir.renameTo(new File(imagedir.getAbsolutePath()
                                                 .replace(myProzess.getTitle(), myNewProcessTitle)));
                                     }
                                 }
@@ -290,9 +290,9 @@ public class ProzessverwaltungForm extends BasisForm {
                                         serviceManager.getProcessService().getProcessDataDirectory(myProzess),
                                         processDir.replace("(processtitle)", myProzess.getTitle()));
 
-                                SafeFile dir = new SafeFile(processDirAbsolut);
+                                File dir = new File(processDirAbsolut);
                                 if (dir.isDirectory()) {
-                                    dir.renameTo(new SafeFile(
+                                    dir.renameTo(new File(
                                             dir.getAbsolutePath().replace(myProzess.getTitle(), myNewProcessTitle)));
                                 }
                             }
@@ -357,13 +357,13 @@ public class ProzessverwaltungForm extends BasisForm {
     public String ContentLoeschen() {
         // deleteMetadataDirectory();
         try {
-            SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
+            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
-                ocr.deleteDir();
+                serviceManager.getFileService().delete(ocr.toURI());
             }
-            SafeFile images = new SafeFile(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
+            File images = new File(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
             if (images.exists()) {
-                images.deleteDir();
+                serviceManager.getFileService().delete(images.toURI());
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -379,10 +379,11 @@ public class ProzessverwaltungForm extends BasisForm {
             deleteSymlinksFromUserHomes();
         }
         try {
-            new SafeFile(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess)).deleteDir();
-            SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
+            serviceManager.getFileService().delete(
+                    new File(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess)).toURI());
+            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
-                ocr.deleteDir();
+                serviceManager.getFileService().delete(ocr.toURI());
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -1864,7 +1865,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public List<String> getXsltList() {
         List<String> answer = new ArrayList<String>();
-        SafeFile folder = new SafeFile("xsltFolder");
+        File folder = new File("xsltFolder");
         if (folder.isDirectory() && folder.exists()) {
             String[] files = folder.list();
 

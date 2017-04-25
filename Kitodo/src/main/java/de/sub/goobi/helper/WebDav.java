@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
@@ -64,7 +63,7 @@ public class WebDav implements Serializable {
             return rueckgabe;
         }
 
-        SafeFile benutzerHome = new SafeFile(directoryName);
+        File benutzerHome = new File(directoryName);
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -145,7 +144,7 @@ public class WebDav implements Serializable {
         /* prüfen, ob Benutzer Massenupload macht */
         if (inBenutzer.isWithMassDownload()) {
             nach += myProcess.getProject().getTitle() + File.separator;
-            SafeFile projectDirectory = new SafeFile(nach = nach.replaceAll(" ", "__"));
+            File projectDirectory = new File(nach = nach.replaceAll(" ", "__"));
             if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
                 List<String> param = new ArrayList<String>();
                 param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -158,7 +157,7 @@ public class WebDav implements Serializable {
 
         /* Leerzeichen maskieren */
         nach = nach.replaceAll(" ", "__");
-        SafeFile benutzerHome = new SafeFile(nach);
+        File benutzerHome = new File(nach);
 
         FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
     }
@@ -189,11 +188,11 @@ public class WebDav implements Serializable {
              * existieren
              */
             if (aktuellerBenutzer.isWithMassDownload()) {
-                SafeFile projekt = new SafeFile(userHome + myProcess.getProject().getTitle());
+                File projekt = new File(userHome + myProcess.getProject().getTitle());
                 serviceManager.getFileService().createDirectoryForUser(projekt.getAbsolutePath(),
                         aktuellerBenutzer.getLogin());
 
-                projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
+                projekt = new File(userHome + DONEDIRECTORYNAME);
                 serviceManager.getFileService().createDirectoryForUser(projekt.getAbsolutePath(),
                         aktuellerBenutzer.getLogin());
             }
@@ -224,8 +223,8 @@ public class WebDav implements Serializable {
             myLogger.info("nach: " + nach);
         }
 
-        SafeFile imagePfad = new SafeFile(von);
-        SafeFile benutzerHome = new SafeFile(nach);
+        File imagePfad = new File(von);
+        File benutzerHome = new File(nach);
 
         // wenn der Ziellink schon existiert, dann abbrechen
         if (benutzerHome.exists()) {
@@ -254,7 +253,7 @@ public class WebDav implements Serializable {
     private void saveTiffHeader(Process inProcess) {
         try {
             /* prüfen, ob Tiff-Header schon existiert */
-            if (new SafeFile(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
+            if (new File(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
                     .exists()) {
                 return;
             }
@@ -283,7 +282,7 @@ public class WebDav implements Serializable {
             User aktuellerBenutzer = Helper.getCurrentUser();
             String verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     + inVerzeichnis;
-            SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
+            File benutzerHome = new File(verzeichnisAlle);
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {

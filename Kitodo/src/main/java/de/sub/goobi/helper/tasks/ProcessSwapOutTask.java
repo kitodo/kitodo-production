@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 
-import org.goobi.io.SafeFile;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
@@ -29,6 +28,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class ProcessSwapOutTask extends LongRunningTask {
     private static final ServiceManager serviceManager = new ServiceManager();
@@ -38,7 +38,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * will be created.
      */
 
-    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int kitodoPathLength, Element inRoot)
+    static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int kitodoPathLength, Element inRoot)
             throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
@@ -51,10 +51,9 @@ public class ProcessSwapOutTask extends LongRunningTask {
                         kitodoPathLength, inRoot);
             }
         } else {
-            Long crc = serviceManager.getFileService().start(srcDir.getDelegate(), dstDir.getDelegate());
+            serviceManager.getFileService().copyDir(srcDir, dstDir);
             Element file = new Element("file");
             file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLength));
-            file.setAttribute("crc32", String.valueOf(crc));
             inRoot.addContent(file);
         }
     }
@@ -63,12 +62,13 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * Deletes all files and subdirectories under dir. But not the dir itself
      * and no metadata files.
      */
-    static boolean deleteDataInDir(SafeFile dir) {
+    static boolean deleteDataInDir(File dir) throws IOException {
+        FileService fileService = serviceManager.getFileService();
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (int i = 0; i < children.length; i++) {
                 if (!children[i].endsWith(".xml")) {
-                    boolean success = new SafeFile(dir, children[i]).deleteDir();
+                    boolean success = fileService.delete(new File(dir, children[i]).toURI());
                     if (!success) {
                         return false;
                     }
@@ -191,7 +191,11 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
         setStatusProgress(80);
-        deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
+        try {
+            deleteDataInDir(new File(fileIn.getAbsolutePath()));
+        } catch (IOException e) {
+            logger.warn("IOException, could not delete Data in Directory", e);
+        }
 
         /*
          * xml-Datei schreiben

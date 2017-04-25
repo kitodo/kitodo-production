@@ -23,12 +23,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.zip.CRC32;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.goobi.io.SafeFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,7 +153,7 @@ public class FileService {
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfFiles(SafeFile inDir) {
+    public Integer getNumberOfFiles(File inDir) {
         int anzahl = 0;
         if (inDir.isDirectory()) {
             /*
@@ -165,62 +166,38 @@ public class FileService {
              */
             String[] children = inDir.list();
             for (int i = 0; i < children.length; i++) {
-                anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));
+                anzahl += getNumberOfFiles(new File(inDir, children[i]));
             }
         }
         return anzahl;
     }
 
     public Integer getNumberOfFiles(String inDir) {
-        return getNumberOfFiles(new SafeFile(inDir));
-    }
-
-    private Long copyFile(File srcFile, File destFile) throws IOException {
-        // TODO use a better checksumming algorithm like SHA-1
-        CRC32 checksum = new CRC32();
-        checksum.reset();
-
-        try (InputStream in = read(srcFile.toURI()); OutputStream out = write(destFile.toURI())) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) >= 0) {
-                checksum.update(buffer, 0, bytesRead);
-                out.write(buffer, 0, bytesRead);
-            }
-        }
-        return Long.valueOf(checksum.getValue());
+        return getNumberOfFiles(new File(inDir));
     }
 
     /**
-     * Start copying of file.
+     * Copy directory.
      *
-     * @param srcFile
+     * @param srcDir
      *            source file
-     * @param destFile
+     * @param destDir
      *            destination file
      * @return Long
      */
-    public Long start(File srcFile, File destFile) throws IOException {
-        // make sure the source file is indeed a readable file
-        if (!srcFile.isFile() || !srcFile.canRead()) {
-            System.err.println("Not a readable file: " + srcFile.getName());
+    public void copyDir(File srcDir, File destDir) throws IOException {
+        if (!destDir.exists()) {
+            destDir.mkdirs();
         }
+        FileUtils.copyDirectory(srcDir, destDir, false);
+    }
 
-        // copy file, optionally creating a checksum
-        Long checksumSrc = copyFile(srcFile, destFile);
+    public void copyFile(File srcFile, File destFile) throws IOException {
+        FileUtils.copyFile(srcFile, destFile);
+    }
 
-        // copy timestamp of last modification
-        if (!destFile.setLastModified(srcFile.lastModified())) {
-            System.err.println("Error: Could not set " + "timestamp of copied file.");
-        }
-
-        // verify file
-        Long checksumDest = createChecksum(destFile);
-        if (checksumSrc.equals(checksumDest)) {
-            return checksumDest;
-        } else {
-            return Long.valueOf(0);
-        }
+    public void copyFileToDirectory(File srcFile, File destDir) throws IOException {
+        FileUtils.copyFileToDirectory(srcFile, destDir);
     }
 
     private Long createChecksum(File file) throws IOException {
@@ -266,5 +243,21 @@ public class FileService {
             return write(uri);
         }
         return write(new File(uri).toURI());
+    }
+
+    public void moveFile(File src, File dest) throws IOException {
+        FileUtils.moveFile(src, dest);
+    }
+
+    public void moveDirectory(File src, File destDir) throws IOException {
+        FileUtils.moveDirectory(src, destDir);
+    }
+
+    public List<File> createAll(List<File> currentFiles) {
+        ArrayList<File> result = new ArrayList<>(currentFiles.size());
+        for (File file : currentFiles) {
+            result.add(file);
+        }
+        return result;
     }
 }

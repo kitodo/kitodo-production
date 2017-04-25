@@ -18,10 +18,12 @@ import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +32,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -44,7 +45,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class CreatePdfFromServletThread extends LongRunningTask {
     private static final Logger logger = Logger.getLogger(CreatePdfFromServletThread.class);
-    private SafeFile targetFolder;
+    private File targetFolder;
     private String internalServletPath;
     private URL metsURL;
     private final ServiceManager serviceManager = new ServiceManager();
@@ -88,9 +89,9 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              */
             URL kitodoContentServerUrl = null;
             String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
-            new SafeFile("");
-            SafeFile tempPdf = SafeFile.createTempFile(this.getProcess().getTitle(), ".pdf");
-            SafeFile finalPdf = new SafeFile(this.targetFolder, this.getProcess().getTitle() + ".pdf");
+            new File("");
+            File tempPdf = File.createTempFile(this.getProcess().getTitle(), ".pdf");
+            File finalPdf = new File(this.targetFolder, this.getProcess().getTitle() + ".pdf");
             Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 
             /*
@@ -115,11 +116,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
                 String url = "";
                 FilenameFilter filter = Helper.imageNameFilter;
-                SafeFile imagesDir = new SafeFile(
+                File imagesDir = new File(
                         serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess()));
-                SafeFile[] meta = imagesDir.listFiles(filter);
+                File[] meta = imagesDir.listFiles(filter);
                 ArrayList<String> filenames = new ArrayList<String>();
-                for (SafeFile data : meta) {
+                for (File data : meta) {
                     String file = "";
                     file += data.toURI().toURL();
                     filenames.add(file);
@@ -178,13 +179,13 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to "
                         + finalPdf.getAbsolutePath());
             }
-            tempPdf.copyFile(finalPdf, false);
+            serviceManager.getFileService().copyFile(tempPdf, finalPdf);
             if (logger.isDebugEnabled()) {
                 logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
             }
             tempPdf.delete();
             if (this.metsURL != null) {
-                SafeFile tempMets = new SafeFile(this.metsURL.toString());
+                File tempMets = new File(this.metsURL.toString());
                 tempMets.delete();
             }
         } catch (Exception e) {
@@ -196,8 +197,9 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              * report Error to User as Error-Log
              */
             String text = "error while pdf creation: " + e.getMessage();
-            SafeFile file = new SafeFile(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
-            try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
+            File file = new File(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
+            try (BufferedWriter output = new BufferedWriter(
+                    new OutputStreamWriter(serviceManager.getFileService().write(file.toURI())))) {
                 output.write(text);
             } catch (IOException e1) {
                 logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);
@@ -219,7 +221,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
      * @param targetFolder
      *            the targetFolder to set
      */
-    public void setTargetFolder(SafeFile targetFolder) {
+    public void setTargetFolder(File targetFolder) {
         this.targetFolder = targetFolder;
     }
 
