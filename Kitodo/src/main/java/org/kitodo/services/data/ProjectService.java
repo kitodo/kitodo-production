@@ -26,7 +26,7 @@ import org.goobi.webapi.beans.Field;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -54,7 +54,7 @@ public class ProjectService extends SearchService {
      * @param project
      *            object
      */
-    public void save(Project project) throws DAOException, IOException, ResponseException {
+    public void save(Project project) throws CustomResponseException, DAOException, IOException {
         projectDao.save(project);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(project, projectType);
@@ -75,7 +75,7 @@ public class ProjectService extends SearchService {
      * @param project
      *            object
      */
-    public void remove(Project project) throws DAOException, IOException, ResponseException {
+    public void remove(Project project) throws CustomResponseException, DAOException, IOException {
         projectDao.remove(project);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(project, projectType);
@@ -88,7 +88,7 @@ public class ProjectService extends SearchService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
         projectDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
@@ -101,7 +101,7 @@ public class ProjectService extends SearchService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), projectType);
     }

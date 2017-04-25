@@ -19,7 +19,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -52,7 +52,7 @@ public class UserGroupService extends SearchService {
      * @param userGroup
      *            object
      */
-    public void save(UserGroup userGroup) throws DAOException, IOException, ResponseException {
+    public void save(UserGroup userGroup) throws CustomResponseException, DAOException, IOException {
         userGroupDao.save(userGroup);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(userGroup, userGroupType);
@@ -65,7 +65,7 @@ public class UserGroupService extends SearchService {
      * @param userGroup
      *            object
      */
-    public void remove(UserGroup userGroup) throws DAOException, IOException, ResponseException {
+    public void remove(UserGroup userGroup) throws CustomResponseException, DAOException, IOException {
         userGroupDao.remove(userGroup);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(userGroup, userGroupType);
@@ -82,7 +82,7 @@ public class UserGroupService extends SearchService {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userGroupType);
     }

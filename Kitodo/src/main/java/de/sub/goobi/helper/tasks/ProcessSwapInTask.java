@@ -25,7 +25,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapInTask extends LongRunningTask {
@@ -215,8 +215,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             return;
         } catch (IOException e) {
             logger.warn("IOException:", e);
-        } catch (ResponseException e) {
-            logger.warn("ResponseException:", e);
+        } catch (CustomResponseException e) {
+            logger.warn("CustomResponseException:", e);
         }
         setStatusMessage("done");
 

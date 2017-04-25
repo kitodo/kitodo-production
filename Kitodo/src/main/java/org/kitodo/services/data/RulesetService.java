@@ -19,19 +19,24 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.services.data.base.SearchService;
+import org.kitodo.services.data.base.TitleSearchService;
 
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
-public class RulesetService extends SearchService {
+public class RulesetService extends TitleSearchService {
 
     private static final Logger logger = Logger.getLogger(RulesetService.class);
 
@@ -53,7 +58,7 @@ public class RulesetService extends SearchService {
      * @param ruleset
      *            object
      */
-    public void save(Ruleset ruleset) throws DAOException, IOException, ResponseException {
+    public void save(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
         rulesetDao.save(ruleset);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(ruleset, rulesetType);
@@ -78,7 +83,7 @@ public class RulesetService extends SearchService {
      * @param ruleset
      *            object
      */
-    public void remove(Ruleset ruleset) throws DAOException, IOException, ResponseException {
+    public void remove(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
         rulesetDao.remove(ruleset);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(ruleset, rulesetType);
@@ -91,16 +96,75 @@ public class RulesetService extends SearchService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException, ResponseException {
+    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
         rulesetDao.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     /**
+     * Find ruleset with exact file.
+     *
+     * @param file
+     *            of the searched ruleset
+     * @return search result
+     */
+    public SearchResult findByFile(String file) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder queryBuilder = createSimpleQuery("file", file, true);
+        return searcher.findDocument(queryBuilder.toString());
+    }
+
+    /**
+     * Find rulesets with exact file content.
+     *
+     * @param fileContent
+     *            of the searched ruleset
+     * @return list of search results
+     */
+    public List<SearchResult> findByFileContent(String fileContent)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder queryBuilder = createSimpleQuery("fileContent", fileContent, true);
+        return searcher.findDocuments(queryBuilder.toString());
+    }
+
+    /**
+     * Find ruleset with exact title and file name.
+     *
+     * @param title
+     *            of the searched ruleset
+     * @param file
+     *            of the searched ruleset
+     * @return search result
+     */
+    public SearchResult findByTitleAndFile(String title, String file)
+            throws CustomResponseException, IOException, ParseException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("title", title, true, Operator.AND));
+        query.must(createSimpleQuery("file", file, true, Operator.AND));
+        return searcher.findDocument(query.toString());
+    }
+
+    /**
+     * Find ruleset with exact title or file name.
+     *
+     * @param title
+     *            of the searched ruleset
+     * @param file
+     *            of the searched ruleset
+     * @return search result
+     */
+    public List<SearchResult> findByTitleOrFile(String title, String file)
+            throws CustomResponseException, IOException, ParseException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.should(createSimpleQuery("title", title, true));
+        query.should(createSimpleQuery("file", file, true));
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, ResponseException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), rulesetType);
     }

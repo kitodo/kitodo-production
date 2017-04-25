@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.kitodo.data.elasticsearch.MockEntity;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class IndexRestClientIT {
 
     @AfterClass
-    public static void cleanIndex() throws IOException, ResponseException {
+    public static void cleanIndex() throws IOException, CustomResponseException {
         IndexRestClient restClient = initializeRestClient();
         restClient.deleteIndex();
     }

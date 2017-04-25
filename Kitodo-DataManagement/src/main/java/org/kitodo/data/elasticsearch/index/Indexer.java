@@ -21,7 +21,7 @@ import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.Index;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 
 /**
@@ -61,7 +61,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      * @return response from the server
      */
     @SuppressWarnings("unchecked")
-    public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException, ResponseException {
+    public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
@@ -85,7 +85,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      * @param beanId
      *            response from the server
      */
-    public String performSingleRequest(Integer beanId) throws IOException, ResponseException {
+    public String performSingleRequest(Integer beanId) throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 
@@ -109,7 +109,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      */
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
-            throws DAOException, IOException, InterruptedException, ResponseException {
+            throws DAOException, IOException, InterruptedException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 

@@ -25,7 +25,7 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseListener;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.exceptions.ResponseException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Implementation of Elastic Search REST Client for index package.
@@ -40,7 +40,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @param id     of document - equal to the id from table in database
      * @return status code of the response from the server
      */
-    public boolean addDocument(HttpEntity entity, Integer id) throws IOException, ResponseException {
+    public boolean addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.<String, String>emptyMap(),
                 entity);
@@ -55,7 +55,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @param documentsToIndex list of json documents to the index
      */
     public String addType(HashMap<Integer, HttpEntity> documentsToIndex)
-            throws InterruptedException, ResponseException {
+            throws InterruptedException, CustomResponseException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final ArrayList<String> output = new ArrayList<>();
 
@@ -86,7 +86,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @param id of the document
      * @return status code of the response from server
      */
-    public boolean deleteDocument(Integer id) throws IOException, ResponseException {
+    public boolean deleteDocument(Integer id) throws IOException, CustomResponseException {
         Response indexResponse = restClient.performRequest("DELETE",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id);
         return processStatusCode(indexResponse.getStatusLine()) == 200;
@@ -97,7 +97,7 @@ public class IndexRestClient extends KitodoRestClient {
      *
      * @return response from server
      */
-    public boolean deleteType() throws IOException, ResponseException {
+    public boolean deleteType() throws IOException, CustomResponseException {
         String query = "{\n" + "  \"query\": {\n" + "    \"match_all\": {}\n" + "  }\n" + "}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest("POST",
@@ -111,26 +111,26 @@ public class IndexRestClient extends KitodoRestClient {
      *
      * @return status code of the response from server
      */
-    public boolean deleteIndex() throws IOException, ResponseException {
+    public boolean deleteIndex() throws IOException, CustomResponseException {
         Response indexResponse = restClient.performRequest("DELETE",
                 "/kitodo");
         return processStatusCode(indexResponse.getStatusLine()) == 200;
     }
 
-    private void filterAsynchronousResponses(ArrayList<String> responses) throws ResponseException {
+    private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {
         for (String response : responses) {
             if (!(response.contains("HTTP/1.1 200") || response.contains("HTTP/1.1 201"))) {
-                throw new ResponseException("ElasticSearch failed to add one or more documents! Reason: " + response);
+                throw new CustomResponseException("ElasticSearch failed to add one or more documents! Reason: " + response);
             }
         }
     }
 
-    private int processStatusCode(StatusLine statusLine) throws ResponseException {
+    private int processStatusCode(StatusLine statusLine) throws CustomResponseException {
         int statusCode = statusLine.getStatusCode();
         if (statusCode >= 400 && statusCode < 452) {
-            throw new ResponseException("Client error: " + statusLine.toString());
+            throw new CustomResponseException("Client error: " + statusLine.toString());
         } else if (statusCode >= 500 && statusCode < 512) {
-            throw new ResponseException("Server error: " + statusLine.toString());
+            throw new CustomResponseException("Server error: " + statusLine.toString());
         }
         return statusCode;
     }
