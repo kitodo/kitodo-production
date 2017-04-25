@@ -23,10 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.zip.CRC32;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -149,27 +146,27 @@ public class FileService {
      * calculate all files with given file extension at specified directory
      * recursively.
      *
-     * @param inDir
+     * @param directory
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfFiles(File inDir) {
-        int anzahl = 0;
-        if (inDir.isDirectory()) {
+    public Integer getNumberOfFiles(File directory) {
+        int count = 0;
+        if (directory.isDirectory()) {
             /*
              * die Images zählen
              */
-            anzahl = inDir.list(Helper.imageNameFilter).length;
+            count = directory.list(Helper.imageNameFilter).length;
 
             /*
              * die Unterverzeichnisse durchlaufen
              */
-            String[] children = inDir.list();
+            String[] children = directory.list();
             for (int i = 0; i < children.length; i++) {
-                anzahl += getNumberOfFiles(new File(inDir, children[i]));
+                count += getNumberOfFiles(new File(directory, children[i]));
             }
         }
-        return anzahl;
+        return count;
     }
 
     public Integer getNumberOfFiles(String inDir) {
@@ -179,38 +176,25 @@ public class FileService {
     /**
      * Copy directory.
      *
-     * @param srcDir
+     * @param sourceDirectory
      *            source file
-     * @param destDir
+     * @param targetDirectory
      *            destination file
      * @return Long
      */
-    public void copyDir(File srcDir, File destDir) throws IOException {
-        if (!destDir.exists()) {
-            destDir.mkdirs();
+    public void copyDir(File sourceDirectory, File targetDirectory) throws IOException {
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
         }
-        FileUtils.copyDirectory(srcDir, destDir, false);
+        FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
     public void copyFile(File srcFile, File destFile) throws IOException {
         FileUtils.copyFile(srcFile, destFile);
     }
 
-    public void copyFileToDirectory(File srcFile, File destDir) throws IOException {
-        FileUtils.copyFileToDirectory(srcFile, destDir);
-    }
-
-    private Long createChecksum(File file) throws IOException {
-        CRC32 checksum = new CRC32();
-        checksum.reset();
-        try (InputStream in = read(file.toURI())) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) >= 0) {
-                checksum.update(buffer, 0, bytesRead);
-            }
-        }
-        return Long.valueOf(checksum.getValue());
+    public void copyFileToDirectory(File sourceDirectory, File targetDirectory) throws IOException {
+        FileUtils.copyFileToDirectory(sourceDirectory, targetDirectory);
     }
 
     public OutputStream write(URI uri) throws IOException {
@@ -245,19 +229,12 @@ public class FileService {
         return write(new File(uri).toURI());
     }
 
-    public void moveFile(File src, File dest) throws IOException {
-        FileUtils.moveFile(src, dest);
+    public void moveFile(File sourceDirectory, File targetDirectory) throws IOException {
+        FileUtils.moveFile(sourceDirectory, targetDirectory);
     }
 
-    public void moveDirectory(File src, File destDir) throws IOException {
-        FileUtils.moveDirectory(src, destDir);
+    public void moveDirectory(File sourceDirectory, File targetDirectory) throws IOException {
+        FileUtils.moveDirectory(sourceDirectory, targetDirectory);
     }
 
-    public List<File> createAll(List<File> currentFiles) {
-        ArrayList<File> result = new ArrayList<>(currentFiles.size());
-        for (File file : currentFiles) {
-            result.add(file);
-        }
-        return result;
-    }
 }

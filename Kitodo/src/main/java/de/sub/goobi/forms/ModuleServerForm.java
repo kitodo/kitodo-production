@@ -172,14 +172,14 @@ public class ModuleServerForm {
     @SuppressWarnings("unchecked")
     private List<ModuleDesc> getModulesFromConfigurationFile() {
         List<ModuleDesc> rueckgabe = new ArrayList<ModuleDesc>();
-        String filename = ConfigCore.getKitodoConfigDirectory() + "modules.xml";
-        if (!(new File(filename).exists())) {
-            Helper.setFehlerMeldung("File not found: ", filename);
+        String fileName = ConfigCore.getKitodoConfigDirectory() + "modules.xml";
+        if (!(new File(fileName).exists())) {
+            Helper.setFehlerMeldung("File not found: ", fileName);
             return rueckgabe;
         }
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new File(filename));
+            Document doc = builder.build(new File(fileName));
             Element root = doc.getRootElement();
             /* alle Module durchlaufen */
             for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {

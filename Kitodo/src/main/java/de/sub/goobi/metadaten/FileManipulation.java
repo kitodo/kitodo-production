@@ -90,30 +90,30 @@ public class FileManipulation {
                 return;
             }
 
-            String basename = this.uploadedFile.getName();
-            if (basename.startsWith(".")) {
-                basename = basename.substring(1);
+            String baseName = this.uploadedFile.getName();
+            if (baseName.startsWith(".")) {
+                baseName = baseName.substring(1);
             }
-            if (basename.contains("/")) {
-                basename = basename.substring(basename.lastIndexOf("/") + 1);
+            if (baseName.contains("/")) {
+                baseName = baseName.substring(baseName.lastIndexOf("/") + 1);
             }
-            if (basename.contains("\\")) {
-                basename = basename.substring(basename.lastIndexOf("\\") + 1);
+            if (baseName.contains("\\")) {
+                baseName = baseName.substring(baseName.lastIndexOf("\\") + 1);
             }
 
             if (StringUtils.isNotBlank(uploadedFileName)) {
-                String fileExtension = Metadaten.getFileExtension(basename);
+                String fileExtension = Metadaten.getFileExtension(baseName);
                 if (!fileExtension.isEmpty() && !uploadedFileName.endsWith(fileExtension)) {
                     uploadedFileName = uploadedFileName + fileExtension;
                 }
-                basename = uploadedFileName;
+                baseName = uploadedFileName;
 
             }
             if (logger.isTraceEnabled()) {
                 logger.trace("folder to import: " + currentFolder);
             }
             String filename = serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess())
-                    + currentFolder + File.separator + basename;
+                    + currentFolder + File.separator + baseName;
 
             if (logger.isTraceEnabled()) {
                 logger.trace("filename to import: " + filename);
@@ -121,7 +121,7 @@ public class FileManipulation {
 
             if (serviceManager.getFileService().fileExist(URI.create(filename))) {
                 List<String> parameterList = new ArrayList<String>();
-                parameterList.add(basename);
+                parameterList.add(baseName);
                 Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
                 return;
             }

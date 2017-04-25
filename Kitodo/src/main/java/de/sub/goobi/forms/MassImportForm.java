@@ -349,9 +349,9 @@ public class MassImportForm {
         if (basename.contains("\\")) {
             basename = basename.substring(basename.lastIndexOf("\\") + 1);
         }
-        String filename = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
+        String fileName = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
 
-        serviceManager.getFileService().copyFile(new File(this.uploadedFile.getName()), new File(filename));
+        serviceManager.getFileService().copyFile(new File(this.uploadedFile.getName()), new File(fileName));
 
     }
 
