@@ -17,14 +17,17 @@ import de.sub.goobi.helper.ProjectHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -32,14 +35,15 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class ProjectService extends TitleSearchService<Project> {
 
     private List<StepInformation> commonWorkFlow = null;
-
     private ProjectDAO projectDAO = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
     private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
@@ -127,6 +131,135 @@ public class ProjectService extends TitleSearchService<Project> {
 
     public List<Project> search(String query) throws DAOException {
         return projectDAO.search(query);
+    }
+
+    /**
+     * Find projects for exact start date.
+     *
+     * @param startDate
+     *            of the searched projects as Date
+     * @param searchCondition
+     *            as SearchCondition - bigger, smaller and so on
+     * @return list of search results
+     */
+    public List<SearchResult> findByStartDate(Date startDate, SearchCondition searchCondition)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleCompareDateQuery("startDate", startDate, searchCondition);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find projects for exact end date.
+     *
+     * @param endDate
+     *            of the searched projects as Date
+     * @param searchCondition
+     *            as SearchCondition - bigger, smaller and so on
+     * @return list of search results
+     */
+    public List<SearchResult> findByEndDate(Date endDate, SearchCondition searchCondition)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleCompareDateQuery("endDate", endDate, searchCondition);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find projects for exact amount of pages.
+     * 
+     * @param numberOfPages
+     *            as Integer
+     * @param searchCondition
+     *            as SearchCondition - bigger, smaller and so on
+     * @return list of search results
+     */
+    public List<SearchResult> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find projects for exact amount of volumes.
+     *
+     * @param numberOfVolumes
+     *            as Integer
+     * @param searchCondition
+     *            as SearchCondition - bigger, smaller and so on
+     * @return list of search results
+     */
+    public List<SearchResult> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleCompareQuery("numberOfVolumes", numberOfVolumes, searchCondition);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find archived or not archived projects.
+     * 
+     * @param archived
+     *            if true - find archived projects, if false - find not archived
+     *            projects
+     * @return list of search results
+     */
+    public List<SearchResult> findByArchived(Boolean archived)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find project by id of process.
+     *
+     * @param id
+     *            of process
+     * @return search result
+     */
+    public SearchResult findByProcessId(Integer id) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("processes.id", id, true);
+        return searcher.findDocument(query.toString());
+    }
+
+    /**
+     * Find projects by title of process.
+     *
+     * @param title
+     *            of process
+     * @return list of search results with projects for specific process title
+     */
+    public List<SearchResult> findByProcessTitle(String title)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> projects = new ArrayList<>();
+
+        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(title, true);
+        for (SearchResult process : processes) {
+            projects.add(findByProcessId(process.getId()));
+        }
+        return projects;
+    }
+
+    /**
+     * Find project by id of user.
+     *
+     * @param id
+     *            of user
+     * @return list of search results
+     */
+    public List<SearchResult> findByUserId(Integer id) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("users.id", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find projects by login of user.
+     *
+     * @param login
+     *            of user
+     * @return list of search result with projects for specific user login
+     */
+    public List<SearchResult> findByUserLogin(String login)
+            throws CustomResponseException, IOException, ParseException {
+        SearchResult user = serviceManager.getUserService().findByLogin(login);
+        return findByUserId(user.getId());
     }
 
     /**
