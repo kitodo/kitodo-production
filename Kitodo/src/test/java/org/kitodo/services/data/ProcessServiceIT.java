@@ -15,9 +15,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
-import de.sub.goobi.helper.FilesystemHelper;
-
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 
@@ -112,10 +112,11 @@ public class ProcessServiceIT {
     @Test
     public void shouldCheckIfTifDirectoryExists() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         // it is weird but it says that it doesn't exist....
-        FilesystemHelper.createDirectory("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
+        fileService.createDirectory(URI.create("C:\\dev\\kitodo\\metadata\\1\\images\\"), "First process_media\\");
         boolean condition = processService.checkIfTifDirectoryExists(process);
         assertTrue("Images TIF directory doesn't exist!", condition);
 
