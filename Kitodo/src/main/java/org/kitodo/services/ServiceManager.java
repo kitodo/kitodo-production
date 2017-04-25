@@ -12,6 +12,7 @@
 package org.kitodo.services;
 
 import org.kitodo.services.data.*;
+import org.kitodo.services.file.FileService;
 
 public class ServiceManager {
 
@@ -32,6 +33,7 @@ public class ServiceManager {
     private UserService userService;
     private WorkpiecePropertyService workpiecePropertyService;
     private WorkpieceService workpieceService;
+    private FileService fileService;
 
     private void initializeBatchService() {
         if (batchService == null) {
@@ -132,6 +134,12 @@ public class ServiceManager {
     private void initializeWorkpieceService() {
         if (workpieceService == null) {
             workpieceService = new WorkpieceService();
+        }
+    }
+
+    private void initializeFileService() {
+        if (fileService == null) {
+            fileService = new FileService();
         }
     }
 
@@ -316,5 +324,15 @@ public class ServiceManager {
     public WorkpieceService getWorkpieceService() {
         initializeWorkpieceService();
         return workpieceService;
+    }
+
+    /**
+     * Initialize FileService if it is not yet initialized and next return it.
+     *
+     * @return FileService object
+     */
+    public FileService getFileService() {
+        initializeFileService();
+        return fileService;
     }
 }
