@@ -42,15 +42,8 @@ public class ProcessType extends BaseType<Process> {
         processObject.put("ruleset", ruleset);
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;
         processObject.put("docket", docket);
-
-        JSONArray batches = new JSONArray();
-        List<Batch> processBatches = process.getBatches();
-        for (Batch batch : processBatches) {
-            batches.add(addIdForRelation(batch.getId()));
-        }
-        processObject.put("batches", batches);
-
-        processObject.put("properties", addPropertyRelation(process.getProperties()));
+        processObject.put("batches", addObjectRelation(process.getBatches()));
+        processObject.put("properties", addObjectRelation(process.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

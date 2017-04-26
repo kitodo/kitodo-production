@@ -40,8 +40,8 @@ public class ProjectType extends BaseType<Project> {
         projectObject.put("numberOfVolumes", project.getNumberOfVolumes());
         String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : null;
         projectObject.put("archived", archived);
-        projectObject.put("processes", addProcessRelation(project.getProcesses()));
-        projectObject.put("users", addUserRelation(project.getUsers()));
+        projectObject.put("processes", addObjectRelation(project.getProcesses()));
+        projectObject.put("users", addObjectRelation(project.getUsers()));
 
         JSONArray projectFileGroups = new JSONArray();
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();

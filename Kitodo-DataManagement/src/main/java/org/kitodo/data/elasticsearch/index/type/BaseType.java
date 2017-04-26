@@ -45,76 +45,18 @@ public abstract class BaseType<T extends BaseBean> implements TypeInterface<T> {
     }
 
     /**
-     * Method for adding relationship between some object and list of process
-     * objects.
+     * Method for adding relationship between bean objects.
      * 
-     * @param processes
+     * @param objects
      *            list
      * @return JSONArray
      */
     @SuppressWarnings("unchecked")
-    JSONArray addProcessRelation(List<Process> processes) {
+    <F extends BaseBean> JSONArray addObjectRelation(List<F> objects) {
         JSONArray jsonArray = new JSONArray();
-        if (processes != null) {
-            for (Process process : processes) {
-                jsonArray.add(addIdForRelation(process.getId()));
-            }
-        }
-        return jsonArray;
-    }
-
-    /**
-     * Method for adding relationship between some object and list of property
-     * objects.
-     * 
-     * @param properties
-     *            list
-     * @return JSONArray
-     */
-    @SuppressWarnings("unchecked")
-    JSONArray addPropertyRelation(List<Property> properties) {
-        JSONArray jsonArray = new JSONArray();
-        if (properties != null) {
-            for (Property property : properties) {
+        if (objects != null) {
+            for (F property : objects) {
                 jsonArray.add(addIdForRelation(property.getId()));
-            }
-        }
-        return jsonArray;
-    }
-
-    /**
-     * Method for adding relationship between some object and list of user
-     * objects.
-     * 
-     * @param users
-     *            list
-     * @return JSONArray
-     */
-    @SuppressWarnings("unchecked")
-    JSONArray addUserRelation(List<User> users) {
-        JSONArray jsonArray = new JSONArray();
-        if (users != null) {
-            for (User user : users) {
-                jsonArray.add(addIdForRelation(user.getId()));
-            }
-        }
-        return jsonArray;
-    }
-
-    /**
-     * Method for adding relationship between some object and list of user group
-     * objects.
-     *
-     * @param userGroups
-     *            list
-     * @return JSONArray
-     */
-    @SuppressWarnings("unchecked")
-    JSONArray addUserGroupRelation(List<UserGroup> userGroups) {
-        JSONArray jsonArray = new JSONArray();
-        if (userGroups != null) {
-            for (UserGroup userGroup : userGroups) {
-                jsonArray.add(addIdForRelation(userGroup.getId()));
             }
         }
         return jsonArray;
@@ -128,7 +70,7 @@ public abstract class BaseType<T extends BaseBean> implements TypeInterface<T> {
      * @return JSONObject
      */
     @SuppressWarnings("unchecked")
-    JSONObject addIdForRelation(Integer id) {
+    private JSONObject addIdForRelation(Integer id) {
         JSONObject object = new JSONObject();
         object.put("id", id);
         return object;

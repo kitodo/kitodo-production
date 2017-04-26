@@ -29,7 +29,7 @@ public class TemplateType extends BaseType<Template> {
         JSONObject processObject = new JSONObject();
         Integer process = template.getProcess() != null ? template.getProcess().getId() : null;
         processObject.put("process", process);
-        processObject.put("properties", addPropertyRelation(template.getProperties()));
+        processObject.put("properties", addObjectRelation(template.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

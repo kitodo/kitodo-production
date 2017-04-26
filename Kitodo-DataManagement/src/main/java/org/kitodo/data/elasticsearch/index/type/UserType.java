@@ -34,8 +34,8 @@ public class UserType extends BaseType<User> {
         userObject.put("active", String.valueOf(user.isActive()));
         userObject.put("location", user.getLocation());
         userObject.put("metadataLanguage", user.getMetadataLanguage());
-        userObject.put("userGroups", addUserGroupRelation(user.getUserGroups()));
-        userObject.put("properties", addPropertyRelation(user.getProperties()));
+        userObject.put("userGroups", addObjectRelation(user.getUserGroups()));
+        userObject.put("properties", addObjectRelation(user.getProperties()));
 
         return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

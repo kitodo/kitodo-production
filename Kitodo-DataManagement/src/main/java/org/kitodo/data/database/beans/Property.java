@@ -74,26 +74,59 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.creationDate = new Date();
     }
 
+    /**
+     * Get title.
+     * 
+     * @return title as String
+     */
     public String getTitle() {
         return this.title;
     }
 
+    /**
+     * Set title.
+     * 
+     * @param title
+     *            as String
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Get value.
+     * 
+     * @return value as String
+     */
     public String getValue() {
         return this.value;
     }
 
+    /**
+     * Set value.
+     * 
+     * @param value
+     *            as String
+     */
     public void setValue(String value) {
         this.value = value;
     }
 
+    /**
+     * Get choice.
+     * 
+     * @return choice as String
+     */
     public String getChoice() {
         return this.choice;
     }
 
+    /**
+     * Set choice.
+     * 
+     * @param choice
+     *            as String
+     */
     public void setChoice(String choice) {
         this.choice = choice;
     }
@@ -110,20 +143,37 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.obligatory;
     }
 
+    /**
+     * Set obligatory.
+     * 
+     * @param obligatory
+     *            as Boolean
+     */
     public void setObligatory(Boolean obligatory) {
         this.obligatory = obligatory;
     }
 
+    /**
+     * Get creation date.
+     * 
+     * @return creation date as Date
+     */
     public Date getCreationDate() {
         return this.creationDate;
     }
 
-    public void setCreationDate(Date creation) {
-        this.creationDate = creation;
+    /**
+     * Set creation date.
+     * 
+     * @param creationDate
+     *            as Date
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     /**
-     * Fetter for data type set to private for hibernate, for use in program use
+     * Getter for data type set to private for hibernate, for use in program use
      * getType instead.
      *
      * @return data type as integer
@@ -179,6 +229,12 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.valueList;
     }
 
+    /**
+     * Not know usage method.
+     * 
+     * @param valueList
+     *            list of Strings
+     */
     public void setValueList(List<String> valueList) {
         this.valueList = valueList;
     }
@@ -198,7 +254,8 @@ public class Property extends BaseBean implements Comparable<Property> {
     /**
      * Set container value as given or 0 when given is null.
      *
-     * @param container value from database or 0
+     * @param container
+     *            value from database or 0
      */
     public void setContainer(Integer container) {
         if (container == null) {
@@ -219,6 +276,12 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.processes;
     }
 
+    /**
+     * Set processes.
+     * 
+     * @param processes
+     *            as List
+     */
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
     }
@@ -235,6 +298,12 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.templates;
     }
 
+    /**
+     * Set templates.
+     * 
+     * @param templates
+     *            as List
+     */
     public void setTemplates(List<Template> templates) {
         this.templates = templates;
     }
@@ -251,6 +320,12 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.users;
     }
 
+    /**
+     * Set users.
+     * 
+     * @param users
+     *            as List
+     */
     public void setUsers(List<User> users) {
         this.users = users;
     }
@@ -267,6 +342,12 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.workpieces;
     }
 
+    /**
+     * Set workpieces.
+     * 
+     * @param workpieces
+     *            as List
+     */
     public void setWorkpieces(List<Workpiece> workpieces) {
         this.workpieces = workpieces;
     }

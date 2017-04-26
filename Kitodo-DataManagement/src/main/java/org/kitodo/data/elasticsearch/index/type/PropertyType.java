@@ -34,26 +34,10 @@ public class PropertyType extends BaseType<Property> {
         JSONObject propertyObject = new JSONObject();
         propertyObject.put("title", property.getTitle());
         propertyObject.put("value", property.getValue());
-        propertyObject.put("processes", addProcessRelation(property.getProcesses()));
-        propertyObject.put("users", addUserRelation(property.getUsers()));
-
-        JSONArray templates = new JSONArray();
-        List<Template> propertyTemplates = property.getTemplates();
-        if (propertyTemplates != null) {
-            for (Template template : propertyTemplates) {
-                templates.add(addIdForRelation(template.getId()));
-            }
-        }
-        propertyObject.put("templates", templates);
-
-        JSONArray workpieces = new JSONArray();
-        List<Workpiece> propertyWorkpieces = property.getWorkpieces();
-        if (propertyWorkpieces != null) {
-            for (Workpiece workpiece : propertyWorkpieces) {
-                workpieces.add(addIdForRelation(workpiece.getId()));
-            }
-        }
-        propertyObject.put("workpieces", workpieces);
+        propertyObject.put("processes", addObjectRelation(property.getProcesses()));
+        propertyObject.put("users", addObjectRelation(property.getUsers()));
+        propertyObject.put("templates", addObjectRelation(property.getTemplates()));
+        propertyObject.put("workpieces", addObjectRelation(property.getWorkpieces()));
 
         return new NStringEntity(propertyObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

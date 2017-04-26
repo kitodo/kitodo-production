@@ -29,7 +29,7 @@ public class WorkpieceType extends BaseType<Workpiece> {
         JSONObject workpieceObject = new JSONObject();
         Integer process = workpiece.getProcess() != null ? workpiece.getProcess().getId() : null;
         workpieceObject.put("process", process);
-        workpieceObject.put("properties", addPropertyRelation(workpiece.getProperties()));
+        workpieceObject.put("properties", addObjectRelation(workpiece.getProperties()));
 
         return new NStringEntity(workpieceObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

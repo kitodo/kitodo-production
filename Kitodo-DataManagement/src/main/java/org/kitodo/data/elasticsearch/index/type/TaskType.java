@@ -55,8 +55,8 @@ public class TaskType extends BaseType<Task> {
         taskObject.put("processingUser", processingUser);
         Integer process = task.getProcess() != null ? task.getProcess().getId() : null;
         taskObject.put("process", process);
-        taskObject.put("users", addUserRelation(task.getUsers()));
-        taskObject.put("userGroups", addUserGroupRelation(task.getUserGroups()));
+        taskObject.put("users", addObjectRelation(task.getUsers()));
+        taskObject.put("userGroups", addObjectRelation(task.getUserGroups()));
 
         return new NStringEntity(taskObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
