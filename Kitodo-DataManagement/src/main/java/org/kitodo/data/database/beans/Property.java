@@ -231,7 +231,22 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.workpieces = workpieces;
     }
 
+    /**
+     * Compare property to other property object.
+     * 
+     * @param property
+     *            object
+     * @return int
+     */
     public int compareTo(Property property) {
-        return this.getTitle().toLowerCase().compareTo(property.getTitle().toLowerCase());
+        int title = this.getTitle().toLowerCase().compareTo(property.getTitle().toLowerCase());
+        int value = this.getValue().toLowerCase().compareTo(property.getValue().toLowerCase());
+        if (title == 0 && value == 0) {
+            return 0;
+        } else if (value == 0) {
+            return title;
+        } else {
+            return value;
+        }
     }
 }
