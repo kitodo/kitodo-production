@@ -1,0 +1,188 @@
+<!--
+        *
+        * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+        *
+        * This file is part of the Kitodo project.
+        *
+        * It is licensed under GNU General Public License version 3 or later.
+        *
+        * For the full copyright and license information, please read the
+        * GPL3-License.txt file that was distributed with this source code.
+        *
+        -->
+
+<!-- ########################################
+
+        Alle Projekte in der Übersicht
+
+        #########################################-->
+<!--<a4j:keepAlive beanName="ProjekteForm"/>-->
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <body>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                       style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                       align="center">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
+
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                        <h:form id="projectform">
+                            <!-- Breadcrumb -->
+                            <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
+                                <h:panelGroup id="id1">
+                                    <h:commandLink id="id2" value="#{msgs.startseite}"
+                                                   action="newMain"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:outputText id="id3" value="#{msgs.projekte}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+
+                            <table border="0" align="center" width="100%" cellpadding="15">
+                                <tr>
+                                    <td>
+
+                                        <!-- Überschrift -->
+                                        <h3>
+                                            <h:outputText id="id4" value="#{msgs.projekte}"/>
+                                        </h3>
+
+                                        <!-- newUser-Schaltknopf -->
+                                        <h:commandLink id="id5" action="#{ProjekteForm.newProject}"
+                                                       immediate="true"
+                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                                            <h:outputText id="id6" value="#{msgs.neuesProjektAnlegen}"/>
+                                        </h:commandLink>
+
+
+                                        <!-- globale Warn- und Fehlermeldungen -->
+                                        <h:messages id="id7" globalOnly="true" errorClass="text_red"
+                                                    infoClass="text_blue" showDetail="true" showSummary="true"
+                                                    tooltip="true"/>
+
+                                        <!-- Datentabelle -->
+                                        <t:dataTable id="id8" styleClass="standardTable" width="100%"
+                                                     cellspacing="1px" cellpadding="1px"
+                                                     headerClass="standardTable_Header"
+                                                     rowClasses="standardTable_Row1,standardTable_Row2"
+                                                     columnClasses="standardTable_Column,standardTable_ColumnCentered"
+                                                     var="item" value="#{ProjekteForm.page.listReload}"
+                                                     style="margin-top: 10px;">
+
+                                            <h:column id="id9">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id10" value="#{msgs.projekt}"/>
+                                                </f:facet>
+                                                <h:outputText id="id11" value="#{item.title}"/>
+                                            </h:column>
+
+                                            <!-- +++++++++++++++++  Mets ++++++++++++++++++++++++
+                                            <t:column id="id12" style="text-align:center">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id13" value="#{msgs.metsAlsInternesSpeicherformat}" />
+                                                </f:facet>
+                                                <h:graphicImage id="id14" value="/newpages/images/check_true.gif"
+                                                                rendered="#{item.metsFormatInternal}" />
+                                                <h:graphicImage id="id15" value="/newpages/images/check_false.gif"
+                                                                rendered="#{!item.metsFormatInternal}" />
+                                            </t:column>
+                                            <t:column id="id16" style="text-align:center">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id17" value="#{msgs.metsAlsDmsExportformat}" />
+                                                </f:facet>
+                                                <h:graphicImage id="id18" value="/newpages/images/check_true.gif"
+                                                                rendered="#{item.metsFormatDmsExport}" />
+                                                <h:graphicImage id="id19" value="/newpages/images/check_false.gif"
+                                                                rendered="#{!item.metsFormatDmsExport}" />
+                                            </t:column>-->
+
+                                            <!-- +++++++++++++++++  FileFormats ++++++++++++++++++++++++ -->
+                                            <t:column id="id20" style="text-align:center">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id21"
+                                                                  value="#{msgs.internesSpeicherformat}"/>
+                                                </f:facet>
+                                                <h:outputText id="id22" value="#{item.fileFormatInternal}"/>
+                                            </t:column>
+                                            <t:column id="id23" style="text-align:center">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id24" value="#{msgs.dmsExportformat}"/>
+                                                </f:facet>
+                                                <h:outputText id="id25" value="#{item.fileFormatDmsExport}"/>
+                                            </t:column>
+                                            <t:column id="id234" style="text-align:center">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id2440" value="#{msgs.projectIsArchived}"/>
+                                                </f:facet>
+
+                                                <h:graphicImage id="id2341"
+                                                                value="/newpages/images/check_true.gif"
+                                                                rendered="#{item.projectIsArchived}"/>
+                                                <h:graphicImage id="id2342"
+                                                                value="/newpages/images/check_false.gif"
+                                                                rendered="#{!item.projectIsArchived}"/>>
+                                            </t:column>
+                                            <t:column id="id26" style="text-align:center"
+                                                      rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                                                <f:facet name="header">
+                                                    <h:outputText id="id27" value="#{msgs.auswahl}"/>
+                                                </f:facet>
+                                                <!-- Bearbeiten-Schaltknopf -->
+                                                <h:commandLink id="id28" action="ProjekteBearbeiten"
+                                                               title="#{msgs.projektBearbeiten}">
+                                                    <h:graphicImage id="id29"
+                                                                    value="/newpages/images/buttons/edit.gif"/>
+                                                    <t:updateActionListener property="#{ProjekteForm.myProjekt}"
+                                                                            value="#{item}"/>
+                                                </h:commandLink>
+                                            </t:column>
+                                        </t:dataTable>
+
+                                        <!-- newUser-Schaltknopf -->
+                                        <h:commandLink id="id52" action="#{ProjekteForm.newProject}"
+                                                       immediate="true"
+                                                       rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (ProjekteForm.page.totalResults > LoginForm.myBenutzer.tableSize)}">
+                                            <h:outputText id="id62" value="#{msgs.neuesProjektAnlegen}"/>
+                                        </h:commandLink>
+
+                                        <table width="100%" border="0">
+                                            <tr valign="top">
+                                                <td align="left">
+
+                                                </td>
+                                                <td align="center">
+                                                    <!-- ===================== Datascroller für die Ergebnisse ====================== -->
+                                                    <t:aliasBean alias="#{mypage}" value="#{ProjekteForm.page}">
+                                                        <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                                    </t:aliasBean>
+                                                    <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </h:form>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
+
+        </body>
+    </f:view>
+
+</html>
