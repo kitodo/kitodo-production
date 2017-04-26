@@ -98,6 +98,11 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.choice = choice;
     }
 
+    /**
+     * Check if property is obligatory (mandatory).
+     *
+     * @return value from database or false
+     */
     public Boolean isObligatory() {
         if (this.obligatory == null) {
             this.obligatory = false;
@@ -162,6 +167,11 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.dataType = inputType.getId();
     }
 
+    /**
+     * Get value list or new empty list.
+     *
+     * @return value list or new empty list
+     */
     public List<String> getValueList() {
         if (this.valueList == null) {
             this.valueList = new ArrayList<>();
@@ -173,6 +183,11 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.valueList = valueList;
     }
 
+    /**
+     * Get container value.
+     *
+     * @return value from database or 0
+     */
     public Integer getContainer() {
         if (this.container == null) {
             return 0;
@@ -180,13 +195,23 @@ public class Property extends BaseBean implements Comparable<Property> {
         return this.container;
     }
 
-    public void setContainer(Integer order) {
-        if (order == null) {
-            order = 0;
+    /**
+     * Set container value as given or 0 when given is null.
+     *
+     * @param container value from database or 0
+     */
+    public void setContainer(Integer container) {
+        if (container == null) {
+            container = 0;
         }
-        this.container = order;
+        this.container = container;
     }
 
+    /**
+     * Get container value.
+     *
+     * @return value from database or 0
+     */
     public List<Process> getProcesses() {
         if (this.processes == null) {
             this.processes = new ArrayList<>();
@@ -198,6 +223,11 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.processes = processes;
     }
 
+    /**
+     * Get templates list or new empty list.
+     *
+     * @return templates list or new empty list
+     */
     public List<Template> getTemplates() {
         if (this.templates == null) {
             this.templates = new ArrayList<>();
@@ -209,6 +239,11 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.templates = templates;
     }
 
+    /**
+     * Get users list or new empty list.
+     *
+     * @return users list or new empty list
+     */
     public List<User> getUsers() {
         if (this.users == null) {
             this.users = new ArrayList<>();
@@ -220,6 +255,11 @@ public class Property extends BaseBean implements Comparable<Property> {
         this.users = users;
     }
 
+    /**
+     * Get workpieces list or new empty list.
+     *
+     * @return workpieces list or new empty list
+     */
     public List<Workpiece> getWorkpieces() {
         if (this.workpieces == null) {
             this.workpieces = new ArrayList<>();
