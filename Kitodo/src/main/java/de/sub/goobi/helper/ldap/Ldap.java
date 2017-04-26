@@ -46,10 +46,10 @@ import javax.naming.ldap.StartTlsResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 public class Ldap {
     private static final Logger myLogger = Logger.getLogger(Ldap.class);
@@ -445,6 +445,7 @@ public class Ldap {
      */
     public boolean changeUserPassword(User inUser, String inOldPassword, String inNewPassword)
             throws NoSuchAlgorithmException {
+        MD4 digester = new MD4();
         Hashtable<String, String> env = getLdapConnectionSettings();
         if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
             env.put(Context.SECURITY_PRINCIPAL, ConfigCore.getParameter("ldap_adminLogin"));
@@ -485,7 +486,7 @@ public class Ldap {
                  */
                 BasicAttribute ntlmpassword = null;
                 try {
-                    byte hmm[] = MD4.mdfour(inNewPassword.getBytes("UnicodeLittleUnmarked"));
+                    byte hmm[] = digester.digest(inNewPassword.getBytes("UnicodeLittleUnmarked"));
                     ntlmpassword = new BasicAttribute("sambaNTPassword", LdapUser.toHexString(hmm));
                 } catch (UnsupportedEncodingException e) {
                     // TODO: Make sure that the password isn't logged here
