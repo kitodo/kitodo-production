@@ -69,7 +69,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -246,7 +246,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     this.serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
                             .add(new History(this.mySchritt.getProcessingBegin(),
                                     this.mySchritt.getOrdering().doubleValue(), this.mySchritt.getTitle(),
-                                    HistoryType.taskInWork, this.mySchritt.getProcess()));
+                                    HistoryTypeEnum.taskInWork, this.mySchritt.getProcess()));
                     try {
                         /*
                          * den Prozess aktualisieren, so dass der
@@ -354,7 +354,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
                 serviceManager.getProcessService().getHistoryInitialized(s.getProcess())
                         .add(new History(s.getProcessingBegin(), s.getOrdering().doubleValue(), s.getTitle(),
-                                HistoryType.taskInWork, s.getProcess()));
+                                HistoryTypeEnum.taskInWork, s.getProcess()));
 
                 if (s.isTypeImagesRead() || s.isTypeImagesWrite()) {
                     try {
@@ -622,7 +622,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     this.mySchritt.getProcess().getWikiField(), "error", message));
             serviceManager.getTaskService().save(temp);
             serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
-                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(), HistoryType.taskError,
+                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(), HistoryTypeEnum.taskError,
                             temp.getProcess()));
             /*
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt

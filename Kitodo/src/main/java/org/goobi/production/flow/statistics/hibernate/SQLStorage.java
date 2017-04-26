@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.enums.TimeUnit;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
  * Class provides SQL for storage statistics
@@ -52,10 +52,10 @@ public class SQLStorage extends SQLGenerator {
 
         if (myIdsCondition != null) {
             // adding ids to the where clause
-            innerWhereClause = "(history.type=" + HistoryType.storageDifference.getValue().toString() + ")  AND ("
+            innerWhereClause = "(history.type=" + HistoryTypeEnum.storageDifference.getValue().toString() + ")  AND ("
                     + myIdsCondition + ")";
         } else {
-            innerWhereClause = "(history.type=" + HistoryType.storageDifference.getValue().toString() + ") ";
+            innerWhereClause = "(history.type=" + HistoryTypeEnum.storageDifference.getValue().toString() + ") ";
         }
 
         subQuery = "(SELECT numericValue AS 'storage', " + getIntervallExpression(myTimeUnit, "history.date") + " "

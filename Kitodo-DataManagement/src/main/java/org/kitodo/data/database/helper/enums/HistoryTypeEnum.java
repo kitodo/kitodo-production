@@ -17,7 +17,7 @@ package org.kitodo.data.database.helper.enums;
  * @author Steffen Hankiewicz
  * @version 24.05.2009
  */
-public enum HistoryType {
+public enum HistoryTypeEnum {
     /**
      * Default type is unknown for all properties, which still don't have a
      * specific type.
@@ -99,8 +99,8 @@ public enum HistoryType {
      * Private constructor, initializes integer value, title and sets boolean,
      * if EventType contains string and/or numeric content.
      */
-    private HistoryType(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
-            String groupingExpression) {
+    private HistoryTypeEnum(int inValue, String inTitle, Boolean inIsNumeric, Boolean inIsString,
+                            String groupingExpression) {
         this.value = inValue;
         this.title = inTitle;
         this.isNumeric = inIsNumeric;
@@ -161,11 +161,11 @@ public enum HistoryType {
      *
      * @param inType
      *            as integer value
-     * @return {@link HistoryType} for given integer
+     * @return {@link HistoryTypeEnum} for given integer
      */
-    public static HistoryType getTypeFromValue(Integer inType) {
+    public static HistoryTypeEnum getTypeFromValue(Integer inType) {
         if (inType != null) {
-            for (HistoryType ss : values()) {
+            for (HistoryTypeEnum ss : values()) {
                 if (ss.getValue() == inType.intValue()) {
                     return ss;
                 }

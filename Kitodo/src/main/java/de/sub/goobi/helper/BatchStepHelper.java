@@ -48,7 +48,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -561,7 +561,7 @@ public class BatchStepHelper {
                 this.serviceManager.getTaskService().save(temp);
                 this.serviceManager.getProcessService().getHistoryInitialized(this.currentStep.getProcess())
                         .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(),
-                                HistoryType.taskError, temp.getProcess()));
+                                HistoryTypeEnum.taskError, temp.getProcess()));
                 /*
                  * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
                  * wieder schliessen
