@@ -167,6 +167,6 @@ public class ConfigCore extends ConfigMain {
      * @return String
      */
     public static String getKitodoConfigDirectory() {
-        return ConfigCore.getParameter(CONFIG_DIR);
+        return getParameter(CONFIG_DIR);
     }
 }
