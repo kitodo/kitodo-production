@@ -18,12 +18,14 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for BatchService class.
@@ -38,6 +40,11 @@ public class BatchServiceIT {
     @AfterClass
     public static void cleanDatabase() {
         // MockDatabase.cleanDatabase();
+    }
+
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(2000);
     }
 
     @Test
@@ -82,6 +89,111 @@ public class BatchServiceIT {
         batchService.remove(6);
         foundBatch = batchService.convertSearchResultToObject(batchService.findById(6));
         assertEquals("Additional batch was not removed from database!", null, foundBatch);
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        BatchService batchService = new BatchService();
+
+        SearchResult batch = batchService.findById(1);
+        String actual = batch.getProperties().get("title");
+        String expected = "First batch";
+        assertEquals("Batch was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitle() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<SearchResult> batches = batchService.findByTitle("batch", true);
+        Integer actual = batches.size();
+        Integer expected = 3;
+        assertEquals("Batches were not found in index!", expected, actual);
+
+        batches = batchService.findByTitle("First batch", true);
+        actual = batches.size();
+        expected = 1;
+        assertEquals("Batch was not found in index!", expected, actual);
+
+        batches = batchService.findByTitle("noBatch", true);
+        actual = batches.size();
+        expected = 0;
+        assertEquals("Batch was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByType() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<SearchResult> batches = batchService.findByType(Batch.Type.LOGISTIC, true);
+        Integer actual = batches.size();
+        Integer expected = 2;
+        assertEquals("Batches were not found in index!", expected, actual);
+
+        batches = batchService.findByType(Batch.Type.SERIAL, true);
+        actual = batches.size();
+        expected = 1;
+        assertEquals("Batch was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleAndType() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<SearchResult> batches = batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC);
+        Integer actual = batches.size();
+        Integer expected = 1;
+        assertEquals("Batch was not found in index!", expected, actual);
+
+        batches = batchService.findByTitleAndType("Second batch", Batch.Type.SERIAL);
+        actual = batches.size();
+        expected = 0;
+        assertEquals("Batch was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleOrType() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<SearchResult> batches = batchService.findByTitleOrType("First batch", Batch.Type.SERIAL);
+        Integer actual = batches.size();
+        Integer expected = 2;
+        assertEquals("Batches were not found in index!", expected, actual);
+
+        batches = batchService.findByTitleOrType("None", Batch.Type.SERIAL);
+        actual = batches.size();
+        expected = 1;
+        assertEquals("More batches were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProcessId() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<SearchResult> batches = batchService.findByProcessId(1);
+        Integer actual = batches.size();
+        Integer expected = 2;
+        assertEquals("Batches were not found in index!", expected, actual);
+
+        batches = batchService.findByProcessId(2);
+        actual = batches.size();
+        expected = 0;
+        assertEquals("Some batches ere found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProcessTitle() throws Exception {
+        BatchService batchService = new BatchService();
+
+        List<SearchResult> batches = batchService.findByProcessTitle("First process");
+        Integer actual = batches.size();
+        Integer expected = 2;
+        assertEquals("Batches were not found in index!", expected, actual);
+
+        batches = batchService.findByProcessTitle("Second process");
+        actual = batches.size();
+        expected = 0;
+        assertEquals("Batches were not found in index!", expected, actual);
     }
 
     @Test
