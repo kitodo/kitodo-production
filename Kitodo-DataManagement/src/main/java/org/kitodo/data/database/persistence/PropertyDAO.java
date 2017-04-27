@@ -13,15 +13,15 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
-import org.kitodo.data.database.beans.TemplateProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class TemplatePropertyDAO extends BaseDAO {
+public class PropertyDAO extends BaseDAO {
 
     private static final long serialVersionUID = 834210846673022251L;
 
     /**
-     * Find template property object by id.
+     * Find property object by id.
      *
      * @param id
      *            of searched object
@@ -30,8 +30,8 @@ public class TemplatePropertyDAO extends BaseDAO {
      *             an exception that can be thrown from the underlying find()
      *             procedure failure.
      */
-    public TemplateProperty find(Integer id) throws DAOException {
-        TemplateProperty result = (TemplateProperty) retrieveObject(TemplateProperty.class, id);
+    public Property find(Integer id) throws DAOException {
+        Property result = (Property) retrieveObject(Property.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -39,34 +39,52 @@ public class TemplatePropertyDAO extends BaseDAO {
     }
 
     /**
-     * The function findAll() retrieves all templates' properties from the
-     * database.
+     * The function findAll() retrieves all properties from the database.
      *
      * @return all persisted templates' properties
      */
     @SuppressWarnings("unchecked")
-    public List<TemplateProperty> findAll() {
-        return retrieveAllObjects(TemplateProperty.class);
-    }
-
-    public TemplateProperty save(TemplateProperty templateProperty) throws DAOException {
-        storeObject(templateProperty);
-        return (TemplateProperty) retrieveObject(TemplateProperty.class, templateProperty.getId());
+    public List<Property> findAll() {
+        return retrieveAllObjects(Property.class);
     }
 
     /**
-     * The function remove() removes a template property
+     * Find properties by query.
+     * 
+     * @param query
+     *            as String
+     * @return list of properties
+     */
+    @SuppressWarnings("unchecked")
+    public List<Property> search(String query) throws DAOException {
+        return retrieveObjects(query);
+    }
+
+    public Property save(Property property) throws DAOException {
+        storeObject(property);
+        return (Property) retrieveObject(Property.class, property.getId());
+    }
+
+    /**
+     * The function remove() removes a property
      *
-     * @param templateProperty
+     * @param property
      *            to be removed
      * @throws DAOException
      *             an exception that can be thrown from the underlying save()
      *             procedure upon database failure.
      */
-    public void remove(TemplateProperty templateProperty) throws DAOException {
-        removeObject(templateProperty);
+    public void remove(Property property) throws DAOException {
+        removeObject(property);
     }
 
+    /**
+     * Count property objects in table.
+     * 
+     * @param query
+     *            as String
+     * @return amount of objects as Long
+     */
     public Long count(String query) throws DAOException {
         return retrieveAmount(query);
     }

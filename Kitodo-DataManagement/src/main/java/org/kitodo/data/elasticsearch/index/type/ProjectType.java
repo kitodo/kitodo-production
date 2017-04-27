@@ -18,10 +18,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
-import org.kitodo.data.database.beans.User;
 
 /**
  * Implementation of Project Type.
@@ -42,24 +40,8 @@ public class ProjectType extends BaseType<Project> {
         projectObject.put("numberOfVolumes", project.getNumberOfVolumes());
         String archived = project.getProjectIsArchived() != null ? project.getProjectIsArchived().toString() : null;
         projectObject.put("archived", archived);
-
-        JSONArray processes = new JSONArray();
-        List<Process> projectProcesses = project.getProcesses();
-        for (Process process : projectProcesses) {
-            JSONObject processObject = new JSONObject();
-            processObject.put("id", process.getId());
-            processes.add(processObject);
-        }
-        projectObject.put("processes", processes);
-
-        JSONArray users = new JSONArray();
-        List<User> projectUsers = project.getUsers();
-        for (User user : projectUsers) {
-            JSONObject userObject = new JSONObject();
-            userObject.put("id", user.getId());
-            users.add(userObject);
-        }
-        projectObject.put("users", users);
+        projectObject.put("processes", addObjectRelation(project.getProcesses()));
+        projectObject.put("users", addObjectRelation(project.getUsers()));
 
         JSONArray projectFileGroups = new JSONArray();
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();

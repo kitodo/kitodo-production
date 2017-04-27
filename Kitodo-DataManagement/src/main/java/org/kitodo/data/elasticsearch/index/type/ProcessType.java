@@ -20,7 +20,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
 
 /**
  * Implementation of Process Type.
@@ -43,25 +42,8 @@ public class ProcessType extends BaseType<Process> {
         processObject.put("ruleset", ruleset);
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;
         processObject.put("docket", docket);
-
-        JSONArray batches = new JSONArray();
-        List<Batch> processBatches = process.getBatches();
-        for (Batch batch : processBatches) {
-            JSONObject batchObject = new JSONObject();
-            batchObject.put("id", batch.getId());
-            batches.add(batchObject);
-        }
-        processObject.put("batches", batches);
-
-        JSONArray properties = new JSONArray();
-        List<ProcessProperty> processProperties = process.getProperties();
-        for (ProcessProperty property : processProperties) {
-            JSONObject propertyObject = new JSONObject();
-            propertyObject.put("title", property.getTitle());
-            propertyObject.put("value", property.getValue());
-            properties.add(propertyObject);
-        }
-        processObject.put("properties", properties);
+        processObject.put("batches", addObjectRelation(process.getBatches()));
+        processObject.put("properties", addObjectRelation(process.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

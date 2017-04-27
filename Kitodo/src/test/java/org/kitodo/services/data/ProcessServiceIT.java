@@ -27,7 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -544,9 +544,9 @@ public class ProcessServiceIT {
     public void shouldFilterForCorrectionSolutionMessages() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<ProcessProperty> expected = new ArrayList<>();
-        List<ProcessProperty> actual = processService
-                .filterForCorrectionSolutionMessages(new ArrayList<ProcessProperty>());
+        List<Property> expected = new ArrayList<>();
+        List<Property> actual = processService
+                .filterForCorrectionSolutionMessages(new ArrayList<Property>());
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 
@@ -556,8 +556,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        List<ProcessProperty> expected = new ArrayList<>();
-        List<ProcessProperty> actual = processService.getSortedCorrectionSolutionMessages(process);
+        List<Property> expected = new ArrayList<>();
+        List<Property> actual = processService.getSortedCorrectionSolutionMessages(process);
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 }

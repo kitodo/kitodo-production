@@ -19,8 +19,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -41,9 +41,9 @@ public class TiffHeader {
     // private String Jahr="";
     // private String Ort="";
     // private String Verlag="";
-    private String Artist = "";
-    private String tifHeader_imagedescription = "";
-    private String tifHeaderDocumentname = "";
+    private String artist = "";
+    private String tifHeaderImageDescription = "";
+    private String tifHeaderDocumentName = "";
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -54,19 +54,15 @@ public class TiffHeader {
         if (serviceManager.getProcessService().getWorkpiecesSize(process) > 0) {
             Workpiece myWerkstueck = process.getWorkpieces().get(0);
             if (serviceManager.getWorkpieceService().getPropertiesSize(myWerkstueck) > 0) {
-                for (WorkpieceProperty eig : myWerkstueck.getProperties()) {
-                    // Werkstueckeigenschaft eig = (Werkstueckeigenschaft)
-                    // iter.next();
-
-                    if (eig.getTitle().equals("TifHeaderDocumentname")) {
-                        this.tifHeaderDocumentname = eig.getValue();
+                for (Property workpieceProperty : myWerkstueck.getProperties()) {
+                    if (workpieceProperty.getTitle().equals("TifHeaderDocumentname")) {
+                        this.tifHeaderDocumentName = workpieceProperty.getValue();
                     }
-                    if (eig.getTitle().equals("TifHeaderImagedescription")) {
-                        this.tifHeader_imagedescription = eig.getValue();
+                    if (workpieceProperty.getTitle().equals("TifHeaderImagedescription")) {
+                        this.tifHeaderImageDescription = workpieceProperty.getValue();
                     }
-
-                    if (eig.getTitle().equals("Artist")) {
-                        this.Artist = eig.getValue();
+                    if (workpieceProperty.getTitle().equals("Artist")) {
+                        this.artist = workpieceProperty.getValue();
                     }
                 }
             }
@@ -77,14 +73,14 @@ public class TiffHeader {
      * Rückgabe des kompletten Tiff-Headers.
      */
     public String getImageDescription() {
-        return this.tifHeader_imagedescription;
+        return this.tifHeaderImageDescription;
     }
 
     /**
      * Rückgabe des kompletten Tiff-Headers.
      */
     private String getDocumentName() {
-        return this.tifHeaderDocumentname;
+        return this.tifHeaderDocumentName;
     }
 
     /**
@@ -99,7 +95,7 @@ public class TiffHeader {
         strBuf.append("# - overwrites tiff-tags." + lineBreak);
         strBuf.append("#" + lineBreak);
         strBuf.append("#" + lineBreak);
-        strBuf.append("Artist=" + this.Artist + lineBreak);
+        strBuf.append("Artist=" + this.artist + lineBreak);
         strBuf.append("Documentname=" + getDocumentName() + lineBreak);
         strBuf.append("ImageDescription=" + getImageDescription() + lineBreak);
         return strBuf.toString();

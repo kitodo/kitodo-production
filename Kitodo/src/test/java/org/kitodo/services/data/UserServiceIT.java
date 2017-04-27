@@ -153,14 +153,13 @@ public class UserServiceIT {
         assertEquals("Projects' size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching - properties are inserted...")
     @Test
     public void shouldGetPropertiesSize() throws Exception {
         UserService userService = new UserService();
 
         User user = userService.find(1);
         int actual = userService.getPropertiesSize(user);
-        assertEquals("Properties' size is incorrect!", 1, actual);
+        assertEquals("Properties' size is incorrect!", 2, actual);
     }
 
     @Ignore("not sure how method works")

@@ -66,6 +66,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -608,13 +609,13 @@ public class AktuelleSchritteForm extends BasisForm {
             temp = serviceManager.getTaskService().setCorrectionStep(temp);
             temp.setProcessingEnd(null);
 
-            org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-            pe.setTitle(Helper.getTranslation("Korrektur notwendig"));
-            pe.setValue("[" + this.formatter.format(new Date()) + ", "
+            Property processProperty = new Property();
+            processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
+            processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
                     + serviceManager.getUserService().getFullName(ben) + "] " + this.problemMessage);
-            pe.setType(PropertyType.messageError);
-            pe.setProcess(this.mySchritt.getProcess());
-            this.mySchritt.getProcess().getProperties().add(pe);
+            processProperty.setType(PropertyType.messageError);
+            processProperty.getProcesses().add(this.mySchritt.getProcess());
+            this.mySchritt.getProcess().getProperties().add(processProperty);
 
             String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": " + this.problemMessage
                     + " (" + serviceManager.getUserService().getFullName(ben) + ")";
@@ -726,15 +727,15 @@ public class AktuelleSchritteForm extends BasisForm {
             this.mySchritt.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.mySchritt.getProcess(),
                     this.mySchritt.getProcess().getWikiField(), "info", message));
 
-            org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-            pe.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-            pe.setValue(
+            Property processProperty = new Property();
+            processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
+            processProperty.setValue(
                     "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(ben)
                             + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
                             + this.solutionMessage);
-            pe.setType(PropertyType.messageImportant);
-            pe.setProcess(this.mySchritt.getProcess());
-            this.mySchritt.getProcess().getProperties().add(pe);
+            processProperty.setType(PropertyType.messageImportant);
+            processProperty.getProcesses().add(this.mySchritt.getProcess());
+            this.mySchritt.getProcess().getProperties().add(processProperty);
 
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
         } catch (DAOException | IOException | CustomResponseException e) {
@@ -1231,10 +1232,11 @@ public class AktuelleSchritteForm extends BasisForm {
 
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.mySchritt.getProcess());
-                pt.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.mySchritt.getProcess());
+                pt.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                        .add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1267,10 +1269,11 @@ public class AktuelleSchritteForm extends BasisForm {
         if (valid) {
             for (ProcessProperty p : this.processPropertyList) {
                 if (p.getProzesseigenschaft() == null) {
-                    org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                    pe.setProcess(this.mySchritt.getProcess());
-                    p.setProzesseigenschaft(pe);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
+                    Property processProperty = new Property();
+                    processProperty.getProcesses().add(this.mySchritt.getProcess());
+                    p.setProzesseigenschaft(processProperty);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                            .add(processProperty);
                 }
                 p.transfer();
                 if (!serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
@@ -1280,10 +1283,10 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
             }
             Process p = this.mySchritt.getProcess();
-            List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
+            List<Property> propertyList = p.getProperties();
+            for (Property processProperty : propertyList) {
+                if (processProperty.getTitle() == null) {
+                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
                 }
             }
 
@@ -1318,25 +1321,26 @@ public class AktuelleSchritteForm extends BasisForm {
                 return;
             }
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.mySchritt.getProcess());
-                this.processProperty.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.mySchritt.getProcess());
+                this.processProperty.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(processProperty);
             }
             this.processProperty.transfer();
 
-            List<org.kitodo.data.database.beans.ProcessProperty> props = this.mySchritt.getProcess().getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
+            List<Property> propertyList = this.mySchritt.getProcess().getProperties();
+            for (Property processProperty : propertyList) {
+                if (processProperty.getTitle() == null) {
                     // TODO: check carefully how this list is modified
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).remove(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                            .remove(processProperty);
                 }
             }
             if (!serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
                     .contains(this.processProperty.getProzesseigenschaft())) {
                 serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
                         .add(this.processProperty.getProzesseigenschaft());
-                this.processProperty.getProzesseigenschaft().setProcess(this.mySchritt.getProcess());
+                this.processProperty.getProzesseigenschaft().getProcesses().add(this.mySchritt.getProcess());
             }
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
@@ -1393,10 +1397,11 @@ public class AktuelleSchritteForm extends BasisForm {
         // this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
         // }
 
-        List<org.kitodo.data.database.beans.ProcessProperty> props = this.mySchritt.getProcess().getProperties();
-        for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-            if (pe.getTitle() == null) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).remove(pe);
+        List<Property> propertyList = this.mySchritt.getProcess().getProperties();
+        for (Property processProperty : propertyList) {
+            if (processProperty.getTitle() == null) {
+                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                        .remove(processProperty);
             }
         }
         try {
@@ -1517,10 +1522,11 @@ public class AktuelleSchritteForm extends BasisForm {
             this.processPropertyList.add(newProp);
             this.processProperty = newProp;
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.mySchritt.getProcess());
-                this.processProperty.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.mySchritt.getProcess());
+                this.processProperty.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                        .add(processProperty);
             }
             this.processProperty.transfer();
 

@@ -20,18 +20,15 @@ public class ServiceManager {
     private DocketService docketService;
     private HistoryService historyService;
     private LdapGroupService ldapGroupService;
-    private ProcessPropertyService processPropertyService;
+    private PropertyService propertyService;
     private ProcessService processService;
     private ProjectFileGroupService projectFileGroupService;
     private ProjectService projectService;
     private RulesetService rulesetService;
     private TaskService taskService;
-    private TemplatePropertyService templatePropertyService;
     private TemplateService templateService;
     private UserGroupService userGroupService;
-    private UserPropertyService userPropertyService;
     private UserService userService;
-    private WorkpiecePropertyService workpiecePropertyService;
     private WorkpieceService workpieceService;
     private FileService fileService;
 
@@ -59,9 +56,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeProcessPropertyService() {
-        if (processPropertyService == null) {
-            processPropertyService = new ProcessPropertyService();
+    private void initializePropertyService() {
+        if (propertyService == null) {
+            propertyService = new PropertyService();
         }
     }
 
@@ -95,12 +92,6 @@ public class ServiceManager {
         }
     }
 
-    private void initializeTemplatePropertyService() {
-        if (templatePropertyService == null) {
-            templatePropertyService = new TemplatePropertyService();
-        }
-    }
-
     private void initializeTemplateService() {
         if (templateService == null) {
             templateService = new TemplateService();
@@ -113,21 +104,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeUserPropertyService() {
-        if (userPropertyService == null) {
-            userPropertyService = new UserPropertyService();
-        }
-    }
-
     private void initializeUserService() {
         if (userService == null) {
             userService = new UserService();
-        }
-    }
-
-    private void initializeWorkpiecePropertyService() {
-        if (workpiecePropertyService == null) {
-            workpiecePropertyService = new WorkpiecePropertyService();
         }
     }
 
@@ -186,14 +165,14 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ProcessPropertyService if it is not yet initialized and next
-     * return it.
+     * Initialize PropertyService if it is not yet initialized and next return
+     * it.
      *
-     * @return ProcessPropertyService object
+     * @return PropertyService object
      */
-    public ProcessPropertyService getProcessPropertyService() {
-        initializeProcessPropertyService();
-        return processPropertyService;
+    public PropertyService getPropertyService() {
+        initializePropertyService();
+        return propertyService;
     }
 
     /**
@@ -251,17 +230,6 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize TemplatePropertyService if it is not yet initialized and next
-     * return it.
-     *
-     * @return TemplatePropertyService object
-     */
-    public TemplatePropertyService getTemplatePropertyService() {
-        initializeTemplatePropertyService();
-        return templatePropertyService;
-    }
-
-    /**
      * Initialize TemplateService if it is not yet initialized and next return
      * it.
      *
@@ -284,17 +252,6 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize UserPropertyService if it is not yet initialized and next
-     * return it.
-     *
-     * @return UserPropertyService object
-     */
-    public UserPropertyService getUserPropertyService() {
-        initializeUserPropertyService();
-        return userPropertyService;
-    }
-
-    /**
      * Initialize UserService if it is not yet initialized and next return it.
      *
      * @return UserService object
@@ -302,17 +259,6 @@ public class ServiceManager {
     public UserService getUserService() {
         initializeUserService();
         return userService;
-    }
-
-    /**
-     * Initialize WorkpiecePropertyService if it is not yet initialized and next
-     * return it.
-     *
-     * @return WorkpiecePropertyService object
-     */
-    public WorkpiecePropertyService getWorkpiecePropertyService() {
-        initializeWorkpiecePropertyService();
-        return workpiecePropertyService;
     }
 
     /**

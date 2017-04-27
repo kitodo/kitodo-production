@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.kitodo.data.database.beans.Property;
+
 public class ProcessProperty implements IProperty, Serializable {
 
     private static final long serialVersionUID = 6413183995622426678L;
@@ -34,7 +36,7 @@ public class ProcessProperty implements IProperty, Serializable {
     private List<String> projects;
     private List<ShowStepCondition> showStepConditions;
     private AccessCondition showProcessGroupAccessCondition;
-    private org.kitodo.data.database.beans.ProcessProperty prozesseigenschaft;
+    private Property prozesseigenschaft;
     private AccessCondition currentStepAccessCondition;
     private boolean currentStepDuplicationAllowed = false;
 
@@ -47,7 +49,7 @@ public class ProcessProperty implements IProperty, Serializable {
         this.possibleValues = new ArrayList<String>();
         this.projects = new ArrayList<String>();
         this.showStepConditions = new ArrayList<ShowStepCondition>();
-        this.prozesseigenschaft = new org.kitodo.data.database.beans.ProcessProperty();
+        this.prozesseigenschaft = new Property();
     }
 
     /*
@@ -284,7 +286,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * @see org.goobi.production.properties.IProperty#getProzesseigenschaft()
      */
 
-    public org.kitodo.data.database.beans.ProcessProperty getProzesseigenschaft() {
+    public Property getProzesseigenschaft() {
         return this.prozesseigenschaft;
     }
 
@@ -295,7 +297,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * #setProzesseigenschaft(org.kitodo.data.database.beans.Prozesseigenschaft)
      */
 
-    public void setProzesseigenschaft(org.kitodo.data.database.beans.ProcessProperty prozesseigenschaft) {
+    public void setProzesseigenschaft(Property prozesseigenschaft) {
         this.prozesseigenschaft = prozesseigenschaft;
     }
 
