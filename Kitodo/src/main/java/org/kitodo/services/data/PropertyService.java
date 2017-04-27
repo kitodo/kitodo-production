@@ -152,6 +152,14 @@ public class PropertyService extends TitleSearchService<Property> {
     }
 
     /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), propertyType);
+    }
+
+    /**
      * Get normalized title.
      * 
      * @param property
