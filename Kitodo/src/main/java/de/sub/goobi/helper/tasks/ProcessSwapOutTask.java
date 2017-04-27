@@ -47,7 +47,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
             }
             String[] children = srcDir.list();
             for (int i = 0; i < children.length; i++) {
-                copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
+                copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]),
                         kitodoPathLength, inRoot);
             }
         } else {
@@ -152,8 +152,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
 
-        SafeFile fileIn = new SafeFile(processDirectory);
-        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
+        File fileIn = new File(processDirectory);
+        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
         if (fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget already exists");
             setStatusProgress(-1);
