@@ -105,8 +105,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             return;
         }
 
-        File fileIn = new File(processDirectory);
-        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
+        SafeFile fileIn = new SafeFile(processDirectory);
+        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
 
         if (!fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget does not exist");

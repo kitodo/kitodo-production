@@ -38,7 +38,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * will be created.
      */
 
-    static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int kitodoPathLength, Element inRoot)
+    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int kitodoPathLength, Element inRoot)
             throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
@@ -47,11 +47,11 @@ public class ProcessSwapOutTask extends LongRunningTask {
             }
             String[] children = srcDir.list();
             for (int i = 0; i < children.length; i++) {
-                copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]),
+                copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
                         kitodoPathLength, inRoot);
             }
         } else {
-            Long crc = serviceManager.getFileService().start(srcDir, dstDir);
+            Long crc = serviceManager.getFileService().start(srcDir.getDelegate(), dstDir.getDelegate());
             Element file = new Element("file");
             file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLength));
             file.setAttribute("crc32", String.valueOf(crc));
@@ -63,7 +63,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * Deletes all files and subdirectories under dir. But not the dir itself
      * and no metadata files.
      */
-    static boolean deleteDataInDir(File dir) {
+    static boolean deleteDataInDir(SafeFile dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (int i = 0; i < children.length; i++) {
@@ -152,8 +152,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
 
-        File fileIn = new File(processDirectory);
-        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
+        SafeFile fileIn = new SafeFile(processDirectory);
+        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
         if (fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget already exists");
             setStatusProgress(-1);
@@ -191,7 +191,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
         setStatusProgress(80);
-        deleteDataInDir(new File(fileIn.getAbsolutePath()));
+        deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
 
         /*
          * xml-Datei schreiben

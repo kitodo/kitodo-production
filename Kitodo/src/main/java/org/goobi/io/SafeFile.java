@@ -315,4 +315,8 @@ public class SafeFile implements Comparable<SafeFile> {
     public URL toURL() throws MalformedURLException {
         return delegate.toURL();
     }
+
+    public File getDelegate() {
+        return this.delegate;
+    }
 }
