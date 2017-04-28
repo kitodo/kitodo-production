@@ -285,17 +285,6 @@
                                                     value="35"/>
                         </h:commandLink>
 
-                        <%-- Administrationsaufgaben
-                        <h:commandLink styleClass="mlink" action="Administrationsaufgaben" id="admin"
-                            style="#{NavigationForm.aktuell == '37' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '37'}">
-                                <f:verbatim>&#8250; </f:verbatim>
-                            </h:panelGroup>
-                            <h:outputText value="#{msgs.scripte}" />
-                            <x:updateActionListener property="#{NavigationForm.aktuell}"
-                                value="37" />
-                        </h:commandLink>
-                        --%>
                     </h:panelGroup>
 
                     <%-- ################            Benutzereinstellungen              ######################--%>
