@@ -76,7 +76,7 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService extends TitleSearchService {
+public class ProcessService extends TitleSearchService<Process> {
 
     private static final Logger myLogger = Logger.getLogger(ProcessService.class);
 
@@ -114,14 +114,22 @@ public class ProcessService extends TitleSearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves process object to database.
      *
      * @param process
      *            object
      */
-    public void save(Process process) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Process process) throws DAOException {
         processDao.save(process, getProgress(process));
+    }
+
+    /**
+     * Method saves process document to the index of Elastic Search.
+     *
+     * @param process
+     *            object
+     */
+    public void saveToIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(process, processType);
     }
