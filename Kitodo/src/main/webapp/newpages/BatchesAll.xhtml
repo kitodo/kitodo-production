@@ -23,7 +23,6 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:si="http://sourceforge.net/projects/jsf-comp/easysi"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -155,7 +154,10 @@
                                                 <h:selectManyListbox value="#{BatchForm.selectedBatches}"
                                                                      style="width:90%;margin-bottom:10px;display:block;"
                                                                      size="20" id="selectBatches">
-                                                    <si:selectItems var="batch" value="#{BatchForm.currentBatches}"
+                                                    <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
+                                                    <!--<si:selectItems var="batch" value="#{BatchForm.currentBatches}"-->
+                                                                    <!--itemLabel="#{batch}" itemValue="#{batch.id}"/>-->
+                                                    <f:selectItems var="batch" value="#{BatchForm.currentBatches}"
                                                                     itemLabel="#{batch}" itemValue="#{batch.id}"/>
                                                 </h:selectManyListbox>
 

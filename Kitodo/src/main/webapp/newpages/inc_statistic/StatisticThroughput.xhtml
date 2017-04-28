@@ -152,14 +152,12 @@
                 <h4 style="margin-top:20px">
                     <h:outputText value="#{element.title}"/>
                 </h4>
-                <!-- TODO: how to use "rendered" attribute in native html element? -->
-                <!--<img style="margin-bottom:15px"-->
-                         <!--src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"-->
-                         <!--title="#{element.title}"-->
-                         <!--rendered="#{element.dataTable.showableInChart and Form.statisticsManager2.targetResultOutput=='chart'}"/>-->
-                <img style="margin-bottom:15px"
-                     src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"
-                     title="#{element.title}"/>
+                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
+                <ui:fragment rendered="#{element.dataTable.showableInChart and Form.statisticsManager2.targetResultOutput=='chart'}">
+                    <img style="margin-bottom:15px"
+                         src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"
+                         title="#{element.title}"/>
+                </ui:fragment>
             </h:panelGroup>
 
 
@@ -181,14 +179,12 @@
                     <h:outputText value="#{element.title}"/>
                 </h4>
                 <h:panelGroup>
-                    <!-- TODO: how to use "rendered" attribute in native html element? -->
-                    <!--<img style="margin-bottom:15px"-->
-                             <!--src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"-->
-                             <!--title="#{element.title}"-->
-                             <!--rendered="#{element.dataTable.showableInChart}"/>-->
-                    <img style="margin-bottom:15px"
-                         src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"
-                         title="#{element.title}"/>
+                    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
+                    <ui:fragment rendered="#{element.dataTable.showableInChart}">
+                        <img style="margin-bottom:15px"
+                             src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"
+                             title="#{element.title}"/>
+                    </ui:fragment>
                     <h:outputText value="#{element.htmlTableRenderer.rendering}" escape="false"
                                   rendered="#{element.dataTable.showableInTable}"/>
                     <h:commandLink action="#{ProzessverwaltungForm.CreateExcel}" title="#{msgs.createExcel}"

@@ -53,16 +53,16 @@
                         <!-- ################            allgemeines             ######################-->
 
                         <h:outputText styleClass="th_menu" value="- #{msgs.allgemeines} -"/>
-                        <!-- Bedienungshinweise
+                        <!-- Bedienungshinweise -->
                         <h:commandLink styleClass="mlink" action="Bedienung"
                                        style="#{NavigationForm.aktuell == '10' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '10'}">
                                 <f:verbatim>&#8250; </f:verbatim>
                             </h:panelGroup>
                             <h:outputText value="#{msgs.bedienungshinweise}" />
-                            <x:updateActionListener property="#{NavigationForm.aktuell}"
+                            <t:updateActionListener property="#{NavigationForm.aktuell}"
                                                     value="10" />
-                        </h:commandLink>-->
+                        </h:commandLink>
 
                         <!-- technischer Hintergrund -->
                         <h:commandLink styleClass="mlink" action="TechnischerHintergrund" id="technicalBackground"
@@ -77,8 +77,8 @@
 
                         <!-- aktive Benutzer -->
                         <h:commandLink styleClass="mlink" action="aktiveBenutzerNeu" id="currentUsers"
-                                       rendered="#{!HelperForm.anonymized}"
-                                       style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                       style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}"
+                                       rendered="#{!HelperForm.anonymized}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '12'}">
                                 <f:verbatim>&#8250; </f:verbatim>
                             </h:panelGroup>

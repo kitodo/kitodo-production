@@ -19,9 +19,12 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
 
-    <h4 rendered="#{ProzessverwaltungForm.myAnzahlList != null}" style="margin-top:20px">
-        <h:outputText value="#{msgs.anzahlDerArtikelUndImages}"/>
-    </h4>
+    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.myAnzahlList != null}">
+        <h4 style="margin-top:20px">
+            <h:outputText value="#{msgs.anzahlDerArtikelUndImages}"/>
+        </h4>
+    </ui:fragment>
 
     <!-- Datentabelle -->
     <t:dataTable styleClass="standardTable" width="100%" cellspacing="1px"
@@ -85,34 +88,36 @@
         </h:column>
     </t:dataTable>
 
-    <table cellpadding="3" cellspacing="0" style="margin-top:10px; width:250px"
-               class="main_statistikboxen" rendered="#{ProzessverwaltungForm.myAnzahlList != null}">
-        <tr>
-            <td class="main_statistikboxen_row1">
-                <h:outputText value="#{msgs.zusammenfassung}"/>
-            </td>
-        </tr>
-        <tr>
-            <td class="main_statistikboxen_row2">
-                <h:panelGrid width="100%" columns="2" columnClasses="columnLinks,columnRechts">
-                    <h:outputText value="#{msgs.baendeGesamt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumProcesses}"/>
-                    <h:outputText value="#{msgs.imagesGesamt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumImages}"/>
-                    <h:outputText value="#{msgs.imagesDurchschnitt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageImages}"/>
-                    <h:outputText value="#{msgs.docstructsGesamt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumDocstructs}"/>
-                    <h:outputText value="#{msgs.docstructsDurchschnitt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageDocstructs}"/>
-                    <h:outputText value="#{msgs.metadataGesamt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumMetadata}"/>
-                    <h:outputText value="#{msgs.metadataDurchschnitt}:"/>
-                    <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageMetadata}"/>
-                </h:panelGrid>
-            </td>
-        </tr>
-    </table>
+    <ui:fragment rendered="#{ProzessverwaltungForm.myAnzahlList != null}">
+        <table cellpadding="3" cellspacing="0" style="margin-top:10px; width:250px"
+                   class="main_statistikboxen">
+            <tr>
+                <td class="main_statistikboxen_row1">
+                    <h:outputText value="#{msgs.zusammenfassung}"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="main_statistikboxen_row2">
+                    <h:panelGrid width="100%" columns="2" columnClasses="columnLinks,columnRechts">
+                        <h:outputText value="#{msgs.baendeGesamt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumProcesses}"/>
+                        <h:outputText value="#{msgs.imagesGesamt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumImages}"/>
+                        <h:outputText value="#{msgs.imagesDurchschnitt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageImages}"/>
+                        <h:outputText value="#{msgs.docstructsGesamt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumDocstructs}"/>
+                        <h:outputText value="#{msgs.docstructsDurchschnitt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageDocstructs}"/>
+                        <h:outputText value="#{msgs.metadataGesamt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.sumMetadata}"/>
+                        <h:outputText value="#{msgs.metadataDurchschnitt}:"/>
+                        <h:outputText value="#{ProzessverwaltungForm.myAnzahlSummary.averageMetadata}"/>
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </table>
+    </ui:fragment>
 </ui:composition>
 
 <!-- ++++++++++++++++     // Action      ++++++++++++++++ -->
