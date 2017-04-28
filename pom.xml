@@ -92,51 +92,6 @@
         <module>Kitodo</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <executions>
-                    <execution>
-                        <id>checkstyle-check</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <failOnViolation>false</failOnViolation>
-                            <failsOnError>false</failsOnError>
-                            <maxAllowedViolations>850</maxAllowedViolations>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.4</version>
-                <configuration>
-                    <xmlOutput>true</xmlOutput>
-                    <xmlOutputDirectory>target/findbugsreports</xmlOutputDirectory>
-                    <effort>Max</effort>
-                    <failOnError>false</failOnError>
-                    <threshold>medium</threshold>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>all-tests</id>
@@ -151,6 +106,53 @@
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>checkstyle-findbugs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>2.17</version>
+                        <executions>
+                            <execution>
+                                <id>checkstyle-check</id>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <encoding>UTF-8</encoding>
+                                    <failOnViolation>false</failOnViolation>
+                                    <failsOnError>false</failsOnError>
+                                    <maxAllowedViolations>850</maxAllowedViolations>
+                                </configuration>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>3.0.4</version>
+                        <configuration>
+                            <xmlOutput>true</xmlOutput>
+                            <xmlOutputDirectory>target/findbugsreports</xmlOutputDirectory>
+                            <effort>Max</effort>
+                            <failOnError>false</failOnError>
+                            <threshold>medium</threshold>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
