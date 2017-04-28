@@ -15,6 +15,7 @@ import com.sun.media.jai.codec.ImageCodec;
 import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.TIFFEncodeParam;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.awt.image.RenderedImage;
@@ -77,7 +78,7 @@ public class Multipage {
          * alle Bilder als Multipage erzeugen
          */
         OutputStream out = new FileOutputStream(
-                this.help.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff");
+                ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff");
         TIFFEncodeParam param = new TIFFEncodeParam();
         param.setCompression(4);
         ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
@@ -113,7 +114,7 @@ public class Multipage {
             /*
              * die txt-Datei direkt in den Stream schreiben lassen
              */
-            String filename = this.help.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff";
+            String filename = ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff";
             if (!(new File(filename)).exists()) {
                 create(process);
             }

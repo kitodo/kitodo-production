@@ -11,6 +11,7 @@
 
 package org.goobi.api.display.helper;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public final class ConfigDispayRules {
      */
 
     private ConfigDispayRules() {
-        configPfad = this.helper.getKitodoConfigDirectory() + "kitodo_metadataDisplayRules.xml";
+        configPfad = ConfigCore.getKitodoConfigDirectory() + "kitodo_metadataDisplayRules.xml";
         try {
             config = new XMLConfiguration(configPfad);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());

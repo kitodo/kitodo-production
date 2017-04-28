@@ -15,11 +15,8 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -127,7 +124,7 @@ public class MassImportForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollections = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
-        String filename = this.help.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
+        String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
@@ -232,7 +229,7 @@ public class MassImportForm {
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
-            this.plugin.setKitodoConfigDirectory(new Helper().getKitodoConfigDirectory());
+            this.plugin.setKitodoConfigDirectory(ConfigCore.getKitodoConfigDirectory());
 
             if (StringUtils.isNotEmpty(this.idList)) {
                 List<String> ids = this.plugin.splitIds(this.idList);
@@ -335,61 +332,26 @@ public class MassImportForm {
     /**
      * File upload with binary copying.
      */
-    public void uploadFile() {
-        ByteArrayInputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            if (this.uploadedFile == null) {
-                Helper.setFehlerMeldung("noFileSelected");
-                return;
-            }
+    public void uploadFile() throws IOException {
 
-            String basename = this.uploadedFile.getName();
-            if (basename.startsWith(".")) {
-                basename = basename.substring(1);
-            }
-            if (basename.contains("/")) {
-                basename = basename.substring(basename.lastIndexOf("/") + 1);
-            }
-            if (basename.contains("\\")) {
-                basename = basename.substring(basename.lastIndexOf("\\") + 1);
-            }
-
-            String filename = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
-
-            inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
-            outputStream = new FileOutputStream(filename);
-
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buf)) > 0) {
-                outputStream.write(buf, 0, len);
-            }
-
-            this.importFile = new File(filename);
-            List<String> param = new ArrayList<String>();
-            param.add(basename);
-            Helper.setMeldung(Helper.getTranslation("uploadSuccessful", param));
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed");
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-
+        if (this.uploadedFile == null) {
+            Helper.setFehlerMeldung("noFileSelected");
+            return;
         }
+
+        String basename = this.uploadedFile.getName();
+        if (basename.startsWith(".")) {
+            basename = basename.substring(1);
+        }
+        if (basename.contains("/")) {
+            basename = basename.substring(basename.lastIndexOf("/") + 1);
+        }
+        if (basename.contains("\\")) {
+            basename = basename.substring(basename.lastIndexOf("\\") + 1);
+        }
+        String filename = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
+
+        serviceManager.getFileService().start(new File(this.uploadedFile.getName()), new File(filename));
 
     }
 

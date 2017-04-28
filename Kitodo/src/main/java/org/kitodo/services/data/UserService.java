@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
@@ -36,6 +35,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 public class UserService extends SearchService {
@@ -45,6 +45,8 @@ public class UserService extends SearchService {
     private UserDAO userDao = new UserDAO();
     private UserType userType = new UserType();
     private Indexer<User, UserType> indexer = new Indexer<>(User.class);
+
+    private ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor with searcher's assigning.
@@ -311,7 +313,7 @@ public class UserService extends SearchService {
         }
         // if the directory is not "", but does not yet exist, then create it
         // now
-        FilesystemHelper.createDirectoryForUser(result, user.getLogin());
+        serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
         return result;
     }
 

@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
-import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
@@ -103,30 +102,6 @@ public class Helper implements Serializable, Observer {
             myParameter = "";
         }
         return myParameter;
-    }
-
-    /**
-     * Get Goobi data directory.
-     *
-     * @return String
-     */
-    public String getKitodoDataDirectory() {
-        if (this.myMetadatenVerzeichnis == null) {
-            this.myMetadatenVerzeichnis = ConfigCore.getParameter("MetadatenVerzeichnis");
-        }
-        return this.myMetadatenVerzeichnis;
-    }
-
-    /**
-     * Get Goobi config directory.
-     *
-     * @return String
-     */
-    public String getKitodoConfigDirectory() {
-        if (this.myConfigVerzeichnis == null) {
-            this.myConfigVerzeichnis = ConfigCore.getParameter(Parameters.CONFIG_DIR);
-        }
-        return this.myConfigVerzeichnis;
     }
 
     /**

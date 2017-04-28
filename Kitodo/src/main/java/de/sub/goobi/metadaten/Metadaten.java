@@ -12,7 +12,6 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
@@ -817,7 +816,7 @@ public class Metadaten {
                 .setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
         this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
-            this.myProzess.setSortHelperImages(FileUtils.getNumberOfFiles(
+            this.myProzess.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(
                     new SafeFile(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess))));
             serviceManager.getProcessService().save(this.myProzess);
         } catch (DAOException e) {

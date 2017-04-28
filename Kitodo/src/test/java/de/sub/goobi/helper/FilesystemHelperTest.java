@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.services.file.FileService;
 
 public class FilesystemHelperTest {
 
@@ -44,28 +45,31 @@ public class FilesystemHelperTest {
     public void renamingOfNonExistingFileShouldThrowFileNotFoundException() throws IOException {
         String oldFileName = "old.xml";
         String newFileName = "new.xml";
-
-        FilesystemHelper.renameFile(oldFileName, newFileName);
+        FileService fileService = new FileService();
+        fileService.renameFile(oldFileName, newFileName);
     }
 
     @Test
     public void shouldRenameAFile() throws IOException {
         createFile("old.xml");
-        FilesystemHelper.renameFile("old.xml", "new.xml");
+        FileService fileService = new FileService();
+        fileService.renameFile("old.xml", "new.xml");
         assertFileExists("new.xml");
         assertFileNotExists("old.xml");
     }
 
     @Test
     public void nothingHappensIfSourceFilenameIsNotSet() throws IOException {
-        FilesystemHelper.renameFile(null, "new.xml");
+        FileService fileService = new FileService();
+        fileService.renameFile(null, "new.xml");
         assertFileNotExists("new.xml");
     }
 
     @Test
     public void nothingHappensIfTargetFilenameIsNotSet() throws IOException {
         createFile("old.xml");
-        FilesystemHelper.renameFile("old.xml", null);
+        FileService fileService = new FileService();
+        fileService.renameFile("old.xml", null);
         assertFileNotExists("new.xml");
     }
 

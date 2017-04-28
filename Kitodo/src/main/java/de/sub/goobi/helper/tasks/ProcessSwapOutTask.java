@@ -12,12 +12,12 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.CopyFile;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 import org.goobi.io.SafeFile;
@@ -31,7 +31,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapOutTask extends LongRunningTask {
-    private final ServiceManager serviceManager = new ServiceManager();
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Copies all files under srcDir to dstDir. If dstDir does not exist, it
@@ -51,7 +51,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
                         kitodoPathLength, inRoot);
             }
         } else {
-            Long crc = CopyFile.start(srcDir, dstDir);
+            Long crc = serviceManager.getFileService().start(srcDir.getDelegate(), dstDir.getDelegate());
             Element file = new Element("file");
             file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLength));
             file.setAttribute("crc32", String.valueOf(crc));
@@ -183,7 +183,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
         setStatusProgress(50);
         try {
             setStatusMessage("copying process folder");
-            copyDirectoryWithCrc32Check(fileIn, fileOut, help.getKitodoDataDirectory().length(), root);
+            copyDirectoryWithCrc32Check(fileIn, fileOut, ConfigCore.getKitodoDataDirectory().length(), root);
         } catch (IOException e) {
             logger.warn("IOException:", e);
             setStatusMessage("IOException in copyDirectory: " + e.getMessage());
@@ -198,7 +198,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
          */
         Format format = Format.getPrettyFormat();
         format.setEncoding("UTF-8");
-        try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
+        try (FileOutputStream fos = (FileOutputStream) serviceManager.getFileService()
+                .write(URI.create(processDirectory + File.separator + "swapped.xml"))) {
             setStatusMessage("writing swapped.xml");
             XMLOutputter xmlOut = new XMLOutputter(format);
             xmlOut.output(doc, fos);

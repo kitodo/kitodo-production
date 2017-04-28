@@ -32,7 +32,6 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.goobi.production.constants.FileNames;
-import org.goobi.production.constants.Parameters;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
@@ -44,7 +43,7 @@ public class ConfigOpac {
         if (config != null) {
             return config;
         }
-        String configPfad = FilenameUtils.concat(ConfigCore.getParameter(Parameters.CONFIG_DIR),
+        String configPfad = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.OPAC_CONFIGURATION_FILE);
 
         if (!new File(configPfad).exists()) {

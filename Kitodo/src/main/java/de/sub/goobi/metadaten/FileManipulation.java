@@ -14,13 +14,12 @@ package de.sub.goobi.metadaten;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -67,7 +65,7 @@ public class FileManipulation {
     // mode of insert (uncounted or into pagination sequence)
     private String insertMode = "uncounted";
 
-    private UploadedFile uploadedFile = null;
+    private File uploadedFile = null;
 
     private String uploadedFileName = null;
 
@@ -85,7 +83,7 @@ public class FileManipulation {
      * File upload with binary copying.
      */
     public void uploadFile() {
-        ByteArrayInputStream inputStream = null;
+        InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             if (this.uploadedFile == null) {
@@ -122,15 +120,15 @@ public class FileManipulation {
                 logger.trace("filename to import: " + filename);
             }
 
-            if (new SafeFile(filename).exists()) {
+            if (serviceManager.getFileService().fileExist(URI.create(filename))) {
                 List<String> parameterList = new ArrayList<String>();
                 parameterList.add(basename);
                 Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
                 return;
             }
 
-            inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
-            outputStream = new FileOutputStream(filename);
+            inputStream = serviceManager.getFileService().read(uploadedFile.toURI());
+            outputStream = serviceManager.getFileService().writeOrCreate(URI.create(filename));
 
             byte[] buf = new byte[1024];
             int len;
@@ -282,11 +280,11 @@ public class FileManipulation {
         }
     }
 
-    public UploadedFile getUploadedFile() {
+    public File getUploadedFile() {
         return this.uploadedFile;
     }
 
-    public void setUploadedFile(UploadedFile uploadedFile) {
+    public void setUploadedFile(File uploadedFile) {
         this.uploadedFile = uploadedFile;
     }
 

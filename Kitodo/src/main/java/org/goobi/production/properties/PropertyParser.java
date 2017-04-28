@@ -11,7 +11,7 @@
 
 package org.goobi.production.properties;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class PropertyParser {
             return properties;
         }
 
-        String path = new Helper().getKitodoConfigDirectory() + "kitodo_processProperties.xml";
+        String path = ConfigCore.getKitodoConfigDirectory() + "kitodo_processProperties.xml";
         XMLConfiguration config;
         try {
             config = new XMLConfiguration(path);
@@ -177,7 +177,7 @@ public class PropertyParser {
             }
             return properties;
         }
-        String path = new Helper().getKitodoConfigDirectory() + "kitodo_processProperties.xml";
+        String path = ConfigCore.getKitodoConfigDirectory() + "kitodo_processProperties.xml";
         XMLConfiguration config;
         try {
             config = new XMLConfiguration(path);

@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
@@ -978,7 +977,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
-                        this.gesamtAnzahlImages += FileUtils.getNumberOfFiles(
+                        this.gesamtAnzahlImages += serviceManager.getFileService().getNumberOfFiles(
                                 serviceManager.getProcessService().getImagesOrigDirectory(false, step.getProcess()));
                     }
                 } catch (Exception e) {

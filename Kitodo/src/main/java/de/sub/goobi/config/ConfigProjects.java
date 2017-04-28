@@ -11,8 +11,6 @@
 
 package de.sub.goobi.config;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ public class ConfigProjects {
     private static final Logger logger = Logger.getLogger(ConfigProjects.class);
 
     public ConfigProjects(String projectTitle) throws IOException {
-        this(projectTitle, new Helper().getKitodoConfigDirectory() + "kitodo_projects.xml");
+        this(projectTitle, ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml");
     }
 
     /**

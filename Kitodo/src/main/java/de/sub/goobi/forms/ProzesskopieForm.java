@@ -1437,7 +1437,7 @@ public class ProzesskopieForm {
         this.possibleDigitalCollection = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
 
-        String filename = FilenameUtils.concat(ConfigCore.getParameter(Parameters.CONFIG_DIR),
+        String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);

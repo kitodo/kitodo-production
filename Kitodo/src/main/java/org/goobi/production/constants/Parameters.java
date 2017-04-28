@@ -56,7 +56,6 @@ public class Parameters {
      * Points to a folder on the file system that contains Production
      * configuration files.
      */
-    public static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
      * Whether during an export to the DMS the images will be copied. Defaults

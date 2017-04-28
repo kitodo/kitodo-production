@@ -155,7 +155,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
                 InputStream inStream = method.getResponseBodyAsStream();
                 try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                        FileOutputStream fos = tempPdf.createFileOutputStream();) {
+                        FileOutputStream fos = (FileOutputStream) serviceManager.getFileService()
+                                .write(tempPdf.toURI())) {
                     byte[] bytes = new byte[8192];
                     int count = bis.read(bytes);
                     while ((count != -1) && (count <= 8192)) {

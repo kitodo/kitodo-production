@@ -202,8 +202,8 @@ public class ProcessSwapInTask extends LongRunningTask {
         setStatusProgress(90);
 
         /* in Prozess speichern */
-        fileOut.deleteDir();
         try {
+            serviceManager.getFileService().delete(fileOut.toURI());
             setStatusMessage("saving process");
             Process myProcess = serviceManager.getProcessService().find(getProcess().getId());
             myProcess.setSwappedOutGui(false);
