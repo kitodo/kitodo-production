@@ -44,10 +44,9 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
-
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can
@@ -77,6 +76,7 @@ public class LdapUser implements DirContext {
      */
     public void configure(User inUser, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
+        MD4 digester = new MD4();
         if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
 
             this.type = inUser.getLogin();
@@ -129,7 +129,7 @@ public class LdapUser implements DirContext {
             }
             /* NTLM */
             try {
-                byte hmm[] = MD4.mdfour(inPassword.getBytes("UnicodeLittleUnmarked"));
+                byte hmm[] = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
                 this.myAttrs.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
                 myLogger.error(e);
