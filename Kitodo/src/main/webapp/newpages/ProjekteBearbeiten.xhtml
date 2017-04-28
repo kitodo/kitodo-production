@@ -1,0 +1,1095 @@
+<!--
+    *
+    * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+    *
+    * This file is part of the Kitodo project.
+    *
+    * It is licensed under GNU General Public License version 3 or later.
+    *
+    * For the full copyright and license information, please read the
+    * GPL3-License.txt file that was distributed with this source code.
+    *
+    -->
+
+<!-- ########################################
+
+    Projekt bearbeiten
+
+    #########################################-->
+<!--<a4j:keepAlive beanName="ProjekteForm"/>-->
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <!-- css filepath configured for mac os x -->
+        <link href="../css/tabbedPane.css" rel="stylesheet" type="text/css"/>
+
+        <body>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                       style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                       align="center">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
+
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                        <h:form id="projectform">
+                            <!-- Breadcrumb -->
+                            <h:panelGrid width="100%" columns="1"
+                                         styleClass="layoutInhaltKopf" id="projectgrid1">
+                                <h:panelGroup id="id1">
+                                    <h:commandLink id="id2" value="#{msgs.startseite}"
+                                                   action="newMain"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:commandLink id="id3" value="#{msgs.projekte}"
+                                                   action="ProjekteAlle"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:outputText id="id4" value="#{msgs.neuesProjektAnlegen}"
+                                                  rendered="#{ProjekteForm.myProjekt.id == null}"/>
+                                    <h:outputText id="id5" value="#{msgs.projektBearbeiten}"
+                                                  rendered="#{ProjekteForm.myProjekt.id != null}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+
+                            <table border="0" align="center" width="100%" cellpadding="15">
+                                <tr>
+                                    <td>
+                                        <h3>
+                                            <h:outputText id="id6" value="#{msgs.neuesProjektAnlegen}"
+                                                          rendered="#{ProjekteForm.myProjekt.id == null}"/>
+                                            <h:outputText id="id7" value="#{msgs.projektBearbeiten}"
+                                                          rendered="#{ProjekteForm.myProjekt.id != null}"/>
+                                        </h3>
+
+                                        <!-- globale Warn- und Fehlermeldungen -->
+                                        <h:messages id="id8" globalOnly="true" errorClass="text_red"
+                                                    infoClass="text_blue" showDetail="true" showSummary="true"
+                                                    tooltip="true"/>
+
+                                        <!-- Box für die Bearbeitung der Details -->
+                                        <table cellpadding="3" cellspacing="0" width="100%"
+                                                   class="eingabeBoxen">
+
+                                            <tr>
+                                                <td class="eingabeBoxen_row1" align="left">
+                                                    <h:outputText id="id9" value="#{msgs.details}"/>
+                                                </td>
+                                                <td class="eingabeBoxen_row1" align="right">
+                                                    <h:commandLink id="id10" action="#{NavigationForm.Reload}">
+                                                        <h:graphicImage id="id11"
+                                                                        value="/newpages/images/reload.gif"/>
+                                                    </h:commandLink>
+                                                </td>
+                                            </tr>
+
+                                            <!-- Formular für die Bearbeitung der Texte -->
+                                            <tr>
+                                                <td class="eingabeBoxen_row2" colspan="2">
+
+                                                    <!--<div class="yui-skin-sam"><div class="yui-skin-sam"> -->
+                                                    <!--<h:outputText id="id12" value="#{ProjekteForm.currentTab}" />-->
+                                                    <t:panelTabbedPane serverSideTabSwitch="true"
+                                                                       immediateTabChange="false" styleClass="tabbedPane"
+                                                                       activeTabStyleClass="activeTab"
+                                                                       inactiveTabStyleClass="inactiveTab"
+                                                                       disabledTabStyleClass="disabledTab"
+                                                                       activeSubStyleClass="activeSub"
+                                                                       inactiveSubStyleClass="inactiveSub"
+                                                                       tabContentStyleClass="tabContent">
+                                                        <!--<div id="demo" class="yui-navset">--> <!--YUI obere Navigation Start -->
+                                                        <!--
+                                                        <ul class="yui-nav">
+                                                            -->
+                                                            <t:panelTab label="#{msgs.details}">
+                                                                <!--<h:form id="formTabDetails">-->
+                                                                <!--
+                                                                <li
+                                                                        class="#{ProjekteForm.currentTab =='tab1'?'selected':''}">
+                                                                    <h:commandLink id="id13" action="#{ProjekteForm.apply}">
+                                                                        <h:outputText id="id14" value="<em>" escape="false" />
+                                                                        <h:outputText id="id15" value="Details" />
+                                                                        <h:outputText id="id16" value="</em>" escape="false" />
+                                                                        <t:updateActionListener value="tab1"
+                                                                                                property="#{ProjekteForm.currentTab}" />
+                                                                    </h:commandLink>
+                                                                </li>
+                                                                -->
+                                                                <div id="tab1">
+                                                                    <h:panelGrid columns="2" rowClasses="top" id="projgrid2"
+                                                                                 styleClass="tableDetails ">
+
+                                                                        <!-- Titel -->
+                                                                        <h:outputLabel id="id17" for="titel"
+                                                                                       value="#{msgs.titel}"/>
+                                                                        <h:panelGroup id="id18">
+                                                                            <h:inputText id="titel"
+                                                                                         style="width: 200px;margin-right:15px"
+                                                                                         value="#{ProjekteForm.myProjekt.title}"
+                                                                                         required="true"/>
+                                                                            <t:message id="id19" for="titel" style="color: red"
+                                                                                       replaceIdWithLabel="true"/>
+                                                                        </h:panelGroup>
+
+                                                                        <!-- Mets als internes Speicherformat (ansonsten xStream)
+                                                                        <h:outputText id="id20" value="#{msgs.metsAlsInternesSpeicherformat}" />
+                                                                        <h:selectBooleanCheckbox id="id21" style="margin-right:15px"
+                                                                                                 value="#{ProjekteForm.myProjekt.metsFormatInternal}" /> -->
+
+                                                                        <!-- Mets als Exportformat (ansonsten RDF XML)
+                                                                        <h:outputText id="id22" value="#{msgs.metsAlsDmsExportformat}" />
+                                                                        <h:selectBooleanCheckbox id="id23" style="margin-right:15px"
+                                                                                                 value="#{ProjekteForm.myProjekt.metsFormatDmsExport}" /> -->
+
+
+                                                                        <!-- test for new project data-->
+
+                                                                        <!-- number of pages -->
+
+                                                                        <h:outputText id="vwid8" value="#{msgs.numberImages}:"/>
+                                                                        <h:panelGroup>
+                                                                            <h:inputText id="id24"
+                                                                                         style="width: 200px;margin-right:15px"
+                                                                                         value="#{ProjekteForm.myProjekt.numberOfPages}">
+                                                                                <!--		<a4j:support id="vwid10" event="onkeyup" reRender="projectForm:calcs" />  -->
+                                                                            </h:inputText>
+                                                                            <h:commandLink
+                                                                                    action="#{ProjekteForm.generateValuesForStatistics}">
+                                                                                <h:graphicImage alt="#{msgs.generateValues}"
+                                                                                                value="/newpages/images/buttons/reload.gif"
+                                                                                                style="margin-right:10px"/>
+                                                                            </h:commandLink>
+                                                                        </h:panelGroup>
+
+                                                                        <!-- number of volumes -->
+                                                                        <h:outputText id="vwid11" value="#{msgs.numberVolumes}:"/>
+                                                                        <h:inputText id="id25"
+                                                                                     style="width: 200px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.numberOfVolumes}">
+                                                                            <!--				<a4j:support id="vwid13" event="onkeyup" reRender="projectForm:calcs" /> -->
+                                                                        </h:inputText>
+
+                                                                        <!-- startdate -->
+                                                                        <h:outputText id="vwid14" value="#{msgs.startdate}:"/>
+                                                                        <!--
+                                                                        <h:inputText id="id26" style="width: 200px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.startDate}" />
+                                                                        -->
+                                                                        <t:inputCalendar id="vwid15" style="width:200px"
+                                                                                         value="#{ProjekteForm.myProjekt.startDate}"
+                                                                                         renderAsPopup="true"
+                                                                                         renderPopupButtonAsImage="true"
+                                                                                         popupTodayString="#{msgs.heute}"
+                                                                                         popupWeekString="#{msgs.kw}"
+                                                                                         styleClass="projekteBearbeiten"
+                                                                                         imageLocation="/newpages/images/calendarImages"
+                                                                                         popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif"/>
+
+                                                                        <!-- enddate -->
+                                                                        <h:outputText id="vwid17" value="#{msgs.enddate}:"/>
+                                                                        <!--
+                                                                        <h:inputText id="id27" style="width: 200px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.endDate}" />
+                                                                        -->
+                                                                        <t:inputCalendar id="vwid18" style="width:200px"
+                                                                                         value="#{ProjekteForm.myProjekt.endDate}"
+                                                                                         renderAsPopup="true"
+                                                                                         renderPopupButtonAsImage="true"
+                                                                                         popupTodayString="#{msgs.heute}"
+                                                                                         popupWeekString="#{msgs.kw}"
+                                                                                         styleClass="projekteBearbeiten"
+                                                                                         monthYearRowClass="monthYearRowClass"
+                                                                                         imageLocation="/newpages/images/calendarImages"
+                                                                                         popupButtonImageUrl="/newpages/images/calendarImages/calendar.gif"/>
+
+                                                                        <h:outputText id="vwid36a"
+                                                                                      value="#{msgs.projectIsArchived}: "/>
+                                                                        <h:selectBooleanCheckbox id="vwid37b"
+                                                                                                 style="margin-right:15px"
+                                                                                                 value="#{ProjekteForm.myProjekt.projectIsArchived}"/>
+
+                                                                    </h:panelGrid>
+                                                                    <!--
+                                                                    <f:facet name="header">
+                                                                        <h:outputText id="vwid20" value="#{msgs.berechnungen}"
+                                                                                      style="font-weight:normal" />
+                                                                    </f:facet>
+                                                                    <h:panelGrid id="vwid21" columns="2" rowClasses="top">
+                                                                    -->
+                                                                    <table class="tableCalcStat tableDetails">
+
+                                                                        <tbody>
+                                                                            <tr class="header">
+                                                                                <td>
+                                                                                    <!-- pages per volume -->
+                                                                                    <h:outputText id="vwid22"
+                                                                                                  value="#{msgs.imagesPerVolume}:"/>
+                                                                                </td>
+                                                                                <td class="left">
+                                                                                    <h:outputText id="vwid23"
+                                                                                                  value="#{ProjekteForm.calcImagesPerVolume}"/>
+                                                                                </td>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <!-- duration -->
+                                                                                <td>
+                                                                                    <h:outputText id="vwid24"
+                                                                                                  value="#{msgs.durationInMonth}:"/>
+                                                                                </td>
+                                                                                <td class="left">
+                                                                                    <h:outputText id="vwid25"
+                                                                                                  value="#{ProjekteForm.calcDuration}"/>
+                                                                                </td>
+                                                                                <td></td>
+                                                                                <td></td>
+                                                                            </tr>
+                                                                            <tr rendered="#{ProjekteForm.calcDuration > 11}">
+                                                                                <!-- throughputPerYear -->
+                                                                                <td>
+                                                                                    <h:outputText id="vwid26"
+                                                                                                  value="#{msgs.volumesPerYear}:"
+                                                                                                  rendered="#{ProjekteForm.calcDuration > 11}"/>
+                                                                                </td>
+                                                                                <td class="left">
+                                                                                    <h:outputText id="vwid27"
+                                                                                                  value="#{ProjekteForm.calcThroughputPerYear}"
+                                                                                                  rendered="#{ProjekteForm.calcDuration > 11}"/>
+                                                                                </td>
+                                                                                <td class="right">
+                                                                                    <h:outputText id="id28"
+                                                                                                  value="#{msgs.pagesPerYear}:"/>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <h:outputText id="id29"
+                                                                                                  value="#{ProjekteForm.calcThroughputPagesPerYear}"/>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
+                                                                            <ui:fragment rendered="#{ProjekteForm.calcDuration > 2}">
+                                                                                <tr>
+                                                                                    <!-- throughputPerQuarter -->
+                                                                                    <td>
+                                                                                        <h:outputText id="vwid28"
+                                                                                                      value="#{msgs.volumesPerQuarter}:"
+                                                                                                      rendered="#{ProjekteForm.calcDuration > 2}"/>
+                                                                                    </td>
+                                                                                    <td class="left">
+                                                                                        <h:outputText id="vwid29"
+                                                                                                      value="#{ProjekteForm.calcThroughputPerQuarter}"
+                                                                                                      rendered="#{ProjekteForm.calcDuration > 2}"/>
+                                                                                    </td>
+                                                                                    <td class="right">
+                                                                                        <!--pages per Quarter -->
+                                                                                        <h:outputText id="vwid38"
+                                                                                                      value="#{msgs.pagesPerQuarter}:"/>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <h:outputText id="vwid39"
+                                                                                                      value="#{ProjekteForm.calcTroughputPagesPerQuarter}"/>
+                                                                                    </td>
+
+                                                                                </tr>
+                                                                            </ui:fragment>
+                                                                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
+                                                                            <ui:fragment rendered="#{ProjekteForm.calcDuration > 0}">
+                                                                                <tr>
+                                                                                    <!-- throughputPerMonth -->
+                                                                                    <td>
+                                                                                        <h:outputText id="vwid30"
+                                                                                                      value="#{msgs.volumesPerMonth}:"
+                                                                                                      rendered="#{ProjekteForm.calcDuration > 0}"/>
+                                                                                    </td>
+                                                                                    <td class="left">
+                                                                                        <h:outputText id="vwid31"
+                                                                                                      value="#{ProjekteForm.calcThroughputPerMonth}"
+                                                                                                      rendered="#{ProjekteForm.calcDuration > 0}"/>
+                                                                                    </td>
+                                                                                    <!-- average pages per month -->
+                                                                                    <td class="right">
+
+                                                                                        <h:outputText id="vwid36"
+                                                                                                      value="#{msgs.pagesPerMonth}:"/>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <h:outputText id="vwid37"
+                                                                                                      value="#{ProjekteForm.calcThroughputPagesPerMonth}"/>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </ui:fragment>
+                                                                            <tr>
+
+                                                                                <!-- throughputPerDay -->
+                                                                                <td>
+                                                                                    <h:outputText id="vwid32"
+                                                                                                  value="#{msgs.volumesPerDay}:"/>
+                                                                                </td>
+                                                                                <td class="left">
+                                                                                    <h:outputText id="vwid33"
+                                                                                                  value="#{ProjekteForm.calcThroughputPerDay}"/>
+                                                                                </td>
+                                                                                <td class="right">
+                                                                                    <!--pages per day -->
+                                                                                    <h:outputText id="vwid34"
+                                                                                                  value="#{msgs.pagesPerDay}:"/>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <h:outputText id="vwid35"
+                                                                                                  value="#{ProjekteForm.calcPagesPerDay}"/>
+                                                                                </td>
+                                                                            </tr>
+
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+
+                                                                <!--</h:form>--> <!--END form id="formTabDetails" -->
+                                                            </t:panelTab>
+                                                            <!-- END label="Details" -->
+
+                                                            <t:panelTab label="#{msgs.technischeDaten}">
+                                                                <!--
+                                                                <li
+                                                                        styleClass="#{ProjekteForm.currentTab =='tab2'?'selected':''}">
+                                                                    <h:commandLink id="id30" action="#{ProjekteForm.apply}">
+                                                                        <h:outputText id="id31" value="<em>" escape="false" />
+                                                                        <h:outputText id="id32" value="DMS Import" />
+                                                                        <h:outputText id="id33" value="</em>" escape="false" />
+                                                                        <x:updateActionListener value="tab2"
+                                                                                                property="#{ProjekteForm.currentTab}" />
+                                                                    </h:commandLink>
+                                                                </li>
+                                                                -->
+                                                                <div id="tab2">
+                                                                    <h:panelGrid columns="2" rowClasses="top" id="projgrid3">
+                                                                        <!-- internes Speicherformat -->
+                                                                        <h:outputText id="id34"
+                                                                                      value="#{msgs.internesSpeicherformat}"/>
+                                                                        <h:selectOneMenu id="id35"
+                                                                                         style="width: 300px;margin-right:15px"
+                                                                                         value="#{ProjekteForm.myProjekt.fileFormatInternal}">
+                                                                            <f:selectItems
+                                                                                    value="#{HelperForm.fileFormatsInternalOnly}"
+                                                                                    var="format" itemLabel="#{format}"
+                                                                                    itemValue="#{format}"/>
+                                                                        </h:selectOneMenu>
+
+                                                                        <!-- Speicherformate für das DMS (mehrere möglich) -->
+                                                                        <h:outputText id="id36" value="#{msgs.dmsExportformat}"/>
+                                                                        <h:selectOneMenu id="id37"
+                                                                                         style="width: 300px;margin-right:15px"
+                                                                                         value="#{ProjekteForm.myProjekt.fileFormatDmsExport}">
+                                                                            <f:selectItems id="id38"
+                                                                                            value="#{HelperForm.fileFormats}"
+                                                                                            var="format"
+                                                                                            itemLabel="#{format}"
+                                                                                            itemValue="#{format}"/>
+                                                                        </h:selectOneMenu>
+
+                                                                        <!-- nutzt DMS-Import -->
+                                                                        <h:outputText id="id39"
+                                                                                      value="#{msgs.automatischerDmsImport}"/>
+                                                                        <h:selectBooleanCheckbox id="id40"
+                                                                                                 style="margin-right:15px"
+                                                                                                 value="#{ProjekteForm.myProjekt.useDmsImport}"/>
+
+                                                                        <!-- Dms-Import-XML-DATEI-Pfad -->
+                                                                        <h:outputText id="id41"
+                                                                                      value="#{msgs.dmsImportPfadXmlDatei}"/>
+                                                                        <h:inputText id="id42"
+                                                                                     style="width: 300px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.dmsImportRootPath}"/>
+
+                                                                        <!-- Dms-Import-Images-Pfad -->
+                                                                        <h:outputText id="id43"
+                                                                                      value="#{msgs.dmsImportImagesPfad}"/>
+                                                                        <h:inputText id="id44"
+                                                                                     style="width: 300px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.dmsImportImagesPath}"/>
+
+                                                                        <!-- Dms-Import-Success-Pfad -->
+                                                                        <h:outputText id="id45"
+                                                                                      value="#{msgs.dmsImportSuccessPfad}"/>
+                                                                        <h:inputText id="id46"
+                                                                                     style="width: 300px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.dmsImportSuccessPath}"/>
+
+                                                                        <!-- Dms-Import-Error-Pfad -->
+                                                                        <h:outputText id="id47"
+                                                                                      value="#{msgs.dmsImportErrorPfad}"/>
+                                                                        <h:inputText id="id48"
+                                                                                     style="width: 300px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.dmsImportErrorPath}"/>
+
+                                                                        <!-- nutzt DMS-Import -->
+                                                                        <h:outputText
+                                                                                value="#{msgs.dmsImportCreateProcessFolder}"/>
+                                                                        <h:selectBooleanCheckbox id="id49"
+                                                                                                 style="margin-right:15px"
+                                                                                                 value="#{ProjekteForm.myProjekt.dmsImportCreateProcessFolder}"/>
+
+                                                                        <!-- Timeout -->
+                                                                        <h:outputLabel id="id50" for="timeout"
+                                                                                       value="#{msgs.timeout} (ms)"/>
+                                                                        <h:panelGroup id="id51">
+                                                                            <h:inputText id="timeout"
+                                                                                         style="width: 300px;margin-right:15px"
+                                                                                         value="#{ProjekteForm.myProjekt.dmsImportTimeOut}"
+                                                                                         required="true"/>
+                                                                            <t:message id="id52" for="timeout" style="color: red"
+                                                                                       replaceIdWithLabel="true"/>
+                                                                        </h:panelGroup>
+                                                                    </h:panelGrid>
+                                                                </div>
+                                                            </t:panelTab>
+                                                            <!--END  label="DMS Import"-->
+
+                                                            <t:panelTab label="#{msgs.metsParamater}">
+                                                                <!--
+                                                                <li
+                                                                        class="#{ProjekteForm.currentTab =='tab3'?'selected':''}">
+                                                                    <h:commandLink id="id53" action="#{ProjekteForm.apply}">
+                                                                        <h:outputText id="id54" value="<em>" escape="false" />
+                                                                        <h:outputText id="id55" value="Mets Parameter" />
+                                                                        <h:outputText id="id56" value="</em>" escape="false" />
+                                                                        <t:updateActionListener value="tab3"
+                                                                                                property="#{ProjekteForm.currentTab}" />
+                                                                    </h:commandLink>
+                                                                </li>
+                                                                -->
+                                                                <div id="tab3">
+                                                                    <h:panelGrid columns="2" rowClasses="top" id="projgrid4">
+
+                                                                        <!-- metsRightsOwner -->
+                                                                        <h:outputText id="id57" value="#{msgs.metsRightsOwner}"/>
+                                                                        <h:inputText id="id58"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsRightsOwner}"/>
+
+                                                                        <!-- metsRightsOwnerLogo -->
+                                                                        <h:outputText id="id59"
+                                                                                      value="#{msgs.metsRightsOwnerLogo}"/>
+                                                                        <h:inputText id="id60"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsRightsOwnerLogo}"/>
+
+                                                                        <!-- metsRightsOwnerSite -->
+                                                                        <h:outputText id="id61"
+                                                                                      value="#{msgs.metsRightsOwnerSite}"/>
+                                                                        <h:inputText id="id62"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsRightsOwnerSite}"/>
+
+                                                                        <!-- metsRightsOwnerMail -->
+                                                                        <h:outputText id="id63"
+                                                                                      value="#{msgs.metsRightsOwnerMail}"/>
+                                                                        <h:inputText id="id64"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsRightsOwnerMail}"/>
+
+                                                                        <!-- metsDigiprovReference -->
+                                                                        <h:outputText id="id65"
+                                                                                      value="#{msgs.metsDigiprovReference}"/>
+                                                                        <h:inputText id="id66"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsDigiprovReference}"/>
+
+                                                                        <!-- metsDigiprovPresentation -->
+                                                                        <h:outputText id="id67"
+                                                                                      value="#{msgs.metsDigiprovPresentation}"/>
+                                                                        <h:inputText id="id68"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsDigiprovPresentation}"/>
+
+                                                                        <!-- metsDigiprovReferenceAnchor -->
+                                                                        <h:outputText
+                                                                                value="#{msgs.metsDigiprovReferenceAnchor}"/>
+                                                                        <h:inputText id="id69"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsDigiprovReferenceAnchor}"/>
+
+                                                                        <!-- metsDigiprovPresentationAnchor-->
+                                                                        <h:outputText
+                                                                                value="#{msgs.metsDigiprovPresentationAnchor}"/>
+                                                                        <h:inputText id="id70"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsDigiprovPresentationAnchor}"/>
+
+                                                                        <!-- metsPointerPath -->
+                                                                        <h:outputText id="id71" value="#{msgs.metsPointerPath}"/>
+                                                                        <h:inputText id="id72"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsPointerPath}"/>
+
+                                                                        <!-- metsPointerPathAnchor -->
+                                                                        <h:outputText id="id73"
+                                                                                      value="#{msgs.metsPointerPathAnchor}"/>
+                                                                        <h:inputText id="id74"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsPointerPathAnchor}"/>
+
+                                                                        <!-- metsPurl -->
+
+                                                                        <h:outputText id="id75" value="#{msgs.metsPurl}"/>
+                                                                        <h:inputText id="id76"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsPurl}"/>
+
+                                                                        <!-- metsContentIDs -->
+                                                                        <h:outputText id="id77" value="#{msgs.metsContentIDs}"/>
+                                                                        <h:inputText id="id78"
+                                                                                     style="width: 650px;margin-right:15px"
+                                                                                     value="#{ProjekteForm.myProjekt.metsContentIDs}"/>
+
+                                                                        <!-- FileGroups -->
+                                                                        <h:outputText id="id79" value="#{msgs.metsfilegroups}"/>
+                                                                        <h:panelGroup id="id80">
+                                                                            <t:dataTable id="id81" width="300"
+                                                                                         columnClasses="standardTable_Column,standardTable_Column,standardTable_ColumnCentered"
+                                                                                         var="item"
+                                                                                         value="#{ProjekteForm.fileGroupList}">
+                                                                                <h:column id="id82">
+                                                                                    <h:outputText id="id83" value="#{item.name}"/>
+                                                                                </h:column>
+                                                                                <h:column id="id84">
+                                                                                    <!-- Bearbeiten-Schaltknopf -->
+                                                                                    <h:panelGroup id="id85">
+                                                                                        <!-- TODO: find replacement for jp:popupFrame -->
+                                                                                        <!--<jp:popupFrame scrolling="auto"-->
+                                                                                                       <!--height="270px"-->
+                                                                                                       <!--width="700px"-->
+                                                                                                       <!--topStyle="background: #1874CD;"-->
+                                                                                                       <!--bottomStyleClass="popup_unten"-->
+                                                                                                       <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
+                                                                                                       <!--styleClass="standardlink"-->
+                                                                                                       <!--style="margin-top:2px;text-decoration:none"-->
+                                                                                                       <!--actionOpen="#{ProjekteForm.filegroupEdit}"-->
+                                                                                                       <!--actionClose="#{NavigationForm.Reload}"-->
+                                                                                                       <!--center="true"-->
+                                                                                                       <!--title="#{msgs.filegroupBearbeiten}"-->
+                                                                                                       <!--immediate="true">-->
+                                                                                            <!--<t:updateActionListener-->
+                                                                                                    <!--property="#{ProjekteForm.zurueck}"-->
+                                                                                                    <!--value="FilegroupPopup"/>-->
+                                                                                            <!--<t:updateActionListener-->
+                                                                                                    <!--property="#{ProjekteForm.myFilegroup}"-->
+                                                                                                    <!--value="#{item}"/>-->
+                                                                                            <!--<t:updateActionListener-->
+                                                                                                    <!--property="#{ProjekteForm.myFilegroup}"-->
+                                                                                                    <!--value="#{item}"/>-->
+                                                                                            <!--<h:graphicImage id="id86"-->
+                                                                                                            <!--value="images/buttons/edit_20.gif"/>-->
+                                                                                        <!--</jp:popupFrame>-->
+                                                                                    </h:panelGroup>
+
+                                                                                    <!-- Löschen-Schaltknopf -->
+                                                                                    <h:commandLink
+                                                                                            action="#{ProjekteForm.filegroupDelete}"
+                                                                                            title="#{msgs.filegroupLoeschen}"
+                                                                                            onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return">
+                                                                                        <h:graphicImage
+                                                                                                value="images/buttons/waste1a_20px.gif"/>
+                                                                                        <t:updateActionListener
+                                                                                                property="#{ProjekteForm.myFilegroup}"
+                                                                                                value="#{item}"/>
+                                                                                    </h:commandLink>
+                                                                                </h:column>
+                                                                            </t:dataTable>
+                                                                            <!-- Hinzufügen-Schaltknopf -->
+                                                                            <h:panelGroup id="id87">
+                                                                                <!-- TODO: find replacement for jp:popupFrame -->
+                                                                                <!--<jp:popupFrame scrolling="auto" height="270px"-->
+
+                                                                                               <!--width="700px"-->
+                                                                                               <!--topStyle="background: #1874CD;"-->
+                                                                                               <!--bottomStyleClass="popup_unten"-->
+                                                                                               <!--styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"-->
+                                                                                               <!--styleClass="standardlink"-->
+                                                                                               <!--style="margin-top:2px;display:block; text-decoration:none"-->
+                                                                                               <!--actionOpen="#{ProjekteForm.filegroupAdd}"-->
+                                                                                               <!--actionClose="#{NavigationForm.Reload}"-->
+                                                                                               <!--center="true"-->
+                                                                                               <!--title="#{msgs.filegroupHinzufuegen}"-->
+                                                                                               <!--immediate="true">-->
+                                                                                    <!--<t:updateActionListener-->
+                                                                                            <!--property="#{ProjekteForm.zurueck}"-->
+                                                                                            <!--value="FilegroupPopup"/>-->
+                                                                                    <!--<h:outputText-->
+                                                                                            <!--style="border-bottom: #a24033 dashed 1px;"-->
+                                                                                            <!--value="#{msgs.filegroupHinzufuegen}"/>-->
+                                                                                <!--</jp:popupFrame>-->
+                                                                            </h:panelGroup>
+                                                                        </h:panelGroup>
+                                                                    </h:panelGrid>
+                                                                </div>
+                                                            </t:panelTab>
+                                                            <!--END label="Mets Parameter" -->
+
+                                                            <t:panelTab label="#{msgs.statistik}"
+                                                                        rendered="#{ProjekteForm.myProjekt.id != null and !HelperForm.anonymized}">
+                                                            <!--
+                                                            <htm:li
+                                                                    styleClass="#{ProjekteForm.currentTab =='tab4'?'selected':''}">
+                                                                <h:commandLink id="id88" action="#{ProjekteForm.apply}">
+                                                                    <h:outputText id="id89" value="<em>" escape="false" />
+                                                                    <h:outputText id="id90" value="Statistik" />
+                                                                    <h:outputText id="id91" value="</em>" escape="false" />
+                                                                    <x:updateActionListener value="tab4"
+                                                                                            property="#{ProjekteForm.currentTab}" />
+                                                                </h:commandLink>
+                                                            </htm:li>
+                                                            -->
+                                                            <div id="tab4">
+
+                                                                <h:panelGroup id="qvzid2">
+
+                                                                    <f:facet name="header">
+                                                                        <h:outputText id="qvzid3" value="#{msgs.vorgaben}"
+                                                                                      style="font-weight:normal"/>
+                                                                    </f:facet>
+
+                                                                    <h:panelGrid id="projgrid6" columns="3" rowClasses="top"
+                                                                                 styleClass="tableStatistik">
+
+                                                                        <h:panelGrid id="qqvzid4" columns="2" rowClasses="top"
+                                                                                     styleClass="leftTableStatistik">
+
+                                                                            <h:outputText id="qvwid8"
+                                                                                          value="#{msgs.numberImages}:"/>
+                                                                            <h:outputText id="id92"
+                                                                                          style="width: 200px;margin-right:15px"
+                                                                                          value="#{ProjekteForm.myProjekt.numberOfPages}">
+
+                                                                            </h:outputText>
+
+                                                                            <!-- number of volumes -->
+                                                                            <h:outputText id="qvwid11"
+                                                                                          value="#{msgs.numberVolumes}:"/>
+                                                                            <h:outputText id="id93"
+                                                                                          style="width: 200px;margin-right:15px"
+                                                                                          value="#{ProjekteForm.myProjekt.numberOfVolumes}">
+                                                                            </h:outputText>
+
+                                                                            <!-- startdate -->
+                                                                            <h:outputText id="qvwid14"
+                                                                                          value="#{msgs.startdate}:"/>
+                                                                            <h:outputText id="id94"
+                                                                                          style="width: 200px;margin-right:15px"
+                                                                                          value="#{ProjekteForm.myProjekt.startDate}"/>
+
+                                                                            <!-- enddate -->
+                                                                            <h:outputText id="qvwid17"
+                                                                                          value="#{msgs.enddate}:"/>
+                                                                            <h:outputText id="id95"
+                                                                                          style="width: 200px;margin-right:15px"
+                                                                                          value="#{ProjekteForm.myProjekt.endDate}"/>
+
+                                                                            <!-- pages per volume -->
+                                                                            <h:outputText id="qvqwid22"
+                                                                                          value="#{msgs.imagesPerVolume}:"/>
+                                                                            <h:outputText id="qvwid23"
+                                                                                          value="#{ProjekteForm.calcImagesPerVolume}"/>
+
+                                                                            <!-- duration -->
+                                                                            <h:outputText id="qvwid24"
+                                                                                          value="#{msgs.durationInMonth}:"/>
+                                                                            <h:outputText id="qvwid25"
+                                                                                          value="#{ProjekteForm.calcDuration}"/>
+                                                                        </h:panelGrid>
+                                                                        <h:panelGrid id="qwevzid4" columns="2" rowClasses="top">
+
+
+                                                                            <!-- throughputPerYear -->
+                                                                            <h:outputText id="qvwid26"
+                                                                                          value="#{msgs.volumesPerYear}:"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 11}"/>
+                                                                            <h:outputText id="qvwid27"
+                                                                                          value="#{ProjekteForm.calcThroughputPerYear}"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 11}"/>
+
+                                                                            <!-- throughputPerQuarter -->
+                                                                            <h:outputText id="vqwid28"
+                                                                                          value="#{msgs.volumesPerQuarter}:"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 2}"/>
+                                                                            <h:outputText id="qvwid29"
+                                                                                          value="#{ProjekteForm.calcThroughputPerQuarter}"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 2}"/>
+
+                                                                            <!-- throughputPerMonth -->
+                                                                            <h:outputText id="qvwid30"
+                                                                                          value="#{msgs.volumesPerMonth}:"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 0}"/>
+                                                                            <h:outputText id="qvwid31"
+                                                                                          value="#{ProjekteForm.calcThroughputPerMonth}"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 0}"/>
+
+                                                                            <!-- throughputPerDay -->
+                                                                            <h:outputText id="qvwid32"
+                                                                                          value="#{msgs.volumesPerDay}:"/>
+                                                                            <h:outputText id="qvwid33"
+                                                                                          value="#{ProjekteForm.calcThroughputPerDay}"/>
+                                                                        </h:panelGrid>
+                                                                        <h:panelGrid id="qwevzidscfhbf4" columns="2"
+                                                                                     rowClasses="top">
+                                                                            <!-- throughputPerYear -->
+                                                                            <h:outputText id="qqvwid26"
+                                                                                          value="#{msgs.pagesPerYear}:"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 11}"/>
+                                                                            <h:outputText id="qqvwid27"
+                                                                                          value="#{ProjekteForm.calcThroughputPagesPerYear}"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 11}"/>
+
+                                                                            <!-- throughputPerQuarter -->
+                                                                            <h:outputText id="qvqwid28"
+                                                                                          value="#{msgs.pagesPerQuarter}:"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 2}"/>
+                                                                            <h:outputText id="qqvwid29"
+                                                                                          value="#{ProjekteForm.calcTroughputPagesPerQuarter}"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 2}"/>
+
+                                                                            <!-- throughputPerMonth -->
+                                                                            <h:outputText id="qqvwid30"
+                                                                                          value="#{msgs.pagesPerMonth}:"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 0}"/>
+                                                                            <h:outputText id="qqvwid31"
+                                                                                          value="#{ProjekteForm.calcThroughputPagesPerMonth}"
+                                                                                          rendered="#{ProjekteForm.calcDuration > 0}"/>
+
+                                                                            <!-- throughputPerDay -->
+                                                                            <h:outputText id="qqvwid32"
+                                                                                          value="#{msgs.pagesPerDay}:"/>
+                                                                            <h:outputText id="qqvwid33"
+                                                                                          value="#{ProjekteForm.calcPagesPerDay}"/>
+                                                                        </h:panelGrid>
+                                                                    </h:panelGrid>
+                                                                </h:panelGroup>
+
+                                                                <!--<htm:div id="staticticdemo" styleClass="yui-navset">-->
+                                                                <t:panelTabbedPane serverSideTabSwitch="true"
+                                                                                   immediateTabChange="false"
+                                                                                   styleClass="subTabbedPane"
+                                                                                   activeTabStyleClass="activeTab"
+                                                                                   inactiveTabStyleClass="inactiveTab"
+                                                                                   disabledTabStyleClass="disabledTab"
+                                                                                   activeSubStyleClass="activeSub"
+                                                                                   inactiveSubStyleClass="inactiveSub"
+                                                                                   tabContentStyleClass="tabContent">
+
+                                                                    <!-- <h:outputText id="id96" value="#{ProjekteForm.currentStatisticTab}" />-->
+
+                                                                    <t:panelTab label="#{msgs.projektstand}">
+                                                                        <!-- <htm:li
+                                                                            styleClass="#{ProjekteForm.currentStatisticTab =='stab1'?'selected':''}">
+                                                                        <h:commandLink id="id97" action="#{ProjekteForm.apply}">
+                                                                            <h:outputText id="id98" value="<em>" escape="false" />
+                                                                            <h:outputText id="id99" value="#{msgs.projektstand}" />
+                                                                            <h:outputText id="id100" value="</em>" escape="false" />
+                                                                            <x:updateActionListener value="stab1"
+                                                                                                    property="#{ProjekteForm.currentStatisticTab}" />
+                                                                        </h:commandLink>
+                                                                    </htm:li>
+
+                                                                        -->
+                                                                        <div id="stab1" class="subTab1">
+
+                                                                            <p style="width: 50px;">
+                                                                                <h:outputText id="vzid34"
+                                                                                              value="#{msgs.volumes}"
+                                                                                              style="font-weight:normal;"/>
+                                                                            </p>
+
+                                                                            <h:graphicImage id="vzid36" alt="volumes"
+                                                                                            title="#{ProjekteForm.myProjekt.title}"
+                                                                                            value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectStatVolumes}"/>
+
+                                                                            <p style="width: 50px;">
+                                                                                <h:outputText id="vzid39" value="#{msgs.seiten}"
+                                                                                              style="font-weight:normal"/>
+                                                                            </p>
+
+                                                                            <h:graphicImage id="vzid41" alt="images"
+                                                                                            title="#{ProjekteForm.myProjekt.title}"
+                                                                                            value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectStatImages}"/>
+
+                                                                        </div>
+                                                                    </t:panelTab>
+
+                                                                    <!-- <htm:div styleClass="yui-skin-sam"> -->
+
+
+                                                                    <!-- <ul class="yui-nav"> -->
+                                                                        <t:panelTab label="#{msgs.projectProgress}">
+                                                                            <!-- 		<htm:li
+                                                                                styleClass="#{ProjekteForm.currentStatisticTab =='stab2'?'selected':''}">
+                                                                            <h:commandLink id="id101" action="#{ProjekteForm.apply}">
+                                                                                <h:outputText id="id102" value="<em>" escape="false" />
+                                                                                <h:outputText id="id103" value="#{msgs.projectProgress}" />
+                                                                                <h:outputText id="id104" value="</em>" escape="false" />
+                                                                                <x:updateActionListener value="stab2"
+                                                                                                        property="#{ProjekteForm.currentStatisticTab}" />
+                                                                            </h:commandLink>
+                                                                        </htm:li>
+                                                                            -->
+                                                                            <div id="stab2" class="subTab2">
+                                                                                <h:outputText id="vzid34_1"
+                                                                                              value="#{msgs.projectProgress}"
+                                                                                              style="font-weight:normal"/>
+
+                                                                                <h:panelGrid id="pcid3" columns="4"
+                                                                                             columnClasses="standardTable_ColumnLeft,standardTable_Column,standardTable_ColumnRight"
+                                                                                             rowClasses="rowTop">
+                                                                                    <!-- SelectManyMenu Workflow -->
+
+                                                                                    <h:selectManyListbox id="vinput5"
+                                                                                                         value="#{ProjekteForm.projectProgressInterface.selectedSteps}">
+                                                                                        <f:selectItems
+                                                                                                value="#{ProjekteForm.projectProgressInterface.selectableSteps}"
+                                                                                                var="item" itemLabel="#{item}"
+                                                                                                itemValue="#{item}"/>
+                                                                                    </h:selectManyListbox>
+
+                                                                                    <h:selectOneMenu id="pcid10" style="height:20px"
+                                                                                                     value="#{ProjekteForm.projectProgressInterface.timeUnit}"
+                                                                                                     converter="StatisticsTimeUnitConverter">
+                                                                                        <f:selectItems id="pcid11"
+                                                                                                        value="#{ProjekteForm.projectProgressInterface.selectableTimeUnits}"
+                                                                                                        var="unit"
+                                                                                                        itemLabel="#{unit.title}"
+                                                                                                        itemValue="#{unit}"/>
+                                                                                    </h:selectOneMenu>
+
+                                                                                    <h:panelGroup id="pcid12" style="height:20px">
+                                                                                        <h:selectBooleanCheckbox id="pcid13"
+                                                                                                                 value="#{ProjekteForm.projectProgressInterface.referenceCurve}"
+                                                                                                                 title="#{msgs.refCurve}">
+                                                                                        </h:selectBooleanCheckbox>
+                                                                                        <h:outputLabel id="pcid14"
+                                                                                                       value="#{msgs.refCurve}"
+                                                                                                       for="pcid13"/>
+                                                                                    </h:panelGroup>
+
+                                                                                    <h:commandButton id="pcid20"
+                                                                                                     value="#{msgs.rerender}">
+                                                                                        <!-- TODO: replace with standard f:ajax tag, but what to do with 'id' attribute? -->
+                                                                                        <!--<a4j:support id="vwid13" event="onclick"-->
+                                                                                                     <!--reRender="vzid36"/>-->
+                                                                                    </h:commandButton>
+
+                                                                                </h:panelGrid>
+
+                                                                                <h:panelGroup id="pcid16">
+                                                                                    <t:graphicImage forceId="true" id="vzid36"
+                                                                                                    rendered="#{ProjekteForm.projectProgressImage != ''}"
+                                                                                                    value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectProgressImage}"/>
+
+                                                                                    <!--  		<h:commandLink action="#{Form.createExcel}" title="#{msgs.createExcel}">
+                                                                                    <h:graphicImage value="/newpages/images/buttons/excel20.png" />
+                                                                                    <h:outputText value="  #{msgs.createExcel}" />
+                                                                                    <x:updateActionListener value="#{ProjekteForm.projectProgressInterface}" property="#{ProjekteForm.myCurrentTable}" />
+                                                                                </h:commandLink>-->
+
+                                                                                </h:panelGroup>
+
+                                                                            </div>
+                                                                        </t:panelTab>
+                                                                        <t:panelTab label="#{msgs.productionStatistics}">
+                                                                            <!--
+                                                                            <htm:li
+                                                                                    styleClass="#{ProjekteForm.currentStatisticTab =='stab3'?'selected':''}">
+                                                                                <h:commandLink id="id105" action="#{ProjekteForm.apply}">
+                                                                                    <h:outputText id="id106" value="<em>" escape="false" />
+                                                                                    <h:outputText id="id107" value="#{msgs.productionStatistics}" />
+                                                                                    <h:outputText id="id108" value="</em>" escape="false" />
+                                                                                    <x:updateActionListener value="stab3"
+                                                                                                            property="#{ProjekteForm.currentStatisticTab}" />
+                                                                                </h:commandLink>
+                                                                            </htm:li>
+                                                                            -->
+                                                                            <div id="stab3" class="subTab3">
+                                                                                <t:aliasBeansScope>
+                                                                                    <t:aliasBean alias="#{Form}"
+                                                                                                 value="#{ProjekteForm}"/>
+                                                                                    <f:subview id="vzid420101">
+                                                                                        <!-- TODO: replaced jsp:include with ui:include; jsp:include is executed in at translation time; verify that ui:include does the same! -->
+                                                                                        <!--<jsp:include-->
+                                                                                                <!--page="/newpages/inc_statistic/StatisticProduction.jsp"/>-->
+                                                                                        <ui:include
+                                                                                                src="/newpages/inc_statistic/StatisticProduction.xhtml"/>
+                                                                                    </f:subview>
+                                                                                </t:aliasBeansScope>
+                                                                            </div>
+                                                                        </t:panelTab>
+                                                                        <t:panelTab label="#{msgs.productionThroughput}">
+                                                                            <!--
+                                                                            <htm:li
+                                                                                    styleClass="#{ProjekteForm.currentStatisticTab =='stab4'?'selected':''}">
+                                                                                <h:commandLink id="id109" action="#{ProjekteForm.apply}">
+                                                                                    <h:outputText id="id110" value="<em>" escape="false" />
+                                                                                    <h:outputText id="id111" value="#{msgs.productionThroughput}" />
+                                                                                    <h:outputText id="id112" value="</em>" escape="false" />
+                                                                                    <x:updateActionListener value="stab4"
+                                                                                                            property="#{ProjekteForm.currentStatisticTab}" />
+                                                                                </h:commandLink>
+                                                                            </htm:li>
+                                                                            -->
+                                                                            <div id="stab4" class="subTab4">
+                                                                                <t:aliasBeansScope>
+                                                                                    <t:aliasBean alias="#{Form}"
+                                                                                                 value="#{ProjekteForm}"/>
+                                                                                    <f:subview id="vzid430101">
+                                                                                        <!-- TODO: replaced jsp:include with ui:include; jsp:include is executed in at translation time; verify that ui:include does the same! -->
+                                                                                        <!--<jsp:include-->
+                                                                                                <!--page="/newpages/inc_statistic/StatisticThroughput.jsp"/>-->
+                                                                                        <ui:include
+                                                                                                src="/newpages/inc_statistic/StatisticThroughput.xhtml"/>
+                                                                                    </f:subview>
+                                                                                </t:aliasBeansScope>
+                                                                            </div>
+                                                                        </t:panelTab>
+                                                                        <t:panelTab label="#{msgs.errorTracking}">
+                                                                            <!--
+                                                                            <htm:li
+                                                                                    styleClass="#{ProjekteForm.currentStatisticTab =='stab5'?'selected':''}">
+                                                                                <h:commandLink id="id113" action="#{ProjekteForm.apply}">
+                                                                                    <h:outputText id="id114" value="<em>" escape="false" />
+                                                                                    <h:outputText id="id115" value="#{msgs.errorTracking}" />
+                                                                                    <h:outputText id="id116" value="</em>" escape="false" />
+                                                                                    <x:updateActionListener value="stab5"
+                                                                                                            property="#{ProjekteForm.currentStatisticTab}" />
+                                                                                </h:commandLink>
+                                                                            </htm:li>
+                                                                            -->
+                                                                            <div id="stab5" class="subTab5">
+                                                                                <t:aliasBeansScope>
+                                                                                    <t:aliasBean alias="#{Form}"
+                                                                                                 value="#{ProjekteForm}"/>
+                                                                                    <f:subview id="vzid440101">
+                                                                                        <!-- TODO: replaced jsp:include with ui:include; jsp:include is executed in at translation time; verify that ui:include does the same! -->
+                                                                                        <!--<jsp:include-->
+                                                                                                <!--page="/newpages/inc_statistic/StatisticCorrection.jsp"/>-->
+                                                                                        <ui:include
+                                                                                                src="/newpages/inc_statistic/StatisticCorrection.xhtml"/>
+                                                                                    </f:subview>
+                                                                                </t:aliasBeansScope>
+                                                                            </div>
+                                                                        </t:panelTab>
+                                                                        <t:panelTab label="#{msgs.storageCalculator}">
+                                                                            <!--
+                                                                            <htm:li
+                                                                                    styleClass="#{ProjekteForm.currentStatisticTab =='stab6'?'selected':''}">
+                                                                                <h:commandLink id="id117" action="#{ProjekteForm.apply}">
+                                                                                    <h:outputText id="id118" value="<em>" escape="false" />
+                                                                                    <h:outputText id="id119" value="#{msgs.storageCalculator}" />
+                                                                                    <h:outputText id="id120" value="</em>" escape="false" />
+                                                                                    <x:updateActionListener value="stab6"
+                                                                                                            property="#{ProjekteForm.currentStatisticTab}" />
+                                                                                </h:commandLink>
+                                                                            </htm:li>
+                                                                            -->
+                                                                            <div id="stab6" class="subTab6">
+                                                                                <t:aliasBeansScope>
+                                                                                    <t:aliasBean alias="#{Form}"
+                                                                                                 value="#{ProjekteForm}"/>
+                                                                                    <f:subview id="vzid450101">
+                                                                                        <!-- TODO: replaced jsp:include with ui:include; jsp:include is executed in at translation time; verify that ui:include does the same! -->
+                                                                                        <!--<jsp:include-->
+                                                                                                <!--page="/newpages/inc_statistic/StatisticStorage.jsp"/>-->
+                                                                                        <ui:include
+                                                                                                src="/newpages/inc_statistic/StatisticStorage.xhtml"/>
+                                                                                    </f:subview>
+                                                                                </t:aliasBeansScope>
+                                                                            </div>
+                                                                        </t:panelTab>
+
+                                                                        <!-- </ul> -->
+
+                                                                    <!--<htm:div styleClass="yui-content">
+
+
+
+
+
+
+                                                                    </htm:div>
+                                                                    -->
+
+                                                                    <!-- </htm:div>  END: <htm:div styleClass="yui-skin-sam">-->
+                                                                </t:panelTabbedPane>
+                                                                <!--</htm:div>-->
+
+                                                            </div>
+
+
+                                                            <!-- </ul> -->
+                                                        <!--<htm:div styleClass="yui-content">
+
+
+
+
+                                                        </htm:div>-->
+                                                        <!--</div>-->
+
+                                                    </t:panelTab>
+                                                    <!-- END label="Statistik" -->
+                                                </t:panelTabbedPane>
+                                                    <!-- END Großes pane Tab -->
+
+                                                    <!--  <htm:div styleClass="yui-skin-sam"> -->
+
+
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="eingabeBoxen_row3" align="left">
+                                                    <h:commandButton id="id121" value="#{msgs.abbrechen}"
+                                                                     action="ProjekteAlle" immediate="true"/>
+                                                </td>
+                                                <td class="eingabeBoxen_row3" align="right">
+                                                    <h:commandButton id="id122" value="#{msgs.loeschen}"
+                                                                     action="#{ProjekteForm.delete}"
+                                                                     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
+                                                                     rendered="#{ProjekteForm.myProjekt.id != null and ProjekteForm.myProjekt.deleteAble}"/>
+                                                    <h:commandButton id="id123" value="#{msgs.uebernehmen}"
+                                                                     action="#{ProjekteForm.apply}"/>
+
+                                                    <h:commandButton id="id124" value="#{msgs.speichern}"
+                                                                     action="#{ProjekteForm.save}"/>
+
+                                                </td>
+
+                                            </tr>
+                                        </table>
+                                        <!-- // Box für die Bearbeitung der Details -->
+
+                                    </td>
+                                </tr>
+                            </table>
+
+
+                        </h:form>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
+
+            <script type="text/javascript">
+                var tabView1 = new YAHOO.widget.TabView('projectform:demo');
+                var tabView2 = new YAHOO.widget.TabView('projectform:staticticdemo');
+            </script>
+
+        </body>
+    </f:view>
+
+</html>

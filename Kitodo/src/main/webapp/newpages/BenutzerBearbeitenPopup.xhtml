@@ -1,0 +1,131 @@
+<!--
+        *
+        * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+        *
+        * This file is part of the Kitodo project.
+        *
+        * It is licensed under GNU General Public License version 3 or later.
+        *
+        * For the full copyright and license information, please read the
+        * GPL3-License.txt file that was distributed with this source code.
+        *
+        -->
+
+<!--<a4j:keepAlive beanName="BenutzerverwaltungForm"/>-->
+<!--<a4j:keepAlive beanName="BenutzergruppenForm"/>-->
+
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <body style="margin:0px;padding:0px">
+            <h:form id="userpopupform">
+                <!-- ===================== Popup-Rahmen ======================
+                <h:graphicImage id="id0" value="/newpages/images/popup/oben.gif" width="430"
+                                style="position:absolute;left:0;top:0;z-index:1" />
+                <h:graphicImage id="id1" value="/newpages/images/popup/links.gif" height="360"
+                                style="position:absolute;left:0;top:19" />
+                <h:graphicImage id="id2" value="/newpages/images/popup/rechts.gif" height="360"
+                                style="position:absolute;left:426;top:19" />
+                <h:graphicImage id="id3" value="/newpages/images/popup/unten.gif" width="430"
+                                style="position:absolute;left:0;top:377" />
+
+                <h:form id="hmmmForm1">
+                    <jp:closePopupFrame>
+                        <h:commandLink id="id4" action="#{NavigationForm.JeniaPopupCloseAction}">
+                            <h:graphicImage id="id5" value="/newpages/images/popup/close.gif"
+                                            style="position:absolute;left:410;top:2;z-index:2" />
+                        </h:commandLink>
+                    </jp:closePopupFrame>
+                </h:form> -->
+
+                <h:outputText id="id6" value="#{msgs.benutzergruppenHinzufuegen}"
+                              style="position:absolute;left:10;top:2;color:white;font-weight:bold;font-size:12;z-index:3"/>
+
+                <!-- ===================== // Popup-Rahmen ====================== -->
+
+                <table style="margin-top:20px" align="center" width="90%"
+                           border="0">
+                    <tr>
+                        <td>
+                            <!-- globale Warn- und Fehlermeldungen -->
+                            <h:messages id="id7" globalOnly="true" errorClass="text_red"
+                                        infoClass="text_blue" showDetail="true" showSummary="true"
+                                        tooltip="true"/>
+
+                            <!-- Datentabelle -->
+                            <t:dataTable id="id8" styleClass="standardTable" width="100%"
+                                         cellspacing="1px" cellpadding="1px"
+                                         headerClass="standardTable_Header"
+                                         rowClasses="standardTable_Row1,standardTable_Row2"
+                                         columnClasses="standardTable_Column,standardTable_ColumnCentered"
+                                         var="item" value="#{BenutzergruppenForm.page.listReload}">
+
+                                <h:column id="id9">
+                                    <f:facet name="header">
+                                        <h:outputText id="id10" value="#{msgs.benutzergruppe}"/>
+                                    </f:facet>
+                                    <h:outputText id="id11" value="#{item.title}"/>
+                                </h:column>
+
+                                <h:column id="id12">
+                                    <f:facet name="header">
+                                        <h:outputText id="id13" value="#{msgs.auswahl}"/>
+                                    </f:facet>
+                                    <%-- Hinzufügen-Schaltknopf --%>
+                                    <h:commandLink
+                                            action="#{BenutzerverwaltungForm.addToGroup}"
+                                            title="#{msgs.uebernehmen}">
+                                        <h:graphicImage id="id14" value="/newpages/images/buttons/addUser.gif"/>
+                                        <f:param id="id15" name="ID" value="#{item.id}"/>
+                                    </h:commandLink>
+
+                                    <!-- TODO: find replacement for jp:closePopupFrame -->
+                                    <!--<jp:closePopupFrame rendered="false">-->
+                                        <!--<h:commandLink id="id16" action="#{NavigationForm.JeniaPopupCloseAction}"-->
+                                                       <!--title="#{msgs.uebernehmen}">-->
+                                            <!--<h:graphicImage id="id17" value="/newpages/images/buttons/addUser.gif"/>-->
+                                            <!--<f:param id="id18" name="ID" value="#{item.id}"/>-->
+                                        <!--</h:commandLink>-->
+                                    <!--</jp:closePopupFrame>-->
+                                </h:column>
+
+                            </t:dataTable>
+
+                            <table width="100%" border="0">
+                                <tr valign="top">
+                                    <td align="left">
+                                        <!-- ===================== Datascroller für die Ergebnisse ====================== -->
+                                        <t:aliasBean alias="#{mypage}"
+                                                     value="#{BenutzergruppenForm.page}">
+                                            <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                        </t:aliasBean>
+                                        <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
+                                    </td>
+                                    <td align="center">
+                                        <!-- Schliessen-Schaltknopf -->
+                                        <!-- TODO: find replacement for jp:closePopupFrame -->
+                                        <!--<jp:closePopupFrame>-->
+                                            <!--&lt;!&ndash; TODO: Use massage files here &ndash;&gt;-->
+                                            <!--<h:commandLink id="id20" value="#{msgs.close}"-->
+                                                           <!--action="#{NavigationForm.JeniaPopupCloseAction}"></h:commandLink>-->
+                                        <!--</jp:closePopupFrame>-->
+                                    </td>
+                                </tr>
+                            </table>
+
+
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </body>
+    </f:view>
+
+</html>
