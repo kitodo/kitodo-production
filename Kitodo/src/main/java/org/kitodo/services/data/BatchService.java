@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -29,11 +30,12 @@ import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.SearchService;
 
-public class BatchService extends SearchService {
+public class BatchService extends SearchService<Batch> {
 
     private BatchDAO batchDao = new BatchDAO();
     private BatchType batchType = new BatchType();
     private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
+    private static final Logger logger = Logger.getLogger(BatchService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -43,14 +45,22 @@ public class BatchService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves batchobject to database.
      *
      * @param batch
      *            object
      */
-    public void save(Batch batch) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Batch batch) throws DAOException {
         batchDao.save(batch);
+    }
+
+    /**
+     * Method saves batch document to the index of Elastic Search.
+     *
+     * @param batch
+     *            object
+     */
+    public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
     }
