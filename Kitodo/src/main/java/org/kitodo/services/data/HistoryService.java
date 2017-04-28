@@ -16,6 +16,7 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
@@ -28,11 +29,12 @@ import org.kitodo.services.data.base.SearchService;
 /**
  * HistoryService.
  */
-public class HistoryService extends SearchService {
+public class HistoryService extends SearchService<History> {
 
     private HistoryDAO historyDao = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
     private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
+    private static final Logger logger = Logger.getLogger(HistoryService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -50,6 +52,27 @@ public class HistoryService extends SearchService {
      */
     public void save(History history) throws CustomResponseException, DAOException, IOException {
         historyDao.save(history);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(history, historyType);
+    }
+
+    /**
+     * Method saves history object to database.
+     *
+     * @param history
+     *            object
+     */
+    public void saveToDatabase(History history) throws DAOException {
+        historyDao.save(history);
+    }
+
+    /**
+     * Method saves history document to the index of Elastic Search.
+     *
+     * @param history
+     *            object
+     */
+    public void saveToIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(history, historyType);
     }
