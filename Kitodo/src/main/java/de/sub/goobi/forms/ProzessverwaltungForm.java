@@ -97,6 +97,7 @@ import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 /**
  * ProzessverwaltungForm class.
@@ -135,6 +136,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private String addToWikiField = "";
     private boolean showStatistics = false;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
     private static String DONEDIRECTORYNAME = "fertig/";
 
     /**
@@ -258,7 +260,7 @@ public class ProzessverwaltungForm extends BasisForm {
                             String imageDirectory = serviceManager.getProcessService().getImagesDirectory(myProzess);
                             File dir = new File(imageDirectory);
                             if (dir.isDirectory()) {
-                                File[] subdirs = dir.listFiles();
+                                File[] subdirs = fileService.listFiles(dir);
                                 for (File imagedir : subdirs) {
                                     if (imagedir.isDirectory()) {
                                         imagedir.renameTo(new File(imagedir.getAbsolutePath()
@@ -272,7 +274,7 @@ public class ProzessverwaltungForm extends BasisForm {
                             String ocrDirectory = serviceManager.getProcessService().getOcrDirectory(myProzess);
                             File dir = new File(ocrDirectory);
                             if (dir.isDirectory()) {
-                                File[] subdirs = dir.listFiles();
+                                File[] subdirs = fileService.listFiles(dir);
                                 for (File imagedir : subdirs) {
                                     if (imagedir.isDirectory()) {
                                         imagedir.renameTo(new File(imagedir.getAbsolutePath()
@@ -359,11 +361,11 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             File ocr = new File(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
-                serviceManager.getFileService().delete(ocr.toURI());
+                fileService.delete(ocr.toURI());
             }
             File images = new File(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
             if (images.exists()) {
-                serviceManager.getFileService().delete(images.toURI());
+                fileService.delete(images.toURI());
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -379,11 +381,11 @@ public class ProzessverwaltungForm extends BasisForm {
             deleteSymlinksFromUserHomes();
         }
         try {
-            serviceManager.getFileService().delete(
+            fileService.delete(
                     new File(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess)).toURI());
             File ocr = new File(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
-                serviceManager.getFileService().delete(ocr.toURI());
+                fileService.delete(ocr.toURI());
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -1867,7 +1869,7 @@ public class ProzessverwaltungForm extends BasisForm {
         List<String> answer = new ArrayList<String>();
         File folder = new File("xsltFolder");
         if (folder.isDirectory() && folder.exists()) {
-            String[] files = folder.list();
+            String[] files = fileService.list(folder);
 
             for (String file : files) {
                 if (file.endsWith(".xslt") || file.endsWith(".xsl")) {

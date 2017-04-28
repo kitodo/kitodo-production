@@ -32,6 +32,7 @@ import org.kitodo.services.file.FileService;
 
 public class ProcessSwapOutTask extends LongRunningTask {
     private static final ServiceManager serviceManager = new ServiceManager();
+    private static final FileService fileService = serviceManager.getFileService();
 
     /**
      * Copies all files under srcDir to dstDir. If dstDir does not exist, it
@@ -45,13 +46,13 @@ public class ProcessSwapOutTask extends LongRunningTask {
                 dstDir.mkdir();
                 dstDir.setLastModified(srcDir.lastModified());
             }
-            String[] children = srcDir.list();
+            String[] children = fileService.list(srcDir);
             for (int i = 0; i < children.length; i++) {
                 copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]),
                         kitodoPathLength, inRoot);
             }
         } else {
-            serviceManager.getFileService().copyDir(srcDir, dstDir);
+            fileService.copyDir(srcDir, dstDir);
             Element file = new Element("file");
             file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLength));
             inRoot.addContent(file);
@@ -63,9 +64,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * and no metadata files.
      */
     static boolean deleteDataInDir(File dir) throws IOException {
-        FileService fileService = serviceManager.getFileService();
         if (dir.isDirectory()) {
-            String[] children = dir.list();
+            String[] children = fileService.list(dir);
             for (int i = 0; i < children.length; i++) {
                 if (!children[i].endsWith(".xml")) {
                     boolean success = fileService.delete(new File(dir, children[i]).toURI());
@@ -202,7 +202,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
          */
         Format format = Format.getPrettyFormat();
         format.setEncoding("UTF-8");
-        try (FileOutputStream fos = (FileOutputStream) serviceManager.getFileService()
+        try (FileOutputStream fos = (FileOutputStream) fileService
                 .write(URI.create(processDirectory + File.separator + "swapped.xml"))) {
             setStatusMessage("writing swapped.xml");
             XMLOutputter xmlOut = new XMLOutputter(format);

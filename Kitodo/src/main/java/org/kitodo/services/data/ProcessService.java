@@ -64,6 +64,7 @@ import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
@@ -94,6 +95,8 @@ public class ProcessService extends TitleSearchService {
     private ProcessType processType = new ProcessType();
     private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
     private ServiceManager serviceManager = new ServiceManager();
+
+    private final FileService fileService = serviceManager.getFileService();
 
     /**
      * Constructor with searcher's assigning.
@@ -299,7 +302,7 @@ public class ProcessService extends TitleSearchService {
         };
 
         String tifOrdner = "";
-        String[] verzeichnisse = dir.list(filterVerz);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
 
         if (verzeichnisse != null) {
             for (int i = 0; i < verzeichnisse.length; i++) {
@@ -310,7 +313,7 @@ public class ProcessService extends TitleSearchService {
         if (tifOrdner.equals("") && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = dir.list();
+                String[] folderList = fileService.list(dir);
                 for (String folder : folderList) {
                     if (folder.endsWith(suffix)) {
                         tifOrdner = folder;
@@ -324,9 +327,9 @@ public class ProcessService extends TitleSearchService {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 File tif = new File(tifOrdner);
-                String[] files = tif.list();
+                String[] files = fileService.list(tif);
                 if (files == null || files.length == 0) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix) && !folder.startsWith(DIRECTORY_PREFIX)) {
                             tifOrdner = folder;
@@ -348,7 +351,7 @@ public class ProcessService extends TitleSearchService {
         }
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            serviceManager.getFileService().createDirectory(URI.create(result), tifOrdner);
+            fileService.createDirectory(URI.create(result), tifOrdner);
         }
         return result;
     }
@@ -365,11 +368,8 @@ public class ProcessService extends TitleSearchService {
         } catch (DAOException | IOException | InterruptedException | SwapException e) {
             return false;
         }
-        if (testMe.list() == null) {
-            return false;
-        }
+        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
 
-        return testMe.exists() && testMe.list().length > 0;
     }
 
     /**
@@ -394,7 +394,7 @@ public class ProcessService extends TitleSearchService {
             };
 
             String origOrdner = "";
-            String[] verzeichnisse = dir.list(filterVerz);
+            String[] verzeichnisse = fileService.list(filterVerz, dir);
             for (int i = 0; i < verzeichnisse.length; i++) {
                 origOrdner = verzeichnisse[i];
             }
@@ -402,7 +402,7 @@ public class ProcessService extends TitleSearchService {
             if (origOrdner.equals("") && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix)) {
                             origOrdner = folder;
@@ -416,9 +416,9 @@ public class ProcessService extends TitleSearchService {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     File tif = new File(origOrdner);
-                    String[] files = tif.list();
+                    String[] files = fileService.list(tif);
                     if (files == null || files.length == 0) {
-                        String[] folderList = dir.list();
+                        String[] folderList = fileService.list(dir);
                         for (String folder : folderList) {
                             if (folder.endsWith(suffix)) {
                                 origOrdner = folder;
@@ -435,7 +435,7 @@ public class ProcessService extends TitleSearchService {
             String rueckgabe = getImagesDirectory(process);
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                serviceManager.getFileService().createDirectory(URI.create(rueckgabe), origOrdner);
+                fileService.createDirectory(URI.create(rueckgabe), origOrdner);
             }
             return rueckgabe;
         } else {
@@ -453,7 +453,7 @@ public class ProcessService extends TitleSearchService {
     public String getImagesDirectory(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
         String pfad = getProcessDataDirectory(process);
-        serviceManager.getFileService().createDirectory(URI.create(pfad), "images");
+        fileService.createDirectory(URI.create(pfad), "images");
         return pfad;
     }
 
@@ -474,7 +474,7 @@ public class ProcessService extends TitleSearchService {
             }
         };
         File sourceFolder = null;
-        String[] verzeichnisse = dir.list(filterVerz);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
             sourceFolder = new File(dir, process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
@@ -559,7 +559,7 @@ public class ProcessService extends TitleSearchService {
         pfad = pfad.replaceAll(" ", "__");
         String processId = process.getId().toString();
         processId = processId.replaceAll(" ", "__");
-        serviceManager.getFileService().createDirectory(URI.create(pfad), processId);
+        fileService.createDirectory(URI.create(pfad), processId);
         return pfad;
     }
 
@@ -891,7 +891,7 @@ public class ProcessService extends TitleSearchService {
     private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
         File temporaryFile = new File(temporaryMetadataFilename);
         File directoryPath = new File(temporaryFile.getParentFile().getPath());
-        for (File temporaryAnchorFile : directoryPath.listFiles()) {
+        for (File temporaryAnchorFile : fileService.listFiles(directoryPath)) {
             String temporaryAnchorFileName = temporaryAnchorFile.toString();
             if (temporaryAnchorFile.isFile()
                     && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
@@ -899,7 +899,7 @@ public class ProcessService extends TitleSearchService {
                         temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
                 temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
                         temporaryAnchorFileName);
-                serviceManager.getFileService().renameFile(temporaryAnchorFileName, anchorFileName);
+                fileService.renameFile(temporaryAnchorFileName, anchorFileName);
             }
         }
     }
@@ -945,7 +945,7 @@ public class ProcessService extends TitleSearchService {
         backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
-            serviceManager.getFileService().renameFile(temporaryMetadataFileName, metadataFileName);
+            fileService.renameFile(temporaryMetadataFileName, metadataFileName);
             removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
         }
     }
@@ -1207,7 +1207,7 @@ public class ProcessService extends TitleSearchService {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            serviceManager.getFileService().createDirectory(URI.create(this.getProcessDataDirectory(process)),
+            fileService.createDirectory(URI.create(this.getProcessDataDirectory(process)),
                     processDir.replace("(processtitle)", process.getTitle()));
         }
 

@@ -30,9 +30,11 @@ import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class WebDav implements Serializable {
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = new FileService();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
@@ -71,20 +73,16 @@ public class WebDav implements Serializable {
                 return name.endsWith("]");
             }
         };
-        String[] dateien = benutzerHome.list(filter);
-        if (dateien == null) {
-            return new ArrayList<String>();
-        } else {
-            for (String data : dateien) {
-                if (data.endsWith("/") || data.endsWith("\\")) {
-                    data = data.substring(0, data.length() - 1);
-                }
-                if (data.contains("/")) {
-                    data = data.substring(data.lastIndexOf("/"));
-                }
+        String[] dateien = fileService.list(filter, benutzerHome);
+        for (String data : dateien) {
+            if (data.endsWith("/") || data.endsWith("\\")) {
+                data = data.substring(0, data.length() - 1);
             }
-            return new ArrayList<String>(Arrays.asList(dateien));
+            if (data.contains("/")) {
+                data = data.substring(data.lastIndexOf("/"));
+            }
         }
+        return new ArrayList<String>(Arrays.asList(dateien));
 
     }
 
@@ -189,12 +187,10 @@ public class WebDav implements Serializable {
              */
             if (aktuellerBenutzer.isWithMassDownload()) {
                 File projekt = new File(userHome + myProcess.getProject().getTitle());
-                serviceManager.getFileService().createDirectoryForUser(projekt.getAbsolutePath(),
-                        aktuellerBenutzer.getLogin());
+                fileService.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
                 projekt = new File(userHome + DONEDIRECTORYNAME);
-                serviceManager.getFileService().createDirectoryForUser(projekt.getAbsolutePath(),
-                        aktuellerBenutzer.getLogin());
+                fileService.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
             }
 
         } catch (Exception ioe) {
@@ -259,7 +255,7 @@ public class WebDav implements Serializable {
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    serviceManager.getFileService().write(URI.create(
+                    fileService.write(URI.create(
                             serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")),
                     StandardCharsets.UTF_8));) {
                 outfile.write(tif.getTiffAlles());
@@ -289,7 +285,7 @@ public class WebDav implements Serializable {
                     return name.endsWith("]");
                 }
             };
-            return benutzerHome.list(filter).length;
+            return fileService.list(filter, benutzerHome).length;
         } catch (Exception e) {
             myLogger.error(e);
             return 0;

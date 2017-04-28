@@ -26,6 +26,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class GoobiHotfolder implements IGoobiHotfolder {
 
@@ -39,6 +40,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     private String collection;
 
     private final ServiceManager serviceManager = new ServiceManager();
+    public final FileService fileService = serviceManager.getFileService();
 
     /**
      * Constructor.
@@ -69,7 +71,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<File> getCurrentFiles() {
-        return Arrays.asList(this.folder.listFiles());
+        return Arrays.asList(fileService.listFiles(this.folder));
     }
 
     /**
@@ -82,7 +84,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
     @Override
     public List<String> getFilesByName(String name) {
-        List<String> files = Arrays.asList(this.folder.list());
+        List<String> files = Arrays.asList(fileService.list(this.folder));
         List<String> answer = new ArrayList<String>();
         for (String file : files) {
             if (file.contains(name) && !file.contains("anchor")) {
@@ -101,7 +103,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<String> getFileNamesByFilter(FilenameFilter filter) {
-        return Arrays.asList(this.folder.list(filter));
+        return Arrays.asList(fileService.list(filter, this.folder));
     }
 
     /**
@@ -113,7 +115,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<File> getFilesByFilter(FilenameFilter filter) {
-        return Arrays.asList(this.folder.listFiles(filter));
+        return Arrays.asList(fileService.listFiles(filter, this.folder));
     }
 
     @Override
@@ -313,7 +315,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     public void unlock() throws IOException {
         File f = getLockFile();
         if (f.exists()) {
-            serviceManager.getFileService().delete(f.toURI());
+            fileService.delete(f.toURI());
         }
     }
 }

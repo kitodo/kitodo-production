@@ -36,6 +36,7 @@ import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.ProjectManager;
 import org.kitodo.data.database.persistence.apache.ProjectObject;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -54,6 +55,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     private FolderInformation fi;
     private ProjectObject project;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     /**
      * The field task holds an optional task instance. Its progress and its
@@ -172,21 +174,21 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             benutzerHome = new File(benutzerHome + File.separator + process.getTitle());
             zielVerzeichnis = benutzerHome.getAbsolutePath();
             /* alte Import-Ordner löschen */
-            if (!serviceManager.getFileService().delete(benutzerHome.toURI())) {
+            if (!fileService.delete(benutzerHome.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Import folder could not be cleared");
                 return false;
             }
             /* alte Success-Ordner löschen */
             File successFile = new File(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-            if (!serviceManager.getFileService().delete(successFile.toURI())) {
+            if (!fileService.delete(successFile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Success folder could not be cleared");
                 return false;
             }
             /* alte Error-Ordner löschen */
             File errorfile = new File(this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
-            if (!serviceManager.getFileService().delete(errorfile.toURI())) {
+            if (!fileService.delete(errorfile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Error folder could not be cleared");
                 return false;
@@ -251,7 +253,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                 if (this.project.isDmsImportCreateProcessFolder()) {
                     File successFile = new File(
                             this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-                    serviceManager.getFileService().delete(successFile.toURI());
+                    fileService.delete(successFile.toURI());
                 }
             }
         }
@@ -300,35 +302,35 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
         // download sources
         File sources = new File(fi.getSourceDirectory());
-        if (sources.exists() && sources.list().length > 0) {
+        if (sources.exists() && fileService.list(sources).length > 0) {
             File destination = new File(userHome + File.separator + atsPpnBand + "_src");
             if (!destination.exists()) {
                 destination.mkdir();
             }
-            File[] dateien = sources.listFiles();
+            File[] dateien = fileService.listFiles(sources);
             for (int i = 0; i < dateien.length; i++) {
                 if (dateien[i].isFile()) {
                     File meinZiel = new File(destination + File.separator + dateien[i].getName());
-                    serviceManager.getFileService().copyFile(dateien[i], meinZiel);
+                    fileService.copyFile(dateien[i], meinZiel);
                 }
             }
         }
 
         File ocr = new File(fi.getOcrDirectory());
         if (ocr.exists()) {
-            File[] folder = ocr.listFiles();
+            File[] folder = fileService.listFiles(ocr);
             for (File dir : folder) {
-                if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
+                if (dir.isDirectory() && fileService.list(dir).length > 0 && dir.getName().contains("_")) {
                     String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
                     File destination = new File(userHome + File.separator + atsPpnBand + suffix);
                     if (!destination.exists()) {
                         destination.mkdir();
                     }
-                    File[] files = dir.listFiles();
+                    File[] files = fileService.listFiles(dir);
                     for (int i = 0; i < files.length; i++) {
                         if (files[i].isFile()) {
                             File target = new File(destination + File.separator + files[i].getName());
-                            serviceManager.getFileService().copyFile(files[i], target);
+                            fileService.copyFile(files[i], target);
                         }
                     }
                 }
@@ -358,7 +360,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (tifOrdner.exists() && tifOrdner.list().length > 0) {
+        if (tifOrdner.exists() && fileService.list(tifOrdner).length > 0) {
             File zielTif = new File(userHome + File.separator + atsPpnBand + ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
@@ -373,8 +375,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
-                    serviceManager.getFileService().createDirectoryForUser(zielTif.getAbsolutePath(),
-                            myUser.getLogin());
+                    fileService.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
                 } catch (Exception e) {
                     if (task != null) {
                         task.setException(e);
@@ -386,14 +387,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
             /* jetzt den eigentlichen Kopiervorgang */
 
-            File[] dateien = tifOrdner.listFiles(Helper.dataFilter);
+            File[] dateien = fileService.listFiles(Helper.dataFilter, tifOrdner);
             for (int i = 0; i < dateien.length; i++) {
                 if (task != null) {
                     task.setWorkDetail(dateien[i].getName());
                 }
                 if (dateien[i].isFile()) {
                     File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
-                    serviceManager.getFileService().copyFile(dateien[i], meinZiel);
+                    fileService.copyFile(dateien[i], meinZiel);
                 }
                 if (task != null) {
                     task.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
@@ -428,7 +429,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                     FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
 
             if (srcDir.isDirectory()) {
-                serviceManager.getFileService().copyFile(srcDir, dstDir);
+                fileService.copyFile(srcDir, dstDir);
             }
         }
     }

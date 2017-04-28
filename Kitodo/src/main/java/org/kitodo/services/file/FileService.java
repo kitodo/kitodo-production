@@ -16,17 +16,22 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ShellScript;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.kitodo.services.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +41,8 @@ public class FileService {
 
     // program options initialized to default values
     private static final int BUFFER_SIZE = 4 * 1024;
+
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     public void createDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!new File(parentFolderUri + directoryName).exists()) {
@@ -156,12 +163,12 @@ public class FileService {
             /*
              * die Images zählen
              */
-            count = directory.list(Helper.imageNameFilter).length;
+            count = list(Helper.imageNameFilter, directory).length;
 
             /*
              * die Unterverzeichnisse durchlaufen
              */
-            String[] children = directory.list();
+            String[] children = list(directory);
             for (int i = 0; i < children.length; i++) {
                 count += getNumberOfFiles(new File(directory, children[i]));
             }
@@ -235,6 +242,49 @@ public class FileService {
 
     public void moveDirectory(File sourceDirectory, File targetDirectory) throws IOException {
         FileUtils.moveDirectory(sourceDirectory, targetDirectory);
+    }
+
+    public String[] list(File file) {
+        String[] unchecked = file.list();
+        return unchecked != null ? unchecked : new String[0];
+    }
+
+    public String[] list(FilenameFilter filter, File file) {
+        String[] unchecked = file.list(filter);
+        return unchecked != null ? unchecked : new String[0];
+    }
+
+    public File[] listFiles(File file) {
+        File[] unchecked = file.listFiles();
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    public File[] listFiles(FileFilter filter, File file) {
+        File[] unchecked = file.listFiles(filter);
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    public File[] listFiles(FilenameFilter filter, File file) {
+        File[] unchecked = file.listFiles(filter);
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    public List<File> getCurrentFiles(File file) {
+        File[] result = file.listFiles();
+        if (result != null) {
+            return Arrays.asList(result);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<File> getFilesByFilter(File file, FilenameFilter filter) {
+        File[] result = file.listFiles(filter);
+        if (result != null) {
+            return Arrays.asList(result);
+        } else {
+            return Collections.emptyList();
+        }
     }
 
 }

@@ -200,7 +200,7 @@ public class HelperForm {
             }
         };
 
-        String[] dateien = cssDir.list(filter);
+        String[] dateien = serviceManager.getFileService().list(filter, cssDir);
         for (String string : dateien) {
             myList.add(new SelectItem("/css/" + string, string));
         }
@@ -228,7 +228,7 @@ public class HelperForm {
             }
         };
 
-        String[] dateien = cssDir.list(filter);
+        String[] dateien = serviceManager.getFileService().list(filter, cssDir);
         for (String string : dateien) {
             if ((CSS_PATH + "/" + string).equals(cssFileName)) {
                 return cssFileName;

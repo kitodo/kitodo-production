@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class FolderInformation {
 
@@ -34,6 +36,9 @@ public class FolderInformation {
     public static final String metadataPath = ConfigCore.getParameter("MetadatenVerzeichnis");
     public static String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     public static String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+
+    private static ServiceManager serviceManager = new ServiceManager();
+    private static FileService fileService = serviceManager.getFileService();
 
     public FolderInformation(int id, String kitodoTitle) {
         this.id = id;
@@ -60,18 +65,18 @@ public class FolderInformation {
         };
 
         String tifOrdner = "";
-        String[] verzeichnisse = dir.list(filterVerz);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
 
         if (verzeichnisse != null) {
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                tifOrdner = verzeichnisse[i];
+            for (String aVerzeichnisse : verzeichnisse) {
+                tifOrdner = aVerzeichnisse;
             }
         }
 
         if (tifOrdner.equals("") && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = dir.list();
+                String[] folderList = fileService.list(dir);
                 for (String folder : folderList) {
                     if (folder.endsWith(suffix)) {
                         tifOrdner = folder;
@@ -84,9 +89,9 @@ public class FolderInformation {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 File tif = new File(tifOrdner);
-                String[] files = tif.list();
+                String[] files = fileService.list(tif);
                 if (files == null || files.length == 0) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix)) {
                             tifOrdner = folder;
@@ -120,14 +125,7 @@ public class FolderInformation {
 
         testMe = new File(getImagesTifDirectory(true));
 
-        if (testMe.list() == null) {
-            return false;
-        }
-        if (testMe.exists() && testMe.list().length > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
     }
 
     /**
@@ -151,15 +149,14 @@ public class FolderInformation {
             };
 
             String origOrdner = "";
-            String[] verzeichnisse = dir.list(filterVerz);
+            String[] verzeichnisse = fileService.list(filterVerz, dir);
             for (int i = 0; i < verzeichnisse.length; i++) {
                 origOrdner = verzeichnisse[i];
             }
-
             if (origOrdner.equals("") && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix)) {
                             origOrdner = folder;
@@ -172,9 +169,9 @@ public class FolderInformation {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
                     File tif = new File(origOrdner);
-                    String[] files = tif.list();
+                    String[] files = fileService.list(tif);
                     if (files == null || files.length == 0) {
-                        String[] folderList = dir.list();
+                        String[] folderList = fileService.list(dir);
                         for (String folder : folderList) {
                             if (folder.endsWith(suffix)) {
                                 origOrdner = folder;
@@ -261,7 +258,7 @@ public class FolderInformation {
             }
         };
         File sourceFolder = null;
-        String[] verzeichnisse = dir.list(filterVerz);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
             sourceFolder = new File(dir, title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
@@ -385,7 +382,7 @@ public class FolderInformation {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.dataFilter);
+        String[] dateien = fileService.list(Helper.dataFilter, dir);
         ArrayList<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {

@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 /**
  * Creation of PDF-Files as long running task for GoobiContentServerServlet.
@@ -49,6 +50,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
     private String internalServletPath;
     private URL metsURL;
     private final ServiceManager serviceManager = new ServiceManager();
+    public final FileService fileService = serviceManager.getFileService();
 
     public CreatePdfFromServletThread() {
     }
@@ -118,7 +120,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 FilenameFilter filter = Helper.imageNameFilter;
                 File imagesDir = new File(
                         serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess()));
-                File[] meta = imagesDir.listFiles(filter);
+                File[] meta = fileService.listFiles(filter, imagesDir);
                 ArrayList<String> filenames = new ArrayList<String>();
                 for (File data : meta) {
                     String file = "";
@@ -156,8 +158,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
                 InputStream inStream = method.getResponseBodyAsStream();
                 try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                        FileOutputStream fos = (FileOutputStream) serviceManager.getFileService()
-                                .write(tempPdf.toURI())) {
+                        FileOutputStream fos = (FileOutputStream) fileService.write(tempPdf.toURI())) {
                     byte[] bytes = new byte[8192];
                     int count = bis.read(bytes);
                     while ((count != -1) && (count <= 8192)) {
@@ -179,7 +180,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to "
                         + finalPdf.getAbsolutePath());
             }
-            serviceManager.getFileService().copyFile(tempPdf, finalPdf);
+            fileService.copyFile(tempPdf, finalPdf);
             if (logger.isDebugEnabled()) {
                 logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
             }
@@ -198,8 +199,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              */
             String text = "error while pdf creation: " + e.getMessage();
             File file = new File(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
-            try (BufferedWriter output = new BufferedWriter(
-                    new OutputStreamWriter(serviceManager.getFileService().write(file.toURI())))) {
+            try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(file.toURI())))) {
                 output.write(text);
             } catch (IOException e1) {
                 logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);

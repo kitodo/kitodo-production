@@ -40,6 +40,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -57,6 +58,8 @@ import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
+
+    private final FileService fileService = serviceManager.getFileService();
     protected Helper help = new Helper();
     protected Prefs myPrefs;
 
@@ -136,7 +139,7 @@ public class ExportMets {
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (myBenutzer != null) {
             try {
-                serviceManager.getFileService().createDirectoryForUser(target, myBenutzer.getLogin());
+                fileService.createDirectoryForUser(target, myBenutzer.getLogin());
             } catch (Exception e) {
                 Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder,
                         e);
@@ -243,7 +246,7 @@ public class ExportMets {
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
                     File folder = new File(
                             serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
-                    if (folder.exists() && folder.list().length > 0) {
+                    if (folder.exists() && fileService.list(folder).length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));

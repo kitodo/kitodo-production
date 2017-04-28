@@ -55,6 +55,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -168,6 +169,7 @@ public class Metadaten {
     private boolean addMetadataGroupMode = false;
     private RenderableMetadataGroup newMetadataGroup;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     /**
      * Konstruktor.
@@ -815,7 +817,7 @@ public class Metadaten {
                 .setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
         this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
-            this.myProzess.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(
+            this.myProzess.setSortHelperImages(fileService.getNumberOfFiles(
                     new File(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess))));
             serviceManager.getProcessService().save(this.myProzess);
         } catch (DAOException e) {
@@ -1686,9 +1688,9 @@ public class Metadaten {
             }
         };
 
-        String[] verzeichnisse = dir.list(filterVerz);
-        for (int i = 0; i < verzeichnisse.length; i++) {
-            this.allTifFolders.add(verzeichnisse[i]);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
+        for (String aVerzeichnisse : verzeichnisse) {
+            this.allTifFolders.add(aVerzeichnisse);
         }
 
         if (ConfigCore.getParameter("MetsEditorDefaultSuffix", null) != null) {
@@ -3126,7 +3128,7 @@ public class Metadaten {
             try {
                 File ocr = new File(serviceManager.getProcessService().getOcrDirectory(myProzess));
                 if (ocr.exists()) {
-                    File[] allOcrFolder = ocr.listFiles();
+                    File[] allOcrFolder = fileService.listFiles(ocr);
                     for (File folder : allOcrFolder) {
                         File filename = new File(folder, imagename);
                         File newFileName = new File(folder, imagename + "_bak");
@@ -3159,7 +3161,7 @@ public class Metadaten {
             try {
                 File ocr = new File(serviceManager.getProcessService().getOcrDirectory(myProzess));
                 if (ocr.exists()) {
-                    File[] allOcrFolder = ocr.listFiles();
+                    File[] allOcrFolder = fileService.listFiles(ocr);
                     for (File folder : allOcrFolder) {
                         File fileToSort = new File(folder, imagename);
                         String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
@@ -3189,8 +3191,8 @@ public class Metadaten {
             // TODO check what happens with .tar.gz
             String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
             for (String folder : allTifFolders) {
-                File[] filesInFolder = new File(
-                        serviceManager.getProcessService().getImagesDirectory(myProzess) + folder).listFiles();
+                File[] filesInFolder = fileService
+                        .listFiles(new File(serviceManager.getProcessService().getImagesDirectory(myProzess) + folder));
                 for (File currentFile : filesInFolder) {
                     String filename = currentFile.getName();
                     String filenamePrefix = filename.replace(getFileExtension(filename), "");
@@ -3202,10 +3204,10 @@ public class Metadaten {
 
             File ocr = new File(serviceManager.getProcessService().getOcrDirectory(myProzess));
             if (ocr.exists()) {
-                File[] folder = ocr.listFiles();
+                File[] folder = fileService.listFiles(ocr);
                 for (File dir : folder) {
-                    if (dir.isDirectory() && dir.list().length > 0) {
-                        File[] filesInFolder = dir.listFiles();
+                    if (dir.isDirectory() && fileService.list(dir).length > 0) {
+                        File[] filesInFolder = fileService.listFiles(dir);
                         for (File currentFile : filesInFolder) {
                             String filename = currentFile.getName();
                             String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));

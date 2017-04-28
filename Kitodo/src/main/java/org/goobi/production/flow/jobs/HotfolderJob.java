@@ -33,6 +33,7 @@ import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -48,6 +49,7 @@ public class HotfolderJob extends AbstractGoobiJob {
     private static final Logger logger = Logger.getLogger(HotfolderJob.class);
 
     private static final ServiceManager serviceManager = new ServiceManager();
+    private static final FileService fileService = serviceManager.getFileService();
 
     /*
      * (non-Javadoc)
@@ -156,7 +158,7 @@ public class HotfolderJob extends AbstractGoobiJob {
         long size = 0;
         for (File f : list) {
             if (f.isDirectory()) {
-                File[] subdir = f.listFiles();
+                File[] subdir = fileService.listFiles(f);
                 for (File sub : subdir) {
                     size += sub.length();
                 }
@@ -193,15 +195,14 @@ public class HotfolderJob extends AbstractGoobiJob {
                             + processTitle.substring(0, processTitle.length() - 4) + File.separator);
                     List<String> imageDir = new ArrayList<String>();
                     if (images.isDirectory()) {
-                        String[] files = images.list();
+                        String[] files = fileService.list(images);
                         for (int i = 0; i < files.length; i++) {
                             imageDir.add(files[i]);
                         }
-                        serviceManager.getFileService().delete(images.toURI());
+                        fileService.delete(images.toURI());
                     }
                     try {
-                        serviceManager.getFileService()
-                                .delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
+                        fileService.delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
                     } catch (Exception e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
@@ -209,7 +210,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     File anchor = new File(dir.getAbsolutePath() + File.separator
                             + processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                     if (anchor.exists()) {
-                        serviceManager.getFileService().delete(anchor.toURI());
+                        fileService.delete(anchor.toURI());
                     }
                     return 27;
                 } else if (!test && updateStrategy.equals("update")) {
@@ -218,15 +219,14 @@ public class HotfolderJob extends AbstractGoobiJob {
                             + processTitle.substring(0, processTitle.length() - 4) + File.separator);
                     List<String> imageDir = new ArrayList<String>();
                     if (images.isDirectory()) {
-                        String[] files = images.list();
+                        String[] files = fileService.list(images);
                         for (int i = 0; i < files.length; i++) {
                             imageDir.add(files[i]);
                         }
-                        serviceManager.getFileService().delete(images.toURI());
+                        fileService.delete(images.toURI());
                     }
                     try {
-                        serviceManager.getFileService()
-                                .delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
+                        fileService.delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
                     } catch (Exception e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
@@ -234,7 +234,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     File anchor = new File(dir.getAbsolutePath() + File.separator
                             + processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                     if (anchor.exists()) {
-                        serviceManager.getFileService().delete(anchor.toURI());
+                        fileService.delete(anchor.toURI());
                     }
                     return 28;
                 }
@@ -264,7 +264,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 + processTitle.substring(0, processTitle.length() - 4) + File.separator);
                         List<String> imageDir = new ArrayList<String>();
                         if (images.isDirectory()) {
-                            String[] files = images.list();
+                            String[] files = fileService.list(images);
                             for (int i = 0; i < files.length; i++) {
                                 imageDir.add(files[i]);
                             }
@@ -272,9 +272,9 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 File image = new File(images, file);
                                 File dest = new File(serviceManager.getProcessService().getImagesOrigDirectory(false, p)
                                         + image.getName());
-                                serviceManager.getFileService().moveFile(image, dest);
+                                fileService.moveFile(image, dest);
                             }
-                            serviceManager.getFileService().delete(images.toURI());
+                            fileService.delete(images.toURI());
                         }
 
                         // copy fulltext files
@@ -283,7 +283,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 + processTitle.substring(0, processTitle.length() - 4) + "_txt" + File.separator);
                         if (fulltext.isDirectory()) {
 
-                            serviceManager.getFileService().moveDirectory(fulltext,
+                            fileService.moveDirectory(fulltext,
                                     new File(serviceManager.getProcessService().getTxtDirectory(p)));
                         }
 
@@ -292,13 +292,12 @@ public class HotfolderJob extends AbstractGoobiJob {
                         File sourceDir = new File(dir.getAbsoluteFile() + File.separator
                                 + processTitle.substring(0, processTitle.length() - 4) + "_src" + File.separator);
                         if (sourceDir.isDirectory()) {
-                            serviceManager.getFileService().moveDirectory(sourceDir,
+                            fileService.moveDirectory(sourceDir,
                                     new File(serviceManager.getProcessService().getImportDirectory(p)));
                         }
 
                         try {
-                            serviceManager.getFileService()
-                                    .delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
+                            fileService.delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
                         } catch (Exception e) {
                             logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
                                     + " into kitodo", e);
@@ -307,7 +306,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         File anchor = new File(dir.getAbsolutePath() + File.separator
                                 + processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                         if (anchor.exists()) {
-                            serviceManager.getFileService().delete(anchor.toURI());
+                            fileService.delete(anchor.toURI());
                         }
                         List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
                         for (StepObject s : steps) {
@@ -379,22 +378,22 @@ public class HotfolderJob extends AbstractGoobiJob {
             // removing all data
             File imagesFolder = new File(basepath);
             if (imagesFolder.isDirectory()) {
-                serviceManager.getFileService().delete(imagesFolder.toURI());
+                fileService.delete(imagesFolder.toURI());
             } else {
                 imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
                 if (imagesFolder.isDirectory()) {
-                    serviceManager.getFileService().delete(imagesFolder.toURI());
+                    fileService.delete(imagesFolder.toURI());
                 }
             }
             try {
-                serviceManager.getFileService().delete(metsfile.toURI());
+                fileService.delete(metsfile.toURI());
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
             File anchor = new File(basepath + "_anchor.xml");
             if (anchor.exists()) {
-                serviceManager.getFileService().delete(anchor.toURI());
+                fileService.delete(anchor.toURI());
             }
             return null;
         }

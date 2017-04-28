@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -47,6 +48,7 @@ public class ExportPdf extends ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
     private static final String PDF_EXTENSION = ".pdf";
+    private final FileService fileService = serviceManager.getFileService();
 
     @Override
     public boolean startExport(Process myProcess, String inZielVerzeichnis)
@@ -128,7 +130,7 @@ public class ExportPdf extends ExportMets {
                     FilenameFilter filter = new FileListFilter("\\d*\\.tif");
                     File imagesDir = new File(
                             serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
-                    File[] meta = imagesDir.listFiles(filter);
+                    File[] meta = fileService.listFiles(filter, imagesDir);
                     int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();
                     TreeSet<String> filenames = new TreeSet<String>(new MetadatenHelper(null, null));
@@ -182,7 +184,7 @@ public class ExportPdf extends ExportMets {
                 String text = "error while pdf creation: " + e.getMessage();
                 File file = new File(zielVerzeichnis, myProcess.getTitle() + ".PDF-ERROR.log");
                 try (BufferedWriter output = new BufferedWriter(
-                        new OutputStreamWriter(serviceManager.getFileService().write(file.toURI())))) {
+                        new OutputStreamWriter(fileService.write(file.toURI())))) {
                     output.write(text);
                 } catch (IOException e1) {
                 }

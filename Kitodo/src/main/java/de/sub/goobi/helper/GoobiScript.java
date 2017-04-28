@@ -42,6 +42,7 @@ import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -62,6 +63,7 @@ public class GoobiScript {
     HashMap<String, String> myParameters;
     private static final Logger logger = Logger.getLogger(GoobiScript.class);
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
     public static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
@@ -192,11 +194,11 @@ public class GoobiScript {
                 try {
                     File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
                     if (ocr.exists()) {
-                        serviceManager.getFileService().delete(ocr.toURI());
+                        fileService.delete(ocr.toURI());
                     }
                     File images = new File(serviceManager.getProcessService().getImagesDirectory(p));
                     if (images.exists()) {
-                        serviceManager.getFileService().delete(images.toURI());
+                        fileService.delete(images.toURI());
                     }
                     Helper.setMeldung("Content deleted for " + title);
                 } catch (Exception e) {
@@ -219,11 +221,10 @@ public class GoobiScript {
 
     private void deleteMetadataDirectory(Process p) {
         try {
-            serviceManager.getFileService()
-                    .delete(new File(serviceManager.getProcessService().getProcessDataDirectory(p)).toURI());
+            fileService.delete(new File(serviceManager.getProcessService().getProcessDataDirectory(p)).toURI());
             File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
             if (ocr.exists()) {
-                serviceManager.getFileService().delete(ocr.toURI());
+                fileService.delete(ocr.toURI());
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -295,7 +296,7 @@ public class GoobiScript {
         try {
             for (Process p : inProzesse) {
                 File imagesFolder = new File(serviceManager.getProcessService().getImagesOrigDirectory(false, p));
-                if (imagesFolder.list().length > 0) {
+                if (fileService.list(imagesFolder).length > 0) {
                     Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
                             + p.getId().intValue() + "] has already data in image folder");
                 } else {
@@ -304,7 +305,7 @@ public class GoobiScript {
                         Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
                                 + " [" + p.getId().intValue() + "] is not existing");
                     } else {
-                        serviceManager.getFileService().copyDir(sourceFolderProzess, imagesFolder);
+                        fileService.copyDir(sourceFolderProzess, imagesFolder);
                         Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
                                 + p.getId().intValue() + "] is copied");
                     }

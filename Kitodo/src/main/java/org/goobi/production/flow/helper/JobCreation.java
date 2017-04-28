@@ -41,7 +41,7 @@ public class JobCreation {
     private static final Logger logger = Logger.getLogger(JobCreation.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
-    private static final FileService fileService = new FileService();
+    private static final FileService fileService = serviceManager.getFileService();
 
     /**
      * Generate process.
@@ -187,7 +187,7 @@ public class JobCreation {
             if (imagesFolder.isDirectory()) {
                 List<String> imageDir = new ArrayList<String>();
 
-                String[] files = imagesFolder.list();
+                String[] files = fileService.list(imagesFolder);
                 for (int i = 0; i < files.length; i++) {
                     imageDir.add(files[i]);
                 }
@@ -238,13 +238,13 @@ public class JobCreation {
             // new folder structure for process imports
             File importFolder = new File(basepath);
             if (importFolder.isDirectory()) {
-                File[] folderList = importFolder.listFiles();
+                File[] folderList = fileService.listFiles(importFolder);
                 for (File directory : folderList) {
                     if (directory.getName().contains("images")) {
-                        File[] imageList = directory.listFiles();
+                        File[] imageList = fileService.listFiles(directory);
                         for (File imagedir : imageList) {
                             if (imagedir.isDirectory()) {
-                                for (File file : imagedir.listFiles()) {
+                                for (File file : fileService.listFiles(imagedir)) {
                                     fileService.moveFile(file,
                                             new File(serviceManager.getProcessService().getImagesDirectory(p)
                                                     + imagedir.getName(), file.getName()));
@@ -259,7 +259,7 @@ public class JobCreation {
                         if (!ocr.exists()) {
                             ocr.mkdir();
                         }
-                        File[] ocrList = directory.listFiles();
+                        File[] ocrList = fileService.listFiles(directory);
                         for (File ocrdir : ocrList) {
                             if (ocrdir.isDirectory()) {
                                 fileService.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
@@ -272,7 +272,7 @@ public class JobCreation {
                         if (!i.exists()) {
                             i.mkdir();
                         }
-                        File[] importList = directory.listFiles();
+                        File[] importList = fileService.listFiles(directory);
                         for (File importdir : importList) {
                             if (importdir.isDirectory()) {
                                 fileService.moveDirectory(importdir, new File(i, importdir.getName()));
