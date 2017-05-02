@@ -25,7 +25,7 @@ import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.SearchService;
 
-public class TemplateService extends SearchService {
+public class TemplateService extends SearchService<Template> {
 
     private TemplateDAO templateDao = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
@@ -39,14 +39,22 @@ public class TemplateService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves template object to database.
      *
      * @param template
      *            object
      */
-    public void save(Template template) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Template template) throws DAOException {
         templateDao.save(template);
+    }
+
+    /**
+     * Method saves template document to the index of Elastic Search.
+     *
+     * @param template
+     *            object
+     */
+    public void saveToIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(template, templateType);
     }
