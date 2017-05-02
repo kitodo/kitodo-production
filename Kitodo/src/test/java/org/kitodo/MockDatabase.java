@@ -26,7 +26,7 @@ import org.joda.time.LocalDate;
 import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -101,7 +101,7 @@ public class MockDatabase {
         Process firstProcess = serviceManager.getProcessService().find(1);
         firstHistory.setNumericValue(2.0);
         firstHistory.setStringValue("History");
-        firstHistory.setHistoryType(HistoryType.color);
+        firstHistory.setHistoryType(HistoryTypeEnum.color);
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstHistory.setDate(localDate.toDate());
         firstHistory.setProcess(firstProcess);

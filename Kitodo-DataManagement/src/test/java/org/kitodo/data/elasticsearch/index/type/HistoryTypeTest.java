@@ -25,9 +25,10 @@ import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
- * Test class for HistoryType.
+ * Test class for HistoryTypeEnum.
  */
 public class HistoryTypeTest {
 
@@ -54,7 +55,7 @@ public class HistoryTypeTest {
         secondHistory.setId(2);
         secondHistory.setNumericValue(2.0);
         secondHistory.setStringValue("2");
-        secondHistory.setHistoryType(org.kitodo.data.database.helper.enums.HistoryType.grayScale);
+        secondHistory.setHistoryType(HistoryTypeEnum.grayScale);
         secondHistory.setProcess(secondProcess);
         histories.add(secondHistory);
 

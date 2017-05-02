@@ -33,7 +33,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
  * Imlpementation of {@link IStatisticalQuestion}. This is used for the
@@ -68,7 +68,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
      * not included means that only min(date) or max(date) - depending on option
      * in.
      *
-     * @see HistoryType
+     * @see HistoryTypeEnum
      *
      * @return status of loops included or not
      */
@@ -244,7 +244,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
             return this.myDataTable;
         }
 
-        DataTable tableStepCompleted = getAllSteps(HistoryType.taskDone);
+        DataTable tableStepCompleted = getAllSteps(HistoryTypeEnum.taskDone);
 
         tableStepCompleted.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         tableStepCompleted.setName(Helper.getTranslation("doneSteps"));
@@ -313,7 +313,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
      * @param requestedType
      * @return
      */
-    private DataTable getAllSteps(HistoryType requestedType) {
+    private DataTable getAllSteps(HistoryTypeEnum requestedType) {
 
         // adding time restrictions
         String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping,

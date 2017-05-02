@@ -31,7 +31,7 @@ import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
@@ -104,7 +104,7 @@ public class HelperSchritteWithoutHibernate {
         logger.debug("create history events for step");
 
         StepManager.addHistory(myDate, currentStep.getOrdering(), currentStep.getTitle(),
-                HistoryType.taskDone.getValue(), processId);
+                HistoryTypeEnum.taskDone.getValue(), processId);
         /*
          * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
          * abgeschlossen sind
@@ -150,7 +150,7 @@ public class HelperSchritteWithoutHibernate {
                     myStep.setEditType(4);
                     logger.debug("create history events for next step");
                     StepManager.addHistory(myDate, myStep.getOrdering(), myStep.getTitle(),
-                            HistoryType.taskOpen.getValue(), processId);
+                            HistoryTypeEnum.taskOpen.getValue(), processId);
                     /* wenn es ein automatischer Schritt mit Script ist */
                     if (logger.isDebugEnabled()) {
                         logger.debug("check if step is an automatic task: " + myStep.isTypeAutomatic());

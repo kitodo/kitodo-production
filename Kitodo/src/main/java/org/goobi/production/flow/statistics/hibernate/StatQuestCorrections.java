@@ -30,7 +30,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /*****************************************************************************
  * Implementation of {@link IStatisticalQuestion}. Statistical Request with
@@ -96,7 +96,7 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
 
         // adding time restrictions
         String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, getTimeUnit(), IDlist)
-                .getSQL(HistoryType.taskError, null, false, false);
+                .getSQL(HistoryTypeEnum.taskError, null, false, false);
 
         Session session = Helper.getHibernateSession();
 

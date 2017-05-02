@@ -20,7 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
  * HistoryItem for any kind of history event of a {@link Process}
@@ -69,12 +69,12 @@ public class History extends BaseBean {
      * @param inStringValue
      *            value as string
      * @param inHistoryEventType
-     *            type of History event( {@link HistoryType} )
+     *            type of History event( {@link HistoryTypeEnum} )
      * @param process
      *            process of History
      */
 
-    public History(Date date, Number inNumericValue, String inStringValue, HistoryType inHistoryEventType,
+    public History(Date date, Number inNumericValue, String inStringValue, HistoryTypeEnum inHistoryEventType,
             Process process) {
         super();
         this.date = date;
@@ -137,11 +137,11 @@ public class History extends BaseBean {
         this.type = type;
     }
 
-    public HistoryType getHistoryType() {
-        return HistoryType.getTypeFromValue(type);
+    public HistoryTypeEnum getHistoryType() {
+        return HistoryTypeEnum.getTypeFromValue(type);
     }
 
-    public void setHistoryType(HistoryType type) {
+    public void setHistoryType(HistoryTypeEnum type) {
         this.type = type.getValue();
     }
 
