@@ -25,7 +25,7 @@ import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.SearchService;
 
-public class WorkpieceService extends SearchService {
+public class WorkpieceService extends SearchService<Workpiece> {
 
     private WorkpieceDAO workpieceDao = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
@@ -39,14 +39,22 @@ public class WorkpieceService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves workpiece object to database.
      *
      * @param workpiece
      *            object
      */
-    public void save(Workpiece workpiece) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Workpiece workpiece) throws DAOException {
         workpieceDao.save(workpiece);
+    }
+
+    /**
+     * Method saves workpiece document to the index of Elastic Search.
+     *
+     * @param workpiece
+     *            object
+     */
+    public void saveToIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(workpiece, workpieceType);
     }
