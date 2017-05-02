@@ -32,9 +32,9 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.services.data.base.SearchService;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class TaskService extends SearchService {
+public class TaskService extends TitleSearchService<Task> {
     private TaskDAO taskDao = new TaskDAO();
     private TaskType taskType = new TaskType();
     private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
@@ -47,14 +47,22 @@ public class TaskService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves task object to database.
      *
      * @param task
      *            object
      */
-    public void save(Task task) throws DAOException, IOException, CustomResponseException {
+    public void saveToDatabase(Task task) throws DAOException {
         taskDao.save(task);
+    }
+
+    /**
+     * Method saves task document to the index of Elastic Search.
+     *
+     * @param task
+     *            object
+     */
+    public void saveToIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(task, taskType);
     }
