@@ -129,7 +129,7 @@
                                     <encoding>UTF-8</encoding>
                                     <failOnViolation>false</failOnViolation>
                                     <failsOnError>false</failsOnError>
-                                    <maxAllowedViolations>850</maxAllowedViolations>
+                                    <maxAllowedViolations>700</maxAllowedViolations>
                                 </configuration>
                                 <goals>
                                     <goal>check</goal>
