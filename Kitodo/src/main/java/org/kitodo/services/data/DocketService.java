@@ -31,7 +31,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class DocketService extends TitleSearchService<Docket> {
-    private DocketDAO docketDao = new DocketDAO();
+    private DocketDAO docketDAO = new DocketDAO();
     private DocketType docketType = new DocketType();
     private Indexer<Docket, DocketType> indexer = new Indexer<>(Docket.class);
     private static final Logger logger = Logger.getLogger(DocketService.class);
@@ -44,11 +44,11 @@ public class DocketService extends TitleSearchService<Docket> {
     }
 
     public Docket find(Integer id) throws DAOException {
-        return docketDao.find(id);
+        return docketDAO.find(id);
     }
 
     public List<Docket> findAll() throws DAOException {
-        return docketDao.findAll();
+        return docketDAO.findAll();
     }
 
     /**
@@ -58,7 +58,7 @@ public class DocketService extends TitleSearchService<Docket> {
      *            object
      */
     public void saveToDatabase(Docket docket) throws DAOException {
-        docketDao.save(docket);
+        docketDAO.save(docket);
     }
 
     /**
@@ -80,17 +80,17 @@ public class DocketService extends TitleSearchService<Docket> {
      *            object
      */
     public void remove(Docket docket) throws CustomResponseException, DAOException, IOException {
-        docketDao.remove(docket);
+        docketDAO.remove(docket);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(docket, docketType);
     }
 
     public List<Docket> search(String query) throws DAOException {
-        return docketDao.search(query);
+        return docketDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return docketDao.count(query);
+        return docketDAO.count(query);
     }
 
     /**

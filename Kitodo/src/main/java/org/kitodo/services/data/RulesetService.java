@@ -40,7 +40,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
 
     private static final Logger logger = Logger.getLogger(RulesetService.class);
 
-    private RulesetDAO rulesetDao = new RulesetDAO();
+    private RulesetDAO rulesetDAO = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();
     private Indexer<Ruleset, RulesetType> indexer = new Indexer<>(Ruleset.class);
 
@@ -58,7 +58,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            object
      */
     public void saveToDatabase(Ruleset ruleset) throws DAOException {
-        rulesetDao.save(ruleset);
+        rulesetDAO.save(ruleset);
     }
 
     /**
@@ -73,15 +73,15 @@ public class RulesetService extends TitleSearchService<Ruleset> {
     }
 
     public Ruleset find(Integer id) throws DAOException {
-        return rulesetDao.find(id);
+        return rulesetDAO.find(id);
     }
 
     public List<Ruleset> findAll() throws DAOException {
-        return rulesetDao.findAll();
+        return rulesetDAO.findAll();
     }
 
     public List<Ruleset> search(String query) throws DAOException {
-        return rulesetDao.search(query);
+        return rulesetDAO.search(query);
     }
 
     /**
@@ -92,7 +92,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            object
      */
     public void remove(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
-        rulesetDao.remove(ruleset);
+        rulesetDAO.remove(ruleset);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(ruleset, rulesetType);
     }
@@ -105,7 +105,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        rulesetDao.remove(id);
+        rulesetDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }

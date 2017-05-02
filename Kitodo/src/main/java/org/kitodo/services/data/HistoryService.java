@@ -31,7 +31,7 @@ import org.kitodo.services.data.base.SearchService;
  */
 public class HistoryService extends SearchService<History> {
 
-    private HistoryDAO historyDao = new HistoryDAO();
+    private HistoryDAO historyDAO = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
     private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
     private static final Logger logger = Logger.getLogger(HistoryService.class);
@@ -51,7 +51,7 @@ public class HistoryService extends SearchService<History> {
      *            object
      */
     public void save(History history) throws CustomResponseException, DAOException, IOException {
-        historyDao.save(history);
+        historyDAO.save(history);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(history, historyType);
     }
@@ -63,7 +63,7 @@ public class HistoryService extends SearchService<History> {
      *            object
      */
     public void saveToDatabase(History history) throws DAOException {
-        historyDao.save(history);
+        historyDAO.save(history);
     }
 
     /**
@@ -78,11 +78,11 @@ public class HistoryService extends SearchService<History> {
     }
 
     public History find(Integer id) throws DAOException {
-        return historyDao.find(id);
+        return historyDAO.find(id);
     }
 
     public List<History> findAll() throws DAOException {
-        return historyDao.findAll();
+        return historyDAO.findAll();
     }
 
     /**
@@ -93,7 +93,7 @@ public class HistoryService extends SearchService<History> {
      * @return list of History objects
      */
     public List<History> search(String query) throws DAOException {
-        return historyDao.search(query);
+        return historyDAO.search(query);
     }
 
     /**
@@ -104,7 +104,7 @@ public class HistoryService extends SearchService<History> {
      *            object
      */
     public void remove(History history) throws CustomResponseException, DAOException, IOException {
-        historyDao.remove(history);
+        historyDAO.remove(history);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(history, historyType);
     }
@@ -117,7 +117,7 @@ public class HistoryService extends SearchService<History> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        historyDao.remove(id);
+        historyDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }

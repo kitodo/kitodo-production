@@ -27,7 +27,7 @@ import org.kitodo.services.data.base.SearchService;
 
 public class TemplateService extends SearchService<Template> {
 
-    private TemplateDAO templateDao = new TemplateDAO();
+    private TemplateDAO templateDAO = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
     private Indexer<Template, TemplateType> indexer = new Indexer<>(Template.class);
 
@@ -45,7 +45,7 @@ public class TemplateService extends SearchService<Template> {
      *            object
      */
     public void saveToDatabase(Template template) throws DAOException {
-        templateDao.save(template);
+        templateDAO.save(template);
     }
 
     /**
@@ -60,11 +60,11 @@ public class TemplateService extends SearchService<Template> {
     }
 
     public Template find(Integer id) throws DAOException {
-        return templateDao.find(id);
+        return templateDAO.find(id);
     }
 
     public List<Template> findAll() throws DAOException {
-        return templateDao.findAll();
+        return templateDAO.findAll();
     }
 
     /**
@@ -75,7 +75,7 @@ public class TemplateService extends SearchService<Template> {
      * @return list of Template objects
      */
     public List<Template> search(String query) throws DAOException {
-        return templateDao.search(query);
+        return templateDAO.search(query);
     }
 
     /**
@@ -86,7 +86,7 @@ public class TemplateService extends SearchService<Template> {
      *            object
      */
     public void remove(Template template) throws CustomResponseException, DAOException, IOException {
-        templateDao.remove(template);
+        templateDAO.remove(template);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(template, templateType);
     }
@@ -99,7 +99,7 @@ public class TemplateService extends SearchService<Template> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        templateDao.remove(id);
+        templateDAO.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
     }

@@ -27,7 +27,7 @@ import org.kitodo.services.data.base.SearchService;
 
 public class WorkpieceService extends SearchService<Workpiece> {
 
-    private WorkpieceDAO workpieceDao = new WorkpieceDAO();
+    private WorkpieceDAO workpieceDAO = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
     private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>(Workpiece.class);
 
@@ -45,7 +45,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            object
      */
     public void saveToDatabase(Workpiece workpiece) throws DAOException {
-        workpieceDao.save(workpiece);
+        workpieceDAO.save(workpiece);
     }
 
     /**
@@ -60,11 +60,11 @@ public class WorkpieceService extends SearchService<Workpiece> {
     }
 
     public Workpiece find(Integer id) throws DAOException {
-        return workpieceDao.find(id);
+        return workpieceDAO.find(id);
     }
 
     public List<Workpiece> findAll() throws DAOException {
-        return workpieceDao.findAll();
+        return workpieceDAO.findAll();
     }
 
     /**
@@ -75,7 +75,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @return list of Batch objects
      */
     public List<Workpiece> search(String query) throws DAOException {
-        return workpieceDao.search(query);
+        return workpieceDAO.search(query);
     }
 
     /**
@@ -86,7 +86,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            object
      */
     public void remove(Workpiece workpiece) throws CustomResponseException, DAOException, IOException {
-        workpieceDao.remove(workpiece);
+        workpieceDAO.remove(workpiece);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(workpiece, workpieceType);
     }
@@ -99,7 +99,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        workpieceDao.remove(id);
+        workpieceDAO.remove(id);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(id);
     }

@@ -91,7 +91,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
-    private ProcessDAO processDao = new ProcessDAO();
+    private ProcessDAO processDAO = new ProcessDAO();
     private ProcessType processType = new ProcessType();
     private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
     private ServiceManager serviceManager = new ServiceManager();
@@ -106,11 +106,11 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     public Process find(Integer id) throws DAOException {
-        return processDao.find(id);
+        return processDAO.find(id);
     }
 
     public List<Process> findAll() throws DAOException {
-        return processDao.findAll();
+        return processDAO.findAll();
     }
 
     /**
@@ -120,7 +120,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      */
     public void saveToDatabase(Process process) throws DAOException {
-        processDao.save(process, getProgress(process));
+        processDAO.save(process, getProgress(process));
     }
 
     /**
@@ -135,7 +135,7 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     public void saveList(List<Process> list) throws DAOException {
-        processDao.saveList(list);
+        processDAO.saveList(list);
     }
 
     /**
@@ -146,7 +146,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      */
     public void remove(Process process) throws CustomResponseException, DAOException, IOException {
-        processDao.remove(process);
+        processDAO.remove(process);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(process, processType);
     }
@@ -159,21 +159,21 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        processDao.remove(id);
+        processDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Process> search(String query) throws DAOException {
-        return processDao.search(query);
+        return processDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return processDao.count(query);
+        return processDAO.count(query);
     }
 
     public void refresh(Process process) {
-        processDao.refresh(process);
+        processDAO.refresh(process);
     }
 
     /**

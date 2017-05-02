@@ -35,7 +35,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class TaskService extends TitleSearchService<Task> {
-    private TaskDAO taskDao = new TaskDAO();
+    private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
     private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
 
@@ -53,7 +53,7 @@ public class TaskService extends TitleSearchService<Task> {
      *            object
      */
     public void saveToDatabase(Task task) throws DAOException {
-        taskDao.save(task);
+        taskDAO.save(task);
     }
 
     /**
@@ -68,11 +68,11 @@ public class TaskService extends TitleSearchService<Task> {
     }
 
     public Task find(Integer id) throws DAOException {
-        return taskDao.find(id);
+        return taskDAO.find(id);
     }
 
     public List<Task> findAll() throws DAOException {
-        return taskDao.findAll();
+        return taskDAO.findAll();
     }
 
     /**
@@ -83,7 +83,7 @@ public class TaskService extends TitleSearchService<Task> {
      *            object
      */
     public void remove(Task task) throws DAOException, IOException, CustomResponseException {
-        taskDao.remove(task);
+        taskDAO.remove(task);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(task, taskType);
     }
@@ -96,17 +96,17 @@ public class TaskService extends TitleSearchService<Task> {
      *            of object
      */
     public void remove(Integer id) throws DAOException, IOException, CustomResponseException {
-        taskDao.remove(id);
+        taskDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Task> search(String query) throws DAOException {
-        return taskDao.search(query);
+        return taskDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return taskDao.count(query);
+        return taskDAO.count(query);
     }
 
     /**

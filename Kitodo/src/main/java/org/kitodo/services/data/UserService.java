@@ -42,7 +42,7 @@ public class UserService extends SearchService<User> {
 
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
-    private UserDAO userDao = new UserDAO();
+    private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
     private Indexer<User, UserType> indexer = new Indexer<>(User.class);
 
@@ -63,7 +63,7 @@ public class UserService extends SearchService<User> {
      *            object
      */
     public void save(User user) throws CustomResponseException, DAOException, IOException {
-        userDao.save(user);
+        userDAO.save(user);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(user, userType);
     }
@@ -75,7 +75,7 @@ public class UserService extends SearchService<User> {
      *            object
      */
     public void saveToDatabase(User user) throws DAOException {
-        userDao.save(user);
+        userDAO.save(user);
     }
 
     /**
@@ -90,11 +90,11 @@ public class UserService extends SearchService<User> {
     }
 
     public User find(Integer id) throws DAOException {
-        return userDao.find(id);
+        return userDAO.find(id);
     }
 
     public List<User> findAll() throws DAOException {
-        return userDao.findAll();
+        return userDAO.findAll();
     }
 
     /**
@@ -105,25 +105,25 @@ public class UserService extends SearchService<User> {
      *            object
      */
     public void remove(User user) throws CustomResponseException, DAOException, IOException {
-        userDao.remove(user);
+        userDAO.remove(user);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(user, userType);
     }
 
     public List<User> search(String query) throws DAOException {
-        return userDao.search(query);
+        return userDAO.search(query);
     }
 
     public List<User> search(String query, String parameter) throws DAOException {
-        return userDao.search(query, parameter);
+        return userDAO.search(query, parameter);
     }
 
     public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
-        return userDao.search(query, namedParameter, parameter);
+        return userDAO.search(query, namedParameter, parameter);
     }
 
     public Long count(String query) throws DAOException {
-        return userDao.count(query);
+        return userDAO.count(query);
     }
 
     /**

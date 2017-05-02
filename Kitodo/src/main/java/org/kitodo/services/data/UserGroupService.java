@@ -26,7 +26,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class UserGroupService extends TitleSearchService<UserGroup> {
-    private UserGroupDAO userGroupDao = new UserGroupDAO();
+    private UserGroupDAO userGroupDAO = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
     private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
 
@@ -38,11 +38,11 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     }
 
     public UserGroup find(Integer id) throws DAOException {
-        return userGroupDao.find(id);
+        return userGroupDAO.find(id);
     }
 
     public List<UserGroup> findAll() throws DAOException {
-        return userGroupDao.findAll();
+        return userGroupDAO.findAll();
     }
 
     /**
@@ -52,7 +52,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            object
      */
     public void saveToDatabase(UserGroup userGroup) throws DAOException {
-        userGroupDao.save(userGroup);
+        userGroupDAO.save(userGroup);
     }
 
     /**
@@ -74,17 +74,17 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            object
      */
     public void remove(UserGroup userGroup) throws CustomResponseException, DAOException, IOException {
-        userGroupDao.remove(userGroup);
+        userGroupDAO.remove(userGroup);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(userGroup, userGroupType);
     }
 
     public List<UserGroup> search(String query) throws DAOException {
-        return userGroupDao.search(query);
+        return userGroupDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return userGroupDao.count(query);
+        return userGroupDAO.count(query);
     }
 
     /**

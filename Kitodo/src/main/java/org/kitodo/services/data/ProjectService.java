@@ -36,7 +36,7 @@ public class ProjectService extends TitleSearchService<Project> {
 
     private List<StepInformation> commonWorkFlow = null;
 
-    private ProjectDAO projectDao = new ProjectDAO();
+    private ProjectDAO projectDAO = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
     private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
 
@@ -54,7 +54,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            object
      */
     public void saveToDatabase(Project project) throws DAOException {
-        projectDao.save(project);
+        projectDAO.save(project);
     }
 
     /**
@@ -69,11 +69,11 @@ public class ProjectService extends TitleSearchService<Project> {
     }
 
     public Project find(Integer id) throws DAOException {
-        return projectDao.find(id);
+        return projectDAO.find(id);
     }
 
     public List<Project> findAll() throws DAOException {
-        return projectDao.findAll();
+        return projectDAO.findAll();
     }
 
     /**
@@ -84,7 +84,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            object
      */
     public void remove(Project project) throws CustomResponseException, DAOException, IOException {
-        projectDao.remove(project);
+        projectDAO.remove(project);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(project, projectType);
     }
@@ -97,13 +97,13 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        projectDao.remove(id);
+        projectDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Project> search(String query) throws DAOException {
-        return projectDao.search(query);
+        return projectDAO.search(query);
     }
 
     /**

@@ -27,7 +27,7 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class PropertyService extends TitleSearchService<Property> {
 
-    private PropertyDAO propertyDao = new PropertyDAO();
+    private PropertyDAO propertyDAO = new PropertyDAO();
     private PropertyType propertyType = new PropertyType();
     private Indexer<Property, PropertyType> indexer = new Indexer<>(Property.class);
 
@@ -45,7 +45,7 @@ public class PropertyService extends TitleSearchService<Property> {
      *            object
      */
     public void saveToDatabase(Property property) throws DAOException {
-        propertyDao.save(property);
+        propertyDAO.save(property);
     }
 
     /**
@@ -67,7 +67,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @return Property
      */
     public Property find(Integer id) throws DAOException {
-        return propertyDao.find(id);
+        return propertyDAO.find(id);
     }
 
     /**
@@ -76,7 +76,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @return list of all properties
      */
     public List<Property> findAll() throws DAOException {
-        return propertyDao.findAll();
+        return propertyDAO.findAll();
     }
 
     /**
@@ -87,7 +87,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @return list of properties
      */
     public List<Property> search(String query) throws DAOException {
-        return propertyDao.search(query);
+        return propertyDAO.search(query);
     }
 
     /**
@@ -97,7 +97,7 @@ public class PropertyService extends TitleSearchService<Property> {
      *            to be removed
      */
     public void remove(Property property) throws DAOException {
-        propertyDao.remove(property);
+        propertyDAO.remove(property);
     }
 
     /**

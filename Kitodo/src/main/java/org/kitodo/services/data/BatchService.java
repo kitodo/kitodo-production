@@ -32,7 +32,7 @@ import org.kitodo.services.data.base.SearchService;
 
 public class BatchService extends SearchService<Batch> {
 
-    private BatchDAO batchDao = new BatchDAO();
+    private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
     private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
     private static final Logger logger = Logger.getLogger(BatchService.class);
@@ -51,7 +51,7 @@ public class BatchService extends SearchService<Batch> {
      *            object
      */
     public void saveToDatabase(Batch batch) throws DAOException {
-        batchDao.save(batch);
+        batchDAO.save(batch);
     }
 
     /**
@@ -66,11 +66,11 @@ public class BatchService extends SearchService<Batch> {
     }
 
     public Batch find(Integer id) throws DAOException {
-        return batchDao.find(id);
+        return batchDAO.find(id);
     }
 
     public List<Batch> findAll() throws DAOException {
-        return batchDao.findAll();
+        return batchDAO.findAll();
     }
 
     /**
@@ -81,7 +81,7 @@ public class BatchService extends SearchService<Batch> {
      * @return list of Batch objects
      */
     public List<Batch> search(String query) throws DAOException {
-        return batchDao.search(query);
+        return batchDAO.search(query);
     }
 
     /**
@@ -92,7 +92,7 @@ public class BatchService extends SearchService<Batch> {
      *            object
      */
     public void remove(Batch batch) throws CustomResponseException, DAOException, IOException {
-        batchDao.remove(batch);
+        batchDAO.remove(batch);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
     }
@@ -105,13 +105,13 @@ public class BatchService extends SearchService<Batch> {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        batchDao.remove(id);
+        batchDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
-        batchDao.removeAll(ids);
+        batchDAO.removeAll(ids);
     }
 
     /**
