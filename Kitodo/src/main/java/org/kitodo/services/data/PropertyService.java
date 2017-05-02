@@ -25,7 +25,7 @@ import org.kitodo.data.elasticsearch.index.type.PropertyType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class PropertyService extends TitleSearchService {
+public class PropertyService extends TitleSearchService<Property> {
 
     private PropertyDAO propertyDao = new PropertyDAO();
     private PropertyType propertyType = new PropertyType();
@@ -39,13 +39,22 @@ public class PropertyService extends TitleSearchService {
     }
 
     /**
-     * Save to database and index.
-     * 
+     * Method saves property object to database.
+     *
      * @param property
      *            object
      */
-    public void save(Property property) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Property property) throws DAOException {
         propertyDao.save(property);
+    }
+
+    /**
+     * Method saves property document to the index of Elastic Search.
+     *
+     * @param property
+     *            object
+     */
+    public void saveToIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(property, propertyType);
     }
