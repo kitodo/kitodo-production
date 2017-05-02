@@ -23,9 +23,9 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.services.data.base.SearchService;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class UserGroupService extends SearchService {
+public class UserGroupService extends TitleSearchService<UserGroup> {
     private UserGroupDAO userGroupDao = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
     private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
@@ -46,14 +46,22 @@ public class UserGroupService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves workpiece object to database.
      *
      * @param userGroup
      *            object
      */
-    public void save(UserGroup userGroup) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(UserGroup userGroup) throws DAOException {
         userGroupDao.save(userGroup);
+    }
+
+    /**
+     * Method saves workpiece document to the index of Elastic Search.
+     *
+     * @param userGroup
+     *            object
+     */
+    public void saveToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(userGroup, userGroupType);
     }
