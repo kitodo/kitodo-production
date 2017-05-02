@@ -27,13 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class WebDav implements Serializable {
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = new FileService();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
@@ -64,7 +65,7 @@ public class WebDav implements Serializable {
             return rueckgabe;
         }
 
-        SafeFile benutzerHome = new SafeFile(directoryName);
+        File benutzerHome = new File(directoryName);
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -72,20 +73,16 @@ public class WebDav implements Serializable {
                 return name.endsWith("]");
             }
         };
-        String[] dateien = benutzerHome.list(filter);
-        if (dateien == null) {
-            return new ArrayList<String>();
-        } else {
-            for (String data : dateien) {
-                if (data.endsWith("/") || data.endsWith("\\")) {
-                    data = data.substring(0, data.length() - 1);
-                }
-                if (data.contains("/")) {
-                    data = data.substring(data.lastIndexOf("/"));
-                }
+        String[] dateien = fileService.list(filter, benutzerHome);
+        for (String data : dateien) {
+            if (data.endsWith("/") || data.endsWith("\\")) {
+                data = data.substring(0, data.length() - 1);
             }
-            return new ArrayList<String>(Arrays.asList(dateien));
+            if (data.contains("/")) {
+                data = data.substring(data.lastIndexOf("/"));
+            }
         }
+        return new ArrayList<String>(Arrays.asList(dateien));
 
     }
 
@@ -145,7 +142,7 @@ public class WebDav implements Serializable {
         /* prüfen, ob Benutzer Massenupload macht */
         if (inBenutzer.isWithMassDownload()) {
             nach += myProcess.getProject().getTitle() + File.separator;
-            SafeFile projectDirectory = new SafeFile(nach = nach.replaceAll(" ", "__"));
+            File projectDirectory = new File(nach = nach.replaceAll(" ", "__"));
             if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
                 List<String> param = new ArrayList<String>();
                 param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -158,7 +155,7 @@ public class WebDav implements Serializable {
 
         /* Leerzeichen maskieren */
         nach = nach.replaceAll(" ", "__");
-        SafeFile benutzerHome = new SafeFile(nach);
+        File benutzerHome = new File(nach);
 
         FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
     }
@@ -189,13 +186,11 @@ public class WebDav implements Serializable {
              * existieren
              */
             if (aktuellerBenutzer.isWithMassDownload()) {
-                SafeFile projekt = new SafeFile(userHome + myProcess.getProject().getTitle());
-                serviceManager.getFileService().createDirectoryForUser(projekt.getAbsolutePath(),
-                        aktuellerBenutzer.getLogin());
+                File projekt = new File(userHome + myProcess.getProject().getTitle());
+                fileService.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
-                projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
-                serviceManager.getFileService().createDirectoryForUser(projekt.getAbsolutePath(),
-                        aktuellerBenutzer.getLogin());
+                projekt = new File(userHome + DONEDIRECTORYNAME);
+                fileService.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
             }
 
         } catch (Exception ioe) {
@@ -224,8 +219,8 @@ public class WebDav implements Serializable {
             myLogger.info("nach: " + nach);
         }
 
-        SafeFile imagePfad = new SafeFile(von);
-        SafeFile benutzerHome = new SafeFile(nach);
+        File imagePfad = new File(von);
+        File benutzerHome = new File(nach);
 
         // wenn der Ziellink schon existiert, dann abbrechen
         if (benutzerHome.exists()) {
@@ -254,13 +249,13 @@ public class WebDav implements Serializable {
     private void saveTiffHeader(Process inProcess) {
         try {
             /* prüfen, ob Tiff-Header schon existiert */
-            if (new SafeFile(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
+            if (new File(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
                     .exists()) {
                 return;
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    serviceManager.getFileService().write(URI.create(
+                    fileService.write(URI.create(
                             serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")),
                     StandardCharsets.UTF_8));) {
                 outfile.write(tif.getTiffAlles());
@@ -283,14 +278,14 @@ public class WebDav implements Serializable {
             User aktuellerBenutzer = Helper.getCurrentUser();
             String verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     + inVerzeichnis;
-            SafeFile benutzerHome = new SafeFile(verzeichnisAlle);
+            File benutzerHome = new File(verzeichnisAlle);
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith("]");
                 }
             };
-            return benutzerHome.list(filter).length;
+            return fileService.list(filter, benutzerHome).length;
         } catch (Exception e) {
             myLogger.error(e);
             return 0;

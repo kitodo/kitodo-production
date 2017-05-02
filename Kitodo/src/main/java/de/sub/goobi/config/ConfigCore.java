@@ -84,22 +84,22 @@ public class ConfigCore extends ConfigMain {
      */
     public static String getTempImagesPathAsCompleteDirectory() {
         FacesContext context = FacesContext.getCurrentInstance();
-        String filename;
+        String fileName;
         if (imagesPath != null) {
-            filename = imagesPath;
+            fileName = imagesPath;
         } else {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-            filename = session.getServletContext().getRealPath("/pages") + File.separator;
+            fileName = session.getServletContext().getRealPath("/pages") + File.separator;
 
             /* den Ordner neu anlegen, wenn er nicht existiert */
             try {
-                serviceManager.getFileService().createDirectory(URI.create(filename), "imagesTemp");
+                serviceManager.getFileService().createDirectory(URI.create(fileName), "imagesTemp");
             } catch (Exception ioe) {
                 myLogger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
             }
         }
-        return filename;
+        return fileName;
     }
 
     public static void setImagesPath(String path) {

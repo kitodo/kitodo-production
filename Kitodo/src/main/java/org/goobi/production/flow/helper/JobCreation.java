@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
@@ -32,6 +31,7 @@ import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
@@ -40,6 +40,8 @@ import ugh.exceptions.WriteException;
 public class JobCreation {
     private static final Logger logger = Logger.getLogger(JobCreation.class);
     private static final ServiceManager serviceManager = new ServiceManager();
+
+    private static final FileService fileService = serviceManager.getFileService();
 
     /**
      * Generate process.
@@ -51,7 +53,7 @@ public class JobCreation {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) {
+    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -64,29 +66,29 @@ public class JobCreation {
         if (logger.isTraceEnabled()) {
             logger.trace("basepath is " + basepath);
         }
-        SafeFile metsfile = new SafeFile(metsfilename);
+        File metsfile = new File(metsfilename);
         Process p = null;
         if (!testTitle(processTitle)) {
             logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
             // removing all data
-            SafeFile imagesFolder = new SafeFile(basepath);
+            File imagesFolder = new File(basepath);
             if (imagesFolder.isDirectory()) {
-                imagesFolder.deleteQuietly();
+                fileService.delete(imagesFolder.toURI());
             } else {
-                imagesFolder = new SafeFile(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
+                imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
                 if (imagesFolder.isDirectory()) {
-                    imagesFolder.deleteQuietly();
+                    fileService.delete(imagesFolder.toURI());
                 }
             }
             try {
-                metsfile.forceDelete();
+                fileService.delete(metsfile.toURI());
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
-            SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
+            File anchor = new File(basepath + "_anchor.xml");
             if (anchor.exists()) {
-                anchor.deleteQuietly();
+                fileService.delete(anchor.toURI());
             }
             return null;
         }
@@ -168,119 +170,121 @@ public class JobCreation {
      * Move files.
      *
      * @param metsfile
-     *            SafeFile object
+     *            File object
      * @param basepath
      *            String
      * @param p
      *            Process object
      */
     @SuppressWarnings("static-access")
-    public static void moveFiles(SafeFile metsfile, String basepath, Process p)
+    public static void moveFiles(File metsfile, String basepath, Process p)
             throws SwapException, DAOException, IOException, InterruptedException {
         if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
-            SafeFile imagesFolder = new SafeFile(basepath);
+            File imagesFolder = new File(basepath);
             if (!imagesFolder.exists()) {
-                imagesFolder = new SafeFile(basepath + "_" + p.DIRECTORY_SUFFIX);
+                imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
             }
             if (imagesFolder.isDirectory()) {
                 List<String> imageDir = new ArrayList<String>();
 
-                String[] files = imagesFolder.list();
+                String[] files = fileService.list(imagesFolder);
                 for (int i = 0; i < files.length; i++) {
                     imageDir.add(files[i]);
                 }
                 for (String file : imageDir) {
-                    SafeFile image = new SafeFile(imagesFolder, file);
-                    SafeFile dest = new SafeFile(
+                    File image = new File(imagesFolder, file);
+                    File dest = new File(
                             serviceManager.getProcessService().getImagesOrigDirectory(false, p) + image.getName());
-                    image.moveFile(dest);
+                    fileService.moveFile(image, dest);
                 }
-                imagesFolder.deleteDirectory();
+                fileService.delete(imagesFolder.toURI());
             }
 
             // copy pdf files
-            SafeFile pdfs = new SafeFile(basepath + "_pdf" + File.separator);
+            File pdfs = new File(basepath + "_pdf" + File.separator);
             if (pdfs.isDirectory()) {
-                pdfs.moveDirectory(serviceManager.getProcessService().getPdfDirectory(p));
+                fileService.moveDirectory(pdfs, new File(serviceManager.getProcessService().getPdfDirectory(p)));
             }
 
             // copy fulltext files
 
-            SafeFile fulltext = new SafeFile(basepath + "_txt");
+            File fulltext = new File(basepath + "_txt");
 
             if (fulltext.isDirectory()) {
 
-                fulltext.moveDirectory(serviceManager.getProcessService().getTxtDirectory(p));
+                fileService.moveDirectory(fulltext, new File(serviceManager.getProcessService().getTxtDirectory(p)));
             }
 
             // copy source files
 
-            SafeFile sourceDir = new SafeFile(basepath + "_src" + File.separator);
+            File sourceDir = new File(basepath + "_src" + File.separator);
             if (sourceDir.isDirectory()) {
-                sourceDir.moveDirectory(serviceManager.getProcessService().getImportDirectory(p));
+                fileService.moveDirectory(sourceDir,
+                        new File((serviceManager.getProcessService().getImportDirectory(p))));
             }
 
             try {
-                metsfile.forceDelete();
+                fileService.delete(metsfile.toURI());
             } catch (Exception e) {
                 logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitle()
                         + " into kitodo", e);
 
             }
-            SafeFile anchor = new SafeFile(basepath + "_anchor.xml");
+            File anchor = new File(basepath + "_anchor.xml");
             if (anchor.exists()) {
-                anchor.deleteQuietly();
+                fileService.delete(anchor.toURI());
             }
         } else {
             // new folder structure for process imports
-            SafeFile importFolder = new SafeFile(basepath);
+            File importFolder = new File(basepath);
             if (importFolder.isDirectory()) {
-                SafeFile[] folderList = importFolder.listFiles();
-                for (SafeFile directory : folderList) {
+                File[] folderList = fileService.listFiles(importFolder);
+                for (File directory : folderList) {
                     if (directory.getName().contains("images")) {
-                        SafeFile[] imageList = directory.listFiles();
-                        for (SafeFile imagedir : imageList) {
+                        File[] imageList = fileService.listFiles(directory);
+                        for (File imagedir : imageList) {
                             if (imagedir.isDirectory()) {
-                                for (SafeFile file : imagedir.listFiles()) {
-                                    file.moveFile(new SafeFile(serviceManager.getProcessService().getImagesDirectory(p)
-                                            + imagedir.getName(), file.getName()));
+                                for (File file : fileService.listFiles(imagedir)) {
+                                    fileService.moveFile(file,
+                                            new File(serviceManager.getProcessService().getImagesDirectory(p)
+                                                    + imagedir.getName(), file.getName()));
                                 }
                             } else {
-                                imagedir.moveFile(new SafeFile(serviceManager.getProcessService().getImagesDirectory(p),
-                                        imagedir.getName()));
+                                fileService.moveFile(imagedir, new File(
+                                        serviceManager.getProcessService().getImagesDirectory(p), imagedir.getName()));
                             }
                         }
                     } else if (directory.getName().contains("ocr")) {
-                        SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(p));
+                        File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
                         if (!ocr.exists()) {
                             ocr.mkdir();
                         }
-                        SafeFile[] ocrList = directory.listFiles();
-                        for (SafeFile ocrdir : ocrList) {
+                        File[] ocrList = fileService.listFiles(directory);
+                        for (File ocrdir : ocrList) {
                             if (ocrdir.isDirectory()) {
-                                ocrdir.moveDirectory(new SafeFile(ocr, ocrdir.getName()));
+                                fileService.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
                             } else {
-                                ocrdir.moveFile(new SafeFile(ocr, ocrdir.getName()));
+                                fileService.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
                             }
                         }
                     } else {
-                        SafeFile i = new SafeFile(serviceManager.getProcessService().getImportDirectory(p));
+                        File i = new File(serviceManager.getProcessService().getImportDirectory(p));
                         if (!i.exists()) {
                             i.mkdir();
                         }
-                        SafeFile[] importList = directory.listFiles();
-                        for (SafeFile importdir : importList) {
+                        File[] importList = fileService.listFiles(directory);
+                        for (File importdir : importList) {
                             if (importdir.isDirectory()) {
-                                importdir.moveDirectory(new SafeFile(i, importdir.getName()));
+                                fileService.moveDirectory(importdir, new File(i, importdir.getName()));
                             } else {
-                                importdir.moveFile(new SafeFile(i, importdir.getName()));
+                                fileService.moveDirectory(importdir, new File(i, importdir.getName()));
                             }
                         }
                     }
                 }
-                importFolder.deleteDirectory();
+                fileService.delete(importFolder.toURI());
 
-                metsfile.deleteQuietly();
+                fileService.delete(metsfile.toURI());
             }
 
         }

@@ -15,19 +15,23 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ServiceManager;
 
 public class DmsImportThread extends Thread {
     private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
-    private SafeFile fileError;
-    private SafeFile fileXml;
-    private SafeFile fileSuccess;
-    private SafeFile folderImages;
+    private File fileError;
+    private File fileXml;
+    private File fileSuccess;
+    private File folderImages;
     private long timeFileSuccess;
     private long timeFileError;
+
+    private static final ServiceManager serviceManager = new ServiceManager();
 
     public String result = "";
 
@@ -49,19 +53,19 @@ public class DmsImportThread extends Thread {
          */
         if (process.getProject().getDmsImportErrorPath() == null
                 || process.getProject().getDmsImportErrorPath().length() == 0) {
-            this.fileError = new SafeFile(process.getProject().getDmsImportRootPath(), ats + ".log");
+            this.fileError = new File(process.getProject().getDmsImportRootPath(), ats + ".log");
         } else {
-            this.fileError = new SafeFile(process.getProject().getDmsImportErrorPath(), ats + ".log");
+            this.fileError = new File(process.getProject().getDmsImportErrorPath(), ats + ".log");
         }
 
-        this.fileXml = new SafeFile(process.getProject().getDmsImportRootPath(), ats + ".xml");
-        this.fileSuccess = new SafeFile(process.getProject().getDmsImportSuccessPath(), ats + ".xml");
+        this.fileXml = new File(process.getProject().getDmsImportRootPath(), ats + ".xml");
+        this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(), ats + ".xml");
         if (process.getProject().isDmsImportCreateProcessFolder()) {
-            this.fileSuccess = new SafeFile(process.getProject().getDmsImportSuccessPath(),
+            this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(),
                     process.getTitle() + File.separator + ats + ".xml");
         }
 
-        this.folderImages = new SafeFile(process.getProject().getDmsImportImagesPath(), ats + "_tif");
+        this.folderImages = new File(process.getProject().getDmsImportImagesPath(), ats + "_tif");
 
         if (this.fileError.exists()) {
             this.timeFileError = this.fileError.getAbsoluteFile().lastModified();
@@ -83,7 +87,8 @@ public class DmsImportThread extends Thread {
                         /* die Logdatei mit der Fehlerbeschreibung einlesen */
                         StringBuffer myBuf = new StringBuffer();
                         myBuf.append("Beim Import ist ein Importfehler aufgetreten: ");
-                        try (BufferedReader r = new BufferedReader(this.fileError.createFileReader())) {
+                        try (BufferedReader r = new BufferedReader(
+                                new InputStreamReader(serviceManager.getFileService().read(this.fileError.toURI())))) {
                             String aLine = r.readLine();
                             while (aLine != null) {
                                 myBuf.append(aLine);
@@ -105,7 +110,11 @@ public class DmsImportThread extends Thread {
         }
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
             /* Images wieder löschen */
-            this.folderImages.deleteDir();
+            try {
+                serviceManager.getFileService().delete(folderImages.toURI());
+            } catch (IOException e) {
+                myLogger.warn("IOException. Could not delete image folder");
+            }
         }
     }
 

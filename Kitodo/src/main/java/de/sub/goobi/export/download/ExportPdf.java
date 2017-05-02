@@ -18,8 +18,10 @@ import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.TreeSet;
 
@@ -30,11 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.goobi.io.FileListFilter;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
@@ -46,6 +48,7 @@ public class ExportPdf extends ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
     private static final String PDF_EXTENSION = ".pdf";
+    private final FileService fileService = serviceManager.getFileService();
 
     @Override
     public boolean startExport(Process myProcess, String inZielVerzeichnis)
@@ -62,7 +65,7 @@ public class ExportPdf extends ExportMets {
         /*
          * first of all write mets-file in images-Folder of process
          */
-        SafeFile metsTempFile = SafeFile.createTempFile(myProcess.getTitle(), ".xml");
+        File metsTempFile = File.createTempFile(myProcess.getTitle(), ".xml");
         writeMetsFile(myProcess, metsTempFile.toString(), gdzfile, true);
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "mets file created");
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "start pdf generation now");
@@ -83,7 +86,7 @@ public class ExportPdf extends ExportMets {
              */
             CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
             pdf.setMetsURL(metsTempFile.toURI().toURL());
-            pdf.setTargetFolder(new SafeFile(zielVerzeichnis));
+            pdf.setTargetFolder(new File(zielVerzeichnis));
             pdf.setInternalServletPath(myBasisUrl);
             if (myLogger.isDebugEnabled()) {
                 myLogger.debug("Taget directory: " + zielVerzeichnis);
@@ -125,13 +128,13 @@ public class ExportPdf extends ExportMets {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
                     FilenameFilter filter = new FileListFilter("\\d*\\.tif");
-                    SafeFile imagesDir = new SafeFile(
+                    File imagesDir = new File(
                             serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
-                    SafeFile[] meta = imagesDir.listFiles(filter);
+                    File[] meta = fileService.listFiles(filter, imagesDir);
                     int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();
                     TreeSet<String> filenames = new TreeSet<String>(new MetadatenHelper(null, null));
-                    for (SafeFile data : meta) {
+                    for (File data : meta) {
                         String file = data.toURI().toURL().toString();
                         filenames.add(file);
                         capacity += file.length();
@@ -170,7 +173,7 @@ public class ExportPdf extends ExportMets {
                     context.responseComplete();
                 }
                 if (metsTempFile.toURI().toURL() != null) {
-                    SafeFile tempMets = new SafeFile(metsTempFile.toURI().toURL().toString());
+                    File tempMets = new File(metsTempFile.toURI().toURL().toString());
                     tempMets.delete();
                 }
             } catch (Exception e) {
@@ -179,8 +182,9 @@ public class ExportPdf extends ExportMets {
                  * report Error to User as Error-Log
                  */
                 String text = "error while pdf creation: " + e.getMessage();
-                SafeFile file = new SafeFile(zielVerzeichnis, myProcess.getTitle() + ".PDF-ERROR.log");
-                try (BufferedWriter output = new BufferedWriter(file.createFileWriter())) {
+                File file = new File(zielVerzeichnis, myProcess.getTitle() + ".PDF-ERROR.log");
+                try (BufferedWriter output = new BufferedWriter(
+                        new OutputStreamWriter(fileService.write(file.toURI())))) {
                     output.write(text);
                 } catch (IOException e1) {
                 }

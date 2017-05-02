@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.SystemUtils;
-import org.goobi.io.SafeFile;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class FolderInformation {
 
@@ -35,6 +36,9 @@ public class FolderInformation {
     public static final String metadataPath = ConfigCore.getParameter("MetadatenVerzeichnis");
     public static String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     public static String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+
+    private static ServiceManager serviceManager = new ServiceManager();
+    private static FileService fileService = serviceManager.getFileService();
 
     public FolderInformation(int id, String kitodoTitle) {
         this.id = id;
@@ -49,7 +53,7 @@ public class FolderInformation {
      * @return String
      */
     public String getImagesTifDirectory(boolean useFallBack) {
-        SafeFile dir = new SafeFile(getImagesDirectory());
+        File dir = new File(getImagesDirectory());
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -61,18 +65,18 @@ public class FolderInformation {
         };
 
         String tifOrdner = "";
-        String[] verzeichnisse = dir.list(filterVerz);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
 
         if (verzeichnisse != null) {
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                tifOrdner = verzeichnisse[i];
+            for (String aVerzeichnisse : verzeichnisse) {
+                tifOrdner = aVerzeichnisse;
             }
         }
 
         if (tifOrdner.equals("") && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = dir.list();
+                String[] folderList = fileService.list(dir);
                 for (String folder : folderList) {
                     if (folder.endsWith(suffix)) {
                         tifOrdner = folder;
@@ -84,10 +88,10 @@ public class FolderInformation {
         if (!tifOrdner.equals("") && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                SafeFile tif = new SafeFile(tifOrdner);
-                String[] files = tif.list();
+                File tif = new File(tifOrdner);
+                String[] files = fileService.list(tif);
                 if (files == null || files.length == 0) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix)) {
                             tifOrdner = folder;
@@ -117,18 +121,11 @@ public class FolderInformation {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean getTifDirectoryExists() {
-        SafeFile testMe;
+        File testMe;
 
-        testMe = new SafeFile(getImagesTifDirectory(true));
+        testMe = new File(getImagesTifDirectory(true));
 
-        if (testMe.list() == null) {
-            return false;
-        }
-        if (testMe.exists() && testMe.list().length > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
     }
 
     /**
@@ -140,7 +137,7 @@ public class FolderInformation {
      */
     public String getImagesOrigDirectory(boolean useFallBack) {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
-            SafeFile dir = new SafeFile(getImagesDirectory());
+            File dir = new File(getImagesDirectory());
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -152,15 +149,14 @@ public class FolderInformation {
             };
 
             String origOrdner = "";
-            String[] verzeichnisse = dir.list(filterVerz);
+            String[] verzeichnisse = fileService.list(filterVerz, dir);
             for (int i = 0; i < verzeichnisse.length; i++) {
                 origOrdner = verzeichnisse[i];
             }
-
             if (origOrdner.equals("") && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix)) {
                             origOrdner = folder;
@@ -172,10 +168,10 @@ public class FolderInformation {
             if (!origOrdner.equals("") && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    SafeFile tif = new SafeFile(origOrdner);
-                    String[] files = tif.list();
+                    File tif = new File(origOrdner);
+                    String[] files = fileService.list(tif);
                     if (files == null || files.length == 0) {
-                        String[] folderList = dir.list();
+                        String[] folderList = fileService.list(dir);
                         for (String folder : folderList) {
                             if (folder.endsWith(suffix)) {
                                 origOrdner = folder;
@@ -254,22 +250,22 @@ public class FolderInformation {
      * @return path
      */
     public String getSourceDirectory() {
-        SafeFile dir = new SafeFile(getImagesDirectory());
+        File dir = new File(getImagesDirectory());
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith("_" + "source"));
             }
         };
-        SafeFile sourceFolder = null;
-        String[] verzeichnisse = dir.list(filterVerz);
+        File sourceFolder = null;
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new SafeFile(dir, title + "_source");
+            sourceFolder = new File(dir, title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                 sourceFolder.mkdir();
             }
         } else {
-            sourceFolder = new SafeFile(dir, verzeichnisse[0]);
+            sourceFolder = new File(dir, verzeichnisse[0]);
         }
 
         return sourceFolder.getAbsolutePath();
@@ -367,7 +363,7 @@ public class FolderInformation {
         String folder = this.getImagesTifDirectory(false);
         folder = folder.substring(0, folder.lastIndexOf("_"));
         folder = folder + "_" + methodName;
-        if (new SafeFile(folder).exists()) {
+        if (new File(folder).exists()) {
             return folder;
         }
         return null;
@@ -379,14 +375,14 @@ public class FolderInformation {
      * @return String
      */
     public List<String> getDataFiles() throws InvalidImagesException {
-        SafeFile dir;
+        File dir;
         try {
-            dir = new SafeFile(getImagesTifDirectory(true));
+            dir = new File(getImagesTifDirectory(true));
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.dataFilter);
+        String[] dateien = fileService.list(Helper.dataFilter, dir);
         ArrayList<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {

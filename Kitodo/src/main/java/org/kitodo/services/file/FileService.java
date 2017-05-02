@@ -16,19 +16,22 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ShellScript;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.zip.CRC32;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.goobi.io.SafeFile;
+import org.kitodo.services.ServiceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,10 +42,12 @@ public class FileService {
     // program options initialized to default values
     private static final int BUFFER_SIZE = 4 * 1024;
 
+    private static final ServiceManager serviceManager = new ServiceManager();
+
     public void createDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!new File(parentFolderUri + directoryName).exists()) {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
-            createDirScript.run(Arrays.asList(new String[]{parentFolderUri + directoryName}));
+            createDirScript.run(Arrays.asList(new String[] {parentFolderUri + directoryName }));
         }
 
     }
@@ -53,11 +58,14 @@ public class FileService {
      * permissions accordingly. This cannot be done from within java code before
      * version 1.7.
      *
-     * @param dirName Name of directory to create
-     * @throws InterruptedException If the thread running the script is interrupted by another
-     * thread while it is waiting, then the wait is ended and an
-     * InterruptedException is thrown.
-     * @throws IOException If an I/O error occurs.
+     * @param dirName
+     *            Name of directory to create
+     * @throws InterruptedException
+     *             If the thread running the script is interrupted by another
+     *             thread while it is waiting, then the wait is ended and an
+     *             InterruptedException is thrown.
+     * @throws IOException
+     *             If an I/O error occurs.
      */
 
     public void createDirectoryForUser(String dirName, String userName) throws IOException, InterruptedException {
@@ -73,11 +81,15 @@ public class FileService {
      * mischief under Windows which unaccountably holds locks on files.
      * Sometimes running the JVM’s garbage collector puts things right.
      *
-     * @param oldFileName File to move or rename
-     * @param newFileName New file name / destination
-     * @throws IOException is thrown if the rename fails permanently
-     * @throws FileNotFoundException is thrown if old file (source file of renaming) does not
-     * exists
+     * @param oldFileName
+     *            File to move or rename
+     * @param newFileName
+     *            New file name / destination
+     * @throws IOException
+     *             is thrown if the rename fails permanently
+     * @throws FileNotFoundException
+     *             is thrown if old file (source file of renaming) does not
+     *             exists
      */
     public void renameFile(String oldFileName, String newFileName) throws IOException {
         final int SLEEP_INTERVAL_MILLIS = 20;
@@ -141,89 +153,55 @@ public class FileService {
      * calculate all files with given file extension at specified directory
      * recursively.
      *
-     * @param inDir the directory to run through
+     * @param directory
+     *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfFiles(SafeFile inDir) {
-        int anzahl = 0;
-        if (inDir.isDirectory()) {
+    public Integer getNumberOfFiles(File directory) {
+        int count = 0;
+        if (directory.isDirectory()) {
             /*
              * die Images zählen
              */
-            anzahl = inDir.list(Helper.imageNameFilter).length;
+            count = list(Helper.imageNameFilter, directory).length;
 
             /*
              * die Unterverzeichnisse durchlaufen
              */
-            String[] children = inDir.list();
+            String[] children = list(directory);
             for (int i = 0; i < children.length; i++) {
-                anzahl += getNumberOfFiles(new SafeFile(inDir, children[i]));
+                count += getNumberOfFiles(new File(directory, children[i]));
             }
         }
-        return anzahl;
+        return count;
     }
 
     public Integer getNumberOfFiles(String inDir) {
-        return getNumberOfFiles(new SafeFile(inDir));
-    }
-
-    private Long copyFile(File srcFile, File destFile) throws IOException {
-        // TODO use a better checksumming algorithm like SHA-1
-        CRC32 checksum = new CRC32();
-        checksum.reset();
-
-        try (InputStream in = read(srcFile.toURI()); OutputStream out = write(destFile.toURI())) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) >= 0) {
-                checksum.update(buffer, 0, bytesRead);
-                out.write(buffer, 0, bytesRead);
-            }
-        }
-        return Long.valueOf(checksum.getValue());
+        return getNumberOfFiles(new File(inDir));
     }
 
     /**
-     * Start copying of file.
+     * Copy directory.
      *
-     * @param srcFile source file
-     * @param destFile destination file
+     * @param sourceDirectory
+     *            source file
+     * @param targetDirectory
+     *            destination file
      * @return Long
      */
-    public Long start(File srcFile, File destFile) throws IOException {
-        // make sure the source file is indeed a readable file
-        if (!srcFile.isFile() || !srcFile.canRead()) {
-            System.err.println("Not a readable file: " + srcFile.getName());
+    public void copyDir(File sourceDirectory, File targetDirectory) throws IOException {
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
         }
-
-        // copy file, optionally creating a checksum
-        Long checksumSrc = copyFile(srcFile, destFile);
-
-        // copy timestamp of last modification
-        if (!destFile.setLastModified(srcFile.lastModified())) {
-            System.err.println("Error: Could not set " + "timestamp of copied file.");
-        }
-
-        // verify file
-        Long checksumDest = createChecksum(destFile);
-        if (checksumSrc.equals(checksumDest)) {
-            return checksumDest;
-        } else {
-            return Long.valueOf(0);
-        }
+        FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
-    private Long createChecksum(File file) throws IOException {
-        CRC32 checksum = new CRC32();
-        checksum.reset();
-        try (InputStream in = read(file.toURI())) {
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) >= 0) {
-                checksum.update(buffer, 0, bytesRead);
-            }
-        }
-        return Long.valueOf(checksum.getValue());
+    public void copyFile(File srcFile, File destFile) throws IOException {
+        FileUtils.copyFile(srcFile, destFile);
+    }
+
+    public void copyFileToDirectory(File sourceDirectory, File targetDirectory) throws IOException {
+        FileUtils.copyFileToDirectory(sourceDirectory, targetDirectory);
     }
 
     public OutputStream write(URI uri) throws IOException {
@@ -257,4 +235,56 @@ public class FileService {
         }
         return write(new File(uri).toURI());
     }
+
+    public void moveFile(File sourceDirectory, File targetDirectory) throws IOException {
+        FileUtils.moveFile(sourceDirectory, targetDirectory);
+    }
+
+    public void moveDirectory(File sourceDirectory, File targetDirectory) throws IOException {
+        FileUtils.moveDirectory(sourceDirectory, targetDirectory);
+    }
+
+    public String[] list(File file) {
+        String[] unchecked = file.list();
+        return unchecked != null ? unchecked : new String[0];
+    }
+
+    public String[] list(FilenameFilter filter, File file) {
+        String[] unchecked = file.list(filter);
+        return unchecked != null ? unchecked : new String[0];
+    }
+
+    public File[] listFiles(File file) {
+        File[] unchecked = file.listFiles();
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    public File[] listFiles(FileFilter filter, File file) {
+        File[] unchecked = file.listFiles(filter);
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    public File[] listFiles(FilenameFilter filter, File file) {
+        File[] unchecked = file.listFiles(filter);
+        return unchecked != null ? unchecked : new File[0];
+    }
+
+    public List<File> getCurrentFiles(File file) {
+        File[] result = file.listFiles();
+        if (result != null) {
+            return Arrays.asList(result);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<File> getFilesByFilter(File file, FilenameFilter filter) {
+        File[] result = file.listFiles(filter);
+        if (result != null) {
+            return Arrays.asList(result);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
 }

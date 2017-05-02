@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 /**
  * Creates backup for files in a given directory that match a regular
@@ -45,7 +46,8 @@ public class BackupFileRotation {
     private String format;
     private String processDataDirectory;
 
-    private ServiceManager serviceManager = new ServiceManager();
+    private final ServiceManager serviceManager = new ServiceManager();
+    public final FileService fileService = serviceManager.getFileService();
 
     /**
      * Start the configured backup.
@@ -116,7 +118,7 @@ public class BackupFileRotation {
         rotateBackupFilesFor(fileName);
 
         String newName = fileName + ".1";
-        serviceManager.getFileService().renameFile(fileName, newName);
+        fileService.renameFile(fileName, newName);
     }
 
     private void rotateBackupFilesFor(String fileName) throws IOException {
@@ -131,7 +133,7 @@ public class BackupFileRotation {
             String oldName = fileName + "." + (count - 1);
             String newName = fileName + "." + count;
             try {
-                serviceManager.getFileService().renameFile(oldName, newName);
+                fileService.renameFile(oldName, newName);
             } catch (FileNotFoundException oldNameNotYetPresent) {
                 if (myLogger.isDebugEnabled()) {
                     myLogger.debug(oldName + " does not yet exist >>> nothing to do");
@@ -144,7 +146,7 @@ public class BackupFileRotation {
         FilenameFilter filter = new FileListFilter(filterFormat);
         File metaFilePath = new File(directoryOfBackupFiles);
 
-        return metaFilePath.listFiles(filter);
+        return fileService.listFiles(filter, metaFilePath);
     }
 
 }

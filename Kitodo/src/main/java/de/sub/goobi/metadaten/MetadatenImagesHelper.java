@@ -45,6 +45,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -67,6 +68,7 @@ public class MetadatenImagesHelper {
     private final DigitalDocument mydocument;
     private int myLastImage = 0;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
         this.myPrefs = inPrefs;
@@ -366,8 +368,7 @@ public class MetadatenImagesHelper {
             logger.trace("ri");
             JpegInterpreter pi = new JpegInterpreter(ri);
             logger.trace("pi");
-            FileOutputStream outputFileStream = (FileOutputStream) serviceManager.getFileService()
-                    .write(URI.create(outFileName));
+            FileOutputStream outputFileStream = (FileOutputStream) fileService.write(URI.create(outFileName));
             logger.trace("output");
             pi.writeToStream(null, outputFileStream);
             logger.trace("write stream");
@@ -429,7 +430,7 @@ public class MetadatenImagesHelper {
          */
         File dir = new File(folder);
         if (dir.exists()) {
-            String[] dateien = dir.list(Helper.dataFilter);
+            String[] dateien = fileService.list(Helper.dataFilter, dir);
             if (dateien == null || dateien.length == 0) {
                 Helper.setFehlerMeldung("[" + title + "] No objects found");
                 return false;
@@ -507,7 +508,7 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.imageNameFilter);
+        String[] dateien = fileService.list(Helper.imageNameFilter, dir);
         ArrayList<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {
@@ -541,7 +542,7 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.imageNameFilter);
+        String[] dateien = fileService.list(Helper.imageNameFilter, dir);
         List<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {
@@ -618,7 +619,7 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.dataFilter);
+        String[] dateien = fileService.list(Helper.dataFilter, dir);
         ArrayList<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {

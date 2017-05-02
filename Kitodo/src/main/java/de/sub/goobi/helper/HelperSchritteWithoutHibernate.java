@@ -18,13 +18,13 @@ import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
@@ -175,9 +175,9 @@ public class HelperSchritteWithoutHibernate {
         ProcessObject po = ProcessManager.getProcessObjectForId(processId);
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
         if (po.getSortHelperImages() != serviceManager.getFileService()
-                .getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true)))) {
+                .getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
             ProcessManager.updateImages(
-                    serviceManager.getFileService().getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true))),
+                    serviceManager.getFileService().getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))),
                     processId);
         }
         logger.debug("update process status");

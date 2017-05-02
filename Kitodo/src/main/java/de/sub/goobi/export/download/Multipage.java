@@ -56,7 +56,7 @@ public class Multipage {
         String pfad = serviceManager.getProcessService().getImagesDirectory(process);
         File dir = new File(pfad);
 
-        String[] dateien = dir.list(Helper.imageNameFilter);
+        String[] dateien = serviceManager.getFileService().list(Helper.imageNameFilter, dir);
 
         /* keine Tifs vorhanden, also raus */
         if (dateien == null) {

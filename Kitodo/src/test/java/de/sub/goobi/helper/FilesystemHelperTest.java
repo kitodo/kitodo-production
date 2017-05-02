@@ -43,16 +43,17 @@ public class FilesystemHelperTest {
 
     @Test(expected = java.io.FileNotFoundException.class)
     public void renamingOfNonExistingFileShouldThrowFileNotFoundException() throws IOException {
+        FileService fileService = new FileService();
         String oldFileName = "old.xml";
         String newFileName = "new.xml";
-        FileService fileService = new FileService();
+
         fileService.renameFile(oldFileName, newFileName);
     }
 
     @Test
     public void shouldRenameAFile() throws IOException {
-        createFile("old.xml");
         FileService fileService = new FileService();
+        createFile("old.xml");
         fileService.renameFile("old.xml", "new.xml");
         assertFileExists("new.xml");
         assertFileNotExists("old.xml");

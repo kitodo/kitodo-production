@@ -264,7 +264,7 @@ public class LoginForm {
             }
         };
         File dir = new File(myPfad);
-        String[] dateien = dir.list(filter);
+        String[] dateien = serviceManager.getFileService().list(filter, dir);
 
         /* alle Dateien durchlaufen und die alten löschen */
         if (dateien != null) {

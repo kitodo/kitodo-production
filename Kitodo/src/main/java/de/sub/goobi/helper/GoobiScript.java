@@ -18,6 +18,7 @@ import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -42,6 +42,7 @@ import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
@@ -62,6 +63,7 @@ public class GoobiScript {
     HashMap<String, String> myParameters;
     private static final Logger logger = Logger.getLogger(GoobiScript.class);
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
     public static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
@@ -190,13 +192,13 @@ public class GoobiScript {
             String title = p.getTitle();
             if (contentOnly) {
                 try {
-                    SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(p));
+                    File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
                     if (ocr.exists()) {
-                        ocr.deleteDir();
+                        fileService.delete(ocr.toURI());
                     }
-                    SafeFile images = new SafeFile(serviceManager.getProcessService().getImagesDirectory(p));
+                    File images = new File(serviceManager.getProcessService().getImagesDirectory(p));
                     if (images.exists()) {
-                        images.deleteDir();
+                        fileService.delete(images.toURI());
                     }
                     Helper.setMeldung("Content deleted for " + title);
                 } catch (Exception e) {
@@ -219,10 +221,10 @@ public class GoobiScript {
 
     private void deleteMetadataDirectory(Process p) {
         try {
-            new SafeFile(serviceManager.getProcessService().getProcessDataDirectory(p)).deleteDir();
-            SafeFile ocr = new SafeFile(serviceManager.getProcessService().getOcrDirectory(p));
+            fileService.delete(new File(serviceManager.getProcessService().getProcessDataDirectory(p)).toURI());
+            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
             if (ocr.exists()) {
-                ocr.deleteDir();
+                fileService.delete(ocr.toURI());
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -285,7 +287,7 @@ public class GoobiScript {
             return;
         }
 
-        SafeFile sourceFolder = new SafeFile(this.myParameters.get("sourcefolder"));
+        File sourceFolder = new File(this.myParameters.get("sourcefolder"));
         if (!sourceFolder.isDirectory()) {
             Helper.setFehlerMeldung("kitodoScriptfield",
                     "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
@@ -293,18 +295,17 @@ public class GoobiScript {
         }
         try {
             for (Process p : inProzesse) {
-                SafeFile imagesFolder = new SafeFile(
-                        serviceManager.getProcessService().getImagesOrigDirectory(false, p));
-                if (imagesFolder.list().length > 0) {
+                File imagesFolder = new File(serviceManager.getProcessService().getImagesOrigDirectory(false, p));
+                if (fileService.list(imagesFolder).length > 0) {
                     Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
                             + p.getId().intValue() + "] has already data in image folder");
                 } else {
-                    SafeFile sourceFolderProzess = new SafeFile(sourceFolder, p.getTitle());
+                    File sourceFolderProzess = new File(sourceFolder, p.getTitle());
                     if (!sourceFolder.isDirectory()) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
                                 + " [" + p.getId().intValue() + "] is not existing");
                     } else {
-                        sourceFolderProzess.copyDir(imagesFolder);
+                        fileService.copyDir(sourceFolderProzess, imagesFolder);
                         Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
                                 + p.getId().intValue() + "] is copied");
                     }
@@ -927,7 +928,7 @@ public class GoobiScript {
     public void deleteTiffHeaderFile(List<Process> inProzesse) {
         for (Process proz : inProzesse) {
             try {
-                SafeFile tiffheaderfile = new SafeFile(
+                File tiffheaderfile = new File(
                         serviceManager.getProcessService().getImagesDirectory(proz) + "tiffwriter.conf");
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();

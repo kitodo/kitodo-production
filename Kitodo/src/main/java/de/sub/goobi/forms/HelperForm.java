@@ -26,7 +26,6 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.goobi.io.SafeFile;
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
@@ -193,7 +192,7 @@ public class HelperForm {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         String filename = session.getServletContext().getRealPath("/css") + File.separator;
-        SafeFile cssDir = new SafeFile(filename);
+        File cssDir = new File(filename);
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -201,7 +200,7 @@ public class HelperForm {
             }
         };
 
-        String[] dateien = cssDir.list(filter);
+        String[] dateien = serviceManager.getFileService().list(filter, cssDir);
         for (String string : dateien) {
             myList.add(new SelectItem("/css/" + string, string));
         }
@@ -221,7 +220,7 @@ public class HelperForm {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         String filename = session.getServletContext().getRealPath(CSS_PATH) + File.separator;
-        SafeFile cssDir = new SafeFile(filename);
+        File cssDir = new File(filename);
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -229,7 +228,7 @@ public class HelperForm {
             }
         };
 
-        String[] dateien = cssDir.list(filter);
+        String[] dateien = serviceManager.getFileService().list(filter, cssDir);
         for (String string : dateien) {
             if ((CSS_PATH + "/" + string).equals(cssFileName)) {
                 return cssFileName;
