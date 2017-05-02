@@ -36,7 +36,7 @@ import org.kitodo.services.data.base.TitleSearchService;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
-public class RulesetService extends TitleSearchService {
+public class RulesetService extends TitleSearchService<Ruleset> {
 
     private static final Logger logger = Logger.getLogger(RulesetService.class);
 
@@ -52,14 +52,22 @@ public class RulesetService extends TitleSearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves ruleset object to database.
      *
      * @param ruleset
      *            object
      */
-    public void save(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Ruleset ruleset) throws DAOException {
         rulesetDao.save(ruleset);
+    }
+
+    /**
+     * Method saves ruleset document to the index of Elastic Search.
+     *
+     * @param ruleset
+     *            object
+     */
+    public void saveToIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(ruleset, rulesetType);
     }
