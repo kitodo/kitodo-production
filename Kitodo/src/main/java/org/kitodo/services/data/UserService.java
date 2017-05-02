@@ -38,7 +38,7 @@ import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class UserService extends SearchService {
+public class UserService extends SearchService<User> {
 
     private static final Logger logger = Logger.getLogger(MySQLHelper.class);
 
@@ -64,6 +64,27 @@ public class UserService extends SearchService {
      */
     public void save(User user) throws CustomResponseException, DAOException, IOException {
         userDao.save(user);
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(user, userType);
+    }
+
+    /**
+     * Method saves user object to database.
+     *
+     * @param user
+     *            object
+     */
+    public void saveToDatabase(User user) throws DAOException {
+        userDao.save(user);
+    }
+
+    /**
+     * Method saves user document to the index of Elastic Search.
+     *
+     * @param user
+     *            object
+     */
+    public void saveToIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(user, userType);
     }
