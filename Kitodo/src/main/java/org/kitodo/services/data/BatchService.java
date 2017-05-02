@@ -29,9 +29,9 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.base.SearchService;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class BatchService extends SearchService<Batch> {
+public class BatchService extends TitleSearchService<Batch> {
 
     private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
@@ -99,29 +99,34 @@ public class BatchService extends SearchService<Batch> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes batch object from database.
      *
      * @param batch
      *            object
      */
-    public void remove(Batch batch) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Batch batch) throws DAOException {
         batchDAO.remove(batch);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(batch, batchType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes batch object from database.
      *
      * @param id
-     *            of object
+     *            of batch object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         batchDAO.remove(id);
+    }
+
+    /**
+     * Method removes batch object from index of Elastic Search.
+     *
+     * @param batch
+     *            object
+     */
+    public void removeFromIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(batch, batchType);
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
