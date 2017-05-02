@@ -30,9 +30,9 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.services.data.base.SearchService;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class ProjectService extends SearchService {
+public class ProjectService extends TitleSearchService<Project> {
 
     private List<StepInformation> commonWorkFlow = null;
 
@@ -48,14 +48,22 @@ public class ProjectService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves project object to database.
      *
      * @param project
      *            object
      */
-    public void save(Project project) throws CustomResponseException, DAOException, IOException {
+    public void saveToDatabase(Project project) throws DAOException {
         projectDao.save(project);
+    }
+
+    /**
+     * Method saves project document to the index of Elastic Search.
+     *
+     * @param project
+     *            object
+     */
+    public void saveToIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(project, projectType);
     }
