@@ -80,6 +80,17 @@ public abstract class SearchService<T extends BaseBean> {
     public abstract List<T> search(String query) throws DAOException;
 
     /**
+     * Method saves relations which can be potentially modified together with
+     * object.
+     *
+     * @param baseBean
+     *            object
+     */
+    protected void saveDependenciesToIndex(T baseBean) throws CustomResponseException, IOException {
+
+    }
+
+    /**
      * Method saves object to database and document to the index of Elastic
      * Search.
      *
@@ -91,6 +102,7 @@ public abstract class SearchService<T extends BaseBean> {
             baseBean.setIndexAction(IndexAction.INDEX);
             saveToDatabase(baseBean);
             saveToIndex(baseBean);
+            saveDependenciesToIndex(baseBean);
         } catch (DAOException e) {
             logger.debug(e);
             throw new DAOException(e);
@@ -100,6 +112,7 @@ public abstract class SearchService<T extends BaseBean> {
             while (true) {
                 try {
                     saveToIndex(baseBean);
+                    saveDependenciesToIndex(baseBean);
                     baseBean.setIndexAction(IndexAction.DONE);
                     saveToDatabase(baseBean);
                     break;

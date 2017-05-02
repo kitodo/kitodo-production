@@ -24,6 +24,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.HistoryType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 /**
@@ -34,6 +35,7 @@ public class HistoryService extends SearchService<History> {
     private HistoryDAO historyDAO = new HistoryDAO();
     private HistoryType historyType = new HistoryType();
     private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(HistoryService.class);
 
     /**
@@ -75,6 +77,17 @@ public class HistoryService extends SearchService<History> {
     public void saveToIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(history, historyType);
+    }
+
+    /**
+     * Method saves process related to modified history.
+     *
+     * @param history
+     *            object
+     */
+    protected void saveDependenciesToIndex(History history) throws CustomResponseException, IOException {
+        //TODO: is it possible that  process is modified during save to history?
+        serviceManager.getProcessService().saveToIndex(history.getProcess());
     }
 
     public History find(Integer id) throws DAOException {

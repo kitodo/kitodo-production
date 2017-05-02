@@ -16,6 +16,8 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TemplateDAO;
@@ -23,6 +25,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 public class TemplateService extends SearchService<Template> {
@@ -30,6 +33,8 @@ public class TemplateService extends SearchService<Template> {
     private TemplateDAO templateDAO = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
     private Indexer<Template, TemplateType> indexer = new Indexer<>(Template.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(TemplateService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -57,6 +62,20 @@ public class TemplateService extends SearchService<Template> {
     public void saveToIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(template, templateType);
+    }
+
+    /**
+     * Method saves process and properties related to modified template.
+     *
+     * @param template
+     *            object
+     */
+    protected void saveDependenciesToIndex(Template template) throws CustomResponseException, IOException {
+        serviceManager.getProcessService().saveToIndex(template.getProcess());
+
+        for (Property property : template.getProperties()) {
+            serviceManager.getPropertyService().saveToIndex(property);
+        }
     }
 
     public Template find(Integer id) throws DAOException {

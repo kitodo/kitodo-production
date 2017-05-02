@@ -16,13 +16,19 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.PropertyDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.PropertyType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class PropertyService extends TitleSearchService<Property> {
@@ -30,6 +36,8 @@ public class PropertyService extends TitleSearchService<Property> {
     private PropertyDAO propertyDAO = new PropertyDAO();
     private PropertyType propertyType = new PropertyType();
     private Indexer<Property, PropertyType> indexer = new Indexer<>(Property.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(PropertyService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -57,6 +65,27 @@ public class PropertyService extends TitleSearchService<Property> {
     public void saveToIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(property, propertyType);
+    }
+
+    /**
+     * Method saves processes related to modified batch.
+     *
+     * @param property
+     *            object
+     */
+    protected void saveDependenciesToIndex(Property property) throws CustomResponseException, IOException {
+        for (Process process : property.getProcesses()) {
+            serviceManager.getProcessService().saveToIndex(process);
+        }
+        for (User user : property.getUsers()) {
+            serviceManager.getUserService().saveToIndex(user);
+        }
+        for (Template template : property.getTemplates()) {
+            serviceManager.getTemplateService().saveToIndex(template);
+        }
+        for (Workpiece workpiece : property.getWorkpieces()) {
+            serviceManager.getWorkpieceService().saveToIndex(workpiece);
+        }
     }
 
     /**

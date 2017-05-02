@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;

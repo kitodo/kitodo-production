@@ -28,6 +28,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
 public class BatchService extends SearchService<Batch> {
@@ -35,6 +36,7 @@ public class BatchService extends SearchService<Batch> {
     private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
     private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
+    private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = Logger.getLogger(BatchService.class);
 
     /**
@@ -45,7 +47,7 @@ public class BatchService extends SearchService<Batch> {
     }
 
     /**
-     * Method saves batchobject to database.
+     * Method saves batch object to database.
      *
      * @param batch
      *            object
@@ -63,6 +65,18 @@ public class BatchService extends SearchService<Batch> {
     public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
+    }
+
+    /**
+     * Method saves processes related to modified batch.
+     * 
+     * @param batch
+     *            object
+     */
+    protected void saveDependenciesToIndex(Batch batch) throws CustomResponseException, IOException {
+        for (Process process : batch.getProcesses()) {
+            serviceManager.getProcessService().saveToIndex(process);
+        }
     }
 
     public Batch find(Integer id) throws DAOException {
