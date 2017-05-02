@@ -1,0 +1,385 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- +++++++++++     Eigenschaftentabelle      ++++++++++ -->
+<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+
+    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
+        <!--<h4 style="margin-top:15" rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">-->
+        <h4 style="margin-top:15" rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
+            <h:outputText value="#{msgs.eigenschaften}"/>
+        </h4>
+    </ui:fragment>
+
+    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
+    <!--<table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable"-->
+               <!--rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">-->
+        <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
+
+        <thead class="standardTable_Header">
+            <tr>
+                <th>
+                    <h:outputText value="#{msgs.title}"/>
+                </th>
+                <th>
+                    <h:outputText value="#{msgs.value}"/>
+                </th>
+                <th>
+                    <h:outputText value="#{msgs.choice}"/>
+                </th>
+            </tr>
+        </thead>
+
+        <t:dataList var="container" value="#{ProzessverwaltungForm.containerList}" rowCountVar="rowCount"
+                    rowIndexVar="rowIndex">
+            <t:dataList var="proc" value="#{ProzessverwaltungForm.containerlessProperties}" rowCountVar="propCount"
+                        rowIndexVar="propInd">
+                <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+                <ui:fragment rendered="#{container == 0}">
+                    <!--<tr rendered="#{container == 0}" class="standardTable_Row1">-->
+                    <tr>
+                        <td>
+                            <h:outputText value="#{proc.name}"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{proc.value}" rendered="#{proc.type.name !=  'link'}"/>
+                            <h:outputLink title="#{proc.value}" value="#{proc.value}" rendered="#{proc.type.name ==  'link'}"
+                                          target="_blank">
+                                <h:outputText value="#{proc.value}"/>
+                            </h:outputLink>
+                        </td>
+                        <td class="standardTable_ColumnCentered">
+                            <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
+                                <h:graphicImage value="/newpages/images/buttons/edit.gif"/>
+                                <t:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{proc}"/>
+                                <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="0"/>
+                                <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}"
+                                                        value="eigenschaft"/>
+                                <!-- <a4j:support event="onchange" reRender="editBatch" />-->
+                            </h:commandLink>
+                            <h:commandLink action="#{ProzessverwaltungForm.duplicateProperty}" title="#{msgs.duplicate}">
+                                <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
+                                <t:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{proc}"/>
+                                <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="0"/>
+                            </h:commandLink>
+                        </td>
+                    </tr>
+                </ui:fragment>
+            </t:dataList>
+
+            <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+            <ui:fragment rendered="#{rowIndex lt rowCount and rowIndex != 0}">
+                <!--<tr rendered="#{rowIndex < rowCount && rowIndex != 0}">-->
+                <tr>
+                    <td colspan="3" class="standardTable_Row1">
+                        <h:outputText value="&#160;" escape="false"/>
+                    </td>
+                </tr>
+            </ui:fragment>
+
+            <t:dataList var="process_item" value="#{ProzessverwaltungForm.containers[container].propertyList}"
+                        rowCountVar="propCount" rowIndexVar="propInd">
+                <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+                <ui:fragment rendered="#{container!=0 }">
+                    <!--<tr class="standardTable_Row1" rendered="#{container!=0 }">-->
+                    <tr class="standardTable_Row1">
+                        <td>
+                            <h:outputText value="#{process_item.name}"/>
+                        </td>
+                        <td>
+                            <h:outputText value="#{process_item.value}" rendered="#{process_item.type.name !=  'link'}"/>
+                            <h:outputLink title="#{process_item.value}" value="#{process_item.value}"
+                                          rendered="#{process_item.type.name ==  'link'}" target="_blank">
+                                <h:outputText value="#{process_item.value}"/>
+                            </h:outputLink>
+                            <!-- 					<h:outputText value="#{process_item.value}" /> -->
+                        </td>
+                        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+                        <ui:fragment rendered="#{propInd ==0}">
+                            <!--<td class="standardTable_ColumnCentered"-->
+                                    <!--rowspan="#{ProzessverwaltungForm.containers[container].propertyListSizeString}"-->
+                                    <!--rendered="#{propInd ==0}">-->
+                            <td class="standardTable_ColumnCentered"
+                                rowspan="#{ProzessverwaltungForm.containers[container].propertyListSizeString}">
+                                <!-- edit container -->
+                                <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
+                                    <h:graphicImage value="/newpages/images/buttons/edit.gif"/>
+                                    <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}"/>
+                                    <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}"
+                                                            value="eigenschaft"/>
+                                    <!-- 	<a4j:support event="onchange" reRender="editBatch" /> -->
+                                </h:commandLink>
+                                <!-- duplicate container -->
+                                <h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}">
+                                    <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
+                                    <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}"/>
+                                </h:commandLink>
+                            </td>
+                        </ui:fragment>
+                    </tr>
+                </ui:fragment>
+            </t:dataList>
+
+
+            <!--
+            <t:dataList var="process_item" value="#{ProzessverwaltungForm.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
+
+                <tr rendered="#{container != 0 && process_item.container==container}" class="standardTable_Row1">
+
+                    <td>
+                        <h:outputText value="#{process_item.name}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{process_item.value}" />
+                    </td>
+
+                    <td class="standardTable_ColumnCentered" rowspan="''+#{ProzessverwaltungForm.containers[container]}" rendered="#{cont != container }">
+
+                        <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
+                            <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft" />
+
+                        </h:commandLink>
+
+                        <h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}">
+                            <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}" />
+                        </h:commandLink>
+                    </td>
+
+                </tr>
+            </t:dataList>
+            -->
+
+        </t:dataList>
+
+
+        <!--
+
+        <t:dataList var="container" value="#{ProzessverwaltungForm.containers}" rowCountVar="rowCount" rowIndexVar="rowIndex">
+            <t:dataList var="proc" value="#{ProzessverwaltungForm.containerlessProperties}" rowCountVar="propCount" rowIndexVar="propInd">
+                <tr rendered="#{container == 0}" class="standardTable_Row1">
+                    <td>
+                        <h:outputText value="#{proc.name}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{proc.value}" />
+                    </td>
+                    <td class="standardTable_ColumnCentered">
+                        <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}">
+                            <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{proc}" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="0" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft" />
+                        </h:commandLink>
+                        <h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}">
+                            <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.processProperty}" value="#{proc}" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="0" />
+                        </h:commandLink>
+                    </td>
+                </tr>
+            </t:dataList>
+
+            <t:dataList var="process_item" value="#{ProzessverwaltungForm.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
+                <tr rendered="#{container != 0 && process_item.container==container}" class="standardTable_Row1">
+
+                    <td>
+                        <h:outputText value="#{process_item.name}" />
+                    </td>
+                    <td>
+                        <h:outputText value="#{process_item.value}" />
+                    </td>
+
+                    <td class="standardTable_ColumnCentered">
+                        <h:commandLink action="ProzessverwaltungBearbeiten" title="#{msgs.bearbeiten}" rendered="#{propInd + 1 == propCount}">
+                            <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft" />
+                        </h:commandLink>
+                        <h:commandLink action="#{ProzessverwaltungForm.duplicateContainer}" title="#{msgs.duplicate}" rendered="#{propInd + 1 == propCount}">
+                            <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                            <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="#{container}" />
+                        </h:commandLink>
+                    </td>
+
+                </tr>
+            </t:dataList>
+            <tr rendered="#{rowIndex + 1 < rowCount}">
+                <td colspan="3" class="standardTable_Row1">
+                    <h:outputText value="&nbsp;" escape="false" />
+                </td>
+            </tr>
+        </t:dataList>
+
+        -->
+
+
+        </table>
+    </ui:fragment>
+
+
+    <!-- newUser-Schaltknopf -->
+    <h:commandLink action="#{ProzessverwaltungForm.createNewProperty}" value="#{msgs.eigenschaftHinzufuegen}"
+                   title="#{msgs.eigenschaftHinzufuegen}"
+                   rendered="#{ProzessverwaltungForm.modusBearbeiten!='eigenschaft'}">
+    <t:updateActionListener property="#{ProzessverwaltungForm.container}" value="0"/>
+    <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value="eigenschaft"/>
+    </h:commandLink>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- +++++++++     Eigenschaft bearbeiten      ++++++++++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='eigenschaft'}">
+        <!--<h4 style="margin-top:15" rendered="#{ProzessverwaltungForm.modusBearbeiten=='eigenschaft'}">-->
+        <h4 style="margin-top:15">
+            <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
+        </h4>
+    </ui:fragment>
+
+    <!-- Box für die Bearbeitung der Details -->
+    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+    <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='eigenschaft'}">
+        <!--<table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen"-->
+                   <!--rendered="#{ProzessverwaltungForm.modusBearbeiten=='eigenschaft'}">-->
+        <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
+
+            <tr>
+                <td class="eingabeBoxen_row1" colspan="2">
+                    <h:outputText value="#{msgs.eigenschaft}"/>
+                </td>
+            </tr>
+
+            <!-- Formular für die Bearbeitung der Eigenschaft -->
+            <tr>
+                <td class="eingabeBoxen_row2" colspan="2">
+                    <table>
+                        <t:dataList var="myprocess_item" value="#{ProzessverwaltungForm.containerProperties}">
+                            <tr>
+                                <td>
+                                    <h:outputText id="eigenschafttitel" style="width: 500px;margin-right:15px"
+                                                  value="#{myprocess_item.name}: " rendered="#{!myprocess_item.isNew}"/>
+                                </td>
+                                <td>
+
+                                    <h:panelGroup rendered="#{myprocess_item.isNew}">
+                                        <h:inputText id="title" value="#{myprocess_item.name}" required="true"/>
+                                        <t:message for="title" style="color: red" detailFormat="#{msgs.keinTitelAngegeben}"/>
+                                    </h:panelGroup>
+
+                                    <!-- textarea -->
+                                    <h:panelGroup id="prpvw15_1"
+                                                  rendered="#{((myprocess_item.type.name == 'text') || (myprocess_item.type.name == 'null'))}">
+                                        <h:inputText id="file" style="width: 500px;margin-right:15px"
+                                                     value="#{myprocess_item.value}"/>
+                                    </h:panelGroup>
+
+                                    <!-- numbers only -->
+                                    <h:panelGroup id="prpvw15_1mnk"
+                                                  rendered="#{myprocess_item.type.name == 'integer' || myprocess_item.type.name == 'number'}">
+
+                                        <h:inputText id="numberstuff122334mnktodo" style="width: 500px;margin-right:15px"
+                                                     value="#{myprocess_item.value}">
+                                            <f:validateLongRange minimum="0"/>
+                                        </h:inputText>
+                                    </h:panelGroup>
+
+                                    <!--  SelectOneMenu -->
+                                    <h:panelGroup id="prpvw15_2" rendered="#{(myprocess_item.type.name == 'list')}">
+                                        <h:selectOneMenu value="#{myprocess_item.value}" style="width: 500px;margin-right:15px"
+                                                         id="prpvw15_2_1">
+                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
+                                            <!--<si:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}"-->
+                                                            <!--var="myprocess_items" itemLabel="#{myprocess_items}"-->
+                                                            <!--itemValue="#{myprocess_items}"/>-->
+                                            <f:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}"
+                                                            var="myprocess_items" itemLabel="#{myprocess_items}"
+                                                            itemValue="#{myprocess_items}"/>
+                                        </h:selectOneMenu>
+                                    </h:panelGroup>
+
+                                    <!--  SelectManyMenu -->
+                                    <h:panelGroup id="prpvw15_3" rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
+                                        <h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px"
+                                                             value="#{myprocess_item.valueList}" size="5">
+                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
+                                            <!--<si:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}"-->
+                                                            <!--var="myprocess_items" itemLabel="#{myprocess_items}"-->
+                                                            <!--itemValue="#{myprocess_items}"/>-->
+                                            <f:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}"
+                                                            var="myprocess_items" itemLabel="#{myprocess_items}"
+                                                            itemValue="#{myprocess_items}"/>
+
+                                        </h:selectManyListbox>
+                                    </h:panelGroup>
+
+                                    <!--  Boolean -->
+                                    <h:panelGroup id="prpvw15_4" rendered="#{(myprocess_item.type.name == 'boolean')}">
+                                        <h:selectBooleanCheckbox value="#{myprocess_item.booleanValue}">
+                                        </h:selectBooleanCheckbox>
+
+                                    </h:panelGroup>
+
+                                    <!--  Date  -->
+                                    <h:panelGroup id="prpvw15_5" rendered="#{(myprocess_item.type.name == 'date')}">
+                                        <!-- TODO: use PrimeFaces calendar tag as replacement for RichFaces calendar tag! -->
+                                        <!--<rich:calendar id="prpvw15_5_1" style="width: 500px;margin-right:15px"-->
+                                                       <!--datePattern="dd.MM.yyyy" value="#{myprocess_item.dateValue}"-->
+                                                       <!--enableManualInput="true">-->
+                                        <!--</rich:calendar>-->
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                        </t:dataList>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="eingabeBoxen_row3" align="left">
+                    <h:commandButton value="#{msgs.abbrechen}" action="#{NavigationForm.Reload}" immediate="true">
+                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                    </h:commandButton>
+                </td>
+                <td class="eingabeBoxen_row3" align="right">
+
+                    <h:commandButton value="#{msgs.loeschen}" action="#{ProzessverwaltungForm.deleteProperty}"
+                                     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
+                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                    </h:commandButton>
+
+
+                    <h:commandButton value="#{msgs.uebernehmen}" action="#{ProzessverwaltungForm.saveCurrentProperty}">
+                        <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+                    </h:commandButton>
+                </td>
+            </tr>
+
+        </table>
+    </ui:fragment>
+</ui:composition>

@@ -1,0 +1,210 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
+    >
+    <f:loadBundle basename="messages.messages" var="msgs"/>
+
+    <!-- ===================== GROSSE SCHRITT BOX IM GELADENEN PROZESS ====================== -->
+
+    <h4 style="margin-top:15">
+        <h:outputText value="#{msgs.arbeitsschritte}"/>
+    </h4>
+
+    <t:dataTable id="vorgaenge" styleClass="standardTable" width="100%"
+                 cellspacing="1px" cellpadding="1px" headerClass="standardTable_Header"
+                 rowClasses="standardTable_Row1,standardTable_Row2"
+                 columnClasses="standardTable_ColumnCentered,standardTable_Column,standardTable_ColumnCentered,standardTable_ColumnCentered"
+                 var="item" value="#{ProzessverwaltungForm.myProzess.tasks}">
+
+        <!-- ===================== Reihenfolge ====================== -->
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="#{msgs.nr}"/>
+            </f:facet>
+            <h:outputText value="#{item.ordering}"/>
+            <!-- Schaltknopf: Reihenfolge nach oben -->
+            <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
+            <!--<a4j:commandLink action="#{ProzessverwaltungForm.reihenfolgeUp}" reRender="vorgaenge"-->
+                             <!--rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">-->
+            <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeUp}"
+                             rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                <h:graphicImage value="/newpages/images/buttons/order_up_klein.gif"
+                                style="margin-left:5px;vertical-align:middle"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.mySchritt}"
+                                        value="#{item}"/>
+                <f:ajax render="vorgaenge"/>
+            </h:commandLink>
+            <!-- Schaltknopf: Reihenfolge nach unten -->
+            <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
+            <!--<a4j:commandLink action="#{ProzessverwaltungForm.reihenfolgeDown}" reRender="vorgaenge"-->
+                             <!--rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">-->
+            <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeDown}"
+                             rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                <h:graphicImage value="/newpages/images/buttons/order_down_klein.gif"
+                                style="vertical-align:middle"/>
+                <t:updateActionListener property="#{ProzessverwaltungForm.mySchritt}"
+                                        value="#{item}"/>
+                <f:ajax render="vorgaenge"/>
+            </h:commandLink>
+        </h:column>
+        <!-- ===================== // Reihenfolge ====================== -->
+
+        <h:column rendered="#{true}">
+            <f:facet name="header">
+                <h:outputText value="#{msgs.title}"/>
+            </f:facet>
+
+            <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
+            <!--<a4j:commandLink reRender="auflistungIntern,myself" id="myself"-->
+                             <!--style="color:black">-->
+            <h:commandLink id="myself" style="color:black">
+                <h:graphicImage value="/newpages/images/plus.gif"
+                                style="margin-right:4px" rendered="#{!item.panelShown}"/>
+                <h:graphicImage value="/newpages/images/minus.gif"
+                                style="margin-right:4px" rendered="#{item.panelShown}"/>
+                <t:updateActionListener value="#{item.panelShown?false:true}"
+                                        property="#{item.panelShown}"/>
+                <h:outputText value="#{item.title}"/>
+                <f:ajax render="auflistungIntern,myself" listener="org.ajax4jsf.ajax.ForceRender"/>
+                <!--<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender"/>-->
+            </h:commandLink>
+
+            <h:panelGroup id="auflistungIntern">
+                <t:div style="width:90%;margin-top;margin-left:12px;margin-top:5px"
+                       rendered="#{item.panelShown}">
+                    <!-- Schrittdetails -->
+                    <ui:include src="prozess_box_Schritte_box_DetailsKlein.xhtml" />
+                </t:div>
+            </h:panelGroup>
+        </h:column>
+
+        <!-- +++++++++++++++++  alle Eigenschaften auflisten - mit CSS ++++++++++++++++++++++++ -->
+        <h:column rendered="#{false}">
+            <f:facet name="header">
+                <t:div>
+                    <t:headerLink immediate="true">
+                        <h:graphicImage value="/newpages/images/plus.gif"
+                                        style="margin-right:4px;" rendered="#{isCollapsed}"/>
+                        <h:graphicImage value="/newpages/images/minus.gif"
+                                        style="margin-right:4px;" rendered="#{!isCollapsed}"/>
+                    </t:headerLink>
+                    <h:outputText value="#{item.localizedTitle}"
+                                  rendered="#{isCollapsed}"/>
+                </t:div>
+            </f:facet>
+
+            <h:panelGroup>
+                <!-- FIXME! PrimeFaces toggle button does not work / shows unpredictable behaviour! -->
+                <!--<jd:hideableController for="tab">-->
+                <p:commandButton onclick="PF('detailsSmall').toggle()" value="Testbutton" type="button" />
+                    <f:facet name="show">
+                        <h:panelGroup>
+                            <h:graphicImage value="/newpages/images/minus.gif"
+                                            style="margin-right:5px"/>
+                            <h:outputText value="#{item.localizedTitle}"/>
+                        </h:panelGroup>
+                    </f:facet>
+                    <f:facet name="hide">
+                        <h:panelGroup>
+                            <h:graphicImage value="/newpages/images/plus.gif"
+                                            style="margin-right:5px"/>
+                            <h:outputText value="#{item.localizedTitle}"/>
+                        </h:panelGroup>
+                    </f:facet>
+                <!--</jd:hideableController>-->
+
+                <!--<jd:hideableArea id="tab">-->
+                <p:panel id="tab" widgetVar="detailsSmall" toggleable="true" collapsed="true">
+                    <h:panelGrid columns="1" style="margin:10px">
+                        <ui:include src="prozess_box_Schritte_box_DetailsKlein.xhtml" />
+                    </h:panelGrid>
+                <!--</jd:hideableArea>-->
+                </p:panel>
+            </h:panelGroup>
+        </h:column>
+        <!-- +++++++++++++++++  // alle Eigenschaften auflisten mit CSS ++++++++++++++++++++++++ -->
+
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="#{msgs.status}"/>
+            </f:facet>
+            <h:panelGrid columns="2" id="statuscolumn">
+
+                <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
+                                title="#{item.processingStatusEnum.title}"/>
+
+                <h:panelGrid columns="1" cellpadding="0" cellspacing="0"
+                             rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                    <!-- Bearbeitungsstatus hoch und runter -->
+                    <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
+                    <!--<a4j:commandLink action="#{ProzessverwaltungForm.SchrittStatusUp}"-->
+                                     <!--title="#{msgs.statusHoeherSetzen}" reRender="statuscolumn">-->
+                    <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusUp}"
+                                     title="#{msgs.statusHoeherSetzen}">
+                        <h:graphicImage
+                                value="/newpages/images/buttons/order_right_klein.gif"/>
+                        <t:updateActionListener
+                                property="#{ProzessverwaltungForm.mySchrittReload}"
+                                value="#{item}"/>
+                        <!--<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender"/>-->
+                        <f:ajax listener="org.ajax4jsf.ajax.ForceRender" render="statuscolumn"/>
+                    </h:commandLink>
+                    <!-- Bearbeitungsstatus hoch und runter -->
+                    <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
+                    <!--<a4j:commandLink action="#{ProzessverwaltungForm.SchrittStatusDown}"-->
+                                     <!--title="#{msgs.statusRunterSetzen}" reRender="statuscolumn">-->
+                    <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusDown}"
+                                     title="#{msgs.statusRunterSetzen}">
+                        <h:graphicImage
+                                value="/newpages/images/buttons/order_left_klein.gif"/>
+                        <t:updateActionListener
+                                property="#{ProzessverwaltungForm.mySchrittReload}"
+                                value="#{item}"/>
+                        <!--<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender"/>-->
+                        <f:ajax listener="org.ajax4jsf.ajax.ForceRender" render="statuscolumn"/>
+                    </h:commandLink>
+                </h:panelGrid>
+
+            </h:panelGrid>
+        </h:column>
+
+        <h:column rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+            <f:facet name="header">
+                <h:outputText value="#{msgs.auswahl}"/>
+            </f:facet>
+            <!-- Bearbeiten-Schaltknopf -->
+            <h:commandLink action="ProzessverwaltungBearbeitenSchritt"
+                           title="#{msgs.detailsDesSchritts}">
+                <h:graphicImage value="/newpages/images/buttons/goInto.gif"/>
+                <t:updateActionListener
+                        property="#{ProzessverwaltungForm.mySchrittReload}" value="#{item}"/>
+                <t:updateActionListener
+                        property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
+            </h:commandLink>
+        </h:column>
+
+    </t:dataTable>
+
+    <!-- newUser-Schaltknopf -->
+    <h:commandLink id="addStepLink" action="#{ProzessverwaltungForm.SchrittNeu}"
+                   value="#{msgs.schrittHinzufuegen}" title="#{msgs.schrittHinzufuegen}"
+                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2) and (ProzessverwaltungForm.myProzess.title != '')}">
+    </h:commandLink>
+</ui:composition>
