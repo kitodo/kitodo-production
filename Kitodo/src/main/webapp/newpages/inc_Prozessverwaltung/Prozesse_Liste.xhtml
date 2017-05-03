@@ -90,6 +90,7 @@
             <h:graphicImage value="/newpages/images/check_false.gif" style="margin-right:4px"
                             rendered="#{!item.selected}"/>
             <t:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>
+            <!-- FIXME: this breaks the JS on the page: -->
             <f:ajax render="myself1"/>
         </h:commandLink>
         <!--<a4j:commandLink reRender="myself1" id="myself1">-->

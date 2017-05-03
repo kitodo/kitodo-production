@@ -1,0 +1,92 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<!-- ########################################
+
+        Werkstueck bearbeiten
+
+        #########################################-->
+
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="/newpages/inc/head.xhtml" />
+        <body>
+
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                       align="center">
+                <ui:include src="/newpages/inc/tbl_Kopf.xhtml" />
+                <tr>
+                    <ui:include src="/newpages/inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
+
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                        <h:form id="werkform">
+                            <!-- Breadcrumb -->
+                            <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
+                                <h:panelGroup>
+                                    <h:commandLink value="#{msgs.startseite}" action="newMain"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:commandLink value="#{msgs.prozessverwaltung}"
+                                                   action="ProzessverwaltungAlle"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:commandLink value="#{msgs.prozessDetails}"
+                                                   action="ProzessverwaltungBearbeiten">
+                                    </h:commandLink>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:outputText value="#{msgs.werkstueckDetails}"/>
+                                </h:panelGroup>
+                            </h:panelGrid>
+
+                            <table border="0" align="center" width="100%" cellpadding="15">
+                                <tr>
+                                    <td>
+                                        <h3>
+                                            <h:outputText value="#{msgs.neueWerkstueckAnlegen}"
+                                                          rendered="#{ProzessverwaltungForm.myWerkstueck.id == null}"/>
+                                            <h:outputText value="#{msgs.werkstueckDetails}"
+                                                          rendered="#{ProzessverwaltungForm.myWerkstueck.id != null}"/>
+                                        </h3>
+
+                                        <!-- globale Warn- und Fehlermeldungen -->
+                                        <h:messages globalOnly="true" errorClass="text_red"
+                                                    infoClass="text_blue" showDetail="true" showSummary="true"
+                                                    tooltip="true"/>
+
+                                        <!-- Werkstueckdetails -->
+                                        <ui:include src="/newpages/inc_Prozessverwaltung/werkstueck_box_Details.xhtml" />
+
+                                        <!-- Werkstueckeigenschaften -->
+                                        <ui:include
+                                        src="/newpages/inc_Prozessverwaltung/werkstueck_box_Eigenschaften.xhtml" />
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </h:form>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+
+                    </td>
+                </tr>
+                <ui:include src="/newpages/inc/tbl_Fuss.xhtml" />
+            </table>
+
+        </body>
+    </f:view>
+
+</html>
