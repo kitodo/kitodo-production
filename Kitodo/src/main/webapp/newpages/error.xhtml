@@ -1,0 +1,151 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<!-- TODO: refactor template to replace JAVA scriptlet -->
+<!--<%@ page-->
+        <!--import="java.io.PrintWriter,java.util.List,org.apache.myfaces.shared_tomahawk.util.ExceptionUtils"-->
+        <!--isErrorPage="true" %>-->
+
+<!-- ########################################
+
+        Startseite
+
+        #########################################-->
+
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="inc/head.xhtml" />
+        <body>
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                       style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable"
+                       align="center">
+
+                <tr>
+                    <ui:include src="/newpages/inc/tbl_Navigation.xhtml"/>
+                    <td valign="top" class="layoutInhalt">
+
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+
+                        <!-- Breadcrumb -->
+                        <h:panelGrid id="id2" columns="1" styleClass="layoutInhaltKopf">
+                            <h:panelGroup id="id3">
+                                <h:outputText id="id4" value="#{msgs.fehler}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+                        <!-- // Breadcrumb -->
+                        <t:div forceId="true" id="mydiv">
+                            <h:form id="myform" style="margin:3px">
+                                <!-- Überschrift -->
+                                <h3>
+                                    <h:outputText id="id5" value="#{msgs.esIstEinFehlerAufgetreten}"/>
+                                </h3>
+
+                                <!-- TODO: refactor template to replace JAVA scriptlet -->
+                                <!--<%-->
+                                <!--if (exception != null) {-->
+                                <!--List exceptions = ExceptionUtils-->
+                                <!--.getExceptions(exception);-->
+                                <!--Throwable throwable = (Throwable) exceptions-->
+                                <!--.get(exceptions.size() - 1);-->
+                                <!--String customaryMessage = exception-->
+                                <!--.getMessage();-->
+                                <!--if (customaryMessage == null) {-->
+                                <!--customaryMessage = "";-->
+                                <!--} else {-->
+                                <!--customaryMessage = customaryMessage-->
+                                <!--+ "<hr/>";-->
+                                <!--}-->
+                                <!--String exceptionMessage = ExceptionUtils-->
+                                <!--.getExceptionMessage(exceptions);-->
+                                <!--%>-->
+
+                                <!--<p style="color:red;font-weight:bold;">-->
+                                    <!--&lt;!&ndash;<%=customaryMessage&ndash;&gt;-->
+                                    <!--&lt;!&ndash;+ exceptionMessage%>&ndash;&gt;-->
+                                <!--</p>-->
+
+                                <!--<a href="#"-->
+                                   <!--onclick="toggle('trace1');toggle('trace2'); return false;">-->
+                                    <!--<span style="display: inline;" id="buttonOff"> + </span> <span-->
+                                        <!--id="buttonOn" style="display: none;"> - </span> Stack Trace</a>-->
+                                <!--<%-->
+                                <!--PrintWriter pw = new PrintWriter(out);-->
+                                <!--%>-->
+                                <!--<t:div id="trace1" forceId="true"-->
+                                       <!--style="border: grey 1px solid; background-color:#EFEFEF;margin:20px;display: none">-->
+                                        <!--<pre>-->
+                                    <!--<%-->
+                                        <!--throwable.printStackTrace(pw);-->
+                                    <!--%>-->
+                                    <!--</pre>-->
+                                <!--</t:div>-->
+                                <!--<%-->
+                                <!--throwable = (Throwable) exceptions-->
+                                <!--.get(0);-->
+                                <!--%>-->
+                                <!--<t:div id="trace2" forceId="true"-->
+                                       <!--style="border: grey 1px solid; background-color:#EFEFEF;margin:20px;display: none">-->
+                                        <!--<pre>-->
+                                    <!--<%-->
+                                        <!--throwable.printStackTrace(pw);-->
+                                    <!--%>-->
+                                    <!--</pre>-->
+                                <!--</t:div>-->
+
+                                <!--<%-->
+                                <!--} else {-->
+                                <!--%>-->
+                                <!--<h:outputText id="id6" value="#{msgs.unbekannterFehler}"/>-->
+                                <!--<%-->
+                                <!--}-->
+                                <!--%>-->
+
+                            </h:form>
+                        </t:div>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+
+                    </td>
+                </tr>
+                <ui:include src="/newpages/inc/tbl_Fuss.xhtml"/>
+            </table>
+
+            <script language="javascript" type="text/javascript">
+                function toggle(id) {
+                    var style = document.getElementById(id).style;
+                    if ("block" == style.display) {
+                        style.display = "none";
+                        document.getElementById("buttonOff").style.display = "inline";
+                        document.getElementById("buttonOn").style.display = "none";
+                    } else {
+                        style.display = "block";
+                        document.getElementById("buttonOff").style.display = "none";
+                        document.getElementById("buttonOn").style.display = "inline";
+                    }
+                }
+            </script>
+
+        </body>
+    </f:view>
+
+</html>
+
