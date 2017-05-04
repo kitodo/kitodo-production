@@ -110,29 +110,34 @@ public class HistoryService extends SearchService<History> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes history object from database.
      *
      * @param history
      *            object
      */
-    public void remove(History history) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(History history) throws DAOException {
         historyDAO.remove(history);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(history, historyType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes history object from database.
      *
      * @param id
-     *            of object
+     *            of history object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         historyDAO.remove(id);
+    }
+
+    /**
+     * Method removes history object from index of Elastic Search.
+     *
+     * @param history
+     *            object
+     */
+    public void removeFromIndex(History history) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(history, historyType);
     }
 
     /**
