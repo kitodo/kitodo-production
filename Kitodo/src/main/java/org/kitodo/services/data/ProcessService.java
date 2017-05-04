@@ -139,9 +139,9 @@ public class ProcessService extends TitleSearchService<Process> {
         for (Batch batch : process.getBatches()) {
             serviceManager.getBatchService().saveToIndex(batch);
         }
-        serviceManager.getProjectService().saveToIndex(process.getProject());
-        //TODO: check which object can be really modified!!!!
-        serviceManager.getDocketService().saveToIndex(process.getDocket());
+        if (process.getProject() != null) {
+            serviceManager.getProjectService().saveToIndex(process.getProject());
+        }
     }
 
     public void saveList(List<Process> list) throws DAOException {
