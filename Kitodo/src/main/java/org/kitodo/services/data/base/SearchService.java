@@ -74,7 +74,8 @@ public abstract class SearchService<T extends BaseBean> {
     public abstract void saveToIndex(T baseBean) throws CustomResponseException, IOException;
 
     /**
-     * Method necessary for get from database object by id. It is used in removeById method.
+     * Method necessary for get from database object by id. It is used in
+     * removeById method.
      *
      * @param id
      *            of object
@@ -117,17 +118,6 @@ public abstract class SearchService<T extends BaseBean> {
     public abstract void removeFromIndex(T baseBean) throws CustomResponseException, IOException;
 
     /**
-     * Method saves relations which can be potentially modified together with
-     * object.
-     *
-     * @param baseBean
-     *            object
-     */
-    protected void saveDependenciesToIndex(T baseBean) throws CustomResponseException, IOException {
-
-    }
-
-    /**
      * Method removes document from the index of Elastic Search.
      *
      * @param id
@@ -136,6 +126,17 @@ public abstract class SearchService<T extends BaseBean> {
     public void removeFromIndex(Integer id) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
+    }
+
+    /**
+     * Method saves relations which can be potentially modified together with
+     * object.
+     *
+     * @param baseBean
+     *            object
+     */
+    protected void saveDependenciesToIndex(T baseBean) throws CustomResponseException, IOException {
+
     }
 
     /**
@@ -241,7 +242,7 @@ public abstract class SearchService<T extends BaseBean> {
                     if (++count >= maxTries) {
                         throw new IOException(ioe.getMessage());
                     }
-                } catch (DAOException daoe)  {
+                } catch (DAOException daoe) {
                     logger.debug("Remove from index was successful but..." + e);
                     throw new DAOException(daoe.getMessage());
                 }
@@ -271,11 +272,13 @@ public abstract class SearchService<T extends BaseBean> {
     }
 
     /**
-     * Convert list of SearchResult object to list of User objects.
+     * Convert list of SearchResult object to list of bean objects.
      *
      * @param searchResults
      *            list of results from ElasticSearch
-     * @return list of users
+     * @param table
+     *            name
+     * @return list of beans
      */
     public List<? extends BaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults, String table)
             throws DAOException, IOException {
@@ -290,6 +293,17 @@ public abstract class SearchService<T extends BaseBean> {
         query.deleteCharAt(query.length() - 1);
         query.append(")");
         return search(query.toString());
+    }
+
+    /**
+     * Convert SearchResult object to bean object.
+     *
+     * @param searchResult
+     *            result from ElasticSearch
+     * @return bean object
+     */
+    public T convertSearchResultToObject(SearchResult searchResult) throws DAOException, IOException {
+        return find(searchResult.getId());
     }
 
     /**
