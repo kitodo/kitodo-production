@@ -58,6 +58,33 @@ public class BatchServiceIT {
     }
 
     @Test
+    public void shouldRemoveBatch() throws Exception {
+        BatchService batchService = new BatchService();
+
+        Batch batch = new Batch();
+        batch.setTitle("To Remove");
+        batch.setType(Batch.Type.SERIAL);
+        batchService.save(batch);
+        Batch foundBatch = batchService.convertSearchResultToObject(batchService.findById(5));
+        assertEquals("Additional batch was not inserted in database!", "To Remove", foundBatch.getTitle());
+
+        batchService.remove(foundBatch);
+        foundBatch = batchService.convertSearchResultToObject(batchService.findById(5));
+        assertEquals("Additional batch was not removed from database!", null, foundBatch);
+
+        batch = new Batch();
+        batch.setTitle("To remove");
+        batch.setType(Batch.Type.SERIAL);
+        batchService.save(batch);
+        foundBatch = batchService.convertSearchResultToObject(batchService.findById(6));
+        assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
+
+        batchService.remove(6);
+        foundBatch = batchService.convertSearchResultToObject(batchService.findById(6));
+        assertEquals("Additional batch was not removed from database!", null, foundBatch);
+    }
+
+    @Test
     public void shouldContainCharSequence() throws Exception {
         BatchService batchService = new BatchService();
 
