@@ -23,12 +23,8 @@
             <h:outputText value="#{msgs.erweiterteEigenschaften}"/>
         </h4>
         <!-- Box für die Bearbeitung der Details -->
-        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
         <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' && AktuelleSchritteForm.batchHelper.propertyListSize>0}">
-            <!--<table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable"-->
-                       <!--rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' && AktuelleSchritteForm.batchHelper.propertyListSize>0}">-->
             <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
-
                 <thead class="standardTable_Header">
                     <tr>
                         <th>
@@ -47,9 +43,7 @@
                             rowIndexVar="rowIndex">
                     <t:dataList var="proc" value="#{AktuelleSchritteForm.batchHelper.containerlessProperties}"
                                 rowCountVar="propCount" rowIndexVar="propInd">
-                        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                         <ui:fragment rendered="#{container!=0 }">
-                            <!--<tr class="standardTable_Row1" rendered="#{container!=0 }">-->
                             <tr class="standardTable_Row1">
                                 <td>
                                     <h:outputText value="#{proc.name}"/>
@@ -90,9 +84,7 @@
                         </ui:fragment>
                     </t:dataList>
 
-                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                     <ui:fragment rendered="#{rowIndex < rowCount && rowIndex != 0}">
-                        <!--<tr rendered="#{rowIndex < rowCount && rowIndex != 0}">-->
                         <tr>
                             <td colspan="3" class="standardTable_Row1">
                                 <h:outputText value="&nbsp;" escape="false"/>
@@ -104,9 +96,7 @@
                                 value="#{AktuelleSchritteForm.batchHelper.containers[container].propertyList}"
                                 rowCountVar="propCount"
                                 rowIndexVar="propInd">
-                        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                         <ui:fragment rendered="#{container!=0 }">
-                            <!--<tr class="standardTable_Row1" rendered="#{container!=0 }">-->
                             <tr class="standardTable_Row1">
                                 <td>
                                     <h:outputText value="#{process_item.name}"/>
@@ -118,11 +108,7 @@
                                         <h:outputText value="#{process_item.value}"/>
                                     </h:outputLink>
                                 </td>
-                                <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                                 <ui:fragment rendered="#{propInd ==0}">
-                                    <!--<td class="standardTable_ColumnCentered"-->
-                                            <!--rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"-->
-                                            <!--rendered="#{propInd ==0}">-->
                                     <td class="standardTable_ColumnCentered"
                                         rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}">
                                         <!-- edit container -->
@@ -134,7 +120,9 @@
                                                                         value="#{container}"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
                                                                         value="eigenschaft"/>
-                                                <a4j:support event="onchange" reRender="editBatch"/>
+                                                <!-- TODO: check, if simply replacing "a4j:support" with "f:ajax" and "reRender" with "render" does the trick! -->
+                                                <!--<a4j:support event="onchange" reRender="editBatch"/>-->
+                                                <f:ajax event="onchange" render="editBatch"/>
                                             </h:commandLink>
 
                                             <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainer}"
@@ -235,10 +223,7 @@
         -->
 
         <!-- Box für die Bearbeitung der Details -->
-        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
         <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
-            <!--<table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen"-->
-                       <!--rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">-->
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
                 <tr>
                     <td class="eingabeBoxen_row1" colspan="2">

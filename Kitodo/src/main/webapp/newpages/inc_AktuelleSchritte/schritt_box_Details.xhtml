@@ -77,7 +77,6 @@
                                     <h:outputText value="#{AktuelleSchritteForm.mySchritt.processingStatusEnum.title}"/>
                                 </td>
                             </tr>
-                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                             <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null && !HelperForm.anonymized}">
                                 <tr>
                                 <!--<tr rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null && !HelperForm.anonymized}">-->
@@ -90,7 +89,6 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                             <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">
                                 <tr>
                                 <!--<tr rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">-->
@@ -103,7 +101,6 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                             <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">
                                 <tr>
                                 <!--<tr rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">-->

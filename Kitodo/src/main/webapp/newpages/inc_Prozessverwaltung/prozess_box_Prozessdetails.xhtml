@@ -23,12 +23,8 @@
             <td>
                 <!-- Box für die Darstellung der Details -->
                 <h:form id="processdetails">
-                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
-                    <!--<table cellpadding="3" cellspacing="0" width="100%" class="main_statistikboxen"-->
-                               <!--rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">-->
-                        <table cellpadding="3" cellspacing="0" width="100%" class="main_statistikboxen"
-                              >
+                        <table cellpadding="3" cellspacing="0" width="100%" class="main_statistikboxen">
                             <tr>
                                 <td class="main_statistikboxen_row1">
                                     <h:outputText value="#{msgs.prozess}"/>
@@ -50,10 +46,7 @@
                                             <td>
                                                 <h:outputText value="#{ProzessverwaltungForm.myProzess.title}"/>
                                             </td>
-                                            <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                                             <ui:fragment rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                                <!--<td rowspan="2" align="right"-->
-                                                        <!--rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">-->
                                                 <td rowspan="2" align="right">
                                                     <h:commandLink title="#{msgs.prozessdetailsBearbeiten}"
                                                                    action="#{NavigationForm.Reload}" style=";margin-right:20px">
@@ -154,9 +147,7 @@
                     </ui:fragment>
                 </h:form>
             </td>
-            <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
             <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">
-                <!--<td rendered="#{ProzessverwaltungForm.modusBearbeiten!='prozess'}">-->
                 <td>
                     <h:form id="htmleditorform">
                         <h:inputText id="myTextArea" value="#{ProzessverwaltungForm.wikiField}" style="width: 50%"/>
@@ -174,10 +165,7 @@
 
     <h:form>
     <!-- Box für die Bearbeitung der Details -->
-        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
         <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='prozess'}">
-            <!--<table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen"-->
-                       <!--rendered="#{ProzessverwaltungForm.modusBearbeiten=='prozess'}">-->
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
                 <tr>
                     <td class="eingabeBoxen_row1" colspan="2">

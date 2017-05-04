@@ -17,30 +17,32 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     >
 
-    <table cellpadding="3" cellspacing="0" width="100%"
-               class="main_statistikboxen" rendered="#{StatistikForm.showStatistics}">
-        <tr>
-            <td class="main_statistikboxen_row1">
-                <h:outputText value="#{msgs.statistikDatenbank}"/>
-            </td>
-        </tr>
-        <tr>
-            <td class="main_statistikboxen_row2">
-                <h:panelGrid width="100%" columns="2" columnClasses="columnLinks,columnRechts">
-                    <h:outputText value="#{msgs.users}:"/>
-                    <h:outputText value="#{StatistikForm.anzahlBenutzer}"/>
-                    <h:outputText value="#{msgs.benutzergruppen}:"/>
-                    <h:outputText value="#{StatistikForm.anzahlBenutzergruppen}"/>
-                    <h:outputText value="#{msgs.prozesse}:"/>
-                    <h:outputText value="#{StatistikForm.anzahlProzesse}"/>
-                    <h:outputText value="#{msgs.schritte}:"/>
-                    <h:outputText value="#{StatistikForm.anzahlSchritte}"/>
-                    <h:outputText value="#{msgs.vorlagen}:"/>
-                    <h:outputText value="#{StatistikForm.anzahlVorlagen}"/>
-                    <h:outputText value="#{msgs.werkstuecke}:"/>
-                    <h:outputText value="#{StatistikForm.anzahlWerkstuecke}"/>
-                </h:panelGrid>
-            </td>
-        </tr>
-    </table>
+    <ui:fragment rendered="#{StatistikForm.showStatistics}">
+        <table cellpadding="3" cellspacing="0" width="100%"
+                   class="main_statistikboxen">
+            <tr>
+                <td class="main_statistikboxen_row1">
+                    <h:outputText value="#{msgs.statistikDatenbank}"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="main_statistikboxen_row2">
+                    <h:panelGrid width="100%" columns="2" columnClasses="columnLinks,columnRechts">
+                        <h:outputText value="#{msgs.users}:"/>
+                        <h:outputText value="#{StatistikForm.anzahlBenutzer}"/>
+                        <h:outputText value="#{msgs.benutzergruppen}:"/>
+                        <h:outputText value="#{StatistikForm.anzahlBenutzergruppen}"/>
+                        <h:outputText value="#{msgs.prozesse}:"/>
+                        <h:outputText value="#{StatistikForm.anzahlProzesse}"/>
+                        <h:outputText value="#{msgs.schritte}:"/>
+                        <h:outputText value="#{StatistikForm.anzahlSchritte}"/>
+                        <h:outputText value="#{msgs.vorlagen}:"/>
+                        <h:outputText value="#{StatistikForm.anzahlVorlagen}"/>
+                        <h:outputText value="#{msgs.werkstuecke}:"/>
+                        <h:outputText value="#{StatistikForm.anzahlWerkstuecke}"/>
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </table>
+    </ui:fragment>
 </ui:composition>

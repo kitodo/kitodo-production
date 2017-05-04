@@ -1,15 +1,15 @@
 <!--
-    *
-    * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
-    *
-    * This file is part of the Kitodo project.
-    *
-    * It is licensed under GNU General Public License version 3 or later.
-    *
-    * For the full copyright and license information, please read the
-    * GPL3-License.txt file that was distributed with this source code.
-    *
-    -->
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
 
 <!-- ++++++++++++++++     Action      ++++++++++++++++ -->
 
@@ -26,57 +26,57 @@
                 <h:outputText value="#{msgs.moeglicheAktionen}"/>
             </td>
         </tr>
-        <!-- TODO: how do we replace the "rendered" attribute here? -->
-        <!--<tr valign="top"-->
-                <!--rendered="#{LoginForm.myBenutzer.withMassDownload && AktuelleSchritteForm.page.totalResults > 0}">-->
-        <tr valign="top">
-            <td class="eingabeBoxen_row2">
-                <h:panelGrid columns="1">
+        <ui:fragment rendered="#{LoginForm.myBenutzer.withMassDownload && AktuelleSchritteForm.page.totalResults > 0}">
+            <tr valign="top">
+                <td class="eingabeBoxen_row2">
+                    <h:panelGrid columns="1">
 
-                    <!-- Upload-Schaltknopf -->
-                    <h:commandLink action="#{AktuelleSchritteForm.uploadFromHomeAlle}"
-                                   title="#{msgs.verzeichnisFertigHochladen}"
-                                   onclick="if (!confirm('#{msgs.upload}?')) return">
-                        <h:graphicImage value="/newpages/images/buttons/load_up1.gif"
-                                        style="margin-right:3px;vertical-align:middle"/>
-                        <h:outputText value="#{msgs.verzeichnisFertigHochladen}"/>
-                    </h:commandLink>
+                        <!-- Upload-Schaltknopf -->
+                        <h:commandLink action="#{AktuelleSchritteForm.uploadFromHomeAlle}"
+                                       title="#{msgs.verzeichnisFertigHochladen}"
+                                       onclick="if (!confirm('#{msgs.upload}?')) return">
+                            <h:graphicImage value="/newpages/images/buttons/load_up1.gif"
+                                            style="margin-right:3px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.verzeichnisFertigHochladen}"/>
+                        </h:commandLink>
 
-                    <!-- Download-Schaltknopf für Page-->
-                    <h:commandLink action="#{AktuelleSchritteForm.DownloadToHomePage}"
-                                   title="#{msgs.alleTrefferDieserSeiteInMeinHomeverzeichnis}"
-                                   onclick="if (!confirm('#{msgs.download}?')) return">
-                        <h:graphicImage value="/newpages/images/buttons/load_down1.gif"
-                                        style="margin-right:3px;vertical-align:middle"/>
-                        <h:outputText value="#{msgs.alleTrefferDieserSeiteInMeinHomeverzeichnis}"/>
-                    </h:commandLink>
+                        <!-- Download-Schaltknopf für Page-->
+                        <h:commandLink action="#{AktuelleSchritteForm.DownloadToHomePage}"
+                                       title="#{msgs.alleTrefferDieserSeiteInMeinHomeverzeichnis}"
+                                       onclick="if (!confirm('#{msgs.download}?')) return">
+                            <h:graphicImage value="/newpages/images/buttons/load_down1.gif"
+                                            style="margin-right:3px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.alleTrefferDieserSeiteInMeinHomeverzeichnis}"/>
+                        </h:commandLink>
 
-                    <!-- Download-Schaltknopf für gesamtes Trefferset -->
-                    <h:commandLink action="#{AktuelleSchritteForm.downloadToHomeHits}"
-                                   title="#{msgs.gesamtesTreffersetInMeinHomeverzeichnis}"
-                                   onclick="if (!confirm('#{msgs.download}?')) return">
-                        <h:graphicImage value="/newpages/images/buttons/load_down1.gif"
-                                        style="margin-right:3px;vertical-align:middle"/>
-                        <h:outputText value="#{msgs.gesamtesTreffersetInMeinHomeverzeichnis}"/>
-                    </h:commandLink>
+                        <!-- Download-Schaltknopf für gesamtes Trefferset -->
+                        <h:commandLink action="#{AktuelleSchritteForm.downloadToHomeHits}"
+                                       title="#{msgs.gesamtesTreffersetInMeinHomeverzeichnis}"
+                                       onclick="if (!confirm('#{msgs.download}?')) return">
+                            <h:graphicImage value="/newpages/images/buttons/load_down1.gif"
+                                            style="margin-right:3px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.gesamtesTreffersetInMeinHomeverzeichnis}"/>
+                        </h:commandLink>
 
-                </h:panelGrid>
-            </td>
-            <td class="eingabeBoxen_row2" align="right">
-                <h:panelGrid columns="3" styleClass="text_light">
-                    <!-- Anzahl der Images aller Treffer -->
-                    <h:outputText value="#{msgs.anzahlDerImagesAllerTreffer}:"/>
-                    <h:outputText id="calcNumber" value="#{AktuelleSchritteForm.allImages}"/>
+                    </h:panelGrid>
+                </td>
+                <td class="eingabeBoxen_row2" align="right">
+                    <h:panelGrid columns="3" styleClass="text_light">
+                        <!-- Anzahl der Images aller Treffer -->
+                        <h:outputText value="#{msgs.anzahlDerImagesAllerTreffer}:"/>
+                        <h:outputText id="calcNumber" value="#{AktuelleSchritteForm.allImages}"/>
 
-                    <h:commandLink  action="#{AktuelleSchritteForm.calcHomeImages}">
-                        <f:ajax render="calcNumber"></f:ajax>
-                        <h:graphicImage value="/newpages/images/reload.gif" style="margin-right:4px"
-                                        rendered="#{item.selected}"/>
-                    </h:commandLink>
+                        <h:commandLink  action="#{AktuelleSchritteForm.calcHomeImages}">
+                            <!-- FIXME: this may destroy JS on the page; wrong usage of f:ajax? -->
+                            <f:ajax render="calcNumber"></f:ajax>
+                            <h:graphicImage value="/newpages/images/reload.gif" style="margin-right:4px"
+                                            rendered="#{item.selected}"/>
+                        </h:commandLink>
 
-                </h:panelGrid>
-            </td>
-        </tr>
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </ui:fragment>
 
         <tr valign="top">
             <td class="eingabeBoxen_row2" colspan="2">

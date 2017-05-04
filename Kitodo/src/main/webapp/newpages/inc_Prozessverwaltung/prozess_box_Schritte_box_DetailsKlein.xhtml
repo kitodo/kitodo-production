@@ -45,9 +45,7 @@
                     </td>
                 </tr>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
-                    <!--<tr rendered="#{item.processingBegin !=null && !HelperForm.anonymized}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
@@ -58,9 +56,7 @@
                     </tr>
                 </ui:fragment>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
-                    <!--<tr rendered="#{item.processingTime !=null && !HelperForm.anonymized}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
@@ -71,9 +67,7 @@
                     </tr>
                 </ui:fragment>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.processingEnd !=null and !HelperForm.anonymized}">
-                    <!--<tr rendered="#{item.processingEnd !=null && !HelperForm.anonymized}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.bearbeitungsende}:"/>
@@ -84,9 +78,7 @@
                     </tr>
                 </ui:fragment>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.processingUser !=null and item.processingUser.id !=0 and !HelperForm.anonymized}">
-                    <!--<tr rendered="#{item.processingUser !=null && item.processingUser.id !=0 && !HelperForm.anonymized}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.letzteAktualisierungDurch}:"/>
@@ -97,9 +89,7 @@
                     </tr>
                 </ui:fragment>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.editTypeEnum !=null}">
-                    <!--<tr rendered="#{item.editTypeEnum !=null}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.aktualisierungstyp}:"/>
@@ -110,9 +100,7 @@
                     </tr>
                 </ui:fragment>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.typeAutomaticScriptPath != null and item.typeAutomaticScriptPath != ''}">
-                    <!--<tr rendered="#{item.typeAutomaticScriptPath != null && item.typeAutomaticScriptPath != ''}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.automatischerSchritt}:"/>
@@ -123,9 +111,7 @@
                     </tr>
                 </ui:fragment>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{item.typeModuleName != null and item.typeModuleName != ''}">
-                    <!--<tr rendered="#{item.typeModuleName != null && item.typeModuleName != ''}">-->
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.module}:"/>

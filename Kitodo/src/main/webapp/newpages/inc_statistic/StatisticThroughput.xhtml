@@ -152,7 +152,6 @@
                 <h4 style="margin-top:20px">
                     <h:outputText value="#{element.title}"/>
                 </h4>
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{element.dataTable.showableInChart and Form.statisticsManager2.targetResultOutput=='chart'}">
                     <img style="margin-bottom:15px"
                          src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"
@@ -179,7 +178,6 @@
                     <h:outputText value="#{element.title}"/>
                 </h4>
                 <h:panelGroup>
-                    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                     <ui:fragment rendered="#{element.dataTable.showableInChart}">
                         <img style="margin-bottom:15px"
                              src="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{element.imageUrl}"

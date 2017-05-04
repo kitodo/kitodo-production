@@ -60,12 +60,8 @@
 
         </x:dataTable>
         -->
-        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
         <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' && AktuelleSchritteForm.propertyListSize>0}">
             <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
-            <!--<table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable"-->
-                       <!--rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' && AktuelleSchritteForm.propertyListSize>0}">-->
-
                 <thead class="standardTable_Header">
                     <tr>
                         <th>
@@ -83,9 +79,7 @@
                             rowIndexVar="rowIndex">
                     <t:dataList var="proc" value="#{AktuelleSchritteForm.containerlessProperties}" rowCountVar="propCount"
                                 rowIndexVar="propInd">
-                        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                         <ui:fragment rendered="#{container==0 }">
-                            <!--<tr class="standardTable_Row1" rendered="#{container==0 }">-->
                             <tr class="standardTable_Row1">
                                 <td>
                                     <h:outputText value="#{proc.name}"/>
@@ -126,9 +120,7 @@
                         </ui:fragment>
                     </t:dataList>
 
-                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                     <ui:fragment rendered="#{rowIndex < rowCount && rowIndex != 0}">
-                        <!--<tr rendered="#{rowIndex < rowCount && rowIndex != 0}">-->
                         <tr>
                             <td colspan="3" class="standardTable_Row1">
                                 <h:outputText value="&nbsp;" escape="false"/>
@@ -138,9 +130,7 @@
 
                     <t:dataList var="process_item" value="#{AktuelleSchritteForm.containers[container].propertyList}"
                                 rowCountVar="propCount" rowIndexVar="propInd">
-                        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                         <ui:fragment rendered="#{container!=0 }">
-                            <!--<tr class="standardTable_Row1" rendered="#{container!=0 }">-->
                             <tr class="standardTable_Row1">
                                 <td>
                                     <h:outputText value="#{process_item.name}"/>
@@ -153,11 +143,7 @@
                                     </h:outputLink>
                                     <!-- 						<h:outputText value="#{process_item.value}" /> -->
                                 </td>
-                                <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                                 <ui:fragment rendered="#{propInd ==0}">
-                                    <!--<td class="standardTable_ColumnCentered"-->
-                                        <!--rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}"-->
-                                        <!--rendered="#{propInd ==0}">-->
                                     <td class="standardTable_ColumnCentered"
                                             rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}">
                                         <h:panelGroup
@@ -192,12 +178,8 @@
             </table>
         </ui:fragment>
 
-        <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
         <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
-            <!--<table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen"-->
-                       <!--rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">-->
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
-
                 <tr>
                     <td class="eingabeBoxen_row1" colspan="2">
                         <h:outputText value="#{msgs.eigenschaft}"/>

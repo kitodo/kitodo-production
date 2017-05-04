@@ -18,7 +18,6 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
-    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
     <ui:fragment rendered="#{SessionForm.bitteAusloggen!=''}">
         <tr>
             <td>
@@ -59,7 +58,6 @@
 
                 </td>
 
-                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                 <ui:fragment rendered="#{HelperForm.applicationIndividualHeader!=''}">
                     <td valign="middle" align="right" style="padding:3px">
                         <h:outputText value="#{HelperForm.applicationIndividualHeader}"
@@ -101,7 +99,6 @@
 
                         <div class="languageSwitch">
                             <t:dataList var="availableLanguage" value="#{SpracheForm.supportedLocales}">
-                                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                                 <ui:fragment rendered="#{not availableLanguage.selected}">
                                     <span class="alterLanguage">
                                         <h:commandLink action="#{SpracheForm.SpracheUmschalten}"
@@ -111,7 +108,6 @@
                                         </h:commandLink>
                                     </span>
                                 </ui:fragment>
-                                <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                                 <ui:fragment rendered="#{availableLanguage.selected}">
                                     <span class="currentLanguage"
                                           title="#{availableLanguage.displayLanguageTranslated}">

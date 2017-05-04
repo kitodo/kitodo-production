@@ -19,9 +19,6 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
-    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
-    <!--<table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px"-->
-           <!--rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">-->
     <ui:fragment rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
             <tr>

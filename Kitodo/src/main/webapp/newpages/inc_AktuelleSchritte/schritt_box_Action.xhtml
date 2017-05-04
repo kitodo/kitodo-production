@@ -1,15 +1,15 @@
 <!--
-    *
-    * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
-    *
-    * This file is part of the Kitodo project.
-    *
-    * It is licensed under GNU General Public License version 3 or later.
-    *
-    * For the full copyright and license information, please read the
-    * GPL3-License.txt file that was distributed with this source code.
-    *
-    -->
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
 
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
@@ -23,8 +23,7 @@
     rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
 
         <!-- ++++++++++++++++     Import      ++++++++++++++++ -->
-        <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null && AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
             <table cellpadding="3" cellspacing="0" width="100%"
                        class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -74,7 +73,6 @@
         <!-- ++++++++++++++++     // Import      ++++++++++++++++ -->
         <h:form id="actionform">
             <!-- ++++++++++++++++     Action      ++++++++++++++++ -->
-            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
             <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten==''}">
                 <table cellpadding="3" cellspacing="0" width="100%"
                        class="eingabeBoxen" style="margin-top:20px">
@@ -109,7 +107,7 @@
 
                                     <!-- Bei Sperrung durch eigenen Benutzer: Sperrung aufheben können -->
                                     <h:commandLink id="action1"
-                                                   rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUsers != null) && (AktuelleSchritteForm.mySchritt.process.blockedUsers.id == LoginForm.myBenutzer.id)}"
+                                                   rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUsers != null) and (AktuelleSchritteForm.mySchritt.process.blockedUsers.id == LoginForm.myBenutzer.id)}"
                                                    action="#{AktuelleSchritteForm.sperrungAufheben}"
                                                    title="#{msgs.oderSperrungAufheben}">
                                         <h:graphicImage value="/newpages/images/buttons/key2a.gif"
@@ -134,7 +132,7 @@
                                 <!-- Plugin-Schaltknopf -->
 
                                 <h:commandLink
-                                        rendered="#{AktuelleSchritteForm.mySchritt.stepPlugin != null && AktuelleSchritteForm.mySchritt.stepPlugin != ''}"
+                                        rendered="#{AktuelleSchritteForm.mySchritt.stepPlugin != null and AktuelleSchritteForm.mySchritt.stepPlugin != ''}"
                                         action="#{AktuelleSchritteForm.callStepPlugin}"
                                         title="#{msgs.stepPlugin} (#{AktuelleSchritteForm.mySchritt.stepPlugin})">
                                     <h:graphicImage value="/newpages/images/buttons/admin4b.gif"
@@ -145,7 +143,7 @@
 
                                 <!-- Modul-Schaltknopf -->
                                 <h:commandLink id="action2"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeModuleName != null && AktuelleSchritteForm.mySchritt.typeModuleName != ''}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeModuleName != null and AktuelleSchritteForm.mySchritt.typeModuleName != ''}"
                                                action="#{AktuelleSchritteForm.executeModule}"
                                                title="#{msgs.modulStarten} (#{AktuelleSchritteForm.mySchritt.typeModuleName})">
                                     <h:graphicImage value="/newpages/images/buttons/admin4b.gif"
@@ -156,7 +154,7 @@
 
                                 <!-- Script-Schaltknopf -->
                                 <h:commandLink id="action3"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName1}">
                                     <t:updateActionListener
@@ -169,7 +167,7 @@
                                 </h:commandLink>
 
                                 <h:commandLink id="action4"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath2 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName2}">
                                     <t:updateActionListener
@@ -182,7 +180,7 @@
                                 </h:commandLink>
 
                                 <h:commandLink id="action5"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath3 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName3}">
                                     <t:updateActionListener
@@ -195,7 +193,7 @@
                                 </h:commandLink>
 
                                 <h:commandLink id="action6"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath4 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName4}">
                                     <t:updateActionListener
@@ -208,7 +206,7 @@
                                 </h:commandLink>
 
                                 <h:commandLink id="action7"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != null && AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != '' && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != null and AktuelleSchritteForm.mySchritt.typeAutomaticScriptPath5 != '' and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
                                                title="#{AktuelleSchritteForm.mySchritt.scriptName5}">
                                     <t:updateActionListener
@@ -222,7 +220,7 @@
                                 </h:commandLink>
                                 <!-- tiffHeaderDownload-Schaltknopf -->
                                 <h:commandLink id="action8"
-                                               rendered="#{0==1 && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{0==1 and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.downloadTiffHeader}"
                                                title="#{msgs.dateiMitTiffHeaderSpeichern}">
                                     <h:graphicImage value="/newpages/images/buttons/tif.gif"
@@ -234,12 +232,12 @@
 
                                 <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
                                 <h:outputText style="back-color:blue; color: red; font-weight: bold;"
-                                              rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                              rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                               value="#{msgs.timeoutWarningDMS}"/>
 
                                 <!-- Upload-Schaltknopf -->
                                 <h:commandLink id="action9"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{AktuelleSchritteForm.exportDMS}"
                                                title="#{msgs.importDms}">
                                     <h:graphicImage value="/newpages/images/buttons/dms.png"
@@ -249,7 +247,7 @@
 
                                 <!-- Metadaten-Schaltknopf -->
                                 <h:commandLink id="action10"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata && AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
+                                               rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata and AktuelleSchritteForm.mySchritt.process.blockedUsers == null}"
                                                action="#{Metadaten.readXml}"
                                                title="#{msgs.metadatenBearbeiten}">
                                     <h:graphicImage value="/newpages/images/buttons/view1.gif"
@@ -257,7 +255,7 @@
                                     <h:outputText value="#{msgs.metadatenBearbeiten}"/>
                                     <t:updateActionListener
                                             value="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"
-                                            property="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"></t:updateActionListener>
+                                            property="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"/>
                                     <f:param name="ProzesseID"
                                              value="#{AktuelleSchritteForm.mySchritt.process.id}"/>
                                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
@@ -320,7 +318,7 @@
 
                                 <!-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke -->
                                 <h:panelGroup
-                                        rendered="#{AktuelleSchritteForm.mySchritt.priority>9 && AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
+                                        rendered="#{AktuelleSchritteForm.mySchritt.priority>9 and AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
                                     <!-- TODO: find replacement for jd hideable controller and hideable area -->
                                     <!--<jd:hideableController for="solution" id="solutionswitcher"-->
                                                            <!--title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">-->

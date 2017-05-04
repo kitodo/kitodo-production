@@ -61,17 +61,9 @@
 
                                     <!-- Show hit list if several results were found -->
 
-                                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
-                                    <ui:fragment rendered="#{container!=0 }">
-                                        <!--<div class="modalBackground"-->
-                                                 <!--rendered="#{ProzesskopieForm.hitlistShowing}"/>-->
-                                        <div class="modalBackground"/>
-                                    </ui:fragment>
-
-                                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                                     <ui:fragment rendered="#{ProzesskopieForm.hitlistShowing}">
-                                        <!--<div class="hitlistBoxWrapper"-->
-                                                 <!--rendered="#{ProzesskopieForm.hitlistShowing}">-->
+                                        <div class="modalBackground"/>
+
                                         <div class="hitlistBoxWrapper">
                                             <div class="hitlistBox">
                                                 <h3>

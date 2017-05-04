@@ -17,15 +17,9 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
-
-    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlage'}">
-        <!--<table cellpadding="3" cellspacing="0" width="100%"-->
-                   <!--class="main_statistikboxen"-->
-                   <!--rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlage'}">-->
         <table cellpadding="3" cellspacing="0" width="100%"
                        class="main_statistikboxen">
-
             <tr>
                 <td class="main_statistikboxen_row1">
                     <h:outputText value="#{msgs.vorlage}"/>
@@ -72,11 +66,7 @@
     </ui:fragment>
 
     <!-- Box für die Bearbeitung der Details -->
-    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlage'}">
-        <!--<table cellpadding="3" cellspacing="0" width="100%"-->
-                   <!--class="eingabeBoxen"-->
-                   <!--rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlage'}">-->
         <table cellpadding="3" cellspacing="0" width="100%"
                class="eingabeBoxen">
 

@@ -253,28 +253,29 @@
                                                                                 <td></td>
                                                                                 <td></td>
                                                                             </tr>
-                                                                            <tr rendered="#{ProjekteForm.calcDuration > 11}">
-                                                                                <!-- throughputPerYear -->
-                                                                                <td>
-                                                                                    <h:outputText id="vwid26"
-                                                                                                  value="#{msgs.volumesPerYear}:"
-                                                                                                  rendered="#{ProjekteForm.calcDuration > 11}"/>
-                                                                                </td>
-                                                                                <td class="left">
-                                                                                    <h:outputText id="vwid27"
-                                                                                                  value="#{ProjekteForm.calcThroughputPerYear}"
-                                                                                                  rendered="#{ProjekteForm.calcDuration > 11}"/>
-                                                                                </td>
-                                                                                <td class="right">
-                                                                                    <h:outputText id="id28"
-                                                                                                  value="#{msgs.pagesPerYear}:"/>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <h:outputText id="id29"
-                                                                                                  value="#{ProjekteForm.calcThroughputPagesPerYear}"/>
-                                                                                </td>
-                                                                            </tr>
-                                                                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
+                                                                            <ui:fragment rendered="#{ProjekteForm.calcDuration > 11}">
+                                                                                <tr>
+                                                                                    <!-- throughputPerYear -->
+                                                                                    <td>
+                                                                                        <h:outputText id="vwid26"
+                                                                                                      value="#{msgs.volumesPerYear}:"
+                                                                                                      rendered="#{ProjekteForm.calcDuration > 11}"/>
+                                                                                    </td>
+                                                                                    <td class="left">
+                                                                                        <h:outputText id="vwid27"
+                                                                                                      value="#{ProjekteForm.calcThroughputPerYear}"
+                                                                                                      rendered="#{ProjekteForm.calcDuration > 11}"/>
+                                                                                    </td>
+                                                                                    <td class="right">
+                                                                                        <h:outputText id="id28"
+                                                                                                      value="#{msgs.pagesPerYear}:"/>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <h:outputText id="id29"
+                                                                                                      value="#{ProjekteForm.calcThroughputPagesPerYear}"/>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </ui:fragment>
                                                                             <ui:fragment rendered="#{ProjekteForm.calcDuration > 2}">
                                                                                 <tr>
                                                                                     <!-- throughputPerQuarter -->
@@ -300,7 +301,6 @@
 
                                                                                 </tr>
                                                                             </ui:fragment>
-                                                                            <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
                                                                             <ui:fragment rendered="#{ProjekteForm.calcDuration > 0}">
                                                                                 <tr>
                                                                                     <!-- throughputPerMonth -->

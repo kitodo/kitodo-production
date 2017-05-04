@@ -1,21 +1,20 @@
 <!--
-        *
-        * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
-        *
-        * This file is part of the Kitodo project.
-        *
-        * It is licensed under GNU General Public License version 3 or later.
-        *
-        * For the full copyright and license information, please read the
-        * GPL3-License.txt file that was distributed with this source code.
-        *
-        -->
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
 
 <ui:composition
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:si="http://sourceforge.net/projects/jsf-comp/easysi"
     >
 
     <table cellpadding="3" cellspacing="0" width="100%"
@@ -39,16 +38,16 @@
                             <h:outputText value="#{item.localizedTitle}"/>
                         </td>
                     </tr>
-                    <!-- TODO: how do we replace the "rendered" attribute here? -->
-                    <!--<tr rendered="false">-->
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.id}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.id}"/>
-                        </td>
-                    </tr>
+                    <ui:fragment rendered="false">
+                        <tr>
+                            <td width="150">
+                                <h:outputText value="#{msgs.id}:"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{item.id}"/>
+                            </td>
+                        </tr>
+                    </ui:fragment>
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.prioritaet}:"/>
@@ -57,36 +56,36 @@
                             <h:outputText value="#{item.priority}"/>
                         </td>
                     </tr>
-                    <!-- TODO: how do we replace the "rendered" attribute here? -->
-                    <!--<tr rendered="#{item.processingBegin !=null && !HelperForm.anonymized}">-->
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingBeginAsFormattedString}"/>
-                        </td>
-                    </tr>
-                    <!-- TODO: how do we replace the "rendered" attribute here? -->
-                    <!--<tr rendered="#{item.processingTime !=null && !HelperForm.anonymized}">-->
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingTimeAsFormattedString}"/>
-                        </td>
-                    </tr>
-                    <!-- TODO: how do we replace the "rendered" attribute here? -->
-                    <!--<htm:tr rendered="#{item.processingUser.id !=0 && item.processingUser !=null && !HelperForm.anonymized}">-->
-                    <tr>
-                        <td width="150">
-                            <h:outputText value="#{msgs.letzteAktualisierungDurch}:"/>
-                        </td>
-                        <td>
-                            <h:outputText value="#{item.processingUser.fullName}"/>
-                        </td>
-                    </tr>
+                    <ui:fragment rendered="#{item.processingBegin !=null && !HelperForm.anonymized}">
+                        <tr>
+                            <td width="150">
+                                <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{item.processingBeginAsFormattedString}"/>
+                            </td>
+                        </tr>
+                    </ui:fragment>
+                    <ui:fragment rendered="#{item.processingTime !=null && !HelperForm.anonymized}">
+                        <tr>
+                            <td width="150">
+                                <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{item.processingTimeAsFormattedString}"/>
+                            </td>
+                        </tr>
+                    </ui:fragment>
+                    <ui:fragment rendered="#{item.processingUser.id !=0 && item.processingUser !=null && !HelperForm.anonymized}">
+                        <tr>
+                            <td width="150">
+                                <h:outputText value="#{msgs.letzteAktualisierungDurch}:"/>
+                            </td>
+                            <td>
+                                <h:outputText value="#{item.processingUser.fullName}"/>
+                            </td>
+                        </tr>
+                    </ui:fragment>
                     <tr>
                         <td width="150">
                             <h:outputText value="#{msgs.aktualisierungstyp}:"/>

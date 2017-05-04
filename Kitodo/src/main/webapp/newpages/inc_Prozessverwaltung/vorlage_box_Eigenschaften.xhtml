@@ -23,11 +23,8 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
 
-    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlageeigenschaft'}">
-        <!--<h4 style="margin-top:15"-->
-                <!--rendered="#{ProzessverwaltungForm.modusBearbeiten!='vorlageeigenschaft'}">-->
-        <h4 style="margin-top:15">
+        <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaften}"/>
         </h4>
     </ui:fragment>
@@ -86,23 +83,15 @@
     <!-- ++++++++++     Eigenschaft bearbeiten      +++++++++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlageeigenschaft'}">
-        <!--<h4 style="margin-top:15"-->
-                <!--rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlageeigenschaft'}">-->
-        <h4 style="margin-top:15">
+        <h4 style="margin-top:15px">
             <h:outputText value="#{msgs.eigenschaftBearbeiten}"/>
         </h4>
     </ui:fragment>
     <!-- Box für die Bearbeitung der Details -->
-    <!-- TODO: "rendered" attribute should be available in JSF 2.2's ui:fragment -->
     <ui:fragment rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlageeigenschaft'}">
-        <!--<table cellpadding="3" cellspacing="0" width="100%"-->
-                   <!--class="eingabeBoxen"-->
-                   <!--rendered="#{ProzessverwaltungForm.modusBearbeiten=='vorlageeigenschaft'}">-->
         <table cellpadding="3" cellspacing="0" width="100%"
                class="eingabeBoxen">
-
             <tr>
                 <td class="eingabeBoxen_row1" colspan="2">
                     <h:outputText value="#{msgs.eigenschaft}"/>

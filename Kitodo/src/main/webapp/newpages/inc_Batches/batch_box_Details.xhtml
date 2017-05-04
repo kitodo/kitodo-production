@@ -106,9 +106,7 @@
                                 </td>
                             </tr>
 
-                            <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                             <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingBegin !=null && !HelperForm.anonymized}">
-                                <!--<tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingBegin !=null && !HelperForm.anonymized}">-->
                                 <tr>
                                     <td width="150">
                                         <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
@@ -119,9 +117,7 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                             <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
-                                <!--<tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">-->
                                 <tr>
                                     <td width="150">
                                         <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
@@ -132,9 +128,7 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
                             <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
-                                <!--<tr rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">-->
                                 <tr>
                                     <td width="150">
                                         <h:outputText value="#{msgs.aktualisierungstyp}:"/>
