@@ -1,0 +1,426 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <h:panelGroup rendered="#{not Metadaten.modusStrukturelementVerschieben}">
+
+        <!-- ++++++++++++++++     Neues Strukturelement      ++++++++++++++++ -->
+        <table cellpadding="3" cellspacing="0" width="350px" class="eingabeBoxen" style="margin-top:0px">
+            <tr>
+                <td class="eingabeBoxen_row1">
+                    <h:outputText value="#{msgs.neuesStrukturelement}"/>
+                </td>
+            </tr>
+            <tr>
+                <td class="eingabeBoxen_row2">
+                    <h:panelGrid id="mygrid1" columns="1">
+
+                        <!-- onclick="addableTypenAnzeigen(this)" -->
+                        <t:selectOneRadio id="auswahlElementWohin" forceId="true" layout="pageDirection"
+                                          style="font-size:12px" onclick="setSecretElement(this.value)"
+                                          value="#{Metadaten.neuesElementWohin}">
+                            <f:selectItem itemValue="1" itemLabel="#{msgs.vorDasAktuelleElement}"/>
+                            <f:selectItem itemValue="2" itemLabel="#{msgs.hinterDasAktuelleElement}"/>
+                            <f:selectItem itemValue="3" itemLabel="#{msgs.alsErstesKindDesAktuellenElements}"/>
+                            <f:selectItem itemValue="4" itemLabel="#{msgs.alsLetztesKindDesAktuellenElements}"/>
+                        </t:selectOneRadio>
+
+                        <t:inputText id="secretElement" forceId="true" value="#{Metadaten.neuesElementWohin}"
+                                     style="display:none;"/>
+
+                        <h:panelGroup>
+                            <t:selectOneMenu id="auswahlAddable1" forceId="true"
+                                             style="width:315px;margin-left:8px;margin-bottom:4px"
+                                             value="#{Metadaten.addDocStructType1}">
+                                <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
+                            </t:selectOneMenu>
+                            <t:selectOneMenu id="auswahlAddable2" forceId="true"
+                                             style="width:315px;margin-left:8px;margin-bottom:4px"
+                                             value="#{Metadaten.addDocStructType2}">
+                                <f:selectItems value="#{Metadaten.addableDocStructTypenAlsKind}"/>
+                            </t:selectOneMenu>
+                        </h:panelGroup>
+                    </h:panelGrid>
+
+                    <h:panelGrid columns="3" width="100%" columnClasses="standardTable_Column,standardTable_Column">
+                        <h:outputText value="#{msgs.ersteSeite}: "/>
+                        <h:panelGroup id="pageStartGroup">
+                            <t:inputText id="pagestart1" forceId="true" value="#{Metadaten.pagesStart}"/>
+                            <!-- TODO: replace rich:suggestionbox -->
+                            <!--<rich:suggestionbox height="200" width="145" for="pagestart1" var="startpage" id="suggestion3"-->
+                                                <!--suggestionAction="#{Metadaten.autocomplete}">-->
+                                <!--<h:column>-->
+                                    <!--<h:outputText value="#{startpage}"/>-->
+                                <!--</h:column>-->
+                            <!--</rich:suggestionbox>-->
+                        </h:panelGroup>
+
+                        <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
+                        <a4j:commandLink action="#{Metadaten.currentStartpage}" reRender="pageStartGroup">
+                            <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
+                                            style="border: 0px;vertical-align:middle;"/>
+                            <t:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
+                        </a4j:commandLink>
+
+                        <h:outputText value="#{msgs.letzteSeite}: "/>
+                        <h:panelGroup id="pageEndGroup">
+                            <t:inputText id="pageend1" forceId="true" value="#{Metadaten.pagesEnd}"/>
+                            <!-- TODO: replace rich:suggestionbox -->
+                            <!--<rich:suggestionbox tokens=":" height="200" width="145" for="pageend1" var="endpage"-->
+                                                <!--id="suggestion4"-->
+                                                <!--suggestionAction="#{Metadaten.autocomplete}">-->
+                                <!--<h:column>-->
+                                    <!--<h:outputText value="#{endpage}"/>-->
+                                <!--</h:column>-->
+                            <!--</rich:suggestionbox>-->
+                        </h:panelGroup>
+                        <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
+                        <a4j:commandLink action="#{Metadaten.currentEndpage}" reRender="pageEndGroup">
+                            <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
+                                            style="border: 0px;vertical-align:middle;"/>
+                            <t:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
+                        </a4j:commandLink>
+                    </h:panelGrid>
+                </td>
+            </tr>
+            <tr>
+                <td class="eingabeBoxen_row3" align="right">
+                    <h:commandLink action="#{Metadaten.addNode}" value="#{msgs.strukturelementHinzufuegen}"
+                                   target="links"/>
+                </td>
+            </tr>
+        </table>
+        <!-- ++++++++++++++++     // Neues Strukturelement      ++++++++++++++++ -->
+
+
+        <!-- ++++++++++++++++     Strukturelement verschieben oder löschen     ++++++++++++++++ -->
+        <table cellpadding="3" cellspacing="0" width="350px" class="eingabeBoxen" style="margin-top:20px">
+            <tr>
+                <td class="eingabeBoxen_row1">
+                    <h:outputText value="#{msgs.ausgewaehltesStrukturelement} ..."/>
+                </td>
+            </tr>
+            <tr>
+                <td class="eingabeBoxen_row2">
+                    <h:panelGrid id="mygrid2" columns="1">
+
+                        <!-- Knoten nach oben -->
+                        <h:commandLink action="#{Metadaten.nodeUp}" title="#{msgs.docstructNachObenSchieben}"
+                                       target="links">
+                            <h:graphicImage value="/newpages/images/buttons/sort_up_20px.gif"
+                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.docstructNachObenSchieben}"/>
+                        </h:commandLink>
+
+                        <!-- Knoten nach unten -->
+                        <h:commandLink action="#{Metadaten.nodeDown}" title="#{msgs.docstructNachUntenSchieben}"
+                                       target="links">
+                            <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
+                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.docstructNachUntenSchieben}"/>
+                        </h:commandLink>
+
+                        <!-- Knoten an andere Stelle schieben -->
+                        <h:commandLink action="Metdaten2rechts" title="#{msgs.docstructAnAndereStelleSchieben}"
+                                       target="rechts">
+                            <h:graphicImage value="/newpages/images/buttons/sort_left_20px.gif"
+                                            style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.docstructAnAndereStelleSchieben}"/>
+                            <t:updateActionListener property="#{Metadaten.modusStrukturelementVerschieben}" value="true"/>
+                        </h:commandLink>
+
+                        <!-- DocstructType ändern -->
+                        <h:panelGroup>
+                            <jd:hideableController for="changeDocStructType" title="#{msgs.docstructTypeAendern}">
+                                <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
+                                                style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
+                                <h:outputText value="#{msgs.docstructTypeAendern}"/>
+                            </jd:hideableController>
+
+                            <jd:hideableArea id="changeDocStructType" saveState="view">
+                                <h:panelGrid id="mygrid3" columns="1" style="margin-left:40px;" rowClasses="top"
+                                             columnClasses="standardTable_ColumnRight">
+                                    <!-- Auswahlliste -->
+                                    <t:selectOneMenu style="width:315px;" value="#{Metadaten.tempWert}">
+                                        <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
+                                    </t:selectOneMenu>
+                                    <!-- Action -->
+                                    <h:commandLink action="#{Metadaten.changeCurrentDocstructType}"
+                                                   title="#{msgs.uebernehmen}" target="links"
+                                                   onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                        <h:outputText value="#{msgs.uebernehmen}"/>
+                                    </h:commandLink>
+                                </h:panelGrid>
+                            </jd:hideableArea>
+                        </h:panelGroup>
+
+                        <!-- zusätzliche Strukturelemente als Kinder unter das ausgewählte Element -->
+                        <h:panelGroup>
+                            <jd:hideableController for="addZusaetzlicheDocstructs"
+                                                   title="#{msgs.strukturelementeAusOpacHinzufuegen}">
+                                <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
+                                                style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
+                                <h:outputText value="#{msgs.strukturelementeAusOpacHinzufuegen}"/>
+                            </jd:hideableController>
+
+                            <jd:hideableArea id="addZusaetzlicheDocstructs" saveState="view">
+                                <h:panelGrid id="mygrid4" columns="2" style="margin-left:40px;" rowClasses="top"
+                                             columnClasses="standardTable_ColumnRight">
+
+                                    <h:outputText value="#{msgs.katalog}"/>
+
+                                    <!-- uses kitodo_opac.xml -->
+
+                                    <h:selectOneMenu id="katalogauswahl" value="#{Metadaten.opacKatalog}"
+                                                     style="display:inline; margin-left:7px">
+                                        <f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step"
+                                                        itemLabel="#{step}" itemValue="#{step}"/>
+                                    </h:selectOneMenu>
+                                    <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px"/>
+                                    <h:selectOneMenu id="feldauswahl" value="#{Metadaten.opacSuchfeld}"
+                                                     style="display:inline; margin-left:10px">
+                                        <f:selectItem itemLabel="PPN" itemValue="12"/>
+                                        <f:selectItem itemLabel="Barcode" itemValue="8535"/>
+                                        <f:selectItem itemLabel="Barcode 8200" itemValue="8200"/>
+                                        <f:selectItem itemLabel="ISBN" itemValue="7"/>
+                                        <f:selectItem itemLabel="ISSN" itemValue="8"/>
+                                    </h:selectOneMenu>
+
+
+                                    <h:outputText value="#{msgs.suchbegriffe}"/>
+                                    <!-- Auswahlliste -->
+                                    <h:inputTextarea value="#{Metadaten.additionalOpacPpns}"/>
+                                    <!-- Action
+                                    onclick="parent.oben.document.getElementById('treeReload').value='reload'; if (!confirm('#{msgs.wirklichAusfuehren}?')) return"
+                                    -->
+                                    <h:outputText value=""/>
+
+                                    <h:panelGroup>
+                                        <h:commandLink target="rechts" immediate="false" style="margin-right:10px"
+                                                       action="#{Metadaten.addMetadaFromOpacPpn}"
+                                                       title="#{msgs.uebernehmen}"
+                                                       onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                            <h:outputText value="#{msgs.nurMetadaten}"/>
+                                        </h:commandLink>
+
+                                        <h:commandLink target="links" immediate="false"
+                                                       action="#{Metadaten.addAdditionalOpacPpns}"
+                                                       title="#{msgs.uebernehmen}"
+                                                       onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                            <h:outputText value="#{msgs.alsUnterelemente}"/>
+                                        </h:commandLink>
+                                    </h:panelGroup>
+                                </h:panelGrid>
+                            </jd:hideableArea>
+                        </h:panelGroup>
+
+                        <!-- OCR-Button -->
+                        <h:outputLink rendered="#{Metadaten.showOcrButton}" target="_blank" value="#{Metadaten.ocrAcdress}"
+                                      title="#{msgs.ocr}">
+                            <h:graphicImage value="/newpages/images/buttons/ocr.png"
+                                            style="margin-left:4px;margin-right:7px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.ocr}"/>
+                        </h:outputLink>
+
+                        <!-- newUser-Schaltknopf
+                        <h:panelGroup rendered="#{Metadaten.showOcrButton}">
+                            <jp:popupFrame scrolling="auto" height="380px" width="430px"
+                                           topStyle="background: #1874CD;" bottomStyleClass="popup_unten"
+                                           styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"
+                                           styleClass="standardlink"
+                                           style="margin-top:2px;display:block; text-decoration:none"
+                                           actionOpen="#{Metadaten.showOcrPopup}" center="true"
+                                           title="#{msgs.ocr}" immediate="true">
+                                <h:graphicImage value="/newpages/images/buttons/ocr.png"
+                                                style="margin-left:4px;margin-right:7px;vertical-align:middle" />
+                                <h:outputText style="border-bottom: #a24033 dashed 1px;"
+                                              value="#{msgs.ocr}" />
+                            </jp:popupFrame>
+                        </h:panelGroup>-->
+
+                        <!-- Knoten löschen -->
+                        <h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.deleteNode}"
+                                       title="#{msgs.strukturelementLoeschen}" target="links">
+                            <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif"
+                                            style="margin-left:4px;margin-right:7px;vertical-align:middle"/>
+                            <h:outputText value="#{msgs.strukturelementLoeschen}"/>
+                        </h:commandLink>
+
+                    </h:panelGrid>
+                </td>
+            </tr>
+        </table>
+        <!-- ++++++++++++++++     // Strukturelement verschieben oder löschen   ++++++++++++++++ -->
+
+        <!-- ########################################
+
+        vorhandene Seiten
+
+        #########################################-->
+
+        <h:panelGroup rendered="#{Metadaten.alleSeiten !=null}">
+
+            <!-- ++++++++++++++++ Zuweisung der ersten und letzten Seite     ++++++++++++++++ -->
+            <table cellpadding="3" cellspacing="0" width="350px" class="eingabeBoxen" style="margin-top:20px">
+                <tr>
+                    <td class="eingabeBoxen_row1">
+                        <h:outputText value="#{msgs.seitenzuordnung} "/>
+                        <h:commandLink>
+                            <h:outputText value="(normal)" rendered="#{Metadaten.treeProperties.showpagesasajax==true}"/>
+                            <h:outputText value="(ajax)" rendered="#{Metadaten.treeProperties.showpagesasajax==false}"/>
+                            <t:updateActionListener value="#{Metadaten.treeProperties.showpagesasajax?false:true}"
+                                                    property="#{Metadaten.treeProperties.showpagesasajax}"/>
+                        </h:commandLink>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="eingabeBoxen_row2">
+                        <h:panelGrid id="mygrid5" columns="2" width="100%"
+                                     columnClasses="standardTable_Column,standardTable_ColumnRight">
+                            <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
+                            <a4j:commandLink action="#{Metadaten.imageShowFirstPage}" reRender="BildArea,myBild">
+                                <h:outputText value="#{msgs.ersteSeite}"/>
+                            </a4j:commandLink>
+                            <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
+                                <t:inputText id="pagestart" forceId="true" value="#{Metadaten.ajaxSeiteStart}"/>
+                                <!--
+                                <h:graphicImage value="/newpages/images/calendarImages/drop1.gif"
+                                                onclick="document.getElementById('formular2:suggestion').callSuggestion(true);"
+                                                alt="" />
+                                -->
+
+                                <!-- TODO: replace rich:suggestionbox -->
+                                <!--<rich:suggestionbox height="200" width="145" for="pagestart" var="startpage" id="suggestion"-->
+                                                    <!--suggestionAction="#{Metadaten.autocomplete}">-->
+                                    <!--<h:column>-->
+                                        <!--<h:outputText value="#{startpage}"/>-->
+                                    <!--</h:column>-->
+                                <!--</rich:suggestionbox>-->
+                            </h:panelGroup>
+
+                            <h:selectOneMenu style="width: 200px"
+                                             rendered="#{Metadaten.treeProperties.showpagesasajax==false}"
+                                             value="#{Metadaten.alleSeitenAuswahl_ersteSeite}">
+                                <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                            </h:selectOneMenu>
+
+                            <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
+                            <a4j:commandLink action="#{Metadaten.imageShowLastPage}" reRender="BildArea,myBild">
+                                <h:outputText value="#{msgs.letzteSeite}"/>
+                            </a4j:commandLink>
+                            <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
+                                <t:inputText id="pageend" forceId="true" value="#{Metadaten.ajaxSeiteEnde}"/>
+                                <!-- TODO: replace rich:suggestionbox -->
+                                <!--<rich:suggestionbox tokens=":" height="200" width="200" for="pageend" var="endpage"-->
+                                                    <!--id="suggestion2"-->
+                                                    <!--suggestionAction="#{Metadaten.autocomplete}">-->
+                                    <!--<h:column>-->
+                                        <!--<h:outputText value="#{endpage}"/>-->
+                                    <!--</h:column>-->
+                                <!--</rich:suggestionbox>-->
+                            </h:panelGroup>
+                            <h:selectOneMenu style="width: 200px"
+                                             rendered="#{Metadaten.treeProperties.showpagesasajax==false}"
+                                             value="#{Metadaten.alleSeitenAuswahl_letzteSeite}">
+                                <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                            </h:selectOneMenu>
+                        </h:panelGrid>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="eingabeBoxen_row3">
+                        <h:panelGrid id="mygrid6" columns="2" width="100%"
+                                     columnClasses="standardTable_Column,standardTable_ColumnRight">
+                            <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
+                            <a4j:commandLink action="#{Metadaten.SeitenVonChildrenUebernehmen}"
+                                             reRender="menuZugehoerigeSeiten">
+                                <h:outputText value="#{msgs.seitenVonUnterelementenZuweisen}"/>
+                            </a4j:commandLink>
+                            <a4j:commandLink action="#{Metadaten.SeitenStartUndEndeSetzen}"
+                                             reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                                             rendered="#{Metadaten.treeProperties.showpagesasajax==false}">
+                                <h:outputText value="#{msgs.seitenZuweisen}"/>
+                            </a4j:commandLink>
+                            <a4j:commandLink action="#{Metadaten.ajaxSeitenStartUndEndeSetzen}"
+                                             reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                                             rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
+                                <h:outputText value="#{msgs.seitenZuweisen}"/>
+                            </a4j:commandLink>
+                        </h:panelGrid>
+
+                    </td>
+
+                </tr>
+            </table>
+            <!-- ++++++++++++++++     // Zuweisung der ersten und letzten Seite   ++++++++++++++++ -->
+
+            <h:panelGrid id="mygrid7" columns="3" columnClasses="top,top,top">
+                <!-- alle Seiten -->
+                <h:panelGroup style="margin-left:0px">
+                    <h3 style="margin-top:20px">
+                        <h:outputText value="#{msgs.alleSeiten}"/>
+                    </h3>
+
+                    <t:selectManyListbox style="font-size:12px;height:300px;width:150px"
+                                         value="#{Metadaten.alleSeitenAuswahl}">
+                        <f:selectItems value="#{Metadaten.alleSeiten}"/>
+                    </t:selectManyListbox>
+
+                </h:panelGroup>
+
+                <!-- Pfeile zum Verschieben der Seiten -->
+                <h:panelGroup>
+                    <!-- nach rechts -->
+                    <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
+                    <a4j:commandLink id="s1" action="#{Metadaten.addPages}"
+                                     reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                                     style="margin-top:175px;margin-left:10px;margin-right:10px;display:block">
+                        <h:graphicImage value="/newpages/images/buttons/order_right.gif"/>
+                    </a4j:commandLink>
+                    <!-- nach links -->
+                    <a4j:commandLink id="s2" action="#{Metadaten.removePages}"
+                                     reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                                     style="margin-top:7px;margin-left:10px;margin-right:10px;display:block">
+                        <h:graphicImage value="/newpages/images/buttons/order_left.gif"/>
+                    </a4j:commandLink>
+                </h:panelGroup>
+
+                <!-- zugewiesene Seiten -->
+                <h:panelGroup>
+                    <h3 style="margin-top:20px">
+                        <h:outputText value="#{msgs.zugehoerigeSeiten}"/>
+                    </h3>
+                    <t:selectManyListbox id="menuZugehoerigeSeiten" style="font-size:12px;height:300px;width:150px"
+                                         value="#{Metadaten.structSeitenAuswahl}">
+                        <f:selectItems value="#{Metadaten.structSeiten}"/>
+                    </t:selectManyListbox>
+                </h:panelGroup>
+            </h:panelGrid>
+
+        </h:panelGroup>
+        <h:commandButton id="docStructReload" immediate="true"
+                         action="#{NavigationForm.Reload}" style="display:none">
+        </h:commandButton>
+    </h:panelGroup>
+
+    <h:panelGroup rendered="#{Metadaten.modusStrukturelementVerschieben}">
+        <ui:include src="BaumZumVerschieben.xhtml" />
+    </h:panelGroup>
+</ui:composition>

@@ -1,0 +1,98 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="/newpages/inc/head.xhtml" />
+        <body>
+
+            <h:form id="formularOben">
+                <table width="100%" style="margin-top:3px" align="center"
+                           border="0px">
+
+                    <tr valign="top">
+                        <td colspan="2">
+                            <table width="100%" class="layoutKopf"
+                                       style="#{HelperForm.applicationHeaderBackground}" cellpadding="0"
+                                       cellspacing="0" border="0">
+                                <tr valign="top">
+                                    <td width="20%" height="48">
+                                        <h:commandLink action="#{Metadaten.goMain}" target="_parent">
+                                            <h:graphicImage value="#{HelperForm.applicationLogo}"/>
+                                        </h:commandLink>
+                                    </td>
+                                    <td valign="middle" align="center">
+                                        <h:outputText style="#{HelperForm.applicationTitleStyle}"
+                                                      value="#{Metadaten.myProzess.titel}"/>
+                                        <noscript>
+                                            <h:outputText style="color: red;font-weight: bold;"
+                                                          value="#{msgs.keinJavascript}"/>
+                                        </noscript>
+                                    </td>
+                                    <td valign="middle" align="right">
+                                        <h:panelGrid id="grid1" columns="2" cellpadding="0" cellspacing="0">
+                                            <h:commandLink value="#{msgs.treelevel} " action="Metadaten3links"
+                                                           target="links" styleClass="metadataHeaderLinks">
+                                                <t:updateActionListener
+                                                        value="#{Metadaten.treeProperties.showtreelevel?false:true}"
+                                                        property="#{Metadaten.treeProperties.showtreelevel}"/>
+                                            </h:commandLink>
+                                            <h:commandLink value="#{msgs.treeTitle} " action="Metadaten3links"
+                                                           style="padding-left: 5px;"
+                                                           target="links" styleClass="metadataHeaderLinks">
+                                                <t:updateActionListener
+                                                        value="#{Metadaten.treeProperties.showtitle?false:true}"
+                                                        property="#{Metadaten.treeProperties.showtitle}"/>
+                                            </h:commandLink>
+                                            <h:commandLink value="#{msgs.treePageNumber} "
+                                                           action="Metadaten3links" target="links"
+                                                           styleClass="metadataHeaderLinks">
+                                                <t:updateActionListener
+                                                        value="#{Metadaten.treeProperties.showfirstpagenumber?false:true}"
+                                                        property="#{Metadaten.treeProperties.showfirstpagenumber}"/>
+                                            </h:commandLink>
+                                            <h:commandLink value="#{msgs.treeExpand} " style="padding-left: 5px;"
+                                                           action="#{Metadaten.expandTree}" target="links"
+                                                           styleClass="metadataHeaderLinks">
+                                                <t:updateActionListener
+                                                        value="#{Metadaten.treeProperties.fullexpanded?false:true}"
+                                                        property="#{Metadaten.treeProperties.fullexpanded}"/>
+                                            </h:commandLink>
+                                            <h:commandLink value="#{msgs.stickyImage} "
+                                                           action="Metadaten2rechts" target="rechts"
+                                                           styleClass="metadataHeaderLinks">
+                                                <t:updateActionListener
+                                                        value="#{Metadaten.treeProperties.imageSticky?false:true}"
+                                                        property="#{Metadaten.treeProperties.imageSticky}"/>
+                                            </h:commandLink>
+                                            <h:outputText/>
+                                        </h:panelGrid>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                </table>
+            </h:form>
+
+        </body>
+    </f:view>
+</html>
