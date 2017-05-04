@@ -56,4 +56,29 @@ public class HistoryServiceIT {
         List<History> histories = historyService.findAll();
         assertEquals("Not all histories were found in database!", 1, histories.size());
     }
+
+    @Test
+    public void shouldRemoveHistory() throws Exception {
+        HistoryService historyService = new HistoryService();
+
+        History history = new History();
+        history.setStringValue("To Remove");
+        historyService.save(history);
+        History foundHistory = historyService.convertSearchResultToObject(historyService.findById(2));
+        assertEquals("Additional history was not inserted in database!", "To Remove", foundHistory.getStringValue());
+
+        historyService.remove(foundHistory);
+        foundHistory = historyService.convertSearchResultToObject(historyService.findById(2));
+        assertEquals("Additional history was not removed from database!", null, foundHistory);
+
+        history = new History();
+        history.setStringValue("To remove");
+        historyService.save(history);
+        foundHistory = historyService.convertSearchResultToObject(historyService.findById(3));
+        assertEquals("Additional history was not inserted in database!", "To remove", foundHistory.getStringValue());
+
+        historyService.remove(3);
+        foundHistory = historyService.convertSearchResultToObject(historyService.findById(3));
+        assertEquals("Additional history was not removed from database!", null, foundHistory);
+    }
 }
