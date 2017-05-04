@@ -30,6 +30,7 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class UserGroupService extends TitleSearchService<UserGroup> {
+
     private UserGroupDAO userGroupDAO = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
     private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
@@ -89,14 +90,32 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes user group object from database.
      *
      * @param userGroup
      *            object
      */
-    public void remove(UserGroup userGroup) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(UserGroup userGroup) throws DAOException {
         userGroupDAO.remove(userGroup);
+    }
+
+    /**
+     * Method removes user group object from database.
+     *
+     * @param id
+     *            of template object
+     */
+    public void removeFromDatabase(Integer id) throws DAOException {
+        userGroupDAO.remove(id);
+    }
+
+    /**
+     * Method removes user group object from index of Elastic Search.
+     *
+     * @param userGroup
+     *            object
+     */
+    public void removeFromIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(userGroup, userGroupType);
     }
