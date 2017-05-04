@@ -79,6 +79,19 @@ public class PropertyDAO extends BaseDAO {
     }
 
     /**
+     * The function remove() removes a property
+     *
+     * @param id
+     *            of property to be removed
+     * @throws DAOException
+     *             an exception that can be thrown from the underlying save()
+     *             procedure upon database failure.
+     */
+    public void remove(Integer id) throws DAOException {
+        removeObject(id);
+    }
+
+    /**
      * Count property objects in table.
      * 
      * @param query
