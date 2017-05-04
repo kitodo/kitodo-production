@@ -94,29 +94,34 @@ public class ProjectService extends TitleSearchService<Project> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes project object from database.
      *
      * @param project
      *            object
      */
-    public void remove(Project project) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Project project) throws DAOException {
         projectDAO.remove(project);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(project, projectType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes project object from database.
      *
      * @param id
-     *            of object
+     *            of project object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         projectDAO.remove(id);
+    }
+
+    /**
+     * Method removes project object from index of Elastic Search.
+     *
+     * @param project
+     *            object
+     */
+    public void removeFromIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(project, projectType);
     }
 
     public List<Project> search(String query) throws DAOException {
