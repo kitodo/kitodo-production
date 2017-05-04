@@ -49,6 +49,31 @@ public class UserGroupServiceIT {
     }
 
     @Test
+    public void shouldRemoveUserGroup() throws Exception {
+        UserGroupService userGroupService = new UserGroupService();
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("To Remove");
+        userGroupService.save(userGroup);
+        UserGroup foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(4));
+        assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
+
+        userGroupService.remove(foundUserGroup);
+        foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(4));
+        assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
+
+        userGroup = new UserGroup();
+        userGroup.setTitle("To remove");
+        userGroupService.save(userGroup);
+        foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(5));
+        assertEquals("Additional user group was not inserted in database!", "To remove", foundUserGroup.getTitle());
+
+        userGroupService.remove(5);
+        foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(5));
+        assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
+    }
+
+    @Test
     public void shouldGetPermissionAsString() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
 
