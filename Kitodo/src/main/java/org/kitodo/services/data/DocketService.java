@@ -31,6 +31,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class DocketService extends TitleSearchService<Docket> {
+
     private DocketDAO docketDAO = new DocketDAO();
     private DocketType docketType = new DocketType();
     private Indexer<Docket, DocketType> indexer = new Indexer<>(Docket.class);
@@ -73,14 +74,32 @@ public class DocketService extends TitleSearchService<Docket> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes docket object from database.
      *
      * @param docket
      *            object
      */
-    public void remove(Docket docket) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Docket docket) throws DAOException {
         docketDAO.remove(docket);
+    }
+
+    /**
+     * Method removes docket object from database.
+     *
+     * @param id
+     *            of docket object
+     */
+    public void removeFromDatabase(Integer id) throws DAOException {
+        docketDAO.remove(id);
+    }
+
+    /**
+     * Method removes docket object from index of Elastic Search.
+     *
+     * @param docket
+     *            object
+     */
+    public void removeFromIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(docket, docketType);
     }
