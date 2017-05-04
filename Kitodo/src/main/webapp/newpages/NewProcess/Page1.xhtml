@@ -1,0 +1,217 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<!-- ########################################
+
+        Kopie einer Prozessvorlage anlegen mit Berücksichtigung komplexer Projekteinstellungen
+
+        #########################################-->
+
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:t="http://myfaces.apache.org/tomahawk"
+    >
+    <f:view locale="#{SpracheForm.locale}">
+        <ui:include src="/newpages/inc/head.xhtml" />
+        <body>
+
+        <table cellspacing="5" cellpadding="0" class="layoutTable" align="center">
+            <ui:include src="/newpages/inc/tbl_Kopf.xhtml" />
+            <tr>
+                <ui:include src="/newpages/inc/tbl_Navigation.xhtml" />
+                <td valign="top" class="layoutInhalt">
+
+                    <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                    <h:form id="pageform1" onkeypress="return ignoreEnterKey(event);">
+                        <!-- Breadcrumb -->
+                        <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
+                            <h:panelGroup>
+                                <h:commandLink value="#{msgs.startseite}" action="newMain"/>
+                                <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                <h:commandLink value="#{msgs.prozessverwaltung}" action="ProzessverwaltungAlle"/>
+                                <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                <h:outputText value="#{msgs.einenNeuenProzessAnlegen}"/>
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+                        <table border="0" align="center" width="100%" cellpadding="15">
+                            <tr>
+                                <td>
+                                    <h3>
+                                        <h:outputText value="#{msgs.einenNeuenProzessAnlegen}"/>
+                                    </h3>
+
+                                    <!-- globale Warn- und Fehlermeldungen -->
+                                    <h:messages globalOnly="true" errorClass="text_red" infoClass="text_blue"
+                                                showDetail="true" showSummary="true" tooltip="true"/>
+
+                                    <!-- Show hit list if several results were found -->
+
+                                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+                                    <ui:fragment rendered="#{container!=0 }">
+                                        <!--<div class="modalBackground"-->
+                                                 <!--rendered="#{ProzesskopieForm.hitlistShowing}"/>-->
+                                        <div class="modalBackground"/>
+                                    </ui:fragment>
+
+                                    <!-- TODO: "rendered" attribute should be available in MyFaces 2.2's ui:fragment -->
+                                    <ui:fragment rendered="#{ProzesskopieForm.hitlistShowing}">
+                                        <!--<div class="hitlistBoxWrapper"-->
+                                                 <!--rendered="#{ProzesskopieForm.hitlistShowing}">-->
+                                        <div class="hitlistBoxWrapper">
+                                            <div class="hitlistBox">
+                                                <h3>
+                                                    <h:outputText
+                                                            value="#{msgs['newProcess.catalogueSearch.heading']}"/>
+                                                </h3>
+                                                <p>
+                                                    <h:outputFormat
+                                                            value="#{msgs['newProcess.catalogueSearch.results']}">
+                                                        <f:param value="#{ProzesskopieForm.numberOfHits}"/>
+                                                    </h:outputFormat>
+                                                </p>
+                                                <t:dataList layout="unorderedList" var="hit"
+                                                            value="#{ProzesskopieForm.hitlist}">
+                                                    <h:commandLink action="#{hit.selectClick}" rendered="#{not hit.error}">
+                                                        <h:outputText value="#{hit.bibliographicCitation}" escape="false"/>
+                                                    </h:commandLink>
+                                                    <h:outputText value="#{msgs['newProcess.catalogueSearch.failed']} "
+                                                                  rendered="#{hit.error}" styleClass="text_red"/>
+                                                    <h:outputText value="#{hit.errorMessage}"
+                                                                  rendered="#{hit.error}" styleClass="text_red"/>
+                                                </t:dataList>
+                                                <h:commandLink
+                                                        value="#{msgs['newProcess.catalogueSearch.previousPage']}"
+                                                        styleClass="leftText"
+                                                        action="#{ProzesskopieForm.previousPageClick}"
+                                                        rendered="#{!ProzesskopieForm.firstPage}"/>
+                                                <h:commandLink
+                                                        value="#{msgs['newProcess.catalogueSearch.leaveDisplay']}"
+                                                        styleClass="leftText"
+                                                        action="#{ProzesskopieForm.previousPageClick}"
+                                                        rendered="#{ProzesskopieForm.firstPage}"/>
+                                                <h:commandLink
+                                                        value="#{msgs['newProcess.catalogueSearch.nextPage']}"
+                                                        styleClass="rightText"
+                                                        action="#{ProzesskopieForm.nextPageClick}"
+                                                        rendered="#{not ProzesskopieForm.lastPage}"/>
+                                            </div>
+                                        </div>
+                                    </ui:fragment>
+
+                                    <!-- ===================== Eingabe der Details ====================== -->
+                                    <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
+
+                                        <tr>
+                                            <td class="eingabeBoxen_row1" colspan="2">
+                                                <h:outputText value="#{msgs.details}"/>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="eingabeBoxen_row2" colspan="2">
+                                                <h:panelGrid columns="1" width="100%">
+                                                    <!-- Formular für Eingabe der Prozess-Metadaten -->
+                                                    <ui:include src="inc_process.xhtml" />
+                                                    <ui:include src="inc_config.xhtml" />
+                                                </h:panelGrid>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td class="eingabeBoxen_row3" align="left">
+                                                <h:commandButton value="#{msgs.abbrechen}" immediate="true"
+                                                                 action="ProzessverwaltungAlle">
+                                                </h:commandButton>
+                                            </td>
+                                            <td class="eingabeBoxen_row3" align="right">
+                                                <h:commandButton value="#{msgs.weiter}"
+                                                                 rendered="#{ProzesskopieForm.prozessKopie.propertiesSize>0}"
+                                                                 action="#{ProzesskopieForm.goToPageTwo}">
+                                                </h:commandButton>
+                                                <h:commandButton value="#{msgs.speichern}"
+                                                                 rendered="#{ProzesskopieForm.prozessKopie.propertiesSize==0}"
+                                                                 action="#{ProzesskopieForm.createNewProcess}">
+                                                </h:commandButton>
+                                                <h:commandButton value="#{msgs.weiter}"
+                                                                 rendered="#{ProzesskopieForm.calendarButtonShowing}"
+                                                                 action="ShowCalendarEditor">
+                                                </h:commandButton>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!-- ===================== // Eingabe der Details ====================== -->
+
+                                </td>
+                            </tr>
+                        </table>
+                    </h:form>
+                    <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
+
+                </td>
+            </tr>
+            <ui:include src="/newpages/inc/tbl_Fuss.xhtml" />
+        </table>
+
+        <script type="text/javascript">
+        //<![CDATA[
+            function getKeyCode(e) {
+                var keycode;
+
+                keycode = e.keyCode ? e.keyCode : e.charCode;
+                //alert('keycode ' + keycode);
+
+                return keycode;
+            }
+
+            function checkOpac(commandId, e) {
+                var keycode;
+
+                keycode = getKeyCode(e);
+
+                e.stopPropagation();
+                if (keycode == 36) {
+                    return false;
+                } else if ((keycode == 13) && (commandId == 'OpacRequest')) {
+                    element = document.getElementById('pageform1:performOpacQuery');
+                    if (element) {
+                        element.click();
+
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+
+                return true;
+
+            }
+
+            function ignoreEnterKey(e) {
+                var keycode;
+                keycode = getKeyCode(e);
+                if (keycode == 13) {
+                    return false;
+                }
+                return true;
+            }
+            //]]>
+        </script>
+        </body>
+    </f:view>
+</html>
