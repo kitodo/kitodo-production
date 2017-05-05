@@ -75,14 +75,14 @@ public class TemplateTypeTest {
         Template template = prepareData().get(0);
         HttpEntity document = templateType.createDocument(template);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{\"process\":1,\"properties\":[{\"id\":1},"
+        JSONObject excepted = (JSONObject) parser.parse("{\"process\":1,\"origin\":null,\"properties\":[{\"id\":1},"
                 + "{\"id\":2}]}");
         assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
 
         template = prepareData().get(1);
         document = templateType.createDocument(template);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        excepted = (JSONObject) parser.parse("{\"process\":2,\"properties\":[]}");
+        excepted = (JSONObject) parser.parse("{\"process\":2,\"origin\":null,\"properties\":[]}");
         assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 
