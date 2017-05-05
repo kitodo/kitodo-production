@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.beans;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +29,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -84,6 +84,9 @@ public class Process extends BaseBean {
     @Column(name = "wikiField", columnDefinition = "longtext")
     private String wikiField = "";
 
+    @Column(name = "processBaseUri")
+    private URI processBaseUri;
+
     @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
@@ -112,7 +115,7 @@ public class Process extends BaseBean {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
-            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
+                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
 
     @ManyToMany(mappedBy = "processes")
@@ -263,6 +266,14 @@ public class Process extends BaseBean {
 
     public String getWikiField() {
         return this.wikiField;
+    }
+
+    public URI getProcessBaseUri() {
+        return processBaseUri;
+    }
+
+    public void setProcessBaseUri(URI processBaseUri) {
+        this.processBaseUri = processBaseUri;
     }
 
     public void setWikiField(String wikiField) {
