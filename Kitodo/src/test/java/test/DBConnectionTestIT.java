@@ -11,27 +11,31 @@
 
 package test;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.services.ServiceManager;
+import java.io.IOException;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.kitodo.MockDatabase;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.services.ServiceManager;
 public class DBConnectionTestIT {
+
+    @BeforeClass
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+        MockDatabase.insertProcessesFull();
+    }
 
     @Test
     public void test() throws Exception {
-
-        Process test = new Process();
-        test.setTitle("First process");
         ServiceManager serviceManager = new ServiceManager();
-        serviceManager.getProcessService().save(test);
 
         long counted = serviceManager.getProcessService().count("from Process");
         Assert.assertNotNull("No Process found", counted);
         Assert.assertEquals(4, counted);
 
-        String title = serviceManager.getProcessService().find(1).getTitle();
-        Assert.assertEquals("First process", title);
-
+        String title = serviceManager.getProcessService().find(4).getTitle();
+        Assert.assertEquals("DBConnectionTest", title);
     }
 }

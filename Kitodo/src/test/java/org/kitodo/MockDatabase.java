@@ -164,6 +164,10 @@ public class MockDatabase {
         thirdProcess.setProject(serviceManager.getProjectService().find(1));
         thirdProcess.setRuleset(serviceManager.getRulesetService().find(1));
         serviceManager.getProcessService().save(thirdProcess);
+
+        Process test = new Process();
+        test.setTitle("DBConnectionTest");
+        serviceManager.getProcessService().save(test);
     }
 
     private static void insertProcessProperties() throws CustomResponseException, DAOException, IOException {
