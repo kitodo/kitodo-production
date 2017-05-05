@@ -61,7 +61,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      * @return response from the server
      */
     @SuppressWarnings("unchecked")
-    public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException, CustomResponseException {
+    public String performSingleRequest(T baseBean, S baseType) throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 

@@ -76,27 +76,22 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService extends TitleSearchService {
-
-    private static final Logger myLogger = Logger.getLogger(ProcessService.class);
-
-    private Boolean selected = false;
-
-    private final MetadatenSperrung msp = new MetadatenSperrung();
+public class ProcessService extends TitleSearchService<Process> {
 
     Helper help = new Helper();
 
-    public static String DIRECTORY_PREFIX = "orig";
-    public static String DIRECTORY_SUFFIX = "images";
-
-    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-
-    private ProcessDAO processDao = new ProcessDAO();
+    private Boolean selected = false;
+    private ProcessDAO processDAO = new ProcessDAO();
     private ProcessType processType = new ProcessType();
     private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
-    private ServiceManager serviceManager = new ServiceManager();
-
+    private final MetadatenSperrung msp = new MetadatenSperrung();
+    private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
+    private static final Logger logger = Logger.getLogger(ProcessService.class);
+    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
+
+    public static String DIRECTORY_PREFIX = "orig";
+    public static String DIRECTORY_SUFFIX = "images";
 
     /**
      * Constructor with searcher's assigning.
@@ -106,28 +101,51 @@ public class ProcessService extends TitleSearchService {
     }
 
     public Process find(Integer id) throws DAOException {
-        return processDao.find(id);
+        return processDAO.find(id);
     }
 
     public List<Process> findAll() throws DAOException {
-        return processDao.findAll();
+        return processDAO.findAll();
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves process object to database.
      *
      * @param process
      *            object
      */
-    public void save(Process process) throws CustomResponseException, DAOException, IOException {
-        processDao.save(process, getProgress(process));
+    public void saveToDatabase(Process process) throws DAOException {
+        processDAO.save(process, getProgress(process));
+    }
+
+    /**
+     * Method saves process document to the index of Elastic Search.
+     *
+     * @param process
+     *            object
+     */
+    public void saveToIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(process, processType);
     }
 
+    /**
+     * Method saves batches related to modified process.
+     *
+     * @param process
+     *            object
+     */
+    protected void saveDependenciesToIndex(Process process) throws CustomResponseException, IOException {
+        for (Batch batch : process.getBatches()) {
+            serviceManager.getBatchService().saveToIndex(batch);
+        }
+        if (process.getProject() != null) {
+            serviceManager.getProjectService().saveToIndex(process.getProject());
+        }
+    }
+
     public void saveList(List<Process> list) throws DAOException {
-        processDao.saveList(list);
+        processDAO.saveList(list);
     }
 
     /**
@@ -138,7 +156,7 @@ public class ProcessService extends TitleSearchService {
      *            object
      */
     public void remove(Process process) throws CustomResponseException, DAOException, IOException {
-        processDao.remove(process);
+        processDAO.remove(process);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(process, processType);
     }
@@ -151,21 +169,21 @@ public class ProcessService extends TitleSearchService {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        processDao.remove(id);
+        processDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Process> search(String query) throws DAOException {
-        return processDao.search(query);
+        return processDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return processDao.count(query);
+        return processDAO.count(query);
     }
 
     public void refresh(Process process) {
-        processDao.refresh(process);
+        processDAO.refresh(process);
     }
 
     /**
@@ -227,7 +245,7 @@ public class ProcessService extends TitleSearchService {
             Session s = Helper.getHibernateSession();
             Hibernate.initialize(process.getHistory());
         } catch (HibernateException e) {
-            myLogger.debug("Hibernate exception: ", e);
+            logger.debug("Hibernate exception: ", e);
         }
         if (process.getHistory() == null) {
             process.setHistory(new ArrayList<History>());
@@ -248,7 +266,7 @@ public class ProcessService extends TitleSearchService {
         try {
             Hibernate.initialize(process.getProperties());
         } catch (HibernateException e) {
-            myLogger.debug("Hibernate exception: ", e);
+            logger.debug("Hibernate exception: ", e);
         }
         return process.getProperties();
     }
@@ -809,8 +827,8 @@ public class ProcessService extends TitleSearchService {
         Hibernate.initialize(process.getRuleset());
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadatenHelper.getMetaFileType(getMetadataFilePath(process));
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
+        if (logger.isDebugEnabled()) {
+            logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
         }
 
         Fileformat ff = determineFileFormat(type, process);
@@ -864,7 +882,7 @@ public class ProcessService extends TitleSearchService {
             bfr.setProcessDataDirectory(getProcessDataDirectory(process));
             bfr.performBackup();
         } else {
-            myLogger.warn("No backup configured for meta data files.");
+            logger.warn("No backup configured for meta data files.");
         }
     }
 
@@ -969,8 +987,8 @@ public class ProcessService extends TitleSearchService {
         if (new File(getTemplateFilePath(process)).exists()) {
             Fileformat ff = null;
             String type = MetadatenHelper.getMetaFileType(getTemplateFilePath(process));
-            if (myLogger.isDebugEnabled()) {
-                myLogger.debug("current template.xml file type: " + type);
+            if (logger.isDebugEnabled()) {
+                logger.debug("current template.xml file type: " + type);
             }
             ff = determineFileFormat(type, process);
             /*
@@ -1039,8 +1057,8 @@ public class ProcessService extends TitleSearchService {
      */
     public String downloadDocket(Process process) {
 
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("generate docket for process " + process.getId());
+        if (logger.isDebugEnabled()) {
+            logger.debug("generate docket for process " + process.getId());
         }
         String rootPath = ConfigCore.getParameter("xsltFolder");
         File xsltFile = new File(rootPath, "docket.xsl");
@@ -1111,7 +1129,7 @@ public class ProcessService extends TitleSearchService {
             return (String) o;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            myLogger.debug("exception: " + e);
+            logger.debug("exception: " + e);
         }
         try {
             String folder = this.getImagesTifDirectory(false, process);
@@ -1121,7 +1139,7 @@ public class ProcessService extends TitleSearchService {
                 return folder;
             }
         } catch (DAOException | InterruptedException | IOException | SwapException ex) {
-            myLogger.debug("exception: " + ex);
+            logger.debug("exception: " + ex);
         }
         return null;
     }

@@ -18,16 +18,17 @@ import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -37,7 +38,9 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService {
+public abstract class SearchService<T extends BaseBean> {
+
+    private static final Logger logger = Logger.getLogger(SearchService.class);
     protected Searcher searcher;
 
     /**
@@ -51,6 +54,22 @@ public abstract class SearchService {
     }
 
     /**
+     * Method saves object to database.
+     *
+     * @param baseBean
+     *            object
+     */
+    public abstract void saveToDatabase(T baseBean) throws DAOException;
+
+    /**
+     * Method saves document to the index of Elastic Search.
+     *
+     * @param baseBean
+     *            object
+     */
+    public abstract void saveToIndex(T baseBean) throws CustomResponseException, IOException;
+
+    /**
      * Method necessary for conversion of SearchResult objects to exact bean
      * objects called from database.
      *
@@ -58,7 +77,75 @@ public abstract class SearchService {
      *            as String
      * @return list of exact bean objects
      */
-    public abstract List<? extends BaseBean> search(String query) throws DAOException;
+    public abstract List<T> search(String query) throws DAOException;
+
+    /**
+     * Method saves relations which can be potentially modified together with
+     * object.
+     *
+     * @param baseBean
+     *            object
+     */
+    protected void saveDependenciesToIndex(T baseBean) throws CustomResponseException, IOException {
+
+    }
+
+    /**
+     * Method saves object to database and document to the index of Elastic
+     * Search. This method binds three other methods: save to database, save to
+     * index and save dependencies to index.
+     * 
+     * <p>
+     * First step sets up the flag indexAction to state Index and saves to
+     * database. It informs that object was updated in database but not yet in
+     * index. If this step fails, method breaks. If it is successful, method
+     * saves changes to index, first document and next its dependencies. If one
+     * of this steps fails, method retries up to 5 times operations on index. If
+     * it continues to fail, method breaks. If save to index was successful,
+     * indexAction flag is changed to Done and database is again updated. There
+     * is possibility that last step fails and in that case, even if index is up
+     * to date, in some point of the future it will be reindexed by administrator.
+     * </p>
+     *
+     * @param baseBean
+     *            object
+     */
+    public void save(T baseBean) throws CustomResponseException, DAOException, IOException {
+        try {
+            baseBean.setIndexAction(IndexAction.INDEX);
+            saveToDatabase(baseBean);
+            saveToIndex(baseBean);
+            saveDependenciesToIndex(baseBean);
+        } catch (DAOException e) {
+            logger.debug(e);
+            throw new DAOException(e);
+        } catch (CustomResponseException | IOException e) {
+            int count = 0;
+            int maxTries = 5;
+            while (true) {
+                try {
+                    saveToIndex(baseBean);
+                    saveDependenciesToIndex(baseBean);
+                    baseBean.setIndexAction(IndexAction.DONE);
+                    saveToDatabase(baseBean);
+                    break;
+                } catch (CustomResponseException cre) {
+                    logger.debug(e);
+                    if (++count >= maxTries) {
+                        throw new CustomResponseException(cre.getMessage());
+                    }
+                } catch (IOException ioe) {
+                    logger.debug(e);
+                    if (++count >= maxTries) {
+                        throw new IOException(ioe.getMessage());
+                    }
+                } catch (DAOException daoe) {
+                    logger.debug("Index was updated but flag in database not... " + e);
+                    throw new DAOException(daoe.getMessage());
+                }
+            }
+        }
+    }
 
     /**
      * Display all documents for exact type.

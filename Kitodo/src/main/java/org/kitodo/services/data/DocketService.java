@@ -16,6 +16,7 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
@@ -29,10 +30,11 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class DocketService extends TitleSearchService {
-    private DocketDAO docketDao = new DocketDAO();
+public class DocketService extends TitleSearchService<Docket> {
+    private DocketDAO docketDAO = new DocketDAO();
     private DocketType docketType = new DocketType();
     private Indexer<Docket, DocketType> indexer = new Indexer<>(Docket.class);
+    private static final Logger logger = Logger.getLogger(DocketService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -42,22 +44,30 @@ public class DocketService extends TitleSearchService {
     }
 
     public Docket find(Integer id) throws DAOException {
-        return docketDao.find(id);
+        return docketDAO.find(id);
     }
 
     public List<Docket> findAll() throws DAOException {
-        return docketDao.findAll();
+        return docketDAO.findAll();
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves docket object to database.
      *
      * @param docket
      *            object
      */
-    public void save(Docket docket) throws CustomResponseException, DAOException, IOException {
-        docketDao.save(docket);
+    public void saveToDatabase(Docket docket) throws DAOException {
+        docketDAO.save(docket);
+    }
+
+    /**
+     * Method saves docket document to the index of Elastic Search.
+     *
+     * @param docket
+     *            object
+     */
+    public void saveToIndex(Docket docket) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(docket, docketType);
     }
@@ -70,17 +80,17 @@ public class DocketService extends TitleSearchService {
      *            object
      */
     public void remove(Docket docket) throws CustomResponseException, DAOException, IOException {
-        docketDao.remove(docket);
+        docketDAO.remove(docket);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(docket, docketType);
     }
 
     public List<Docket> search(String query) throws DAOException {
-        return docketDao.search(query);
+        return docketDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return docketDao.count(query);
+        return docketDAO.count(query);
     }
 
     /**

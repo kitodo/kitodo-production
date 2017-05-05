@@ -36,11 +36,11 @@ import org.kitodo.services.data.base.TitleSearchService;
 import ugh.dl.Prefs;
 import ugh.exceptions.PreferencesException;
 
-public class RulesetService extends TitleSearchService {
+public class RulesetService extends TitleSearchService<Ruleset> {
 
     private static final Logger logger = Logger.getLogger(RulesetService.class);
 
-    private RulesetDAO rulesetDao = new RulesetDAO();
+    private RulesetDAO rulesetDAO = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();
     private Indexer<Ruleset, RulesetType> indexer = new Indexer<>(Ruleset.class);
 
@@ -52,28 +52,36 @@ public class RulesetService extends TitleSearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves ruleset object to database.
      *
      * @param ruleset
      *            object
      */
-    public void save(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
-        rulesetDao.save(ruleset);
+    public void saveToDatabase(Ruleset ruleset) throws DAOException {
+        rulesetDAO.save(ruleset);
+    }
+
+    /**
+     * Method saves ruleset document to the index of Elastic Search.
+     *
+     * @param ruleset
+     *            object
+     */
+    public void saveToIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(ruleset, rulesetType);
     }
 
     public Ruleset find(Integer id) throws DAOException {
-        return rulesetDao.find(id);
+        return rulesetDAO.find(id);
     }
 
     public List<Ruleset> findAll() throws DAOException {
-        return rulesetDao.findAll();
+        return rulesetDAO.findAll();
     }
 
     public List<Ruleset> search(String query) throws DAOException {
-        return rulesetDao.search(query);
+        return rulesetDAO.search(query);
     }
 
     /**
@@ -84,7 +92,7 @@ public class RulesetService extends TitleSearchService {
      *            object
      */
     public void remove(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
-        rulesetDao.remove(ruleset);
+        rulesetDAO.remove(ruleset);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(ruleset, rulesetType);
     }
@@ -97,7 +105,7 @@ public class RulesetService extends TitleSearchService {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        rulesetDao.remove(id);
+        rulesetDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }

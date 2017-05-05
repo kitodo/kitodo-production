@@ -25,7 +25,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
@@ -38,15 +42,13 @@ import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class UserService extends SearchService {
+public class UserService extends SearchService<User> {
 
-    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
-
-    private UserDAO userDao = new UserDAO();
+    private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
     private Indexer<User, UserType> indexer = new Indexer<>(User.class);
-
-    private ServiceManager serviceManager = new ServiceManager();
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(UserService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -63,17 +65,62 @@ public class UserService extends SearchService {
      *            object
      */
     public void save(User user) throws CustomResponseException, DAOException, IOException {
-        userDao.save(user);
+        userDAO.save(user);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(user, userType);
     }
 
+    /**
+     * Method saves user object to database.
+     *
+     * @param user
+     *            object
+     */
+    public void saveToDatabase(User user) throws DAOException {
+        userDAO.save(user);
+    }
+
+    /**
+     * Method saves user document to the index of Elastic Search.
+     *
+     * @param user
+     *            object
+     */
+    public void saveToIndex(User user) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(user, userType);
+    }
+
+    /**
+     * Method saves user groups, properties and tasks related to modified user.
+     *
+     * @param user
+     *            object
+     */
+    protected void saveDependenciesToIndex(User user) throws CustomResponseException, IOException {
+        for (UserGroup userGroup : user.getUserGroups()) {
+            serviceManager.getUserGroupService().saveToIndex(userGroup);
+        }
+
+        for (Project project : user.getProjects()) {
+            serviceManager.getProjectService().saveToIndex(project);
+        }
+
+        for (Property property : user.getProperties()) {
+            serviceManager.getPropertyService().saveToIndex(property);
+        }
+
+        for (Task task : user.getTasks()) {
+            serviceManager.getTaskService().saveToIndex(task);
+        }
+    }
+
     public User find(Integer id) throws DAOException {
-        return userDao.find(id);
+        return userDAO.find(id);
     }
 
     public List<User> findAll() throws DAOException {
-        return userDao.findAll();
+        return userDAO.findAll();
     }
 
     /**
@@ -84,25 +131,25 @@ public class UserService extends SearchService {
      *            object
      */
     public void remove(User user) throws CustomResponseException, DAOException, IOException {
-        userDao.remove(user);
+        userDAO.remove(user);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(user, userType);
     }
 
     public List<User> search(String query) throws DAOException {
-        return userDao.search(query);
+        return userDAO.search(query);
     }
 
     public List<User> search(String query, String parameter) throws DAOException {
-        return userDao.search(query, parameter);
+        return userDAO.search(query, parameter);
     }
 
     public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
-        return userDao.search(query, namedParameter, parameter);
+        return userDAO.search(query, namedParameter, parameter);
     }
 
     public Long count(String query) throws DAOException {
-        return userDao.count(query);
+        return userDAO.count(query);
     }
 
     /**

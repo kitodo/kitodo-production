@@ -31,7 +31,7 @@ public class ProjectType extends BaseType<Project> {
     public HttpEntity createDocument(Project project) {
 
         JSONObject projectObject = new JSONObject();
-        projectObject.put("name", project.getTitle());
+        projectObject.put("title", project.getTitle());
         String startDate = project.getStartDate() != null ? formatDate(project.getStartDate()) : null;
         projectObject.put("startDate", startDate);
         String endDate = project.getEndDate() != null ? formatDate(project.getEndDate()) : null;

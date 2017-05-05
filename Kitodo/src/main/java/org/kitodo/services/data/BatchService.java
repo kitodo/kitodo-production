@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -27,13 +28,16 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
-public class BatchService extends SearchService {
+public class BatchService extends SearchService<Batch> {
 
-    private BatchDAO batchDao = new BatchDAO();
+    private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
     private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(BatchService.class);
 
     /**
      * Constructor with searcher's assigning.
@@ -43,24 +47,44 @@ public class BatchService extends SearchService {
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves batch object to database.
      *
      * @param batch
      *            object
      */
-    public void save(Batch batch) throws CustomResponseException, DAOException, IOException {
-        batchDao.save(batch);
+    public void saveToDatabase(Batch batch) throws DAOException {
+        batchDAO.save(batch);
+    }
+
+    /**
+     * Method saves batch document to the index of Elastic Search.
+     *
+     * @param batch
+     *            object
+     */
+    public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
     }
 
+    /**
+     * Method saves processes related to modified batch.
+     * 
+     * @param batch
+     *            object
+     */
+    protected void saveDependenciesToIndex(Batch batch) throws CustomResponseException, IOException {
+        for (Process process : batch.getProcesses()) {
+            serviceManager.getProcessService().saveToIndex(process);
+        }
+    }
+
     public Batch find(Integer id) throws DAOException {
-        return batchDao.find(id);
+        return batchDAO.find(id);
     }
 
     public List<Batch> findAll() throws DAOException {
-        return batchDao.findAll();
+        return batchDAO.findAll();
     }
 
     /**
@@ -71,7 +95,7 @@ public class BatchService extends SearchService {
      * @return list of Batch objects
      */
     public List<Batch> search(String query) throws DAOException {
-        return batchDao.search(query);
+        return batchDAO.search(query);
     }
 
     /**
@@ -82,7 +106,7 @@ public class BatchService extends SearchService {
      *            object
      */
     public void remove(Batch batch) throws CustomResponseException, DAOException, IOException {
-        batchDao.remove(batch);
+        batchDAO.remove(batch);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
     }
@@ -95,13 +119,13 @@ public class BatchService extends SearchService {
      *            of object
      */
     public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        batchDao.remove(id);
+        batchDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
-        batchDao.removeAll(ids);
+        batchDAO.removeAll(ids);
     }
 
     /**
