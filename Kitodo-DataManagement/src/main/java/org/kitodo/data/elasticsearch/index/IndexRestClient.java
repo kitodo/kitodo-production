@@ -22,7 +22,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.apache.log4j.Logger;
 import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.ResponseListener;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -32,12 +34,16 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
  */
 public class IndexRestClient extends KitodoRestClient {
 
+    private static final Logger logger = Logger.getLogger(IndexRestClient.class);
+
     /**
      * Add document to the index. This method will be used for add or update of
      * single document.
      *
-     * @param entity with document which is going to be indexed
-     * @param id     of document - equal to the id from table in database
+     * @param entity
+     *            with document which is going to be indexed
+     * @param id
+     *            of document - equal to the id from table in database
      * @return status code of the response from the server
      */
     public boolean addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
@@ -52,7 +58,8 @@ public class IndexRestClient extends KitodoRestClient {
      * Add list of documents to the index. This method will be used for add
      * whole table to the index. It performs asynchronous request.
      *
-     * @param documentsToIndex list of json documents to the index
+     * @param documentsToIndex
+     *            list of json documents to the index
      */
     public String addType(HashMap<Integer, HttpEntity> documentsToIndex)
             throws InterruptedException, CustomResponseException {
@@ -83,13 +90,25 @@ public class IndexRestClient extends KitodoRestClient {
     /**
      * Delete document from the index.
      *
-     * @param id of the document
+     * @param id
+     *            of the document
      * @return status code of the response from server
      */
     public boolean deleteDocument(Integer id) throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest("DELETE",
-                "/" + this.getIndex() + "/" + this.getType() + "/" + id);
-        return processStatusCode(indexResponse.getStatusLine()) == 200;
+        boolean result = false;
+        try {
+            Response indexResponse = restClient.performRequest("DELETE",
+                    "/" + this.getIndex() + "/" + this.getType() + "/" + id);
+            result = processStatusCode(indexResponse.getStatusLine()) == 200;
+        } catch (ResponseException e) {
+            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
+                logger.debug(e.getMessage());
+                result = true;
+            } else {
+                throw new CustomResponseException(e.getMessage());
+            }
+        }
+        return result;
     }
 
     /**
@@ -112,15 +131,15 @@ public class IndexRestClient extends KitodoRestClient {
      * @return status code of the response from server
      */
     public boolean deleteIndex() throws IOException, CustomResponseException {
-        Response indexResponse = restClient.performRequest("DELETE",
-                "/kitodo");
+        Response indexResponse = restClient.performRequest("DELETE", "/kitodo");
         return processStatusCode(indexResponse.getStatusLine()) == 200;
     }
 
     private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {
         for (String response : responses) {
             if (!(response.contains("HTTP/1.1 200") || response.contains("HTTP/1.1 201"))) {
-                throw new CustomResponseException("ElasticSearch failed to add one or more documents! Reason: " + response);
+                throw new CustomResponseException(
+                        "ElasticSearch failed to add one or more documents! Reason: " + response);
             }
         }
     }
