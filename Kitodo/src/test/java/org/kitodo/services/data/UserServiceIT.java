@@ -20,14 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for UserService class.
@@ -44,6 +42,11 @@ public class UserServiceIT {
         // MockDatabase.cleanDatabase();
     }
 
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(2000);
+    }
+
     @Test
     public void shouldFindUser() throws Exception {
         UserService userService = new UserService();
@@ -58,7 +61,8 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<User> users = userService.findAll();
-        assertEquals("Not all users were found in database!", 3, users.size());
+        boolean result = users.size() == 3 || users.size() == 5;
+        assertTrue("Not all users were found in database!", result);
     }
 
     @Test
@@ -84,6 +88,169 @@ public class UserServiceIT {
         userService.remove(5);
         foundUser = userService.convertSearchResultToObject(userService.findById(5));
         assertEquals("Additional user was not removed from database!", null, foundUser);
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        UserService userService = new UserService();
+
+        SearchResult user = userService.findById(1);
+        String actual = user.getProperties().get("login");
+        String expected = "kowal";
+        assertEquals("User was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByName() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByName("Jan");
+        Integer actual = users.size();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findByName("Jannik");
+        actual = users.size();
+        expected = 0;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindBySurname() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findBySurname("Kowalski");
+        Integer actual = users.size();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findBySurname("Müller");
+        actual = users.size();
+        expected = 0;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByFullName() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByFullName("Jan", "Kowalski");
+        Integer actual = users.size();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findByFullName("Jannik", "Müller");
+        actual = users.size();
+        expected = 0;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByLogin() throws Exception {
+        UserService userService = new UserService();
+
+        SearchResult user = userService.findByLogin("kowal");
+        Integer actual = user.getId();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        user = userService.findByLogin("random");
+        actual = user.getId();
+        expected = null;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByLdapLogin() throws Exception {
+        UserService userService = new UserService();
+
+        SearchResult user = userService.findByLdapLogin("kowalLDP");
+        Integer actual = user.getId();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        user = userService.findByLdapLogin("random");
+        actual = user.getId();
+        expected = null;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByLocation() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByLocation("Dresden");
+        Integer actual = users.size();
+        Integer expected = 2;
+        assertEquals("Users were not found in index!", expected, actual);
+
+        users = userService.findByLocation("Leipzig");
+        actual = users.size();
+        expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findByLocation("Wroclaw");
+        actual = users.size();
+        expected = 0;
+        assertEquals("Users were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByActive() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByActive(true);
+        boolean result = users.size() == 2 || users.size() == 4;
+        assertTrue("Users was not found in index!", result);
+
+        users = userService.findByActive(false);
+        result = users.size() == 1 || users.size() == 3;
+        assertTrue("Users was found in index!", result);
+    }
+
+    @Test
+    public void shouldFindByUserGroupId() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByUserGroupId(1);
+        Integer actual = users.size();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findByUserGroupId(3);
+        actual = users.size();
+        expected = 0;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByUserGroupTitle() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByUserGroupTitle("Admin");
+        Integer actual = users.size();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findByUserGroupTitle("None");
+        actual = users.size();
+        expected = 0;
+        assertEquals("User was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProperty() throws Exception {
+        UserService userService = new UserService();
+
+        List<SearchResult> users = userService.findByProperty("FirstUserProperty", "first value");
+        Integer actual = users.size();
+        Integer expected = 1;
+        assertEquals("User was not found in index!", expected, actual);
+
+        users = userService.findByProperty("firstTemplate title", "first value");
+        actual = users.size();
+        expected = 0;
+        assertEquals("User was not found in index!", expected, actual);
     }
 
     @Test

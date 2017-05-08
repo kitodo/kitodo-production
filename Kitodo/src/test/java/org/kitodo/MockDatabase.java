@@ -463,6 +463,7 @@ public class MockDatabase {
         firstUser.setLogin("kowal");
         firstUser.setPassword("test");
         firstUser.setLdapLogin("kowalLDP");
+        firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
         firstUser.setCss("/css/fancy.css");
         serviceManager.getUserService().save(firstUser);
@@ -472,6 +473,7 @@ public class MockDatabase {
         secondUser.setSurname("Nowak");
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
+        secondUser.setLocation("Dresden");
         secondUser.setSessionTimeout(9000);
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().find(1));
         serviceManager.getUserService().save(secondUser);
@@ -481,6 +483,7 @@ public class MockDatabase {
         thirdUser.setSurname("Dora");
         thirdUser.setLogin("dora");
         thirdUser.setLdapLogin("doraLDP");
+        thirdUser.setLocation("Leipzig");
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
     }
