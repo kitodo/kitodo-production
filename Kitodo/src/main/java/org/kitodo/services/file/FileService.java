@@ -23,17 +23,36 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.io.BackupFileRotation;
+import org.hibernate.Hibernate;
+import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.RulesetService;
+
+import ugh.dl.Fileformat;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.WriteException;
+import ugh.fileformats.excel.RDFFile;
+import ugh.fileformats.mets.MetsMods;
+import ugh.fileformats.mets.XStream;
 
 public class FileService {
 
@@ -41,6 +60,8 @@ public class FileService {
 
     // program options initialized to default values
     private static final int BUFFER_SIZE = 4 * 1024;
+
+    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
     private static final ServiceManager serviceManager = new ServiceManager();
 
@@ -81,7 +102,7 @@ public class FileService {
      * mischief under Windows which unaccountably holds locks on files.
      * Sometimes running the JVM’s garbage collector puts things right.
      *
-     * @param oldFileName
+     * @param fileUri
      *            File to move or rename
      * @param newFileName
      *            New file name / destination
@@ -91,7 +112,7 @@ public class FileService {
      *             is thrown if old file (source file of renaming) does not
      *             exists
      */
-    public void renameFile(String oldFileName, String newFileName) throws IOException {
+    public void renameFile(URI fileUri, String newFileName) throws IOException {
         final int SLEEP_INTERVAL_MILLIS = 20;
         final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
         File oldFile;
@@ -99,29 +120,29 @@ public class FileService {
         boolean success;
         int millisWaited = 0;
 
-        if ((oldFileName == null) || (newFileName == null)) {
+        if ((fileUri == null) || (newFileName == null)) {
             return;
         }
 
-        oldFile = new File(oldFileName);
+        oldFile = new File(fileUri);
         newFile = new File(newFileName);
 
         if (!oldFile.exists()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("File " + oldFileName + " does not exist for renaming.");
+                logger.debug("File " + fileUri + " does not exist for renaming.");
             }
-            throw new FileNotFoundException(oldFileName + " does not exist for renaming.");
+            throw new FileNotFoundException(fileUri + " does not exist for renaming.");
         }
 
         if (newFile.exists()) {
-            String message = "Renaming of " + oldFileName + " into " + newFileName + " failed: Destination exists.";
+            String message = "Renaming of " + fileUri + " into " + newFileName + " failed: Destination exists.";
             logger.error(message);
             throw new IOException(message);
         }
 
         do {
             if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
-                logger.warn("Renaming " + oldFileName
+                logger.warn("Renaming " + fileUri
                         + " failed. This is Windows. Running the garbage collector may yield good results. "
                         + "Forcing immediate garbage collection now!");
                 System.gc();
@@ -129,7 +150,7 @@ public class FileService {
             success = oldFile.renameTo(newFile);
             if (!success) {
                 if (millisWaited == 0 && logger.isInfoEnabled()) {
-                    logger.info("Renaming " + oldFileName + " failed. File may be locked. Retrying...");
+                    logger.info("Renaming " + fileUri + " failed. File may be locked. Retrying...");
                 }
                 try {
                     Thread.sleep(SLEEP_INTERVAL_MILLIS);
@@ -140,8 +161,8 @@ public class FileService {
         } while (!success && millisWaited < MAX_WAIT_MILLIS);
 
         if (!success) {
-            logger.error("Rename " + oldFileName + " failed. This is a permanent error. Giving up.");
-            throw new IOException("Renaming of " + oldFileName + " into " + newFileName + " failed.");
+            logger.error("Rename " + fileUri + " failed. This is a permanent error. Giving up.");
+            throw new IOException("Renaming of " + fileUri + " into " + newFileName + " failed.");
         }
 
         if (millisWaited > 0 && logger.isInfoEnabled()) {
@@ -204,12 +225,12 @@ public class FileService {
         FileUtils.copyFileToDirectory(sourceDirectory, targetDirectory);
     }
 
-    public OutputStream write(URI uri) throws IOException {
-        return new FileOutputStream(new File(uri));
+    public OutputStream write(URI uri) throws IOException, URISyntaxException {
+        return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
     }
 
     public InputStream read(URI uri) throws IOException {
-        URL url = uri.toURL();
+        URL url = mapUriToKitodoUri(uri).toURL();
         return url.openStream();
     }
 
@@ -229,11 +250,8 @@ public class FileService {
         return new File(uri).exists();
     }
 
-    public OutputStream writeOrCreate(URI uri) throws IOException {
-        if (fileExist(uri)) {
-            return write(uri);
-        }
-        return write(new File(uri).toURI());
+    public OutputStream writeOrCreate(URI uri) throws IOException, URISyntaxException {
+        return write(uri);
     }
 
     public void moveFile(File sourceDirectory, File targetDirectory) throws IOException {
@@ -287,4 +305,230 @@ public class FileService {
         }
     }
 
+    public void writeMetadataFile(Fileformat gdzfile, Process process) throws IOException, PreferencesException,
+            InterruptedException, DAOException, SwapException, WriteException, URISyntaxException {
+        OutputStream write = serviceManager.getFileService().write(process.getProcessBaseUri());
+
+        RulesetService rulesetService = new RulesetService();
+        boolean backupCondition;
+        boolean writeResult;
+        File temporaryMetadataFile;
+        Fileformat ff;
+        URI metadataFileUri;
+        String temporaryMetadataFileName;
+
+        Hibernate.initialize(process.getRuleset());
+        switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
+            case METS:
+                ff = new MetsMods(rulesetService.getPreferences(process.getRuleset()));
+                break;
+            case RDF:
+                ff = new RDFFile(rulesetService.getPreferences(process.getRuleset()));
+                break;
+            default:
+                ff = new XStream(rulesetService.getPreferences(process.getRuleset()));
+                break;
+        }
+        // createBackupFile();
+        metadataFileUri = getMetadataFilePath(process);
+        temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
+
+        ff.setDigitalDocument(gdzfile.getDigitalDocument());
+        // ff.write(getMetadataFilePath());
+        writeResult = ff.write(temporaryMetadataFileName);
+        temporaryMetadataFile = new File(temporaryMetadataFileName);
+        backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
+        if (backupCondition) {
+            createBackupFile(process);
+            renameFile(metadataFileUri, temporaryMetadataFileName);
+            removePrefixFromRelatedMetsAnchorFilesFor(URI.create(temporaryMetadataFileName));
+        }
+
+    }
+
+    private void removePrefixFromRelatedMetsAnchorFilesFor(URI temporaryMetadataFilename) throws IOException {
+        File temporaryFile = new File(temporaryMetadataFilename);
+        File directoryPath = new File(temporaryFile.getParentFile().getPath());
+        for (File temporaryAnchorFile : listFiles(directoryPath)) {
+            String temporaryAnchorFileName = temporaryAnchorFile.toString();
+            if (temporaryAnchorFile.isFile()
+                    && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
+                String anchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
+                        temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
+                temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
+                        temporaryAnchorFileName);
+                renameFile(URI.create(anchorFileName), temporaryAnchorFileName);
+            }
+        }
+    }
+
+    // backup of meta.xml
+    private void createBackupFile(Process process)
+            throws IOException, InterruptedException, SwapException, DAOException, URISyntaxException {
+        int numberOfBackups = 0;
+
+        if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
+            numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
+        }
+
+        if (numberOfBackups != 0) {
+            BackupFileRotation bfr = new BackupFileRotation();
+            bfr.setNumberOfBackups(numberOfBackups);
+            bfr.setFormat("meta.*\\.xml");
+            bfr.setProcess(process);
+            bfr.performBackup();
+        } else {
+            logger.warn("No backup configured for meta data files.");
+        }
+    }
+
+    public URI getMetadataFilePath(Process process)
+            throws IOException, InterruptedException, SwapException, DAOException {
+        return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+    }
+
+    private String getTemporaryMetadataFileName(URI fileName) {
+
+        File temporaryFile = new File(fileName);
+        String directoryPath = temporaryFile.getParentFile().getPath();
+        String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
+
+        return directoryPath + File.separator + temporaryFileName;
+    }
+
+    /**
+     * This method is needed for migraion purposes. It mappes existing
+     * filePathes to the Correct URI.
+     *
+     * @param process
+     *            the process, the uri is needed for.
+     * @return the URI.
+     */
+    public URI getProcessBaseUriForExistingProcess(Process process) {
+        String pfad = process.getId() + File.separator;
+        pfad = pfad.replaceAll(" ", "__");
+        return URI.create(pfad);
+    }
+
+    /**
+     * Get's the URI for a Process Sub-location. Possible Locations are listed
+     * in ProcessSubType
+     *
+     * @param process
+     *            the process to get the sublocation for.
+     * @param processSubType
+     *            The subType.
+     * @param id
+     *            the id of the single object (e.g. image) if null, the root
+     *            folder of the sublocation is returned
+     * @return The URI of the requested location
+     */
+    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String id) {
+
+        URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+
+        if (id == null) {
+            id = "";
+        }
+
+        switch (processSubType) {
+            case IMAGE:
+                return URI.create(processDataDirectory + "image" + File.separator + id);
+            case IMAGE_SOURCE:
+                return URI.create(getSourceDirectory(process) + id);
+            case META_XML:
+                return URI.create(processDataDirectory + "meta.xml");
+            case TEMPLATE:
+                return URI.create(processDataDirectory + "template.xml");
+            case IMPORT:
+                return URI.create(processDataDirectory + "import" + File.separator + id);
+            case OCR:
+                return URI.create(processDataDirectory + "ocr" + File.separator);
+            case OCR_PDF:
+                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_pdf"
+                        + File.separator + id);
+            case OCR_TXT:
+                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_txt"
+                        + File.separator + id);
+            case OCR_WORD:
+                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_wc"
+                        + File.separator + id);
+            case OCR_ALTO:
+                return URI.create(processDataDirectory + "ocr" + File.separator + process.getTitle() + "_alto"
+                        + File.separator + id);
+            default:
+                return processDataDirectory;
+        }
+
+    }
+
+    /**
+     * deletes all process directorys and their content.
+     *
+     * @param process
+     *            the processt o delete the doirectorys for.
+     * @return true, if deletion was successfull.
+     */
+    public boolean deleteProcessContent(Process process) {
+        for (ProcessSubType processSubType : ProcessSubType.values()) {
+            URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, null);
+            try {
+                delete(processSubTypeURI);
+            } catch (IOException e) {
+                logger.warn("uri " + processSubTypeURI + " could not be deleted");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Gets the image source directory
+     *
+     * @param process
+     *            the process, to get the source directory for
+     * @return the source directory as a string
+     */
+    public String getSourceDirectory(Process process) {
+        File dir = new File(getProcessSubTypeURI(process, ProcessSubType.IMAGE, null));
+        FilenameFilter filterVerz = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return (name.endsWith("_" + "source"));
+            }
+        };
+        File sourceFolder = null;
+        String[] verzeichnisse = list(filterVerz, dir);
+        if (verzeichnisse == null || verzeichnisse.length == 0) {
+            sourceFolder = new File(dir, process.getTitle() + "_source");
+            if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
+                sourceFolder.mkdir();
+            }
+        } else {
+            sourceFolder = new File(dir, verzeichnisse[0]);
+        }
+
+        return sourceFolder.getAbsolutePath();
+    }
+
+    private URI mapUriToKitodoUri(URI uri) throws MalformedURLException {
+        return URI.create(ConfigCore.getKitodoDataDirectory() + uri);
+    }
+
+    /**
+     * gets all sub URIs of an uri.
+     *
+     * @param processSubTypeURI
+     *            the uri, to get the subUris from.
+     * @return A List of sub uris.
+     */
+    public ArrayList<URI> getSubUris(URI processSubTypeURI) {
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files = listFiles(new File(processSubTypeURI));
+        for (File file : files) {
+            resultList.add(file.toURI());
+        }
+
+        return resultList;
+    }
 }

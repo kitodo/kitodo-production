@@ -16,9 +16,9 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +34,7 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -52,6 +53,8 @@ public class MetadatenHelper implements Comparator<Object> {
     private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
     public static final int PAGENUMBER_FIRST = 0;
     public static final int PAGENUMBER_LAST = 1;
+
+    static ServiceManager serviceManager = new ServiceManager();
 
     private Prefs myPrefs;
     private DigitalDocument mydocument;
@@ -507,7 +510,7 @@ public class MetadatenHelper implements Comparator<Object> {
     /**
      * prüfen, ob es sich hier um eine rdf- oder um eine mets-Datei handelt.
      */
-    public static String getMetaFileType(String file) throws IOException {
+    public static String getMetaFileType(URI file) throws IOException {
         /*
          * Typen und Suchbegriffe festlegen
          */
@@ -517,8 +520,8 @@ public class MetadatenHelper implements Comparator<Object> {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        try (InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-                BufferedReader bufRead = new BufferedReader(input);) {
+        try (InputStreamReader input = new InputStreamReader(serviceManager.getFileService().read((file)),
+                StandardCharsets.UTF_8); BufferedReader bufRead = new BufferedReader(input);) {
             char[] buffer = new char[200];
             while ((bufRead.read(buffer)) >= 0) {
                 String temp = new String(buffer).toLowerCase();

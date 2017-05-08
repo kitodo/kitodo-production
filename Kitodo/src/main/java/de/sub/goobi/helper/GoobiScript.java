@@ -14,9 +14,6 @@ package de.sub.goobi.helper;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.helper.tasks.ProcessSwapInTask;
-import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
-import de.sub.goobi.helper.tasks.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -176,7 +173,7 @@ public class GoobiScript {
             try {
                 Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
                 myRdf.getDigitalDocument().addAllContentFiles();
-                serviceManager.getProcessService().writeMetadataFile(myRdf, proz);
+                serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
@@ -193,7 +190,7 @@ public class GoobiScript {
             String title = p.getTitle();
             if (contentOnly) {
                 try {
-                    File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
+                    File ocr = new File(serviceManager.getFileService().getOcrDirectory(p));
                     if (ocr.exists()) {
                         fileService.delete(ocr.toURI());
                     }
@@ -220,16 +217,8 @@ public class GoobiScript {
         }
     }
 
-    private void deleteMetadataDirectory(Process p) {
-        try {
-            fileService.delete(new File(serviceManager.getProcessService().getProcessDataDirectory(p)).toURI());
-            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
-            if (ocr.exists()) {
-                fileService.delete(ocr.toURI());
-            }
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("Can not delete metadata directory", e);
-        }
+    private void deleteMetadataDirectory(Process process) {
+        serviceManager.getFileService().deleteProcessContent(process);
     }
 
     private void runScript(List<Process> inProzesse, String stepname, String scriptname) {
@@ -250,30 +239,6 @@ public class GoobiScript {
             }
         }
 
-    }
-
-    /**
-     * Prozesse auslagern.
-     */
-    private void swapOutProzesses(List<Process> inProzesse) {
-        for (Process p : inProzesse) {
-            ProcessSwapOutTask task = new ProcessSwapOutTask();
-            task.initialize(p);
-            TaskManager.addTask(task);
-            task.start();
-        }
-    }
-
-    /**
-     * Prozesse wieder einlagern.
-     */
-    private void swapInProzesses(List<Process> inProzesse) {
-        for (Process p : inProzesse) {
-            ProcessSwapInTask task = new ProcessSwapInTask();
-            task.initialize(p);
-            TaskManager.addTask(task);
-            task.start();
-        }
     }
 
     /**

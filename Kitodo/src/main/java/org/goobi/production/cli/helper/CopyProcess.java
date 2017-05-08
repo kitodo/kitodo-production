@@ -256,7 +256,7 @@ public class CopyProcess extends ProzesskopieForm {
 
     /**
      * OPAC evaluation.
-     * 
+     *
      * @param io
      *            import object
      * @return empty String
@@ -716,14 +716,7 @@ public class CopyProcess extends ProzesskopieForm {
             createNewFileformat();
         }
 
-        File f = new File(serviceManager.getProcessService().getProcessDataDirectoryIgnoreSwapping(this.prozessKopie));
-        if (!f.exists() && !f.mkdir()) {
-            Helper.setFehlerMeldung("Could not create process directory");
-            logger.error("Could not create process directory");
-            return this.prozessKopie;
-        }
-
-        serviceManager.getProcessService().writeMetadataFile(this.myRdf, this.prozessKopie);
+        serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
         // }
 

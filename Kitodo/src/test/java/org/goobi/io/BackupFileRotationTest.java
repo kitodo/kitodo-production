@@ -19,10 +19,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Process;
 
 public class BackupFileRotationTest {
 
@@ -50,7 +52,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void backupFileShouldContainSameContentAsOriginalFile() throws IOException {
+    public void backupFileShouldContainSameContentAsOriginalFile() throws IOException, URISyntaxException {
         int numberOfBackups = 1;
         String content = "Test One.";
         writeFile(BACKUP_FILE_PATH + BACKUP_FILE_NAME, content);
@@ -59,7 +61,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void modifiedDateShouldNotChangedOnBackup() throws IOException {
+    public void modifiedDateShouldNotChangedOnBackup() throws IOException, URISyntaxException {
         int numberOfBackups = 1;
         long originalModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
         runBackup(numberOfBackups);
@@ -67,7 +69,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void shouldWriteTwoBackupFiles() throws IOException {
+    public void shouldWriteTwoBackupFiles() throws IOException, URISyntaxException {
         int numberOfBackups = 2;
 
         runBackup(numberOfBackups);
@@ -80,7 +82,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException {
+    public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException, URISyntaxException {
         String content1 = "Test One.";
         int numberOfBackups = 2;
 
@@ -94,7 +96,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void secondBackupFileCorrectModifiedDate() throws IOException {
+    public void secondBackupFileCorrectModifiedDate() throws IOException, URISyntaxException {
         long expectedLastModifiedDate;
         int numberOfBackups = 2;
         expectedLastModifiedDate = getLastModifiedFileDate(BACKUP_FILE_PATH + BACKUP_FILE_NAME);
@@ -107,7 +109,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void threeBackupRunsCreateThreeBackupFiles() throws IOException {
+    public void threeBackupRunsCreateThreeBackupFiles() throws IOException, URISyntaxException {
         int numberOfBackups = 3;
 
         runBackup(numberOfBackups);
@@ -122,7 +124,8 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns() throws IOException {
+    public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns()
+            throws IOException, URISyntaxException {
         int numberOfBackups = 3;
         String content1 = "Test One.";
 
@@ -161,14 +164,17 @@ public class BackupFileRotationTest {
         return testFile.lastModified();
     }
 
-    private void runBackup(int numberOfBackups) throws IOException {
+    private void runBackup(int numberOfBackups) throws IOException, URISyntaxException {
         runBackup(numberOfBackups, BACKUP_FILE_NAME);
     }
 
-    private void runBackup(int numberOfBackups, String format) throws IOException {
+    private void runBackup(int numberOfBackups, String format) throws IOException, URISyntaxException {
+
+        Process process = new Process();
+
         BackupFileRotation bfr = new BackupFileRotation();
         bfr.setNumberOfBackups(numberOfBackups);
-        bfr.setProcessDataDirectory(BACKUP_FILE_PATH);
+        bfr.setProcess(process);
         bfr.setFormat(format);
         bfr.performBackup();
     }

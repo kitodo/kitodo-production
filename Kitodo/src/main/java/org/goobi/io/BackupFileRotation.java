@@ -11,13 +11,16 @@
 
 package org.goobi.io;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.ProcessSubType;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -45,7 +48,7 @@ public class BackupFileRotation {
 
     private int numberOfBackups;
     private String format;
-    private String processDataDirectory;
+    private Process process;
 
     private final ServiceManager serviceManager = new ServiceManager();
     public final FileService fileService = serviceManager.getFileService();
@@ -60,25 +63,25 @@ public class BackupFileRotation {
      * @throws IOException
      *             if a file system operation fails
      */
-    public void performBackup() throws IOException {
-        File[] metaFiles;
+    public void performBackup() throws IOException, URISyntaxException {
+        ArrayList<URI> metaFiles;
 
         if (numberOfBackups < 1) {
             return;
         }
 
-        metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
+        metaFiles = generateBackupBaseNameFileList(format, process);
 
-        if (metaFiles.length < 1) {
+        if (metaFiles.size() < 1) {
             if (logger.isInfoEnabled()) {
-                logger.info(
-                        "No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
+                logger.info("No files matching format '" + format + "' in directory "
+                        + serviceManager.getProcessService().getProcessDataDirectory(process) + " found.");
             }
             return;
         }
 
-        for (File metaFile : metaFiles) {
-            createBackupForFile(metaFile.getPath());
+        for (URI metaFile : metaFiles) {
+            createBackupForFile(metaFile);
         }
     }
 
@@ -105,33 +108,34 @@ public class BackupFileRotation {
     }
 
     /**
-     * Set the directory to find the original files and to place the backup
-     * files.
+     * Sets the process.
      *
-     * @param processDataDirectory
-     *            A platform specific filesystem path
+     * @param process
+     *            the process
      */
-    public void setProcessDataDirectory(String processDataDirectory) {
-        this.processDataDirectory = processDataDirectory;
+    public void setProcess(Process process) {
+        this.process = process;
     }
 
-    private void createBackupForFile(String fileName) throws IOException {
+    private void createBackupForFile(URI fileName) throws IOException, URISyntaxException {
         rotateBackupFilesFor(fileName);
 
         String newName = fileName + ".1";
         fileService.renameFile(fileName, newName);
     }
 
-    private void rotateBackupFilesFor(String fileName) throws IOException {
-        File oldest = new File(fileName + "." + numberOfBackups);
-        if (oldest.exists() && !oldest.delete()) {
-            String message = "Could not delete " + oldest.getAbsolutePath();
+    private void rotateBackupFilesFor(URI fileName) throws IOException, URISyntaxException {
+
+        URI oldest = new URI(fileName + "." + numberOfBackups);
+        boolean deleted = fileService.delete(oldest);
+        if (!deleted) {
+            String message = "Could not delete " + oldest.toString();
             logger.error(message);
             throw new IOException(message);
         }
 
         for (int count = numberOfBackups; count > 1; count--) {
-            String oldName = fileName + "." + (count - 1);
+            URI oldName = new URI(fileName + "." + (count - 1));
             String newName = fileName + "." + count;
             try {
                 fileService.renameFile(oldName, newName);
@@ -143,11 +147,18 @@ public class BackupFileRotation {
         }
     }
 
-    private File[] generateBackupBaseNameFileList(String filterFormat, String directoryOfBackupFiles) {
-        FilenameFilter filter = new FileListFilter(filterFormat);
-        File metaFilePath = new File(directoryOfBackupFiles);
+    private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
 
-        return fileService.listFiles(filter, metaFilePath);
+        ArrayList<URI> filteredUris = new ArrayList<>();
+
+        URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
+        ArrayList<URI> subUris = fileService.getSubUris(processSubTypeURI);
+        for (URI uri : subUris) {
+            if (uri.toString().matches(filterFormat)) {
+                filteredUris.add(uri);
+            }
+        }
+        return filteredUris;
     }
 
 }
