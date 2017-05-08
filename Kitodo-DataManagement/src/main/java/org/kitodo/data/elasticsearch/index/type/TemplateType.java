@@ -26,11 +26,12 @@ public class TemplateType extends BaseType<Template> {
     @Override
     public HttpEntity createDocument(Template template) {
 
-        JSONObject processObject = new JSONObject();
+        JSONObject templateObject = new JSONObject();
+        templateObject.put("origin", template.getOrigin());
         Integer process = template.getProcess() != null ? template.getProcess().getId() : null;
-        processObject.put("process", process);
-        processObject.put("properties", addObjectRelation(template.getProperties()));
+        templateObject.put("process", process);
+        templateObject.put("properties", addObjectRelation(template.getProperties()));
 
-        return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
+        return new NStringEntity(templateObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
 }
