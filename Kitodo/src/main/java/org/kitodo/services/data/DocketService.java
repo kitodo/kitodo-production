@@ -155,7 +155,6 @@ public class DocketService extends TitleSearchService<Docket> {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true));
         query.should(createSimpleQuery("file", file, true));
-        System.out.println(query.toString());
         return searcher.findDocuments(query.toString());
     }
 

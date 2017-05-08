@@ -303,7 +303,12 @@ public abstract class SearchService<T extends BaseBean> {
      * @return bean object
      */
     public T convertSearchResultToObject(SearchResult searchResult) throws DAOException, IOException {
-        return find(searchResult.getId());
+        if (searchResult.getId() == null) {
+            //TODO: maybe here could be used some instancing of generic class...
+            return null;
+        } else {
+            return find(searchResult.getId());
+        }
     }
 
     /**

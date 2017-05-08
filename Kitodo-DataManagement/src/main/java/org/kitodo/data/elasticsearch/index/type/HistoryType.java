@@ -32,7 +32,8 @@ public class HistoryType extends BaseType<History> {
         historyObject.put("type", history.getHistoryType().toString());
         String date = history.getDate() != null ? formatDate(history.getDate()) : null;
         historyObject.put("date", date);
-        historyObject.put("process", history.getProcess().getId());
+        Integer process = history.getProcess() != null ? history.getProcess().getId() : null;
+        historyObject.put("process", process);
 
         return new NStringEntity(historyObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
