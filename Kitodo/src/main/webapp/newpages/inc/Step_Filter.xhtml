@@ -25,9 +25,6 @@
         <h:outputText value="#{msgs.selectFilter}: "/>
         <!-- Filter Liste -->
         <t:selectOneMenu forceId="true" id="select" style="width:18%;" value="#{Form.filter}" onclick="setFilter();">
-            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-            <!--<si:selectItems id="pcid11" value="#{Form.user.filters}" var="item" itemLabel="#{item}"-->
-                            <!--itemValue="#{item}"/>-->
             <f:selectItems id="pcid11" value="#{Form.user.filters}" var="item" itemLabel="#{item}"
                             itemValue="#{item}"/>
         </t:selectOneMenu>

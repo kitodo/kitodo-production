@@ -31,10 +31,6 @@
                         <td class="eingabeBoxen_row2">
                             <h:outputText value="#{msgs.showDataForProcess}: "/>
                             <h:selectOneMenu value="#{AktuelleSchritteForm.batchHelper.processName}">
-                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                <!--<si:selectItems var="process"-->
-                                                <!--value="#{AktuelleSchritteForm.batchHelper.processNameList}"-->
-                                                <!--itemLabel="#{process}" itemValue="#{process}"/>-->
                                 <f:selectItems var="process"
                                                 value="#{AktuelleSchritteForm.batchHelper.processNameList}"
                                                 itemLabel="#{process}" itemValue="#{process}"/>

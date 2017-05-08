@@ -26,7 +26,6 @@
                 <h:outputText value="#{msgs.manifestationType}"/>
             </f:facet>
             <h:selectOneMenu value="#{docstruct.docStruct}">
-                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
                 <f:selectItems value="#{MassImportForm.plugin.possibleDocstructs}" itemLabel="#{test}" itemValue="#{test}"
                                 var="test"/>
             </h:selectOneMenu>
@@ -45,7 +44,6 @@
                 <h:outputText value="#{msgs.volume}"/>
             </f:facet>
             <h:selectOneMenu value="#{docstruct.volumeProperty.value}" id="prpvw15_2">
-                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
                 <f:selectItems id="prpvw15_2_2" value="#{docstruct.volumeProperty.possibleValues}" var="props"
                                 itemLabel="#{props}" itemValue="#{props}"/>
             </h:selectOneMenu>
@@ -57,7 +55,6 @@
                 <h:outputText value="#{msgs.copy}"/>
             </f:facet>
             <h:selectOneMenu value="#{docstruct.copyProperty.value}" id="prpvw15_1">
-                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
                 <f:selectItems id="prpvw15_1_2" value="#{docstruct.copyProperty.possibleValues}" var="props"
                                 itemLabel="#{props}" itemValue="#{props}"/>
             </h:selectOneMenu>

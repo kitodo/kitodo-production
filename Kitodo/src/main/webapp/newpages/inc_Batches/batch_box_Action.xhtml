@@ -75,11 +75,8 @@
                                         <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
                                         <h:selectOneMenu style="width:350px"
                                                          value="#{AktuelleSchritteForm.batchHelper.myProblemStep}">
-                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
                                             <f:selectItems
                                                     value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}"/>
-                                            <!-- <si:selectItems value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}" var="step1"
-                                                                 itemLabel="#{step1.titelMitBenutzername}" itemValue="#{step1.id}" />-->
                                         </h:selectOneMenu>
                                         <h:outputText value="#{msgs.bemerkung}"/>
                                         <h:inputTextarea style="width:350px;height:80px"
@@ -120,10 +117,7 @@
                                         <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
                                         <h:selectOneMenu style="width:350px" id="select1"
                                                          value="#{AktuelleSchritteForm.batchHelper.mySolutionStep}">
-                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
                                             <f:selectItems value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}"/>
-                                            <!-- <si:selectItems value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}" var="step2"
-                                                                 itemLabel="#{step2.titelMitBenutzername}" itemValue="#{step2.id}" />-->
                                         </h:selectOneMenu>
                                         <h:outputText value="#{msgs.bemerkung}"/>
                                         <h:inputTextarea style="width:350px;height:80px" id="input1"

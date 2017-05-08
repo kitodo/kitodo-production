@@ -291,11 +291,6 @@
                                             <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
                                             <h:selectOneMenu style="width:350px"
                                                              value="#{AktuelleSchritteForm.myProblemID}">
-                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                <!--<si:selectItems-->
-                                                        <!--value="#{AktuelleSchritteForm.previousStepsForProblemReporting}"-->
-                                                        <!--var="step1" itemLabel="#{step1.titleWithUserName}"-->
-                                                        <!--itemValue="#{step1.id}"/>-->
                                                 <f:selectItems
                                                         value="#{AktuelleSchritteForm.previousStepsForProblemReporting}"
                                                         var="step1" itemLabel="#{step1.titleWithUserName}"
@@ -336,11 +331,6 @@
                                             <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
                                             <h:selectOneMenu style="width:350px" id="select1"
                                                              value="#{AktuelleSchritteForm.mySolutionID}">
-                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                <!--<si:selectItems-->
-                                                        <!--value="#{AktuelleSchritteForm.nextStepsForProblemSolution}"-->
-                                                        <!--var="step2" itemLabel="#{step2.titelMitBenutzername}"-->
-                                                        <!--itemValue="#{step2.id}"/>-->
                                                 <f:selectItems
                                                         value="#{AktuelleSchritteForm.nextStepsForProblemSolution}"
                                                         var="step2" itemLabel="#{step2.titelMitBenutzername}"

@@ -266,10 +266,6 @@
                                         <h:panelGroup id="prpvw15_2" rendered="#{(myprocess_item.type.name == 'list')}">
                                             <h:selectOneMenu value="#{myprocess_item.value}"
                                                              style="width: 500px;margin-right:15px" id="prpvw15_2_1">
-                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                <!--<si:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}"-->
-                                                                <!--var="myprocess_items" itemLabel="#{myprocess_items}"-->
-                                                                <!--itemValue="#{myprocess_items}"/>-->
                                                 <f:selectItems id="prpvw15_2_2" value="#{myprocess_item.possibleValues}"
                                                                 var="myprocess_items" itemLabel="#{myprocess_items}"
                                                                 itemValue="#{myprocess_items}"/>
@@ -281,10 +277,6 @@
                                                       rendered="#{(myprocess_item.type.name == 'listmultiselect')}">
                                             <h:selectManyListbox id="prpvw15_3_1" style="width: 500px;margin-right:15px"
                                                                  value="#{myprocess_item.valueList}" size="5">
-                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                <!--<si:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}"-->
-                                                                <!--var="myprocess_items" itemLabel="#{myprocess_items}"-->
-                                                                <!--itemValue="#{myprocess_items}"/>-->
                                                 <f:selectItems id="prpvw15_3_2" value="#{myprocess_item.possibleValues}"
                                                                 var="myprocess_items" itemLabel="#{myprocess_items}"
                                                                 itemValue="#{myprocess_items}"/>

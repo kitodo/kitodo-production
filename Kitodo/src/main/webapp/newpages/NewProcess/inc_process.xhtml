@@ -45,7 +45,6 @@
 
         <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}"
                          style="display:inline; margin-left:7px">
-            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
             <f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}"
                             itemValue="#{step}"/>
         </h:selectOneMenu>
@@ -102,8 +101,6 @@
     <h:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
                      onchange="submit()"
                      styleClass="prozessKopieFeldbreite">
-
-        <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
         <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
                         itemValue="#{step.title}"/>
     </h:selectOneMenu>
@@ -125,7 +122,6 @@
     <h:selectManyListbox id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
                          rendered="#{ProzesskopieForm.standardFields.collections}"
                          value="#{ProzesskopieForm.digitalCollections}">
-        <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
         <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
                         itemValue="#{step}"/>
     </h:selectManyListbox>

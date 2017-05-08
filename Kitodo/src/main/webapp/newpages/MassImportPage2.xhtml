@@ -115,11 +115,6 @@
                                                                 <h:selectOneMenu value="#{property.value}" id="selectMenu"
                                                                                  style="width: 500px;margin-right:15px"
                                                                                  required="#{property.required}">
-                                                                    <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                    <!--<si:selectItems id="prpvw15_2_2"-->
-                                                                                    <!--value="#{property.possibleValues}"-->
-                                                                                    <!--var="propertys" itemLabel="#{propertys}"-->
-                                                                                    <!--itemValue="#{propertys}"/>-->
                                                                     <f:selectItems id="prpvw15_2_2"
                                                                                     value="#{property.possibleValues}"
                                                                                     var="propertys" itemLabel="#{propertys}"
@@ -134,11 +129,6 @@
                                                                                      style="width: 500px;margin-right:15px"
                                                                                      value="#{property.valueList}"
                                                                                      size="5" required="#{property.required}">
-                                                                    <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                    <!--<si:selectItems id="prpvw15_3_2"-->
-                                                                                    <!--value="#{property.possibleValues}"-->
-                                                                                    <!--var="propertys" itemLabel="#{propertys}"-->
-                                                                                    <!--itemValue="#{propertys}"/>-->
                                                                     <f:selectItems id="prpvw15_3_2"
                                                                                     value="#{property.possibleValues}"
                                                                                     var="propertys" itemLabel="#{propertys}"

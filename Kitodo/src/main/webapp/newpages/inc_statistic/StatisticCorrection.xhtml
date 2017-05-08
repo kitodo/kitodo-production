@@ -57,9 +57,6 @@
 
                     <h:selectOneMenu id="uaid10" style="width:130px" value="#{Form.statisticsManager3.sourceTimeUnit}"
                                      converter="StatisticsTimeUnitConverter">
-                        <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                        <!--<si:selectItems id="uaid11" value="#{Form.statisticsManager3.allTimeUnits}" var="unit"-->
-                                        <!--itemLabel="#{unit.title}" itemValue="#{unit}"/>-->
                         <f:selectItems id="uaid11" value="#{Form.statisticsManager3.allTimeUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -75,9 +72,6 @@
 
                     <h:selectOneMenu id="uaid16" style="width:130px" value="#{Form.statisticsManager3.targetTimeUnit}"
                                      converter="StatisticsTimeUnitConverter">
-                        <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                        <!--<si:selectItems id="uaid17" value="#{Form.statisticsManager3.allTimeUnits}" var="unit"-->
-                                        <!--itemLabel="#{unit.title}" itemValue="#{unit}"/>-->
                         <f:selectItems id="uaid17" value="#{Form.statisticsManager3.allTimeUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -87,9 +81,6 @@
                     <h:selectOneMenu id="uaid19" style="width:130px"
                                      value="#{Form.statisticsManager3.targetCalculationUnit}"
                                      converter="StatisticsCalculationUnitConverter">
-                        <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                        <!--<si:selectItems id="uaid20" value="#{Form.statisticsManager3.allCalculationUnits}" var="unit"-->
-                                        <!--itemLabel="#{unit.title}" itemValue="#{unit}"/>-->
                         <f:selectItems id="uaid20" value="#{Form.statisticsManager3.allCalculationUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -98,9 +89,6 @@
 
                     <h:selectOneMenu id="uaid22" style="width:130px" value="#{Form.statisticsManager3.targetResultOutput}"
                                      converter="StatisticsResultOutputConverter">
-                        <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                        <!--<si:selectItems id="uaid23" value="#{Form.statisticsManager3.allResultOutputs}" var="out"-->
-                                        <!--itemLabel="#{out.title}" itemValue="#{out}"/>-->
                         <f:selectItems id="uaid23" value="#{Form.statisticsManager3.allResultOutputs}" var="out"
                                         itemLabel="#{out.title}" itemValue="#{out}"/>
                     </h:selectOneMenu>

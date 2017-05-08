@@ -17,8 +17,7 @@
 
         #########################################-->
 
-        <!DOCTYPE html>
-
+<!DOCTYPE html>
 <html
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -94,10 +93,6 @@
                                                         </h:selectOneMenu>
 
                                                         <h:selectOneMenu value="#{SearchForm.project}" style="width:570px">
-                                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                            <!--<si:selectItems id="pcid11" value="#{SearchForm.projects}"-->
-                                                                            <!--var="proj" itemLabel="#{proj}"-->
-                                                                            <!--itemValue="#{proj}"/>-->
                                                             <f:selectItems id="pcid11" value="#{SearchForm.projects}"
                                                                             var="proj" itemLabel="#{proj}"
                                                                             itemValue="#{proj}"/>
@@ -114,10 +109,6 @@
                                                         <h:panelGroup>
                                                             <h:selectOneMenu value="#{SearchForm.processPropertyTitle}"
                                                                              style="width:175px; margin-right:3px">
-                                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                <!--<si:selectItems value="#{SearchForm.processPropertyTitles}"-->
-                                                                                <!--var="proc" itemLabel="#{proc}"-->
-                                                                                <!--itemValue="#{proc}"/>-->
                                                                 <f:selectItems value="#{SearchForm.processPropertyTitles}"
                                                                                 var="proc" itemLabel="#{proc}"
                                                                                 itemValue="#{proc}"/>
@@ -137,10 +128,6 @@
                                                         <h:panelGroup>
                                                             <h:selectOneMenu value="#{SearchForm.masterpiecePropertyTitle}"
                                                                              style="width:175px; margin-right:3px">
-                                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                <!--<si:selectItems-->
-                                                                        <!--value="#{SearchForm.masterpiecePropertyTitles}"-->
-                                                                        <!--var="work" itemLabel="#{work}" itemValue="#{work}"/>-->
                                                                 <f:selectItems
                                                                         value="#{SearchForm.masterpiecePropertyTitles}"
                                                                         var="work" itemLabel="#{work}" itemValue="#{work}"/>
@@ -159,10 +146,6 @@
                                                         <h:panelGroup>
                                                             <h:selectOneMenu value="#{SearchForm.templatePropertyTitle}"
                                                                              style="width:175px; margin-right:3px">
-                                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                <!--<si:selectItems value="#{SearchForm.templatePropertyTitles}"-->
-                                                                                <!--var="temp" itemLabel="#{temp}"-->
-                                                                                <!--itemValue="#{temp}"/>-->
                                                                 <f:selectItems value="#{SearchForm.templatePropertyTitles}"
                                                                                 var="temp" itemLabel="#{temp}"
                                                                                 itemValue="#{temp}"/>
@@ -181,11 +164,6 @@
                                                         <h:panelGroup>
                                                             <h:selectOneMenu value="#{SearchForm.status}"
                                                                              style="width:175px; margin-right:3px">
-                                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                <!--<si:selectItems value="#{SearchForm.stepstatus}"-->
-                                                                                <!--var="stepstatus"-->
-                                                                                <!--itemLabel="#{stepstatus.title}"-->
-                                                                                <!--itemValue="#{stepstatus.searchString}"/>-->
                                                                 <f:selectItems value="#{SearchForm.stepstatus}"
                                                                                 var="stepstatus"
                                                                                 itemLabel="#{stepstatus.title}"
@@ -193,10 +171,6 @@
                                                             </h:selectOneMenu>
                                                             <h:selectOneMenu value="#{SearchForm.stepname}"
                                                                              style="width:394px">
-                                                                <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                                <!--<si:selectItems value="#{SearchForm.stepTitles}"-->
-                                                                                <!--var="stepTitles" itemLabel="#{stepTitles}"-->
-                                                                                <!--itemValue="#{stepTitles}"/>-->
                                                                 <f:selectItems value="#{SearchForm.stepTitles}"
                                                                                 var="stepTitles" itemLabel="#{stepTitles}"
                                                                                 itemValue="#{stepTitles}"/>
@@ -208,19 +182,11 @@
                                                                   rendered="#{HelperForm.userStepDoneSearchEnabled}"/>
                                                     <h:panelGroup rendered="#{HelperForm.userStepDoneSearchEnabled}">
                                                         <h:selectOneMenu value="#{SearchForm.stepdoneuser}">
-                                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                            <!--<si:selectItems value="#{SearchForm.user}"-->
-                                                                            <!--var="user" itemLabel="#{user.fullName}"-->
-                                                                            <!--itemValue="#{user.login}"/>-->
                                                             <f:selectItems value="#{SearchForm.user}"
                                                                             var="user" itemLabel="#{user.fullName}"
                                                                             itemValue="#{user.login}"/>
                                                         </h:selectOneMenu>
                                                         <h:selectOneMenu value="#{SearchForm.stepdonetitle}">
-                                                            <!-- TODO: verify that f:selectItems does exactly the same as si:selectItems in JSF2 -->
-                                                            <!--<si:selectItems value="#{SearchForm.stepTitles}"-->
-                                                                            <!--var="stepTitles" itemLabel="#{stepTitles}"-->
-                                                                            <!--itemValue="#{stepTitles}"/>-->
                                                             <f:selectItems value="#{SearchForm.stepTitles}"
                                                                             var="stepTitles" itemLabel="#{stepTitles}"
                                                                             itemValue="#{stepTitles}"/>
