@@ -23,15 +23,15 @@
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="/newpages/inc/head.xhtml" />
 
-        <body style="margin: 0px 2px 2px 2px;" class="metadatenRechtsBody" onload="addableTypenAnzeigen();TreeReloaden()">
+        <h:body style="margin: 0px 2px 2px 2px;" class="metadatenRechtsBody" onload="addableTypenAnzeigen();TreeReloaden()">
 
         <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-2.1.1.min.js"></script>
         <script type="text/javascript">
         //<![CDATA[
             jQuery.noConflict();
-            <%-- leave $ to RichFaces' prototype.js --%>
+            // leave $ to RichFaces' prototype.js
 
-            <%--
+            /*
              * The function toAjaxUrl() converts an absolute URL of a norm data record
              * to the relative URL we need to actually retrieve this norm data record,
              * using a reverse proxy to get along with Javascript's same origin policy.
@@ -39,14 +39,14 @@
              * @param URL
              *            of a norm data record
              * @return access URL via reverse proxy
-             --%>
+             */
             function toAjaxUrl(url) {
                 return url.replace(new RegExp("^.*?://[^/]+/(.*)$", ""), function ($0, $1) {
                     return "${pageContext.request.contextPath}/" + $1 + "/about/rdf";
                 });
             }
 
-            <%--
+            /*
              * The function setNameFromRecord() retrieves a norm data record using AJAX
              * and puts the first and last name in the corresponding form fields.
              *
@@ -56,7 +56,7 @@
              *            id of the input element to put the first name
              * @param lastnameID
              *            id of the input element to put the last name
-             --%>
+             */
             function setNameFromRecord(recordID, firstnameID, lastnameID) {
                 var url = toAjaxUrl(document.getElementById(recordID).value);
                 jQuery.ajax({
@@ -78,23 +78,23 @@
                         });
             }
 
-            <%--
+            /*
              * The function getNormDateNeuPerson() retrieves a norm data record using
              * AJAX from the form to add a new person as metadata. The first and last
              * name from the records will be put in the corresponding form fields.
-             --%>
+             */
             function getNormDataNeuPerson() {
                 setNameFromRecord("formular2:normDataRecord", "formular2:vorname", "formular2:nachname");
             }
 
-            <%--
+            /*
              * The function getNormDataPersonenUndMetadaten() retrieves a norm data
              * record using AJAX from the form showing all metadata. The first and last
              * name from the records will be put in the corresponding form fields.
              *
              * @param actionLink
              *            link corresponding to the group of fields to update
-             --%>
+             */
             function getNormDataPersonenUndMetadaten(actionLink) {
                 var actionLinkID = actionLink.id;
                 var recordID = actionLinkID.replace(/:clicker$/, ":record");
@@ -228,7 +228,7 @@
                 <td>
 
                     <h:panelGroup id="myMessages">
-                        <%-- globale Warn- und Fehlermeldungen --%>
+                        <!-- globale Warn- und Fehlermeldungen -->
                         <h:messages globalOnly="true" errorClass="text_red" infoClass="text_blue" showDetail="true"
                                     showSummary="true" tooltip="true"/>
                     </h:panelGroup>
@@ -317,7 +317,7 @@
                 </td>
             </tr>
         </table>
-        </body>
+        </h:body>
     </f:view>
 
     <script type="text/javascript">
