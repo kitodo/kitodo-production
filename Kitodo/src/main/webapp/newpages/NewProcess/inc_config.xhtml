@@ -36,24 +36,26 @@
         <t:dataList var="intern" style="font-weight: normal;margin-left:30px" value="#{ProzesskopieForm.additionalFields}"
                     layout="ordered list"
                     rowCountVar="rowCount" rowIndexVar="rowIndex">
-            <tr rendered="#{intern.showDependingOnDoctype}">
-                <td width="150">
-                    <h:outputText value="#{intern.title}:"/>
-                </td>
-                <td>
-                    <h:inputText value="#{intern.value}" styleClass="prozessKopieFeldbreite"
-                                 rendered="#{intern.selectList==null}"/>
-                    <!--  		<h:selectOneMenu  value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
-                    <f:selectItems value="#{intern.selectList}" />
-                </h:selectOneMenu> -->
-                    <h:selectOneListbox value="#{intern.value}" styleClass="prozessKopieFeldbreite"
-                                        rendered="#{intern.selectList!=null}">
-                        <f:selectItems value="#{intern.selectList}"/>
-                    </h:selectOneListbox>
+            <ui:fragment rendered="#{intern.showDependingOnDoctype}">
+                <tr>
+                    <td width="150">
+                        <h:outputText value="#{intern.title}:"/>
+                    </td>
+                    <td>
+                        <h:inputText value="#{intern.value}" styleClass="prozessKopieFeldbreite"
+                                     rendered="#{intern.selectList==null}"/>
+                        <!--  		<h:selectOneMenu  value="#{intern.wert}" styleClass="prozessKopieFeldbreite" rendered="#{intern.selectList!=null}">
+                        <f:selectItems value="#{intern.selectList}" />
+                    </h:selectOneMenu> -->
+                        <h:selectOneListbox value="#{intern.value}" styleClass="prozessKopieFeldbreite"
+                                            rendered="#{intern.selectList!=null}">
+                            <f:selectItems value="#{intern.selectList}"/>
+                        </h:selectOneListbox>
 
-                    <h:outputText value="*" rendered="#{intern.required}"/>
-                </td>
-            </tr>
+                        <h:outputText value="*" rendered="#{intern.required}"/>
+                    </td>
+                </tr>
+            </ui:fragment>
 
         </t:dataList>
 

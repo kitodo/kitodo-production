@@ -91,7 +91,7 @@
                             rendered="#{!item.selected}"/>
             <t:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>
             <!-- FIXME: this breaks the JS on the page: -->
-            <f:ajax render="myself1"/>
+            <!--<f:ajax render="myself1"/>-->
         </h:commandLink>
         <!--<a4j:commandLink reRender="myself1" id="myself1">-->
             <!--<h:graphicImage value="/newpages/images/check_true.gif" style="margin-right:4px"-->
@@ -186,6 +186,15 @@
             <!--<h:outputText value="#{item.title}"/>-->
             <!--<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender"/>-->
         <!--</a4j:commandLink>-->
+
+        <!-- TODO: verify if this is a suitable replacement for the a4j:commandLink above! -->
+        <h:commandLink reRender="auflistungIntern,myself" id="myself" style="color:black">
+            <h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelShown}"/>
+            <h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelShown}"/>
+            <t:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}"/>
+            <h:outputText value="#{item.title}"/>
+            <f:ajax render="auflistungIntern myself" />
+        </h:commandLink>
 
         <h:panelGroup id="auflistungIntern">
             <t:dataTable id="prozessdetails" styleClass="standardTable" width="90%"

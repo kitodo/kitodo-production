@@ -24,7 +24,7 @@
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
-        <body style="margin:0px;padding:0px">
+        <h:body style="margin:0px;padding:0px">
             <h:form id="userpopupform">
                 <!-- ===================== Popup-Rahmen ======================
                 <h:graphicImage id="id0" value="/newpages/images/popup/oben.gif" width="430"
@@ -46,7 +46,7 @@
                 </h:form> -->
 
                 <h:outputText id="id6" value="#{msgs.benutzergruppenHinzufuegen}"
-                              style="position:absolute;left:10;top:2;color:white;font-weight:bold;font-size:12;z-index:3"/>
+                              style="position:absolute;left:10px;top:2px;color:white;font-weight:bold;font-size:12;z-index:3"/>
 
                 <!-- ===================== // Popup-Rahmen ====================== -->
 
@@ -78,7 +78,7 @@
                                     <f:facet name="header">
                                         <h:outputText id="id13" value="#{msgs.auswahl}"/>
                                     </f:facet>
-                                    <%-- Hinzufügen-Schaltknopf --%>
+                                    <!-- Hinzufügen-Schaltknopf -->
                                     <h:commandLink
                                             action="#{BenutzerverwaltungForm.addToGroup}"
                                             title="#{msgs.uebernehmen}">
@@ -125,7 +125,7 @@
                     </tr>
                 </table>
             </h:form>
-        </body>
+        </h:body>
     </f:view>
 
 </html>

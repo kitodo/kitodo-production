@@ -56,7 +56,7 @@
                             <h:outputText value="#{item.priority}"/>
                         </td>
                     </tr>
-                    <ui:fragment rendered="#{item.processingBegin !=null && !HelperForm.anonymized}">
+                    <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
                         <tr>
                             <td width="150">
                                 <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
@@ -66,7 +66,7 @@
                             </td>
                         </tr>
                     </ui:fragment>
-                    <ui:fragment rendered="#{item.processingTime !=null && !HelperForm.anonymized}">
+                    <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
                         <tr>
                             <td width="150">
                                 <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
@@ -76,7 +76,7 @@
                             </td>
                         </tr>
                     </ui:fragment>
-                    <ui:fragment rendered="#{item.processingUser.id !=0 && item.processingUser !=null && !HelperForm.anonymized}">
+                    <ui:fragment rendered="#{item.processingUser.id !=0 and item.processingUser !=null and !HelperForm.anonymized}">
                         <tr>
                             <td width="150">
                                 <h:outputText value="#{msgs.letzteAktualisierungDurch}:"/>

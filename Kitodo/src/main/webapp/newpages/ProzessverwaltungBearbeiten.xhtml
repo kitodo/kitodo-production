@@ -28,81 +28,81 @@
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <h:body>
-        <table class="headTable" cellspacing="0" cellpadding="0"
-                   style="padding-left:5px;padding-right:5px;margin-top:5px;">
-            <ui:include src="inc/tbl_Kopf.xhtml" />
-        </table>
-        <table cellspacing="5" cellpadding="0" class="layoutTable" align="center">
-            <tr>
-                <ui:include src="inc/tbl_Navigation.xhtml" />
-                <td valign="top" class="layoutInhalt">
+            <table class="headTable" cellspacing="0" cellpadding="0"
+                       style="padding-left:5px;padding-right:5px;margin-top:5px;">
+                <ui:include src="inc/tbl_Kopf.xhtml" />
+            </table>
+            <table cellspacing="5" cellpadding="0" class="layoutTable" align="center">
+                <tr>
+                    <ui:include src="inc/tbl_Navigation.xhtml" />
+                    <td valign="top" class="layoutInhalt">
 
-                    <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
-                    <h:form id="id0" style="margin:0px">
-                        <!-- Breadcrumb -->
-                        <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
-                            <h:panelGroup id="id1">
-                                <h:commandLink id="id2" value="#{msgs.startseite}" action="newMain"/>
-                                <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                <h:commandLink id="id3" value="#{msgs.prozessverwaltung}" action="ProzessverwaltungAlle"/>
-                                <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                <h:outputText id="id4" value="#{msgs.einenNeuenProzessAnlegen}"
-                                              rendered="#{ProzessverwaltungForm.myProzess.id == null}"/>
-                                <h:outputText id="id5" value="#{msgs.prozessDetails}"
-                                              rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
-                            </h:panelGroup>
-                        </h:panelGrid>
-                    </h:form>
-
-                    <table border="0" align="center" width="100%" cellpadding="15">
-                        <tr>
-                            <td>
-                                <h3>
-                                    <h:outputText id="id6" value="#{msgs.einenNeuenProzessAnlegen}"
+                        <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
+                        <h:form id="id0" style="margin:0px">
+                            <!-- Breadcrumb -->
+                            <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
+                                <h:panelGroup id="id1">
+                                    <h:commandLink id="id2" value="#{msgs.startseite}" action="newMain"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:commandLink id="id3" value="#{msgs.prozessverwaltung}" action="ProzessverwaltungAlle"/>
+                                    <f:verbatim> &#8250;&#8250; </f:verbatim>
+                                    <h:outputText id="id4" value="#{msgs.einenNeuenProzessAnlegen}"
                                                   rendered="#{ProzessverwaltungForm.myProzess.id == null}"/>
-                                    <h:outputText id="id7" value="#{msgs.prozessDetails}"
+                                    <h:outputText id="id5" value="#{msgs.prozessDetails}"
                                                   rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
-                                </h3>
+                                </h:panelGroup>
+                            </h:panelGrid>
+                        </h:form>
 
-                                <!-- globale Warn- und Fehlermeldungen -->
-                                <h:messages id="id8" globalOnly="true" errorClass="text_red" infoClass="text_blue"
-                                            showDetail="true" showSummary="true" tooltip="true"/>
+                        <table border="0" align="center" width="100%" cellpadding="15">
+                            <tr>
+                                <td>
+                                    <h3>
+                                        <h:outputText id="id6" value="#{msgs.einenNeuenProzessAnlegen}"
+                                                      rendered="#{ProzessverwaltungForm.myProzess.id == null}"/>
+                                        <h:outputText id="id7" value="#{msgs.prozessDetails}"
+                                                      rendered="#{ProzessverwaltungForm.myProzess.id != null}"/>
+                                    </h3>
 
-                                <!-- Prozessdetails -->
-                                <ui:include src="inc_Prozessverwaltung/prozess_box_Prozessdetails.xhtml" />
+                                    <!-- globale Warn- und Fehlermeldungen -->
+                                    <h:messages id="id8" globalOnly="true" errorClass="text_red" infoClass="text_blue"
+                                                showDetail="true" showSummary="true" tooltip="true"/>
 
-                                <h:form id="proceditform" onkeypress="ifEnterClick(event, 'proceditform:absenden');">
+                                    <!-- Prozessdetails -->
+                                    <ui:include src="inc_Prozessverwaltung/prozess_box_Prozessdetails.xhtml" />
 
-                                    <f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null}">
-                                        <!-- Schritte -->
-                                        <ui:include src="inc_Prozessverwaltung/prozess_box_Schritte.xhtml" />
+                                    <h:form id="proceditform" onkeypress="ifEnterClick(event, 'proceditform:absenden');">
 
-                                        <!-- Vorlagen -->
-                                        <f:subview id="subVorlage"
-                                                   rendered="#{ProzessverwaltungForm.myProzess.templatesSize != 0}">
-                                            <ui:include src="inc_Prozessverwaltung/prozess_box_Vorlagen.xhtml" />
+                                        <f:subview id="sub001" rendered="#{ProzessverwaltungForm.myProzess.id != null}">
+                                            <!-- Schritte -->
+                                            <ui:include src="inc_Prozessverwaltung/prozess_box_Schritte.xhtml" />
+
+                                            <!-- Vorlagen -->
+                                            <f:subview id="subVorlage"
+                                                       rendered="#{ProzessverwaltungForm.myProzess.templatesSize != 0}">
+                                                <ui:include src="inc_Prozessverwaltung/prozess_box_Vorlagen.xhtml" />
+                                            </f:subview>
+
+                                            <!-- Werkstuecke -->
+                                            <f:subview id="subWerk"
+                                                       rendered="#{ProzessverwaltungForm.myProzess.workpiecesSize != 0}">
+                                                <ui:include src="inc_Prozessverwaltung/prozess_box_Werkstuecke.xhtml" />
+                                            </f:subview>
+
+                                            <!-- Prozesseigenschaften -->
+                                            <ui:include src="inc_Prozessverwaltung/prozess_box_Properties.xhtml" />
                                         </f:subview>
 
-                                        <!-- Werkstuecke -->
-                                        <f:subview id="subWerk"
-                                                   rendered="#{ProzessverwaltungForm.myProzess.workpiecesSize != 0}">
-                                            <ui:include src="inc_Prozessverwaltung/prozess_box_Werkstuecke.xhtml" />
-                                        </f:subview>
+                                    </h:form>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
 
-                                        <!-- Prozesseigenschaften -->
-                                        <ui:include src="inc_Prozessverwaltung/prozess_box_Properties.xhtml" />
-                                    </f:subview>
-
-                                </h:form>
-                            </td>
-                        </tr>
-                    </table>
-                    <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
-
-                </td>
-            </tr>
-            <ui:include src="inc/tbl_Fuss.xhtml" />
-        </table>
+                    </td>
+                </tr>
+                <ui:include src="inc/tbl_Fuss.xhtml" />
+            </table>
 
         </h:body>
     </f:view>

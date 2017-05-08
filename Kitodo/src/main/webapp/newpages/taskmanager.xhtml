@@ -27,7 +27,7 @@
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
-        <body>
+        <h:body>
             <table class="headTable" cellspacing="0" cellpadding="0"
                        style="padding-left:5px;padding-right:5px;margin-top:5px;">
                 <ui:include src="inc/tbl_Kopf.xhtml" />
@@ -122,7 +122,7 @@
                                                     title="Meldungen" layout="table" infoClass="text_blue"
                                                     showDetail="true" showSummary="true" tooltip="true"/>
 
-                                        <!-- TODO: find suitable replacement; for example p:poll from PrimeFaces -->
+                                        <!-- TODO: find suitable replacement for example p:poll from PrimeFaces -->
                                         <!--<a4j:poll id="id19" interval="5001" reRender="taskliste"-->
                                                   <!--ajaxSingle="true"/>-->
 
@@ -259,7 +259,7 @@
                 </tr>
                 <ui:include src="inc/tbl_Fuss.xhtml" />
             </table>
-        </body>
+        </h:body>
     </f:view>
 
 </html>
