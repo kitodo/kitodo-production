@@ -112,7 +112,7 @@ public class FileService {
      *             is thrown if old file (source file of renaming) does not
      *             exists
      */
-    public void renameFile(URI fileUri, String newFileName) throws IOException {
+    public URI renameFile(URI fileUri, String newFileName) throws IOException {
         final int SLEEP_INTERVAL_MILLIS = 20;
         final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
         File oldFile;
@@ -121,7 +121,7 @@ public class FileService {
         int millisWaited = 0;
 
         if ((fileUri == null) || (newFileName == null)) {
-            return;
+            return null;
         }
 
         oldFile = new File(fileUri);
@@ -168,6 +168,8 @@ public class FileService {
         if (millisWaited > 0 && logger.isInfoEnabled()) {
             logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
         }
+
+        return fileUri;
     }
 
     /**
@@ -221,8 +223,8 @@ public class FileService {
         FileUtils.copyFile(srcFile, destFile);
     }
 
-    public void copyFileToDirectory(File sourceDirectory, File targetDirectory) throws IOException {
-        FileUtils.copyFileToDirectory(sourceDirectory, targetDirectory);
+    public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+        FileUtils.copyFileToDirectory(new File(sourceDirectory), new File(targetDirectory));
     }
 
     public OutputStream write(URI uri) throws IOException, URISyntaxException {
@@ -248,6 +250,10 @@ public class FileService {
 
     public boolean fileExist(URI uri) {
         return new File(uri).exists();
+    }
+
+    public String getFileName(URI uri) {
+        return uri.toString();
     }
 
     public OutputStream writeOrCreate(URI uri) throws IOException, URISyntaxException {
@@ -530,5 +536,59 @@ public class FileService {
         }
 
         return resultList;
+    }
+
+    /**
+     * gets all sub URIs of an uri.
+     *
+     * @param processSubTypeURI
+     *            the uri, to get the subUris from.
+     * @return A List of sub uris.
+     */
+    public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
+        ArrayList<URI> resultList = new ArrayList<>();
+        File[] files = listFiles(filter, new File(processSubTypeURI));
+        for (File file : files) {
+            resultList.add(file.toURI());
+        }
+
+        return resultList;
+    }
+
+    /**
+     * Creates a new File.
+     * 
+     * @param fileName
+     *            the name of the new file
+     * @return the uri of the new file
+     */
+    public URI createResource(String fileName) {
+        return new File(fileName).toURI();
+    }
+
+    /**
+     * Gets the specific IMAGE sub type.
+     * 
+     * @param process
+     *            the process to get the imageDirectory for.
+     * @return The uri of the Image Directory.
+     */
+    public URI getImagesDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
+    }
+
+    public URI getOcrDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
+    }
+
+    /**
+     * checks, if a URI leads to a directory.
+     * 
+     * @param dir
+     *            the uri to check.
+     * @return true, if it is a directory.
+     */
+    public boolean isDirectory(URI dir) {
+        return new File(dir).isDirectory();
     }
 }

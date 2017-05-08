@@ -54,8 +54,8 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 public class FileManipulation {
     private static final Logger logger = LogManager.getLogger(FileManipulation.class);
     private Metadaten metadataBean;
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private static final ServiceManager serviceManager = new ServiceManager();
+    private static final FileService fileService = serviceManager.getFileService();
 
     public FileManipulation(Metadaten metadataBean) {
         this.metadataBean = metadataBean;
@@ -200,7 +200,7 @@ public class FileManipulation {
         this.uploadedFileName = uploadedFileName;
     }
 
-    private void updatePagination(String filename) throws TypeNotAllowedForParentException, IOException,
+    private void updatePagination(URI filename) throws TypeNotAllowedForParentException, IOException,
             InterruptedException, SwapException, DAOException, MetadataTypeNotAllowedException {
         if (!matchesFileConfiguration(filename)) {
             return;
@@ -259,7 +259,7 @@ public class FileManipulation {
                     doc.getLogicalDocStruct().addReferenceTo(newPage, "logical_physical");
 
                     ContentFile cf = new ContentFile();
-                    cf.setLocation(filename);
+                    cf.setLocation(fileService.getFileName(filename));
                     newPage.addContentFile(cf);
                     doc.getFileSet().addFile(cf);
 
@@ -323,16 +323,16 @@ public class FileManipulation {
      * Download file.
      */
     public void downloadFile() {
-        File downloadFile = null;
+        URI downloadFile = null;
 
         int imageOrder = Integer.parseInt(imageSelection);
         DocStruct page = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
-        File[] filesInFolder = fileService.listFiles(new File(serviceManager.getFileService()
-                .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder)));
-        for (File currentFile : filesInFolder) {
-            String currentFileName = currentFile.getName();
+        ArrayList<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
+                .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, currentFolder));
+        for (URI currentFile : filesInFolder) {
+            String currentFileName = fileService.getFileName(currentFile);
             String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
             if (filenamePrefix.equals(currentFileNamePrefix)) {
                 downloadFile = currentFile;
@@ -340,7 +340,7 @@ public class FileManipulation {
             }
         }
 
-        if (downloadFile == null || !downloadFile.exists()) {
+        if (downloadFile == null || !fileService.fileExist(downloadFile)) {
             List<String> paramList = new ArrayList<String>();
             // paramList.add(metadataBean.getMyProzess().getTitel());
             paramList.add(filenamePrefix);
@@ -353,7 +353,7 @@ public class FileManipulation {
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
 
-            String fileName = downloadFile.getName();
+            String fileName = fileService.getFileName(downloadFile);
             ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
             String contentType = servletContext.getMimeType(fileName);
             response.setContentType(contentType);
@@ -361,7 +361,7 @@ public class FileManipulation {
             InputStream in = null;
             ServletOutputStream out = null;
             try {
-                in = fileService.read(downloadFile.toURI());
+                in = fileService.read(downloadFile);
                 out = response.getOutputStream();
                 byte[] buffer = new byte[4096];
                 int length;
@@ -537,26 +537,23 @@ public class FileManipulation {
             masterPrefix = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         }
         Process currentProcess = metadataBean.getMyProzess();
-        List<String> importedFilenames = new ArrayList<String>();
+        List<URI> importedFilenames = new ArrayList<>();
         for (String importName : selectedFiles) {
-            File importfolder = new File(tempDirectory + "fileupload" + File.separator + importName);
-            File[] subfolderList = fileService.listFiles(importfolder);
-            for (File subfolder : subfolderList) {
+            URI importFolderUri = fileService
+                    .createResource(tempDirectory + "fileupload" + File.separator + importName);
+            ArrayList<URI> subfolderList = fileService.getSubUris(importFolderUri);
+            for (URI subfolder : subfolderList) {
 
                 if (useMasterFolder) {
                     // check if current import folder is master folder
-                    if (subfolder.getName().startsWith(masterPrefix)) {
+                    if (fileService.getFileName(subfolder).startsWith(masterPrefix)) {
                         try {
-                            URI masterFolderName = serviceManager.getProcessService().getImagesOrigDirectory(false,
+                            URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
                                     currentProcess);
-                            File masterDirectory = new File(masterFolderName);
-                            if (!masterDirectory.exists()) {
-                                masterDirectory.mkdir();
-                            }
-                            File[] objectInFolder = fileService.listFiles(subfolder);
-                            List<File> sortedList = Arrays.asList(objectInFolder);
+                            ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
+                            List<URI> sortedList = objectInFolder;
                             Collections.sort(sortedList);
-                            for (File file : sortedList) {
+                            for (URI file : sortedList) {
                                 fileService.copyFileToDirectory(file, masterDirectory);
                             }
                         } catch (SwapException e) {
@@ -570,22 +567,22 @@ public class FileManipulation {
                             logger.error(e);
                         }
                     } else {
-                        if (subfolder.getName().contains("_")) {
-                            String folderSuffix = subfolder.getName()
-                                    .substring(subfolder.getName().lastIndexOf("_") + 1);
-                            String folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
+                        if (fileService.getFileName(subfolder).contains("_")) {
+                            String folderSuffix = fileService.getFileName(subfolder)
+                                    .substring(fileService.getFileName(subfolder).lastIndexOf("_") + 1);
+                            URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
                                     currentProcess);
                             if (folderName != null) {
                                 try {
-                                    File directory = new File(folderName);
-                                    File[] objectInFolder = fileService.listFiles(subfolder);
-                                    List<File> sortedList = Arrays.asList(objectInFolder);
+                                    URI directory = folderName;
+                                    ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
+                                    List<URI> sortedList = objectInFolder;
                                     Collections.sort(sortedList);
-                                    for (File file : sortedList) {
+                                    for (URI file : sortedList) {
                                         if (serviceManager.getProcessService()
                                                 .getImagesTifDirectory(false, currentProcess)
                                                 .equals(folderName + File.separator)) {
-                                            importedFilenames.add(file.getName());
+                                            importedFilenames.add(file);
                                         }
                                         fileService.copyFileToDirectory(file, directory);
                                     }
@@ -604,20 +601,21 @@ public class FileManipulation {
                     }
 
                 } else {
-                    if (subfolder.getName().contains("_")) {
-                        String folderSuffix = subfolder.getName().substring(subfolder.getName().lastIndexOf("_") + 1);
-                        String folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
+                    if (fileService.getFileName(subfolder).contains("_")) {
+                        String folderSuffix = fileService.getFileName(subfolder)
+                                .substring(fileService.getFileName(subfolder).lastIndexOf("_") + 1);
+                        URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
                                 currentProcess);
                         if (folderName != null) {
-                            File directory = new File(folderName);
-                            File[] objectInFolder = fileService.listFiles(subfolder);
-                            List<File> sortedList = Arrays.asList(objectInFolder);
+                            URI directory = folderName;
+                            ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
+                            List<URI> sortedList = objectInFolder;
                             Collections.sort(sortedList);
-                            for (File file : sortedList) {
+                            for (URI file : sortedList) {
                                 try {
                                     if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
                                             .equals(folderName + File.separator)) {
-                                        importedFilenames.add(file.getName());
+                                        importedFilenames.add(file);
                                     }
                                     fileService.copyFileToDirectory(file, directory);
                                 } catch (IOException e) {
@@ -641,7 +639,7 @@ public class FileManipulation {
                 metadataBean.createPagination();
             } else {
                 int indexToImport = Integer.parseInt(insertPage);
-                for (String filename : importedFilenames) {
+                for (URI filename : importedFilenames) {
                     updatePagination(filename);
                     insertPage = String.valueOf(++indexToImport);
                 }
@@ -678,13 +676,14 @@ public class FileManipulation {
         this.currentFolder = currentFolder;
     }
 
-    private static boolean matchesFileConfiguration(String filename) {
+    private static boolean matchesFileConfiguration(URI file) {
+        String fileName = fileService.getFileName(file);
 
-        if (filename == null) {
+        if (fileName == null) {
             return false;
         }
 
-        String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
+        String afterLastSlash = fileName.substring(fileName.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
 
         String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");

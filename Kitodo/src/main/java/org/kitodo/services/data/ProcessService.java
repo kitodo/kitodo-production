@@ -890,8 +890,8 @@ public class ProcessService extends TitleSearchService<Process> {
         Hibernate.initialize(process.getRuleset());
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadatenHelper.getMetaFileType(metadataFileUri);
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
+        if (logger.isDebugEnabled()) {
+            logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
         }
 
         Fileformat ff = determineFileFormat(type, process);
@@ -956,8 +956,8 @@ public class ProcessService extends TitleSearchService<Process> {
             Fileformat ff = null;
             String type = MetadatenHelper
                     .getMetaFileType(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null));
-            if (myLogger.isDebugEnabled()) {
-                myLogger.debug("current template.xml file type: " + type);
+            if (logger.isDebugEnabled()) {
+                logger.debug("current template.xml file type: " + type);
             }
             ff = determineFileFormat(type, process);
             ff.read(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null).toString());
@@ -1083,21 +1083,23 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return method from name
      */
-    public String getMethodFromName(String methodName, Process process) {
+    public URI getMethodFromName(String methodName, Process process) {
         java.lang.reflect.Method method;
         try {
             method = this.getClass().getMethod(methodName);
             Object o = method.invoke(this);
-            return (String) o;
+            return (URI) o;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
             logger.debug("exception: " + e);
         }
         try {
             URI folder = this.getImagesTifDirectory(false, process);
-            folder = folder.substring(0, folder.lastIndexOf("_"));
-            folder = folder + "_" + methodName;
-            if (new File(folder).exists()) {
+            String folderName = fileService.getFileName(folder);
+            folderName = folderName.substring(0, folderName.lastIndexOf("_"));
+            folderName = folderName + "_" + methodName;
+            folder = fileService.renameFile(folder, folderName);
+            if (fileService.fileExist(folder)) {
                 return folder;
             }
         } catch (DAOException | InterruptedException | IOException | SwapException ex) {
