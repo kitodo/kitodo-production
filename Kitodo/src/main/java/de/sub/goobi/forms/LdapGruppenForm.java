@@ -22,6 +22,11 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
 public class LdapGruppenForm extends BasisForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
@@ -67,7 +72,7 @@ public class LdapGruppenForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         try {
             Session session = Helper.getHibernateSession();
             session.clear();
@@ -82,7 +87,7 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     public String FilterKeinMitZurueck() {
-        FilterKein();
+        filterKein();
         return this.zurueck;
     }
 

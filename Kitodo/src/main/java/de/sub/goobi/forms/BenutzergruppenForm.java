@@ -28,6 +28,11 @@ import org.kitodo.data.database.persistence.SimpleDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
 public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private UserGroup myBenutzergruppe = new UserGroup();
@@ -97,7 +102,7 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         try {
             Session session = Helper.getHibernateSession();
             session.clear();
@@ -112,7 +117,7 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     public String FilterKeinMitZurueck() {
-        FilterKein();
+        filterKein();
         return this.zurueck;
     }
 

@@ -30,6 +30,11 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
 public class DocketForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();

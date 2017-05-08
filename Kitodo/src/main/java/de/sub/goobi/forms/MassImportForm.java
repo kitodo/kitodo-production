@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -59,6 +61,8 @@ import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
 
+@ManagedBean
+@ViewScoped
 public class MassImportForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private Process template;

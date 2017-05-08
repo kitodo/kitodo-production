@@ -149,7 +149,7 @@ public class SpracheForm {
             return frame.getLocale();
         } else {
             // workaround for session object not containing 'locale' value
-            return Locale.ENGLISH;
+            return Locale.GERMAN;
         }
     }
 

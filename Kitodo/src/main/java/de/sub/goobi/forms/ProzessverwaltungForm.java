@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
@@ -104,6 +106,8 @@ import org.kitodo.services.file.FileService;
  *
  * @author Wulf Riebensahm
  */
+@ManagedBean
+@ViewScoped
 public class ProzessverwaltungForm extends BasisForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);

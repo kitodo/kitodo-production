@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
@@ -51,6 +53,8 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
+@ManagedBean
+@ViewScoped
 public class BatchForm extends BasisForm {
 
     private static final long serialVersionUID = 8234897225425856549L;
