@@ -775,7 +775,7 @@ public class MockDatabase {
     // class
     public static void cleanDatabase() {
         Session session = Helper.getHibernateSession();
-        session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+        session.createQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
         session.createQuery("DELETE FROM History WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM User WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM Process WHERE id !=null").executeUpdate();
@@ -791,7 +791,7 @@ public class MockDatabase {
         session.createQuery("DELETE FROM Template WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM UserGroup WHERE id !=null").executeUpdate();
         session.createQuery("DELETE FROM Property WHERE id !=null").executeUpdate();
-        // session.createSQLQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+        // session.createQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
     }
 
     /**
