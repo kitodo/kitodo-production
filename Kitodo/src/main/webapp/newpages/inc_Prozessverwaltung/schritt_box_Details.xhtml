@@ -130,14 +130,18 @@
                             </td>
                         </tr>
 
-                        <tr rendered="#{ProzessverwaltungForm.mySchritt.typeScriptStep && ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath!='' && ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath!=null}">
-                            <td width="150">
-                                <h:outputText value="#{msgs.script}:"/>
-                            </td>
-                            <td>
-                                <h:outputText value="#{ProzessverwaltungForm.mySchritt.listOfPaths}"/>
-                            </td>
-                        </tr>
+                        <ui:fragment rendered="#{ProzessverwaltungForm.mySchritt.typeScriptStep and
+                                                ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath!='' and
+                                                ProzessverwaltungForm.mySchritt.typeAutomaticScriptPath!=null}">
+                            <tr>
+                                <td width="150">
+                                    <h:outputText value="#{msgs.script}:"/>
+                                </td>
+                                <td>
+                                    <h:outputText value="#{ProzessverwaltungForm.mySchritt.listOfPaths}"/>
+                                </td>
+                            </tr>
+                        </ui:fragment>
 
                         <tr>
                             <td width="150">

@@ -52,98 +52,98 @@
                                 </h:panelGroup>
                             </h:panelGrid>
 
-                            <!-- FIXME: wrap table inside ui:fragment with "rendered" attribute -->
-                            <table border="0" align="center" width="100%" cellpadding="15"
-                                       rendered="#{LoginForm.maximaleBerechtigung == 1}">
-                                <tr>
-                                    <td>
+                            <ui:fragment rendered="#{LoginForm.maximaleBerechtigung == 1}">
+                                <table border="0" align="center" width="100%" cellpadding="15">
+                                    <tr>
+                                        <td>
 
-                                        <!-- Überschrift -->
-                                        <h3>
-                                            <h:outputText id="id4" value="#{msgs.ldapgruppen}"/>
-                                        </h3>
+                                            <!-- Überschrift -->
+                                            <h3>
+                                                <h:outputText id="id4" value="#{msgs.ldapgruppen}"/>
+                                            </h3>
 
-                                        <h:commandLink id="id5" action="#{LdapGruppenForm.Neu}"
-                                                       immediate="true"
-                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                            <h:outputText id="id6" value="#{msgs.neueLdapgruppeAnlegen}"/>
-                                        </h:commandLink>
+                                            <h:commandLink id="id5" action="#{LdapGruppenForm.Neu}"
+                                                           immediate="true"
+                                                           rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                                                <h:outputText id="id6" value="#{msgs.neueLdapgruppeAnlegen}"/>
+                                            </h:commandLink>
 
-                                        <!-- globale Warn- und Fehlermeldungen -->
-                                        <h:messages id="id7" globalOnly="true" errorClass="text_red"
-                                                    infoClass="text_blue" showDetail="true" showSummary="true"
-                                                    tooltip="true"/>
+                                            <!-- globale Warn- und Fehlermeldungen -->
+                                            <h:messages id="id7" globalOnly="true" errorClass="text_red"
+                                                        infoClass="text_blue" showDetail="true" showSummary="true"
+                                                        tooltip="true"/>
 
-                                        <!-- Datentabelle -->
-                                        <t:dataTable id="id8" styleClass="standardTable" width="100%"
-                                                     cellspacing="1px" cellpadding="1px"
-                                                     headerClass="standardTable_Header"
-                                                     rowClasses="standardTable_Row1,standardTable_Row2"
-                                                     columnClasses="standardTable_Column" var="item"
-                                                     value="#{LdapGruppenForm.page.listReload}" style="margin-top: 10px;">
+                                            <!-- Datentabelle -->
+                                            <t:dataTable id="id8" styleClass="standardTable" width="100%"
+                                                         cellspacing="1px" cellpadding="1px"
+                                                         headerClass="standardTable_Header"
+                                                         rowClasses="standardTable_Row1,standardTable_Row2"
+                                                         columnClasses="standardTable_Column" var="item"
+                                                         value="#{LdapGruppenForm.page.listReload}" style="margin-top: 10px;">
 
-                                            <h:column id="id9">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id10" value="#{msgs.ldapgruppe}"/>
-                                                </f:facet>
-                                                <h:outputText id="id11" value="#{item.title}"/>
-                                            </h:column>
+                                                <h:column id="id9">
+                                                    <f:facet name="header">
+                                                        <h:outputText id="id10" value="#{msgs.ldapgruppe}"/>
+                                                    </f:facet>
+                                                    <h:outputText id="id11" value="#{item.title}"/>
+                                                </h:column>
 
-                                            <h:column id="id12">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id13" value="#{msgs.homeVerzeichnis}"/>
-                                                </f:facet>
-                                                <h:outputText id="id14" value="#{item.homeDirectory}"/>
-                                            </h:column>
+                                                <h:column id="id12">
+                                                    <f:facet name="header">
+                                                        <h:outputText id="id13" value="#{msgs.homeVerzeichnis}"/>
+                                                    </f:facet>
+                                                    <h:outputText id="id14" value="#{item.homeDirectory}"/>
+                                                </h:column>
 
-                                            <h:column id="id15">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id16" value="gidNumber"/>
-                                                </f:facet>
-                                                <h:outputText id="id17" value="#{item.gidNumber}"/>
-                                            </h:column>
+                                                <h:column id="id15">
+                                                    <f:facet name="header">
+                                                        <h:outputText id="id16" value="gidNumber"/>
+                                                    </f:facet>
+                                                    <h:outputText id="id17" value="#{item.gidNumber}"/>
+                                                </h:column>
 
-                                            <t:column id="id18" style="text-align:center"
-                                                      rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                                                <f:facet name="header">
-                                                    <h:outputText id="id19" value="#{msgs.auswahl}"/>
-                                                </f:facet>
-                                                <!-- Bearbeiten-Schaltknopf -->
-                                                <h:commandLink id="id20" action="LdapGruppenBearbeiten"
-                                                               title="#{msgs.ldapgruppeBearbeiten}">
-                                                    <h:graphicImage id="id21"
-                                                                    value="/newpages/images/buttons/edit.gif"/>
-                                                    <t:updateActionListener
-                                                            property="#{LdapGruppenForm.myLdapGruppe}" value="#{item}"/>
-                                                </h:commandLink>
-                                            </t:column>
-                                        </t:dataTable>
-                                        <h:commandLink id="id52" action="#{LdapGruppenForm.Neu}"
-                                                       immediate="true"
-                                                       rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (LdapGruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
-                                        >
-                                            <h:outputText id="id62" value="#{msgs.neueLdapgruppeAnlegen}"/>
-                                        </h:commandLink>
+                                                <t:column id="id18" style="text-align:center"
+                                                          rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                                                    <f:facet name="header">
+                                                        <h:outputText id="id19" value="#{msgs.auswahl}"/>
+                                                    </f:facet>
+                                                    <!-- Bearbeiten-Schaltknopf -->
+                                                    <h:commandLink id="id20" action="LdapGruppenBearbeiten"
+                                                                   title="#{msgs.ldapgruppeBearbeiten}">
+                                                        <h:graphicImage id="id21"
+                                                                        value="/newpages/images/buttons/edit.gif"/>
+                                                        <t:updateActionListener
+                                                                property="#{LdapGruppenForm.myLdapGruppe}" value="#{item}"/>
+                                                    </h:commandLink>
+                                                </t:column>
+                                            </t:dataTable>
+                                            <h:commandLink id="id52" action="#{LdapGruppenForm.Neu}"
+                                                           immediate="true"
+                                                           rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) and (LdapGruppenForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
+                                            >
+                                                <h:outputText id="id62" value="#{msgs.neueLdapgruppeAnlegen}"/>
+                                            </h:commandLink>
 
-                                        <table width="100%" border="0">
-                                            <tr valign="top">
-                                                <td align="left">
-                                                    <!-- newUser-Schaltknopf -->
+                                            <table width="100%" border="0">
+                                                <tr valign="top">
+                                                    <td align="left">
+                                                        <!-- newUser-Schaltknopf -->
 
-                                                </td>
-                                                <td align="center">
-                                                    <!-- ===================== Datascroller für die Ergebnisse ====================== -->
-                                                    <t:aliasBean alias="#{mypage}"
-                                                                 value="#{LdapGruppenForm.page}">
-                                                        <ui:include src="/newpages/inc/datascroller.xhtml"/>
-                                                    </t:aliasBean>
-                                                    <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
+                                                    </td>
+                                                    <td align="center">
+                                                        <!-- ===================== Datascroller für die Ergebnisse ====================== -->
+                                                        <t:aliasBean alias="#{mypage}"
+                                                                     value="#{LdapGruppenForm.page}">
+                                                            <ui:include src="/newpages/inc/datascroller.xhtml"/>
+                                                        </t:aliasBean>
+                                                        <!-- ===================== // Datascroller für die Ergebnisse ====================== -->
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </ui:fragment>
                         </h:form>
                         <!-- ++++++++++++++++    // Inhalt      ++++++++++++++++ -->
 
