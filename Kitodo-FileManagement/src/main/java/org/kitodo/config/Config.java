@@ -14,11 +14,11 @@ package org.kitodo.config;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Config {
-    private static final Logger myLogger = LoggerFactory.getLogger(Config.class);
+    private static final Logger logger = LogManager.getLogger(Config.class);
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
 
@@ -36,7 +36,7 @@ public class Config {
                     try {
                         initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
-                        myLogger.warn(
+                        logger.warn(
                                 "Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.", e);
                         initialized = new PropertiesConfiguration();
                     }
