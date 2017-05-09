@@ -25,7 +25,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
@@ -41,7 +42,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 class UGHUtils {
-    private static final Logger myLogger = Logger.getLogger(UGHUtils.class);
+    private static final Logger logger = LogManager.getLogger(UGHUtils.class);
 
     /**
      * The function addMetadatum() adds the meta data element given in terms of
@@ -70,7 +71,7 @@ class UGHUtils {
             md.setValue(inValue);
             inStruct.addMetadata(md);
         } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-            myLogger.error(e);
+            logger.error(e);
         }
     }
 
