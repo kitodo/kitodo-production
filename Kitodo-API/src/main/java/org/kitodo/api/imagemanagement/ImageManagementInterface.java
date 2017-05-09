@@ -38,7 +38,7 @@ public interface ImageManagementInterface {
      *            The uri to save the derivative to.
      * @param resultFileFormat
      *            The formate for the derivative.
-     * @return true, if creation was successfull, false otherwise.
+     * @return true, if creation was successful, false otherwise.
      */
     boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri, ImageFileFormat resultFileFormat);
 
