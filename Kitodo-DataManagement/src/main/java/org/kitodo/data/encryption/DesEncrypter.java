@@ -29,7 +29,8 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DesEncrypter {
     private Cipher encryptionCipher;
@@ -38,7 +39,7 @@ public class DesEncrypter {
     private static final byte[] defaultSalt = {(byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32, (byte) 0x56,
             (byte) 0x35, (byte) 0xE3, (byte) 0x03 };
 
-    private static final Logger logger = Logger.getLogger(DesEncrypter.class);
+    private static final Logger logger = LogManager.getLogger(DesEncrypter.class);
 
     private void initialise(String passPhrase) {
         int iterationCount = 19;

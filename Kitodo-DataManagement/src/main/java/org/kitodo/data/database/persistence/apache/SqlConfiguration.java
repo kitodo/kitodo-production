@@ -17,7 +17,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -29,7 +30,7 @@ public class SqlConfiguration {
     private String dbUser = "goobi";
     private String dbPassword = "CHANGEIT";
     private String dbURI = "jdbc:mysql://localhost/goobi?autoReconnect=true&amp;autoReconnectForPools=true";
-    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
+    private static final Logger logger = LogManager.getLogger(SqlConfiguration.class);
 
     private int dbPoolMinSize = 1;
     private int dbPoolMaxSize = 20;

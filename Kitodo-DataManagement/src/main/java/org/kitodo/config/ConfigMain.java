@@ -14,11 +14,11 @@ package org.kitodo.config;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ConfigMain {
-    private static final Logger myLogger = Logger.getLogger(ConfigMain.class);
+    private static final Logger logger = LogManager.getLogger(ConfigMain.class);
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
 
@@ -31,8 +31,8 @@ public class ConfigMain {
                     try {
                         initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
-                        if (myLogger.isEnabledFor(Level.WARN)) {
-                            myLogger.warn(
+                        if (logger.isWarnEnabled()) {
+                            logger.warn(
                                     "Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.",
                                     e);
                         }
@@ -56,7 +56,7 @@ public class ConfigMain {
         try {
             return getConfig().getString(inParameter);
         } catch (RuntimeException e) {
-            myLogger.error(e);
+            logger.error(e);
             return "- keine Konfiguration gefunden -";
         }
     }

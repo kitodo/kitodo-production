@@ -22,7 +22,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.elasticsearch.client.ResponseListener;
@@ -34,7 +35,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
  */
 public class IndexRestClient extends KitodoRestClient {
 
-    private static final Logger logger = Logger.getLogger(IndexRestClient.class);
+    private static final Logger logger = LogManager.getLogger(IndexRestClient.class);
 
     /**
      * Add document to the index. This method will be used for add or update of

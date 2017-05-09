@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Ruleset;
 
@@ -30,7 +30,7 @@ public class MySQLHelper {
     private static final int MAX_TRIES_NEW_CONNECTION = 5;
     private static final int TIME_FOR_CONNECTION_VALID_CHECK = 5;
 
-    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
+    private static final Logger logger = LogManager.getLogger(MySQLHelper.class);
 
     private static MySQLHelper helper = new MySQLHelper();
     private ConnectionManager cm = null;
@@ -57,7 +57,7 @@ public class MySQLHelper {
 
         for (int i = 0; i < MAX_TRIES_NEW_CONNECTION; i++) {
 
-            if (logger.isEnabledFor(Level.WARN)) {
+            if (logger.isWarnEnabled()) {
                 logger.warn("Connection failed: Trying to get new connection. Attempt:" + i);
             }
 

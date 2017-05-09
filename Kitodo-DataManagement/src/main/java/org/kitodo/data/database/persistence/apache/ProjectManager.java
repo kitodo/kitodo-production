@@ -14,11 +14,12 @@ package org.kitodo.data.database.persistence.apache;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 
 public class ProjectManager {
-    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
+    private static final Logger logger = LogManager.getLogger(ProjectManager.class);
 
     public static ProjectObject getProjectById(int projectId) {
         try {
