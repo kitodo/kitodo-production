@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 public class RefreshObject {
     private static final Logger logger = LogManager.getLogger(RefreshObject.class);
@@ -32,7 +32,7 @@ public class RefreshObject {
             logger.debug("refreshing process with id " + processID);
         }
         try {
-            Session session = HibernateUtilOld.getSessionFactory().openSession();
+            Session session = HibernateUtil.getSessionFactory().openSession();
             if (session != null) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("session is connected: " + session.isConnected());
@@ -51,7 +51,7 @@ public class RefreshObject {
             }
 
             logger.debug("created a new session");
-            Process o = (Process) session.get(Process.class, Integer.valueOf(processID));
+            Process o = session.get(Process.class, processID);
             logger.debug("loaded process");
             session.refresh(o);
             logger.debug("refreshed process");
@@ -78,11 +78,10 @@ public class RefreshObject {
             session = Helper.getHibernateSession();
             if (session == null || !session.isOpen() || !session.isConnected()) {
                 logger.debug("session is closed, creating a new session");
-                HibernateUtilOld.rebuildSessionFactory();
-                session = HibernateUtilOld.getSessionFactory().openSession();
+                session = HibernateUtil.getSessionFactory().openSession();
                 needsClose = true;
             }
-            Process o = (Process) session.get(Process.class, processID);
+            Process o = session.get(Process.class, processID);
             logger.debug("loaded process");
             session.refresh(o);
             logger.debug("refreshed process");
@@ -106,15 +105,13 @@ public class RefreshObject {
      */
     public static void refreshStep(int stepID) {
         try {
-
-            Session session = HibernateUtilOld.getSessionFactory().openSession();
-            Task o = (Task) session.get(Task.class, stepID);
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Task o = session.get(Task.class, stepID);
             session.refresh(o);
             session.close();
         } catch (Exception e) {
-            logger.error("cannot refresh step with id " + stepID);
+            logger.error("cannot refresh task with id " + stepID);
         }
-
     }
 
 }

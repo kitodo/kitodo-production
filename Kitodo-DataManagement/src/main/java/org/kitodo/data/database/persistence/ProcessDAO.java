@@ -45,7 +45,7 @@ public class ProcessDAO extends BaseDAO {
      * @return all persisted processes
      */
     @SuppressWarnings("unchecked")
-    public List<Process> findAll() {
+    public List<Process> findAll() throws DAOException {
         return retrieveAllObjects(Process.class);
     }
 
@@ -117,16 +117,5 @@ public class ProcessDAO extends BaseDAO {
     public void refresh(Process process) {
         Object o = process;
         refresh(o);
-    }
-
-    /**
-     * Never ending loop...
-     * 
-     * @param process
-     *            object
-     */
-    public void update(Process process) {
-        Object o = process;
-        updateObject(o);
     }
 }

@@ -44,7 +44,7 @@ public class UserDAO extends BaseDAO {
      * @return all persisted users
      */
     @SuppressWarnings("unchecked")
-    public List<User> findAll() {
+    public List<User> findAll() throws DAOException {
         return retrieveAllObjects(User.class);
     }
 

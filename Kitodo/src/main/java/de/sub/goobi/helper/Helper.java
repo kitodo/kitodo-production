@@ -55,7 +55,7 @@ import org.goobi.mq.WebServiceResult;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 // TODO: split this class! here should be only parts of Helper which are needed
 // for Beans and Persistence
@@ -335,13 +335,13 @@ public class Helper implements Serializable, Observer {
         try {
             sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
             if (sess == null) {
-                sess = HibernateUtilOld.getSession();
+                sess = HibernateUtil.getSession();
             }
         } catch (Exception e) {
-            sess = HibernateUtilOld.getSession();
+            sess = HibernateUtil.getSession();
         }
         if (!sess.isOpen()) {
-            sess = HibernateUtilOld.getSession();
+            sess = HibernateUtil.getSession();
         }
         return sess;
     }

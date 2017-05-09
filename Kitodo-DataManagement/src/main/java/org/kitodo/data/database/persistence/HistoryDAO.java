@@ -47,7 +47,7 @@ public class HistoryDAO extends BaseDAO {
      * @return all persisted histories
      */
     @SuppressWarnings("unchecked")
-    public List<History> findAll() {
+    public List<History> findAll() throws DAOException {
         return retrieveAllObjects(History.class);
     }
 

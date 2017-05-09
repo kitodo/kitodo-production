@@ -44,7 +44,7 @@ public class PropertyDAO extends BaseDAO {
      * @return all persisted templates' properties
      */
     @SuppressWarnings("unchecked")
-    public List<Property> findAll() {
+    public List<Property> findAll() throws DAOException {
         return retrieveAllObjects(Property.class);
     }
 

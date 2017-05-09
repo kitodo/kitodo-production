@@ -22,12 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Session;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -391,25 +388,6 @@ public class TaskService extends TitleSearchService<Task> {
         }
         return answer;
 
-    }
-
-    /**
-     * Get the current object for this row.
-     *
-     * @return the current object representing a row.
-     */
-    public Task getCurrent(Task task) {
-        boolean hasOpen = HibernateUtilOld.hasOpenSession();
-        Session session = Helper.getHibernateSession();
-
-        Task current = (Task) session.get(Task.class, task.getId());
-        if (current == null) {
-            current = (Task) session.load(Task.class, task.getId());
-        }
-        if (!hasOpen) {
-            session.close();
-        }
-        return current;
     }
 
     /**

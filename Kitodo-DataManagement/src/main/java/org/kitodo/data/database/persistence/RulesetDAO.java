@@ -48,7 +48,7 @@ public class RulesetDAO extends BaseDAO {
      * @return all persisted rulesets
      */
     @SuppressWarnings("unchecked")
-    public List<Ruleset> findAll() {
+    public List<Ruleset> findAll() throws DAOException {
         return retrieveAllObjects(Ruleset.class);
     }
 

@@ -47,7 +47,7 @@ public class BatchDAO extends BaseDAO {
      * @return all persisted batches
      */
     @SuppressWarnings("unchecked")
-    public List<Batch> findAll() {
+    public List<Batch> findAll() throws DAOException {
         return retrieveAllObjects(Batch.class);
     }
 
