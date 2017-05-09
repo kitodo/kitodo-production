@@ -1,5 +1,7 @@
 # Travis continuous integration for Kitodo.Production
 
+dist: trusty
+
 language: java
 
 jdk:
