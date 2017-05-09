@@ -263,6 +263,7 @@
             <artifactId>pdfbox</artifactId>
             <version>1.7.1</version>
         </dependency>
+        <!-- it still uses log4j -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -308,11 +309,6 @@
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>transport</artifactId>
             <version>5.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>3.1.0.GA</version>
         </dependency>
         <dependency>
             <groupId>org.javassist</groupId>

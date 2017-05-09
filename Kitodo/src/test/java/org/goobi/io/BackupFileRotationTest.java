@@ -20,21 +20,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BackupFileRotationTest {
 
     public static final String BACKUP_FILE_NAME = "File-BackupFileRotationTest.xml";
     public static final String BACKUP_FILE_PATH = "./";
-
-    @BeforeClass
-    public static void oneTimeSetUp() {
-        BasicConfigurator.configure();
-    }
 
     @Before
     public void setUp() throws Exception {
