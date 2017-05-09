@@ -49,7 +49,9 @@ public class MySQLHelper {
             return connection;
         }
 
-        connection.close();
+        if (!connection.isClosed()) {
+            connection.close();
+        }
 
         for (int i = 0; i < MAX_TRIES_NEW_CONNECTION; i++) {
 
