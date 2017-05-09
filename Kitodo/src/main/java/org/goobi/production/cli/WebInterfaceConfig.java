@@ -11,7 +11,7 @@
 
 package org.goobi.production.cli;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class WebInterfaceConfig {
     public static List<String> getCredentials(String requestIp, String requestPassword) {
         ArrayList<String> allowed = new ArrayList<String>();
         try {
-            XMLConfiguration config = new XMLConfiguration(new Helper().getGoobiConfigDirectory() + "goobi_webapi.xml");
+            XMLConfiguration config = new XMLConfiguration(ConfigCore.getKitodoConfigDirectory() + "kitodo_webapi.xml");
             config.setListDelimiter('&');
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
 

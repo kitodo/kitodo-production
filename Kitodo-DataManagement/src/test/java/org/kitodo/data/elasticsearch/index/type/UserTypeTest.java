@@ -22,10 +22,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
-import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.UserProperty;
 
 /**
  * Test class for UserType.
@@ -36,7 +35,7 @@ public class UserTypeTest {
 
         List<User> users = new ArrayList<>();
         List<UserGroup> userGroups = new ArrayList<>();
-        List<UserProperty> userProperties = new ArrayList<>();
+        List<Property> properties = new ArrayList<>();
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setId(1);
@@ -46,15 +45,13 @@ public class UserTypeTest {
         secondUserGroup.setId(2);
         userGroups.add(secondUserGroup);
 
-        UserProperty firstUserProperty = new UserProperty();
-        firstUserProperty.setTitle("first");
-        firstUserProperty.setValue("1");
-        userProperties.add(firstUserProperty);
+        Property firstProperty = new Property();
+        firstProperty.setId(1);
+        properties.add(firstProperty);
 
-        UserProperty secondUserProperty = new UserProperty();
-        secondUserProperty.setTitle("second");
-        secondUserProperty.setValue("2");
-        userProperties.add(secondUserProperty);
+        Property secondProperty = new Property();
+        secondProperty.setId(2);
+        properties.add(secondProperty);
 
         User firstUser = new User();
         firstUser.setId(1);
@@ -73,7 +70,7 @@ public class UserTypeTest {
         secondUser.setActive(true);
         secondUser.setLocation("Berlin");
         secondUser.setUserGroups(userGroups);
-        secondUser.setProperties(userProperties);
+        secondUser.setProperties(properties);
         users.add(secondUser);
 
         User thirdUser = new User();
@@ -81,7 +78,7 @@ public class UserTypeTest {
         thirdUser.setName("Peter");
         thirdUser.setSurname("Müller");
         thirdUser.setLogin("pmueller");
-        thirdUser.setProperties(userProperties);
+        thirdUser.setProperties(properties);
         users.add(thirdUser);
 
         return users;
@@ -103,10 +100,9 @@ public class UserTypeTest {
         user = prepareData().get(1);
         document = userType.createDocument(user);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":\"1\"},{\"id\":\"2\"}],"
+        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1},{\"id\":2}],"
                 + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
-                + "{\"title\":\"second\",\"value\":\"2\"}]}");
+                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
@@ -114,8 +110,7 @@ public class UserTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"login\":\"pmueller\",\"ldapLogin\":null,\"userGroups\":[],"
                 + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":null,\"properties\":[{\"title\":\"first\",\"value\":\"1\"},"
-                + "{\"title\":\"second\",\"value\":\"2\"}]}");
+                + "\"location\":null,\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

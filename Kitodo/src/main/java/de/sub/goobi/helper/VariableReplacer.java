@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
@@ -28,11 +28,10 @@ import org.apache.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
@@ -123,7 +122,7 @@ public class VariableReplacer {
             // TODO name ändern?
             String sourcePath = serviceManager.getProcessService().getSourceDirectory(this.process).replace("\\", "/");
             String importPath = serviceManager.getProcessService().getImportDirectory(this.process).replace("\\", "/");
-            String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
+            String myprefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
 
             /*
              * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben
@@ -229,9 +228,9 @@ public class VariableReplacer {
             for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
                 for (Workpiece ws : this.process.getWorkpieces()) {
-                    for (WorkpieceProperty we : ws.getProperties()) {
-                        if (we.getTitle().equalsIgnoreCase(propertyTitle)) {
-                            inString = inString.replace(r.group(), we.getValue());
+                    for (Property workpieceProperty : ws.getProperties()) {
+                        if (workpieceProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
+                            inString = inString.replace(r.group(), workpieceProperty.getValue());
                             break;
                         }
                     }
@@ -243,9 +242,9 @@ public class VariableReplacer {
             for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
                 String propertyTitle = r.group(1);
                 for (Template v : this.process.getTemplates()) {
-                    for (TemplateProperty ve : v.getProperties()) {
-                        if (ve.getTitle().equalsIgnoreCase(propertyTitle)) {
-                            inString = inString.replace(r.group(), ve.getValue());
+                    for (Property templateProperty : v.getProperties()) {
+                        if (templateProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
+                            inString = inString.replace(r.group(), templateProperty.getValue());
                             break;
                         }
                     }
@@ -348,6 +347,8 @@ public class VariableReplacer {
                     }
                     break;
 
+                default:
+                    break;
             }
             return result;
         } else {

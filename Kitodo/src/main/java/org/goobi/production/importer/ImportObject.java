@@ -18,9 +18,7 @@ import java.util.List;
 
 import org.goobi.production.enums.ImportReturnValue;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.ProcessProperty;
-import org.kitodo.data.database.beans.TemplateProperty;
-import org.kitodo.data.database.beans.WorkpieceProperty;
+import org.kitodo.data.database.beans.Property;
 
 public class ImportObject {
 
@@ -36,9 +34,9 @@ public class ImportObject {
     private String errorMessage = "";
 
     // additional information
-    private List<ProcessProperty> processProperties = new ArrayList<>();
-    private List<WorkpieceProperty> workProperties = new ArrayList<>();
-    private List<TemplateProperty> templateProperties = new ArrayList<>();
+    private List<Property> processProperties = new ArrayList<>();
+    private List<Property> workProperties = new ArrayList<>();
+    private List<Property> templateProperties = new ArrayList<>();
 
     public ImportObject() {
     }
@@ -75,27 +73,27 @@ public class ImportObject {
         this.errorMessage = errorMessage;
     }
 
-    public List<ProcessProperty> getProcessProperties() {
+    public List<Property> getProcessProperties() {
         return this.processProperties;
     }
 
-    public void setProcessProperties(List<ProcessProperty> processProperties) {
+    public void setProcessProperties(List<Property> processProperties) {
         this.processProperties = processProperties;
     }
 
-    public List<WorkpieceProperty> getWorkProperties() {
+    public List<Property> getWorkProperties() {
         return this.workProperties;
     }
 
-    public void setWorkProperties(List<WorkpieceProperty> workProperties) {
+    public void setWorkProperties(List<Property> workProperties) {
         this.workProperties = workProperties;
     }
 
-    public List<TemplateProperty> getTemplateProperties() {
+    public List<Property> getTemplateProperties() {
         return this.templateProperties;
     }
 
-    public void setTemplateProperties(List<TemplateProperty> templateProperties) {
+    public void setTemplateProperties(List<Property> templateProperties) {
         this.templateProperties = templateProperties;
     }
 

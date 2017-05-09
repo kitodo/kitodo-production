@@ -11,7 +11,7 @@
 
 package org.goobi.production.cli;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class WebInterface extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");
-        if (ConfigMain.getBooleanParameter("useWebApi", false)) {
+        if (ConfigCore.getBooleanParameter("useWebApi", false)) {
             String ip = "";
             String password = "";
             try {

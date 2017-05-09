@@ -11,12 +11,11 @@
 
 package de.sub.goobi.export.download;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.dms.ExportDms_CorrectRusdml;
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -26,6 +25,7 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +33,6 @@ import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -41,6 +40,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -58,6 +58,8 @@ import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
+
+    private final FileService fileService = serviceManager.getFileService();
     protected Helper help = new Helper();
     protected Prefs myPrefs;
 
@@ -100,7 +102,7 @@ public class ExportMets {
         String atsPpnBand = myProcess.getTitle();
         Fileformat gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
 
-        String rules = ConfigMain.getParameter("copyData.onExport");
+        String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(new CopierData(gdzfile, myProcess));
@@ -137,7 +139,7 @@ public class ExportMets {
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (myBenutzer != null) {
             try {
-                FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+                fileService.createDirectoryForUser(target, myBenutzer.getLogin());
             } catch (Exception e) {
                 Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder,
                         e);
@@ -164,7 +166,7 @@ public class ExportMets {
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
         String imageFolderPath = serviceManager.getProcessService().getImagesDirectory(myProcess);
-        SafeFile imageFolder = new SafeFile(imageFolderPath);
+        File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
          */
@@ -223,7 +225,7 @@ public class ExportMets {
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
+            File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
             cf.setLocation(f.toURI().toString());
         }
 
@@ -242,9 +244,9 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    SafeFile folder = new SafeFile(
+                    File folder = new File(
                             serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
-                    if (folder.exists() && folder.list().length > 0) {
+                    if (folder.exists() && fileService.list(folder).length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -299,7 +301,7 @@ public class ExportMets {
         String metsPointer = vp.replace(metsPointerToReplace);
         mm.setMptrAnchorUrl(metsPointer);
 
-        if (ConfigMain.getBooleanParameter("ExportValidateImages", true)) {
+        if (ConfigCore.getBooleanParameter("ExportValidateImages", true)) {
             try {
                 // TODO andere Dateigruppen nicht mit image Namen ersetzen
                 List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProcess);

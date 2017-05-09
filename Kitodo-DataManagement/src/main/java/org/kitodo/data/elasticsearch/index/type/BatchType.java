@@ -11,16 +11,11 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Process;
 
 /**
  * Implementation of Batch Type.
@@ -31,21 +26,11 @@ public class BatchType extends BaseType<Batch> {
     @Override
     public HttpEntity createDocument(Batch batch) {
 
-        LinkedHashMap<String, String> orderedBatchMap = new LinkedHashMap<>();
-        orderedBatchMap.put("title", batch.getTitle());
-        String type = batch.getType() != null ? batch.getType().toString() : "null";
-        orderedBatchMap.put("type", type);
-
-        JSONArray processes = new JSONArray();
-        List<Process> batchProcesses = batch.getProcesses();
-        for (Process process : batchProcesses) {
-            JSONObject processObject = new JSONObject();
-            processObject.put("id", process.getId().toString());
-            processes.add(processObject);
-        }
-
-        JSONObject batchObject = new JSONObject(orderedBatchMap);
-        batchObject.put("processes", processes);
+        JSONObject batchObject = new JSONObject();
+        batchObject.put("title", batch.getTitle());
+        String type = batch.getType() != null ? batch.getType().toString() : null;
+        batchObject.put("type", type);
+        batchObject.put("processes", addObjectRelation(batch.getProcesses()));
 
         return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

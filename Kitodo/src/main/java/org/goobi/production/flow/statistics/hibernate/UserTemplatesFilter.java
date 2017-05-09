@@ -22,7 +22,7 @@ import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 
 /**
- * This class of IEvaluable filter implements the template filter
+ * This class of IEvaluable filter implements the template filter.
  * 
  * @author Wulf Riebensahm
  */
@@ -70,7 +70,7 @@ public class UserTemplatesFilter implements IEvaluableFilter, Cloneable {
      * (java.lang.String)
      */
     @Override
-    public void setFilter(String Filter) {
+    public void setFilter(String filter) {
         throw new UnsupportedOperationException(
                 this.getClass().getName() + " does not implement the method 'setFilter()'. This Filter is static");
     }

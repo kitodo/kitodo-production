@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 import de.sub.goobi.metadaten.MetadatenSperrung;
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class LoginForm {
@@ -67,7 +68,7 @@ public class LoginForm {
      *
      * @return String
      */
-    public String Einloggen() {
+    public String Einloggen() throws IOException {
         AlteBilderAufraeumen();
         this.myBenutzer = null;
         /* ohne Login gleich abbrechen */
@@ -103,7 +104,7 @@ public class LoginForm {
                     SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
                     HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext()
                             .getSession(false);
-                    if (!temp.BenutzerInAndererSessionAktiv(mySession, b)) {
+                    if (!temp.userActiveInOtherSession(mySession, b)) {
                         /* in der Session den Login speichern */
                         temp.sessionBenutzerAktualisieren(mySession, b);
                         this.myBenutzer = b;
@@ -171,9 +172,9 @@ public class LoginForm {
             return "newMain";
         }
         this.myBenutzer = null;
-        Integer LoginID = Integer.valueOf(Helper.getRequestParameter("ID"));
+        Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            this.myBenutzer = serviceManager.getUserService().find(LoginID);
+            this.myBenutzer = serviceManager.getUserService().find(loginId);
             /* in der Session den Login speichern */
             SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
             temp.sessionBenutzerAktualisieren(
@@ -222,6 +223,8 @@ public class LoginForm {
                 Helper.setFehlerMeldung("ldap errror", e.getMessage());
             } catch (IOException e) {
                 Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+            } catch (CustomResponseException e) {
+                Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
             }
         }
         return "";
@@ -243,13 +246,15 @@ public class LoginForm {
             Helper.setFehlerMeldung("could not save", e.getMessage());
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+        } catch (CustomResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
         }
         return "";
     }
 
-    private void AlteBilderAufraeumen() {
+    private void AlteBilderAufraeumen() throws IOException {
         /* Pages-Verzeichnis mit den temporären Images ermitteln */
-        String myPfad = ConfigMain.getTempImagesPathAsCompleteDirectory();
+        String myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
         /* Verzeichnis einlesen */
         FilenameFilter filter = new FilenameFilter() {
@@ -259,14 +264,14 @@ public class LoginForm {
             }
         };
         File dir = new File(myPfad);
-        String[] dateien = dir.list(filter);
+        String[] dateien = serviceManager.getFileService().list(filter, dir);
 
         /* alle Dateien durchlaufen und die alten löschen */
         if (dateien != null) {
             for (int i = 0; i < dateien.length; i++) {
                 File file = new File(myPfad + dateien[i]);
                 if ((System.currentTimeMillis() - file.lastModified()) > 7200000) {
-                    file.delete();
+                    serviceManager.getFileService().delete(file.toURI());
                 }
             }
         }

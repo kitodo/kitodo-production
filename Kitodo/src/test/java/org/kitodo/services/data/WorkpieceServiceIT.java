@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Tests for WorkpieceService class.
@@ -29,7 +30,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class WorkpieceServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 

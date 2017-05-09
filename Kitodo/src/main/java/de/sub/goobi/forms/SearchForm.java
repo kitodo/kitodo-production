@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -28,12 +28,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 public class SearchForm {
@@ -82,7 +80,7 @@ public class SearchForm {
      */
     protected void initMasterpiecePropertyTitles() {
         Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(WorkpieceProperty.class);
+        Criteria crit = session.createCriteria(Property.class);
         crit.addOrder(Order.asc("titel"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
         this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
@@ -105,7 +103,7 @@ public class SearchForm {
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Project.class);
 
-        crit.addOrder(Order.asc("titel"));
+        crit.addOrder(Order.asc("title"));
         if (restriction > 2) {
             crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
         }
@@ -127,7 +125,7 @@ public class SearchForm {
      */
     protected void initProcessPropertyTitles() {
         Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(ProcessProperty.class);
+        Criteria crit = session.createCriteria(Property.class);
         crit.addOrder(Order.asc("title"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
         this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
@@ -178,7 +176,7 @@ public class SearchForm {
      */
     protected void initTemplatePropertyTitles() {
         Session session = Helper.getHibernateSession();
-        Criteria crit = session.createCriteria(TemplateProperty.class);
+        Criteria crit = session.createCriteria(Property.class);
         crit.addOrder(Order.asc("title"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
         this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
@@ -436,7 +434,7 @@ public class SearchForm {
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
                 && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
-                && ConfigMain.getBooleanParameter("withUserStepDoneSearch")) {
+                && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
             search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE
                     + this.stepdonetitle + "\" ";
         }

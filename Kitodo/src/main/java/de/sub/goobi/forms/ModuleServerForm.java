@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.modul.ExtendedDataImpl;
 import de.sub.goobi.modul.ExtendedProzessImpl;
@@ -93,7 +93,7 @@ public class ModuleServerForm {
         if (modulmanager == null) {
             synchronized (ModuleServerForm.class) {
                 if (modulmanager == null) {
-                    int port = ConfigMain.getIntParameter("goobiModuleServerPort");
+                    int port = ConfigCore.getIntParameter("kitodoModuleServerPort");
                     final GoobiModuleManager manager = new GoobiModuleManager(port, new ExtendedProzessImpl(),
                             new ExtendedDataImpl());
 
@@ -172,14 +172,14 @@ public class ModuleServerForm {
     @SuppressWarnings("unchecked")
     private List<ModuleDesc> getModulesFromConfigurationFile() {
         List<ModuleDesc> rueckgabe = new ArrayList<ModuleDesc>();
-        String filename = help.getGoobiConfigDirectory() + "modules.xml";
-        if (!(new File(filename).exists())) {
-            Helper.setFehlerMeldung("File not found: ", filename);
+        String fileName = ConfigCore.getKitodoConfigDirectory() + "modules.xml";
+        if (!(new File(fileName).exists())) {
+            Helper.setFehlerMeldung("File not found: ", fileName);
             return rueckgabe;
         }
         try {
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new File(filename));
+            Document doc = builder.build(new File(fileName));
             Element root = doc.getRootElement();
             /* alle Module durchlaufen */
             for (Iterator<Element> iter = root.getChildren().iterator(); iter.hasNext();) {
@@ -285,7 +285,7 @@ public class ModuleServerForm {
         GoobiModuleParameter gmp = new GoobiModuleParameter(processId, tempID, myModule.getModuleClient().longsessionID,
                 null);
 
-        String applicationUrl = ConfigMain.getParameter("ApplicationWebsiteUrl");
+        String applicationUrl = ConfigCore.getParameter("ApplicationWebsiteUrl");
 
         gmp.put("return_url", applicationUrl + HelperForm.MAIN_JSF_PATH + "/aktiveModule.jsf?sessionId=" + tempID);
         gmp.put("type", "PRODUCE");
@@ -307,7 +307,7 @@ public class ModuleServerForm {
         Message message = null;
         while (MessageContainer.size() > 0) {
             message = MessageContainer.pop();
-            handle_message(message, modules);
+            handleMessage(message, modules);
         }
     }
 
@@ -319,7 +319,7 @@ public class ModuleServerForm {
      * @param modules
      *            GoobiModuleManager
      */
-    private static void handle_message(Message message, GoobiModuleManager modules) {
+    private static void handleMessage(Message message, GoobiModuleManager modules) {
         if ((message.body.error.faultCode == 0) && (message.body.error.faultString.equals("END"))) {
             String in_session = message.from;
             /*
@@ -396,11 +396,9 @@ public class ModuleServerForm {
 
             return tempProz;
         } catch (NumberFormatException e) {
-            new Helper();
             throw new GoobiException(5, "******** wrapped NumberFormatException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
-            new Helper();
             throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }

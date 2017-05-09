@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for RulesetService class.
@@ -30,7 +32,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class RulesetServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -54,6 +56,89 @@ public class RulesetServiceIT {
 
         List<Ruleset> rulesets = rulesetService.findAll();
         assertEquals("Not all rulesets were found in database!", 2, rulesets.size());
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        SearchResult ruleset = rulesetService.findById(1);
+        String actual = ruleset.getProperties().get("title");
+        String expected = "SLUBDD";
+        assertEquals("Ruleset was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitle() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        List<SearchResult> rulesets = rulesetService.findByTitle("SLUBDD", true);
+        Integer actual = rulesets.size();
+        Integer expected = 1;
+        assertEquals("Ruleset was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByFile() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        SearchResult ruleset = rulesetService.findByFile("ruleset_slubdd.xml");
+        String actual = ruleset.getProperties().get("file");
+        String expected = "ruleset_slubdd.xml";
+        assertEquals("Ruleset was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleAndFile() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        SearchResult ruleset = rulesetService.findByTitleAndFile("SLUBHH","ruleset_slubhh.xml");
+        Integer actual = ruleset.getId();
+        Integer expected = 2;
+        assertEquals("Ruleset was not found in index!", expected, actual);
+
+        ruleset = rulesetService.findByTitleAndFile("SLUBDD","none");
+        actual = ruleset.getId();
+        expected = null;
+        assertEquals("Ruleset was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleOrFile() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        List<SearchResult> ruleset = rulesetService.findByTitleOrFile("SLUBDD","ruleset_slubhh.xml");
+        Integer actual = ruleset.size();
+        Integer expected = 2;
+        assertEquals("Rulesets were not found in index!", expected, actual);
+
+        ruleset = rulesetService.findByTitleOrFile("default","ruleset_slubhh.xml");
+        actual = ruleset.size();
+        expected = 1;
+        assertEquals("Ruleset was not found in index!", expected, actual);
+
+        ruleset = rulesetService.findByTitleOrFile("none","none");
+        actual = ruleset.size();
+        expected = 0;
+        assertEquals("Some rulesets were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindAllRulesetsDocuments() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        List<SearchResult> rulesets = rulesetService.findAllDocuments();
+        assertEquals("Not all rulesets were found in index!", 2, rulesets.size());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldConvertSearchResultsToObjectList() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        List<SearchResult> searchResults = rulesetService.findAllDocuments();
+        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertSearchResultsToObjectList(searchResults, "Ruleset");
+        assertEquals("Not all rulesets were converted!", 2, rulesets.size());
     }
 
     @Test

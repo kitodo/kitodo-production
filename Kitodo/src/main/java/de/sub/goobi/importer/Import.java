@@ -55,25 +55,25 @@ public class Import {
      *
      * @return String
      */
-    public String Start() {
-        myLogger.info("Import Start - start");
+    public String start() {
+        myLogger.info("Import start - start");
         this.importFehler = "";
         this.importMeldung = "";
         try {
             // Einlesen(prozessID.toString());
-            Einlesen();
+            read();
         } catch (Exception e) {
             this.importFehler = "An error occurred: " + e.getMessage();
             myLogger.error(e);
         }
-        myLogger.info("Import Start - ende");
+        myLogger.info("Import start - ende");
         return "";
     }
 
-    private void Einlesen() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+    private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
             PreferencesException, SwapException, DAOException, WriteException {
-        myLogger.debug("Einlesen() - Start");
+        myLogger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {
 
@@ -87,7 +87,7 @@ public class Import {
                 String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
                 reader = new BufferedReader(new StringReader(gesamteDatei));
                 ImportRussland myImport = new ImportRussland();
-                myImport.Parsen(reader, this.mySchritt.getProcess());
+                myImport.parse(reader, this.mySchritt.getProcess());
                 this.importMeldung = "Der russische Import wurde erfolgreich abgeschlossen";
             }
 
@@ -96,7 +96,7 @@ public class Import {
                 String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
                 reader = new BufferedReader(new StringReader(gesamteDatei));
                 ImportZentralblatt myImport = new ImportZentralblatt();
-                myImport.Parsen(reader, this.mySchritt.getProcess());
+                myImport.parse(reader, this.mySchritt.getProcess());
                 this.importMeldung = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
             }
 

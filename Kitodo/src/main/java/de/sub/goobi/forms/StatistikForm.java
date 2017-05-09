@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class StatistikForm {
 
     /**
      * The function getAnzahlBenutzer() counts the number of user accounts in
-     * the goobi.production environment. Since user accounts are not hard
+     * the kitodo.production environment. Since user accounts are not hard
      * deleted from the database when the delete button is pressed a where
      * clause is used in the SQL statement to exclude the deleted accounts from
      * the sum.
@@ -241,6 +241,6 @@ public class StatistikForm {
     }
 
     public boolean getShowStatistics() {
-        return ConfigMain.getBooleanParameter("showStatisticsOnStartPage", true);
+        return ConfigCore.getBooleanParameter("showStatisticsOnStartPage", true);
     }
 }

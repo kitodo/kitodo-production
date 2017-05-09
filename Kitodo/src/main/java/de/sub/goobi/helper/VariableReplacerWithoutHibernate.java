@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
@@ -114,7 +114,7 @@ public class VariableReplacerWithoutHibernate {
         String sourcePath = fi.getSourceDirectory().replace("\\", "/");
         String importPath = fi.getImportDirectory().replace("\\", "/");
         Ruleset ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
-        String myprefs = ConfigMain.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile();
+        String myprefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile();
 
         /*
          * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen,
@@ -321,6 +321,9 @@ public class VariableReplacerWithoutHibernate {
                             logger.warn("Can not replace variable for METS: " + metadata);
                         }
                     }
+                    break;
+
+                default:
                     break;
             }
             return result;

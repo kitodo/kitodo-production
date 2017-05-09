@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
@@ -26,6 +26,7 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class RegelsaetzeForm extends BasisForm {
@@ -46,7 +47,7 @@ public class RegelsaetzeForm extends BasisForm {
      */
     public String Speichern() {
         try {
-            if (hasValidRulesetFilePath(myRegelsatz, ConfigMain.getParameter("RegelsaetzeVerzeichnis"))) {
+            if (hasValidRulesetFilePath(myRegelsatz, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(myRegelsatz);
                 return "RegelsaetzeAlle";
             } else {
@@ -59,6 +60,9 @@ public class RegelsaetzeForm extends BasisForm {
             return "";
         } catch (IOException e) {
             logger.error(e);
+            return "";
+        } catch (CustomResponseException e) {
+            logger.error("ElasticSearch server incorrect response",e);
             return "";
         }
     }
@@ -86,6 +90,9 @@ public class RegelsaetzeForm extends BasisForm {
             return "";
         } catch (IOException e) {
             logger.error(e);
+            return "";
+        } catch (CustomResponseException e) {
+            logger.error("ElasticSearch server incorrect response",e);
             return "";
         }
         return "RegelsaetzeAlle";

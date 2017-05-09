@@ -126,7 +126,7 @@
                                 <htm:table width="100%" border="0">
                                     <htm:tr valign="top">
                                         <htm:td align="left">
-                                            <%-- Neu-Schaltknopf --%>
+                                            <%-- newUser-Schaltknopf --%>
 
                                         </htm:td>
                                         <htm:td align="center">

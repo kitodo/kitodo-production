@@ -15,9 +15,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
-import de.sub.goobi.helper.FilesystemHelper;
-
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +26,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 
@@ -40,7 +41,7 @@ import ugh.dl.DigitalDocument;
 public class ProcessServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -63,7 +64,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
-        assertEquals("Not all processes were found in database!", 3, processes.size());
+        assertEquals("Not all processes were found in database!", 4, processes.size());
     }
 
     @Test
@@ -111,10 +112,11 @@ public class ProcessServiceIT {
     @Test
     public void shouldCheckIfTifDirectoryExists() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         // it is weird but it says that it doesn't exist....
-        FilesystemHelper.createDirectory("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
+        fileService.createDirectory(URI.create("C:\\dev\\kitodo\\metadata\\1\\images\\"), "First process_media\\");
         boolean condition = processService.checkIfTifDirectoryExists(process);
         assertTrue("Images TIF directory doesn't exist!", condition);
 
@@ -543,9 +545,9 @@ public class ProcessServiceIT {
     public void shouldFilterForCorrectionSolutionMessages() throws Exception {
         ProcessService processService = new ProcessService();
 
-        List<ProcessProperty> expected = new ArrayList<>();
-        List<ProcessProperty> actual = processService
-                .filterForCorrectionSolutionMessages(new ArrayList<ProcessProperty>());
+        List<Property> expected = new ArrayList<>();
+        List<Property> actual = processService
+                .filterForCorrectionSolutionMessages(new ArrayList<Property>());
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 
@@ -555,8 +557,8 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        List<ProcessProperty> expected = new ArrayList<>();
-        List<ProcessProperty> actual = processService.getSortedCorrectionSolutionMessages(process);
+        List<Property> expected = new ArrayList<>();
+        List<Property> actual = processService.getSortedCorrectionSolutionMessages(process);
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 }

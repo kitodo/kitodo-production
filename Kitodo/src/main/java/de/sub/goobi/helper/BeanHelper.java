@@ -16,14 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.services.ServiceManager;
 
 public class BeanHelper {
@@ -41,11 +39,11 @@ public class BeanHelper {
      *            String
      */
     public static void addProperty(Process process, String title, String value) {
-        ProcessProperty property = new ProcessProperty();
+        Property property = new Property();
         property.setTitle(title);
         property.setValue(value);
-        property.setProcess(process);
-        List<ProcessProperty> properties = serviceManager.getProcessService().getPropertiesInitialized(process);
+        property.getProcesses().add(process);
+        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(process);
         if (properties == null) {
             properties = new ArrayList<>();
         }
@@ -63,11 +61,11 @@ public class BeanHelper {
      *            String
      */
     public static void addProperty(Template template, String title, String value) {
-        TemplateProperty property = new TemplateProperty();
+        Property property = new Property();
         property.setTitle(title);
         property.setValue(value);
-        property.setTemplate(template);
-        List<TemplateProperty> properties = template.getProperties();
+        property.getTemplates().add(template);
+        List<Property> properties = template.getProperties();
         if (properties == null) {
             properties = new ArrayList<>();
         }
@@ -85,11 +83,11 @@ public class BeanHelper {
      *            String
      */
     public static void addProperty(Workpiece workpiece, String title, String value) {
-        WorkpieceProperty property = new WorkpieceProperty();
+        Property property = new Property();
         property.setTitle(title);
         property.setValue(value);
-        property.setWorkpiece(workpiece);
-        List<WorkpieceProperty> properties = workpiece.getProperties();
+        property.getWorkpieces().add(workpiece);
+        List<Property> properties = workpiece.getProperties();
         if (properties == null) {
             properties = new ArrayList<>();
         }
@@ -191,15 +189,15 @@ public class BeanHelper {
             /*
              * Eigenschaften des Schritts
              */
-            List<WorkpieceProperty> myProperties = new ArrayList<>();
-            for (Iterator<WorkpieceProperty> iterator = workpiece.getProperties().iterator(); iterator.hasNext();) {
-                WorkpieceProperty property = iterator.next();
-                WorkpieceProperty propertyNew = new WorkpieceProperty();
+            List<Property> myProperties = new ArrayList<>();
+            for (Iterator<Property> iterator = workpiece.getProperties().iterator(); iterator.hasNext();) {
+                Property property = iterator.next();
+                Property propertyNew = new Property();
                 propertyNew.setObligatory(property.isObligatory());
                 propertyNew.setType(property.getType());
                 propertyNew.setTitle(property.getTitle());
                 propertyNew.setValue(property.getValue());
-                propertyNew.setWorkpiece(workpieceNew);
+                propertyNew.getWorkpieces().add(workpieceNew);
                 myProperties.add(propertyNew);
             }
             workpieceNew.setProperties(myProperties);
@@ -219,15 +217,15 @@ public class BeanHelper {
      *            new object
      */
     public static void copyProperties(Process processTemplate, Process processCopy) {
-        List<ProcessProperty> myProperties = new ArrayList<>();
-        for (Iterator<ProcessProperty> iterator = processTemplate.getProperties().iterator(); iterator.hasNext();) {
-            ProcessProperty property = iterator.next();
-            ProcessProperty propertyNew = new ProcessProperty();
+        List<Property> myProperties = new ArrayList<>();
+        for (Iterator<Property> iterator = processTemplate.getProperties().iterator(); iterator.hasNext();) {
+            Property property = iterator.next();
+            Property propertyNew = new Property();
             propertyNew.setObligatory(property.isObligatory());
             propertyNew.setType(property.getType());
             propertyNew.setTitle(property.getTitle());
             propertyNew.setValue(property.getValue());
-            propertyNew.setProcess(processCopy);
+            propertyNew.getProcesses().add(processCopy);
             myProperties.add(propertyNew);
         }
         // TODO read property configuration
@@ -255,15 +253,15 @@ public class BeanHelper {
             /*
              * Eigenschaften des Schritts
              */
-            List<TemplateProperty> myProperties = new ArrayList<>();
-            for (Iterator<TemplateProperty> iterator = template.getProperties().iterator(); iterator.hasNext();) {
-                TemplateProperty property = iterator.next();
-                TemplateProperty propertyNew = new TemplateProperty();
+            List<Property> myProperties = new ArrayList<>();
+            for (Iterator<Property> iterator = template.getProperties().iterator(); iterator.hasNext();) {
+                Property property = iterator.next();
+                Property propertyNew = new Property();
                 propertyNew.setObligatory(property.isObligatory());
                 propertyNew.setType(property.getType());
                 propertyNew.setTitle(property.getTitle());
                 propertyNew.setValue(property.getValue());
-                propertyNew.setTemplate(templateNew);
+                propertyNew.getTemplates().add(templateNew);
                 myProperties.add(propertyNew);
             }
             templateNew.setProperties(myProperties);
@@ -286,7 +284,7 @@ public class BeanHelper {
     public static String determineWorkpieceProperty(Process myProcess, String inputProperty) {
         String propertyString = "";
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
-            for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+            for (Property property : myWorkpiece.getProperties()) {
                 if (property.getTitle().equals(inputProperty)) {
                     propertyString = property.getValue();
                 }
@@ -307,7 +305,7 @@ public class BeanHelper {
     public static String determineScanTemplateProperty(Process myProcess, String inputProperty) {
         String propertyString = "";
         for (Template myTemplate : myProcess.getTemplates()) {
-            for (TemplateProperty property : myTemplate.getProperties()) {
+            for (Property property : myTemplate.getProperties()) {
                 if (property.getTitle().equals(inputProperty)) {
                     propertyString = property.getValue();
                 }
@@ -328,7 +326,7 @@ public class BeanHelper {
      */
     public static void changeWorkpieceProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
-            for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+            for (Property property : myWorkpiece.getProperties()) {
                 if (property.getTitle().equals(inputProperty)) {
                     property.setValue(inputValue);
                 }
@@ -348,7 +346,7 @@ public class BeanHelper {
      */
     public static void changeScanTemplateProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Template myTemplate : myProcess.getTemplates()) {
-            for (TemplateProperty property : myTemplate.getProperties()) {
+            for (Property property : myTemplate.getProperties()) {
                 if (property.getTitle().equals(inputProperty)) {
                     property.setValue(inputValue);
                 }
@@ -368,7 +366,7 @@ public class BeanHelper {
      */
     public static void removeWorkpieceProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
-            for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+            for (Property property : myWorkpiece.getProperties()) {
                 if (property.getTitle().equals(inputProperty) && property.getValue().equals(inputValue)) {
                     myWorkpiece.getProperties().remove(property);
                 }
@@ -388,7 +386,7 @@ public class BeanHelper {
      */
     public static void removeScanTemplateProperty(Process myProcess, String inputProperty, String inputValue) {
         for (Template myTemplate : myProcess.getTemplates()) {
-            for (TemplateProperty property : myTemplate.getProperties()) {
+            for (Property property : myTemplate.getProperties()) {
                 if (property.getTitle().equals(inputProperty) && property.getValue().equals(inputValue)) {
                     myTemplate.getProperties().remove(property);
                 }
@@ -405,7 +403,7 @@ public class BeanHelper {
     public static void removeDoubleWorkpieceProperty(Process myProcess) {
         for (Workpiece myWorkpiece : myProcess.getWorkpieces()) {
             List<String> einzelstuecke = new ArrayList<>();
-            for (WorkpieceProperty property : myWorkpiece.getProperties()) {
+            for (Property property : myWorkpiece.getProperties()) {
                 /* prüfen, ob die Eigenschaft doppelt, wenn ja, löschen */
                 if (einzelstuecke.contains(property.getTitle() + "|" + property.getValue())) {
                     myWorkpiece.getProperties().remove(property);
@@ -425,7 +423,7 @@ public class BeanHelper {
     public static void removeDoubleScanTemplateProperty(Process myProcess) {
         for (Template myTemplate : myProcess.getTemplates()) {
             List<String> einzelstuecke = new ArrayList<>();
-            for (TemplateProperty property : myTemplate.getProperties()) {
+            for (Property property : myTemplate.getProperties()) {
                 /* prüfen, ob die Eigenschaft doppelt, wenn ja, löschen */
                 if (einzelstuecke.contains(property.getTitle() + "|" + property.getValue())) {
                     myTemplate.getProperties().remove(property);

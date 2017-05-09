@@ -81,10 +81,10 @@
 
         <htm:tr>
             <htm:td styleClass="eingabeBoxen_row3">
-                <h:commandButton action="#{Metadaten.Abbrechen}"
+                <h:commandButton action="#{Metadaten.cancel}"
                                  value="#{msgs.abbrechen}" immediate="true"></h:commandButton>
                 <x:commandButton id="absenden2" forceId="true" type="submit"
-                                 action="#{Metadaten.SpeichernPerson}"
+                                 action="#{Metadaten.savePerson}"
                                  value="#{msgs.dieAenderungenSpeichern}"></x:commandButton>
             </htm:td>
         </htm:tr>

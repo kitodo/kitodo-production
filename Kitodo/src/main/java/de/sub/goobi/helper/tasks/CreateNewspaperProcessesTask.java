@@ -34,6 +34,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -215,7 +216,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     if (isInterrupted()) {
                         return;
                     }
-                    String state = newProcess.NeuenProzessAnlegen();
+                    String state = newProcess.createNewProcess();
                     if (!state.equals("ProzessverwaltungKopie3")) {
                         throw new RuntimeException(String.valueOf(Helper.getLastMessage()).replaceFirst(":\\?*$", ""));
                     }
@@ -234,7 +235,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         } catch (Exception e) {
             // ReadException, PreferencesException, SwapException, DAOException,
             // WriteException, IOException,
-            // InterruptedException from ProzesskopieForm.NeuenProzessAnlegen()
+            // InterruptedException from ProzesskopieForm.createNewProcess()
             String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null)
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
                             Arrays.asList(new String[] {currentTitle }))
@@ -413,7 +414,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             thrown while performing the rollback
      */
     private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle)
-            throws DAOException, IOException {
+            throws DAOException, IOException, CustomResponseException {
         if (createBatches != null) {
             int lastIndex = issues.size() - 1;
             int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
@@ -440,7 +441,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             if the current session can't be retrieved or an exception is
      *             thrown while performing the rollback
      */
-    private void flushLogisticsBatch(String processTitle) throws DAOException, IOException {
+    private void flushLogisticsBatch(String processTitle) throws DAOException, IOException, CustomResponseException {
         if (serviceManager.getBatchService().size(logisticsBatch) > 0) {
             logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
             serviceManager.getBatchService().save(logisticsBatch);
@@ -470,7 +471,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             if the current session can't be retrieved or an exception is
      *             thrown while performing the rollback
      */
-    private void saveFullBatch(String theProcessTitle) throws DAOException, IOException {
+    private void saveFullBatch(String theProcessTitle) throws DAOException, IOException, CustomResponseException {
         fullBatch.setTitle(firstGroupFrom(theProcessTitle));
         serviceManager.getBatchService().save(fullBatch);
     }

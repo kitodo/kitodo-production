@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
             RenderableMetadataGroup container, String projectName) throws ConfigurationException {
         super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
         checkConfiguration();
-        getField(Field.NORMDATA_RECORD).setValue(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""));
+        getField(Field.NORMDATA_RECORD).setValue(ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, ""));
         if (binding != null) {
             for (Person person : binding.getPersonByType(metadataType.getName())) {
                 addContent(person);
@@ -270,7 +270,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
         }
         String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
         if (normdataRecord != null && normdataRecord.length() > 0
-                && !normdataRecord.equals(ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
+                && !normdataRecord.equals(ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
             String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
             person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
         }

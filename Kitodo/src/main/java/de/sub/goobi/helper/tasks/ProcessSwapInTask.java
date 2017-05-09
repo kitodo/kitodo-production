@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -19,12 +19,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.goobi.io.SafeFile;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProcessSwapInTask extends LongRunningTask {
@@ -75,8 +75,8 @@ public class ProcessSwapInTask extends LongRunningTask {
         String swapPath = null;
         String processDirectory = "";
 
-        if (ConfigMain.getBooleanParameter("useSwapping")) {
-            swapPath = ConfigMain.getParameter("swapPath", "");
+        if (ConfigCore.getBooleanParameter("useSwapping")) {
+            swapPath = ConfigCore.getParameter("swapPath", "");
         } else {
             setStatusMessage("swapping not activated");
             setStatusProgress(-1);
@@ -87,7 +87,7 @@ public class ProcessSwapInTask extends LongRunningTask {
             setStatusProgress(-1);
             return;
         }
-        SafeFile swapFile = new SafeFile(swapPath);
+        File swapFile = new File(swapPath);
         if (!swapFile.exists()) {
             setStatusMessage("Swap folder does not exist or is not mounted");
             setStatusProgress(-1);
@@ -104,8 +104,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             return;
         }
 
-        SafeFile fileIn = new SafeFile(processDirectory);
-        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
+        File fileIn = new File(processDirectory);
+        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
 
         if (!fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget does not exist");
@@ -145,7 +145,11 @@ public class ProcessSwapInTask extends LongRunningTask {
             Element el = it.next();
             crcMap.put(el.getAttribute("path").getValue(), el.getAttribute("crc32").getValue());
         }
-        ProcessSwapOutTask.deleteDataInDir(fileIn);
+        try {
+            ProcessSwapOutTask.deleteDataInDir(fileIn);
+        } catch (IOException e) {
+            logger.warn("IOException. Could not delete data in directory.");
+        }
 
         /*
          * Dateien kopieren und Checksummen ermitteln
@@ -201,8 +205,8 @@ public class ProcessSwapInTask extends LongRunningTask {
         setStatusProgress(90);
 
         /* in Prozess speichern */
-        fileOut.deleteDir();
         try {
+            serviceManager.getFileService().delete(fileOut.toURI());
             setStatusMessage("saving process");
             Process myProcess = serviceManager.getProcessService().find(getProcess().getId());
             myProcess.setSwappedOutGui(false);
@@ -214,6 +218,8 @@ public class ProcessSwapInTask extends LongRunningTask {
             return;
         } catch (IOException e) {
             logger.warn("IOException:", e);
+        } catch (CustomResponseException e) {
+            logger.warn("CustomResponseException:", e);
         }
         setStatusMessage("done");
 

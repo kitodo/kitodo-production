@@ -90,7 +90,7 @@
                                         style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17};"/>
 
                         <h:commandLink target="links" styleClass="document"
-                                       action="#{Metadaten.KnotenVerschieben}"
+                                       action="#{Metadaten.moveNode}"
                                        rendered="#{item.node.einfuegenErlaubt && not item.node.selected}">
                             <h:outputText value="#{item.node.description}"/>
                             <x:updateActionListener

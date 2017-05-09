@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 
 import de.intranda.commons.chart.results.DataTable;
 import de.schlichtherle.io.File;
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.util.Locale;
 
@@ -53,7 +53,7 @@ public class StatisticsRenderingElementTest {
 
     @Test
     public final void testCreateRenderer() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testElement.createRenderer(true);
 
     }
@@ -66,7 +66,7 @@ public class StatisticsRenderingElementTest {
 
     @Test
     public final void testGetHtmlTableRenderer() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testElement.getHtmlTableRenderer();
     }
 
@@ -77,7 +77,7 @@ public class StatisticsRenderingElementTest {
 
     @Test
     public final void testGetImageUrl() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testElement.createRenderer(true);
         assertNotNull(testElement.getImageUrl());
     }

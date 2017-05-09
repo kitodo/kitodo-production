@@ -11,7 +11,7 @@
 
 package org.kitodo.api.validation.filestructure;
 
-import java.io.File;
+import java.net.URI;
 import java.net.URL;
 
 import org.kitodo.api.validation.ValidationResult;
@@ -19,14 +19,14 @@ import org.kitodo.api.validation.ValidationResult;
 public interface FileStructureValidationInterface {
 
     /**
-     * validates a given xml file against a xsd at a given location.
+     * validates a xml file at a given uri against a xsd at a given location.
      * 
-     * @param xmlFile
+     * @param xmlFileUri
      *            The file to validate.
      * @param xsdFileUrl
      *            The location of the schema to validate against.
      * @return A ValidationResult, with result boolean and resultMessages.
      */
-    ValidationResult validate(File xmlFile, URL xsdFileUrl);
+    ValidationResult validate(URI xmlFileUri, URL xsdFileUrl);
 
 }

@@ -13,7 +13,7 @@ package de.sub.goobi.forms;
 
 import de.intranda.commons.chart.renderer.ChartRenderer;
 import de.intranda.commons.chart.results.ChartDraw.ChartType;
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
@@ -59,6 +59,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class ProjekteForm extends BasisForm {
@@ -93,7 +94,7 @@ public class ProjekteForm extends BasisForm {
     // making sure its cleaned up
     @Override
     protected void finalize() {
-        this.Cancel();
+        this.cancel();
     }
 
     /**
@@ -129,7 +130,7 @@ public class ProjekteForm extends BasisForm {
     /**
      * this needs to be executed in order to rollback adding of filegroups.
      */
-    public String Cancel() {
+    public String cancel() {
         // flushing new fileGroups
         deleteFileGroups(this.newFileGroups);
         // resetting the List of new fileGroups
@@ -142,7 +143,7 @@ public class ProjekteForm extends BasisForm {
         return "ProjekteAlle";
     }
 
-    public String Neu() {
+    public String newProject() {
         this.myProjekt = new Project();
         return "ProjekteBearbeiten";
     }
@@ -152,7 +153,7 @@ public class ProjekteForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Speichern() {
+    public String save() {
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         try {
@@ -166,6 +167,10 @@ public class ProjekteForm extends BasisForm {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
             myLogger.error(e);
             return "";
+        } catch (CustomResponseException e) {
+            Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+            myLogger.error(e);
+            return "";
         }
     }
 
@@ -174,9 +179,9 @@ public class ProjekteForm extends BasisForm {
      *
      * @return String
      */
-    public String Apply() {
+    public String apply() {
         // call this to make saving and deleting permanent
-        myLogger.trace("Apply wird aufgerufen...");
+        myLogger.trace("apply wird aufgerufen...");
         this.commitFileGroups();
         try {
             serviceManager.getProjectService().save(this.myProjekt);
@@ -189,6 +194,10 @@ public class ProjekteForm extends BasisForm {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
             myLogger.error(e);
             return "";
+        } catch (CustomResponseException e) {
+            Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+            myLogger.error(e);
+            return "";
         }
     }
 
@@ -197,7 +206,7 @@ public class ProjekteForm extends BasisForm {
      *
      * @return String
      */
-    public String Loeschen() {
+    public String delete() {
         if (this.myProjekt.getUsers().size() > 0) {
             Helper.setFehlerMeldung("userAssignedError");
             return "";
@@ -211,6 +220,10 @@ public class ProjekteForm extends BasisForm {
             } catch (IOException e) {
                 Helper.setFehlerMeldung("could not delete from index", e.getMessage());
                 myLogger.error(e);
+            } catch (CustomResponseException e) {
+                Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+                myLogger.error(e);
+                return "";
             }
         }
         return "ProjekteAlle";
@@ -221,7 +234,7 @@ public class ProjekteForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         try {
             Session session = Helper.getHibernateSession();
             session.clear();
@@ -241,8 +254,8 @@ public class ProjekteForm extends BasisForm {
      *
      * @return String
      */
-    public String FilterKeinMitZurueck() {
-        FilterKein();
+    public String filterKeinMitZurueck() {
+        filterKein();
         return this.zurueck;
     }
 
@@ -306,7 +319,7 @@ public class ProjekteForm extends BasisForm {
      */
     public void setMyProjekt(Project inProjekt) {
         // has to be called if a page back move was done
-        this.Cancel();
+        this.cancel();
         this.myProjekt = inProjekt;
     }
 
@@ -404,7 +417,7 @@ public class ProjekteForm extends BasisForm {
      * generates values for count of volumes and images for statistics.
      */
     @SuppressWarnings("rawtypes")
-    public void GenerateValuesForStatistics() {
+    public void generateValuesForStatistics() {
         Criteria crit = Helper.getHibernateSession().createCriteria(Process.class)
                 .add(Restrictions.eq("projekt", this.myProjekt));
         ProjectionList pl = Projections.projectionList();
@@ -651,7 +664,7 @@ public class ProjekteForm extends BasisForm {
             cr.setDataTable(this.projectProgressData.getSelectedTable());
             BufferedImage bi = (BufferedImage) cr.getRendering();
             this.projectProgressImage = System.currentTimeMillis() + ".png";
-            String localImagePath = ConfigMain.getTempImagesPathAsCompleteDirectory();
+            String localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
             File outputfile = new File(localImagePath + this.projectProgressImage);
             try {
@@ -719,7 +732,7 @@ public class ProjekteForm extends BasisForm {
         projectStatusDraw.paint();
 
         // write image to temporary file
-        String localImagePath = ConfigMain.getTempImagesPathAsCompleteDirectory();
+        String localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
         File outputfile = new File(localImagePath + inName);
         ImageIO.write(image, "png", outputfile);
     }
@@ -737,7 +750,7 @@ public class ProjekteForm extends BasisForm {
     /**
      * Create excel.
      */
-    public void CreateExcel() {
+    public void createExcel() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
 

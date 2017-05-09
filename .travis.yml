@@ -4,6 +4,12 @@ language: java
 
 cache:
 
+dist: trusty
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+
 sudo: required
 
 env: DB=mysql
@@ -11,7 +17,7 @@ env: DB=mysql
 services:
   - mysql
 
-script: mvn clean install -Pall-tests,flyway
+script: mvn clean install -Pall-tests,flyway,checkstyle-findbugs
 
 before_install:
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
@@ -21,6 +27,8 @@ before_install:
 
 before_script:
   - cp config/database.yml.travis config/database.yml
+  - cp Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.travis Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
   - mysql -u root -e 'CREATE DATABASE kitodo;'
   - mysql -u root -e "CREATE USER 'kitodo'@'localhost' IDENTIFIED BY 'kitodo';"
   - mysql -u root -e "GRANT ALL ON kitodo.* TO 'kitodo'@'localhost';"
+  - mysql -u root kitodo < Kitodo/setup/schema.sql

@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public interface RestClientInterface {
 
-    void initiateClient(String host, Integer port, String protocol);
+    void initiateClient();
 
     String getServerInformation() throws IOException;
 

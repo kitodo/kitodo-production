@@ -23,8 +23,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 
 /**
  * Test class for TemplateType.
@@ -34,7 +34,7 @@ public class TemplateTypeTest {
     private static List<Template> prepareData() {
 
         List<Template> templates = new ArrayList<>();
-        List<TemplateProperty> templateProperties = new ArrayList<>();
+        List<Property> properties = new ArrayList<>();
 
         Process firstProcess = new Process();
         firstProcess.setId(1);
@@ -45,20 +45,18 @@ public class TemplateTypeTest {
         Process thirdProcess = new Process();
         thirdProcess.setId(3);
 
-        TemplateProperty firstTemplateProperty = new TemplateProperty();
-        firstTemplateProperty.setTitle("first");
-        firstTemplateProperty.setValue("1");
-        templateProperties.add(firstTemplateProperty);
+        Property firstProperty = new Property();
+        firstProperty.setId(1);
+        properties.add(firstProperty);
 
-        TemplateProperty secondTemplateProperty = new TemplateProperty();
-        secondTemplateProperty.setTitle("second");
-        secondTemplateProperty.setValue("2");
-        templateProperties.add(secondTemplateProperty);
+        Property secondProperty = new Property();
+        secondProperty.setId(2);
+        properties.add(secondProperty);
 
         Template firstTemplate = new Template();
         firstTemplate.setId(1);
         firstTemplate.setProcess(firstProcess);
-        firstTemplate.setProperties(templateProperties);
+        firstTemplate.setProperties(properties);
         templates.add(firstTemplate);
 
         Template secondTemplate = new Template();
@@ -70,7 +68,6 @@ public class TemplateTypeTest {
     }
 
     @Test
-    // problem with ordering of objects
     public void shouldCreateDocument() throws Exception {
         TemplateType templateType = new TemplateType();
         JSONParser parser = new JSONParser();
@@ -78,14 +75,14 @@ public class TemplateTypeTest {
         Template template = prepareData().get(0);
         HttpEntity document = templateType.createDocument(template);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{\"process\":\"1\",\"properties\":[{\"title\":\"first\","
-                + "\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        JSONObject excepted = (JSONObject) parser.parse("{\"process\":1,\"properties\":[{\"id\":1},"
+                + "{\"id\":2}]}");
         assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
 
         template = prepareData().get(1);
         document = templateType.createDocument(template);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        excepted = (JSONObject) parser.parse("{\"process\":\"2\",\"properties\":[]}");
+        excepted = (JSONObject) parser.parse("{\"process\":2,\"properties\":[]}");
         assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 

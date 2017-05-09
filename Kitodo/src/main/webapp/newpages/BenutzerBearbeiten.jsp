@@ -169,7 +169,7 @@
                                                                detailFormat="#{msgs.keineLdapgruppeAngegeben}"/>
                                                     <%-- ldap configuration schreiben --%>
                                                     <h:commandLink id="id32" title="#{msgs.ldapKonfigurationSchreiben}"
-                                                                   action="#{BenutzerverwaltungForm.LdapKonfigurationSchreiben}"
+                                                                   action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}"
                                                                    rendered="#{BenutzerverwaltungForm.myClass.id != null}">
                                                         <h:graphicImage id="id33"
                                                                         value="/newpages/images/buttons/key3.gif"/>
@@ -240,7 +240,7 @@
                                                     <h:column id="id48">
                                                         <%-- Löschen-Schaltknopf --%>
                                                         <h:commandLink
-                                                                action="#{BenutzerverwaltungForm.AusGruppeLoeschen}"
+                                                                action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                                                 title="#{msgs.ausGruppeLoeschen}">
                                                             <h:graphicImage id="id49"
                                                                             value="images/buttons/waste1a_20px.gif"/>
@@ -256,7 +256,7 @@
                                                                    styleFrame="border-style: solid;border-color: #1874CD; border-width: 2px;"
                                                                    styleClass="standardlink"
                                                                    style="margin-top:2px;display:block; text-decoration:none"
-                                                                   actionOpen="#{ProjekteForm.FilterKeinMitZurueck}"
+                                                                   actionOpen="#{ProjekteForm.filterKeinMitZurueck}"
                                                                    actionClose="#{NavigationForm.Reload}" center="true"
                                                                    title="#{msgs.projekte}" immediate="true">
                                                         <x:updateActionListener property="#{ProjekteForm.zurueck}"
@@ -277,7 +277,7 @@
                                                     <h:column id="id55">
                                                         <%-- Löschen-Schaltknopf --%>
                                                         <h:commandLink
-                                                                action="#{BenutzerverwaltungForm.AusProjektLoeschen}"
+                                                                action="#{BenutzerverwaltungForm.ausProjektLoeschen}"
                                                                 title="#{msgs.ausProjektLoeschen}">
                                                             <h:graphicImage id="id56"
                                                                             value="images/buttons/waste1a_20px.gif"/>
@@ -298,11 +298,11 @@
 
                                         <htm:td styleClass="eingabeBoxen_row3" align="right">
                                             <h:commandButton id="id59" value="#{msgs.loeschen}"
-                                                             action="#{BenutzerverwaltungForm.Loeschen}"
+                                                             action="#{BenutzerverwaltungForm.delete}"
                                                              onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')"
                                                              rendered="#{BenutzerverwaltungForm.myClass.id != null}"/>
                                             <h:commandButton id="absenden" value="#{msgs.speichern}"
-                                                             action="#{BenutzerverwaltungForm.Speichern}"/>
+                                                             action="#{BenutzerverwaltungForm.save}"/>
                                         </htm:td>
                                     </htm:tr>
 

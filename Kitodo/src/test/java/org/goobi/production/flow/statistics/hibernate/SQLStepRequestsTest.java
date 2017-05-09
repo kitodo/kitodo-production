@@ -20,12 +20,12 @@ import java.util.Calendar;
 import org.goobi.production.flow.statistics.enums.TimeUnit;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 public class SQLStepRequestsTest {
 
     static SQLStepRequests request;
-    static HistoryType typeSelection;
+    static HistoryTypeEnum typeSelection;
 
     @BeforeClass
     public static void setUp() {
@@ -34,7 +34,7 @@ public class SQLStepRequestsTest {
         cal1.set(2009, 01, 01);
         cal2.set(2009, 03, 31);
         request = new SQLStepRequests(cal1.getTime(), cal2.getTime(), TimeUnit.days, null);
-        typeSelection = HistoryType.storageDifference;
+        typeSelection = HistoryTypeEnum.storageDifference;
     }
 
     @Test
@@ -60,7 +60,7 @@ public class SQLStepRequestsTest {
 
     @Test
     public final void testSQLMaxStepOrder() {
-        String answer = request.SQLMaxStepOrder(typeSelection);
+        String answer = request.getSQLMaxStepOrder(typeSelection);
         assertNotNull(answer);
     }
 

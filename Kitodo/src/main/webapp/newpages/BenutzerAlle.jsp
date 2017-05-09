@@ -60,7 +60,7 @@
                                 <htm:h3>
                                     <h:outputText id="id4" value="#{msgs.users}"/>
                                 </htm:h3>
-                                <h:commandLink id="id5" action="#{BenutzerverwaltungForm.Neu}"
+                                <h:commandLink id="id5" action="#{BenutzerverwaltungForm.newUser}"
                                                immediate="true"
                                                rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                     <h:outputText id="id6" value="#{msgs.neuenBenutzerAnlegen}"/>
@@ -94,10 +94,10 @@
                                                      onkeypress="return submitEnter('FilterAlle',event)"/>
                                         <x:commandButton type="submit" id="FilterAlle" forceId="true"
                                                          style="display:none"
-                                                         action="#{BenutzerverwaltungForm.FilterAlleStart}"/>
+                                                         action="#{BenutzerverwaltungForm.filterAlleStart}"/>
 
                                         <h:commandLink
-                                                action="#{BenutzerverwaltungForm.FilterAlleStart}"
+                                                action="#{BenutzerverwaltungForm.filterAlleStart}"
                                                 title="#{msgs.filterAnwenden}" style="margin-left:5px">
                                             <h:graphicImage id="id13"
                                                             value="/newpages/images/buttons/reload.gif"/>
@@ -182,7 +182,7 @@
 
                                         <%-- LdapKonfiguration schreiben-Schaltknopf --%>
                                         <%-- 										<h:commandLink id="id34" title="#{msgs.ldapKonfigurationSchreiben}"
-                                        action="#{BenutzerverwaltungForm.LdapKonfigurationSchreiben}">
+                                        action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}">
                                         <h:graphicImage id="id35" value="/newpages/images/buttons/key3.gif" />
                                         <x:updateActionListener
                                             property="#{BenutzerverwaltungForm.myClass}" value="#{item}" />
@@ -199,7 +199,7 @@
                                     </h:column>
 
                                 </x:dataTable>
-                                <h:commandLink id="id52" action="#{BenutzerverwaltungForm.Neu}"
+                                <h:commandLink id="id52" action="#{BenutzerverwaltungForm.newUser}"
                                                immediate="true"
                                                rendered="#{((LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)) && (BenutzerverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                                 >
@@ -208,8 +208,8 @@
                                 <htm:table width="100%" border="0">
                                     <htm:tr valign="top">
                                         <htm:td align="left">
-                                            <%-- Neu-Schaltknopf --%>
-                                            <%-- 				<h:commandLink id="id38" action="#{BenutzerverwaltungForm.Neu}"
+                                            <%-- newUser-Schaltknopf --%>
+                                            <%-- 				<h:commandLink id="id38" action="#{BenutzerverwaltungForm.newUser}"
                                             immediate="true"
                                             rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                                             <h:outputText id="id39" value="#{msgs.neuenBenutzerAnlegen}" />

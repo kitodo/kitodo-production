@@ -17,27 +17,38 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Table;
-
 import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.Index;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 
 /**
  * Implementation of Elastic Search Indexer for index package.
  */
-public class Indexer<T extends BaseBean, S extends BaseType> {
-
-    private String index;
+public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
 
     private HTTPMethods method;
 
-    private String type;
+    /**
+     * Constructor for indexer with type names equal to table names.
+     *
+     * @param beanClass
+     *            as Class
+     */
+    public Indexer(Class<?> beanClass) {
+        super(beanClass);
+    }
 
-    public Indexer(String index, Class<?> beanClass) {
-        this.setIndex(index);
-        this.setType(beanClass);
+    /**
+     * Constructor for indexer with type names not equal to table names.
+     *
+     * @param type
+     *            as String
+     */
+    public Indexer(String type) {
+        super(type);
     }
 
     /**
@@ -50,19 +61,15 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * @return response from the server
      */
     @SuppressWarnings("unchecked")
-    public String performSingleRequest(T baseBean, S baseType) throws DAOException, IOException {
-        IndexRestClient restClient = new IndexRestClient();
+    public String performSingleRequest(T baseBean, S baseType) throws IOException, CustomResponseException {
+        IndexRestClient restClient = initiateRestClient();
         String response;
-
-        restClient.initiateClient("localhost", 9200, "http");
-        restClient.setIndex(index);
-        restClient.setType(type);
 
         if (method == HTTPMethods.PUT) {
             HttpEntity document = baseType.createDocument(baseBean);
-            response = restClient.addDocument(document, baseBean.getId());
+            response = String.valueOf(restClient.addDocument(document, baseBean.getId()));
         } else if (method == HTTPMethods.DELETE) {
-            response = restClient.deleteDocument(baseBean.getId());
+            response = String.valueOf(restClient.deleteDocument(baseBean.getId()));
         } else {
             response = "Incorrect HTTP method!";
         }
@@ -78,16 +85,12 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      * @param beanId
      *            response from the server
      */
-    public String performSingleRequest(Integer beanId) throws IOException {
-        IndexRestClient restClient = new IndexRestClient();
+    public String performSingleRequest(Integer beanId) throws IOException, CustomResponseException {
+        IndexRestClient restClient = initiateRestClient();
         String response;
 
-        restClient.initiateClient("localhost", 9200, "http");
-        restClient.setIndex(index);
-        restClient.setType(type);
-
         if (method == HTTPMethods.DELETE) {
-            response = restClient.deleteDocument(beanId);
+            response = String.valueOf(restClient.deleteDocument(beanId));
         } else {
             response = "Incorrect HTTP method!";
         }
@@ -106,19 +109,15 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      */
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
-            throws DAOException, IOException, InterruptedException {
-        IndexRestClient restClient = new IndexRestClient();
+            throws DAOException, IOException, InterruptedException, CustomResponseException {
+        IndexRestClient restClient = initiateRestClient();
         String response;
-
-        restClient.initiateClient("localhost", 9200, "http");
-        restClient.setIndex(index);
-        restClient.setType(type);
 
         if (method == HTTPMethods.PUT) {
             HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseBeans);
             response = restClient.addType(documents);
         } else if (method == HTTPMethods.DELETE) {
-            response = restClient.deleteType();
+            response = String.valueOf(restClient.deleteType());
         } else {
             response = "Incorrect HTTP method!";
         }
@@ -128,23 +127,12 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
         return response;
     }
 
-    /**
-     * Get name of the index.
-     *
-     * @return index's name
-     */
-    public String getIndex() {
-        return index;
-    }
-
-    /**
-     * Set name of the index.
-     *
-     * @param index
-     *            name
-     */
-    public void setIndex(String index) {
-        this.index = index;
+    private IndexRestClient initiateRestClient() {
+        IndexRestClient restClient = new IndexRestClient();
+        restClient.initiateClient();
+        restClient.setIndex(index);
+        restClient.setType(type);
+        return restClient;
     }
 
     /**
@@ -165,25 +153,5 @@ public class Indexer<T extends BaseBean, S extends BaseType> {
      */
     public void setMethod(HTTPMethods method) {
         this.method = method;
-    }
-
-    /**
-     * Get name of the type.
-     *
-     * @return type's name
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * Set up type name. It could be private if it would for generic type (T)
-     *
-     * @param beanClass
-     *            beans' class
-     */
-    public void setType(Class<?> beanClass) {
-        Table table = beanClass.getAnnotation(Table.class);
-        this.type = table.name();
     }
 }

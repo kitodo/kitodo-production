@@ -1,0 +1,4 @@
+flyway.user=kitodo
+flyway.password=kitodo
+flyway.url=jdbc:mysql://localhost/kitodo
+flyway.locations=filesystem:Kitodo-DataManagement/src/main/resources/db/migration

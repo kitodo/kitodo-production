@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
-import org.goobi.production.constants.Parameters;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.Util;
@@ -103,30 +102,6 @@ public class Helper implements Serializable, Observer {
             myParameter = "";
         }
         return myParameter;
-    }
-
-    /**
-     * Get Goobi data directory.
-     *
-     * @return String
-     */
-    public String getGoobiDataDirectory() {
-        if (this.myMetadatenVerzeichnis == null) {
-            this.myMetadatenVerzeichnis = ConfigMain.getParameter("MetadatenVerzeichnis");
-        }
-        return this.myMetadatenVerzeichnis;
-    }
-
-    /**
-     * Get Goobi config directory.
-     *
-     * @return String
-     */
-    public String getGoobiConfigDirectory() {
-        if (this.myConfigVerzeichnis == null) {
-            this.myConfigVerzeichnis = ConfigMain.getParameter(Parameters.CONFIG_DIR);
-        }
-        return this.myConfigVerzeichnis;
     }
 
     /**
@@ -380,7 +355,7 @@ public class Helper implements Serializable, Observer {
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-                File file = new File(ConfigMain.getParameter("localMessages", "/usr/local/goobi/messages/"));
+                File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/kitodo/messages/"));
                 if (file.exists()) {
                     // Load local message bundle from file system only if file
                     // exists;
@@ -518,7 +493,7 @@ public class Helper implements Serializable, Observer {
         @Override
         public boolean accept(File dir, String name) {
             boolean fileOk = false;
-            String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
+            String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
 
             if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
                 fileOk = true;
@@ -540,7 +515,7 @@ public class Helper implements Serializable, Observer {
         @Override
         public boolean accept(File dir, String name) {
             boolean fileOk = false;
-            String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
+            String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
             if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
                 fileOk = true;
             } else if (name.matches(prefix + "\\.[jJ][pP][eE]?[gG]")) {

@@ -11,16 +11,15 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,12 +32,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.myfaces.custom.fileupload.UploadedFile;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -54,6 +52,7 @@ public class FileManipulation {
     private static final Logger logger = Logger.getLogger(FileManipulation.class);
     private Metadaten metadataBean;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     public FileManipulation(Metadaten metadataBean) {
         this.metadataBean = metadataBean;
@@ -67,7 +66,7 @@ public class FileManipulation {
     // mode of insert (uncounted or into pagination sequence)
     private String insertMode = "uncounted";
 
-    private UploadedFile uploadedFile = null;
+    private File uploadedFile = null;
 
     private String uploadedFileName = null;
 
@@ -85,7 +84,7 @@ public class FileManipulation {
      * File upload with binary copying.
      */
     public void uploadFile() {
-        ByteArrayInputStream inputStream = null;
+        InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
             if (this.uploadedFile == null) {
@@ -93,44 +92,44 @@ public class FileManipulation {
                 return;
             }
 
-            String basename = this.uploadedFile.getName();
-            if (basename.startsWith(".")) {
-                basename = basename.substring(1);
+            String baseName = this.uploadedFile.getName();
+            if (baseName.startsWith(".")) {
+                baseName = baseName.substring(1);
             }
-            if (basename.contains("/")) {
-                basename = basename.substring(basename.lastIndexOf("/") + 1);
+            if (baseName.contains("/")) {
+                baseName = baseName.substring(baseName.lastIndexOf("/") + 1);
             }
-            if (basename.contains("\\")) {
-                basename = basename.substring(basename.lastIndexOf("\\") + 1);
+            if (baseName.contains("\\")) {
+                baseName = baseName.substring(baseName.lastIndexOf("\\") + 1);
             }
 
             if (StringUtils.isNotBlank(uploadedFileName)) {
-                String fileExtension = Metadaten.getFileExtension(basename);
+                String fileExtension = Metadaten.getFileExtension(baseName);
                 if (!fileExtension.isEmpty() && !uploadedFileName.endsWith(fileExtension)) {
                     uploadedFileName = uploadedFileName + fileExtension;
                 }
-                basename = uploadedFileName;
+                baseName = uploadedFileName;
 
             }
             if (logger.isTraceEnabled()) {
                 logger.trace("folder to import: " + currentFolder);
             }
             String filename = serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess())
-                    + currentFolder + File.separator + basename;
+                    + currentFolder + File.separator + baseName;
 
             if (logger.isTraceEnabled()) {
                 logger.trace("filename to import: " + filename);
             }
 
-            if (new SafeFile(filename).exists()) {
+            if (fileService.fileExist(URI.create(filename))) {
                 List<String> parameterList = new ArrayList<String>();
-                parameterList.add(basename);
+                parameterList.add(baseName);
                 Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
                 return;
             }
 
-            inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
-            outputStream = new FileOutputStream(filename);
+            inputStream = fileService.read(uploadedFile.toURI());
+            outputStream = fileService.writeOrCreate(URI.create(filename));
 
             byte[] buf = new byte[1024];
             int len;
@@ -187,7 +186,7 @@ public class FileManipulation {
             }
         }
         metadataBean.retrieveAllImages();
-        metadataBean.BildErmitteln(0);
+        metadataBean.identifyImage(0);
     }
 
     public String getUploadedFileName() {
@@ -282,11 +281,11 @@ public class FileManipulation {
         }
     }
 
-    public UploadedFile getUploadedFile() {
+    public File getUploadedFile() {
         return this.uploadedFile;
     }
 
-    public void setUploadedFile(UploadedFile uploadedFile) {
+    public void setUploadedFile(File uploadedFile) {
         this.uploadedFile = uploadedFile;
     }
 
@@ -321,17 +320,17 @@ public class FileManipulation {
      * Download file.
      */
     public void downloadFile() {
-        SafeFile downloadFile = null;
+        File downloadFile = null;
 
         int imageOrder = Integer.parseInt(imageSelection);
         DocStruct page = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren().get(imageOrder);
         String imagename = page.getImageName();
         String filenamePrefix = imagename.substring(0, imagename.lastIndexOf("."));
         try {
-            SafeFile[] filesInFolder = new SafeFile(
-                    serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess()) + currentFolder)
-                            .listFiles();
-            for (SafeFile currentFile : filesInFolder) {
+            File[] filesInFolder = fileService.listFiles(
+                    new File(serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess())
+                            + currentFolder));
+            for (File currentFile : filesInFolder) {
                 String currentFileName = currentFile.getName();
                 String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf("."));
                 if (filenamePrefix.equals(currentFileNamePrefix)) {
@@ -370,7 +369,7 @@ public class FileManipulation {
             InputStream in = null;
             ServletOutputStream out = null;
             try {
-                in = downloadFile.createFileInputStream();
+                in = fileService.read(downloadFile.toURI());
                 out = response.getOutputStream();
                 byte[] buffer = new byte[4096];
                 int length;
@@ -421,12 +420,12 @@ public class FileManipulation {
 
             }
         }
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
-        SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
+        File fileuploadFolder = new File(tempDirectory + "fileupload");
         if (!fileuploadFolder.exists()) {
             fileuploadFolder.mkdir();
         }
-        SafeFile destination = new SafeFile(
+        File destination = new File(
                 fileuploadFolder.getAbsolutePath() + File.separator + metadataBean.getMyProzess().getTitle());
         if (!destination.exists()) {
             destination.mkdir();
@@ -437,27 +436,26 @@ public class FileManipulation {
             String processTitle = metadataBean.getMyProzess().getTitle();
             for (String folder : metadataBean.getAllTifFolders()) {
                 try {
-                    SafeFile[] filesInFolder = new SafeFile(
-                            serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess()) + folder)
-                                    .listFiles();
-                    for (SafeFile currentFile : filesInFolder) {
+                    File[] filesInFolder = fileService.listFiles(
+                            new File(serviceManager.getProcessService().getImagesDirectory(metadataBean.getMyProzess())
+                                    + folder));
+                    for (File currentFile : filesInFolder) {
 
                         String filenameInFolder = currentFile.getName();
                         String filenamePrefix = filenameInFolder.replace(Metadaten.getFileExtension(filenameInFolder),
                                 "");
                         if (filenamePrefix.equals(prefix)) {
-                            SafeFile tempFolder = new SafeFile(destination.getAbsolutePath() + File.separator + folder);
+                            File tempFolder = new File(destination.getAbsolutePath() + File.separator + folder);
                             if (!tempFolder.exists()) {
                                 tempFolder.mkdir();
                             }
 
-                            SafeFile destinationFile = new SafeFile(tempFolder,
-                                    processTitle + "_" + currentFile.getName());
+                            File destinationFile = new File(tempFolder, processTitle + "_" + currentFile.getName());
 
                             // if (deleteFilesAfterMove) {
                             // currentFile.renameTo(destinationFile);
                             // } else {
-                            currentFile.copyFile(destinationFile);
+                            fileService.copyFile(currentFile, destinationFile);
                             // }
                             break;
 
@@ -486,7 +484,7 @@ public class FileManipulation {
         }
 
         metadataBean.retrieveAllImages();
-        metadataBean.BildErmitteln(0);
+        metadataBean.identifyImage(0);
     }
 
     public List<String> getSelectedFiles() {
@@ -519,12 +517,12 @@ public class FileManipulation {
      */
     public List<String> getAllImportFolder() {
 
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
-        SafeFile fileuploadFolder = new SafeFile(tempDirectory + "fileupload");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
+        File fileuploadFolder = new File(tempDirectory + "fileupload");
 
         allImportFolder = new ArrayList<String>();
         if (fileuploadFolder.isDirectory()) {
-            allImportFolder.addAll(Arrays.asList(fileuploadFolder.list(directoryFilter)));
+            allImportFolder.addAll(Arrays.asList(fileService.list(directoryFilter, fileuploadFolder)));
         }
         return allImportFolder;
     }
@@ -536,7 +534,7 @@ public class FileManipulation {
     private static FilenameFilter directoryFilter = new FilenameFilter() {
         @Override
         public boolean accept(final java.io.File dir, final String name) {
-            SafeFile toTest = new SafeFile(dir, name);
+            File toTest = new File(dir, name);
             return toTest.isDirectory();
         }
     };
@@ -544,26 +542,26 @@ public class FileManipulation {
     /**
      * Import files.
      */
-    public void importFiles() {
+    public void importFiles() throws IOException {
 
         if (selectedFiles == null || selectedFiles.isEmpty()) {
             Helper.setFehlerMeldung("noFileSelected");
             return;
         }
-        String tempDirectory = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
-        if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
+        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             useMasterFolder = true;
-            masterPrefix = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+            masterPrefix = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         }
         Process currentProcess = metadataBean.getMyProzess();
         List<String> importedFilenames = new ArrayList<String>();
         for (String importName : selectedFiles) {
-            SafeFile importfolder = new SafeFile(tempDirectory + "fileupload" + File.separator + importName);
-            SafeFile[] subfolderList = importfolder.listFiles();
-            for (SafeFile subfolder : subfolderList) {
+            File importfolder = new File(tempDirectory + "fileupload" + File.separator + importName);
+            File[] subfolderList = fileService.listFiles(importfolder);
+            for (File subfolder : subfolderList) {
 
                 if (useMasterFolder) {
                     // check if current import folder is master folder
@@ -571,15 +569,15 @@ public class FileManipulation {
                         try {
                             String masterFolderName = serviceManager.getProcessService().getImagesOrigDirectory(false,
                                     currentProcess);
-                            SafeFile masterDirectory = new SafeFile(masterFolderName);
+                            File masterDirectory = new File(masterFolderName);
                             if (!masterDirectory.exists()) {
                                 masterDirectory.mkdir();
                             }
-                            SafeFile[] objectInFolder = subfolder.listFiles();
-                            List<SafeFile> sortedList = Arrays.asList(objectInFolder);
+                            File[] objectInFolder = fileService.listFiles(subfolder);
+                            List<File> sortedList = Arrays.asList(objectInFolder);
                             Collections.sort(sortedList);
-                            for (SafeFile object : sortedList) {
-                                object.copyFileToDirectory(masterDirectory);
+                            for (File file : sortedList) {
+                                fileService.copyFileToDirectory(file, masterDirectory);
                             }
                         } catch (SwapException e) {
                             logger.error(e);
@@ -599,17 +597,17 @@ public class FileManipulation {
                                     currentProcess);
                             if (folderName != null) {
                                 try {
-                                    SafeFile directory = new SafeFile(folderName);
-                                    SafeFile[] objectInFolder = subfolder.listFiles();
-                                    List<SafeFile> sortedList = Arrays.asList(objectInFolder);
+                                    File directory = new File(folderName);
+                                    File[] objectInFolder = fileService.listFiles(subfolder);
+                                    List<File> sortedList = Arrays.asList(objectInFolder);
                                     Collections.sort(sortedList);
-                                    for (SafeFile object : sortedList) {
+                                    for (File file : sortedList) {
                                         if (serviceManager.getProcessService()
                                                 .getImagesTifDirectory(false, currentProcess)
                                                 .equals(folderName + File.separator)) {
-                                            importedFilenames.add(object.getName());
+                                            importedFilenames.add(file.getName());
                                         }
-                                        object.copyFileToDirectory(directory);
+                                        fileService.copyFileToDirectory(file, directory);
                                     }
                                 } catch (IOException e) {
                                     logger.error(e);
@@ -631,17 +629,17 @@ public class FileManipulation {
                         String folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
                                 currentProcess);
                         if (folderName != null) {
-                            SafeFile directory = new SafeFile(folderName);
-                            SafeFile[] objectInFolder = subfolder.listFiles();
-                            List<SafeFile> sortedList = Arrays.asList(objectInFolder);
+                            File directory = new File(folderName);
+                            File[] objectInFolder = fileService.listFiles(subfolder);
+                            List<File> sortedList = Arrays.asList(objectInFolder);
                             Collections.sort(sortedList);
-                            for (SafeFile object : sortedList) {
+                            for (File file : sortedList) {
                                 try {
                                     if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
                                             .equals(folderName + File.separator)) {
-                                        importedFilenames.add(object.getName());
+                                        importedFilenames.add(file.getName());
                                     }
-                                    object.copyFileToDirectory(directory);
+                                    fileService.copyFileToDirectory(file, directory);
                                 } catch (IOException e) {
                                     logger.error(e);
                                 } catch (SwapException e) {
@@ -685,11 +683,11 @@ public class FileManipulation {
         // delete folder
 
         for (String importName : selectedFiles) {
-            SafeFile importfolder = new SafeFile(tempDirectory + "fileupload" + File.separator + importName);
-            importfolder.deleteQuietly();
+            File importfolder = new File(tempDirectory + "fileupload" + File.separator + importName);
+            fileService.delete(importfolder.toURI());
         }
         metadataBean.retrieveAllImages();
-        metadataBean.BildErmitteln(0);
+        metadataBean.identifyImage(0);
     }
 
     public String getCurrentFolder() {
@@ -709,7 +707,7 @@ public class FileManipulation {
         String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
 
-        String prefix = ConfigMain.getParameter("ImagePrefix", "\\d{8}");
+        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
         if (!afterLastBackslash.matches(prefix + "\\..+")) {
             return false;
         }

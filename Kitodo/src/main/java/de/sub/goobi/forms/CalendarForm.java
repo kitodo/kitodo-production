@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
@@ -72,8 +72,8 @@ public class CalendarForm {
          * by the currently showing block (or otherwise needs to be greyed-out
          * in the front end).
          */
-        protected boolean onBlock = true; // do not grey out dates which aren’t
-                                          // defined by the calendar system
+        // do not grey out dates which aren't defined by the calendar system
+        protected boolean onBlock = true;
 
         /**
          * The function getDay() returns the day of month (that is a number in
@@ -659,12 +659,12 @@ public class CalendarForm {
      * <p>
      * The issue colour presets are samples which have been chosen to provide
      * distinguishability also for users with red-green color vision deficiency.
-     * Arbitrary colours can be defined in goobi_config.properties by setting
+     * Arbitrary colours can be defined in kitodo_config.properties by setting
      * the property “issue.colours”.
      * </p>
      */
     public CalendarForm() {
-        ISSUE_COLOURS = ConfigMain
+        ISSUE_COLOURS = ConfigCore
                 .getParameter("issue.colours",
                         "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
                 .split(";");

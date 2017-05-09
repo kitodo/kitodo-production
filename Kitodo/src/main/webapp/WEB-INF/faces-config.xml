@@ -180,14 +180,6 @@
         </navigation-case>
     </navigation-rule>
 
-    <!-- Administrationsaufgaben -->
-    <navigation-rule>
-        <navigation-case>
-            <from-outcome>Administrationsaufgaben</from-outcome>
-            <to-view-id>/newpages/admin.jsp</to-view-id>
-        </navigation-case>
-    </navigation-rule>
-
     <!-- Bearbeitung von Prozessverwaltung -->
     <navigation-rule>
         <navigation-case>
@@ -502,13 +494,6 @@
         <managed-bean-name>StatistikForm</managed-bean-name>
         <managed-bean-class>de.sub.goobi.forms.StatistikForm</managed-bean-class>
         <managed-bean-scope>application</managed-bean-scope>
-    </managed-bean>
-
-    <!-- Bean für Administrationsaufgaben -->
-    <managed-bean>
-        <managed-bean-name>AdministrationForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.AdministrationForm</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für Prozessverwaltung -->

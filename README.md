@@ -22,7 +22,7 @@ and packaging of the application is [Maven](https://maven.apache.org/).
 ### Dependencies
 
 Available dependencies are fetched from Maven Central. Further dependencies (not available in Maven Central) are located in Kitodo/src/main/webapp/WEB-INF/lib.
-The only thing that is not shipped is a Tomcat specific servlet API. This should come along with the Tomcat distribution you are building against.
+Two things that are not shipped are a Tomcat specific servlet API and an ElasticSearch server. First thing should come along with the Tomcat distribution you are building against. Second, you need to download by yourself from [ElasticSearch 5.1.1](https://www.elastic.co/downloads/past-releases/elasticsearch-5-1-1) and start before Maven build. On the Windows system ElasticSearch starts after open elasticsearch.bat file from bin folder. Additional information about running of ElasticSearch can be found [here](https://www.elastic.co/downloads/elasticsearch).
 
 ### Vanilla build using Maven
 
@@ -33,9 +33,9 @@ Execute "mvn clean package" and put generated war file in Tomcat.
 Basic configuration files are located under `src/main/resources/` directory. To provide a custom (local) configuration, create a directory `config-local` and put there your specific configuration files just before you create a distribution via the `mvn` command. The build script will then replace every default configuration file with the configuration file it finds in your `config-local` directory.
 
 Most probably, you will have to adjust these four files:
-* goobi_config.properties
+* kitodo_config.properties
 * contentServerConfig.xml
 * hibernate.cfg.xml
 * log4j.properties
 
-Setting up a Kitodo instance can be quite tricky. For more help on how to configure Kitodo, please check the web sites above, the GitHub Wiki or ask questions on the mailing lists.
+Setting up a Kitodo instance can be quite tricky. For more help on how to configure Kitodo, please check the [installation guides](https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung), the [GitHub Wiki](https://github.com/kitodo/kitodo-production/wiki) or ask questions on the [mailing lists](https://github.com/kitodo/kitodo-production/wiki#Mailingliste).

@@ -25,9 +25,10 @@ import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 
@@ -39,7 +40,12 @@ public class ProcessTypeTest {
     private static List<Process> prepareData() {
 
         List<Process> processes = new ArrayList<>();
-        List<ProcessProperty> processProperties = new ArrayList<>();
+        List<Property> properties = new ArrayList<>();
+        List<Batch> batches = new ArrayList<>();
+
+        Batch batch = new Batch();
+        batch.setId(1);
+        batches.add(batch);
 
         Project project = new Project();
         project.setId(1);
@@ -50,15 +56,13 @@ public class ProcessTypeTest {
         Docket docket = new Docket();
         docket.setId(1);
 
-        ProcessProperty firstProcessProperty = new ProcessProperty();
-        firstProcessProperty.setTitle("first");
-        firstProcessProperty.setValue("1");
-        processProperties.add(firstProcessProperty);
+        Property firstProperty = new Property();
+        firstProperty.setId(1);
+        properties.add(firstProperty);
 
-        ProcessProperty secondProcessProperty = new ProcessProperty();
-        secondProcessProperty.setTitle("second");
-        secondProcessProperty.setValue("2");
-        processProperties.add(secondProcessProperty);
+        Property secondProperty = new Property();
+        secondProperty.setId(2);
+        properties.add(secondProperty);
 
         Process firstProcess = new Process();
         firstProcess.setId(1);
@@ -66,6 +70,7 @@ public class ProcessTypeTest {
         firstProcess.setOutputName("Test");
         LocalDate localDate = new LocalDate(2017, 1, 1);
         firstProcess.setCreationDate(localDate.toDate());
+        firstProcess.setBatches(batches);
         firstProcess.setWikiField("Wiki");
         firstProcess.setProject(project);
         firstProcess.setRuleset(ruleset);
@@ -78,7 +83,7 @@ public class ProcessTypeTest {
         secondProcess.setWikiField("Field");
         secondProcess.setProject(project);
         secondProcess.setDocket(docket);
-        secondProcess.setProperties(processProperties);
+        secondProcess.setProperties(properties);
         processes.add(secondProcess);
 
         Process thirdProcess = new Process();
@@ -98,26 +103,25 @@ public class ProcessTypeTest {
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"name\":\"Testing\",\"outputName\":\"Test\","
-                + "\"wikiField\":\"Wiki\",\"ldapGroup\":\"null\",\"ruleset\":\"1\",\"project\":\"1\","
-                + "\"creationDate\":\"2017-01-01\",\"properties\":[]}");
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
+                + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project\":1,\"creationDate\":"
+                + "\"2017-01-01\",\"batches\":[{\"id\":1}],\"properties\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"name\":\"Rendering\",\"outputName\":\"Render\","
-                + "\"wikiField\":\"Field\",\"ldapGroup\":\"1\",\"name\":\"Rendering\",\"ruleset\":\"null\","
-                + "\"project\":\"1\",\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"properties\":[{\"title\":\"first\",\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
+                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project\":1,\"creationDate\":\""
+                + dateFormat.format(process.getCreationDate())+ "\",\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
         document = processType.createDocument(process);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"name\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
-                + "\"ldapGroup\":\"null\",\"ruleset\":\"null\",\"project\":\"null\"," + "\"creationDate\":\""
-                + dateFormat.format(process.getCreationDate()) + "\",\"properties\":[]}");
+        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
+                + "\"docket\":null,\"ruleset\":null,\"project\":null," + "\"creationDate\":\""
+                + dateFormat.format(process.getCreationDate()) + "\",\"properties\":[],\"batches\":[]}");
         assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

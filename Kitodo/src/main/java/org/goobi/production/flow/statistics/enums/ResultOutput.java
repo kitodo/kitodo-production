@@ -18,7 +18,7 @@ import de.sub.goobi.helper.Helper;
  * 
  * @author Steffen Hankiewicz
  * @version 21.05.2009
- ****************************************************************************/
+ */
 public enum ResultOutput {
 
     chart("1", "chart"), table("2", "table"), chartAndTable("3", "chartAndTable");
@@ -33,7 +33,7 @@ public enum ResultOutput {
      *            title as String
      * @param inId
      *            id as string
-     ****************************************************************************/
+     */
     private ResultOutput(String inId, String inTitle) {
         id = inId;
         title = inTitle;
@@ -43,7 +43,7 @@ public enum ResultOutput {
      * return unique ID for result output
      * 
      * @return unique ID as String
-     ****************************************************************************/
+     */
     public String getId() {
         return id;
     }
@@ -52,7 +52,7 @@ public enum ResultOutput {
      * return localized title for result output
      * 
      * @return localized title
-     ****************************************************************************/
+     */
     public String getTitle() {
         return Helper.getTranslation(title);
     }
@@ -63,7 +63,7 @@ public enum ResultOutput {
      * @param inId
      *            the unique ID
      * @return {@link ResultOutput} with given ID
-     ****************************************************************************/
+     */
     public static ResultOutput getById(String inId) {
         for (ResultOutput unit : ResultOutput.values()) {
             if (unit.getId().equals(inId)) {

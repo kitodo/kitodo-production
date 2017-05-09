@@ -21,41 +21,76 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import org.apache.log4j.Logger;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class ProjectService {
+public class ProjectService extends TitleSearchService<Project> {
 
     private List<StepInformation> commonWorkFlow = null;
 
-    private ProjectDAO projectDao = new ProjectDAO();
+    private ProjectDAO projectDAO = new ProjectDAO();
     private ProjectType projectType = new ProjectType();
-    private Indexer<Project, ProjectType> indexer = new Indexer<>("kitodo", Project.class);
+    private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(ProjectService.class);
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Constructor with searcher's assigning.
+     */
+    public ProjectService() {
+        super(new Searcher(Project.class));
+    }
+
+    /**
+     * Method saves project object to database.
      *
      * @param project
      *            object
      */
-    public void save(Project project) throws DAOException, IOException {
-        projectDao.save(project);
+    public void saveToDatabase(Project project) throws DAOException {
+        projectDAO.save(project);
+    }
+
+    /**
+     * Method saves project document to the index of Elastic Search.
+     *
+     * @param project
+     *            object
+     */
+    public void saveToIndex(Project project) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(project, projectType);
     }
 
+    /**
+     * Method saves processes related to modified project.
+     *
+     * @param project
+     *            object
+     */
+    protected void saveDependenciesToIndex(Project project) throws CustomResponseException, IOException {
+        for (Process process : project.getProcesses()) {
+            serviceManager.getProcessService().saveToIndex(process);
+        }
+    }
+
     public Project find(Integer id) throws DAOException {
-        return projectDao.find(id);
+        return projectDAO.find(id);
     }
 
     public List<Project> findAll() throws DAOException {
-        return projectDao.findAll();
+        return projectDAO.findAll();
     }
 
     /**
@@ -65,8 +100,8 @@ public class ProjectService {
      * @param project
      *            object
      */
-    public void remove(Project project) throws DAOException, IOException {
-        projectDao.remove(project);
+    public void remove(Project project) throws CustomResponseException, DAOException, IOException {
+        projectDAO.remove(project);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(project, projectType);
     }
@@ -78,20 +113,20 @@ public class ProjectService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
-        projectDao.remove(id);
+    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+        projectDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Project> search(String query) throws DAOException {
-        return projectDao.search(query);
+        return projectDAO.search(query);
     }
 
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), projectType);
     }

@@ -61,7 +61,7 @@
                                     <h:outputText id="id4" value="#{msgs.dockets}"/>
                                 </htm:h3>
 
-                                <%-- Neu-Schaltknopf --%>
+                                <%-- newUser-Schaltknopf --%>
                                 <h:commandLink id="id5" action="#{DocketForm.Neu}"
                                                immediate="true"
                                                rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
@@ -86,7 +86,7 @@
                                         <f:facet name="header">
                                             <h:outputText id="id10" value="#{msgs.titel}"/>
                                         </f:facet>
-                                        <h:outputText id="id11" value="#{item.name}"/>
+                                        <h:outputText id="id11" value="#{item.title}"/>
                                     </h:column>
 
                                     <h:column id="id12">

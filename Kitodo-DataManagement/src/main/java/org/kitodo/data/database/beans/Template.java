@@ -19,9 +19,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -37,9 +37,11 @@ public class Template extends BaseBean {
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_process_id"))
     private Process process;
 
-    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("title ASC")
-    private List<TemplateProperty> properties;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "template_x_property", joinColumns = {
+            @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_template_x_property_template_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
+    private List<Property> properties;
 
     @Transient
     private boolean panelShown = true;
@@ -64,14 +66,14 @@ public class Template extends BaseBean {
         this.process = process;
     }
 
-    public List<TemplateProperty> getProperties() {
+    public List<Property> getProperties() {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
         return this.properties;
     }
 
-    public void setProperties(List<TemplateProperty> properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = properties;
     }
 

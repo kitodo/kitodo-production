@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
@@ -66,6 +68,7 @@ public class MetadatenImagesHelper {
     private final DigitalDocument mydocument;
     private int myLastImage = 0;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
         this.myPrefs = inPrefs;
@@ -99,9 +102,9 @@ public class MetadatenImagesHelper {
             /*
              * Probleme mit dem FilePath
              */
-            MetadataType MDTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+            MetadataType metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
             try {
-                Metadata mdForPath = new Metadata(MDTypeForPath);
+                Metadata mdForPath = new Metadata(metadataTypeForPath);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     mdForPath.setValue(
                             "file:/" + serviceManager.getProcessService().getImagesTifDirectory(false, process));
@@ -110,8 +113,7 @@ public class MetadatenImagesHelper {
                             "file://" + serviceManager.getProcessService().getImagesTifDirectory(false, process));
                 }
                 physicaldocstruct.addMetadata(mdForPath);
-            } catch (MetadataTypeNotAllowedException e1) {
-            } catch (DocStructHasNoTypeException e1) {
+            } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e1) {
             }
             this.mydocument.setPhysicalDocStruct(physicaldocstruct);
         }
@@ -141,7 +143,7 @@ public class MetadatenImagesHelper {
             return;
         }
 
-        String defaultPagination = ConfigMain.getParameter("MetsEditorDefaultPagination", "uncounted");
+        String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
         Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
         List<DocStruct> pageElementsWithoutImages = new ArrayList<DocStruct>();
         List<String> imagesWithoutPageElements = new ArrayList<String>();
@@ -358,7 +360,7 @@ public class MetadatenImagesHelper {
         if (logger.isTraceEnabled()) {
             logger.trace("tmpSize: " + tmpSize);
         }
-        if (ConfigMain.getParameter("goobiContentServerUrl", "").equals("")) {
+        if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
             logger.trace("api");
             ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
             logger.trace("im");
@@ -366,15 +368,15 @@ public class MetadatenImagesHelper {
             logger.trace("ri");
             JpegInterpreter pi = new JpegInterpreter(ri);
             logger.trace("pi");
-            FileOutputStream outputFileStream = new FileOutputStream(outFileName);
+            FileOutputStream outputFileStream = (FileOutputStream) fileService.write(URI.create(outFileName));
             logger.trace("output");
             pi.writeToStream(null, outputFileStream);
             logger.trace("write stream");
             outputFileStream.close();
             logger.trace("close stream");
         } else {
-            String cs = ConfigMain.getParameter("goobiContentServerUrl") + inFileName + "&scale=" + tmpSize + "&rotate="
-                    + intRotation + "&format=jpg";
+            String cs = ConfigCore.getParameter("kitodoContentServerUrl") + inFileName + "&scale=" + tmpSize
+                    + "&rotate=" + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
             if (logger.isTraceEnabled()) {
                 logger.trace("url: " + cs);
@@ -383,7 +385,7 @@ public class MetadatenImagesHelper {
             HttpClient httpclient = new HttpClient();
             GetMethod method = new GetMethod(csUrl.toString());
             logger.trace("get");
-            Integer contentServerTimeOut = ConfigMain.getIntParameter("goobiContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
             method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
             int statusCode = httpclient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
@@ -428,14 +430,14 @@ public class MetadatenImagesHelper {
          */
         File dir = new File(folder);
         if (dir.exists()) {
-            String[] dateien = dir.list(Helper.dataFilter);
+            String[] dateien = fileService.list(Helper.dataFilter, dir);
             if (dateien == null || dateien.length == 0) {
                 Helper.setFehlerMeldung("[" + title + "] No objects found");
                 return false;
             }
 
             this.myLastImage = dateien.length;
-            if (ConfigMain.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+            if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
                 List<String> filesDirs = Arrays.asList(dateien);
                 Collections.sort(filesDirs);
                 int counter = 1;
@@ -468,23 +470,23 @@ public class MetadatenImagesHelper {
     public static class GoobiImageFileComparator implements Comparator<String> {
 
         @Override
-        public int compare(String s1, String s2) {
-            String imageSorting = ConfigMain.getParameter("ImageSorting", "number");
-            s1 = s1.substring(0, s1.lastIndexOf("."));
-            s2 = s2.substring(0, s2.lastIndexOf("."));
+        public int compare(String firstString, String secondString) {
+            String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
+            firstString = firstString.substring(0, firstString.lastIndexOf("."));
+            secondString = secondString.substring(0, secondString.lastIndexOf("."));
 
             if (imageSorting.equalsIgnoreCase("number")) {
                 try {
-                    Integer i1 = Integer.valueOf(s1);
-                    Integer i2 = Integer.valueOf(s2);
-                    return i1.compareTo(i2);
+                    Integer firstInteger = Integer.valueOf(firstString);
+                    Integer secondInteger = Integer.valueOf(secondString);
+                    return firstInteger.compareTo(secondInteger);
                 } catch (NumberFormatException e) {
-                    return s1.compareToIgnoreCase(s2);
+                    return firstString.compareToIgnoreCase(secondString);
                 }
             } else if (imageSorting.equalsIgnoreCase("alphanumeric")) {
-                return s1.compareToIgnoreCase(s2);
+                return firstString.compareToIgnoreCase(secondString);
             } else {
-                return s1.compareToIgnoreCase(s2);
+                return firstString.compareToIgnoreCase(secondString);
             }
         }
 
@@ -506,7 +508,7 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.imageNameFilter);
+        String[] dateien = fileService.list(Helper.imageNameFilter, dir);
         ArrayList<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {
@@ -540,7 +542,7 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.imageNameFilter);
+        String[] dateien = fileService.list(Helper.imageNameFilter, dir);
         List<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {
@@ -617,7 +619,7 @@ public class MetadatenImagesHelper {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = dir.list(Helper.dataFilter);
+        String[] dateien = fileService.list(Helper.dataFilter, dir);
         ArrayList<String> dataList = new ArrayList<String>();
         if (dateien != null && dateien.length > 0) {
             for (int i = 0; i < dateien.length; i++) {

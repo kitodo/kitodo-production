@@ -14,7 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Tests for UserService class.
@@ -34,7 +35,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class UserServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -152,14 +153,13 @@ public class UserServiceIT {
         assertEquals("Projects' size is incorrect!", 1, actual);
     }
 
-    @Ignore("problem with lazy fetching - properties are inserted...")
     @Test
     public void shouldGetPropertiesSize() throws Exception {
         UserService userService = new UserService();
 
         User user = userService.find(1);
         int actual = userService.getPropertiesSize(user);
-        assertEquals("Properties' size is incorrect!", 1, actual);
+        assertEquals("Properties' size is incorrect!", 2, actual);
     }
 
     @Ignore("not sure how method works")
@@ -187,7 +187,7 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         User user = userService.find(1);
-        String homeDirectory = ConfigMain.getParameter("dir_Users");
+        String homeDirectory = ConfigCore.getParameter("dir_Users");
         boolean condition = userService.getHomeDirectory(user).equals(homeDirectory + "kowal" + File.separator);
         System.out.println("1. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);

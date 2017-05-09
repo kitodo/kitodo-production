@@ -11,7 +11,7 @@
 
 package org.goobi.production.properties;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 
 public class PropertyParser {
@@ -45,7 +46,7 @@ public class PropertyParser {
             return properties;
         }
 
-        String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
+        String path = ConfigCore.getKitodoConfigDirectory() + "kitodo_processProperties.xml";
         XMLConfiguration config;
         try {
             config = new XMLConfiguration(path);
@@ -123,26 +124,26 @@ public class PropertyParser {
         // all properties from config and
         // some of them with already existing 'eigenschaften'
         ArrayList<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
-        List<org.kitodo.data.database.beans.ProcessProperty> plist = mySchritt.getProcess().getProperties();
-        for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
+        List<Property> propertyList = mySchritt.getProcess().getProperties();
+        for (Property processProperty : propertyList) {
 
             for (ProcessProperty pp : listClone) {
                 // TODO added temporarily a fix for NPE. Properties without
                 // title shouldn't exist at all
-                if (pe.getTitle() != null) {
+                if (processProperty.getTitle() != null) {
 
-                    if (pe.getTitle().equals(pp.getName())) {
+                    if (processProperty.getTitle().equals(pp.getName())) {
                         // pp has no pe assigned
                         if (pp.getProzesseigenschaft() == null) {
-                            pp.setProzesseigenschaft(pe);
-                            pp.setValue(pe.getValue());
-                            pp.setContainer(pe.getContainer());
+                            pp.setProzesseigenschaft(processProperty);
+                            pp.setValue(processProperty.getValue());
+                            pp.setContainer(processProperty.getContainer());
                         } else {
                             // clone pp
-                            ProcessProperty pnew = pp.getClone(pe.getContainer());
-                            pnew.setProzesseigenschaft(pe);
-                            pnew.setValue(pe.getValue());
-                            pnew.setContainer(pe.getContainer());
+                            ProcessProperty pnew = pp.getClone(processProperty.getContainer());
+                            pnew.setProzesseigenschaft(processProperty);
+                            pnew.setValue(processProperty.getValue());
+                            pnew.setContainer(processProperty.getContainer());
                             properties.add(pnew);
                         }
                     }
@@ -164,19 +165,19 @@ public class PropertyParser {
         String projectTitle = process.getProject().getTitle();
         ArrayList<ProcessProperty> properties = new ArrayList<ProcessProperty>();
         if (process.isTemplate()) {
-            List<org.kitodo.data.database.beans.ProcessProperty> plist = process.getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
+            List<Property> propertyList = process.getProperties();
+            for (Property processProperty : propertyList) {
                 ProcessProperty pp = new ProcessProperty();
-                pp.setName(pe.getTitle());
-                pp.setProzesseigenschaft(pe);
+                pp.setName(processProperty.getTitle());
+                pp.setProzesseigenschaft(processProperty);
                 pp.setType(Type.TEXT);
-                pp.setValue(pe.getValue());
-                pp.setContainer(pe.getContainer());
+                pp.setValue(processProperty.getValue());
+                pp.setContainer(processProperty.getContainer());
                 properties.add(pp);
             }
             return properties;
         }
-        String path = new Helper().getGoobiConfigDirectory() + "goobi_processProperties.xml";
+        String path = ConfigCore.getKitodoConfigDirectory() + "kitodo_processProperties.xml";
         XMLConfiguration config;
         try {
             config = new XMLConfiguration(path);
@@ -227,26 +228,26 @@ public class PropertyParser {
           // all properties from config and some
           // of them with already existing 'eigenschaften'
         List<ProcessProperty> listClone = new ArrayList<ProcessProperty>(properties);
-        List<org.kitodo.data.database.beans.ProcessProperty> plist = process.getProperties();
-        for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
+        List<Property> propertyList = process.getProperties();
+        for (Property processProperty : propertyList) {
 
             // TODO added temporarily a fix for NPE. Properties without title
             // shouldn't exist at all
-            if (pe.getTitle() != null) {
+            if (processProperty.getTitle() != null) {
 
                 for (ProcessProperty pp : listClone) {
-                    if (pe.getTitle().equals(pp.getName())) {
+                    if (processProperty.getTitle().equals(pp.getName())) {
                         // pp has no pe assigned
                         if (pp.getProzesseigenschaft() == null) {
-                            pp.setProzesseigenschaft(pe);
-                            pp.setValue(pe.getValue());
-                            pp.setContainer(pe.getContainer());
+                            pp.setProzesseigenschaft(processProperty);
+                            pp.setValue(processProperty.getValue());
+                            pp.setContainer(processProperty.getContainer());
                         } else {
                             // clone pp
-                            ProcessProperty pnew = pp.getClone(pe.getContainer());
-                            pnew.setProzesseigenschaft(pe);
-                            pnew.setValue(pe.getValue());
-                            pnew.setContainer(pe.getContainer());
+                            ProcessProperty pnew = pp.getClone(processProperty.getContainer());
+                            pnew.setProzesseigenschaft(processProperty);
+                            pnew.setValue(processProperty.getValue());
+                            pnew.setContainer(processProperty.getContainer());
                             if (logger.isDebugEnabled()) {
                                 logger.debug("add property B " + pp.getName() + " - " + pp.getValue() + " - "
                                         + pp.getContainer());
@@ -260,19 +261,18 @@ public class PropertyParser {
 
         // add 'eigenschaft' to all ProcessProperties
         for (ProcessProperty pp : properties) {
-            if (pp.getProzesseigenschaft() == null) {
-            } else {
-                plist.remove(pp.getProzesseigenschaft());
+            if (pp.getProzesseigenschaft() != null) {
+                propertyList.remove(pp.getProzesseigenschaft());
             }
         }
         // create ProcessProperties to remaining 'eigenschaften'
-        if (plist.size() > 0) {
-            for (org.kitodo.data.database.beans.ProcessProperty pe : plist) {
+        if (propertyList.size() > 0) {
+            for (Property processProperty : propertyList) {
                 ProcessProperty pp = new ProcessProperty();
-                pp.setProzesseigenschaft(pe);
-                pp.setName(pe.getTitle());
-                pp.setValue(pe.getValue());
-                pp.setContainer(pe.getContainer());
+                pp.setProzesseigenschaft(processProperty);
+                pp.setName(processProperty.getTitle());
+                pp.setValue(processProperty.getValue());
+                pp.setContainer(processProperty.getContainer());
                 pp.setType(Type.TEXT);
                 if (logger.isDebugEnabled()) {
                     logger.debug("add property C " + pp.getName() + " - " + pp.getValue() + " - " + pp.getContainer());

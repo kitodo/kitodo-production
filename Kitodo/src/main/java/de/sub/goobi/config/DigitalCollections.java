@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.goobi.production.constants.FileNames;
-import org.goobi.production.constants.Parameters;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -40,7 +39,7 @@ public class DigitalCollections {
     public static List<String> possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
 
         List<String> result = new ArrayList<String>();
-        String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+        String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("File not found: " + filename);
@@ -64,8 +63,8 @@ public class DigitalCollections {
                  */
                 if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
                     List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
+                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                        Element col = secondIterator.next();
                         result.add(col.getText());
                     }
                 }
@@ -74,12 +73,12 @@ public class DigitalCollections {
         // If result is empty, get „default“
         if (result.size() == 0) {
             List<Element> primaryChildrenIterator = root.getChildren();
-            for (Iterator<Element> iter = primaryChildrenIterator.iterator(); iter.hasNext();) {
-                Element child = iter.next();
+            for (Iterator<Element> iterator = primaryChildrenIterator.iterator(); iterator.hasNext();) {
+                Element child = iterator.next();
                 if (child.getName().equals("default")) {
                     List<Element> myCols = child.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
+                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                        Element col = secondIterator.next();
                         result.add(col.getText());
                     }
                 }

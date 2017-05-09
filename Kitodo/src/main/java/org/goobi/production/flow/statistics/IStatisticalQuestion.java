@@ -27,7 +27,7 @@ import org.goobi.production.flow.statistics.enums.TimeUnit;
  * 
  * @author Wulf Riebensahm
  * @author Steffen Hankiewicz
- ****************************************************************************/
+ */
 public interface IStatisticalQuestion {
 
     /**
@@ -36,14 +36,14 @@ public interface IStatisticalQuestion {
      * 
      * @param dataSource
      * @return List<DataTable>
-     ****************************************************************************/
+     */
     public List<DataTable> getDataTables(IDataSource dataSource);
 
     /**
      * This method is used to set a grouping unit for time based data
      * 
      * @param timeUnit
-     ****************************************************************************/
+     */
     public void setTimeUnit(TimeUnit timeUnit);
 
     /**
@@ -61,13 +61,13 @@ public interface IStatisticalQuestion {
      * @param inRenderer
      *            as {@link IRenderer}
      * @return true, if rendering should use invertet {@link DataTable}
-     ****************************************************************************/
+     */
     public Boolean isRendererInverted(IRenderer inRenderer);
 
     /**
      * get number format pattern
      * 
      * @return number format pattern for rendering the results
-     ****************************************************************************/
+     */
     public String getNumberFormatPattern();
 }

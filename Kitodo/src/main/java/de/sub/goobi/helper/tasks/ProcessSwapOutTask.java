@@ -11,49 +11,50 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.CopyFile;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
-import org.goobi.io.SafeFile;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class ProcessSwapOutTask extends LongRunningTask {
-    private final ServiceManager serviceManager = new ServiceManager();
+    private static final ServiceManager serviceManager = new ServiceManager();
+    private static final FileService fileService = serviceManager.getFileService();
 
     /**
      * Copies all files under srcDir to dstDir. If dstDir does not exist, it
      * will be created.
      */
 
-    static void copyDirectoryWithCrc32Check(SafeFile srcDir, SafeFile dstDir, int goobipathlength, Element inRoot)
+    static void copyDirectoryWithCrc32Check(File srcDir, File dstDir, int kitodoPathLength, Element inRoot)
             throws IOException {
         if (srcDir.isDirectory()) {
             if (!dstDir.exists()) {
                 dstDir.mkdir();
                 dstDir.setLastModified(srcDir.lastModified());
             }
-            String[] children = srcDir.list();
+            String[] children = fileService.list(srcDir);
             for (int i = 0; i < children.length; i++) {
-                copyDirectoryWithCrc32Check(new SafeFile(srcDir, children[i]), new SafeFile(dstDir, children[i]),
-                        goobipathlength, inRoot);
+                copyDirectoryWithCrc32Check(new File(srcDir, children[i]), new File(dstDir, children[i]),
+                        kitodoPathLength, inRoot);
             }
         } else {
-            Long crc = CopyFile.start(srcDir, dstDir);
+            fileService.copyDir(srcDir, dstDir);
             Element file = new Element("file");
-            file.setAttribute("path", srcDir.getAbsolutePath().substring(goobipathlength));
-            file.setAttribute("crc32", String.valueOf(crc));
+            file.setAttribute("path", srcDir.getAbsolutePath().substring(kitodoPathLength));
             inRoot.addContent(file);
         }
     }
@@ -62,12 +63,12 @@ public class ProcessSwapOutTask extends LongRunningTask {
      * Deletes all files and subdirectories under dir. But not the dir itself
      * and no metadata files.
      */
-    static boolean deleteDataInDir(SafeFile dir) {
+    static boolean deleteDataInDir(File dir) throws IOException {
         if (dir.isDirectory()) {
-            String[] children = dir.list();
+            String[] children = fileService.list(dir);
             for (int i = 0; i < children.length; i++) {
                 if (!children[i].endsWith(".xml")) {
-                    boolean success = new SafeFile(dir, children[i]).deleteDir();
+                    boolean success = fileService.delete(new File(dir, children[i]).toURI());
                     if (!success) {
                         return false;
                     }
@@ -122,8 +123,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
         String swapPath = null;
         String processDirectory = "";
 
-        if (ConfigMain.getBooleanParameter("useSwapping")) {
-            swapPath = ConfigMain.getParameter("swapPath", "");
+        if (ConfigCore.getBooleanParameter("useSwapping")) {
+            swapPath = ConfigCore.getParameter("swapPath", "");
         } else {
             setStatusMessage("swapping not activated");
             setStatusProgress(-1);
@@ -151,8 +152,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
 
-        SafeFile fileIn = new SafeFile(processDirectory);
-        SafeFile fileOut = new SafeFile(swapPath + getProcess().getId() + File.separator);
+        File fileIn = new File(processDirectory);
+        File fileOut = new File(swapPath + getProcess().getId() + File.separator);
         if (fileOut.exists()) {
             setStatusMessage(getProcess().getTitle() + ": swappingOutTarget already exists");
             setStatusProgress(-1);
@@ -182,7 +183,7 @@ public class ProcessSwapOutTask extends LongRunningTask {
         setStatusProgress(50);
         try {
             setStatusMessage("copying process folder");
-            copyDirectoryWithCrc32Check(fileIn, fileOut, help.getGoobiDataDirectory().length(), root);
+            copyDirectoryWithCrc32Check(fileIn, fileOut, ConfigCore.getKitodoDataDirectory().length(), root);
         } catch (IOException e) {
             logger.warn("IOException:", e);
             setStatusMessage("IOException in copyDirectory: " + e.getMessage());
@@ -190,14 +191,19 @@ public class ProcessSwapOutTask extends LongRunningTask {
             return;
         }
         setStatusProgress(80);
-        deleteDataInDir(new SafeFile(fileIn.getAbsolutePath()));
+        try {
+            deleteDataInDir(new File(fileIn.getAbsolutePath()));
+        } catch (IOException e) {
+            logger.warn("IOException, could not delete Data in Directory", e);
+        }
 
         /*
          * xml-Datei schreiben
          */
         Format format = Format.getPrettyFormat();
         format.setEncoding("UTF-8");
-        try (FileOutputStream fos = new FileOutputStream(processDirectory + File.separator + "swapped.xml")) {
+        try (FileOutputStream fos = (FileOutputStream) fileService
+                .write(URI.create(processDirectory + File.separator + "swapped.xml"))) {
             setStatusMessage("writing swapped.xml");
             XMLOutputter xmlOut = new XMLOutputter(format);
             xmlOut.output(doc, fos);
@@ -222,6 +228,8 @@ public class ProcessSwapOutTask extends LongRunningTask {
             setStatusProgress(-1);
         } catch (IOException e) {
             logger.warn("IOException:", e);
+        } catch (CustomResponseException e) {
+            logger.warn("CustomResponseException:", e);
         }
 
         setStatusMessage("done");

@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.util.ArrayList;
 
@@ -125,7 +125,7 @@ public class MetaPerson {
     public String getRecord() {
         String authorityValue = this.p.getAuthorityValue();
         if (authorityValue == null || authorityValue.isEmpty()) {
-            authorityValue = ConfigMain.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+            authorityValue = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
         }
         return authorityValue;
     }

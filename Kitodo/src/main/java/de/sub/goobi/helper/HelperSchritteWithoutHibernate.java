@@ -11,27 +11,27 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.AutomaticDmsExportWithoutHibernate;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
@@ -63,11 +63,11 @@ public class HelperSchritteWithoutHibernate {
      * Schritt abschliessen und dabei parallele Schritte berücksichtigen.
      */
 
-    public void CloseStepObjectAutomatic(StepObject currentStep) {
+    public void closeStepObjectAutomatic(StepObject currentStep) {
         closeStepObject(currentStep, currentStep.getProcessId(), false);
     }
 
-    public void CloseStepObjectAutomatic(StepObject currentStep, boolean requestFromGUI) {
+    public void closeStepObjectAutomatic(StepObject currentStep, boolean requestFromGUI) {
         closeStepObject(currentStep, currentStep.getProcessId(), requestFromGUI);
     }
 
@@ -104,7 +104,7 @@ public class HelperSchritteWithoutHibernate {
         logger.debug("create history events for step");
 
         StepManager.addHistory(myDate, currentStep.getOrdering(), currentStep.getTitle(),
-                HistoryType.taskDone.getValue(), processId);
+                HistoryTypeEnum.taskDone.getValue(), processId);
         /*
          * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
          * abgeschlossen sind
@@ -150,7 +150,7 @@ public class HelperSchritteWithoutHibernate {
                     myStep.setEditType(4);
                     logger.debug("create history events for next step");
                     StepManager.addHistory(myDate, myStep.getOrdering(), myStep.getTitle(),
-                            HistoryType.taskOpen.getValue(), processId);
+                            HistoryTypeEnum.taskOpen.getValue(), processId);
                     /* wenn es ein automatischer Schritt mit Script ist */
                     if (logger.isDebugEnabled()) {
                         logger.debug("check if step is an automatic task: " + myStep.isTypeAutomatic());
@@ -174,8 +174,10 @@ public class HelperSchritteWithoutHibernate {
         }
         ProcessObject po = ProcessManager.getProcessObjectForId(processId);
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
-        if (po.getSortHelperImages() != FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true)))) {
-            ProcessManager.updateImages(FileUtils.getNumberOfFiles(new SafeFile(fi.getImagesOrigDirectory(true))),
+        if (po.getSortHelperImages() != serviceManager.getFileService()
+                .getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
+            ProcessManager.updateImages(
+                    serviceManager.getFileService().getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))),
                     processId);
         }
         logger.debug("update process status");
@@ -195,15 +197,15 @@ public class HelperSchritteWithoutHibernate {
             if (logger.isDebugEnabled()) {
                 logger.debug("closing task " + finish.getTitle());
             }
-            CloseStepObjectAutomatic(finish);
+            closeStepObjectAutomatic(finish);
         }
         // TODO remove this later
         try {
             logger.debug("update hibernate cache");
-            if (requestFromGUI && ConfigMain.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)) {
-                RefreshObject.refreshProcess_GUI(processId);
+            if (requestFromGUI && ConfigCore.getBooleanParameter("DatabaseShareHibernateSessionWithUser", true)) {
+                RefreshObject.refreshProcessGUI(processId);
             } else {
-                if (ConfigMain.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
+                if (ConfigCore.getBooleanParameter("DatabaseRefreshSessionWithoutUser", true)) {
                     RefreshObject.refreshProcess(processId);
                 }
             }
@@ -348,10 +350,10 @@ public class HelperSchritteWithoutHibernate {
                             step.setProcessingStatus(TaskStatus.OPEN.getValue());
                             StepManager.updateStep(step);
                         } else {
-                            CloseStepObjectAutomatic(step);
+                            closeStepObjectAutomatic(step);
                         }
                     } else {
-                        CloseStepObjectAutomatic(step);
+                        closeStepObjectAutomatic(step);
                     }
 
                 } else {
@@ -384,8 +386,8 @@ public class HelperSchritteWithoutHibernate {
      */
     public void executeDmsExport(StepObject step, boolean automatic) {
         AutomaticDmsExportWithoutHibernate dms = new AutomaticDmsExportWithoutHibernate(
-                ConfigMain.getBooleanParameter("automaticExportWithImages", true));
-        if (!ConfigMain.getBooleanParameter("automaticExportWithOcr", true)) {
+                ConfigCore.getBooleanParameter("automaticExportWithImages", true));
+        if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
             dms.setExportFulltext(false);
         }
         dms.setTask(task);
@@ -393,7 +395,7 @@ public class HelperSchritteWithoutHibernate {
         try {
             boolean validate = dms.startExport(po);
             if (validate) {
-                CloseStepObjectAutomatic(step);
+                closeStepObjectAutomatic(step);
             } else {
                 abortStep(step);
             }

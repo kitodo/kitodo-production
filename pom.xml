@@ -32,6 +32,10 @@
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <parent.basedir>${basedir}</parent.basedir>
         <phase.prop>none</phase.prop>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <repositories>
@@ -84,34 +88,9 @@
         <module>OpacPica-Plugin</module>
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-API</module>
+        <module>Kitodo-FileManagement</module>
         <module>Kitodo</module>
     </modules>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.17</version>
-                <executions>
-                    <execution>
-                        <id>checkstyle-check</id>
-                        <phase>compile</phase>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failOnViolation>false</failOnViolation>
-                            <failsOnError>false</failsOnError>
-                            <maxAllowedViolations>3000</maxAllowedViolations>
-                        </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <profiles>
         <profile>
@@ -135,21 +114,43 @@
             </build>
         </profile>
         <profile>
-            <id>findbugs</id>
+            <id>checkstyle-findbugs</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>2.17</version>
+                        <executions>
+                            <execution>
+                                <id>checkstyle-check</id>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <encoding>UTF-8</encoding>
+                                    <failOnViolation>false</failOnViolation>
+                                    <failsOnError>false</failsOnError>
+                                    <maxAllowedViolations>700</maxAllowedViolations>
+                                </configuration>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
                         <version>3.0.4</version>
                         <configuration>
+                            <xmlOutput>true</xmlOutput>
+                            <xmlOutputDirectory>target/findbugsreports</xmlOutputDirectory>
                             <effort>Max</effort>
                             <failOnError>false</failOnError>
-                            <threshold>Low</threshold>
-                            <xmlOutput>true</xmlOutput>
+                            <threshold>medium</threshold>
                         </configuration>
                         <executions>
                             <execution>
+                                <phase>compile</phase>
                                 <goals>
                                     <goal>check</goal>
                                 </goals>

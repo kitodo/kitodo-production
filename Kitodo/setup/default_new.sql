@@ -66,7 +66,7 @@ INSERT INTO `ruleset` (`id`, `title`, `file`, `orderMetadataByRuleset`) VALUES
 /*!40000 ALTER TABLE `ruleset` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `docket` DISABLE KEYS */;
-INSERT INTO `docket` (`id`, `name`, `file`) VALUES
+INSERT INTO `docket` (`id`, `title`, `file`) VALUES
 (1, 'default', 'docket.xsl');
 /*!40000 ALTER TABLE `docket` ENABLE KEYS */;
 

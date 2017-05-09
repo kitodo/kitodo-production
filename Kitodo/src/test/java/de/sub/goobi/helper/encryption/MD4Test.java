@@ -13,19 +13,18 @@ package de.sub.goobi.helper.encryption;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
 
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
+import org.junit.Test;
 
 public class MD4Test {
     static HashMap<String, byte[]> testData;
 
     static {
-        testData = new HashMap<String, byte[]>();
+        testData = new HashMap<>();
         testData.put("Password",
                 new byte[] {-92, -12, -100, 64, 101, 16, -67, -54, -74, -126, 78, -25, -61, 15, -40, 82 });
         testData.put("12345678", new byte[] {37, -105, 69, -53, 18, 58, 82, -86, 46, 105, 58, -86, -52, -94, -37, 82 });
@@ -38,16 +37,12 @@ public class MD4Test {
     }
 
     @Test
-    public void encryptTest() {
+    public void encryptTest() throws Exception {
         for (String clearText : testData.keySet()) {
-            byte hmm[] = new byte[0];
-            try {
-                hmm = MD4.mdfour(clearText.getBytes("UnicodeLittleUnmarked"));
-            } catch (UnsupportedEncodingException e) {
-                System.out.println("Unsupported encoding exception: " + e.getMessage());
-            }
+            MD4 digester = new MD4();
+            byte encrypted[] = digester.digest(clearText.getBytes("UnicodeLittleUnmarked"));
             assertTrue("Encrypted password doesn't match the precomputed one! ",
-                    Arrays.equals(hmm, testData.get(clearText)));
+                    Arrays.equals(encrypted, testData.get(clearText)));
         }
     }
 }

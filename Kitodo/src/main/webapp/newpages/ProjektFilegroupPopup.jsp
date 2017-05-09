@@ -123,7 +123,7 @@
                         <htm:tr>
                             <htm:td styleClass="eingabeBoxen_row3" align="left">
 
-                                <%-- Abbrechen-Schaltknopf --%>
+                                <%-- cancel-Schaltknopf --%>
                                 <jp:closePopupFrame>
                                     <h:commandLink id="id18" value="#{msgs.abbrechen}" immediate="true"
                                                    action="#{NavigationForm.JeniaPopupCloseAction}"></h:commandLink>

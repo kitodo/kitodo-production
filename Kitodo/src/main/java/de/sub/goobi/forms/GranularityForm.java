@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
@@ -35,7 +35,7 @@ import org.w3c.dom.Document;
 /**
  * The class GranularityForm provides the screen logic for a JSF page to choose
  * the granularity to split up the course of appearance of a newspaper into
- * Goobi processes.
+ * Kitodo processes.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
@@ -178,6 +178,8 @@ public class GranularityForm {
                 case QUARTERS:
                     result.add(new SelectItem("years", Helper.getTranslation("granularity.years")));
                     break;
+                default:
+                    assert false : granularity;
             }
         }
         return result;
@@ -223,7 +225,7 @@ public class GranularityForm {
      * @return an error message, or the empty string if everything is okay.
      */
     public String getLockMessage() {
-        long perProcess = ConfigMain.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
+        long perProcess = ConfigCore.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
         if (getNumberOfProcesses() < 1 || perProcess < 1
                 || (numberOfPages != null && numberOfPages / getNumberOfProcesses() >= perProcess)) {
             return "";

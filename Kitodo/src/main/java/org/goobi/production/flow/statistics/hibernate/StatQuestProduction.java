@@ -101,21 +101,21 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         }
 
         // we have to build a query from scratch by reading the ID's
-        List<Integer> IDlist = null;
+        List<Integer> idList = null;
         try {
-            IDlist = originalFilter.getIDList();
+            idList = originalFilter.getIDList();
         } catch (UnsupportedOperationException e) {
         }
-        if (IDlist == null || IDlist.size() == 0) {
+        if (idList == null || idList.size() == 0) {
             return null;
         }
         String natSQL = "";
         // adding time restrictions
         if (stepname == null) {
-            natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist)
+            natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, idList)
                     .getSQL(exactStepDone);
         } else {
-            natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, IDlist)
+            natSQL = new ImprovedSQLProduction(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, idList)
                     .getSQL(stepname);
         }
         Session session = Helper.getHibernateSession();

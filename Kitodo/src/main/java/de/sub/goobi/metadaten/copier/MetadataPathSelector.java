@@ -198,7 +198,6 @@ public class MetadataPathSelector extends MetadataSelector {
         if (subnode != null) {
             selector.createOrOverwrite(data, subnode, value);
         }
-        return;
     }
 
     /**

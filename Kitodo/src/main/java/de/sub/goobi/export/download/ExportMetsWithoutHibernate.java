@@ -12,7 +12,6 @@
 package de.sub.goobi.export.download;
 
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacerWithoutHibernate;
 import de.sub.goobi.helper.exceptions.ExportFileException;
@@ -20,13 +19,13 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
@@ -119,7 +118,7 @@ public class ExportMetsWithoutHibernate {
         String target = inTargetFolder;
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         try {
-            FilesystemHelper.createDirectoryForUser(target, myBenutzer.getLogin());
+            serviceManager.getFileService().createDirectoryForUser(target, myBenutzer.getLogin());
         } catch (Exception e) {
             Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder, e);
         }
@@ -146,7 +145,7 @@ public class ExportMetsWithoutHibernate {
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
         String imageFolderPath = this.fi.getImagesDirectory();
-        SafeFile imageFolder = new SafeFile(imageFolderPath);
+        File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
          */
@@ -197,7 +196,7 @@ public class ExportMetsWithoutHibernate {
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            SafeFile f = new SafeFile(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
+            File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
             cf.setLocation(f.toURI().toString());
         }
 
@@ -217,8 +216,8 @@ public class ExportMetsWithoutHibernate {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    SafeFile folder = new SafeFile(this.fi.getMethodFromName(pfg.getFolder()));
-                    if (folder.exists() && folder.list().length > 0) {
+                    File folder = new File(this.fi.getMethodFromName(pfg.getFolder()));
+                    if (folder.exists() && serviceManager.getFileService().list(folder).length > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));

@@ -11,7 +11,7 @@
 
 package org.goobi.production.flow.jobs;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -74,8 +74,8 @@ public class JobManager implements ServletContextListener {
         logger.debug(goobiJob.getJobName());
         JobDetail jobDetail = new JobDetail(goobiJob.getJobName(), null, goobiJob.getClass());
 
-        if (ConfigMain.getLongParameter(configuredStartTimeProperty, -1) != -1) {
-            long msOfToday = ConfigMain.getLongParameter(configuredStartTimeProperty, -1);
+        if (ConfigCore.getLongParameter(configuredStartTimeProperty, -1) != -1) {
+            long msOfToday = ConfigCore.getLongParameter(configuredStartTimeProperty, -1);
             Calendar cal = Calendar.getInstance();
             cal.set(1984, 8, 11, 0, 0);
             cal.set(Calendar.SECOND, 0);
@@ -112,7 +112,7 @@ public class JobManager implements ServletContextListener {
     }
 
     @Override
-    public void contextDestroyed(ServletContextEvent arg0) {
+    public void contextDestroyed(ServletContextEvent argument) {
         logger.debug("Stop daily JobManager scheduler");
         try {
             stopTimedJobs();
@@ -122,8 +122,8 @@ public class JobManager implements ServletContextListener {
     }
 
     @Override
-    public void contextInitialized(ServletContextEvent arg0) {
-        logger.debug("Start daily JobManager scheduler");
+    public void contextInitialized(ServletContextEvent argument) {
+        logger.debug("start daily JobManager scheduler");
         try {
             startTimedJobs();
         } catch (SchedulerException e) {

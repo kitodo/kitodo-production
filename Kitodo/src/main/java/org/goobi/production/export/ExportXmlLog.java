@@ -11,7 +11,7 @@
 
 package org.goobi.production.export;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,12 +40,10 @@ import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -233,7 +231,7 @@ public class ExportXmlLog implements IProcessDataExport {
         }
 
         ArrayList<Element> processProperties = new ArrayList<Element>();
-        for (ProcessProperty prop : process.getProperties()) {
+        for (Property prop : process.getProperties()) {
             Element property = new Element("property", xmlns);
             property.setAttribute("propertyIdentifier", prop.getTitle());
             if (prop.getValue() != null) {
@@ -301,7 +299,7 @@ public class ExportXmlLog implements IProcessDataExport {
             template.setAttribute("originalID", String.valueOf(v.getId()));
 
             ArrayList<Element> templateProperties = new ArrayList<Element>();
-            for (TemplateProperty prop : v.getProperties()) {
+            for (Property prop : v.getProperties()) {
                 Element property = new Element("property", xmlns);
                 property.setAttribute("propertyIdentifier", prop.getTitle());
                 if (prop.getValue() != null) {
@@ -346,7 +344,7 @@ public class ExportXmlLog implements IProcessDataExport {
             dd.setAttribute("digitalDocumentID", String.valueOf(w.getId()));
 
             ArrayList<Element> docProperties = new ArrayList<Element>();
-            for (WorkpieceProperty prop : w.getProperties()) {
+            for (Property prop : w.getProperties()) {
                 Element property = new Element("property", xmlns);
                 property.setAttribute("propertyIdentifier", prop.getTitle());
                 if (prop.getValue() != null) {
@@ -473,7 +471,7 @@ public class ExportXmlLog implements IProcessDataExport {
      *            the filename of the xslt
      */
 
-    public void XmlTransformation(OutputStream out, Document doc, String filename)
+    public void xmlTransformation(OutputStream out, Document doc, String filename)
             throws XSLTransformException, IOException {
         Document docTrans;
         if (filename != null && filename.equals("")) {
@@ -499,7 +497,7 @@ public class ExportXmlLog implements IProcessDataExport {
     public void startTransformation(Process p, OutputStream out, String filename)
             throws ConfigurationException, XSLTransformException, IOException {
         Document doc = createDocument(p, true);
-        XmlTransformation(out, doc, filename);
+        xmlTransformation(out, doc, filename);
     }
 
     private String replacer(String in) {
@@ -519,7 +517,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
         HashMap<String, String> fields = new HashMap<String, String>();
         try {
-            File file = new File(new Helper().getGoobiConfigDirectory() + "goobi_exportXml.xml");
+            File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
                 XMLConfiguration config = new XMLConfiguration(file);
                 config.setListDelimiter('&');
@@ -541,7 +539,7 @@ public class ExportXmlLog implements IProcessDataExport {
     private HashMap<String, String> getNamespacesFromConfig() {
         HashMap<String, String> nss = new HashMap<String, String>();
         try {
-            File file = new File(new Helper().getGoobiConfigDirectory() + "goobi_exportXml.xml");
+            File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
                 XMLConfiguration config = new XMLConfiguration(file);
                 config.setListDelimiter('&');

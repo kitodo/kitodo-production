@@ -11,7 +11,7 @@
 
 package org.goobi.production.cli.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.LoginForm;
@@ -43,16 +43,15 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DocStruct;
@@ -83,8 +82,8 @@ public class CopyProcess extends ProzesskopieForm {
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
-    private String tifHeader_imagedescription = "";
-    private String tifHeader_documentname = "";
+    private String tifHeaderImageDescription = "";
+    private String tifHeaderDocumentName = "";
     private String naviFirstPage;
     private Integer auswahl;
     private String docType;
@@ -261,7 +260,7 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return empty String
      */
-    public String OpacAuswerten(ImportObject io) {
+    public String evaluateOpac(ImportObject io) {
         clearValues();
         readProjectConfigs();
         try {
@@ -287,7 +286,7 @@ public class CopyProcess extends ProzesskopieForm {
      * OpacAnfrage.
      */
     @Override
-    public String OpacAuswerten() {
+    public String evaluateOpac() {
         clearValues();
         readProjectConfigs();
         try {
@@ -375,7 +374,7 @@ public class CopyProcess extends ProzesskopieForm {
 
             }
         }
-        CalcTiffheader();
+        calculateTiffHeader();
 
     }
 
@@ -391,24 +390,24 @@ public class CopyProcess extends ProzesskopieForm {
         this.standardFields.put("doctype", true);
         this.standardFields.put("regelsatz", true);
         this.additionalFields = new ArrayList<AdditionalField>();
-        this.tifHeader_documentname = "";
-        this.tifHeader_imagedescription = "";
+        this.tifHeaderDocumentName = "";
+        this.tifHeaderImageDescription = "";
     }
 
     /**
      * Auswahl des Prozesses auswerten.
      */
     @Override
-    public String TemplateAuswahlAuswerten() throws DAOException {
+    public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);
-            for (WorkpieceProperty eig : werk.getProperties()) {
+            for (Property workpieceProperty : werk.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(workpieceProperty.getTitle())) {
+                        field.setValue(workpieceProperty.getValue());
                     }
                 }
             }
@@ -417,10 +416,10 @@ public class CopyProcess extends ProzesskopieForm {
         if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
             /* erste Vorlage durchlaufen */
             Template vor = tempProzess.getTemplates().get(0);
-            for (TemplateProperty eig : vor.getProperties()) {
+            for (Property templateProperty : vor.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(templateProperty.getTitle())) {
+                        field.setValue(templateProperty.getValue());
                     }
                 }
             }
@@ -472,7 +471,7 @@ public class CopyProcess extends ProzesskopieForm {
                     + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
         }
 
-        String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
             valide = false;
             Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
@@ -520,12 +519,12 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public String GoToSeite1() {
+    public String goToPageOne() {
         return this.naviFirstPage;
     }
 
     @Override
-    public String GoToSeite2() {
+    public String goToPageTwo() {
         if (!isContentValid()) {
             return this.naviFirstPage;
         } else {
@@ -541,7 +540,7 @@ public class CopyProcess extends ProzesskopieForm {
     public boolean testTitle() {
         boolean valide = true;
 
-        if (ConfigMain.getBooleanParameter("MassImportUniqueTitle", true)) {
+        if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
             /*
              * grundsätzlich den Vorgangstitel prüfen
              */
@@ -552,7 +551,7 @@ public class CopyProcess extends ProzesskopieForm {
                         + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
             }
 
-            String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
             if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
                 valide = false;
                 Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
@@ -579,11 +578,11 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     /**
-     * Anlegen des Prozesses und Speichern der Metadaten.
+     * Anlegen des Prozesses und save der Metadaten.
      */
 
     public Process NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException {
+            SwapException, DAOException, WriteException, CustomResponseException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -665,7 +664,7 @@ public class CopyProcess extends ProzesskopieForm {
      * @return Process object
      */
     public Process createProcess(ImportObject io) throws ReadException, IOException, InterruptedException,
-            PreferencesException, SwapException, DAOException, WriteException {
+            PreferencesException, SwapException, DAOException, WriteException, CustomResponseException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -837,23 +836,23 @@ public class CopyProcess extends ProzesskopieForm {
             /* Doctype */
             BeanHelper.addProperty(werk, "DocType", this.docType);
             /* Tiffheader */
-            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addProperty(werk, "DocType", this.docType);
             /* Tiffheader */
-            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeader_imagedescription);
-            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeader_documentname);
+            BeanHelper.addProperty(werk, "TifHeaderImagedescription", this.tifHeaderImageDescription);
+            BeanHelper.addProperty(werk, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
-            for (ProcessProperty pe : io.getProcessProperties()) {
-                addProperty(this.prozessKopie, pe);
+            for (Property processProperty : io.getProcessProperties()) {
+                addProperty(this.prozessKopie, processProperty);
             }
-            for (WorkpieceProperty we : io.getWorkProperties()) {
-                addProperty(werk, we);
+            for (Property workpieceProperty : io.getWorkProperties()) {
+                addProperty(werk, workpieceProperty);
             }
 
-            for (TemplateProperty ve : io.getTemplateProperties()) {
-                addProperty(vor, ve);
+            for (Property templateProperty : io.getTemplateProperties()) {
+                addProperty(vor, templateProperty);
             }
             BeanHelper.addProperty(prozessKopie, "Template", prozessVorlage.getTitle());
             BeanHelper.addProperty(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
@@ -932,7 +931,7 @@ public class CopyProcess extends ProzesskopieForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollection = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
-        String filename = new Helper().getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
+        String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
@@ -951,8 +950,8 @@ public class CopyProcess extends ProzesskopieForm {
                 // collect default collections
                 if (projekt.getName().equals("default")) {
                     List<Element> myCols = projekt.getChildren("DigitalCollection");
-                    for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                        Element col = it2.next();
+                    for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                        Element col = secondIterator.next();
 
                         if (col.getAttribute("default") != null
                                 && col.getAttributeValue("default").equalsIgnoreCase("true")) {
@@ -969,8 +968,8 @@ public class CopyProcess extends ProzesskopieForm {
                         // all all collections to list
                         if (projektname.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
                             List<Element> myCols = projekt.getChildren("DigitalCollection");
-                            for (Iterator<Element> it2 = myCols.iterator(); it2.hasNext();) {
-                                Element col = it2.next();
+                            for (Iterator<Element> secondIterator = myCols.iterator(); secondIterator.hasNext();) {
+                                Element col = secondIterator.next();
 
                                 if (col.getAttribute("default") != null
                                         && col.getAttributeValue("default").equalsIgnoreCase("true")) {
@@ -983,10 +982,7 @@ public class CopyProcess extends ProzesskopieForm {
                     }
                 }
             }
-        } catch (JDOMException e1) {
-            myLogger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-        } catch (IOException e1) {
+        } catch (JDOMException | IOException e1) {
             myLogger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         }
@@ -1043,22 +1039,22 @@ public class CopyProcess extends ProzesskopieForm {
 
     @Override
     public String getTifHeader_documentname() {
-        return this.tifHeader_documentname;
+        return this.tifHeaderDocumentName;
     }
 
     @Override
-    public void setTifHeader_documentname(String tifHeader_documentname) {
-        this.tifHeader_documentname = tifHeader_documentname;
+    public void setTifHeader_documentname(String tifHeaderDocumentName) {
+        this.tifHeaderDocumentName = tifHeaderDocumentName;
     }
 
     @Override
     public String getTifHeader_imagedescription() {
-        return this.tifHeader_imagedescription;
+        return this.tifHeaderImageDescription;
     }
 
     @Override
-    public void setTifHeader_imagedescription(String tifHeader_imagedescription) {
-        this.tifHeader_imagedescription = tifHeader_imagedescription;
+    public void setTifHeader_imagedescription(String tifHeaderImageDescription) {
+        this.tifHeaderImageDescription = tifHeaderImageDescription;
     }
 
     @Override
@@ -1110,7 +1106,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     @Override
     @SuppressWarnings("rawtypes")
-    public void CalcProzesstitel() {
+    public void calculateProcessTitle() {
         String newTitle = "";
         String titeldefinition = "";
         ConfigProjects cp = null;
@@ -1176,8 +1172,8 @@ public class CopyProcess extends ProzesskopieForm {
                 newTitle += myString.substring(1, myString.length() - 1);
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator it2 = this.additionalFields.iterator(); it2.hasNext();) {
-                    AdditionalField myField = (AdditionalField) it2.next();
+                for (Iterator secondIterator = this.additionalFields.iterator(); secondIterator.hasNext();) {
+                    AdditionalField myField = (AdditionalField) secondIterator.next();
 
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
@@ -1202,7 +1198,7 @@ public class CopyProcess extends ProzesskopieForm {
             newTitle = newTitle.substring(0, newTitle.length() - 1);
         }
         this.prozessKopie.setTitle(newTitle);
-        CalcTiffheader();
+        calculateTiffHeader();
     }
 
     private String calcProcessTitleCheck(String inFeldName, String inFeldWert) {
@@ -1228,8 +1224,8 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public void CalcTiffheader() {
-        String tif_definition = "";
+    public void calculateTiffHeader() {
+        String tifDefinition = "";
         ConfigProjects cp = null;
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
@@ -1238,23 +1234,23 @@ public class CopyProcess extends ProzesskopieForm {
             return;
         }
 
-        tif_definition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
+        tifDefinition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
 
         /*
          * evtuelle Ersetzungen
          */
-        tif_definition = tif_definition.replaceAll("\\[\\[", "<");
-        tif_definition = tif_definition.replaceAll("\\]\\]", ">");
+        tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
+        tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
         /*
          * Documentname ist im allgemeinen = Prozesstitel
          */
-        this.tifHeader_documentname = this.prozessKopie.getTitle();
-        this.tifHeader_imagedescription = "";
+        this.tifHeaderDocumentName = this.prozessKopie.getTitle();
+        this.tifHeaderImageDescription = "";
         /*
          * Imagedescription
          */
-        StringTokenizer tokenizer = new StringTokenizer(tif_definition, "+");
+        StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         while (tokenizer.hasMoreTokens()) {
             String myString = tokenizer.nextToken();
@@ -1263,14 +1259,15 @@ public class CopyProcess extends ProzesskopieForm {
              * übernehmen
              */
             if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-                this.tifHeader_imagedescription += myString.substring(1, myString.length() - 1);
+                this.tifHeaderImageDescription += myString.substring(1, myString.length() - 1);
             } else if (myString.equals("$Doctype")) {
 
-                this.tifHeader_imagedescription += this.docType;
+                this.tifHeaderImageDescription += this.docType;
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
-                for (Iterator<AdditionalField> it2 = this.additionalFields.iterator(); it2.hasNext();) {
-                    AdditionalField myField = it2.next();
+                for (Iterator<AdditionalField> secondIterator = this.additionalFields.iterator(); secondIterator
+                        .hasNext();) {
+                    AdditionalField myField = secondIterator.next();
 
                     /*
                      * wenn es das ATS oder TSL-Feld ist, dann den berechneten
@@ -1285,8 +1282,7 @@ public class CopyProcess extends ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        this.tifHeader_imagedescription += calcProcessTitleCheck(myField.getTitle(),
-                                myField.getValue());
+                        this.tifHeaderImageDescription += calcProcessTitleCheck(myField.getTitle(), myField.getValue());
                     }
                 }
             }
@@ -1294,69 +1290,64 @@ public class CopyProcess extends ProzesskopieForm {
         }
     }
 
-    private void addProperty(Template inVorlage, TemplateProperty property) {
+    private void addProperty(Template inVorlage, Property property) {
         if (property.getContainer() == 0) {
-            for (TemplateProperty ve : inVorlage.getProperties()) {
-                if (ve.getTitle().equals(property.getTitle()) && ve.getContainer() > 0) {
-                    ve.setValue(property.getValue());
+            for (Property templateProperty : inVorlage.getProperties()) {
+                if (templateProperty.getTitle().equals(property.getTitle()) && templateProperty.getContainer() > 0) {
+                    templateProperty.setValue(property.getValue());
                     return;
                 }
             }
         }
-        TemplateProperty eig = new TemplateProperty();
-        eig.setTitle(property.getTitle());
-        eig.setValue(property.getValue());
-        eig.setChoice(property.getChoice());
-        eig.setContainer(property.getContainer());
-        eig.setType(property.getType());
-        eig.setTemplate(inVorlage);
-        List<TemplateProperty> eigenschaften = inVorlage.getProperties();
-        if (eigenschaften != null) {
-            eigenschaften.add(eig);
+        Property templateProperty = insertDataToProperty(property);
+        templateProperty.getTemplates().add(inVorlage);
+        List<Property> properties = inVorlage.getProperties();
+        if (properties != null) {
+            properties.add(templateProperty);
         }
     }
 
-    private void addProperty(Process inProcess, ProcessProperty property) {
+    private void addProperty(Process inProcess, Property property) {
         if (property.getContainer() == 0) {
-            for (ProcessProperty pe : inProcess.getProperties()) {
-                if (pe.getTitle().equals(property.getTitle()) && pe.getContainer() > 0) {
-                    pe.setValue(property.getValue());
+            for (Property processProperty : inProcess.getProperties()) {
+                if (processProperty.getTitle().equals(property.getTitle()) && processProperty.getContainer() > 0) {
+                    processProperty.setValue(property.getValue());
                     return;
                 }
             }
         }
-        ProcessProperty eig = new ProcessProperty();
-        eig.setTitle(property.getTitle());
-        eig.setValue(property.getValue());
-        eig.setChoice(property.getChoice());
-        eig.setContainer(property.getContainer());
-        eig.setType(property.getType());
-        eig.setProcess(inProcess);
-        List<ProcessProperty> eigenschaften = serviceManager.getProcessService().getPropertiesInitialized(inProcess);
-        if (eigenschaften != null) {
-            eigenschaften.add(eig);
+        Property processProperty = insertDataToProperty(property);
+        processProperty.getProcesses().add(inProcess);
+        List<Property> properties = serviceManager.getProcessService().getPropertiesInitialized(inProcess);
+        if (properties != null) {
+            properties.add(processProperty);
         }
     }
 
-    private void addProperty(Workpiece inWerk, WorkpieceProperty property) {
+    private void addProperty(Workpiece inWerk, Property property) {
         if (property.getContainer() == 0) {
-            for (WorkpieceProperty we : inWerk.getProperties()) {
-                if (we.getTitle().equals(property.getTitle()) && we.getContainer() > 0) {
-                    we.setValue(property.getValue());
+            for (Property workpieceProperty : inWerk.getProperties()) {
+                if (workpieceProperty.getTitle().equals(property.getTitle()) && workpieceProperty.getContainer() > 0) {
+                    workpieceProperty.setValue(property.getValue());
                     return;
                 }
             }
         }
-        WorkpieceProperty eig = new WorkpieceProperty();
-        eig.setTitle(property.getTitle());
-        eig.setValue(property.getValue());
-        eig.setChoice(property.getChoice());
-        eig.setContainer(property.getContainer());
-        eig.setType(property.getType());
-        eig.setWorkpiece(inWerk);
-        List<WorkpieceProperty> eigenschaften = inWerk.getProperties();
-        if (eigenschaften != null) {
-            eigenschaften.add(eig);
+        Property workpieceProperty = insertDataToProperty(property);
+        workpieceProperty.getWorkpieces().add(inWerk);
+        List<Property> properties = inWerk.getProperties();
+        if (properties != null) {
+            properties.add(workpieceProperty);
         }
+    }
+
+    private Property insertDataToProperty(Property property) {
+        Property newProperty = new Property();
+        newProperty.setTitle(property.getTitle());
+        newProperty.setValue(property.getValue());
+        newProperty.setChoice(property.getChoice());
+        newProperty.setContainer(property.getContainer());
+        newProperty.setType(property.getType());
+        return newProperty;
     }
 }

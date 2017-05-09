@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -19,8 +18,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
 
 /**
  * Implementation of Process Type.
@@ -31,30 +30,20 @@ public class ProcessType extends BaseType<Process> {
     @Override
     public HttpEntity createDocument(Process process) {
 
-        LinkedHashMap<String, String> orderedProcessMap = new LinkedHashMap<>();
-        orderedProcessMap.put("name", process.getTitle());
-        orderedProcessMap.put("outputName", process.getOutputName());
+        JSONObject processObject = new JSONObject();
+        processObject.put("title", process.getTitle());
+        processObject.put("outputName", process.getOutputName());
         String creationDate = process.getCreationDate() != null ? formatDate(process.getCreationDate()) : null;
-        orderedProcessMap.put("creationDate", creationDate);
-        orderedProcessMap.put("wikiField", process.getWikiField());
-        String project = process.getProject() != null ? process.getProject().getId().toString() : "null";
-        orderedProcessMap.put("project", project);
-        String ruleset = process.getRuleset() != null ? process.getRuleset().getId().toString() : "null";
-        orderedProcessMap.put("ruleset", ruleset);
-        String ldapGroup = process.getDocket() != null ? process.getDocket().getId().toString() : "null";
-        orderedProcessMap.put("ldapGroup", ldapGroup);
-
-        JSONObject processObject = new JSONObject(orderedProcessMap);
-
-        JSONArray properties = new JSONArray();
-        List<ProcessProperty> processProperties = process.getProperties();
-        for (ProcessProperty property : processProperties) {
-            JSONObject propertyObject = new JSONObject();
-            propertyObject.put("title", property.getTitle());
-            propertyObject.put("value", property.getValue());
-            properties.add(propertyObject);
-        }
-        processObject.put("properties", properties);
+        processObject.put("creationDate", creationDate);
+        processObject.put("wikiField", process.getWikiField());
+        Integer project = process.getProject() != null ? process.getProject().getId() : null;
+        processObject.put("project", project);
+        Integer ruleset = process.getRuleset() != null ? process.getRuleset().getId() : null;
+        processObject.put("ruleset", ruleset);
+        Integer docket = process.getDocket() != null ? process.getDocket().getId() : null;
+        processObject.put("docket", docket);
+        processObject.put("batches", addObjectRelation(process.getBatches()));
+        processObject.put("properties", addObjectRelation(process.getProperties()));
 
         return new NStringEntity(processObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

@@ -23,38 +23,57 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class TaskService {
-    private TaskDAO taskDao = new TaskDAO();
+public class TaskService extends TitleSearchService<Task> {
+    private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
-    private Indexer<Task, TaskType> indexer = new Indexer<>("kitodo", Task.class);
+    private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Constructor with searcher's assigning.
+     */
+    public TaskService() {
+        super(new Searcher(Task.class));
+    }
+
+    /**
+     * Method saves task object to database.
      *
      * @param task
      *            object
      */
-    public void save(Task task) throws DAOException, IOException {
-        taskDao.save(task);
+    public void saveToDatabase(Task task) throws DAOException {
+        taskDAO.save(task);
+    }
+
+    /**
+     * Method saves task document to the index of Elastic Search.
+     *
+     * @param task
+     *            object
+     */
+    public void saveToIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(task, taskType);
     }
 
     public Task find(Integer id) throws DAOException {
-        return taskDao.find(id);
+        return taskDAO.find(id);
     }
 
     public List<Task> findAll() throws DAOException {
-        return taskDao.findAll();
+        return taskDAO.findAll();
     }
 
     /**
@@ -64,8 +83,8 @@ public class TaskService {
      * @param task
      *            object
      */
-    public void remove(Task task) throws DAOException, IOException {
-        taskDao.remove(task);
+    public void remove(Task task) throws DAOException, IOException, CustomResponseException {
+        taskDAO.remove(task);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(task, taskType);
     }
@@ -77,24 +96,24 @@ public class TaskService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
-        taskDao.remove(id);
+    public void remove(Integer id) throws DAOException, IOException, CustomResponseException {
+        taskDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Task> search(String query) throws DAOException {
-        return taskDao.search(query);
+        return taskDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return taskDao.count(query);
+        return taskDAO.count(query);
     }
 
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), taskType);
     }
@@ -382,8 +401,6 @@ public class TaskService {
             current = (Task) session.load(Task.class, task.getId());
         }
         if (!hasOpen) {
-            current.getUsers().size();
-            current.getUserGroups().size();
             session.close();
         }
         return current;

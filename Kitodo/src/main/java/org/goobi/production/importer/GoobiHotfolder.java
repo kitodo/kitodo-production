@@ -11,7 +11,7 @@
 
 package org.goobi.production.importer;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,8 +24,9 @@ import java.util.List;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class GoobiHotfolder implements IGoobiHotfolder {
 
@@ -33,10 +34,13 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
 
     private String name;
-    private SafeFile folder;
+    private File folder;
     private Integer template;
     private String updateStrategy;
     private String collection;
+
+    private final ServiceManager serviceManager = new ServiceManager();
+    public final FileService fileService = serviceManager.getFileService();
 
     /**
      * Constructor.
@@ -52,7 +56,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @param collection
      *            String
      */
-    public GoobiHotfolder(String name, SafeFile folder, Integer template, String updateStrategy, String collection) {
+    public GoobiHotfolder(String name, File folder, Integer template, String updateStrategy, String collection) {
         this.setName(name);
         this.folder = folder;
         this.setTemplate(template);
@@ -66,8 +70,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @return a list with all xml files in GoobiHotfolder
      */
     @Override
-    public List<java.io.File> getCurrentFiles() {
-        return this.folder.getCurrentFiles();
+    public List<File> getCurrentFiles() {
+        return Arrays.asList(fileService.listFiles(this.folder));
     }
 
     /**
@@ -80,7 +84,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
     @Override
     public List<String> getFilesByName(String name) {
-        List<String> files = Arrays.asList(this.folder.list());
+        List<String> files = Arrays.asList(fileService.list(this.folder));
         List<String> answer = new ArrayList<String>();
         for (String file : files) {
             if (file.contains(name) && !file.contains("anchor")) {
@@ -99,7 +103,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<String> getFileNamesByFilter(FilenameFilter filter) {
-        return Arrays.asList(this.folder.list(filter));
+        return Arrays.asList(fileService.list(filter, this.folder));
     }
 
     /**
@@ -111,7 +115,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     @Override
     public List<File> getFilesByFilter(FilenameFilter filter) {
-        return this.folder.getFilesByFilter(filter);
+        return Arrays.asList(fileService.listFiles(filter, this.folder));
     }
 
     @Override
@@ -155,7 +159,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
         try {
             XMLConfiguration config = new XMLConfiguration(
-                    new Helper().getGoobiConfigDirectory() + "goobi_hotfolder.xml");
+                    ConfigCore.getKitodoConfigDirectory() + "kitodo_hotfolder.xml");
 
             logger.trace("config 3");
 
@@ -173,7 +177,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
                 logger.trace("config 7");
                 String name = config.getString("hotfolder(" + i + ")[@name]");
                 logger.trace("config 8");
-                SafeFile folder = new SafeFile(config.getString("hotfolder(" + i + ")[@folder]"));
+                File folder = new File(config.getString("hotfolder(" + i + ")[@folder]"));
                 logger.trace("config 9");
                 Integer template = config.getInt("hotfolder(" + i + ")[@template]");
                 logger.trace("config 10");
@@ -286,8 +290,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
         return this.collection;
     }
 
-    public SafeFile getLockFile() {
-        return new SafeFile(this.folder, ".lock");
+    public File getLockFile() {
+        return new File(this.folder, ".lock");
 
     }
 
@@ -299,7 +303,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * Lock.
      */
     public void lock() throws IOException {
-        SafeFile f = getLockFile();
+        File f = getLockFile();
         if (!f.exists()) {
             f.createNewFile();
         }
@@ -309,9 +313,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * Unlock.
      */
     public void unlock() throws IOException {
-        SafeFile f = getLockFile();
+        File f = getLockFile();
         if (f.exists()) {
-            f.forceDelete();
+            fileService.delete(f.toURI());
         }
     }
 }

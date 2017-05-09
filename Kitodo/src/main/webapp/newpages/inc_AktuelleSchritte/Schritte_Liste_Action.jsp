@@ -33,7 +33,7 @@
             <h:panelGrid columns="1">
 
                 <%-- Upload-Schaltknopf --%>
-                <h:commandLink action="#{AktuelleSchritteForm.UploadFromHomeAlle}"
+                <h:commandLink action="#{AktuelleSchritteForm.uploadFromHomeAlle}"
                                title="#{msgs.verzeichnisFertigHochladen}"
                                onclick="if (!confirm('#{msgs.upload}?')) return">
                     <h:graphicImage value="/newpages/images/buttons/load_up1.gif"
@@ -51,7 +51,7 @@
                 </h:commandLink>
 
                 <%-- Download-Schaltknopf für gesamtes Trefferset --%>
-                <h:commandLink action="#{AktuelleSchritteForm.DownloadToHomeHits}"
+                <h:commandLink action="#{AktuelleSchritteForm.downloadToHomeHits}"
                                title="#{msgs.gesamtesTreffersetInMeinHomeverzeichnis}"
                                onclick="if (!confirm('#{msgs.download}?')) return">
                     <h:graphicImage value="/newpages/images/buttons/load_down1.gif"
@@ -110,7 +110,7 @@
 
 
                         </h:panelGrid>
-                        <h:commandLink action="#{AktuelleSchritteForm.FilterAlleStart}" style="margin-left:44px"
+                        <h:commandLink action="#{AktuelleSchritteForm.filterAlleStart}" style="margin-left:44px"
                                        title="#{msgs.uebernehmen}">
                             <h:outputText value="#{msgs.uebernehmen}"/>
                         </h:commandLink>

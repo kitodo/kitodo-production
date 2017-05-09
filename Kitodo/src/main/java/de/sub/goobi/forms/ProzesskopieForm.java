@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
@@ -62,20 +62,19 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -421,14 +420,14 @@ public class ProzesskopieForm {
     }
 
     /**
-     * The function OpacAuswerten() is executed if a user clicks the command
-     * link to start a catalogue search. It performs the search and loads the
-     * hit if it is unique. Otherwise, it will cause a hit list to show up for
-     * the user to select a hit.
+     * The function evaluateOpac() is executed if a user clicks the command link
+     * to start a catalogue search. It performs the search and loads the hit if
+     * it is unique. Otherwise, it will cause a hit list to show up for the user
+     * to select a hit.
      *
      * @return always "", telling JSF to stay on that page
      */
-    public String OpacAuswerten() {
+    public String evaluateOpac() {
         long timeout = CataloguePlugin.getTimeout();
         try {
             clearValues();
@@ -530,7 +529,7 @@ public class ProzesskopieForm {
      *            data to process
      */
     private void applyCopyingRules(CopierData data) {
-        String rules = ConfigMain.getParameter("copyData.onCatalogueQuery");
+        String rules = ConfigCore.getParameter("copyData.onCatalogueQuery");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(data);
@@ -611,19 +610,19 @@ public class ProzesskopieForm {
     /**
      * Auswahl des Prozesses auswerten.
      */
-    public String TemplateAuswahlAuswerten() throws DAOException {
+    public String templateAuswahlAuswerten() throws DAOException {
         /* den ausgewählten Prozess laden */
         Process tempProzess = serviceManager.getProcessService().find(this.auswahl);
         if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
             /* erstes Werkstück durchlaufen */
             Workpiece werk = tempProzess.getWorkpieces().get(0);
-            for (WorkpieceProperty eig : werk.getProperties()) {
+            for (Property workpieceProperty : werk.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(workpieceProperty.getTitle())) {
+                        field.setValue(workpieceProperty.getValue());
                     }
-                    if (eig.getTitle().equals("DocType")) {
-                        docType = eig.getValue();
+                    if (workpieceProperty.getTitle().equals("DocType")) {
+                        docType = workpieceProperty.getValue();
                     }
                 }
             }
@@ -632,19 +631,19 @@ public class ProzesskopieForm {
         if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
             /* erste Vorlage durchlaufen */
             Template vor = tempProzess.getTemplates().get(0);
-            for (TemplateProperty eig : vor.getProperties()) {
+            for (Property templateProperty : vor.getProperties()) {
                 for (AdditionalField field : this.additionalFields) {
-                    if (field.getTitle().equals(eig.getTitle())) {
-                        field.setValue(eig.getValue());
+                    if (field.getTitle().equals(templateProperty.getTitle())) {
+                        field.setValue(templateProperty.getValue());
                     }
                 }
             }
         }
 
         if (serviceManager.getProcessService().getPropertiesSize(tempProzess) > 0) {
-            for (ProcessProperty pe : serviceManager.getProcessService().getPropertiesInitialized(tempProzess)) {
-                if (pe.getTitle().equals("digitalCollection")) {
-                    digitalCollections.add(pe.getValue());
+            for (Property processProperty : serviceManager.getProcessService().getPropertiesInitialized(tempProzess)) {
+                if (processProperty.getTitle().equals("digitalCollection")) {
+                    digitalCollections.add(processProperty.getValue());
                 }
             }
         }
@@ -697,7 +696,7 @@ public class ProzesskopieForm {
                         + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
             }
 
-            String validateRegEx = ConfigMain.getParameter("validateProzessTitelRegex", "[\\w-]*");
+            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
             if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
                 valide = false;
                 Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
@@ -747,7 +746,7 @@ public class ProzesskopieForm {
         return valide;
     }
 
-    public String GoToSeite1() {
+    public String goToPageOne() {
         return NAVI_FIRST_PAGE;
     }
 
@@ -756,7 +755,7 @@ public class ProzesskopieForm {
      *
      * @return page
      */
-    public String GoToSeite2() {
+    public String goToPageTwo() {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         } else {
@@ -765,9 +764,9 @@ public class ProzesskopieForm {
     }
 
     /**
-     * Anlegen des Prozesses und Speichern der Metadaten.
+     * Anlegen des Prozesses und save der Metadaten.
      */
-    public String NeuenProzessAnlegen() throws ReadException, IOException, InterruptedException, PreferencesException,
+    public String createNewProcess() throws ReadException, IOException, InterruptedException, PreferencesException,
             SwapException, DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
@@ -775,7 +774,7 @@ public class ProzesskopieForm {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         }
-        EigenschaftenHinzufuegen();
+        addProperties();
 
         for (Task step : this.prozessKopie.getTasks()) {
             /*
@@ -810,6 +809,10 @@ public class ProzesskopieForm {
             myLogger.error(e);
             myLogger.error("error on save: ", e);
             return "";
+        } catch (CustomResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+            myLogger.error(e);
+            return "";
         }
 
         /*
@@ -839,13 +842,13 @@ public class ProzesskopieForm {
                     }
                 }
             } catch (NullPointerException e) { // if
-                                               // getAllAllowedDocStructTypes()
-                                               // returns null
+                // getAllAllowedDocStructTypes()
+                // returns null
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
                         populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
             } catch (IndexOutOfBoundsException e) { // if
-                                                    // getAllAllowedDocStructTypes()
-                                                    // returns empty list
+                // getAllAllowedDocStructTypes()
+                // returns empty list
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
                         populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
             } catch (UGHException catchAll) {
@@ -916,7 +919,7 @@ public class ProzesskopieForm {
             /*
              * Metadata inheritance and enrichment
              */
-            if (ConfigMain.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+            if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
                 DocStruct enricher = myRdf.getDigitalDocument().getLogicalDocStruct();
                 Map<String, Map<String, Metadata>> higherLevelMetadata = new HashMap<String, Map<String, Metadata>>();
                 while (enricher.getAllChildren() != null) {
@@ -1057,6 +1060,10 @@ public class ProzesskopieForm {
                 myLogger.error(e);
                 myLogger.error("error on save: ", e);
                 return "";
+            } catch (CustomResponseException e) {
+                Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+                myLogger.error(e);
+                return "";
             }
         }
 
@@ -1189,7 +1196,7 @@ public class ProzesskopieForm {
         }
     }
 
-    private void EigenschaftenHinzufuegen() {
+    private void addProperties() {
         /*
          * Vorlageneigenschaften initialisieren
          */
@@ -1430,7 +1437,7 @@ public class ProzesskopieForm {
         this.possibleDigitalCollection = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
 
-        String filename = FilenameUtils.concat(ConfigMain.getParameter(Parameters.CONFIG_DIR),
+        String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
@@ -1610,7 +1617,7 @@ public class ProzesskopieForm {
     /**
      * Prozesstitel und andere Details generieren.
      */
-    public void CalcProzesstitel() {
+    public void calculateProcessTitle() {
         try {
             generateTitle(null);
         } catch (IOException e) {
@@ -1730,7 +1737,7 @@ public class ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        newTitle += CalcProzesstitelCheck(myField.getTitle(), myField.getValue());
+                        newTitle += calculateProcessTitleCheck(myField.getTitle(), myField.getValue());
                     }
                 }
             }
@@ -1742,11 +1749,11 @@ public class ProzesskopieForm {
         // remove non-ascii characters for the sake of TIFF header limits
         String filteredTitle = newTitle.replaceAll("[^\\p{ASCII}]", "");
         prozessKopie.setTitle(filteredTitle);
-        CalcTiffheader();
+        calculateTiffHeader();
         return filteredTitle;
     }
 
-    private String CalcProzesstitelCheck(String inFeldName, String inFeldWert) {
+    private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
         String rueckgabe = inFeldWert;
 
         /*
@@ -1777,7 +1784,7 @@ public class ProzesskopieForm {
     /**
      * Calculate tiff header.
      */
-    public void CalcTiffheader() {
+    public void calculateTiffHeader() {
         String tif_definition = "";
         ConfigProjects cp = null;
         try {
@@ -1842,7 +1849,7 @@ public class ProzesskopieForm {
                     /* den Inhalt zum Titel hinzufügen */
                     if (myField.getTitle().equals(myString) && myField.getShowDependingOnDoctype()
                             && myField.getValue() != null) {
-                        this.tifHeader_imagedescription += CalcProzesstitelCheck(myField.getTitle(),
+                        this.tifHeader_imagedescription += calculateProcessTitleCheck(myField.getTitle(),
                                 myField.getValue());
                     }
 
@@ -1939,6 +1946,8 @@ public class ProzesskopieForm {
                     case 4:
                         result.append(word.length() > 1 ? word.substring(0, 1) : word);
                         break;
+                    default:
+                        assert false : wordNo;
                 }
                 wordNo++;
             }
@@ -1989,7 +1998,7 @@ public class ProzesskopieForm {
      *         configuration
      */
     private int getPageSize() {
-        return ConfigMain.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
+        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
     }
 
     /**

@@ -13,8 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.metadaten.MetadatenHelper;
@@ -24,6 +23,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,7 +41,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
-import org.goobi.io.SafeFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
@@ -51,7 +50,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -59,8 +58,13 @@ import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
@@ -72,49 +76,76 @@ import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
 import ugh.fileformats.mets.XStream;
 
-public class ProcessService {
-
-    private static final Logger myLogger = Logger.getLogger(ProcessService.class);
-
-    private Boolean selected = false;
-
-    private final MetadatenSperrung msp = new MetadatenSperrung();
+public class ProcessService extends TitleSearchService<Process> {
 
     Helper help = new Helper();
+
+    private Boolean selected = false;
+    private ProcessDAO processDAO = new ProcessDAO();
+    private ProcessType processType = new ProcessType();
+    private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
+    private final MetadatenSperrung msp = new MetadatenSperrung();
+    private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
+    private static final Logger logger = Logger.getLogger(ProcessService.class);
+    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
     public static String DIRECTORY_PREFIX = "orig";
     public static String DIRECTORY_SUFFIX = "images";
 
-    private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
-
-    private ProcessDAO processDao = new ProcessDAO();
-    private ProcessType processType = new ProcessType();
-    private Indexer<Process, ProcessType> indexer = new Indexer<>("kitodo", Process.class);
-    private UserService userService = new UserService();
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public ProcessService() {
+        super(new Searcher(Process.class));
+    }
 
     public Process find(Integer id) throws DAOException {
-        return processDao.find(id);
+        return processDAO.find(id);
     }
 
     public List<Process> findAll() throws DAOException {
-        return processDao.findAll();
+        return processDAO.findAll();
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves process object to database.
      *
      * @param process
      *            object
      */
-    public void save(Process process) throws DAOException, IOException {
-        processDao.save(process, getProgress(process));
+    public void saveToDatabase(Process process) throws DAOException {
+        processDAO.save(process, getProgress(process));
+    }
+
+    /**
+     * Method saves process document to the index of Elastic Search.
+     *
+     * @param process
+     *            object
+     */
+    public void saveToIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(process, processType);
     }
 
+    /**
+     * Method saves batches related to modified process.
+     *
+     * @param process
+     *            object
+     */
+    protected void saveDependenciesToIndex(Process process) throws CustomResponseException, IOException {
+        for (Batch batch : process.getBatches()) {
+            serviceManager.getBatchService().saveToIndex(batch);
+        }
+        if (process.getProject() != null) {
+            serviceManager.getProjectService().saveToIndex(process.getProject());
+        }
+    }
+
     public void saveList(List<Process> list) throws DAOException {
-        processDao.saveList(list);
+        processDAO.saveList(list);
     }
 
     /**
@@ -124,8 +155,8 @@ public class ProcessService {
      * @param process
      *            object
      */
-    public void remove(Process process) throws DAOException, IOException {
-        processDao.remove(process);
+    public void remove(Process process) throws CustomResponseException, DAOException, IOException {
+        processDAO.remove(process);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(process, processType);
     }
@@ -137,28 +168,28 @@ public class ProcessService {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws DAOException, IOException {
-        processDao.remove(id);
+    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+        processDAO.remove(id);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(id);
     }
 
     public List<Process> search(String query) throws DAOException {
-        return processDao.search(query);
+        return processDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return processDao.count(query);
+        return processDAO.count(query);
     }
 
     public void refresh(Process process) {
-        processDao.refresh(process);
+        processDAO.refresh(process);
     }
 
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), processType);
     }
@@ -214,7 +245,7 @@ public class ProcessService {
             Session s = Helper.getHibernateSession();
             Hibernate.initialize(process.getHistory());
         } catch (HibernateException e) {
-            myLogger.debug("Hibernate exception: ", e);
+            logger.debug("Hibernate exception: ", e);
         }
         if (process.getHistory() == null) {
             process.setHistory(new ArrayList<History>());
@@ -231,11 +262,11 @@ public class ProcessService {
      *
      * @return the properties field of the process which is loaded
      */
-    public List<ProcessProperty> getPropertiesInitialized(Process process) {
+    public List<Property> getPropertiesInitialized(Process process) {
         try {
             Hibernate.initialize(process.getProperties());
         } catch (HibernateException e) {
-            myLogger.debug("Hibernate exception: ", e);
+            logger.debug("Hibernate exception: ", e);
         }
         return process.getProperties();
     }
@@ -250,7 +281,7 @@ public class ProcessService {
         if (MetadatenSperrung.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
-                result = userService.find(Integer.valueOf(userID));
+                result = serviceManager.getUserService().find(Integer.valueOf(userID));
             } catch (Exception e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }
@@ -277,9 +308,9 @@ public class ProcessService {
      */
     public String getImagesTifDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        SafeFile dir = new SafeFile(getImagesDirectory(process));
-        DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-        DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+        File dir = new File(getImagesDirectory(process));
+        DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+        DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
@@ -289,7 +320,7 @@ public class ProcessService {
         };
 
         String tifOrdner = "";
-        String[] verzeichnisse = dir.list(filterVerz);
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
 
         if (verzeichnisse != null) {
             for (int i = 0; i < verzeichnisse.length; i++) {
@@ -298,9 +329,9 @@ public class ProcessService {
         }
 
         if (tifOrdner.equals("") && useFallBack) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = dir.list();
+                String[] folderList = fileService.list(dir);
                 for (String folder : folderList) {
                     if (folder.endsWith(suffix)) {
                         tifOrdner = folder;
@@ -311,12 +342,12 @@ public class ProcessService {
         }
 
         if (!tifOrdner.equals("") && useFallBack) {
-            String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                SafeFile tif = new SafeFile(tifOrdner);
-                String[] files = tif.list();
+                File tif = new File(tifOrdner);
+                String[] files = fileService.list(tif);
                 if (files == null || files.length == 0) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix) && !folder.startsWith(DIRECTORY_PREFIX)) {
                             tifOrdner = folder;
@@ -331,14 +362,14 @@ public class ProcessService {
             tifOrdner = process.getTitle() + "_" + DIRECTORY_SUFFIX;
         }
 
-        String result = getImagesDirectory(process) + tifOrdner;
+        String result = getImagesDirectory(process);
 
         if (!result.endsWith(File.separator)) {
             result += File.separator;
         }
-        if (!ConfigMain.getBooleanParameter("useOrigFolder", true)
-                && ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            FilesystemHelper.createDirectory(result);
+        if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
+                && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+            fileService.createDirectory(URI.create(result), tifOrdner);
         }
         return result;
     }
@@ -349,17 +380,14 @@ public class ProcessService {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean checkIfTifDirectoryExists(Process process) {
-        SafeFile testMe;
+        File testMe;
         try {
-            testMe = new SafeFile(getImagesTifDirectory(true, process));
+            testMe = new File(getImagesTifDirectory(true, process));
         } catch (DAOException | IOException | InterruptedException | SwapException e) {
             return false;
         }
-        if (testMe.list() == null) {
-            return false;
-        }
+        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
 
-        return testMe.exists() && testMe.list().length > 0;
     }
 
     /**
@@ -371,10 +399,10 @@ public class ProcessService {
      */
     public String getImagesOrigDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        if (ConfigMain.getBooleanParameter("useOrigFolder", true)) {
-            SafeFile dir = new SafeFile(getImagesDirectory(process));
-            DIRECTORY_SUFFIX = ConfigMain.getParameter("DIRECTORY_SUFFIX", "tif");
-            DIRECTORY_PREFIX = ConfigMain.getParameter("DIRECTORY_PREFIX", "orig");
+        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
+            File dir = new File(getImagesDirectory(process));
+            DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+            DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
             FilenameFilter filterVerz = new FilenameFilter() {
                 @Override
@@ -384,15 +412,15 @@ public class ProcessService {
             };
 
             String origOrdner = "";
-            String[] verzeichnisse = dir.list(filterVerz);
+            String[] verzeichnisse = fileService.list(filterVerz, dir);
             for (int i = 0; i < verzeichnisse.length; i++) {
                 origOrdner = verzeichnisse[i];
             }
 
             if (origOrdner.equals("") && useFallBack) {
-                String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = dir.list();
+                    String[] folderList = fileService.list(dir);
                     for (String folder : folderList) {
                         if (folder.endsWith(suffix)) {
                             origOrdner = folder;
@@ -403,12 +431,12 @@ public class ProcessService {
             }
 
             if (!origOrdner.equals("") && useFallBack) {
-                String suffix = ConfigMain.getParameter("MetsEditorDefaultSuffix", "");
+                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    SafeFile tif = new SafeFile(origOrdner);
-                    String[] files = tif.list();
+                    File tif = new File(origOrdner);
+                    String[] files = fileService.list(tif);
                     if (files == null || files.length == 0) {
-                        String[] folderList = dir.list();
+                        String[] folderList = fileService.list(dir);
                         for (String folder : folderList) {
                             if (folder.endsWith(suffix)) {
                                 origOrdner = folder;
@@ -422,10 +450,10 @@ public class ProcessService {
             if (origOrdner.equals("")) {
                 origOrdner = DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX;
             }
-            String rueckgabe = getImagesDirectory(process) + origOrdner + File.separator;
-            if (ConfigMain.getBooleanParameter("createOrigFolderIfNotExists", false)
+            String rueckgabe = getImagesDirectory(process);
+            if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                FilesystemHelper.createDirectory(rueckgabe);
+                fileService.createDirectory(URI.create(rueckgabe), origOrdner);
             }
             return rueckgabe;
         } else {
@@ -442,8 +470,8 @@ public class ProcessService {
      */
     public String getImagesDirectory(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = getProcessDataDirectory(process) + "images" + File.separator;
-        FilesystemHelper.createDirectory(pfad);
+        String pfad = getProcessDataDirectory(process);
+        fileService.createDirectory(URI.create(pfad), "images");
         return pfad;
     }
 
@@ -456,22 +484,22 @@ public class ProcessService {
      */
     public String getSourceDirectory(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        SafeFile dir = new SafeFile(getImagesDirectory(process));
+        File dir = new File(getImagesDirectory(process));
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith("_" + "source"));
             }
         };
-        SafeFile sourceFolder = null;
-        String[] verzeichnisse = dir.list(filterVerz);
+        File sourceFolder = null;
+        String[] verzeichnisse = fileService.list(filterVerz, dir);
         if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new SafeFile(dir, process.getTitle() + "_source");
-            if (ConfigMain.getBooleanParameter("createSourceFolder", false)) {
+            sourceFolder = new File(dir, process.getTitle() + "_source");
+            if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
                 sourceFolder.mkdir();
             }
         } else {
-            sourceFolder = new SafeFile(dir, verzeichnisse[0]);
+            sourceFolder = new File(dir, verzeichnisse[0]);
         }
 
         return sourceFolder.getAbsolutePath();
@@ -495,7 +523,7 @@ public class ProcessService {
             pst.setShowMessages(true);
             pst.run();
             if (pst.getException() != null) {
-                if (!new SafeFile(path, "images").exists() && !new SafeFile(path, "meta.xml").exists()) {
+                if (!new File(path, "images").exists() && !new File(path, "meta.xml").exists()) {
                     throw new SwapException(pst.getException().getMessage());
                 } else {
                     process.setSwappedOutGui(false);
@@ -545,9 +573,11 @@ public class ProcessService {
      */
     public String getProcessDataDirectoryIgnoreSwapping(Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = this.help.getGoobiDataDirectory() + process.getId() + File.separator;
+        String pfad = ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator;
         pfad = pfad.replaceAll(" ", "__");
-        FilesystemHelper.createDirectory(pfad);
+        String processId = process.getId().toString();
+        processId = processId.replaceAll(" ", "__");
+        fileService.createDirectory(URI.create(pfad), processId);
         return pfad;
     }
 
@@ -720,7 +750,7 @@ public class ProcessService {
     }
 
     /**
-     * Old getFortschritt1().
+     * Old getProcess().
      *
      * @param process
      *            object
@@ -732,7 +762,7 @@ public class ProcessService {
     }
 
     /**
-     * Old getFortschritt2().
+     * Old getProgressTwo().
      *
      * @param process
      *            object
@@ -746,7 +776,7 @@ public class ProcessService {
     }
 
     /**
-     * Old getFortschritt3().
+     * Old getProgressThree().
      *
      * @param process
      *            object
@@ -797,8 +827,8 @@ public class ProcessService {
         Hibernate.initialize(process.getRuleset());
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadatenHelper.getMetaFileType(getMetadataFilePath(process));
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
+        if (logger.isDebugEnabled()) {
+            logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
         }
 
         Fileformat ff = determineFileFormat(type, process);
@@ -841,8 +871,8 @@ public class ProcessService {
             throws IOException, InterruptedException, SwapException, DAOException {
         int numberOfBackups = 0;
 
-        if (ConfigMain.getIntParameter("numberOfMetaBackups") != 0) {
-            numberOfBackups = ConfigMain.getIntParameter("numberOfMetaBackups");
+        if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
+            numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
         }
 
         if (numberOfBackups != 0) {
@@ -852,14 +882,14 @@ public class ProcessService {
             bfr.setProcessDataDirectory(getProcessDataDirectory(process));
             bfr.performBackup();
         } else {
-            myLogger.warn("No backup configured for meta data files.");
+            logger.warn("No backup configured for meta data files.");
         }
     }
 
     private boolean checkForMetadataFile(Process process)
             throws IOException, InterruptedException, SwapException, DAOException, PreferencesException {
         boolean result = true;
-        SafeFile f = new SafeFile(getMetadataFilePath(process));
+        File f = new File(getMetadataFilePath(process));
         if (!f.exists()) {
             result = false;
         }
@@ -869,7 +899,7 @@ public class ProcessService {
 
     private String getTemporaryMetadataFileName(String fileName) {
 
-        SafeFile temporaryFile = new SafeFile(fileName);
+        File temporaryFile = new File(fileName);
         String directoryPath = temporaryFile.getParentFile().getPath();
         String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
 
@@ -877,9 +907,9 @@ public class ProcessService {
     }
 
     private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
-        SafeFile temporaryFile = new SafeFile(temporaryMetadataFilename);
-        SafeFile directoryPath = new SafeFile(temporaryFile.getParentFile().getPath());
-        for (SafeFile temporaryAnchorFile : directoryPath.listFiles()) {
+        File temporaryFile = new File(temporaryMetadataFilename);
+        File directoryPath = new File(temporaryFile.getParentFile().getPath());
+        for (File temporaryAnchorFile : fileService.listFiles(directoryPath)) {
             String temporaryAnchorFileName = temporaryAnchorFile.toString();
             if (temporaryAnchorFile.isFile()
                     && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
@@ -887,7 +917,7 @@ public class ProcessService {
                         temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
                 temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
                         temporaryAnchorFileName);
-                FilesystemHelper.renameFile(temporaryAnchorFileName, anchorFileName);
+                fileService.renameFile(temporaryAnchorFileName, anchorFileName);
             }
         }
     }
@@ -905,7 +935,7 @@ public class ProcessService {
         RulesetService rulesetService = new RulesetService();
         boolean backupCondition;
         boolean writeResult;
-        SafeFile temporaryMetadataFile;
+        File temporaryMetadataFile;
         Fileformat ff;
         String metadataFileName;
         String temporaryMetadataFileName;
@@ -929,11 +959,11 @@ public class ProcessService {
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
         // ff.write(getMetadataFilePath());
         writeResult = ff.write(temporaryMetadataFileName);
-        temporaryMetadataFile = new SafeFile(temporaryMetadataFileName);
+        temporaryMetadataFile = new File(temporaryMetadataFileName);
         backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
-            FilesystemHelper.renameFile(temporaryMetadataFileName, metadataFileName);
+            fileService.renameFile(temporaryMetadataFileName, metadataFileName);
             removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
         }
     }
@@ -954,11 +984,11 @@ public class ProcessService {
             throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
         RulesetService rulesetService = new RulesetService();
         Hibernate.initialize(process.getRuleset());
-        if (new SafeFile(getTemplateFilePath(process)).exists()) {
+        if (new File(getTemplateFilePath(process)).exists()) {
             Fileformat ff = null;
             String type = MetadatenHelper.getMetaFileType(getTemplateFilePath(process));
-            if (myLogger.isDebugEnabled()) {
-                myLogger.debug("current template.xml file type: " + type);
+            if (logger.isDebugEnabled()) {
+                logger.debug("current template.xml file type: " + type);
             }
             ff = determineFileFormat(type, process);
             /*
@@ -1027,13 +1057,13 @@ public class ProcessService {
      */
     public String downloadDocket(Process process) {
 
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("generate docket for process " + process.getId());
+        if (logger.isDebugEnabled()) {
+            logger.debug("generate docket for process " + process.getId());
         }
-        String rootPath = ConfigMain.getParameter("xsltFolder");
-        SafeFile xsltFile = new SafeFile(rootPath, "docket.xsl");
+        String rootPath = ConfigCore.getParameter("xsltFolder");
+        File xsltFile = new File(rootPath, "docket.xsl");
         if (process.getDocket() != null) {
-            xsltFile = new SafeFile(rootPath, process.getDocket().getFile());
+            xsltFile = new File(rootPath, process.getDocket().getFile());
             if (!xsltFile.exists()) {
                 Helper.setFehlerMeldung("docketMissing");
                 return "";
@@ -1099,17 +1129,17 @@ public class ProcessService {
             return (String) o;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
-            myLogger.debug("exception: " + e);
+            logger.debug("exception: " + e);
         }
         try {
             String folder = this.getImagesTifDirectory(false, process);
             folder = folder.substring(0, folder.lastIndexOf("_"));
             folder = folder + "_" + methodName;
-            if (new SafeFile(folder).exists()) {
+            if (new File(folder).exists()) {
                 return folder;
             }
         } catch (DAOException | InterruptedException | IOException | SwapException ex) {
-            myLogger.debug("exception: " + ex);
+            logger.debug("exception: " + ex);
         }
         return null;
     }
@@ -1187,16 +1217,16 @@ public class ProcessService {
 
     /**
      * The method createProcessDirs() starts creation of directories configured
-     * by parameter processDirs within goobi_config.properties
+     * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process)
             throws SwapException, DAOException, IOException, InterruptedException {
 
-        String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            FilesystemHelper.createDirectory(FilenameUtils.concat(this.getProcessDataDirectory(process),
-                    processDir.replace("(processtitle)", process.getTitle())));
+            fileService.createDirectory(URI.create(this.getProcessDataDirectory(process)),
+                    processDir.replace("(processtitle)", process.getTitle()));
         }
 
     }
@@ -1236,8 +1266,8 @@ public class ProcessService {
      *            List of process properties
      * @return List of filtered correction / solution messages
      */
-    protected List<ProcessProperty> filterForCorrectionSolutionMessages(List<ProcessProperty> lpe) {
-        ArrayList<ProcessProperty> filteredList = new ArrayList<ProcessProperty>();
+    protected List<Property> filterForCorrectionSolutionMessages(List<Property> lpe) {
+        ArrayList<Property> filteredList = new ArrayList<>();
         List<String> listOfTranslations = new ArrayList<String>();
         String propertyTitle = "";
 
@@ -1251,10 +1281,10 @@ public class ProcessService {
         }
 
         // filtering for correction and solution messages
-        for (ProcessProperty pe : lpe) {
-            propertyTitle = pe.getTitle();
+        for (Property property : lpe) {
+            propertyTitle = property.getTitle();
             if (listOfTranslations.contains(propertyTitle)) {
-                filteredList.add(pe);
+                filteredList.add(property);
             }
         }
         return filteredList;
@@ -1266,9 +1296,9 @@ public class ProcessService {
      *
      * @return list of ProcessProperty objects
      */
-    public List<ProcessProperty> getSortedCorrectionSolutionMessages(Process process) {
-        List<ProcessProperty> filteredList;
-        List<ProcessProperty> lpe = process.getProperties();
+    public List<Property> getSortedCorrectionSolutionMessages(Process process) {
+        List<Property> filteredList;
+        List<Property> lpe = process.getProperties();
 
         if (lpe.isEmpty()) {
             return new ArrayList<>();
@@ -1277,9 +1307,9 @@ public class ProcessService {
         filteredList = filterForCorrectionSolutionMessages(lpe);
 
         // sorting after creation date
-        Collections.sort(filteredList, new Comparator<ProcessProperty>() {
+        Collections.sort(filteredList, new Comparator<Property>() {
             @Override
-            public int compare(ProcessProperty o1, ProcessProperty o2) {
+            public int compare(Property o1, Property o2) {
                 Date o1Date = o1.getCreationDate();
                 Date o2Date = o2.getCreationDate();
                 if (o1Date == null) {

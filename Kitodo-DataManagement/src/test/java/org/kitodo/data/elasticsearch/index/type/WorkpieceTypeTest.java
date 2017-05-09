@@ -23,8 +23,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 
 /**
  * Test class for WorkpieceType.
@@ -34,7 +34,7 @@ public class WorkpieceTypeTest {
     private static List<Workpiece> prepareData() {
 
         List<Workpiece> workpieces = new ArrayList<>();
-        List<WorkpieceProperty> workpieceProperties = new ArrayList<>();
+        List<Property> properties = new ArrayList<>();
 
         Process firstProcess = new Process();
         firstProcess.setId(1);
@@ -42,20 +42,18 @@ public class WorkpieceTypeTest {
         Process secondProcess = new Process();
         secondProcess.setId(2);
 
-        WorkpieceProperty firstWorkpieceProperty = new WorkpieceProperty();
-        firstWorkpieceProperty.setTitle("first");
-        firstWorkpieceProperty.setValue("1");
-        workpieceProperties.add(firstWorkpieceProperty);
+        Property firstProperty = new Property();
+        firstProperty.setId(1);
+        properties.add(firstProperty);
 
-        WorkpieceProperty secondWorkpieceProperty = new WorkpieceProperty();
-        secondWorkpieceProperty.setTitle("second");
-        secondWorkpieceProperty.setValue("2");
-        workpieceProperties.add(secondWorkpieceProperty);
+        Property secondProperty = new Property();
+        secondProperty.setId(2);
+        properties.add(secondProperty);
 
         Workpiece firstWorkpiece = new Workpiece();
         firstWorkpiece.setId(1);
         firstWorkpiece.setProcess(firstProcess);
-        firstWorkpiece.setProperties(workpieceProperties);
+        firstWorkpiece.setProperties(properties);
         workpieces.add(firstWorkpiece);
 
         Workpiece secondWorkpiece = new Workpiece();
@@ -74,14 +72,13 @@ public class WorkpieceTypeTest {
         Workpiece workpiece = prepareData().get(0);
         HttpEntity document = workpieceType.createDocument(workpiece);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"process\":\"1\",\"properties\":[{\"title\":\"first\","
-                + "\"value\":\"1\"},{\"title\":\"second\",\"value\":\"2\"}]}");
+        JSONObject expected = (JSONObject) parser.parse("{\"process\":1,\"properties\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("Workpiece value for process key doesn't match to given plain text!", expected, actual);
 
         workpiece = prepareData().get(1);
         document = workpieceType.createDocument(workpiece);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"process\":\"2\",\"properties\":[]}");
+        expected = (JSONObject) parser.parse("{\"process\":2,\"properties\":[]}");
         assertEquals("Workpiece value for process key doesn't match to given plain text!", expected, actual);
     }
 

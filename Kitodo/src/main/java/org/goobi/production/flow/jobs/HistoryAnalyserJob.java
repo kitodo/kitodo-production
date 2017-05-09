@@ -30,7 +30,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.services.ServiceManager;
 
@@ -84,30 +84,30 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
             throws IOException, InterruptedException, SwapException, DAOException {
         boolean updated = false;
         /* storage */
-        if (updateHistoryEvent(inProcess, HistoryType.storageDifference, getCurrentStorageSize(inProcess))) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.storageDifference, getCurrentStorageSize(inProcess))) {
             updated = true;
         }
         /* imagesWork */
         Integer numberWork = FileUtils.getNumberOfFiles(
                 new File(serviceManager.getProcessService().getImagesTifDirectory(true, inProcess)), ".tif");
-        if (updateHistoryEvent(inProcess, HistoryType.imagesWorkDiff, numberWork.longValue())) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.imagesWorkDiff, numberWork.longValue())) {
             updated = true;
         }
 
         /* imagesMaster */
         Integer numberMaster = FileUtils.getNumberOfFiles(
                 new File(serviceManager.getProcessService().getImagesOrigDirectory(true, inProcess)), ".tif");
-        if (updateHistoryEvent(inProcess, HistoryType.imagesMasterDiff, numberMaster.longValue())) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.imagesMasterDiff, numberMaster.longValue())) {
             updated = true;
         }
 
         /* metadata */
-        if (updateHistoryEvent(inProcess, HistoryType.metadataDiff, inProcess.getSortHelperMetadata().longValue())) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.metadataDiff, inProcess.getSortHelperMetadata().longValue())) {
             updated = true;
         }
 
         /* docstruct */
-        if (updateHistoryEvent(inProcess, HistoryType.docstructDiff, inProcess.getSortHelperDocstructs().longValue())) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.docstructDiff, inProcess.getSortHelperDocstructs().longValue())) {
             updated = true;
         }
 
@@ -165,7 +165,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     // attempts to add a history event,
                     // exists method returns null if event already exists
                     he = addHistoryEvent(step.getProcessingEnd(), step.getOrdering(), step.getTitle(),
-                            HistoryType.taskDone, inProcess);
+                            HistoryTypeEnum.taskDone, inProcess);
                     if (he != null) {
                         isDirty = true;
                     }
@@ -173,7 +173,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     // that step based on
                     // the latest timestamp for the previous step
                     he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getOrdering(),
-                            step.getTitle(), HistoryType.taskOpen, inProcess);
+                            step.getTitle(), HistoryTypeEnum.taskOpen, inProcess);
                     if (he != null) {
                         isDirty = true;
                     }
@@ -199,7 +199,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                         isDirty = true;
                     }
                     he = addHistoryEvent(step.getProcessingBegin(), step.getOrdering(), step.getTitle(),
-                            HistoryType.taskInWork, inProcess);
+                            HistoryTypeEnum.taskInWork, inProcess);
                     if (he != null) {
                         isDirty = true;
                     }
@@ -207,7 +207,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     // on that step based on
                     // the latest timestamp from the previous step
                     he = addHistoryEvent(getTimestampFromPreviousStep(inProcess, step), step.getOrdering(),
-                            step.getTitle(), HistoryType.taskOpen, inProcess);
+                            step.getTitle(), HistoryTypeEnum.taskOpen, inProcess);
                     if (he != null) {
                         isDirty = true;
                     }
@@ -237,7 +237,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                         isDirty = true;
                     }
                     he = addHistoryEvent(step.getProcessingTime(), step.getOrdering(), step.getTitle(),
-                            HistoryType.taskOpen, inProcess);
+                            HistoryTypeEnum.taskOpen, inProcess);
                     if (he != null) {
                         isDirty = true;
                     }
@@ -251,7 +251,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
             // adds for each step a step locked on the basis of the process
             // creation timestamp (new in 1.6)
             he = addHistoryEvent(inProcess.getCreationDate(), step.getOrdering(), step.getTitle(),
-                    HistoryType.taskLocked, inProcess);
+                    HistoryTypeEnum.taskLocked, inProcess);
 
             if (he != null) {
                 isDirty = true;
@@ -278,13 +278,13 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @param stepName
      *            String
      * @param type
-     *            HistoryType object
+     *            HistoryTypeEnum object
      * @param inProcess
      *            Process object
      * @return History event if event needs to be added, null if event(same
      *         kind, same time, same process) already exists
      */
-    private static History addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName, HistoryType type,
+    private static History addHistoryEvent(Date timeStamp, Integer stepOrder, String stepName, HistoryTypeEnum type,
             Process inProcess) {
         History he = new History(timeStamp, stepOrder, stepName, type, inProcess);
 
@@ -322,7 +322,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      *
      * @return stored value as Long
      */
-    private static Long getStoredValue(Process inProcess, HistoryType inType) {
+    private static Long getStoredValue(Process inProcess, HistoryTypeEnum inType) {
         long storedValue = 0;
         for (History historyItem : inProcess.getHistory()) {
             if (historyItem.getHistoryType() == inType) {
@@ -337,7 +337,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      *
      * @return true if value is different and history got updated, else false
      */
-    private static Boolean updateHistoryEvent(Process inProcess, HistoryType inType, Long inCurrentValue) {
+    private static Boolean updateHistoryEvent(Process inProcess, HistoryTypeEnum inType, Long inCurrentValue) {
         long storedValue = getStoredValue(inProcess, inType);
         long diff = inCurrentValue - storedValue;
 

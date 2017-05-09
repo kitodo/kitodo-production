@@ -11,7 +11,7 @@
 
 package org.goobi.mq.processors;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
@@ -69,7 +69,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = Logger.getLogger(CreateNewProcessProcessor.class);
 
     public CreateNewProcessProcessor() {
-        super(ConfigMain.getParameter("activeMQ.createNewProcess.queue", null));
+        super(ConfigCore.getParameter("activeMQ.createNewProcess.queue", null));
     }
 
     @Override
@@ -132,8 +132,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             if (userFields != null) {
                 setUserFields(newProcess, userFields);
             }
-            newProcess.CalcProzesstitel();
-            String state = newProcess.NeuenProzessAnlegen();
+            newProcess.calculateProcessTitle();
+            String state = newProcess.createNewProcess();
             if (!state.equals("ProzessverwaltungKopie3")) {
                 throw new RuntimeException();
             }
@@ -274,10 +274,10 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     /**
      * Sets the bibliographic data for a new process from a library catalogue.
      * This is equal to manually choosing a catalogue and a search field,
-     * entering the search string and clicking “Apply”.
+     * entering the search string and clicking “apply”.
      *
      * <p>
-     * Since the underlying OpacAuswerten() method doesn’t raise exceptions, we
+     * Since the underlying evaluateOpac() method doesn’t raise exceptions, we
      * count the populated “additional details” fields before and after running
      * the request and assume the method to have failed if not even one more
      * field was populated by the method call.
@@ -302,7 +302,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
         inputForm.setOpacSuchbegriff(value);
 
         int before = countPopulatedAdditionalFields(inputForm);
-        inputForm.OpacAuswerten();
+        inputForm.evaluateOpac();
         int afterwards = countPopulatedAdditionalFields(inputForm);
 
         if (!(afterwards > before)) {

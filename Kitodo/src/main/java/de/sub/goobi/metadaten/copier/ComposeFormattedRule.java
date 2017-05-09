@@ -48,6 +48,7 @@ public class ComposeFormattedRule extends DataCopyrule {
      * “%2$02d”, the function will convert the second list object to long, if
      * the format String contains “%02d” the function cannot tell which argument
      * is meant and thus doesn’t do anything for it.
+     * TODO: check (test) and fix it - especially catch continue
      *
      * @param format
      *            format String, to get the desired types from
@@ -101,9 +102,7 @@ public class ComposeFormattedRule extends DataCopyrule {
                     case 'x':
                         result[i] = Long.parseLong(elements.get(i));
                 }
-            } catch (RuntimeException e) { // ArrayIndexOutOfBoundsException,
-                                           // ClassCastException,
-                                           // NumberFormatException
+            } catch (ArrayIndexOutOfBoundsException | ClassCastException | NumberFormatException e) {
                 continue;
             }
         }
@@ -188,7 +187,8 @@ public class ComposeFormattedRule extends DataCopyrule {
         format = DataSelector.create(listOfObjects.next());
         do {
             source.add(DataSelector.create(listOfObjects.next()));
-        } while (listOfObjects.hasNext());
+        }
+        while (listOfObjects.hasNext());
     }
 
     /**

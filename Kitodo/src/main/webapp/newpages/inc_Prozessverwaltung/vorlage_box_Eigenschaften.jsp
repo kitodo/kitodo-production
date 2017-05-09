@@ -68,7 +68,7 @@
     </h:column>
 </x:dataTable>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.VorlageEigenschaftNeu}"
                value="#{msgs.eigenschaftHinzufuegen}"
                title="#{msgs.eigenschaftHinzufuegen}"

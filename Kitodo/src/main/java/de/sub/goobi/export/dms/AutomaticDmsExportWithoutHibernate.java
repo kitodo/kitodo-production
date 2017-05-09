@@ -11,10 +11,9 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMetsWithoutHibernate;
-import de.sub.goobi.helper.FilesystemHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.metadaten.MetadatenVerifizierungWithoutHibernate;
@@ -28,7 +27,6 @@ import java.io.IOException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -38,6 +36,7 @@ import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.ProjectManager;
 import org.kitodo.data.database.persistence.apache.ProjectObject;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
@@ -56,6 +55,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     private FolderInformation fi;
     private ProjectObject project;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     /**
      * The field task holds an optional task instance. Its progress and its
@@ -127,7 +127,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             return false;
         }
 
-        String rules = ConfigMain.getParameter("copyData.onExport");
+        String rules = ConfigCore.getParameter("copyData.onExport");
         if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
             try {
                 new DataCopier(rules).process(new CopierData(newfile, process));
@@ -152,7 +152,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
          * Metadaten validieren
          */
 
-        if (ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
             MetadatenVerifizierungWithoutHibernate mv = new MetadatenVerifizierungWithoutHibernate();
             if (!mv.validate(gdzfile, this.myPrefs, process.getId(), process.getTitle())) {
                 return false;
@@ -164,33 +164,31 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
          * Speicherort vorbereiten und downloaden
          */
         String zielVerzeichnis;
-        SafeFile benutzerHome;
+        File benutzerHome;
 
         zielVerzeichnis = this.project.getDmsImportImagesPath();
-        benutzerHome = new SafeFile(zielVerzeichnis);
+        benutzerHome = new File(zielVerzeichnis);
 
         /* ggf. noch einen Vorgangsordner anlegen */
         if (this.project.isDmsImportCreateProcessFolder()) {
-            benutzerHome = new SafeFile(benutzerHome + File.separator + process.getTitle());
+            benutzerHome = new File(benutzerHome + File.separator + process.getTitle());
             zielVerzeichnis = benutzerHome.getAbsolutePath();
             /* alte Import-Ordner löschen */
-            if (!benutzerHome.deleteDir()) {
+            if (!fileService.delete(benutzerHome.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Import folder could not be cleared");
                 return false;
             }
             /* alte Success-Ordner löschen */
-            SafeFile successFile = new SafeFile(
-                    this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-            if (!successFile.deleteDir()) {
+            File successFile = new File(this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+            if (!fileService.delete(successFile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Success folder could not be cleared");
                 return false;
             }
             /* alte Error-Ordner löschen */
-            SafeFile errorfile = new SafeFile(
-                    this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
-            if (!errorfile.deleteDir()) {
+            File errorfile = new File(this.project.getDmsImportErrorPath() + File.separator + process.getTitle());
+            if (!fileService.delete(errorfile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Error folder could not be cleared");
                 return false;
@@ -250,12 +248,12 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
+            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
                 /* Success-Ordner wieder löschen */
                 if (this.project.isDmsImportCreateProcessFolder()) {
-                    SafeFile successFile = new SafeFile(
+                    File successFile = new File(
                             this.project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-                    successFile.deleteDir();
+                    fileService.delete(successFile.toURI());
                 }
             }
         }
@@ -299,40 +297,40 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      * @param ordnerEndung
      *            String
      */
-    public void fulltextDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand,
-            final String ordnerEndung) throws IOException, InterruptedException, SwapException, DAOException {
+    public void fulltextDownload(ProcessObject myProcess, File userHome, String atsPpnBand, final String ordnerEndung)
+            throws IOException, InterruptedException, SwapException, DAOException {
 
         // download sources
-        SafeFile sources = new SafeFile(fi.getSourceDirectory());
-        if (sources.exists() && sources.list().length > 0) {
-            SafeFile destination = new SafeFile(userHome + File.separator + atsPpnBand + "_src");
+        File sources = new File(fi.getSourceDirectory());
+        if (sources.exists() && fileService.list(sources).length > 0) {
+            File destination = new File(userHome + File.separator + atsPpnBand + "_src");
             if (!destination.exists()) {
                 destination.mkdir();
             }
-            SafeFile[] dateien = sources.listFiles();
+            File[] dateien = fileService.listFiles(sources);
             for (int i = 0; i < dateien.length; i++) {
                 if (dateien[i].isFile()) {
-                    SafeFile meinZiel = new SafeFile(destination + File.separator + dateien[i].getName());
-                    dateien[i].copyFile(meinZiel, false);
+                    File meinZiel = new File(destination + File.separator + dateien[i].getName());
+                    fileService.copyFile(dateien[i], meinZiel);
                 }
             }
         }
 
-        SafeFile ocr = new SafeFile(fi.getOcrDirectory());
+        File ocr = new File(fi.getOcrDirectory());
         if (ocr.exists()) {
-            SafeFile[] folder = ocr.listFiles();
-            for (SafeFile dir : folder) {
-                if (dir.isDirectory() && dir.list().length > 0 && dir.getName().contains("_")) {
+            File[] folder = fileService.listFiles(ocr);
+            for (File dir : folder) {
+                if (dir.isDirectory() && fileService.list(dir).length > 0 && dir.getName().contains("_")) {
                     String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-                    SafeFile destination = new SafeFile(userHome + File.separator + atsPpnBand + suffix);
+                    File destination = new File(userHome + File.separator + atsPpnBand + suffix);
                     if (!destination.exists()) {
                         destination.mkdir();
                     }
-                    SafeFile[] files = dir.listFiles();
+                    File[] files = fileService.listFiles(dir);
                     for (int i = 0; i < files.length; i++) {
                         if (files[i].isFile()) {
-                            SafeFile target = new SafeFile(destination + File.separator + files[i].getName());
-                            files[i].copyFile(target, false);
+                            File target = new File(destination + File.separator + files[i].getName());
+                            fileService.copyFile(files[i], target);
                         }
                     }
                 }
@@ -352,18 +350,18 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(ProcessObject myProcess, SafeFile userHome, String atsPpnBand, final String ordnerEndung)
+    public void imageDownload(ProcessObject myProcess, File userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException, SwapException, DAOException {
         /*
          * den Ausgangspfad ermitteln
          */
-        SafeFile tifOrdner = new SafeFile(this.fi.getImagesTifDirectory(true));
+        File tifOrdner = new File(this.fi.getImagesTifDirectory(true));
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (tifOrdner.exists() && tifOrdner.list().length > 0) {
-            SafeFile zielTif = new SafeFile(userHome + File.separator + atsPpnBand + ordnerEndung);
+        if (tifOrdner.exists() && fileService.list(tifOrdner).length > 0) {
+            File zielTif = new File(userHome + File.separator + atsPpnBand + ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
             if (this.project.isUseDmsImport()) {
@@ -377,7 +375,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
-                    FilesystemHelper.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
+                    fileService.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
                 } catch (Exception e) {
                     if (task != null) {
                         task.setException(e);
@@ -389,14 +387,14 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
             /* jetzt den eigentlichen Kopiervorgang */
 
-            SafeFile[] dateien = tifOrdner.listFiles(Helper.dataFilter);
+            File[] dateien = fileService.listFiles(Helper.dataFilter, tifOrdner);
             for (int i = 0; i < dateien.length; i++) {
                 if (task != null) {
                     task.setWorkDetail(dateien[i].getName());
                 }
                 if (dateien[i].isFile()) {
-                    SafeFile meinZiel = new SafeFile(zielTif + File.separator + dateien[i].getName());
-                    dateien[i].copyFile(meinZiel, false);
+                    File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
+                    fileService.copyFile(dateien[i], meinZiel);
                 }
                 if (task != null) {
                     task.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
@@ -412,7 +410,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
     }
 
     /**
-     * Starts copying all directories configured in goobi_config.properties
+     * Starts copying all directories configured in kitodo_config.properties
      * parameter "processDirs" to export folder.
      *
      * @param myProcess
@@ -421,17 +419,17 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      *            the destination directory
      */
     private void directoryDownload(ProcessObject myProcess, String zielVerzeichnis) throws IOException {
-        String[] processDirs = ConfigMain.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
 
-            SafeFile srcDir = new SafeFile(FilenameUtils.concat(fi.getProcessDataDirectory(),
+            File srcDir = new File(FilenameUtils.concat(fi.getProcessDataDirectory(),
                     processDir.replace("(processtitle)", myProcess.getTitle())));
-            SafeFile dstDir = new SafeFile(
+            File dstDir = new File(
                     FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
 
             if (srcDir.isDirectory()) {
-                srcDir.copyDir(dstDir);
+                fileService.copyFile(srcDir, dstDir);
             }
         }
     }

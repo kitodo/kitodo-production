@@ -11,15 +11,12 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -127,7 +124,7 @@ public class MassImportForm {
     private void initializePossibleDigitalCollections() {
         this.possibleDigitalCollections = new ArrayList<String>();
         ArrayList<String> defaultCollections = new ArrayList<String>();
-        String filename = this.help.getGoobiConfigDirectory() + "goobi_digitalCollections.xml";
+        String filename = ConfigCore.getKitodoConfigDirectory() + "kitodo_digitalCollections.xml";
         if (!(new File(filename).exists())) {
             Helper.setFehlerMeldung("File not found: ", filename);
             return;
@@ -216,7 +213,7 @@ public class MassImportForm {
      *
      * @return String
      */
-    public String convertData() {
+    public String convertData() throws IOException {
         this.processList = new ArrayList<Process>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");
@@ -228,11 +225,11 @@ public class MassImportForm {
 
             // found list with ids
             Prefs prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
-            String tempfolder = ConfigMain.getParameter("tempfolder");
+            String tempfolder = ConfigCore.getParameter("tempfolder");
             this.plugin.setImportFolder(tempfolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
-            this.plugin.setGoobiConfigDirectory(new Helper().getGoobiConfigDirectory());
+            this.plugin.setKitodoConfigDirectory(ConfigCore.getKitodoConfigDirectory());
 
             if (StringUtils.isNotEmpty(this.idList)) {
                 List<String> ids = this.plugin.splitIds(this.idList);
@@ -335,61 +332,26 @@ public class MassImportForm {
     /**
      * File upload with binary copying.
      */
-    public void uploadFile() {
-        ByteArrayInputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            if (this.uploadedFile == null) {
-                Helper.setFehlerMeldung("noFileSelected");
-                return;
-            }
+    public void uploadFile() throws IOException {
 
-            String basename = this.uploadedFile.getName();
-            if (basename.startsWith(".")) {
-                basename = basename.substring(1);
-            }
-            if (basename.contains("/")) {
-                basename = basename.substring(basename.lastIndexOf("/") + 1);
-            }
-            if (basename.contains("\\")) {
-                basename = basename.substring(basename.lastIndexOf("\\") + 1);
-            }
-
-            String filename = ConfigMain.getParameter("tempfolder", "/usr/local/goobi/temp/") + basename;
-
-            inputStream = new ByteArrayInputStream(this.uploadedFile.getBytes());
-            outputStream = new FileOutputStream(filename);
-
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = inputStream.read(buf)) > 0) {
-                outputStream.write(buf, 0, len);
-            }
-
-            this.importFile = new File(filename);
-            List<String> param = new ArrayList<String>();
-            param.add(basename);
-            Helper.setMeldung(Helper.getTranslation("uploadSuccessful", param));
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed");
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-
+        if (this.uploadedFile == null) {
+            Helper.setFehlerMeldung("noFileSelected");
+            return;
         }
+
+        String basename = this.uploadedFile.getName();
+        if (basename.startsWith(".")) {
+            basename = basename.substring(1);
+        }
+        if (basename.contains("/")) {
+            basename = basename.substring(basename.lastIndexOf("/") + 1);
+        }
+        if (basename.contains("\\")) {
+            basename = basename.substring(basename.lastIndexOf("\\") + 1);
+        }
+        String fileName = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
+
+        serviceManager.getFileService().copyFile(new File(this.uploadedFile.getName()), new File(fileName));
 
     }
 
@@ -845,7 +807,7 @@ public class MassImportForm {
      */
     public String downloadDocket() {
         logger.debug("generate docket for process list");
-        String rootpath = ConfigMain.getParameter("xsltFolder");
+        String rootpath = ConfigCore.getParameter("xsltFolder");
         File xsltfile = new File(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {

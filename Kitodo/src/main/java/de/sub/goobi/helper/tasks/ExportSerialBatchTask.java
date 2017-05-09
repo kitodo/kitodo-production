@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
@@ -154,8 +154,8 @@ public class ExportSerialBatchTask extends EmptyTask {
         try {
             if (stepcounter == 0) {
                 pointers.clear();
-                for (Process process1 : batch.getProcesses()) {
-                    process = process1;
+                for (Process processIterator : batch.getProcesses()) {
+                    process = processIterator;
                     pointers.add(ExportNewspaperBatchTask.getMetsPointerURL(process));
                 }
                 processesIterator = batch.getProcesses().iterator();
@@ -170,7 +170,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     process = processesIterator.next();
                     DigitalDocument out = buildExportDocument(process, pointers);
                     ExportDms exporter = new ExportDms(
-                            ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
+                            ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
                     exporter.startExport(process, LoginForm.getCurrentUserHomeDir(), out);
                     stepcounter++;
@@ -184,7 +184,6 @@ public class ExportSerialBatchTask extends EmptyTask {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
-            return;
         }
     }
 

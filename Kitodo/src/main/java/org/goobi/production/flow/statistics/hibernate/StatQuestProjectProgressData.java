@@ -33,9 +33,9 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.type.StandardBasicTypes;
 import org.joda.time.DateTime;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
-/*****************************************************************************
+/**
  * Imlpementation of {@link IStatisticalQuestion}. This is used for the
  * generation of a Datatable relfecting the progress of a project, based on it's
  * processes workflow. Only the workflow common to all processes is used. A
@@ -44,7 +44,7 @@ import org.kitodo.data.database.helper.enums.HistoryType;
  * project.
  * 
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class StatQuestProjectProgressData implements IStatisticalQuestionLimitedTimeframe, Serializable {
 
     private static final long serialVersionUID = 5488469945490611200L;
@@ -68,7 +68,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
      * not included means that only min(date) or max(date) - depending on option
      * in.
      *
-     * @see HistoryType
+     * @see HistoryTypeEnum
      *
      * @return status of loops included or not
      */
@@ -244,7 +244,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
             return this.myDataTable;
         }
 
-        DataTable tableStepCompleted = getAllSteps(HistoryType.taskDone);
+        DataTable tableStepCompleted = getAllSteps(HistoryTypeEnum.taskDone);
 
         tableStepCompleted.setUnitLabel(Helper.getTranslation(this.timeGrouping.getSingularTitle()));
         tableStepCompleted.setName(Helper.getTranslation("doneSteps"));
@@ -313,7 +313,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
      * @param requestedType
      * @return
      */
-    private DataTable getAllSteps(HistoryType requestedType) {
+    private DataTable getAllSteps(HistoryTypeEnum requestedType) {
 
         // adding time restrictions
         String natSQL = new SQLStepRequestByName(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping,

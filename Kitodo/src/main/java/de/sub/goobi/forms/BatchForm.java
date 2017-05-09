@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
@@ -46,6 +46,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
@@ -123,7 +124,7 @@ public class BatchForm extends BasisForm {
         Criteria crit = this.myFilteredDataSource.getCriteria();
         crit.addOrder(Order.desc("creationDate"));
         crit.add(Restrictions.eq("template", Boolean.FALSE));
-        int batchMaxSize = ConfigMain.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
+        int batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
         if (batchMaxSize > 0) {
             crit.setMaxResults(batchMaxSize);
         }
@@ -212,7 +213,7 @@ public class BatchForm extends BasisForm {
      * 
      * @return page - all batches
      */
-    public String FilterAlleStart() throws DAOException {
+    public String filterAlleStart() throws DAOException {
         filterBatches();
         filterProcesses();
         return "BatchesAll";
@@ -225,7 +226,7 @@ public class BatchForm extends BasisForm {
      */
     public String downloadDocket() {
         logger.debug("generate docket for process list");
-        String rootpath = ConfigMain.getParameter("xsltFolder");
+        String rootpath = ConfigCore.getParameter("xsltFolder");
         File xsltfile = new File(rootpath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         List<Process> docket = Collections.emptyList();
@@ -282,7 +283,7 @@ public class BatchForm extends BasisForm {
         }
         try {
             serviceManager.getBatchService().removeAll(ids);
-            FilterAlleStart();
+            filterAlleStart();
         } catch (DAOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
@@ -306,7 +307,7 @@ public class BatchForm extends BasisForm {
                 Batch batch = serviceManager.getBatchService().find(Integer.parseInt(entry));
                 serviceManager.getBatchService().addAll(batch, this.selectedProcesses);
                 serviceManager.getBatchService().save(batch);
-                if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
+                if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
                                 Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
@@ -320,13 +321,16 @@ public class BatchForm extends BasisForm {
         } catch (IOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+        } catch (CustomResponseException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
         }
     }
 
     /**
      * Remove processes from Batch.
      */
-    public void removeProcessesFromBatch() throws DAOException, IOException {
+    public void removeProcessesFromBatch() throws DAOException, IOException, CustomResponseException {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
             return;
@@ -340,7 +344,7 @@ public class BatchForm extends BasisForm {
             Batch batch = serviceManager.getBatchService().find(Integer.parseInt(entry));
             serviceManager.getBatchService().removeAll(batch, this.selectedProcesses);
             serviceManager.getBatchService().save(batch);
-            if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
+            if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : this.selectedProcesses) {
                     serviceManager.getProcessService()
                             .addToWikiField(
@@ -352,7 +356,7 @@ public class BatchForm extends BasisForm {
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
         }
-        FilterAlleStart();
+        filterAlleStart();
     }
 
     /**
@@ -381,6 +385,9 @@ public class BatchForm extends BasisForm {
             } catch (IOException e) {
                 Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
                 logger.error(e);
+            } catch (CustomResponseException e) {
+                logger.error(e);
+                Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
             }
         }
     }
@@ -388,7 +395,7 @@ public class BatchForm extends BasisForm {
     /**
      * Create new Batch.
      */
-    public void createNewBatch() throws DAOException, IOException {
+    public void createNewBatch() throws DAOException, IOException, CustomResponseException {
         if (selectedProcesses.size() > 0) {
             Batch batch = null;
             if (batchTitle != null && batchTitle.trim().length() > 0) {
@@ -398,7 +405,7 @@ public class BatchForm extends BasisForm {
             }
 
             serviceManager.getBatchService().save(batch);
-            if (ConfigMain.getBooleanParameter("batches.logChangesToWikiField", false)) {
+            if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : selectedProcesses) {
                     serviceManager.getProcessService()
                             .addToWikiField(
@@ -410,7 +417,7 @@ public class BatchForm extends BasisForm {
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
         }
-        FilterAlleStart();
+        filterAlleStart();
     }
 
     /*
@@ -490,10 +497,10 @@ public class BatchForm extends BasisForm {
                             Hibernate.initialize(prozess.getProject().getProjectFileGroups());
                             Hibernate.initialize(prozess.getRuleset());
                             ExportDms dms = new ExportDms(
-                                    ConfigMain.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
+                                    ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                             dms.startExport(prozess);
                         }
-                        return ConfigMain.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
                     case NEWSPAPER:
                         TaskManager.addTask(new ExportNewspaperBatchTask(batch));
                         return "taskmanager";
@@ -555,6 +562,9 @@ public class BatchForm extends BasisForm {
         } catch (IOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("errorElasticSearch");
+        } catch (CustomResponseException e) {
+            logger.error(e);
+            Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
         }
     }
 }

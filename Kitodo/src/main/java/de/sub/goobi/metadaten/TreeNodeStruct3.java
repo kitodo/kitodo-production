@@ -11,7 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.TreeNode;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class TreeNodeStruct3 extends TreeNode {
     private boolean einfuegenErlaubt;
 
     /**
-     * Konstruktoren
+     * Konstruktoren.
      */
     public TreeNodeStruct3() {
     }
@@ -59,7 +59,7 @@ public class TreeNodeStruct3 extends TreeNode {
 
     public String getMainTitle() {
 
-        int maxSize = ConfigMain.getIntParameter("MetsEditorMaxTitleLength", 0);
+        int maxSize = ConfigCore.getIntParameter("MetsEditorMaxTitleLength", 0);
         if (maxSize > 0 && this.mainTitle != null && this.mainTitle.length() > maxSize) {
             return this.mainTitle.substring(0, maxSize - 1);
         }

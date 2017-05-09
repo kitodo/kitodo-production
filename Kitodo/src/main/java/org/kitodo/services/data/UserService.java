@@ -13,8 +13,7 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.config.ConfigMain;
-import de.sub.goobi.helper.FilesystemHelper;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
@@ -26,22 +25,37 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
+import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.SearchService;
 
-public class UserService {
+public class UserService extends SearchService<User> {
 
-    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
-
-    private UserDAO userDao = new UserDAO();
+    private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
-    private Indexer<User, UserType> indexer = new Indexer<>("kitodo", User.class);
+    private Indexer<User, UserType> indexer = new Indexer<>(User.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(UserService.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public UserService() {
+        super(new Searcher(User.class));
+    }
 
     /**
      * Method saves object to database and insert document to the index of
@@ -50,18 +64,63 @@ public class UserService {
      * @param user
      *            object
      */
-    public void save(User user) throws DAOException, IOException {
-        userDao.save(user);
+    public void save(User user) throws CustomResponseException, DAOException, IOException {
+        userDAO.save(user);
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(user, userType);
     }
 
+    /**
+     * Method saves user object to database.
+     *
+     * @param user
+     *            object
+     */
+    public void saveToDatabase(User user) throws DAOException {
+        userDAO.save(user);
+    }
+
+    /**
+     * Method saves user document to the index of Elastic Search.
+     *
+     * @param user
+     *            object
+     */
+    public void saveToIndex(User user) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performSingleRequest(user, userType);
+    }
+
+    /**
+     * Method saves user groups, properties and tasks related to modified user.
+     *
+     * @param user
+     *            object
+     */
+    protected void saveDependenciesToIndex(User user) throws CustomResponseException, IOException {
+        for (UserGroup userGroup : user.getUserGroups()) {
+            serviceManager.getUserGroupService().saveToIndex(userGroup);
+        }
+
+        for (Project project : user.getProjects()) {
+            serviceManager.getProjectService().saveToIndex(project);
+        }
+
+        for (Property property : user.getProperties()) {
+            serviceManager.getPropertyService().saveToIndex(property);
+        }
+
+        for (Task task : user.getTasks()) {
+            serviceManager.getTaskService().saveToIndex(task);
+        }
+    }
+
     public User find(Integer id) throws DAOException {
-        return userDao.find(id);
+        return userDAO.find(id);
     }
 
     public List<User> findAll() throws DAOException {
-        return userDao.findAll();
+        return userDAO.findAll();
     }
 
     /**
@@ -71,32 +130,32 @@ public class UserService {
      * @param user
      *            object
      */
-    public void remove(User user) throws DAOException, IOException {
-        userDao.remove(user);
+    public void remove(User user) throws CustomResponseException, DAOException, IOException {
+        userDAO.remove(user);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(user, userType);
     }
 
     public List<User> search(String query) throws DAOException {
-        return userDao.search(query);
+        return userDAO.search(query);
     }
 
     public List<User> search(String query, String parameter) throws DAOException {
-        return userDao.search(query, parameter);
+        return userDAO.search(query, parameter);
     }
 
     public List<User> search(String query, String namedParameter, String parameter) throws DAOException {
-        return userDao.search(query, namedParameter, parameter);
+        return userDAO.search(query, namedParameter, parameter);
     }
 
     public Long count(String query) throws DAOException {
-        return userDao.count(query);
+        return userDAO.count(query);
     }
 
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userType);
     }
@@ -115,10 +174,6 @@ public class UserService {
             current = (User) session.load(User.class, user.getId());
         }
         if (!hasOpen) {
-            current.getProjects().size();
-            current.getProcessingTasks().size();
-            current.getTasks().size();
-            current.getUserGroups().size();
             session.close();
         }
         return current;
@@ -261,7 +316,7 @@ public class UserService {
         if (inputPassword == null || inputPassword.length() == 0) {
             return false;
         } else {
-            if (ConfigMain.getBooleanParameter("ldap_use")) {
+            if (ConfigCore.getBooleanParameter("ldap_use")) {
                 Ldap ldap = new Ldap();
                 return ldap.isUserPasswordCorrect(user, inputPassword);
             } else {
@@ -289,11 +344,11 @@ public class UserService {
      */
     public String getHomeDirectory(User user) throws IOException, InterruptedException {
         String result;
-        if (ConfigMain.getBooleanParameter("ldap_use")) {
+        if (ConfigCore.getBooleanParameter("ldap_use")) {
             Ldap ldap = new Ldap();
             result = ldap.getUserHomeDirectory(user);
         } else {
-            result = ConfigMain.getParameter("dir_Users") + user.getLogin();
+            result = ConfigCore.getParameter("dir_Users") + user.getLogin();
         }
 
         if (result.equals("")) {
@@ -305,7 +360,7 @@ public class UserService {
         }
         // if the directory is not "", but does not yet exist, then create it
         // now
-        FilesystemHelper.createDirectoryForUser(result, user.getLogin());
+        serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
         return result;
     }
 

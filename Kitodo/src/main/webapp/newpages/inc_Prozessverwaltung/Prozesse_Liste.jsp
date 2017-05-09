@@ -37,14 +37,14 @@
     <h:outputText value="#{msgs.aktuelleProzesse}" rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell'}"/>
 </htm:h4>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
                rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen'}"
                id="new1">
     <h:outputText value="#{msgs.einenNeuenProzessAnlegen}"/>
 </h:commandLink>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
                rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen'}"
                id="new2">
@@ -410,7 +410,7 @@
         </h:commandLink>
 
         <%-- Metadaten-Schaltknopf --%>
-        <h:commandLink action="#{Metadaten.XMLlesen}" id="action14" title="#{msgs.metadatenBearbeiten}123"
+        <h:commandLink action="#{Metadaten.readXml}" id="action14" title="#{msgs.metadatenBearbeiten}123"
                        rendered="#{(LoginForm.maximaleBerechtigung != 1) && (LoginForm.maximaleBerechtigung != 2) && item.blockedUsers == null && ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
             <h:graphicImage value="/newpages/images/buttons/view1.gif" style="margin-right:10px"/>
             <f:param name="nurLesen" value="true"/>
@@ -422,7 +422,7 @@
         <h:panelGroup rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
 
             <%-- Metadaten-Schaltknopf --%>
-            <h:commandLink action="#{Metadaten.XMLlesen}" id="action15" title="#{msgs.metadatenBearbeiten}"
+            <h:commandLink action="#{Metadaten.readXml}" id="action15" title="#{msgs.metadatenBearbeiten}"
                            rendered="#{ProzessverwaltungForm.modusAnzeige!='vorlagen'}">
                 <h:graphicImage value="/newpages/images/buttons/view1.gif" style="margin-right:10px"/>
                 <f:param name="ProzesseID" value="#{item.id}"/>
@@ -537,14 +537,14 @@
 
 </x:dataTable>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.Neu}" immediate="true"
                rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige!='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                id="new3">
     <h:outputText value="#{msgs.einenNeuenProzessAnlegen}"/>
 </h:commandLink>
 
-<%-- Neu-Schaltknopf --%>
+<%-- newUser-Schaltknopf --%>
 <h:commandLink action="#{ProzessverwaltungForm.NeuVorlage}" immediate="true"
                rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2) && ProzessverwaltungForm.modusAnzeige=='vorlagen' && (ProzessverwaltungForm.page.totalResults > LoginForm.myBenutzer.tableSize)}"
                id="new4">

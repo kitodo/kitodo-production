@@ -21,11 +21,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 
-/*****************************************************************************
+/**
  * Filter, that uses Criteria, changed by {@link FilterHelper}.
  * 
  * @author Wulf Riebensahm
- ****************************************************************************/
+ */
 public class UserProcessesFilter implements IEvaluableFilter, Cloneable {
     private static final long serialVersionUID = -7552065588001741347L;
     private boolean clearSession = false;
@@ -69,7 +69,7 @@ public class UserProcessesFilter implements IEvaluableFilter, Cloneable {
      * (java.lang.String)
      */
     @Override
-    public void setFilter(String Filter) {
+    public void setFilter(String filter) {
         throw new UnsupportedOperationException(
                 this.getClass().getName() + " does not implement the method 'setFilter()'. This Filter is static");
     }

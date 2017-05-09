@@ -105,7 +105,7 @@ public class ScriptThreadWithoutHibernate extends EmptyTask {
             IStepPlugin isp = (IStepPlugin) PluginLoader.getPluginByTitle(PluginType.Step, step.getStepPlugin());
             isp.initialize(step, "");
             if (isp.execute()) {
-                hs.CloseStepObjectAutomatic(step);
+                hs.closeStepObjectAutomatic(step);
             }
         }
     }

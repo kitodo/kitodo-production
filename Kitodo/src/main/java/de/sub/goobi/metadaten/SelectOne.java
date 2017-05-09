@@ -74,8 +74,9 @@ public class SelectOne<T extends Selectable> {
      */
     public void setSelected(String id) {
         T found = entries.get(id);
-        if (found != null)
+        if (found != null) {
             this.selected = found;
+        }
     }
 
     /**

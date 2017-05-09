@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import de.schlichtherle.io.File;
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kitodo.services.ServiceManager;
 
 public class StatisticsManagerTest {
     static StatisticsManager testManager;
@@ -76,19 +77,20 @@ public class StatisticsManagerTest {
 
     @AfterClass
     public static void tearDown() {
+        ServiceManager serviceManager = new ServiceManager();
         File dir = new File(tempPath);
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(java.io.File dir, String name) {
                 return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"));
             }
         };
-        String[] data = dir.list(filter);
+        String[] data = serviceManager.getFileService().list(filter, dir);
         File file;
         if (data == null || data.length == 0) {
             return;
         }
-        for (int i = 0; i < data.length; i++) {
-            file = new File(tempPath + data[i]);
+        for (String aData : data) {
+            file = new File(tempPath + aData);
             boolean success = file.delete();
             if (!success) {
                 throw new IllegalArgumentException("Delete: deletion failed");
@@ -121,7 +123,7 @@ public class StatisticsManagerTest {
     @Ignore("Crashing")
     @Test
     public final void testCalculate() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testManager.calculate();
     }
 
@@ -261,7 +263,7 @@ public class StatisticsManagerTest {
 
     @Test
     public final void testGetRenderingElements() {
-        ConfigMain.setImagesPath(tempPath);
+        ConfigCore.setImagesPath(tempPath);
         testManager.getRenderingElements();
     }
 

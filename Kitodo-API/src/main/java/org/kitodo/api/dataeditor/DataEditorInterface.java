@@ -11,27 +11,27 @@
 
 package org.kitodo.api.dataeditor;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 public interface DataEditorInterface {
 
     /**
      * Opens an editor to read an xmlfile.
      *
-     * @param xmlFilePath
-     *            The Path to the xml file to read.
+     * @param xmlFileUri
+     *            The URI to the xml file to read.
      */
-    void readData(Path xmlFilePath);
+    void readData(URI xmlFileUri);
 
     /**
      * Opens an editor to edit an xmlfile.
      *
-     * @param xmlFilePath
-     *            The Path to the xml file to edit.
-     * @param rulesetFilePath
-     *            The Path to the rulesetFilePath.
+     * @param xmlFileUri
+     *            The URI to the xml file to edit.
+     * @param rulesetFileUri
+     *            The URI to the rulesetFile.
      * @return true, if editing was succesfull, false otherwise.
      */
-    boolean editData(Path xmlFilePath, Path rulesetFilePath);
+    boolean editData(URI xmlFileUri, URI rulesetFileUri);
 
 }

@@ -11,7 +11,7 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
@@ -26,6 +26,7 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class DocketForm extends BasisForm {
@@ -44,9 +45,9 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Speichern() {
+    public String save() {
         try {
-            if (hasValidRulesetFilePath(myDocket, ConfigMain.getParameter("xsltFolder"))) {
+            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
                 return "DocketList";
             } else {
@@ -59,6 +60,10 @@ public class DocketForm extends BasisForm {
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+            logger.error(e);
+            return "";
+        } catch (CustomResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
             logger.error(e);
             return "";
         }
@@ -74,7 +79,7 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Loeschen() {
+    public String deleteDocket() {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setFehlerMeldung("DocketInUse");
@@ -87,6 +92,10 @@ public class DocketForm extends BasisForm {
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+            return "";
+        } catch (CustomResponseException e) {
+            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
+            logger.error(e);
             return "";
         }
         return "DocketList";
@@ -105,14 +114,14 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         try {
             // HibernateUtil.clearSession();
             Session session = Helper.getHibernateSession();
             // session.flush();
             session.clear();
             Criteria crit = session.createCriteria(Docket.class);
-            crit.addOrder(Order.asc("name"));
+            crit.addOrder(Order.asc("title"));
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
@@ -121,8 +130,8 @@ public class DocketForm extends BasisForm {
         return "DocketList";
     }
 
-    public String FilterKeinMitZurueck() {
-        FilterKein();
+    public String filterKeinMitZurueck() {
+        filterKein();
         return this.zurueck;
     }
 

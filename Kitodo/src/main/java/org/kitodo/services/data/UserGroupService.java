@@ -16,36 +16,76 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserGroupDAO;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.TitleSearchService;
 
-public class UserGroupService {
-    private UserGroupDAO userGroupDao = new UserGroupDAO();
+public class UserGroupService extends TitleSearchService<UserGroup> {
+    private UserGroupDAO userGroupDAO = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
-    private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>("kitodo", UserGroup.class);
+    private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
+    private final ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = Logger.getLogger(UserGroupService.class);
+
+    /**
+     * Constructor with searcher's assigning.
+     */
+    public UserGroupService() {
+        super(new Searcher(UserGroup.class));
+    }
 
     public UserGroup find(Integer id) throws DAOException {
-        return userGroupDao.find(id);
+        return userGroupDAO.find(id);
     }
 
     public List<UserGroup> findAll() throws DAOException {
-        return userGroupDao.findAll();
+        return userGroupDAO.findAll();
     }
 
     /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
+     * Method saves workpiece object to database.
      *
      * @param userGroup
      *            object
      */
-    public void save(UserGroup userGroup) throws DAOException, IOException {
-        userGroupDao.save(userGroup);
+    public void saveToDatabase(UserGroup userGroup) throws DAOException {
+        userGroupDAO.save(userGroup);
+    }
+
+    /**
+     * Method saves workpiece document to the index of Elastic Search.
+     *
+     * @param userGroup
+     *            object
+     */
+    public void saveToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(userGroup, userGroupType);
+    }
+
+    /**
+     * Method saves users and tasks related to modified user group.
+     *
+     * @param userGroup
+     *            object
+     */
+    protected void saveDependenciesToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+        for (User user : userGroup.getUsers()) {
+            serviceManager.getUserService().saveToIndex(user);
+        }
+
+        for (Task task : userGroup.getTasks()) {
+            serviceManager.getTaskService().saveToIndex(task);
+        }
     }
 
     /**
@@ -55,24 +95,24 @@ public class UserGroupService {
      * @param userGroup
      *            object
      */
-    public void remove(UserGroup userGroup) throws DAOException, IOException {
-        userGroupDao.remove(userGroup);
+    public void remove(UserGroup userGroup) throws CustomResponseException, DAOException, IOException {
+        userGroupDAO.remove(userGroup);
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(userGroup, userGroupType);
     }
 
     public List<UserGroup> search(String query) throws DAOException {
-        return userGroupDao.search(query);
+        return userGroupDAO.search(query);
     }
 
     public Long count(String query) throws DAOException {
-        return userGroupDao.count(query);
+        return userGroupDAO.count(query);
     }
 
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userGroupType);
     }

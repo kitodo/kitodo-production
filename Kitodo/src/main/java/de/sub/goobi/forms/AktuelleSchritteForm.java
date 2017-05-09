@@ -11,11 +11,10 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.FileUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
@@ -66,15 +65,17 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.HistoryType;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 public class AktuelleSchritteForm extends BasisForm {
@@ -128,7 +129,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /*
@@ -138,7 +139,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Anzeige der Schritte.
      */
-    public String FilterAlleStart() {
+    public String filterAlleStart() {
         try {
             this.myFilteredDataSource = new UserDefinedStepFilter(true);
 
@@ -217,7 +218,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
-    public String SchrittDurchBenutzerUebernehmen() {
+    public String schrittDurchBenutzerUebernehmen() {
         this.flagWaitLock.lock();
         try {
             if (!this.flagWait) {
@@ -245,7 +246,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     this.serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
                             .add(new History(this.mySchritt.getProcessingBegin(),
                                     this.mySchritt.getOrdering().doubleValue(), this.mySchritt.getTitle(),
-                                    HistoryType.taskInWork, this.mySchritt.getProcess()));
+                                    HistoryTypeEnum.taskInWork, this.mySchritt.getProcess()));
                     try {
                         /*
                          * den Prozess aktualisieren, so dass der
@@ -257,6 +258,8 @@ public class AktuelleSchritteForm extends BasisForm {
                         myLogger.error("step couldn't get saved", e);
                     } catch (IOException e) {
                         myLogger.error("process couldn't get inserted", e);
+                    } catch (CustomResponseException e) {
+                        myLogger.error("Elastic Search incorrect server response", e);
                     } finally {
                         this.flagWait = false;
                     }
@@ -266,7 +269,7 @@ public class AktuelleSchritteForm extends BasisForm {
                      */
 
                     if (this.mySchritt.isTypeImagesRead() || this.mySchritt.isTypeImagesWrite()) {
-                        DownloadToHome();
+                        downloadToHome();
                     }
                 }
             } else {
@@ -285,7 +288,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String EditStep() {
+    public String editStep() {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
@@ -298,7 +301,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     @SuppressWarnings("unchecked")
-    public String TakeOverBatch() {
+    public String takeOverBatch() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch = new ArrayList<Task>();
 
@@ -323,7 +326,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
             currentStepsOfBatch = crit.list();
         } else {
-            return SchrittDurchBenutzerUebernehmen();
+            return schrittDurchBenutzerUebernehmen();
         }
         // if only one step is assigned for this batch, use the single
 
@@ -333,7 +336,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return "";
         }
         if (currentStepsOfBatch.size() == 1) {
-            return SchrittDurchBenutzerUebernehmen();
+            return schrittDurchBenutzerUebernehmen();
         }
 
         for (Task s : currentStepsOfBatch) {
@@ -351,7 +354,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
                 serviceManager.getProcessService().getHistoryInitialized(s.getProcess())
                         .add(new History(s.getProcessingBegin(), s.getOrdering().doubleValue(), s.getTitle(),
-                                HistoryType.taskInWork, s.getProcess()));
+                                HistoryTypeEnum.taskInWork, s.getProcess()));
 
                 if (s.isTypeImagesRead() || s.isTypeImagesWrite()) {
                     try {
@@ -364,7 +367,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (ben != null) {
                         s.setProcessingUser(ben);
                     }
-                    this.myDav.DownloadToHome(s.getProcess(), s.getId(), !s.isTypeImagesWrite());
+                    this.myDav.downloadToHome(s.getProcess(), s.getId(), !s.isTypeImagesWrite());
 
                 }
             }
@@ -374,13 +377,13 @@ public class AktuelleSchritteForm extends BasisForm {
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
                 myLogger.error("task couldn't get saved", e);
-            } catch (IOException e) {
+            } catch (IOException | CustomResponseException e) {
                 myLogger.error("task couldn't get inserted", e);
             }
         }
 
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "BatchesEdit";
+        return "batchesEdit";
     }
 
     /**
@@ -389,7 +392,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     @SuppressWarnings("unchecked")
-    public String BatchesEdit() {
+    public String batchesEdit() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch = new ArrayList<Task>();
 
@@ -426,7 +429,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return "AktuelleSchritteBearbeiten";
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "BatchesEdit";
+        return "batchesEdit";
     }
 
     @Deprecated
@@ -438,8 +441,8 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String SchrittDurchBenutzerZurueckgeben() {
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+    public String schrittDurchBenutzerZurueckgeben() {
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setProcessingStatusEnum(TaskStatus.OPEN);
         // mySchritt.setBearbeitungsbenutzer(null);
         // if we have a correction-step here then never remove startdate
@@ -459,7 +462,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * gespeichert wird
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | CustomResponseException e) {
             myLogger.error("task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
@@ -471,7 +474,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String SchrittDurchBenutzerAbschliessen() {
+    public String schrittDurchBenutzerAbschliessen() {
 
         if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
             IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
@@ -506,7 +509,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (this.mySchritt.isTypeCloseVerify()) {
             /* Metadatenvalidierung */
-            if (this.mySchritt.isTypeMetadata() && ConfigMain.getBooleanParameter("useMetadatenvalidierung")) {
+            if (this.mySchritt.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
                 MetadatenVerifizierung mv = new MetadatenVerifizierung();
                 mv.setAutoSave(true);
                 if (!mv.validate(this.mySchritt.getProcess())) {
@@ -546,17 +549,17 @@ public class AktuelleSchritteForm extends BasisForm {
          * wenn das Ergebnis der Verifizierung ok ist, dann weiter, ansonsten
          * schon vorher draussen
          */
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         // it returns null! - not possible to close task
         StepObject so = StepManager.getStepById(this.mySchritt.getId());
-        new HelperSchritteWithoutHibernate().CloseStepObjectAutomatic(so, true);
+        new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(so, true);
         // new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
-        return FilterAlleStart();
+        return filterAlleStart();
     }
 
-    public String SperrungAufheben() {
-        MetadatenSperrung.UnlockProcess(this.mySchritt.getProcess().getId());
+    public String sperrungAufheben() {
+        MetadatenSperrung.unlockProcess(this.mySchritt.getProcess().getId());
         return "";
     }
 
@@ -581,7 +584,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return problem as String
      */
     @SuppressWarnings("unchecked")
-    public String ReportProblem() {
+    public String reportProblem() {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             Helper.setFehlerMeldung("userNotFound");
@@ -591,7 +594,7 @@ public class AktuelleSchritteForm extends BasisForm {
             myLogger.debug("mySchritt.ID: " + this.mySchritt.getId());
             myLogger.debug("Korrekturschritt.ID: " + this.myProblemID);
         }
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         Date myDate = new Date();
         this.mySchritt.setProcessingStatusEnum(TaskStatus.LOCKED);
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -605,13 +608,13 @@ public class AktuelleSchritteForm extends BasisForm {
             temp = serviceManager.getTaskService().setCorrectionStep(temp);
             temp.setProcessingEnd(null);
 
-            org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-            pe.setTitle(Helper.getTranslation("Korrektur notwendig"));
-            pe.setValue("[" + this.formatter.format(new Date()) + ", "
+            Property processProperty = new Property();
+            processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
+            processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
                     + serviceManager.getUserService().getFullName(ben) + "] " + this.problemMessage);
-            pe.setType(PropertyType.messageError);
-            pe.setProcess(this.mySchritt.getProcess());
-            this.mySchritt.getProcess().getProperties().add(pe);
+            processProperty.setType(PropertyType.messageError);
+            processProperty.getProcesses().add(this.mySchritt.getProcess());
+            this.mySchritt.getProcess().getProperties().add(processProperty);
 
             String message = Helper.getTranslation("KorrekturFuer") + " " + temp.getTitle() + ": " + this.problemMessage
                     + " (" + serviceManager.getUserService().getFullName(ben) + ")";
@@ -619,7 +622,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     this.mySchritt.getProcess().getWikiField(), "error", message));
             serviceManager.getTaskService().save(temp);
             serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
-                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(), HistoryType.taskError,
+                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(), HistoryTypeEnum.taskError,
                             temp.getProcess()));
             /*
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
@@ -642,13 +645,13 @@ public class AktuelleSchritteForm extends BasisForm {
              * gespeichert wird
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | CustomResponseException e) {
             myLogger.error("task couldn't get saved/inserted", e);
         }
 
         this.problemMessage = "";
         this.myProblemID = 0;
-        return FilterAlleStart();
+        return filterAlleStart();
     }
 
     /**
@@ -673,14 +676,14 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String SolveProblem() {
+    public String solveProblem() {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             Helper.setFehlerMeldung("userNotFound");
             return "";
         }
         Date now = new Date();
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setProcessingStatusEnum(TaskStatus.DONE);
         this.mySchritt.setProcessingEnd(now);
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -723,36 +726,36 @@ public class AktuelleSchritteForm extends BasisForm {
             this.mySchritt.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.mySchritt.getProcess(),
                     this.mySchritt.getProcess().getWikiField(), "info", message));
 
-            org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-            pe.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
-            pe.setValue(
+            Property processProperty = new Property();
+            processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
+            processProperty.setValue(
                     "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(ben)
                             + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + temp.getTitle() + ": "
                             + this.solutionMessage);
-            pe.setType(PropertyType.messageImportant);
-            pe.setProcess(this.mySchritt.getProcess());
-            this.mySchritt.getProcess().getProperties().add(pe);
+            processProperty.setType(PropertyType.messageImportant);
+            processProperty.getProcesses().add(this.mySchritt.getProcess());
+            this.mySchritt.getProcess().getProperties().add(processProperty);
 
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException e) {
+        } catch (DAOException | IOException | CustomResponseException e) {
             myLogger.error("task couldn't get saved/inserted", e);
         }
 
         this.solutionMessage = "";
         this.mySolutionID = 0;
-        return FilterAlleStart();
+        return filterAlleStart();
     }
 
     /**
      * Upload und Download der Images.
      */
-    public String UploadFromHome() {
+    public String uploadFromHome() {
         mySchritt.setProcessingTime(new Date());
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben != null) {
             mySchritt.setProcessingUser(ben);
         }
-        this.myDav.UploadFromHome(this.mySchritt.getProcess());
+        this.myDav.uploadFromHome(this.mySchritt.getProcess());
         Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProcess().getTitle());
         return "";
     }
@@ -762,7 +765,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return String
      */
-    public String DownloadToHome() {
+    public String downloadToHome() {
         try {
             new File(serviceManager.getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()));
         } catch (Exception e1) {
@@ -773,7 +776,7 @@ public class AktuelleSchritteForm extends BasisForm {
         if (ben != null) {
             mySchritt.setProcessingUser(ben);
         }
-        this.myDav.DownloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId(),
+        this.myDav.downloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId(),
                 !this.mySchritt.isTypeImagesWrite());
 
         return "";
@@ -785,8 +788,8 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String UploadFromHomeAlle() throws NumberFormatException, DAOException {
-        List<String> fertigListe = this.myDav.UploadFromHomeAlle(DONEDIRECTORYNAME);
+    public String uploadFromHomeAlle() throws NumberFormatException, DAOException {
+        List<String> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<String> geprueft = new ArrayList<String>();
         /*
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
@@ -794,7 +797,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (fertigListe != null && fertigListe.size() > 0 && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
-            FilterAlleStart();
+            filterAlleStart();
         }
         for (Iterator<String> iter = fertigListe.iterator(); iter.hasNext();) {
             String element = iter.next();
@@ -809,7 +812,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 if (step.getProcess().getId() == Integer.parseInt(myID)
                         && step.getProcessingStatusEnum() == TaskStatus.INWORK) {
                     this.mySchritt = step;
-                    if (!SchrittDurchBenutzerAbschliessen().isEmpty()) {
+                    if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
                         geprueft.add(element);
                     }
                     this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
@@ -817,7 +820,7 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
 
-        this.myDav.removeFromHomeAlle(geprueft, DONEDIRECTORYNAME);
+        this.myDav.removeAllFromHome(geprueft, DONEDIRECTORYNAME);
         Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", DONEDIRECTORYNAME);
         return "";
     }
@@ -847,8 +850,10 @@ public class AktuelleSchritteForm extends BasisForm {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
                 } catch (IOException e) {
                     Helper.setMeldung("errorElasticSearch" + proz.getTitle());
+                } catch (CustomResponseException e) {
+                    Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
-                this.myDav.DownloadToHome(proz, step.getId(), false);
+                this.myDav.downloadToHome(proz, step.getId(), false);
             }
         }
         // calcHomeImages();
@@ -862,7 +867,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String DownloadToHomeHits() {
+    public String downloadToHomeHits() {
 
         for (Iterator<Task> iter = this.page.getCompleteList().iterator(); iter.hasNext();) {
             Task step = iter.next();
@@ -882,8 +887,10 @@ public class AktuelleSchritteForm extends BasisForm {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
                 } catch (IOException e) {
                     Helper.setMeldung("errorElasticSearch" + proz.getTitle());
+                } catch (CustomResponseException e) {
+                    Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
-                this.myDav.DownloadToHome(proz, step.getId(), false);
+                this.myDav.downloadToHome(proz, step.getId(), false);
             }
         }
         // calcHomeImages();
@@ -970,7 +977,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
-                        this.gesamtAnzahlImages += FileUtils.getNumberOfFiles(
+                        this.gesamtAnzahlImages += serviceManager.getFileService().getNumberOfFiles(
                                 serviceManager.getProcessService().getImagesOrigDirectory(false, step.getProcess()));
                     }
                 } catch (Exception e) {
@@ -1083,7 +1090,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * dies jetzt nachholen, damit die Liste vollstÃ¤ndig ist
              */
             if (this.page == null && (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}") != null) {
-                FilterAlleStart();
+                filterAlleStart();
             }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
@@ -1096,7 +1103,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Auswahl mittels Selectboxen.
      */
     @SuppressWarnings("unchecked")
-    public void SelectionAll() {
+    public void selectionAll() {
         for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
             Task s = iter.next();
             s.setSelected(true);
@@ -1107,7 +1114,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Selection none.
      */
     @SuppressWarnings("unchecked")
-    public void SelectionNone() {
+    public void selectionNone() {
         for (Iterator<Task> iter = this.page.getList().iterator(); iter.hasNext();) {
             Task s = iter.next();
             s.setSelected(false);
@@ -1117,15 +1124,15 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Downloads.
      */
-    public void DownloadTiffHeader() throws IOException {
+    public void downloadTiffHeader() throws IOException {
         TiffHeader tiff = new TiffHeader(this.mySchritt.getProcess());
-        tiff.ExportStart();
+        tiff.exportStart();
     }
 
     /**
      * Export DMS.
      */
-    public void ExportDMS() {
+    public void exportDMS() {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.mySchritt.getProcess());
@@ -1198,7 +1205,7 @@ public class AktuelleSchritteForm extends BasisForm {
             this.addToWikiField = "";
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-            } catch (DAOException | IOException e) {
+            } catch (DAOException | IOException | CustomResponseException e) {
                 myLogger.error(e);
             }
         }
@@ -1224,10 +1231,11 @@ public class AktuelleSchritteForm extends BasisForm {
 
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.mySchritt.getProcess());
-                pt.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.mySchritt.getProcess());
+                pt.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                        .add(processProperty);
                 pt.transfer();
             }
             if (!this.containers.keySet().contains(pt.getContainer())) {
@@ -1260,10 +1268,11 @@ public class AktuelleSchritteForm extends BasisForm {
         if (valid) {
             for (ProcessProperty p : this.processPropertyList) {
                 if (p.getProzesseigenschaft() == null) {
-                    org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                    pe.setProcess(this.mySchritt.getProcess());
-                    p.setProzesseigenschaft(pe);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
+                    Property processProperty = new Property();
+                    processProperty.getProcesses().add(this.mySchritt.getProcess());
+                    p.setProzesseigenschaft(processProperty);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                            .add(processProperty);
                 }
                 p.transfer();
                 if (!serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
@@ -1273,10 +1282,10 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
             }
             Process p = this.mySchritt.getProcess();
-            List<org.kitodo.data.database.beans.ProcessProperty> props = p.getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(pe);
+            List<Property> propertyList = p.getProperties();
+            for (Property processProperty : propertyList) {
+                if (processProperty.getTitle() == null) {
+                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
                 }
             }
 
@@ -1288,6 +1297,9 @@ public class AktuelleSchritteForm extends BasisForm {
                 Helper.setFehlerMeldung("propertiesNotSaved");
             } catch (IOException e) {
                 myLogger.error(e);
+            } catch (CustomResponseException e) {
+                myLogger.error(e);
+                Helper.setMeldung("ElasticSearch server incorrect response");
             }
         }
     }
@@ -1308,25 +1320,26 @@ public class AktuelleSchritteForm extends BasisForm {
                 return;
             }
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.mySchritt.getProcess());
-                this.processProperty.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.mySchritt.getProcess());
+                this.processProperty.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(processProperty);
             }
             this.processProperty.transfer();
 
-            List<org.kitodo.data.database.beans.ProcessProperty> props = this.mySchritt.getProcess().getProperties();
-            for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-                if (pe.getTitle() == null) {
+            List<Property> propertyList = this.mySchritt.getProcess().getProperties();
+            for (Property processProperty : propertyList) {
+                if (processProperty.getTitle() == null) {
                     // TODO: check carefully how this list is modified
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).remove(pe);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                            .remove(processProperty);
                 }
             }
             if (!serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
                     .contains(this.processProperty.getProzesseigenschaft())) {
                 serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
                         .add(this.processProperty.getProzesseigenschaft());
-                this.processProperty.getProzesseigenschaft().setProcess(this.mySchritt.getProcess());
+                this.processProperty.getProzesseigenschaft().getProcesses().add(this.mySchritt.getProcess());
             }
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
@@ -1334,7 +1347,7 @@ public class AktuelleSchritteForm extends BasisForm {
             } catch (DAOException e) {
                 myLogger.error(e);
                 Helper.setFehlerMeldung("propertyNotSaved");
-            } catch (IOException e) {
+            } catch (IOException | CustomResponseException e) {
                 myLogger.error(e);
             }
         }
@@ -1383,10 +1396,11 @@ public class AktuelleSchritteForm extends BasisForm {
         // this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
         // }
 
-        List<org.kitodo.data.database.beans.ProcessProperty> props = this.mySchritt.getProcess().getProperties();
-        for (org.kitodo.data.database.beans.ProcessProperty pe : props) {
-            if (pe.getTitle() == null) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).remove(pe);
+        List<Property> propertyList = this.mySchritt.getProcess().getProperties();
+        for (Property processProperty : propertyList) {
+            if (processProperty.getTitle() == null) {
+                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                        .remove(processProperty);
             }
         }
         try {
@@ -1394,7 +1408,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             myLogger.error(e);
             Helper.setFehlerMeldung("propertiesNotDeleted");
-        } catch (IOException e) {
+        } catch (IOException | CustomResponseException e) {
             myLogger.error(e);
         }
         // saveWithoutValidation();
@@ -1507,10 +1521,11 @@ public class AktuelleSchritteForm extends BasisForm {
             this.processPropertyList.add(newProp);
             this.processProperty = newProp;
             if (this.processProperty.getProzesseigenschaft() == null) {
-                org.kitodo.data.database.beans.ProcessProperty pe = new org.kitodo.data.database.beans.ProcessProperty();
-                pe.setProcess(this.mySchritt.getProcess());
-                this.processProperty.setProzesseigenschaft(pe);
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess()).add(pe);
+                Property processProperty = new Property();
+                processProperty.getProcesses().add(this.mySchritt.getProcess());
+                this.processProperty.setProzesseigenschaft(processProperty);
+                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
+                        .add(processProperty);
             }
             this.processProperty.transfer();
 
@@ -1521,7 +1536,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DAOException e) {
             myLogger.error(e);
             Helper.setFehlerMeldung("propertiesNotSaved");
-        } catch (IOException e) {
+        } catch (IOException | CustomResponseException e) {
             myLogger.error(e);
         }
         loadProcessProperties();

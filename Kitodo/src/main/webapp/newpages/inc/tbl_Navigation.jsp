@@ -93,7 +93,7 @@
 
                         <%-- aktuelle Schritte --%>
                         <h:commandLink styleClass="mlink" id="myTasks"
-                                       action="#{AktuelleSchritteForm.FilterAlleStart}"
+                                       action="#{AktuelleSchritteForm.filterAlleStart}"
                                        style="#{NavigationForm.aktuell == '20' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '20'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -136,7 +136,7 @@
                         <%-- batches --%>
                         <h:commandLink styleClass="mlink"
                                        rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                       action="#{BatchForm.FilterAlleStart}"
+                                       action="#{BatchForm.filterAlleStart}"
                                        style="#{NavigationForm.aktuell == '44' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '44'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -188,7 +188,7 @@
 
                         <%-- Menu Administration / Users --%>
                         <h:commandLink styleClass="mlink" id="users"
-                                       action="#{BenutzerverwaltungForm.FilterKein}"
+                                       action="#{BenutzerverwaltungForm.filterKein}"
                                        style="#{NavigationForm.aktuell == '30' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '30'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -212,7 +212,7 @@
 
                         <%-- Projekte --%>
                         <h:commandLink styleClass="mlink" id="projects"
-                                       action="#{ProjekteForm.FilterKein}"
+                                       action="#{ProjekteForm.filterKein}"
                                        style="#{NavigationForm.aktuell == '32' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '32'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -236,7 +236,7 @@
 
                         <%-- Dockets --%>
                         <h:commandLink styleClass="mlink" id="navigation"
-                                       action="#{DocketForm.FilterKein}"
+                                       action="#{DocketForm.filterKein}"
                                        style="#{NavigationForm.aktuell == '45' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '45'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -285,17 +285,6 @@
                                                     value="35"/>
                         </h:commandLink>
 
-                        <%-- Administrationsaufgaben
-                        <h:commandLink styleClass="mlink" action="Administrationsaufgaben" id="admin"
-                            style="#{NavigationForm.aktuell == '37' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '37'}">
-                                <f:verbatim>&#8250; </f:verbatim>
-                            </h:panelGroup>
-                            <h:outputText value="#{msgs.scripte}" />
-                            <x:updateActionListener property="#{NavigationForm.aktuell}"
-                                value="37" />
-                        </h:commandLink>
-                        --%>
                     </h:panelGroup>
 
                     <%-- ################            Benutzereinstellungen              ######################--%>

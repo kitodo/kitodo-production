@@ -11,15 +11,15 @@
 
 package de.sub.goobi.helper;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.download.TiffHeader;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,13 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.goobi.io.SafeFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class WebDav implements Serializable {
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = new FileService();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger myLogger = Logger.getLogger(WebDav.class);
 
@@ -44,27 +45,27 @@ public class WebDav implements Serializable {
     private static String DONEDIRECTORYNAME = "fertig/";
 
     public WebDav() {
-        DONEDIRECTORYNAME = ConfigMain.getParameter("doneDirectoryName", "fertig/");
+        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /**
      * Retrieve all folders from one directory.
      */
 
-    public List<String> UploadFromHomeAlle(String inVerzeichnis) {
+    public List<String> uploadAllFromHome(String inVerzeichnis) {
         List<String> rueckgabe = new ArrayList<String>();
         User aktuellerBenutzer = Helper.getCurrentUser();
-        String VerzeichnisAlle;
+        String directoryName;
 
         try {
-            VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
-            myLogger.error("Exception UploadFromHomeAlle()", ioe);
-            Helper.setFehlerMeldung("UploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
+            myLogger.error("Exception uploadFromHomeAlle()", ioe);
+            Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return rueckgabe;
         }
 
-        SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
+        File benutzerHome = new File(directoryName);
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -72,20 +73,16 @@ public class WebDav implements Serializable {
                 return name.endsWith("]");
             }
         };
-        String[] dateien = benutzerHome.list(filter);
-        if (dateien == null) {
-            return new ArrayList<String>();
-        } else {
-            for (String data : dateien) {
-                if (data.endsWith("/") || data.endsWith("\\")) {
-                    data = data.substring(0, data.length() - 1);
-                }
-                if (data.contains("/")) {
-                    data = data.substring(data.lastIndexOf("/"));
-                }
+        String[] dateien = fileService.list(filter, benutzerHome);
+        for (String data : dateien) {
+            if (data.endsWith("/") || data.endsWith("\\")) {
+                data = data.substring(0, data.length() - 1);
             }
-            return new ArrayList<String>(Arrays.asList(dateien));
+            if (data.contains("/")) {
+                data = data.substring(data.lastIndexOf("/"));
+            }
         }
+        return new ArrayList<String>(Arrays.asList(dateien));
 
     }
 
@@ -93,11 +90,11 @@ public class WebDav implements Serializable {
      * Remove Folders from Directory.
      */
     // TODO: Use generic types
-    public void removeFromHomeAlle(List<String> inList, String inVerzeichnis) {
-        String VerzeichnisAlle;
+    public void removeAllFromHome(List<String> inList, String inVerzeichnis) {
+        String verzeichnisAlle;
         User aktuellerBenutzer = Helper.getCurrentUser();
         try {
-            VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
         } catch (Exception ioe) {
             myLogger.error("Exception RemoveFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("Upload stoped, error", ioe.getMessage());
@@ -106,7 +103,7 @@ public class WebDav implements Serializable {
 
         for (Iterator<String> it = inList.iterator(); it.hasNext();) {
             String myname = it.next();
-            FilesystemHelper.deleteSymLink(VerzeichnisAlle + myname);
+            FilesystemHelper.deleteSymLink(verzeichnisAlle + myname);
         }
     }
 
@@ -116,10 +113,10 @@ public class WebDav implements Serializable {
      * @param myProcess
      *            Process object
      */
-    public void UploadFromHome(Process myProcess) {
+    public void uploadFromHome(Process myProcess) {
         User aktuellerBenutzer = Helper.getCurrentUser();
         if (aktuellerBenutzer != null) {
-            UploadFromHome(aktuellerBenutzer, myProcess);
+            uploadFromHome(aktuellerBenutzer, myProcess);
         }
     }
 
@@ -131,13 +128,13 @@ public class WebDav implements Serializable {
      * @param myProcess
      *            Process object
      */
-    public void UploadFromHome(User inBenutzer, Process myProcess) {
+    public void uploadFromHome(User inBenutzer, Process myProcess) {
         String nach = "";
 
         try {
             nach = serviceManager.getUserService().getHomeDirectory(inBenutzer);
         } catch (Exception ioe) {
-            myLogger.error("Exception UploadFromHome(...)", ioe);
+            myLogger.error("Exception uploadFromHome(...)", ioe);
             Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
             return;
         }
@@ -145,7 +142,7 @@ public class WebDav implements Serializable {
         /* prüfen, ob Benutzer Massenupload macht */
         if (inBenutzer.isWithMassDownload()) {
             nach += myProcess.getProject().getTitle() + File.separator;
-            SafeFile projectDirectory = new SafeFile(nach = nach.replaceAll(" ", "__"));
+            File projectDirectory = new File(nach = nach.replaceAll(" ", "__"));
             if (!projectDirectory.exists() && !projectDirectory.mkdir()) {
                 List<String> param = new ArrayList<String>();
                 param.add(String.valueOf(nach.replaceAll(" ", "__")));
@@ -158,7 +155,7 @@ public class WebDav implements Serializable {
 
         /* Leerzeichen maskieren */
         nach = nach.replaceAll(" ", "__");
-        SafeFile benutzerHome = new SafeFile(nach);
+        File benutzerHome = new File(nach);
 
         FilesystemHelper.deleteSymLink(benutzerHome.getAbsolutePath());
     }
@@ -173,7 +170,7 @@ public class WebDav implements Serializable {
      * @param inNurLesen
      *            boolean
      */
-    public void DownloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
+    public void downloadToHome(Process myProcess, int inSchrittID, boolean inNurLesen) {
         saveTiffHeader(myProcess);
         User aktuellerBenutzer = Helper.getCurrentUser();
         String von = "";
@@ -189,15 +186,15 @@ public class WebDav implements Serializable {
              * existieren
              */
             if (aktuellerBenutzer.isWithMassDownload()) {
-                SafeFile projekt = new SafeFile(userHome + myProcess.getProject().getTitle());
-                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+                File projekt = new File(userHome + myProcess.getProject().getTitle());
+                fileService.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
 
-                projekt = new SafeFile(userHome + DONEDIRECTORYNAME);
-                FilesystemHelper.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
+                projekt = new File(userHome + DONEDIRECTORYNAME);
+                fileService.createDirectoryForUser(projekt.getAbsolutePath(), aktuellerBenutzer.getLogin());
             }
 
         } catch (Exception ioe) {
-            myLogger.error("Exception DownloadToHome()", ioe);
+            myLogger.error("Exception downloadToHome()", ioe);
             Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
             return;
         }
@@ -222,28 +219,28 @@ public class WebDav implements Serializable {
             myLogger.info("nach: " + nach);
         }
 
-        SafeFile imagePfad = new SafeFile(von);
-        SafeFile benutzerHome = new SafeFile(nach);
+        File imagePfad = new File(von);
+        File benutzerHome = new File(nach);
 
         // wenn der Ziellink schon existiert, dann abbrechen
         if (benutzerHome.exists()) {
             return;
         }
 
-        String command = ConfigMain.getParameter("script_createSymLink") + " ";
+        String command = ConfigCore.getParameter("script_createSymLink") + " ";
         command += imagePfad + " " + benutzerHome + " ";
         if (inNurLesen) {
-            command += ConfigMain.getParameter("UserForImageReading", "root");
+            command += ConfigCore.getParameter("UserForImageReading", "root");
         } else {
             command += aktuellerBenutzer.getLogin();
         }
         try {
             ShellScript.legacyCallShell2(command);
         } catch (java.io.IOException ioe) {
-            myLogger.error("IOException DownloadToHome()", ioe);
+            myLogger.error("IOException downloadToHome()", ioe);
             Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
         } catch (InterruptedException e) {
-            myLogger.error("InterruptedException DownloadToHome()", e);
+            myLogger.error("InterruptedException downloadToHome()", e);
             Helper.setFehlerMeldung("Download aborted, InterruptedException", e.getMessage());
             myLogger.error(e);
         }
@@ -252,14 +249,14 @@ public class WebDav implements Serializable {
     private void saveTiffHeader(Process inProcess) {
         try {
             /* prüfen, ob Tiff-Header schon existiert */
-            if (new SafeFile(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
+            if (new File(serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")
                     .exists()) {
                 return;
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(
-                            serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf"),
+                    fileService.write(URI.create(
+                            serviceManager.getProcessService().getImagesDirectory(inProcess) + "tiffwriter.conf")),
                     StandardCharsets.UTF_8));) {
                 outfile.write(tif.getTiffAlles());
             }
@@ -279,16 +276,16 @@ public class WebDav implements Serializable {
     public int getAnzahlBaende(String inVerzeichnis) {
         try {
             User aktuellerBenutzer = Helper.getCurrentUser();
-            String VerzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
+            String verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
                     + inVerzeichnis;
-            SafeFile benutzerHome = new SafeFile(VerzeichnisAlle);
+            File benutzerHome = new File(verzeichnisAlle);
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith("]");
                 }
             };
-            return benutzerHome.list(filter).length;
+            return fileService.list(filter, benutzerHome).length;
         } catch (Exception e) {
             myLogger.error(e);
             return 0;

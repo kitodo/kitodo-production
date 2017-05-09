@@ -24,12 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.ProcessProperty;
+import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.TemplateProperty;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.beans.WorkpieceProperty;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -88,13 +87,13 @@ public class ExtendedDataImpl extends DataImpl {
          */
         if (type.equals("") || type.equals(isProcess)) {
             if (serviceManager.getProcessService().getPropertiesInitialized(p) == null) {
-                p.setProperties(new ArrayList<ProcessProperty>());
+                p.setProperties(new ArrayList<Property>());
             }
-            ProcessProperty pe = new ProcessProperty();
-            pe.setProcess(p);
-            pe.setTitle(gpp.getName());
-            pe.setValue(gpp.getValue());
-            serviceManager.getProcessService().getPropertiesInitialized(p).add(pe);
+            Property processProperty = new Property();
+            processProperty.getProcesses().add(p);
+            processProperty.setTitle(gpp.getName());
+            processProperty.setValue(gpp.getValue());
+            serviceManager.getProcessService().getPropertiesInitialized(p).add(processProperty);
         }
 
         /*
@@ -110,13 +109,13 @@ public class ExtendedDataImpl extends DataImpl {
             }
             Workpiece w = p.getWorkpieces().get(count);
             if (w.getProperties() == null) {
-                w.setProperties(new ArrayList<WorkpieceProperty>());
+                w.setProperties(new ArrayList<Property>());
             }
-            WorkpieceProperty we = new WorkpieceProperty();
-            we.setWorkpiece(w);
-            we.setTitle(gpp.getName());
-            we.setValue(gpp.getValue());
-            w.getProperties().add(we);
+            Property workpieceProperty = new Property();
+            workpieceProperty.getWorkpieces().add(w);
+            workpieceProperty.setTitle(gpp.getName());
+            workpieceProperty.setValue(gpp.getValue());
+            w.getProperties().add(workpieceProperty);
         }
 
         /*
@@ -132,13 +131,13 @@ public class ExtendedDataImpl extends DataImpl {
             }
             Template v = p.getTemplates().get(count);
             if (v.getProperties() == null) {
-                v.setProperties(new ArrayList<TemplateProperty>());
+                v.setProperties(new ArrayList<Property>());
             }
-            TemplateProperty ve = new TemplateProperty();
-            ve.setTemplate(v);
-            ve.setTitle(gpp.getName());
-            ve.setValue(gpp.getValue());
-            v.getProperties().add(ve);
+            Property templateProperty = new Property();
+            templateProperty.getTemplates().add(v);
+            templateProperty.setTitle(gpp.getName());
+            templateProperty.setValue(gpp.getValue());
+            v.getProperties().add(templateProperty);
         }
 
         try {
@@ -148,6 +147,9 @@ public class ExtendedDataImpl extends DataImpl {
                     + Helper.getStacktraceAsString(e));
         } catch (IOException e) {
             throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
+                    + Helper.getStacktraceAsString(e));
+        } catch (CustomResponseException e) {
+            throw new GoobiException(1400, "******** wrapped CustomResponseException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return 0;
@@ -242,11 +244,11 @@ public class ExtendedDataImpl extends DataImpl {
          */
         if (type.equals("") || type.equals(isProcess)) {
             // TODO: Use for loops
-            for (Iterator<ProcessProperty> it = p.getProperties().iterator(); it.hasNext();) {
-                ProcessProperty pe = it.next();
-                if (!pe.getTitle().startsWith("#")) {
-                    gpps.add(new GoobiProcessProperty(pe.getTitle(), String.valueOf(pe.getId().intValue()),
-                            pe.getValue()));
+            for (Iterator<Property> iterator = p.getProperties().iterator(); iterator.hasNext();) {
+                Property processProperty = iterator.next();
+                if (!processProperty.getTitle().startsWith("#")) {
+                    gpps.add(new GoobiProcessProperty(processProperty.getTitle(),
+                            String.valueOf(processProperty.getId().intValue()), processProperty.getValue()));
                 }
             }
         }
@@ -264,11 +266,11 @@ public class ExtendedDataImpl extends DataImpl {
             }
             Workpiece w = p.getWorkpieces().get(count);
             // TODO: Use for loops
-            for (Iterator<WorkpieceProperty> it = w.getProperties().iterator(); it.hasNext();) {
-                WorkpieceProperty we = it.next();
-                if (!we.getTitle().startsWith("#")) {
-                    gpps.add(new GoobiProcessProperty(we.getTitle(), String.valueOf(we.getId().intValue()),
-                            we.getValue()));
+            for (Iterator<Property> iterator = w.getProperties().iterator(); iterator.hasNext();) {
+                Property workpieceProperty = iterator.next();
+                if (!workpieceProperty.getTitle().startsWith("#")) {
+                    gpps.add(new GoobiProcessProperty(workpieceProperty.getTitle(),
+                            String.valueOf(workpieceProperty.getId().intValue()), workpieceProperty.getValue()));
                 }
             }
         }
@@ -286,11 +288,11 @@ public class ExtendedDataImpl extends DataImpl {
             }
             Template v = p.getTemplates().get(count);
             // TODO: Use for loops
-            for (Iterator<TemplateProperty> it = v.getProperties().iterator(); it.hasNext();) {
-                TemplateProperty ve = it.next();
-                if (!ve.getTitle().startsWith("#")) {
-                    gpps.add(new GoobiProcessProperty(ve.getTitle(), String.valueOf(ve.getId().intValue()),
-                            ve.getValue()));
+            for (Iterator<Property> iterator = v.getProperties().iterator(); iterator.hasNext();) {
+                Property templateProperty = iterator.next();
+                if (!templateProperty.getTitle().startsWith("#")) {
+                    gpps.add(new GoobiProcessProperty(templateProperty.getTitle(),
+                            String.valueOf(templateProperty.getId().intValue()), templateProperty.getValue()));
                 }
             }
         }
@@ -352,16 +354,16 @@ public class ExtendedDataImpl extends DataImpl {
             List hits = serviceManager.getProcessService().search(myquery);
             if (hits.size() > 0) {
                 if (type.equals("") || type.equals(isProcess)) {
-                    ProcessProperty pe = (ProcessProperty) hits.get(0);
-                    pe.setValue(gpp.getValue());
+                    Property processProperty = (Property) hits.get(0);
+                    processProperty.setValue(gpp.getValue());
                 }
                 if (type.equals(isWorkpiece)) {
-                    WorkpieceProperty we = (WorkpieceProperty) hits.get(0);
-                    we.setValue(gpp.getValue());
+                    Property workpieceProperty = (Property) hits.get(0);
+                    workpieceProperty.setValue(gpp.getValue());
                 }
                 if (type.equals(isTemplate)) {
-                    TemplateProperty ve = (TemplateProperty) hits.get(0);
-                    ve.setValue(gpp.getValue());
+                    Property templateProperty = (Property) hits.get(0);
+                    templateProperty.setValue(gpp.getValue());
                 }
                 serviceManager.getProcessService().save(p);
             } else {
@@ -373,6 +375,9 @@ public class ExtendedDataImpl extends DataImpl {
                     + Helper.getStacktraceAsString(e));
         } catch (IOException e) {
             throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
+                    + Helper.getStacktraceAsString(e));
+        } catch (CustomResponseException e) {
+            throw new GoobiException(1400, "******** wrapped CustomResponseException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return 0;

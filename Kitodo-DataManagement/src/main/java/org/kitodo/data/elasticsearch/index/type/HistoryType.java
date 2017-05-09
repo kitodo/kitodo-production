@@ -11,8 +11,6 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.LinkedHashMap;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -28,15 +26,13 @@ public class HistoryType extends BaseType<History> {
     @Override
     public HttpEntity createDocument(History history) {
 
-        LinkedHashMap<String, String> orderedHistoryMap = new LinkedHashMap<>();
-        orderedHistoryMap.put("numericValue", history.getNumericValue().toString());
-        orderedHistoryMap.put("stringValue", history.getStringValue());
-        orderedHistoryMap.put("type", history.getHistoryType().toString());
+        JSONObject historyObject = new JSONObject();
+        historyObject.put("numericValue", history.getNumericValue());
+        historyObject.put("stringValue", history.getStringValue());
+        historyObject.put("type", history.getHistoryType().toString());
         String date = history.getDate() != null ? formatDate(history.getDate()) : null;
-        orderedHistoryMap.put("date", date);
-        orderedHistoryMap.put("process", history.getProcess().getId().toString());
-
-        JSONObject historyObject = new JSONObject(orderedHistoryMap);
+        historyObject.put("date", date);
+        historyObject.put("process", history.getProcess().getId());
 
         return new NStringEntity(historyObject.toJSONString(), ContentType.APPLICATION_JSON);
     }

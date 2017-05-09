@@ -11,7 +11,7 @@
 
 package de.sub.goobi.helper.ldap;
 
-import de.sub.goobi.config.ConfigMain;
+import de.sub.goobi.config.ConfigCore;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -44,10 +44,9 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
-
-import edu.sysu.virgoftp.ftp.encrypt.MD4;
 
 /**
  * This class is used by the DirObj example. It is a DirContext class that can
@@ -77,7 +76,8 @@ public class LdapUser implements DirContext {
      */
     public void configure(User inUser, String inPassword, String inUidNumber)
             throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
-        if (!ConfigMain.getBooleanParameter("ldap_readonly", false)) {
+        MD4 digester = new MD4();
+        if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
 
             this.type = inUser.getLogin();
             LdapGroup lp = inUser.getLdapGroup();
@@ -129,7 +129,7 @@ public class LdapUser implements DirContext {
             }
             /* NTLM */
             try {
-                byte hmm[] = MD4.mdfour(inPassword.getBytes("UnicodeLittleUnmarked"));
+                byte hmm[] = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
                 this.myAttrs.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
                 myLogger.error(e);
@@ -139,11 +139,11 @@ public class LdapUser implements DirContext {
              * Encryption of password und Base64-Enconding
              */
 
-            MessageDigest md = MessageDigest.getInstance(ConfigMain.getParameter("ldap_encryption", "SHA"));
+            MessageDigest md = MessageDigest.getInstance(ConfigCore.getParameter("ldap_encryption", "SHA"));
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
             String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
             this.myAttrs.put("userPassword",
-                    "{" + ConfigMain.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
+                    "{" + ConfigCore.getParameter("ldap_encryption", "SHA") + "}" + digestBase64);
         }
     }
 
@@ -477,12 +477,12 @@ public class LdapUser implements DirContext {
 
     // -- DirContext
     @Override
-    public void modifyAttributes(Name name, int mod_op, Attributes attrs) throws NamingException {
+    public void modifyAttributes(Name name, int modOp, Attributes attrs) throws NamingException {
         throw new OperationNotSupportedException();
     }
 
     @Override
-    public void modifyAttributes(String name, int mod_op, Attributes attrs) throws NamingException {
+    public void modifyAttributes(String name, int modOp, Attributes attrs) throws NamingException {
         throw new OperationNotSupportedException();
     }
 

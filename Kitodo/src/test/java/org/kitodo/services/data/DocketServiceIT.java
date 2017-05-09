@@ -23,6 +23,8 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for DocketService class.
@@ -30,7 +32,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class DocketServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -44,7 +46,7 @@ public class DocketServiceIT {
         DocketService docketService = new DocketService();
 
         Docket docket = docketService.find(1);
-        boolean condition = docket.getName().equals("default") && docket.getFile().equals("docket.xsl");
+        boolean condition = docket.getTitle().equals("default") && docket.getFile().equals("docket.xsl");
         assertTrue("Docket was not found in database!", condition);
     }
 
@@ -54,5 +56,88 @@ public class DocketServiceIT {
 
         List<Docket> dockets = docketService.findAll();
         assertEquals("Not all dockets were found in database!", 2, dockets.size());
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        DocketService docketService = new DocketService();
+
+        SearchResult docket = docketService.findById(1);
+        String actual = docket.getProperties().get("title");
+        String expected = "default";
+        assertEquals("Docket was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitle() throws Exception {
+        DocketService docketService = new DocketService();
+
+        List<SearchResult> dockets = docketService.findByTitle("default", true);
+        Integer actual = dockets.size();
+        Integer expected = 1;
+        assertEquals("Docket was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByFile() throws Exception {
+        DocketService docketService = new DocketService();
+
+        SearchResult docket = docketService.findByFile("docket.xsl");
+        String actual = docket.getProperties().get("file");
+        String expected = "docket.xsl";
+        assertEquals("Docket was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleAndFile() throws Exception {
+        DocketService docketService = new DocketService();
+
+        SearchResult docket = docketService.findByTitleAndFile("default","docket.xsl");
+        Integer actual = docket.getId();
+        Integer expected = 1;
+        assertEquals("Docket was not found in index!", expected, actual);
+
+        docket = docketService.findByTitleAndFile("default","none");
+        actual = docket.getId();
+        expected = null;
+        assertEquals("Docket was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleOrFile() throws Exception {
+        DocketService docketService = new DocketService();
+
+        List<SearchResult> docket = docketService.findByTitleOrFile("default","docket.xsl");
+        Integer actual = docket.size();
+        Integer expected = 2;
+        assertEquals("Dockets were not found in index!", expected, actual);
+
+        docket = docketService.findByTitleOrFile("default","none");
+        actual = docket.size();
+        expected = 1;
+        assertEquals("Docket was not found in index!", expected, actual);
+
+        docket = docketService.findByTitleOrFile("none","none");
+        actual = docket.size();
+        expected = 0;
+        assertEquals("Some dockets were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindAllDocketsDocuments() throws Exception {
+        DocketService docketService = new DocketService();
+
+        List<SearchResult> dockets = docketService.findAllDocuments();
+        assertEquals("Not all dockets were found in index!", 2, dockets.size());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldConvertSearchResultsToObjectList() throws Exception {
+        DocketService docketService = new DocketService();
+
+        List<SearchResult> searchResults = docketService.findAllDocuments();
+        List<Docket> dockets = (List<Docket>) docketService.convertSearchResultsToObjectList(searchResults, "Docket");
+        assertEquals("Not all dockets were converted!", 2, dockets.size());
     }
 }
