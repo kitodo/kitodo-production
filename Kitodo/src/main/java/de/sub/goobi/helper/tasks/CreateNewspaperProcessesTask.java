@@ -217,7 +217,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                         return;
                     }
                     String state = newProcess.createNewProcess();
-                    if (!state.equals("ProzessverwaltungKopie3")) {
+                    if (!state.equals("NewProcess/Page3")) {
                         throw new RuntimeException(String.valueOf(Helper.getLastMessage()).replaceFirst(":\\?*$", ""));
                     }
                     addToBatches(newProcess.getProzessKopie(), issues, currentTitle);

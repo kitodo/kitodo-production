@@ -668,7 +668,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String SchrittNeu() {
         this.mySchritt = new Task();
         this.modusBearbeiten = "schritt";
-        return "ProzessverwaltungBearbeitenSchritt";
+        return "inc_Prozessverwaltung/schritt";
     }
 
     /**
@@ -770,7 +770,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getTemplates().add(this.myVorlage);
         this.myVorlage.setProcess(this.myProzess);
         Speichern();
-        return "ProzessverwaltungBearbeitenVorlage";
+        return "inc_Prozessverwaltung/vorlage";
     }
 
     /**

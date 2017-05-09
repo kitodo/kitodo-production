@@ -197,7 +197,7 @@ public class CopyProcess extends ProzesskopieForm {
                 ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
-        this.naviFirstPage = "ProzessverwaltungKopie1";
+        this.naviFirstPage = "NewProcess/Page1";
         if (this.opacKatalog.equals("")) {
             this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
         }
@@ -529,7 +529,7 @@ public class CopyProcess extends ProzesskopieForm {
         if (!isContentValid()) {
             return this.naviFirstPage;
         } else {
-            return "ProzessverwaltungKopie2";
+            return "NewProcess/Page2";
         }
     }
 

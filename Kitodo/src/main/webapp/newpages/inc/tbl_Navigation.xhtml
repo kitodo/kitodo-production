@@ -40,7 +40,7 @@
                         #########################################-->
 
                         <!-- Startseite -->
-                        <h:commandLink styleClass="mlink" action="newMain" id="main"
+                        <h:commandLink styleClass="mlink" action="Main" id="main"
                                        style="#{NavigationForm.aktuell == '0' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '0'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -54,7 +54,7 @@
 
                         <h:outputText styleClass="th_menu" value="- #{msgs.allgemeines} -"/>
                         <!-- Bedienungshinweise -->
-                        <h:commandLink styleClass="mlink" action="Bedienung"
+                        <h:commandLink styleClass="mlink" action="statischBedienung"
                                        style="#{NavigationForm.aktuell == '10' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '10'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -65,7 +65,7 @@
                         </h:commandLink>
 
                         <!-- technischer Hintergrund -->
-                        <h:commandLink styleClass="mlink" action="TechnischerHintergrund" id="technicalBackground"
+                        <h:commandLink styleClass="mlink" action="statischTechnischerHintergrund" id="technicalBackground"
                                        style="#{NavigationForm.aktuell == '11' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '11'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -76,7 +76,7 @@
                         </h:commandLink>
 
                         <!-- aktive Benutzer -->
-                        <h:commandLink styleClass="mlink" action="aktiveBenutzerNeu" id="currentUsers"
+                        <h:commandLink styleClass="mlink" action="aktiveBenutzer" id="currentUsers"
                                        style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}"
                                        rendered="#{!HelperForm.anonymized}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '12'}">
@@ -259,7 +259,6 @@
                                                         value="34"/>
                             </h:commandLink>
 
-
                             <!-- aktive Tasks -->
                             <h:commandLink styleClass="mlink" action="taskmanager"
                                            rendered="#{NavigationForm.showTaskManager}"
@@ -306,7 +305,7 @@
                                           value="- #{msgs.benutzerdaten} -"/>
 
                             <!-- Benutzerkonfiguration -->
-                            <h:commandLink styleClass="mlink" action="Benutzerkonfiguration" id="userconfig"
+                            <h:commandLink styleClass="mlink" action="BenutzerKonfiguration" id="userconfig"
                                            style="#{NavigationForm.aktuell == '40' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                 <h:panelGroup rendered="#{NavigationForm.aktuell == '40'}">
                                     <f:verbatim>&#8250; </f:verbatim>
@@ -317,7 +316,7 @@
                             </h:commandLink>
 
                             <!-- Passwort ändern -->
-                            <h:commandLink styleClass="mlink" action="newPasswortAendern" id="changePW"
+                            <h:commandLink styleClass="mlink" action="PasswortAendern" id="changePW"
                                            style="#{NavigationForm.aktuell == '41' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                 <h:panelGroup rendered="#{NavigationForm.aktuell == '41'}">
                                     <f:verbatim>&#8250; </f:verbatim>

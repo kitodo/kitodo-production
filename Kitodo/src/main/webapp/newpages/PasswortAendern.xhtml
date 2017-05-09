@@ -44,7 +44,7 @@
                             <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
                                     <h:commandLink id="id2" value="#{msgs.startseite}"
-                                                   action="newMain"/>
+                                                   action="Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.passwortAendern}"/>
                                 </h:panelGroup>
@@ -121,10 +121,10 @@
                                                 <td class="eingabeBoxen_row3">
                                                     <h:commandButton
                                                             action="#{LoginForm.PasswortAendernAbbrechen}"
-                                                            value="#{msgs.abbrechen}" immediate="true"></h:commandButton>
+                                                            value="#{msgs.abbrechen}" immediate="true"/>
                                                     <t:commandButton id="absenden" forceId="true" type="submit"
                                                                      action="#{LoginForm.PasswortAendernSpeichern}"
-                                                                     value="#{msgs.passwortAendern}"></t:commandButton>
+                                                                     value="#{msgs.passwortAendern}"/>
                                                 </td>
                                             </tr>
 

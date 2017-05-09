@@ -135,7 +135,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             }
             newProcess.calculateProcessTitle();
             String state = newProcess.createNewProcess();
-            if (!state.equals("ProzessverwaltungKopie3")) {
+            if (!state.equals("NewProcess/Page3")) {
                 throw new RuntimeException();
             }
             if (logger.isInfoEnabled()) {

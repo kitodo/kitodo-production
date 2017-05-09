@@ -208,7 +208,7 @@ public class ProzesskopieForm {
 
     public static final String DIRECTORY_SUFFIX = "_tif";
 
-    static final String NAVI_FIRST_PAGE = "ProzessverwaltungKopie1";
+    static final String NAVI_FIRST_PAGE = "NewProcess/Page1";
 
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
@@ -760,7 +760,7 @@ public class ProzesskopieForm {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         } else {
-            return "ProzessverwaltungKopie2";
+            return "NewProcess/Page2";
         }
     }
 
@@ -1080,7 +1080,7 @@ public class ProzesskopieForm {
                 myThread.start();
             }
         }
-        return "ProzessverwaltungKopie3";
+        return "NewProcess/Page3";
 
     }
 

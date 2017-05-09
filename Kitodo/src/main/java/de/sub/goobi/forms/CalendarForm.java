@@ -1038,7 +1038,7 @@ public class CalendarForm {
             Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
             return "";
         }
-        return "ShowGranularityPicker";
+        return "granularity";
     }
 
     /**

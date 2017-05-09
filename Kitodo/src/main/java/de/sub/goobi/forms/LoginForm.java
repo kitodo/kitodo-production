@@ -60,7 +60,7 @@ public class LoginForm {
         if (mySession != null) {
             mySession.invalidate();
         }
-        return "newMain";
+        return "Main";
     }
 
     /**
@@ -169,7 +169,7 @@ public class LoginForm {
      */
     public String EinloggenAls() {
         if (getMaximaleBerechtigung() != 1) {
-            return "newMain";
+            return "Main";
         }
         this.myBenutzer = null;
         Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
@@ -184,7 +184,7 @@ public class LoginForm {
             Helper.setFehlerMeldung("could not read database", e.getMessage());
             return "";
         }
-        return "newMain";
+        return "Main";
     }
 
     /*
@@ -195,7 +195,7 @@ public class LoginForm {
      * Bearbeitungsvorgang abbrechen.
      */
     public String PasswortAendernAbbrechen() {
-        return "newMain";
+        return "Main";
     }
 
     /**

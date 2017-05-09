@@ -505,7 +505,7 @@ public class BatchForm extends BasisForm {
                                     ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                             dms.startExport(prozess);
                         }
-                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
                     case NEWSPAPER:
                         TaskManager.addTask(new ExportNewspaperBatchTask(batch));
                         return "taskmanager";
