@@ -11,7 +11,8 @@
 
 package org.goobi.production.flow.jobs;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -23,7 +24,7 @@ import org.quartz.JobExecutionException;
  * @version 21.10.2009
  */
 public abstract class AbstractGoobiJob implements Job, IGoobiJob {
-    private static final Logger logger = Logger.getLogger(AbstractGoobiJob.class);
+    private static final Logger logger = LogManager.getLogger(AbstractGoobiJob.class);
     private static Boolean isRunning = false;
 
     protected AbstractGoobiJob() {

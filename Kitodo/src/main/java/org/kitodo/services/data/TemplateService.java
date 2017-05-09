@@ -16,7 +16,8 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -34,7 +35,7 @@ public class TemplateService extends SearchService<Template> {
     private TemplateType templateType = new TemplateType();
     private Indexer<Template, TemplateType> indexer = new Indexer<>(Template.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(TemplateService.class);
+    private static final Logger logger = LogManager.getLogger(TemplateService.class);
 
     /**
      * Constructor with searcher's assigning.

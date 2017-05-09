@@ -28,7 +28,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -61,7 +62,7 @@ import ugh.exceptions.WriteException;
 
 public class GoobiScript {
     HashMap<String, String> myParameters;
-    private static final Logger logger = Logger.getLogger(GoobiScript.class);
+    private static final Logger logger = LogManager.getLogger(GoobiScript.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
     public static final String DIRECTORY_SUFFIX = "_tif";

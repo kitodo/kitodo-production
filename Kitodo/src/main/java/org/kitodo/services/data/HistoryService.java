@@ -16,7 +16,8 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HistoryDAO;
@@ -36,7 +37,7 @@ public class HistoryService extends SearchService<History> {
     private HistoryType historyType = new HistoryType();
     private Indexer<History, HistoryType> indexer = new Indexer<>(History.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(HistoryService.class);
+    private static final Logger logger = LogManager.getLogger(HistoryService.class);
 
     /**
      * Constructor with searcher's assigning.

@@ -40,7 +40,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -63,7 +64,7 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class MetadatenImagesHelper {
-    private static final Logger logger = Logger.getLogger(MetadatenImagesHelper.class);
+    private static final Logger logger = LogManager.getLogger(MetadatenImagesHelper.class);
     private final Prefs myPrefs;
     private final DigitalDocument mydocument;
     private int myLastImage = 0;

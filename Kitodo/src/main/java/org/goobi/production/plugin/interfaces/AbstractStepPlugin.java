@@ -15,7 +15,8 @@ import java.util.HashMap;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.enums.StepReturnValue;
 import org.kitodo.data.database.beans.Task;
@@ -23,7 +24,7 @@ import org.kitodo.data.database.beans.Task;
 @PluginImplementation
 public abstract class AbstractStepPlugin implements IStepPlugin {
 
-    private static final Logger logger = Logger.getLogger(AbstractStepPlugin.class);
+    private static final Logger logger = LogManager.getLogger(AbstractStepPlugin.class);
 
     protected String name = "Abstract Step Plugin";
     protected String version = "1.0";

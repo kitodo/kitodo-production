@@ -16,7 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -40,7 +41,7 @@ import org.kitodo.services.file.FileService;
  */
 public class BackupFileRotation {
 
-    private static final Logger myLogger = Logger.getLogger(BackupFileRotation.class);
+    private static final Logger logger = LogManager.getLogger(BackupFileRotation.class);
 
     private int numberOfBackups;
     private String format;
@@ -69,8 +70,8 @@ public class BackupFileRotation {
         metaFiles = generateBackupBaseNameFileList(format, processDataDirectory);
 
         if (metaFiles.length < 1) {
-            if (myLogger.isInfoEnabled()) {
-                myLogger.info(
+            if (logger.isInfoEnabled()) {
+                logger.info(
                         "No files matching format '" + format + "' in directory " + processDataDirectory + " found.");
             }
             return;
@@ -125,7 +126,7 @@ public class BackupFileRotation {
         File oldest = new File(fileName + "." + numberOfBackups);
         if (oldest.exists() && !oldest.delete()) {
             String message = "Could not delete " + oldest.getAbsolutePath();
-            myLogger.error(message);
+            logger.error(message);
             throw new IOException(message);
         }
 
@@ -135,8 +136,8 @@ public class BackupFileRotation {
             try {
                 fileService.renameFile(oldName, newName);
             } catch (FileNotFoundException oldNameNotYetPresent) {
-                if (myLogger.isDebugEnabled()) {
-                    myLogger.debug(oldName + " does not yet exist >>> nothing to do");
+                if (logger.isDebugEnabled()) {
+                    logger.debug(oldName + " does not yet exist >>> nothing to do");
                 }
             }
         }

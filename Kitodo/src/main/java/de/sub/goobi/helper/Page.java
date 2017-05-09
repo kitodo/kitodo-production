@@ -17,7 +17,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 
@@ -38,7 +39,7 @@ public class Page implements Serializable { // implements Iterator
     private int page = 0;
     private int totalResults = 0;
     private Criteria criteria;
-    private static final Logger logger = Logger.getLogger(Page.class);
+    private static final Logger logger = LogManager.getLogger(Page.class);
 
     /**
      * Construct a new Page with a Criteria. Page numbers are zero-based, so the

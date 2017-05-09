@@ -26,8 +26,8 @@ import net.xeoh.plugins.base.impl.PluginManagerFactory;
 import net.xeoh.plugins.base.util.PluginManagerUtil;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
@@ -43,7 +43,7 @@ import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class PluginLoader {
-    private static final Logger logger = Logger.getLogger(PluginLoader.class);
+    private static final Logger logger = LogManager.getLogger(PluginLoader.class);
 
     /**
      * The function getCataloguePluginForCatalogue() returns a redirection class
@@ -177,13 +177,8 @@ public class PluginLoader {
                 T plugin = (T) UnspecificPlugin.create(type, implementation);
                 plugin.configure(getPluginConfiguration());
                 result.add(plugin);
-            } catch (NoSuchMethodException e) {
-                if (logger.isEnabledFor(Level.WARN)) {
-                    logger.warn("Bad implementation of " + type.getName() + " plugin "
-                            + implementation.getClass().getName(), e);
-                }
-            } catch (SecurityException e) {
-                if (logger.isEnabledFor(Level.WARN)) {
+            } catch (NoSuchMethodException | SecurityException e) {
+                if (logger.isWarnEnabled()) {
                     logger.warn("Bad implementation of " + type.getName() + " plugin "
                             + implementation.getClass().getName(), e);
                 }

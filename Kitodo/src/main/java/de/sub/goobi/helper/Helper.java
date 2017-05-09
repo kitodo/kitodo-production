@@ -48,8 +48,9 @@ import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
@@ -76,7 +77,7 @@ public class Helper implements Serializable, Observer {
 
     }
 
-    private static final Logger myLogger = Logger.getLogger(Helper.class);
+    private static final Logger logger = LogManager.getLogger(Helper.class);
     private static final long serialVersionUID = -7449236652821237059L;
 
     private String myMetadatenVerzeichnis;
@@ -205,8 +206,7 @@ public class Helper implements Serializable, Observer {
                     new FacesMessage(nurInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, beschr));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
-            myLogger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
-
+            logger.log(nurInfo ? Level.INFO : Level.ERROR, compoundMessage);
         }
     }
 
@@ -297,9 +297,9 @@ public class Helper implements Serializable, Observer {
                     try {
                         value = vb.getValue(context);
                     } catch (PropertyNotFoundException e) {
-                        myLogger.error(e);
+                        logger.error(e);
                     } catch (EvaluationException e) {
-                        myLogger.error(e);
+                        logger.error(e);
                     }
                 }
             }

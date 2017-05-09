@@ -13,7 +13,8 @@ package de.sub.goobi.helper;
 
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -28,7 +29,7 @@ import ugh.exceptions.PreferencesException;
 
 public class XmlArtikelZaehlen {
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(XmlArtikelZaehlen.class);
+    private static final Logger logger = LogManager.getLogger(XmlArtikelZaehlen.class);
 
     public enum CountType {
         METADATA, DOCSTRUCT;

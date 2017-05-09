@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -37,7 +38,7 @@ public class BatchService extends TitleSearchService<Batch> {
     private BatchType batchType = new BatchType();
     private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(BatchService.class);
+    private static final Logger logger = LogManager.getLogger(BatchService.class);
 
     /**
      * Constructor with searcher's assigning.

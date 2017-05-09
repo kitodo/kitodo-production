@@ -18,7 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 
 import ugh.dl.DocStruct;
@@ -43,7 +44,7 @@ public class MetadataPathSelector extends MetadataSelector {
     private static final String ANY_METADATA_TYPE_SYMBOL = "*";
 
     @SuppressWarnings("javadoc")
-    private static final Logger LOG = Logger.getLogger(MetadataPathSelector.class);
+    private static final Logger logger = LogManager.getLogger(MetadataPathSelector.class);
     /**
      * The constant METADATA_SPLIT_PATH_SCHEME holds a regular expression used
      * to extract the first metadata path segment.
@@ -175,8 +176,8 @@ public class MetadataPathSelector extends MetadataSelector {
                 // copy rules aren’t related to the rule set but depend on it,
                 // so copy rules that don’t work with the current rule set are
                 // ignored
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Cannot create structural element " + docStructType + " as child of "
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Cannot create structural element " + docStructType + " as child of "
                             + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
                             + " because it isn’t allowed by the rule set.");
                 }
@@ -186,8 +187,8 @@ public class MetadataPathSelector extends MetadataSelector {
                 throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
             } catch (Exception e) {
                 // copy rule failed, skip it
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Cannot create structural element " + docStructType + " as child of "
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Cannot create structural element " + docStructType + " as child of "
                             + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type")
                             + ": Accessing the rule set failed with exception: "
                             + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);

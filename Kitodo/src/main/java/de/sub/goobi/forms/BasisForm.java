@@ -16,12 +16,13 @@ import de.sub.goobi.helper.Page;
 
 import java.io.Serializable;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
 
 public class BasisForm implements Serializable {
-    private static final Logger logger = Logger.getLogger(BasisForm.class);
+    private static final Logger logger = LogManager.getLogger(BasisForm.class);
     private static final long serialVersionUID = 2950419497162710096L;
     private final ServiceManager serviceManager = new ServiceManager();
     protected Page page;

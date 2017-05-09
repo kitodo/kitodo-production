@@ -17,7 +17,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.goobi.production.chart.IProjectTask;
 import org.goobi.production.chart.IProvideProjectTaskList;
@@ -64,7 +65,7 @@ import org.kitodo.services.ServiceManager;
 
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
-    private static final Logger myLogger = Logger.getLogger(ProjekteForm.class);
+    private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
 
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
@@ -161,15 +162,15 @@ public class ProjekteForm extends BasisForm {
             return "ProjekteAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
             return "";
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
             return "";
         }
     }
@@ -181,22 +182,22 @@ public class ProjekteForm extends BasisForm {
      */
     public String apply() {
         // call this to make saving and deleting permanent
-        myLogger.trace("apply wird aufgerufen...");
+        logger.trace("apply wird aufgerufen...");
         this.commitFileGroups();
         try {
             serviceManager.getProjectService().save(this.myProjekt);
             return "";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
-            myLogger.error(e.getMessage());
+            logger.error(e.getMessage());
             return "";
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
             return "";
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
             return "";
         }
     }
@@ -215,14 +216,14 @@ public class ProjekteForm extends BasisForm {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not delete", e.getMessage());
-                myLogger.error(e.getMessage());
+                logger.error(e.getMessage());
                 return "";
             } catch (IOException e) {
                 Helper.setFehlerMeldung("could not delete from index", e.getMessage());
-                myLogger.error(e);
+                logger.error(e);
             } catch (CustomResponseException e) {
                 Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
-                myLogger.error(e);
+                logger.error(e);
                 return "";
             }
         }
@@ -243,7 +244,7 @@ public class ProjekteForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("could not read", he.getMessage());
-            myLogger.error(he.getMessage());
+            logger.error(he.getMessage());
             return "";
         }
         return "ProjekteAlle";
@@ -551,7 +552,7 @@ public class ProjekteForm extends BasisForm {
         DateTime start = new DateTime(this.myProjekt.getStartDate().getTime());
         DateTime end = new DateTime(this.myProjekt.getEndDate().getTime());
         Weeks weeks = Weeks.weeksBetween(start, end);
-        myLogger.trace(weeks.getWeeks());
+        logger.trace(weeks.getWeeks());
         int days = (weeks.getWeeks() * 5);
 
         if (days < 1) {
@@ -670,7 +671,7 @@ public class ProjekteForm extends BasisForm {
             try {
                 ImageIO.write(bi, "png", outputfile);
             } catch (IOException e) {
-                myLogger.debug("couldn't write project progress chart to file", e);
+                logger.debug("couldn't write project progress chart to file", e);
             }
         }
     }

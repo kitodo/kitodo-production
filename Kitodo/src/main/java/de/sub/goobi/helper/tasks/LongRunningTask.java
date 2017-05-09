@@ -13,7 +13,8 @@ package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.helper.Helper;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 
 /**
@@ -47,7 +48,7 @@ public abstract class LongRunningTask extends EmptyTask {
         initialize(master.process);
     }
 
-    protected static final Logger logger = Logger.getLogger(LongRunningTask.class);
+    protected static final Logger logger = LogManager.getLogger(LongRunningTask.class);
 
     private Process process;
     private boolean isSingleThread = true;

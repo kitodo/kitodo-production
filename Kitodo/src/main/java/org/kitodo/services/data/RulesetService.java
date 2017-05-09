@@ -18,7 +18,8 @@ import de.sub.goobi.config.ConfigCore;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -38,7 +39,7 @@ import ugh.exceptions.PreferencesException;
 
 public class RulesetService extends TitleSearchService<Ruleset> {
 
-    private static final Logger logger = Logger.getLogger(RulesetService.class);
+    private static final Logger logger = LogManager.getLogger(RulesetService.class);
 
     private RulesetDAO rulesetDAO = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();

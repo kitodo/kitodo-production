@@ -29,7 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
@@ -59,7 +60,7 @@ import org.kitodo.services.ServiceManager;
 import ugh.dl.Prefs;
 
 public class MassImportForm {
-    private static final Logger logger = Logger.getLogger(MassImportForm.class);
+    private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private Process template;
     private List<Process> processes;
     private List<String> digitalCollections;

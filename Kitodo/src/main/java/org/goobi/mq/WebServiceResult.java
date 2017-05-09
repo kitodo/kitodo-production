@@ -15,14 +15,15 @@ import de.sub.goobi.helper.enums.ReportLevel;
 
 import javax.jms.MapMessage;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 public class WebServiceResult {
-    private static final Logger logger = Logger.getLogger(ActiveMQDirector.class);
+    private static final Logger logger = LogManager.getLogger(WebServiceResult.class);
 
     private String queueName;
     private String id;

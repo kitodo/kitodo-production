@@ -18,12 +18,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
 public class DmsImportThread extends Thread {
-    private static final Logger myLogger = Logger.getLogger(DmsImportThread.class);
+    private static final Logger logger = LogManager.getLogger(DmsImportThread.class);
     private File fileError;
     private File fileXml;
     private File fileSuccess;
@@ -105,7 +106,7 @@ public class DmsImportThread extends Thread {
                     }
                 }
             } catch (Throwable t) {
-                myLogger.error("Unexception exception", t);
+                logger.error("Unexception exception", t);
             }
         }
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
@@ -113,7 +114,7 @@ public class DmsImportThread extends Thread {
             try {
                 serviceManager.getFileService().delete(folderImages.toURI());
             } catch (IOException e) {
-                myLogger.warn("IOException. Could not delete image folder");
+                logger.warn("IOException. Could not delete image folder");
             }
         }
     }

@@ -19,7 +19,8 @@ import java.util.Date;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -35,7 +36,7 @@ import org.quartz.TriggerUtils;
  * @version 21.10.2009
  */
 public class JobManager implements ServletContextListener {
-    private static final Logger logger = Logger.getLogger(JobManager.class);
+    private static final Logger logger = LogManager.getLogger(JobManager.class);
 
     /**
      * Restarts timed Jobs.

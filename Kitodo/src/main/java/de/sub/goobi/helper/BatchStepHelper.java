@@ -31,7 +31,8 @@ import java.util.TreeMap;
 import javax.faces.model.SelectItem;
 import javax.naming.AuthenticationException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
@@ -59,7 +60,7 @@ import org.kitodo.services.ServiceManager;
 
 public class BatchStepHelper {
     private List<Task> steps;
-    private static final Logger logger = Logger.getLogger(BatchStepHelper.class);
+    private static final Logger logger = LogManager.getLogger(BatchStepHelper.class);
     private Task currentStep;
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private List<ProcessProperty> processPropertyList;

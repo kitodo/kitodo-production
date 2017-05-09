@@ -26,7 +26,8 @@ import java.util.List;
 import javax.faces.model.SelectItem;
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
@@ -40,7 +41,7 @@ import org.w3c.dom.Document;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class GranularityForm {
-    private static final Logger logger = Logger.getLogger(GranularityForm.class);
+    private static final Logger logger = LogManager.getLogger(GranularityForm.class);
 
     protected Granularity generateBatches;
 

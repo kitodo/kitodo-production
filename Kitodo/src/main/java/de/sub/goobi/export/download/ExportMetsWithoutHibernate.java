@@ -25,7 +25,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
@@ -58,7 +59,7 @@ public class ExportMetsWithoutHibernate {
     private ProjectObject project;
     private final ServiceManager serviceManager = new ServiceManager();
 
-    protected static final Logger myLogger = Logger.getLogger(ExportMetsWithoutHibernate.class);
+    protected static final Logger logger = LogManager.getLogger(ExportMetsWithoutHibernate.class);
 
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
@@ -288,9 +289,9 @@ public class ExportMetsWithoutHibernate {
             }
         } catch (IndexOutOfBoundsException e) {
 
-            myLogger.error(e);
+            logger.error(e);
         } catch (InvalidImagesException e) {
-            myLogger.error(e);
+            logger.error(e);
         }
         mm.write(targetFileName);
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");

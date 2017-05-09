@@ -32,7 +32,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.export.ExportDocket;
 import org.goobi.production.flow.statistics.hibernate.IEvaluableFilter;
@@ -54,7 +55,7 @@ public class BatchForm extends BasisForm {
 
     private static final long serialVersionUID = 8234897225425856549L;
 
-    private static final Logger logger = Logger.getLogger(BatchForm.class);
+    private static final Logger logger = LogManager.getLogger(BatchForm.class);
 
     private List<Process> currentProcesses;
     private List<Process> selectedProcesses;

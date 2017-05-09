@@ -26,7 +26,8 @@ import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -48,7 +49,7 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHibernate {
-    private static final Logger myLogger = Logger.getLogger(AutomaticDmsExportWithoutHibernate.class);
+    private static final Logger logger = LogManager.getLogger(AutomaticDmsExportWithoutHibernate.class);
     ConfigProjects cp;
     private boolean exportWithImages = true;
     private boolean exportFullText = true;
@@ -123,7 +124,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                 task.setException(e);
             }
             Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
-            myLogger.error("Export abgebrochen, xml-LeseFehler", e);
+            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
         }
 
@@ -381,7 +382,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                         task.setException(e);
                     }
                     Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
-                    myLogger.error("could not create destination directory", e);
+                    logger.error("could not create destination directory", e);
                 }
             }
 

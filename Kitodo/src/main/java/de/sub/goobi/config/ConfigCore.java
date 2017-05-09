@@ -20,13 +20,14 @@ import java.util.concurrent.TimeUnit;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.services.ServiceManager;
 
 public class ConfigCore extends ConfigMain {
-    private static final Logger myLogger = Logger.getLogger(ConfigCore.class);
+    private static final Logger logger = LogManager.getLogger(ConfigCore.class);
     private static String imagesPath = null;
     private static ServiceManager serviceManager = new ServiceManager();
     private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
@@ -41,7 +42,7 @@ public class ConfigCore extends ConfigMain {
         try {
             return getConfig().getString(inParameter);
         } catch (RuntimeException e) {
-            myLogger.error(e);
+            logger.error(e);
             return "- keine Konfiguration gefunden -";
         }
     }
@@ -95,7 +96,7 @@ public class ConfigCore extends ConfigMain {
             try {
                 serviceManager.getFileService().createDirectory(URI.create(fileName), "imagesTemp");
             } catch (Exception ioe) {
-                myLogger.error("IO error: " + ioe);
+                logger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
             }
         }

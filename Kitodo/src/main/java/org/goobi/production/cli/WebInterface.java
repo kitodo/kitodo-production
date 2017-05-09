@@ -26,14 +26,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 public class WebInterface extends HttpServlet {
-    private static final Logger logger = Logger.getLogger(WebInterface.class);
+    private static final Logger logger = LogManager.getLogger(WebInterface.class);
     private static final long serialVersionUID = 6187229284187412768L;
 
     @Override

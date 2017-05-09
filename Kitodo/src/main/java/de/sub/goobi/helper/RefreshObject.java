@@ -11,14 +11,15 @@
 
 package de.sub.goobi.helper;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
 public class RefreshObject {
-    private static final Logger logger = Logger.getLogger(RefreshObject.class);
+    private static final Logger logger = LogManager.getLogger(RefreshObject.class);
 
     /**
      * Refresh process.

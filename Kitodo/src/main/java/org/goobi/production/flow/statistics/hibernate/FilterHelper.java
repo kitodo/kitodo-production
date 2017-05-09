@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.text.StrTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.IlikeExpression;
 import org.goobi.production.flow.statistics.hibernate.UserDefinedFilter.Parameters;
 import org.hibernate.Criteria;
@@ -44,7 +45,7 @@ import org.kitodo.services.ServiceManager;
  * @author Wulf Riebensahm
  */
 public class FilterHelper {
-    private static final Logger logger = Logger.getLogger(FilterHelper.class);
+    private static final Logger logger = LogManager.getLogger(FilterHelper.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**

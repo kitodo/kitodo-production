@@ -23,7 +23,8 @@ import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.plugin.interfaces.IGoobiHotfolder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -31,7 +32,7 @@ import org.kitodo.services.file.FileService;
 public class GoobiHotfolder implements IGoobiHotfolder {
 
     /** Logger for this class. */
-    private static final Logger logger = Logger.getLogger(GoobiHotfolder.class);
+    private static final Logger logger = LogManager.getLogger(GoobiHotfolder.class);
 
     private String name;
     private File folder;

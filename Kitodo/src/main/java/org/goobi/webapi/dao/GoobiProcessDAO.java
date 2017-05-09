@@ -16,7 +16,8 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.webapi.beans.GoobiProcess;
 import org.goobi.webapi.beans.GoobiProcessStep;
 import org.goobi.webapi.beans.IdentifierPPN;
@@ -32,7 +33,7 @@ import org.kitodo.data.database.beans.Task;
 
 public class GoobiProcessDAO {
 
-    private static final Logger myLogger = Logger.getLogger(GoobiProcessDAO.class);
+    private static final Logger logger = LogManager.getLogger(GoobiProcessDAO.class);
 
     public static GoobiProcess getProcessByPPN(IdentifierPPN ppn) {
         Session session;
@@ -56,7 +57,7 @@ public class GoobiProcessDAO {
             result = (GoobiProcess) criteria.uniqueResult();
 
         } catch (HibernateException he) {
-            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+            logger.error("Catched Hibernate exception: " + he.getMessage());
         }
 
         return result;
@@ -88,7 +89,7 @@ public class GoobiProcessDAO {
                 result.addAll(list);
             }
         } catch (HibernateException he) {
-            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+            logger.error("Catched Hibernate exception: " + he.getMessage());
         }
 
         return result;
@@ -120,7 +121,7 @@ public class GoobiProcessDAO {
                 result.addAll(list);
             }
         } catch (HibernateException he) {
-            myLogger.error("Catched Hibernate exception: " + he.getMessage());
+            logger.error("Catched Hibernate exception: " + he.getMessage());
         }
 
         return result;

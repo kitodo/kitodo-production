@@ -27,7 +27,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.enums.CalculationUnit;
 import org.goobi.production.flow.statistics.enums.ResultOutput;
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -48,7 +49,7 @@ import org.jfree.data.general.DefaultValueDataset;
 public class StatisticsManager implements Serializable {
 
     private static final long serialVersionUID = -1070332559779545423L;
-    private static final Logger logger = Logger.getLogger(StatisticsManager.class);
+    private static final Logger logger = LogManager.getLogger(StatisticsManager.class);
     /* simple JFreeChart Dataset for the old simple statistics */
     private Dataset jfreeDataset;
     /* internal StatisticsMode */

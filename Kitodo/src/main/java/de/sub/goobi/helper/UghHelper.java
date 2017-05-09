@@ -15,7 +15,8 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -26,7 +27,7 @@ import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 
 public class UghHelper {
-    private static final Logger myLogger = Logger.getLogger(UghHelper.class);
+    private static final Logger logger = LogManager.getLogger(UghHelper.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -80,7 +81,7 @@ public class UghHelper {
 
                     return md;
                 } catch (MetadataTypeNotAllowedException e) {
-                    myLogger.debug(e.getMessage());
+                    logger.debug(e.getMessage());
                     return null;
                 }
             }

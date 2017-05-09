@@ -42,7 +42,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.enums.PluginType;
@@ -80,7 +81,7 @@ import org.kitodo.services.ServiceManager;
 
 public class AktuelleSchritteForm extends BasisForm {
     private static final long serialVersionUID = 5841566727939692509L;
-    private static final Logger myLogger = Logger.getLogger(AktuelleSchritteForm.class);
+    private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
     private Process myProcess = new Process();
     private Task mySchritt = new Task();
     private Integer myProblemID;
@@ -255,11 +256,11 @@ public class AktuelleSchritteForm extends BasisForm {
                         this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
                     } catch (DAOException e) {
                         Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                        myLogger.error("step couldn't get saved", e);
+                        logger.error("step couldn't get saved", e);
                     } catch (IOException e) {
-                        myLogger.error("process couldn't get inserted", e);
+                        logger.error("process couldn't get inserted", e);
                     } catch (CustomResponseException e) {
-                        myLogger.error("Elastic Search incorrect server response", e);
+                        logger.error("Elastic Search incorrect server response", e);
                     } finally {
                         this.flagWait = false;
                     }
@@ -376,9 +377,9 @@ public class AktuelleSchritteForm extends BasisForm {
                 this.serviceManager.getProcessService().save(s.getProcess());
             } catch (DAOException e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                myLogger.error("task couldn't get saved", e);
+                logger.error("task couldn't get saved", e);
             } catch (IOException | CustomResponseException e) {
-                myLogger.error("task couldn't get inserted", e);
+                logger.error("task couldn't get inserted", e);
             }
         }
 
@@ -463,7 +464,7 @@ public class AktuelleSchritteForm extends BasisForm {
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
         } catch (DAOException | IOException | CustomResponseException e) {
-            myLogger.error("task couldn't get saved/inserted", e);
+            logger.error("task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
         return "AktuelleSchritteAlle";
@@ -590,9 +591,9 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("userNotFound");
             return "";
         }
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("mySchritt.ID: " + this.mySchritt.getId());
-            myLogger.debug("Korrekturschritt.ID: " + this.myProblemID);
+        if (logger.isDebugEnabled()) {
+            logger.debug("mySchritt.ID: " + this.mySchritt.getId());
+            logger.debug("Korrekturschritt.ID: " + this.myProblemID);
         }
         this.myDav.uploadFromHome(this.mySchritt.getProcess());
         Date myDate = new Date();
@@ -646,7 +647,7 @@ public class AktuelleSchritteForm extends BasisForm {
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
         } catch (DAOException | IOException | CustomResponseException e) {
-            myLogger.error("task couldn't get saved/inserted", e);
+            logger.error("task couldn't get saved/inserted", e);
         }
 
         this.problemMessage = "";
@@ -738,7 +739,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
         } catch (DAOException | IOException | CustomResponseException e) {
-            myLogger.error("task couldn't get saved/inserted", e);
+            logger.error("task couldn't get saved/inserted", e);
         }
 
         this.solutionMessage = "";
@@ -981,7 +982,7 @@ public class AktuelleSchritteForm extends BasisForm {
                                 serviceManager.getProcessService().getImagesOrigDirectory(false, step.getProcess()));
                     }
                 } catch (Exception e) {
-                    myLogger.error(e);
+                    logger.error(e);
                 }
             }
         }
@@ -1004,7 +1005,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             schrittPerParameterLaden();
         } catch (DAOException | NumberFormatException e) {
-            myLogger.error(e);
+            logger.error(e);
         }
         return this.mySchritt;
     }
@@ -1138,7 +1139,7 @@ public class AktuelleSchritteForm extends BasisForm {
             export.startExport(this.mySchritt.getProcess());
         } catch (Exception e) {
             Helper.setFehlerMeldung("Error on export", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
         }
     }
 
@@ -1206,7 +1207,7 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
             } catch (DAOException | IOException | CustomResponseException e) {
-                myLogger.error(e);
+                logger.error(e);
             }
         }
     }
@@ -1293,12 +1294,12 @@ public class AktuelleSchritteForm extends BasisForm {
                 this.serviceManager.getProcessService().save(p);
                 Helper.setMeldung("propertiesSaved");
             } catch (DAOException e) {
-                myLogger.error(e);
+                logger.error(e);
                 Helper.setFehlerMeldung("propertiesNotSaved");
             } catch (IOException e) {
-                myLogger.error(e);
+                logger.error(e);
             } catch (CustomResponseException e) {
-                myLogger.error(e);
+                logger.error(e);
                 Helper.setMeldung("ElasticSearch server incorrect response");
             }
         }
@@ -1345,10 +1346,10 @@ public class AktuelleSchritteForm extends BasisForm {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
                 Helper.setMeldung("propertySaved");
             } catch (DAOException e) {
-                myLogger.error(e);
+                logger.error(e);
                 Helper.setFehlerMeldung("propertyNotSaved");
             } catch (IOException | CustomResponseException e) {
-                myLogger.error(e);
+                logger.error(e);
             }
         }
         loadProcessProperties();
@@ -1406,10 +1407,10 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
         } catch (DAOException e) {
-            myLogger.error(e);
+            logger.error(e);
             Helper.setFehlerMeldung("propertiesNotDeleted");
         } catch (IOException | CustomResponseException e) {
-            myLogger.error(e);
+            logger.error(e);
         }
         // saveWithoutValidation();
         loadProcessProperties();
@@ -1534,10 +1535,10 @@ public class AktuelleSchritteForm extends BasisForm {
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
             Helper.setMeldung("propertySaved");
         } catch (DAOException e) {
-            myLogger.error(e);
+            logger.error(e);
             Helper.setFehlerMeldung("propertiesNotSaved");
         } catch (IOException | CustomResponseException e) {
-            myLogger.error(e);
+            logger.error(e);
         }
         loadProcessProperties();
         return "";

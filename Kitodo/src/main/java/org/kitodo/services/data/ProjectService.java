@@ -21,7 +21,8 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
 import org.kitodo.data.database.beans.Process;
@@ -43,7 +44,7 @@ public class ProjectService extends TitleSearchService<Project> {
     private ProjectType projectType = new ProjectType();
     private Indexer<Project, ProjectType> indexer = new Indexer<>(Project.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(ProjectService.class);
+    private static final Logger logger = LogManager.getLogger(ProjectService.class);
 
     /**
      * Constructor with searcher's assigning.

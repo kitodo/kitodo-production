@@ -24,7 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
@@ -48,7 +49,7 @@ import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 
 public class HelperSchritteWithoutHibernate {
-    private static final Logger logger = Logger.getLogger(HelperSchritteWithoutHibernate.class);
+    private static final Logger logger = LogManager.getLogger(HelperSchritteWithoutHibernate.class);
     private final ServiceManager serviceManager = new ServiceManager();
     public static final String DIRECTORY_PREFIX = "orig_";
 

@@ -23,7 +23,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.IDataSource;
 import org.goobi.production.flow.statistics.IStatisticalQuestion;
 import org.goobi.production.flow.statistics.IStatisticalQuestionLimitedTimeframe;
@@ -72,7 +73,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         this.flagIncludeLoops = includeLoops;
     }
 
-    private final Logger myLogger = Logger.getLogger(StatQuestThroughput.class);
+    private final Logger logger = LogManager.getLogger(StatQuestThroughput.class);
 
     /*
      * (non-Javadoc)
@@ -298,8 +299,8 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         String headerFromSQL = new SQLStepRequestsImprovedDiscrimination(this.timeFilterFrom, this.timeFilterTo, null,
                 this.myIDlist).getSQL(requestedType, null, true, true);
 
-        this.myLogger.trace(natSQL);
-        this.myLogger.trace(headerFromSQL);
+        this.logger.trace(natSQL);
+        this.logger.trace(headerFromSQL);
 
         return buildDataTableFromSQL(natSQL, headerFromSQL);
     }
@@ -320,7 +321,7 @@ public class StatQuestThroughput implements IStatisticalQuestionLimitedTimeframe
         String natSQL = new SQLStepRequests(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, this.myIDlist)
                 .getSQL(requestedType, step, true, this.flagIncludeLoops);
 
-        this.myLogger.trace(natSQL);
+        this.logger.trace(natSQL);
 
         return buildDataTableFromSQL(natSQL, null);
     }

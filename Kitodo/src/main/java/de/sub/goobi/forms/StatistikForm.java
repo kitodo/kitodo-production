@@ -21,7 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -32,7 +33,7 @@ import org.kitodo.services.ServiceManager;
 
 public class StatistikForm {
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger myLogger = Logger.getLogger(StatistikForm.class);
+    private static final Logger logger = LogManager.getLogger(StatistikForm.class);
     Calendar cal = new GregorianCalendar();
     int n = 200;
 
@@ -104,7 +105,7 @@ public class StatistikForm {
         try {
             return serviceManager.getTaskService().count("from Task");
         } catch (DAOException e) {
-            myLogger.error("Hibernate error", e);
+            logger.error("Hibernate error", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
             return Long.valueOf(-1);
         }

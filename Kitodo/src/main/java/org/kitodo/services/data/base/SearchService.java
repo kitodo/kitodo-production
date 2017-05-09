@@ -23,7 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -42,8 +43,8 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
  * ElasticSearch index.
  */
 public abstract class SearchService<T extends BaseBean> {
-    private static final Logger logger = Logger.getLogger(SearchService.class);
 
+    private static final Logger logger = LogManager.getLogger(SearchService.class);
     protected Searcher searcher;
     protected Indexer indexer;
 

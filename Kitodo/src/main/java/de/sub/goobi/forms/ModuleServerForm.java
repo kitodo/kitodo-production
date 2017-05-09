@@ -37,7 +37,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.text.StrTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcException;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -55,7 +56,7 @@ public class ModuleServerForm {
     private ModuleDesc myModule;
     Helper help = new Helper();
     Timer messageTimer;
-    private static final Logger logger = Logger.getLogger(ModuleServerForm.class);
+    private static final Logger logger = LogManager.getLogger(ModuleServerForm.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**

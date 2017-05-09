@@ -29,7 +29,8 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
@@ -51,7 +52,7 @@ import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsModsImportExport;
 
 public class ExportDms extends ExportMets {
-    private static final Logger myLogger = Logger.getLogger(ExportDms.class);
+    private static final Logger logger = LogManager.getLogger(ExportDms.class);
     ConfigProjects cp;
     private boolean exportWithImages = true;
     private boolean exportFullText = true;
@@ -153,7 +154,7 @@ public class ExportDms extends ExportMets {
             } else {
                 Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
             }
-            myLogger.error("Export abgebrochen, xml-LeseFehler", e);
+            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
         }
     }
@@ -201,7 +202,7 @@ public class ExportDms extends ExportMets {
             } else {
                 Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
             }
-            myLogger.error("Export abgebrochen, xml-LeseFehler", e);
+            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
         }
 
@@ -354,7 +355,7 @@ public class ExportDms extends ExportMets {
                     } else {
                         Helper.setFehlerMeldung(process.getTitle() + ": error on export - ", e.getMessage());
                     }
-                    myLogger.error(process.getTitle() + ": error on export", e);
+                    logger.error(process.getTitle() + ": error on export", e);
                 }
                 if (agoraThread.result.length() > 0) {
                     if (exportDmsTask != null) {
@@ -534,7 +535,7 @@ public class ExportDms extends ExportMets {
                     } else {
                         Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
                     }
-                    myLogger.error("could not create destination directory", e);
+                    logger.error("could not create destination directory", e);
                     if (e instanceof IOException) {
                         throw (IOException) e;
                     } else if (e instanceof InterruptedException) {

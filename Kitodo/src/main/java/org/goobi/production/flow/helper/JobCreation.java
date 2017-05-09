@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
@@ -38,7 +39,7 @@ import ugh.exceptions.ReadException;
 import ugh.exceptions.WriteException;
 
 public class JobCreation {
-    private static final Logger logger = Logger.getLogger(JobCreation.class);
+    private static final Logger logger = LogManager.getLogger(JobCreation.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     private static final FileService fileService = serviceManager.getFileService();

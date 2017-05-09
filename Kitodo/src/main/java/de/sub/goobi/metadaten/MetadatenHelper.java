@@ -31,7 +31,8 @@ import java.util.Map.Entry;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 
 import ugh.dl.DigitalDocument;
@@ -48,7 +49,7 @@ import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 
 public class MetadatenHelper implements Comparator<Object> {
-    private static final Logger myLogger = Logger.getLogger(MetadatenHelper.class);
+    private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
     public static final int PAGENUMBER_FIRST = 0;
     public static final int PAGENUMBER_LAST = 1;
 
@@ -317,7 +318,7 @@ public class MetadatenHelper implements Comparator<Object> {
                 newTypes.add(dst);
             } else {
                 Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
-                myLogger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
+                logger.error("getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel
                         + " nicht definiert");
             }
         }
@@ -583,8 +584,8 @@ public class MetadatenHelper implements Comparator<Object> {
                 firstName = firstMetadataType.getNameByLanguage(this.language);
                 secondName = secondMetadataType.getNameByLanguage(this.language);
             } catch (java.lang.NullPointerException e) {
-                if (myLogger.isDebugEnabled()) {
-                    myLogger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or "
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Language " + language + " for metadata " + firstMetadata.getType() + " or "
                             + secondMetadata.getType() + " is missing in ruleset");
                 }
                 return 0;

@@ -19,14 +19,15 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 
 public class PropertyParser {
-    private static final Logger logger = Logger.getLogger(PropertyParser.class);
+    private static final Logger logger = LogManager.getLogger(PropertyParser.class);
 
     /**
      * Get properties for task.

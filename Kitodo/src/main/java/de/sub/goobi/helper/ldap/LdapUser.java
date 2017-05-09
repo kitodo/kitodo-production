@@ -43,7 +43,8 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
@@ -53,7 +54,7 @@ import org.kitodo.data.database.beans.User;
  * be stored by service providers like the LDAP system providers.
  */
 public class LdapUser implements DirContext {
-    private static final Logger myLogger = Logger.getLogger(LdapUser.class);
+    private static final Logger logger = LogManager.getLogger(LdapUser.class);
     String type;
     Attributes myAttrs;
 
@@ -125,14 +126,14 @@ public class LdapUser implements DirContext {
             try {
                 this.myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
             } catch (Exception e) {
-                myLogger.error(e);
+                logger.error(e);
             }
             /* NTLM */
             try {
                 byte hmm[] = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
                 this.myAttrs.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
-                myLogger.error(e);
+                logger.error(e);
             }
 
             /*
@@ -168,9 +169,9 @@ public class LdapUser implements DirContext {
                 String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1000));
         result = result.replaceAll("\\{uidnumber\\*2\\+1001\\}",
                 String.valueOf(Integer.parseInt(inUidNumber) * 2 + 1001));
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
-            myLogger.debug("Replace outstring: " + result);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Replace instring: " + inString + " - " + inUser + " - " + inUidNumber);
+            logger.debug("Replace outstring: " + result);
         }
         return result;
     }

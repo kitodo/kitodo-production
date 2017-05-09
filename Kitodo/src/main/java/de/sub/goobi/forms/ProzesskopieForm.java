@@ -42,7 +42,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
@@ -96,7 +97,7 @@ import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
 
 public class ProzesskopieForm {
-    private static final Logger myLogger = Logger.getLogger(ProzesskopieForm.class);
+    private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -396,7 +397,7 @@ public class ProzesskopieForm {
         try {
             aktuellerNutzer = serviceManager.getUserService().find(loginForm.getMyBenutzer().getId());
         } catch (DAOException e) {
-            myLogger.error(e);
+            logger.error(e);
         }
         if (aktuellerNutzer != null) {
             /*
@@ -596,7 +597,7 @@ public class ProzesskopieForm {
                             }
                         }
                     } catch (UghHelperException e) {
-                        myLogger.error(e);
+                        logger.error(e);
                         Helper.setFehlerMeldung(e.getMessage(), "");
                     }
                     if (field.getValue() != null && !field.getValue().equals("")) {
@@ -661,7 +662,7 @@ public class ProzesskopieForm {
             removeCollections(colStruct);
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Error on creating process", e);
-            myLogger.error("Error on creating process", e);
+            logger.error("Error on creating process", e);
         } catch (RuntimeException e) {
             /*
              * das Firstchild unterhalb des Topstructs konnte nicht ermittelt
@@ -806,12 +807,12 @@ public class ProzesskopieForm {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DAOException e) {
-            myLogger.error(e);
-            myLogger.error("error on save: ", e);
+            logger.error(e);
+            logger.error("error on save: ", e);
             return "";
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
             return "";
         }
 
@@ -973,7 +974,7 @@ public class ProzesskopieForm {
                                 try {
                                     enricher.addMetadata(higherElement.getValue());
                                 } catch (UGHException didNotWork) {
-                                    myLogger.info(didNotWork);
+                                    logger.info(didNotWork);
                                 }
                             }
                         }
@@ -1034,13 +1035,13 @@ public class ProzesskopieForm {
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
-                myLogger.error("creation of new process throws an error: ", e);
+                logger.error("creation of new process throws an error: ", e);
             } catch (UghHelperException e) {
                 Helper.setFehlerMeldung("UghHelperException", e.getMessage());
-                myLogger.error("creation of new process throws an error: ", e);
+                logger.error("creation of new process throws an error: ", e);
             } catch (MetadataTypeNotAllowedException e) {
                 Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
-                myLogger.error("creation of new process throws an error: ", e);
+                logger.error("creation of new process throws an error: ", e);
             }
 
         }
@@ -1057,12 +1058,12 @@ public class ProzesskopieForm {
             try {
                 serviceManager.getProcessService().save(this.prozessKopie);
             } catch (DAOException e) {
-                myLogger.error(e);
-                myLogger.error("error on save: ", e);
+                logger.error(e);
+                logger.error("error on save: ", e);
                 return "";
             } catch (CustomResponseException e) {
                 Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
-                myLogger.error(e);
+                logger.error(e);
                 return "";
             }
         }
@@ -1121,10 +1122,10 @@ public class ProzesskopieForm {
             }
         } catch (UghHelperException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
-            myLogger.error(e);
+            logger.error(e);
         } catch (DocStructHasNoTypeException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
-            myLogger.error(e);
+            logger.error(e);
         }
     }
 
@@ -1185,13 +1186,13 @@ public class ProzesskopieForm {
             }
 
         } catch (TypeNotAllowedForParentException e) {
-            myLogger.error(e);
+            logger.error(e);
         } catch (TypeNotAllowedAsChildException e) {
-            myLogger.error(e);
+            logger.error(e);
         } catch (PreferencesException e) {
-            myLogger.error(e);
+            logger.error(e);
         } catch (FileNotFoundException e) {
-            myLogger.error("Error while reading von opac-config", e);
+            logger.error("Error while reading von opac-config", e);
             Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
         }
     }
@@ -1306,12 +1307,12 @@ public class ProzesskopieForm {
                         }
                     }
                 } catch (PreferencesException e) {
-                    myLogger.error(e);
+                    logger.error(e);
                 }
                 try {
                     fillFieldsFromMetadataFile();
                 } catch (PreferencesException e) {
-                    myLogger.error(e);
+                    logger.error(e);
                 }
             }
         }
@@ -1490,10 +1491,10 @@ public class ProzesskopieForm {
                 }
             }
         } catch (JDOMException e1) {
-            myLogger.error("error while parsing digital collections", e1);
+            logger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         } catch (IOException e1) {
-            myLogger.error("error while parsing digital collections", e1);
+            logger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         }
 
@@ -1517,7 +1518,7 @@ public class ProzesskopieForm {
         try {
             return ConfigOpac.getAllCatalogueTitles();
         } catch (Throwable t) {
-            myLogger.error("Error while reading von opac-config", t);
+            logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
             return new ArrayList<String>();
         }
@@ -1532,7 +1533,7 @@ public class ProzesskopieForm {
         try {
             return ConfigOpac.getAllDoctypes();
         } catch (Throwable t) {
-            myLogger.error("Error while reading von opac-config", t);
+            logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
             return new ArrayList<ConfigOpacDoctype>();
         }
@@ -1825,7 +1826,7 @@ public class ProzesskopieForm {
                 try {
                     this.tifHeader_imagedescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
                 } catch (Throwable t) {
-                    myLogger.error("Error while reading von opac-config", t);
+                    logger.error("Error while reading von opac-config", t);
                     Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
                 }
             } else {
@@ -2062,7 +2063,7 @@ public class ProzesskopieForm {
             // restart of the servlet container
             return false;
         } catch (FileNotFoundException e) {
-            myLogger.error("Error while reading von opac-config", e);
+            logger.error("Error while reading von opac-config", e);
             Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
             return false;
         }
