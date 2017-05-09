@@ -1,0 +1,27 @@
+@startuml
+digraph Filemanagement {
+    fontname = "Monospace"
+    fontsize = 8
+
+    node [
+        fontname = "Monospace"
+        fontsize = 8
+        shape = "record"
+    ]
+
+    edge [
+        fontname = "Monospace"
+        fontsize = 8
+    ]
+
+    FileManagementInterface [
+        label="{
+            \<\<interface\>\>\n
+            FileManagementInterface
+            |\l
+            + retrieve(Path path): File\l
+            + save(File file, Path path): boolean\l
+        }"
+    ]
+}
+@enduml
