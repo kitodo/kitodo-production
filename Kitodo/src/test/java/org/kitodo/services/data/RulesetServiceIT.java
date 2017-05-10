@@ -132,6 +132,31 @@ public class RulesetServiceIT {
     }
 
     @Test
+    public void shouldRemoveRuleset() throws Exception {
+        RulesetService rulesetService = new RulesetService();
+
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle("To Remove");
+        rulesetService.save(ruleset);
+        Ruleset foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(3));
+        assertEquals("Additional ruleset was not inserted in database!", "To Remove", foundRuleset.getTitle());
+
+        rulesetService.remove(ruleset);
+        foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(3));
+        assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
+
+        ruleset = new Ruleset();
+        ruleset.setTitle("To remove");
+        rulesetService.save(ruleset);
+        foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(4));
+        assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
+
+        rulesetService.remove(4);
+        foundRuleset = rulesetService.convertSearchResultToObject(rulesetService.findById(4));
+        assertEquals("Additional ruleset was not removed from database!", null, foundRuleset);
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void shouldConvertSearchResultsToObjectList() throws Exception {
         RulesetService rulesetService = new RulesetService();

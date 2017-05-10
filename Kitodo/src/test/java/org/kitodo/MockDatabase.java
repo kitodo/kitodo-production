@@ -182,7 +182,6 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 14);
         firstProcessProperty.setCreationDate(localDate.toDate());
         firstProcessProperty.setContainer(1);
-        System.out.println(process.getId());
         firstProcessProperty.getProcesses().add(process);
         serviceManager.getPropertyService().save(firstProcessProperty);
 
@@ -395,7 +394,6 @@ public class MockDatabase {
         secondProcess.getTasks().add(secondTask);
         secondProcess.getTasks().add(thirdTask);
         secondProcess.getTasks().add(fourthTask);
-        System.out.println("tasks2 " + secondProcess.getTasks().size());
         serviceManager.getProcessService().save(secondProcess);
 
         blockedUser.getProcessingTasks().add(secondTask);

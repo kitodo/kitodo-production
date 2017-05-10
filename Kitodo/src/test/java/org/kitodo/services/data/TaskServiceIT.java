@@ -24,6 +24,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
@@ -56,6 +57,33 @@ public class TaskServiceIT {
 
         List<Task> tasks = taskService.findAll();
         assertEquals("Not all tasks were found in database!", 4, tasks.size());
+    }
+
+    @Test
+    public void shouldRemoveTask() throws Exception {
+        TaskService taskService = new TaskService();
+
+        Task task = new Task();
+        task.setTitle("To Remove");
+        task.setProcessingStatusEnum(TaskStatus.OPEN);
+        taskService.save(task);
+        Task foundTask = taskService.convertSearchResultToObject(taskService.findById(5));
+        assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
+
+        taskService.remove(foundTask);
+        foundTask = taskService.convertSearchResultToObject(taskService.findById(5));
+        assertEquals("Additional task was not removed from database!", null, foundTask);
+
+        task = new Task();
+        task.setTitle("To remove");
+        task.setProcessingStatusEnum(TaskStatus.OPEN);
+        taskService.save(task);
+        foundTask = taskService.convertSearchResultToObject(taskService.findById(6));
+        assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
+
+        taskService.remove(6);
+        foundTask = taskService.convertSearchResultToObject(taskService.findById(6));
+        assertEquals("Additional task was not removed from database!", null, foundTask);
     }
 
     @Test

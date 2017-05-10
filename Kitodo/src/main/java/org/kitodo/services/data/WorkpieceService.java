@@ -100,29 +100,34 @@ public class WorkpieceService extends SearchService<Workpiece> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes workpiece object from database.
      *
      * @param workpiece
      *            object
      */
-    public void remove(Workpiece workpiece) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Workpiece workpiece) throws DAOException {
         workpieceDAO.remove(workpiece);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(workpiece, workpieceType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes workpiece object from database.
      *
      * @param id
-     *            of object
+     *            of workpiece object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         workpieceDAO.remove(id);
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(id);
+    }
+
+    /**
+     * Method removes workpiece object from index of Elastic Search.
+     *
+     * @param workpiece
+     *            object
+     */
+    public void removeFromIndex(Workpiece workpiece) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(workpiece, workpieceType);
     }
 
     /**

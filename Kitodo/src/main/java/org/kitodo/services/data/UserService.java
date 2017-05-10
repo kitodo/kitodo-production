@@ -124,14 +124,32 @@ public class UserService extends SearchService<User> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes user object from database.
      *
      * @param user
      *            object
      */
-    public void remove(User user) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(User user) throws DAOException {
         userDAO.remove(user);
+    }
+
+    /**
+     * Method removes user object from database.
+     *
+     * @param id
+     *            of template object
+     */
+    public void removeFromDatabase(Integer id) throws DAOException {
+        userDAO.remove(id);
+    }
+
+    /**
+     * Method removes user object from index of Elastic Search.
+     *
+     * @param user
+     *            object
+     */
+    public void removeFromIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(user, userType);
     }

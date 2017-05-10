@@ -104,6 +104,31 @@ public class PropertyServiceIT {
     }
 
     @Test
+    public void shouldRemoveProperty() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        Property property = new Property();
+        property.setTitle("To Remove");
+        propertyService.save(property);
+        Property foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(9));
+        assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
+
+        propertyService.remove(foundProperty);
+        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(9));
+        assertEquals("Additional property was not removed from database!", null, foundProperty);
+
+        property = new Property();
+        property.setTitle("To remove");
+        propertyService.save(property);
+        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(10));
+        assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
+
+        propertyService.remove(10);
+        foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(10));
+        assertEquals("Additional property was not removed from database!", null, foundProperty);
+    }
+
+    @Test
     public void shouldGetNormalizedTitle() throws Exception {
         PropertyService processPropertyService = new PropertyService();
 

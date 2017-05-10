@@ -132,6 +132,31 @@ public class DocketServiceIT {
     }
 
     @Test
+    public void shouldRemoveDocket() throws Exception {
+        DocketService docketService = new DocketService();
+
+        Docket docket = new Docket();
+        docket.setTitle("To Remove");
+        docketService.save(docket);
+        Docket foundDocket = docketService.convertSearchResultToObject(docketService.findById(3));
+        assertEquals("Additional docket was not inserted in database!", "To Remove", foundDocket.getTitle());
+
+        docketService.remove(foundDocket);
+        foundDocket = docketService.convertSearchResultToObject(docketService.findById(3));
+        assertEquals("Additional docket was not removed from database!", null, foundDocket);
+
+        docket = new Docket();
+        docket.setTitle("To remove");
+        docketService.save(docket);
+        foundDocket = docketService.convertSearchResultToObject(docketService.findById(4));
+        assertEquals("Additional docket was not inserted in database!", "To remove", foundDocket.getTitle());
+
+        docketService.remove(4);
+        foundDocket = docketService.convertSearchResultToObject(docketService.findById(4));
+        assertEquals("Additional docket was not removed from database!", null, foundDocket);
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void shouldConvertSearchResultsToObjectList() throws Exception {
         DocketService docketService = new DocketService();

@@ -100,29 +100,34 @@ public class TemplateService extends SearchService<Template> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes template object from database.
      *
      * @param template
      *            object
      */
-    public void remove(Template template) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Template template) throws DAOException {
         templateDAO.remove(template);
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(template, templateType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes template object from database.
      *
      * @param id
-     *            of object
+     *            of template object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         templateDAO.remove(id);
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(id);
+    }
+
+    /**
+     * Method removes template object from index of Elastic Search.
+     *
+     * @param template
+     *            object
+     */
+    public void removeFromIndex(Template template) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(template, templateType);
     }
 
     /**

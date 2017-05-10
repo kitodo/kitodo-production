@@ -68,6 +68,31 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldRemoveProcess() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        Process process = new Process();
+        process.setTitle("To Remove");
+        processService.save(process);
+        Process foundProcess = processService.convertSearchResultToObject(processService.findById(5));
+        assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
+
+        processService.remove(foundProcess);
+        foundProcess = processService.convertSearchResultToObject(processService.findById(5));
+        assertEquals("Additional process was not removed from database!", null, foundProcess);
+
+        process = new Process();
+        process.setTitle("To remove");
+        processService.save(process);
+        foundProcess = processService.convertSearchResultToObject(processService.findById(6));
+        assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
+
+        processService.remove(6);
+        foundProcess = processService.convertSearchResultToObject(processService.findById(6));
+        assertEquals("Additional process was not removed from database!", null, foundProcess);
+    }
+
+    @Test
     public void shouldGetBatchesByType() throws Exception {
         ProcessService processService = new ProcessService();
 

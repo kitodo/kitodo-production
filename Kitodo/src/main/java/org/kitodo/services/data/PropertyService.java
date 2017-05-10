@@ -120,13 +120,34 @@ public class PropertyService extends TitleSearchService<Property> {
     }
 
     /**
-     * Remove property from database.
-     * 
+     * Method removes property object from database.
+     *
      * @param property
-     *            to be removed
+     *            object
      */
-    public void remove(Property property) throws DAOException {
+    public void removeFromDatabase(Property property) throws DAOException {
         propertyDAO.remove(property);
+    }
+
+    /**
+     * Method removes property object from database.
+     *
+     * @param id
+     *            of property object
+     */
+    public void removeFromDatabase(Integer id) throws DAOException {
+        propertyDAO.remove(id);
+    }
+
+    /**
+     * Method removes property object from index of Elastic Search.
+     *
+     * @param property
+     *            object
+     */
+    public void removeFromIndex(Property property) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(property, propertyType);
     }
 
     /**

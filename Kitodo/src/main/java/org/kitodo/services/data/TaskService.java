@@ -36,6 +36,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class TaskService extends TitleSearchService<Task> {
+
     private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
     private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
@@ -77,29 +78,34 @@ public class TaskService extends TitleSearchService<Task> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes task object from database.
      *
      * @param task
      *            object
      */
-    public void remove(Task task) throws DAOException, IOException, CustomResponseException {
+    public void removeFromDatabase(Task task) throws DAOException {
         taskDAO.remove(task);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(task, taskType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes task object from database.
      *
      * @param id
-     *            of object
+     *            of task object
      */
-    public void remove(Integer id) throws DAOException, IOException, CustomResponseException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         taskDAO.remove(id);
+    }
+
+    /**
+     * Method removes task object from index of Elastic Search.
+     *
+     * @param task
+     *            object
+     */
+    public void removeFromIndex(Task task) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(task, taskType);
     }
 
     public List<Task> search(String query) throws DAOException {

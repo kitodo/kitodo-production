@@ -85,29 +85,34 @@ public class RulesetService extends TitleSearchService<Ruleset> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes ruleset object from database.
      *
      * @param ruleset
      *            object
      */
-    public void remove(Ruleset ruleset) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Ruleset ruleset) throws DAOException {
         rulesetDAO.remove(ruleset);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(ruleset, rulesetType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes ruleset object from database.
      *
      * @param id
-     *            of object
+     *            of ruleset object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         rulesetDAO.remove(id);
+    }
+
+    /**
+     * Method removes ruleset object from index of Elastic Search.
+     *
+     * @param ruleset
+     *            object
+     */
+    public void removeFromIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(ruleset, rulesetType);
     }
 
     /**

@@ -48,6 +48,31 @@ public class TemplateServiceIT {
     }
 
     @Test
+    public void shouldRemoveTemplate() throws Exception {
+        TemplateService templateService = new TemplateService();
+
+        Template template = new Template();
+        template.setOrigin("To Remove");
+        templateService.save(template);
+        Template foundTemplate = templateService.convertSearchResultToObject(templateService.findById(3));
+        assertEquals("Additional template was not inserted in database!", "To Remove", foundTemplate.getOrigin());
+
+        templateService.remove(foundTemplate);
+        foundTemplate = templateService.convertSearchResultToObject(templateService.findById(3));
+        assertEquals("Additional template was not removed from database!", null, foundTemplate);
+
+        template = new Template();
+        template.setOrigin("To remove");
+        templateService.save(template);
+        foundTemplate = templateService.convertSearchResultToObject(templateService.findById(4));
+        assertEquals("Additional template was not inserted in database!", "To remove", foundTemplate.getOrigin());
+
+        templateService.remove(4);
+        foundTemplate = templateService.convertSearchResultToObject(templateService.findById(4));
+        assertEquals("Additional template was not removed from database!", null, foundTemplate);
+    }
+
+    @Test
     public void shouldGetPropertiesSize() throws Exception {
         TemplateService templateService = new TemplateService();
 

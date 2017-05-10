@@ -60,8 +60,11 @@ public class IndexRestClientIT {
     @Test
     public void shouldDeleteDocument() throws Exception {
         IndexRestClient restClient = initializeRestClient();
+
         restClient.addType(MockEntity.createEntities());
         assertTrue("Delete of document has failed!", restClient.deleteDocument(1));
+
+        assertTrue("Delete of document has failed!", restClient.deleteDocument(100));
     }
 
     @Test

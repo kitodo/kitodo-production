@@ -149,29 +149,34 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes process object from database.
      *
      * @param process
      *            object
      */
-    public void remove(Process process) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Process process) throws DAOException {
         processDAO.remove(process);
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(process, processType);
     }
 
     /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
+     * Method removes process object from database.
      *
      * @param id
-     *            of object
+     *            of process object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
+    public void removeFromDatabase(Integer id) throws DAOException {
         processDAO.remove(id);
+    }
+
+    /**
+     * Method removes process object from index of Elastic Search.
+     *
+     * @param process
+     *            object
+     */
+    public void removeFromIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(process, processType);
     }
 
     public List<Process> search(String query) throws DAOException {

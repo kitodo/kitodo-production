@@ -62,6 +62,31 @@ public class UserServiceIT {
     }
 
     @Test
+    public void shouldRemoveUser() throws Exception {
+        UserService userService = new UserService();
+
+        User user = new User();
+        user.setLogin("Remove");
+        userService.save(user);
+        User foundUser = userService.convertSearchResultToObject(userService.findById(4));
+        assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
+
+        userService.remove(foundUser);
+        foundUser = userService.convertSearchResultToObject(userService.findById(4));
+        assertEquals("Additional user was not removed from database!", null, foundUser);
+
+        user = new User();
+        user.setLogin("remove");
+        userService.save(user);
+        foundUser = userService.convertSearchResultToObject(userService.findById(5));
+        assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
+
+        userService.remove(5);
+        foundUser = userService.convertSearchResultToObject(userService.findById(5));
+        assertEquals("Additional user was not removed from database!", null, foundUser);
+    }
+
+    @Test
     public void shouldGetTableSize() throws Exception {
         UserService userService = new UserService();
 

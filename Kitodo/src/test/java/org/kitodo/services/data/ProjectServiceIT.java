@@ -60,6 +60,31 @@ public class ProjectServiceIT {
     }
 
     @Test
+    public void shouldRemoveProject() throws Exception {
+        ProjectService projectService = new ProjectService();
+
+        Project project = new Project();
+        project.setTitle("To Remove");
+        projectService.save(project);
+        Project foundProject = projectService.convertSearchResultToObject(projectService.findById(4));
+        assertEquals("Additional project was not inserted in database!", "To Remove", foundProject.getTitle());
+
+        projectService.remove(foundProject);
+        foundProject = projectService.convertSearchResultToObject(projectService.findById(4));
+        assertEquals("Additional project was not removed from database!", null, foundProject);
+
+        project = new Project();
+        project.setTitle("To remove");
+        projectService.save(project);
+        foundProject = projectService.convertSearchResultToObject(projectService.findById(5));
+        assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
+
+        projectService.remove(5);
+        foundProject = projectService.convertSearchResultToObject(projectService.findById(5));
+        assertEquals("Additional project was not removed from database!", null, foundProject);
+    }
+
+    @Test
     public void shouldGetWorkFlow() throws Exception {
         ProjectService projectService = new ProjectService();
 
