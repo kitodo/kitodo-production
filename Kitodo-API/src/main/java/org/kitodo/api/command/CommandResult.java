@@ -21,7 +21,7 @@ public class CommandResult {
     /** The command as a String. */
     private String command;
 
-    /** If the command execution was successfull. */
+    /** If the command execution was successful. */
     private boolean successful;
 
     /** The resultmessages. */
@@ -65,7 +65,7 @@ public class CommandResult {
     }
 
     /**
-     * Gets if command was successfull.
+     * Gets if command was successful.
      * 
      * @return The successful.
      */

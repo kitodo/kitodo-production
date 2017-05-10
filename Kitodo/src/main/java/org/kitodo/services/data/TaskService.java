@@ -293,7 +293,7 @@ public class TaskService extends TitleSearchService<Task> {
     }
 
     /**
-     * Get all scripts adn their paths.
+     * Get all scripts and their paths.
      *
      * @param task
      *            object

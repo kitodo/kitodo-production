@@ -41,7 +41,7 @@ public interface FileManagementInterface {
      * 
      * @param uri
      *            the uri to delete
-     * @return true if successfull, false otherwise
+     * @return true if successful, false otherwise
      */
     boolean delete(URI uri) throws IOException;
 

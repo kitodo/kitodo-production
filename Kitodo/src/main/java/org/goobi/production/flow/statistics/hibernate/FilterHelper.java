@@ -230,7 +230,7 @@ public class FilterHelper {
     /**
      * Filter processes for done steps range.
      *
-     * @param con Conjuction object
+     * @param con Conjunction object
      * @param parameters String
      * @param inStatus TaskStatus object
      * @param negate boolean
