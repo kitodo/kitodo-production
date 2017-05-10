@@ -17,6 +17,8 @@ import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,35 +56,35 @@ public class JobCreation {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException {
+    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException, URISyntaxException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
         }
-        String metsfilename = io.getMetsFilename();
+        URI metsfilename = io.getMetsFilename();
         if (logger.isTraceEnabled()) {
             logger.trace("mets filename is " + metsfilename);
         }
-        String basepath = metsfilename.substring(0, metsfilename.length() - 4);
+        URI basepath = metsfilename;
         if (logger.isTraceEnabled()) {
             logger.trace("basepath is " + basepath);
         }
-        File metsfile = new File(metsfilename);
+        URI metsfile = metsfilename;
         Process p = null;
         if (!testTitle(processTitle)) {
             logger.error("cannot create process, process title \"" + processTitle + "\" is already in use");
             // removing all data
-            File imagesFolder = new File(basepath);
-            if (imagesFolder.isDirectory()) {
-                fileService.delete(imagesFolder.toURI());
+            URI imagesFolder = basepath;
+            if (fileService.isDirectory(imagesFolder)) {
+                fileService.delete(imagesFolder);
             } else {
-                imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
-                if (imagesFolder.isDirectory()) {
-                    fileService.delete(imagesFolder.toURI());
+                imagesFolder = fileService.createResource(basepath, "_" + vorlage.DIRECTORY_SUFFIX);
+                if (fileService.isDirectory(imagesFolder)) {
+                    fileService.delete(imagesFolder);
                 }
             }
             try {
-                fileService.delete(metsfile.toURI());
+                fileService.delete(metsfile);
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
@@ -178,33 +180,34 @@ public class JobCreation {
      *            Process object
      */
     @SuppressWarnings("static-access")
-    public static void moveFiles(File metsfile, String basepath, Process p)
+    public static void moveFiles(URI metsfile, URI basepath, Process p)
             throws SwapException, DAOException, IOException, InterruptedException {
         if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
-            File imagesFolder = new File(basepath);
-            if (!imagesFolder.exists()) {
-                imagesFolder = new File(basepath + "_" + p.DIRECTORY_SUFFIX);
+            URI imagesFolder = basepath;
+            if (!fileService.fileExist(imagesFolder)) {
+                imagesFolder = fileService.createResource(basepath, "_" + p.DIRECTORY_SUFFIX);
             }
-            if (imagesFolder.isDirectory()) {
-                List<String> imageDir = new ArrayList<String>();
+            if (fileService.isDirectory(imagesFolder)) {
+                List<URI> imageDir = new ArrayList<>();
 
-                String[] files = fileService.list(imagesFolder);
-                for (int i = 0; i < files.length; i++) {
-                    imageDir.add(files[i]);
+                ArrayList<URI> files = fileService.getSubUris(imagesFolder);
+                for (int i = 0; i < files.size(); i++) {
+                    imageDir.add(files.get(i));
                 }
-                for (String file : imageDir) {
-                    File image = new File(imagesFolder, file);
-                    File dest = new File(
-                            serviceManager.getProcessService().getImagesOrigDirectory(false, p) + image.getName());
+                for (URI uri : imageDir) {
+                    URI image = fileService.createResource(imagesFolder, uri.toString());
+                    URI dest = fileService.createResource(
+                            serviceManager.getProcessService().getImagesOrigDirectory(false, p),
+                            fileService.getFileName(image));
                     fileService.moveFile(image, dest);
                 }
-                fileService.delete(imagesFolder.toURI());
+                fileService.delete(imagesFolder);
             }
 
             // copy pdf files
             File pdfs = new File(basepath + "_pdf" + File.separator);
             if (pdfs.isDirectory()) {
-                fileService.moveDirectory(pdfs, new File(serviceManager.getProcessService().getPdfDirectory(p)));
+                fileService.moveDirectory(pdfs, new File(serviceManager.getFileService().getPdfDirectory(p)));
             }
 
             // copy fulltext files
@@ -213,22 +216,21 @@ public class JobCreation {
 
             if (fulltext.isDirectory()) {
 
-                fileService.moveDirectory(fulltext, new File(serviceManager.getProcessService().getTxtDirectory(p)));
+                fileService.moveDirectory(fulltext, new File(serviceManager.getFileService().getTxtDirectory(p)));
             }
 
             // copy source files
 
             File sourceDir = new File(basepath + "_src" + File.separator);
             if (sourceDir.isDirectory()) {
-                fileService.moveDirectory(sourceDir,
-                        new File((serviceManager.getProcessService().getImportDirectory(p))));
+                fileService.moveDirectory(sourceDir, new File((serviceManager.getFileService().getImportDirectory(p))));
             }
 
             try {
-                fileService.delete(metsfile.toURI());
+                fileService.delete(metsfile);
             } catch (Exception e) {
-                logger.error("Can not delete file " + metsfile.getName() + " after importing " + p.getTitle()
-                        + " into kitodo", e);
+                logger.error("Can not delete file " + metsfile + " after importing " + p.getTitle() + " into kitodo",
+                        e);
 
             }
             File anchor = new File(basepath + "_anchor.xml");
@@ -237,55 +239,62 @@ public class JobCreation {
             }
         } else {
             // new folder structure for process imports
-            File importFolder = new File(basepath);
-            if (importFolder.isDirectory()) {
-                File[] folderList = fileService.listFiles(importFolder);
-                for (File directory : folderList) {
-                    if (directory.getName().contains("images")) {
-                        File[] imageList = fileService.listFiles(directory);
-                        for (File imagedir : imageList) {
-                            if (imagedir.isDirectory()) {
-                                for (File file : fileService.listFiles(imagedir)) {
+            URI importFolder = basepath;
+            if (fileService.isDirectory(importFolder)) {
+                ArrayList<URI> folderList = fileService.getSubUris(importFolder);
+                for (URI directory : folderList) {
+                    if (fileService.getFileName(directory).contains("images")) {
+                        ArrayList<URI> imageList = fileService.getSubUris(directory);
+                        for (URI imagedir : imageList) {
+                            if (fileService.isDirectory(imagedir)) {
+                                for (URI file : fileService.getSubUris(imagedir)) {
                                     fileService.moveFile(file,
-                                            new File(serviceManager.getProcessService().getImagesDirectory(p)
-                                                    + imagedir.getName(), file.getName()));
+                                            fileService.createResource(
+                                                    serviceManager.getFileService().getImagesDirectory(p),
+                                                    fileService.getFileName(imagedir) + fileService.getFileName(file)));
                                 }
                             } else {
-                                fileService.moveFile(imagedir, new File(
-                                        serviceManager.getProcessService().getImagesDirectory(p), imagedir.getName()));
+                                fileService.moveFile(imagedir,
+                                        fileService.createResource(
+                                                serviceManager.getFileService().getImagesDirectory(p),
+                                                fileService.getFileName(imagedir)));
                             }
                         }
-                    } else if (directory.getName().contains("ocr")) {
-                        File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
-                        if (!ocr.exists()) {
-                            ocr.mkdir();
+                    } else if (fileService.getFileName(directory).contains("ocr")) {
+                        URI ocr = serviceManager.getFileService().getOcrDirectory(p);
+                        if (!fileService.fileExist(ocr)) {
+                            fileService.createDirectory(ocr, null);
                         }
-                        File[] ocrList = fileService.listFiles(directory);
-                        for (File ocrdir : ocrList) {
-                            if (ocrdir.isDirectory()) {
-                                fileService.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
+                        ArrayList<URI> ocrList = fileService.getSubUris(directory);
+                        for (URI ocrdir : ocrList) {
+                            if (fileService.isDirectory(ocrdir)) {
+                                fileService.moveDirectory(ocrdir,
+                                        fileService.createResource(ocr, fileService.getFileName(ocrdir)));
                             } else {
-                                fileService.moveDirectory(ocrdir, new File(ocr, ocrdir.getName()));
+                                fileService.moveDirectory(ocrdir,
+                                        fileService.createResource(ocr, fileService.getFileName(ocrdir)));
                             }
                         }
                     } else {
-                        File i = new File(serviceManager.getProcessService().getImportDirectory(p));
-                        if (!i.exists()) {
-                            i.mkdir();
+                        URI i = serviceManager.getFileService().getImportDirectory(p);
+                        if (!fileService.fileExist(i)) {
+                            fileService.createResource(i.getPath());
                         }
-                        File[] importList = fileService.listFiles(directory);
-                        for (File importdir : importList) {
-                            if (importdir.isDirectory()) {
-                                fileService.moveDirectory(importdir, new File(i, importdir.getName()));
+                        ArrayList<URI> importList = fileService.getSubUris(directory);
+                        for (URI importdir : importList) {
+                            if (fileService.isDirectory(importdir)) {
+                                fileService.moveDirectory(importdir,
+                                        fileService.createResource(i, fileService.getFileName(importdir)));
                             } else {
-                                fileService.moveDirectory(importdir, new File(i, importdir.getName()));
+                                fileService.moveDirectory(importdir,
+                                        fileService.createResource(i, fileService.getFileName(importdir)));
                             }
                         }
                     }
                 }
-                fileService.delete(importFolder.toURI());
+                fileService.delete(importFolder);
 
-                fileService.delete(metsfile.toURI());
+                fileService.delete(metsfile);
             }
 
         }

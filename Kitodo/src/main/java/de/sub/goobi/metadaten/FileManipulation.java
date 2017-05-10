@@ -412,34 +412,32 @@ public class FileManipulation {
 
             }
         }
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
-        File fileuploadFolder = new File(tempDirectory + "fileupload");
-        if (!fileuploadFolder.exists()) {
-            fileuploadFolder.mkdir();
-        }
-        File destination = new File(
-                fileuploadFolder.getAbsolutePath() + File.separator + metadataBean.getMyProzess().getTitle());
-        if (!destination.exists()) {
-            destination.mkdir();
+        URI tempDirectory = fileService.getTemporalDirectory();
+        URI fileuploadFolder = fileService.createDirectory(tempDirectory, "fileupload");
+
+        URI destination = fileuploadFolder.resolve(File.separator + metadataBean.getMyProzess().getTitle());
+        if (!fileService.fileExist(destination)) {
+            fileService.createDirectory(fileuploadFolder, metadataBean.getMyProzess().getTitle());
         }
 
         for (String filename : filenamesToMove) {
             String prefix = filename.replace(Metadaten.getFileExtension(filename), "");
             String processTitle = metadataBean.getMyProzess().getTitle();
-            for (String folder : metadataBean.getAllTifFolders()) {
-                File[] filesInFolder = fileService.listFiles(new File(serviceManager.getFileService()
-                        .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, folder)));
-                for (File currentFile : filesInFolder) {
+            for (URI folder : metadataBean.getAllTifFolders()) {
+                ArrayList<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
+                        .getProcessSubTypeURI(metadataBean.getMyProzess(), ProcessSubType.IMAGE, folder.toString()));
+                for (URI currentFile : filesInFolder) {
 
-                    String filenameInFolder = currentFile.getName();
+                    String filenameInFolder = fileService.getFileName(currentFile);
                     String filenamePrefix = filenameInFolder.replace(Metadaten.getFileExtension(filenameInFolder), "");
                     if (filenamePrefix.equals(prefix)) {
-                        File tempFolder = new File(destination.getAbsolutePath() + File.separator + folder);
-                        if (!tempFolder.exists()) {
-                            tempFolder.mkdir();
+                        URI tempFolder = destination.resolve(File.separator + folder);
+                        if (!fileService.fileExist(tempFolder)) {
+                            fileService.createDirectory(destination, folder.toString());
                         }
 
-                        File destinationFile = new File(tempFolder, processTitle + "_" + currentFile.getName());
+                        URI destinationFile = tempFolder
+                                .resolve(processTitle + "_" + fileService.getFileName(currentFile));
 
                         // if (deleteFilesAfterMove) {
                         // currentFile.renameTo(destinationFile);

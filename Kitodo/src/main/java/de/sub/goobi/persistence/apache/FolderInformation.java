@@ -18,14 +18,12 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -52,7 +50,7 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public String getImagesTifDirectory(boolean useFallBack) {
+    public URI getImagesTifDirectory(boolean useFallBack) {
         File dir = new File(getImagesDirectory());
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
@@ -112,7 +110,7 @@ public class FolderInformation {
             rueckgabe += File.separator;
         }
 
-        return rueckgabe;
+        return URI.create(rueckgabe);
     }
 
     /**
@@ -135,7 +133,7 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public String getImagesOrigDirectory(boolean useFallBack) {
+    public URI getImagesOrigDirectory(boolean useFallBack) {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             File dir = new File(getImagesDirectory());
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -188,7 +186,7 @@ public class FolderInformation {
 
             String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
 
-            return rueckgabe;
+            return URI.create(rueckgabe);
         } else {
             return getImagesTifDirectory(useFallBack);
         }
@@ -199,10 +197,10 @@ public class FolderInformation {
      *
      * @return path
      */
-    public String getImagesDirectory() {
+    public URI getImagesDirectory() {
         String pfad = getProcessDataDirectory() + "images" + File.separator;
 
-        return pfad;
+        return URI.create(pfad);
     }
 
     /**
@@ -210,38 +208,38 @@ public class FolderInformation {
      *
      * @return path
      */
-    public String getProcessDataDirectory() {
+    public URI getProcessDataDirectory() {
         String pfad = metadataPath + this.id + File.separator;
         pfad = pfad.replaceAll(" ", "__");
-        return pfad;
+        return URI.create(pfad);
     }
 
-    public String getOcrDirectory() {
-        return getProcessDataDirectory() + "ocr" + File.separator;
+    public URI getOcrDirectory() {
+        return URI.create(getProcessDataDirectory() + "ocr" + File.separator);
     }
 
-    public String getTxtDirectory() {
-        return getOcrDirectory() + this.title + "_txt" + File.separator;
+    public URI getTxtDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_txt" + File.separator);
     }
 
-    public String getWordDirectory() {
-        return getOcrDirectory() + this.title + "_wc" + File.separator;
+    public URI getWordDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_wc" + File.separator);
     }
 
-    public String getPdfDirectory() {
-        return getOcrDirectory() + this.title + "_pdf" + File.separator;
+    public URI getPdfDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_pdf" + File.separator);
     }
 
-    public String getAltoDirectory() {
-        return getOcrDirectory() + this.title + "_alto" + File.separator;
+    public URI getAltoDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_alto" + File.separator);
     }
 
-    public String getImportDirectory() {
-        return getProcessDataDirectory() + "import" + File.separator;
+    public URI getImportDirectory() {
+        return URI.create(getProcessDataDirectory() + "import" + File.separator);
     }
 
-    public String getMetadataFilePath() {
-        return getProcessDataDirectory() + "meta.xml";
+    public URI getMetadataFilePath() {
+        return URI.create(getProcessDataDirectory() + "meta.xml");
     }
 
     /**
@@ -249,7 +247,7 @@ public class FolderInformation {
      *
      * @return path
      */
-    public String getSourceDirectory() {
+    public URI getSourceDirectory() {
         File dir = new File(getImagesDirectory());
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
@@ -268,75 +266,7 @@ public class FolderInformation {
             sourceFolder = new File(dir, verzeichnisse[0]);
         }
 
-        return sourceFolder.getAbsolutePath();
-    }
-
-    /**
-     * Get folder for process.
-     *
-     * @param useFallBack
-     *            boolean
-     * @return Map of paths
-     */
-    public Map<String, String> getFolderForProcess(boolean useFallBack) {
-        Map<String, String> answer = new HashMap<String, String>();
-        String processpath = getProcessDataDirectory().replace("\\", "/");
-        String tifpath = getImagesTifDirectory(useFallBack).replace("\\", "/");
-        String imagepath = getImagesDirectory().replace("\\", "/");
-        String origpath = getImagesOrigDirectory(useFallBack).replace("\\", "/");
-        String metaFile = getMetadataFilePath().replace("\\", "/");
-        String ocrBasisPath = getOcrDirectory().replace("\\", "/");
-        String ocrPlaintextPath = getTxtDirectory().replace("\\", "/");
-        String sourcepath = getSourceDirectory().replace("\\", "/");
-        String importpath = getImportDirectory().replace("\\", "/");
-        if (tifpath.endsWith(File.separator)) {
-            tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (imagepath.endsWith(File.separator)) {
-            imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (origpath.endsWith(File.separator)) {
-            origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (processpath.endsWith(File.separator)) {
-            processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (sourcepath.endsWith(File.separator)) {
-            sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (ocrBasisPath.endsWith(File.separator)) {
-            ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
-                    "/");
-        }
-        if (ocrPlaintextPath.endsWith(File.separator)) {
-            ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
-                    .replace("\\", "/");
-        }
-        if (SystemUtils.IS_OS_WINDOWS) {
-            answer.put("(tifurl)", "file:/" + tifpath);
-        } else {
-            answer.put("(tifurl)", "file://" + tifpath);
-        }
-        if (SystemUtils.IS_OS_WINDOWS) {
-            answer.put("(origurl)", "file:/" + origpath);
-        } else {
-            answer.put("(origurl)", "file://" + origpath);
-        }
-        if (SystemUtils.IS_OS_WINDOWS) {
-            answer.put("(imageurl)", "file:/" + imagepath);
-        } else {
-            answer.put("(imageurl)", "file://" + imagepath);
-        }
-        answer.put("(tifpath)", tifpath);
-        answer.put("(origpath)", origpath);
-        answer.put("(imagepath)", imagepath);
-        answer.put("(processpath)", processpath);
-        answer.put("(sourcepath)", sourcepath);
-        answer.put("(importpath)", importpath);
-        answer.put("(ocrbasispath)", ocrBasisPath);
-        answer.put("(ocrplaintextpath)", ocrPlaintextPath);
-        answer.put("(metaFile)", metaFile);
-        return answer;
+        return URI.create(sourceFolder.getAbsolutePath());
     }
 
     /**
@@ -360,7 +290,7 @@ public class FolderInformation {
         } catch (IllegalAccessException e) {
         } catch (InvocationTargetException e) {
         }
-        String folder = this.getImagesTifDirectory(false);
+        String folder = this.getImagesTifDirectory(false).toString();
         folder = folder.substring(0, folder.lastIndexOf("_"));
         folder = folder + "_" + methodName;
         if (new File(folder).exists()) {

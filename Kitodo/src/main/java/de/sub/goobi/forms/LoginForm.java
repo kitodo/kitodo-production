@@ -19,6 +19,7 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
@@ -372,8 +373,8 @@ public class LoginForm {
      * @throws IOException
      *             if an I/O error occurs.
      */
-    public static String getCurrentUserHomeDir() throws IOException, InterruptedException {
-        String result = "";
+    public static URI getCurrentUserHomeDir() throws IOException, InterruptedException {
+        URI result = null;
         ServiceManager serviceManager = new ServiceManager();
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         if (loginForm != null) {

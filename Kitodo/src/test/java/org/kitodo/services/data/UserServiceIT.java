@@ -424,7 +424,7 @@ public class UserServiceIT {
         // but not sure how to test because it depends on config.properties
         // ldap_use
         user = userService.find(2);
-        condition = userService.getHomeDirectory(user).contains("nowak");
+        condition = userService.getHomeDirectory(user).toString().contains("nowak");
         System.out.println("2. Home directory: " + user.getLogin() + userService.getHomeDirectory(user));
         assertTrue("Home directory of user is incorrect!", condition);
     }

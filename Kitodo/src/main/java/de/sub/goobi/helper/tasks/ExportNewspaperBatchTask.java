@@ -401,7 +401,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     LocalDate appeared = new LocalDate(year, monthOfYear,
                             getMetadataIntValueByName(dayNode, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
                     for (@SuppressWarnings("unused")
-                            DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
+                    DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
                         result.add(appeared);
                     }
                 }
@@ -519,7 +519,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         MetsMods result = new MetsMods(ruleSet);
-        result.read(serviceManager.getProcessService().getMetadataFilePath(process));
+        result.read(serviceManager.getFileService().getMetadataFilePath(process).toString());
 
         DigitalDocument caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(

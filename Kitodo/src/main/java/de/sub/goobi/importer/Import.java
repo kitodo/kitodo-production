@@ -16,6 +16,7 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +74,7 @@ public class Import {
 
     private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
-            PreferencesException, SwapException, DAOException, WriteException {
+            PreferencesException, SwapException, DAOException, WriteException, URISyntaxException {
         logger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {

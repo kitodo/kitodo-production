@@ -18,6 +18,7 @@ import de.unigoettingen.goobi.module.api.dataprovider.process.ProcessImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 
 import org.kitodo.data.database.beans.Process;
@@ -94,22 +95,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getImageDir(String sessionId) throws GoobiException {
         super.getImageDir(sessionId);
-        try {
-            return serviceManager.getProcessService()
-                    .getImagesDirectory(ModuleServerForm.getProcessFromShortSession(sessionId));
-        } catch (IOException e) {
-            throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (InterruptedException e) {
-            throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (SwapException e) {
-            throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (DAOException e) {
-            throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        }
+        return serviceManager.getFileService()
+                .getImagesDirectory(ModuleServerForm.getProcessFromShortSession(sessionId)).toString();
     }
 
     /**
@@ -125,8 +112,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     public String getMetadataFile(String sessionId) throws GoobiException {
         super.getMetadataFile(sessionId);
         try {
-            return serviceManager.getProcessService()
-                    .getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
+            return serviceManager.getFileService()
+                    .getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId)).toString();
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
@@ -153,11 +140,12 @@ public class ExtendedProzessImpl extends ProcessImpl {
      *             1, 2, 4, 5, 6, 254
      */
     @Override
-    public HashMap<String, String> getParams(String sessionId) throws GoobiException {
+    public HashMap<String, URI> getParams(String sessionId) throws GoobiException {
         super.getParams(sessionId);
-        HashMap<String, String> myMap = new HashMap<String, String>();
+        HashMap<String, URI> myMap = new HashMap<>();
         Process p = ModuleServerForm.getProcessFromShortSession(sessionId);
-        myMap.put("ruleset", ConfigCore.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile());
+        myMap.put("ruleset", serviceManager.getFileService()
+                .createResource(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + p.getRuleset().getFile()));
         try {
             myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p));
         } catch (IOException e) {

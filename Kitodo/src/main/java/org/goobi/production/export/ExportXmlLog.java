@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -375,14 +376,15 @@ public class ExportXmlLog implements IProcessDataExport {
         ArrayList<Element> metadataElements = new ArrayList<Element>();
 
         try {
-            String filename = serviceManager.getProcessService().getMetadataFilePath(process);
-            Document metsDoc = new SAXBuilder().build(filename);
+            URI filename = serviceManager.getFileService().getMetadataFilePath(process);
+            Document metsDoc = new SAXBuilder().build(filename.toString());
             Document anchorDoc = null;
-            String anchorfilename = serviceManager.getProcessService().getMetadataFilePath(process).replace("meta.xml",
-                    "meta_anchor.xml");
-            File anchorFile = new File(anchorfilename);
-            if (anchorFile.exists() && anchorFile.canRead()) {
-                anchorDoc = new SAXBuilder().build(anchorfilename);
+            URI anchorfilename = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
+                    .replace("meta.xml", "meta_anchor.xml"));
+            URI anchorFile = anchorfilename;
+            if (serviceManager.getFileService().fileExist(anchorFile)
+                    && serviceManager.getFileService().canRead(anchorFile)) {
+                anchorDoc = new SAXBuilder().build(anchorfilename.toString());
             }
             HashMap<String, Namespace> namespaces = new HashMap<String, Namespace>();
 

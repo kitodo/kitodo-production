@@ -26,6 +26,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -1015,22 +1016,22 @@ public class ProzesskopieForm {
                 }
                 Metadata newmd = new Metadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newmd.setValue("file:/" + serviceManager.getProcessService().getImagesDirectory(this.prozessKopie)
+                    newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 } else {
-                    newmd.setValue("file://" + serviceManager.getProcessService().getImagesDirectory(this.prozessKopie)
+                    newmd.setValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 }
                 this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
 
                 /* Rdf-File schreiben */
-                serviceManager.getProcessService().writeMetadataFile(this.myRdf, this.prozessKopie);
+                serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
                 /*
                  * soll der Prozess als Vorlage verwendet werden?
                  */
                 if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
-                    serviceManager.getProcessService().writeMetadataAsTemplateFile(this.myRdf, this.prozessKopie);
+                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.myRdf, this.prozessKopie);
                 }
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
@@ -1042,6 +1043,9 @@ public class ProzesskopieForm {
             } catch (MetadataTypeNotAllowedException e) {
                 Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
                 logger.error("creation of new process throws an error: ", e);
+            } catch (URISyntaxException e) {
+                Helper.setFehlerMeldung("URI creation failed", e.getMessage());
+                logger.error("creation of uri throws an error: ", e);
             }
 
         }

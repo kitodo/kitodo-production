@@ -100,10 +100,6 @@ public class GoobiScript {
          */
         if (this.myParameters.get("action").equals("swapSteps")) {
             swapSteps(inProzesse);
-        } else if (this.myParameters.get("action").equals("swapProzessesOut")) {
-            swapOutProzesses(inProzesse);
-        } else if (this.myParameters.get("action").equals("swapProzessesIn")) {
-            swapInProzesses(inProzesse);
         } else if (this.myParameters.get("action").equals("importFromFileSystem")) {
             importFromFileSystem(inProzesse);
         } else if (this.myParameters.get("action").equals("addUser")) {
@@ -194,7 +190,7 @@ public class GoobiScript {
                     if (ocr.exists()) {
                         fileService.delete(ocr.toURI());
                     }
-                    File images = new File(serviceManager.getProcessService().getImagesDirectory(p));
+                    File images = new File(serviceManager.getFileService().getImagesDirectory(p));
                     if (images.exists()) {
                         fileService.delete(images.toURI());
                     }
@@ -271,7 +267,7 @@ public class GoobiScript {
                         Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
                                 + " [" + p.getId().intValue() + "] is not existing");
                     } else {
-                        fileService.copyDir(sourceFolderProzess, imagesFolder);
+                        fileService.copyDirectory(sourceFolderProzess, imagesFolder);
                         Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
                                 + p.getId().intValue() + "] is copied");
                     }
@@ -895,7 +891,7 @@ public class GoobiScript {
         for (Process proz : inProzesse) {
             try {
                 File tiffheaderfile = new File(
-                        serviceManager.getProcessService().getImagesDirectory(proz) + "tiffwriter.conf");
+                        serviceManager.getFileService().getImagesDirectory(proz) + "tiffwriter.conf");
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();
                 }
@@ -925,14 +921,14 @@ public class GoobiScript {
                 }
                 Metadata newmd = new Metadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newmd.setValue("file:/" + serviceManager.getProcessService().getImagesDirectory(proz)
-                            + proz.getTitle() + DIRECTORY_SUFFIX);
+                    newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(proz) + proz.getTitle()
+                            + DIRECTORY_SUFFIX);
                 } else {
-                    newmd.setValue("file://" + serviceManager.getProcessService().getImagesDirectory(proz)
+                    newmd.setValue("file://" + serviceManager.getFileService().getImagesDirectory(proz)
                             + proz.getTitle() + DIRECTORY_SUFFIX);
                 }
                 myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
-                serviceManager.getProcessService().writeMetadataFile(myRdf, proz);
+                serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ImagePath updated: ", proz.getTitle());
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {

@@ -12,6 +12,7 @@
 package org.goobi.io;
 
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -127,11 +127,13 @@ public class BackupFileRotation {
     private void rotateBackupFilesFor(URI fileName) throws IOException, URISyntaxException {
 
         URI oldest = new URI(fileName + "." + numberOfBackups);
-        boolean deleted = fileService.delete(oldest);
-        if (!deleted) {
-            String message = "Could not delete " + oldest.toString();
-            logger.error(message);
-            throw new IOException(message);
+        if (fileService.fileExist(oldest)) {
+            boolean deleted = fileService.delete(oldest);
+            if (!deleted) {
+                String message = "Could not delete " + oldest.toString();
+                logger.error(message);
+                throw new IOException(message);
+            }
         }
 
         for (int count = numberOfBackups; count > 1; count--) {
@@ -150,13 +152,12 @@ public class BackupFileRotation {
     private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
 
         ArrayList<URI> filteredUris = new ArrayList<>();
+        FilenameFilter filter = new FileListFilter(filterFormat);
 
-        URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
-        ArrayList<URI> subUris = fileService.getSubUris(processSubTypeURI);
+        URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
+        ArrayList<URI> subUris = fileService.getSubUris(filter, processDataDirectory);
         for (URI uri : subUris) {
-            if (uri.toString().matches(filterFormat)) {
-                filteredUris.add(uri);
-            }
+            filteredUris.add(uri);
         }
         return filteredUris;
     }

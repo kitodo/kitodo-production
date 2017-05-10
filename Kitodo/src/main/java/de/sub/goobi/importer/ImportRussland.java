@@ -15,6 +15,7 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -67,9 +68,10 @@ public class ImportRussland {
      * @param inProzess
      *            Process object
      */
-    protected void parse(BufferedReader reader, Process inProzess) throws IOException, WrongImportFileException,
-            TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException,
-            ReadException, InterruptedException, PreferencesException, SwapException, DAOException, WriteException {
+    protected void parse(BufferedReader reader, Process inProzess)
+            throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
+            TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
+            PreferencesException, SwapException, DAOException, WriteException, URISyntaxException {
 
         /*
          * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess
@@ -133,7 +135,7 @@ public class ImportRussland {
         /*
          * Datei abschliessend wieder speichern
          */
-        serviceManager.getProcessService().writeMetadataFile(gdzfile, inProzess);
+        serviceManager.getFileService().writeMetadataFile(gdzfile, inProzess);
         logger.debug("ParsenRussland() - Ende");
     }
 

@@ -19,6 +19,7 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -220,7 +221,7 @@ public class MetadatenVerifizierung {
         }
 
         try {
-            List<String> images = mih.getDataFiles(myProcess);
+            List<URI> images = mih.getDataFiles(myProcess);
             if (images != null) {
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
                 int sizeOfImages = images.size();
@@ -242,7 +243,7 @@ public class MetadatenVerifizierung {
          */
         try {
             if (this.autoSave) {
-                serviceManager.getProcessService().writeMetadataFile(gdzfile, process);
+                serviceManager.getFileService().writeMetadataFile(gdzfile, process);
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Error while writing metadata: " + process.getTitle(), e);

@@ -11,6 +11,7 @@
 
 package org.goobi.production.importer;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -26,8 +27,8 @@ public class ImportObject {
     private String processTitle = "";
     private final Collection<Batch> batches = new LinkedList<Batch>();
 
-    private String metsFilename = "";
-    private String importFileName = "";
+    private URI metsFilename;
+    private URI importFileName;
 
     // error handling
     private ImportReturnValue importReturnValue = ImportReturnValue.ExportFinished;
@@ -49,11 +50,11 @@ public class ImportObject {
         this.processTitle = processTitle;
     }
 
-    public String getMetsFilename() {
+    public URI getMetsFilename() {
         return this.metsFilename;
     }
 
-    public void setMetsFilename(String metsFilename) {
+    public void setMetsFilename(URI metsFilename) {
         this.metsFilename = metsFilename;
     }
 
@@ -101,11 +102,11 @@ public class ImportObject {
         return batches;
     }
 
-    public String getImportFileName() {
+    public URI getImportFileName() {
         return importFileName;
     }
 
-    public void setImportFileName(String importFileName) {
+    public void setImportFileName(URI importFileName) {
         this.importFileName = importFileName;
     }
 }

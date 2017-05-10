@@ -30,6 +30,7 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.Property;
 import org.kitodo.data.database.persistence.apache.StepObject;
+import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -38,6 +39,8 @@ import ugh.dl.MetadataType;
 import ugh.dl.Prefs;
 
 public class VariableReplacerWithoutHibernate {
+
+    private ServiceManager serviceManager = new ServiceManager();
 
     private enum MetadataLevel {
         ALL, FIRSTCHILD, TOPSTRUCT;
@@ -104,15 +107,18 @@ public class VariableReplacerWithoutHibernate {
 
         FolderInformation fi = new FolderInformation(this.process.getId(), this.process.getTitle());
 
-        String processpath = fi.getProcessDataDirectory().replace("\\", "/");
-        String tifpath = fi.getImagesTifDirectory(false).replace("\\", "/");
-        String imagepath = fi.getImagesDirectory().replace("\\", "/");
-        String origpath = fi.getImagesOrigDirectory(false).replace("\\", "/");
-        String metaFile = fi.getMetadataFilePath().replace("\\", "/");
-        String ocrBasisPath = fi.getOcrDirectory().replace("\\", "/");
-        String ocrPlaintextPath = fi.getTxtDirectory().replace("\\", "/");
-        String sourcePath = fi.getSourceDirectory().replace("\\", "/");
-        String importPath = fi.getImportDirectory().replace("\\", "/");
+        String processpath = serviceManager.getFileService().getFileName(fi.getProcessDataDirectory()).replace("\\",
+                "/");
+        String tifpath = serviceManager.getFileService().getFileName(fi.getImagesTifDirectory(false)).replace("\\",
+                "/");
+        String imagepath = serviceManager.getFileService().getFileName(fi.getImagesDirectory()).replace("\\", "/");
+        String origpath = serviceManager.getFileService().getFileName(fi.getImagesOrigDirectory(false)).replace("\\",
+                "/");
+        String metaFile = serviceManager.getFileService().getFileName(fi.getMetadataFilePath()).replace("\\", "/");
+        String ocrBasisPath = serviceManager.getFileService().getFileName(fi.getOcrDirectory()).replace("\\", "/");
+        String ocrPlaintextPath = serviceManager.getFileService().getFileName(fi.getTxtDirectory()).replace("\\", "/");
+        String sourcePath = serviceManager.getFileService().getFileName(fi.getSourceDirectory()).replace("\\", "/");
+        String importPath = serviceManager.getFileService().getFileName(fi.getImportDirectory()).replace("\\", "/");
         Ruleset ruleset = ProcessManager.getRuleset(this.process.getRulesetId());
         String myprefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile();
 

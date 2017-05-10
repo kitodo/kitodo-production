@@ -538,7 +538,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            fileService.createDirectory(result, tifOrdner);
+            fileService.createMetaDirectory(result, tifOrdner);
         }
         return result;
     }
@@ -622,7 +622,7 @@ public class ProcessService extends TitleSearchService<Process> {
             URI rueckgabe = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                fileService.createDirectory(rueckgabe, origOrdner);
+                fileService.createMetaDirectory(rueckgabe, origOrdner);
             }
             return rueckgabe;
         } else {
@@ -1189,7 +1189,7 @@ public class ProcessService extends TitleSearchService<Process> {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            fileService.createDirectory(this.getProcessDataDirectory(process),
+            fileService.createMetaDirectory(this.getProcessDataDirectory(process),
                     processDir.replace("(processtitle)", process.getTitle()));
         }
 

@@ -21,6 +21,7 @@ import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +73,7 @@ public class ExportMetsWithoutHibernate {
             MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
             DAOException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        String benutzerHome = "";
+        URI benutzerHome = null;
         if (login != null) {
             benutzerHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
         }
@@ -87,7 +88,7 @@ public class ExportMetsWithoutHibernate {
      * @param inZielVerzeichnis
      *            String
      */
-    public boolean startExport(ProcessObject process, String inZielVerzeichnis)
+    public boolean startExport(ProcessObject process, URI inZielVerzeichnis)
             throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
             MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
             DAOException, TypeNotAllowedForParentException {
@@ -103,7 +104,7 @@ public class ExportMetsWithoutHibernate {
         this.fi = new FolderInformation(process.getId(), process.getTitle());
         Fileformat gdzfile = process.readMetadataFile(this.fi.getMetadataFilePath(), this.myPrefs);
 
-        String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
+        URI zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
         String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
         return writeMetsFile(process, targetFileName, gdzfile, false);
@@ -115,8 +116,8 @@ public class ExportMetsWithoutHibernate {
      * @param inTargetFolder
      *            the folder to prove and maybe create it
      */
-    protected String prepareUserDirectory(String inTargetFolder) {
-        String target = inTargetFolder;
+    protected URI prepareUserDirectory(URI inTargetFolder) {
+        URI target = inTargetFolder;
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         try {
             serviceManager.getFileService().createDirectoryForUser(target, myBenutzer.getLogin());
@@ -145,7 +146,7 @@ public class ExportMetsWithoutHibernate {
         this.project = ProjectManager.getProjectById(process.getProjectId());
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
-        String imageFolderPath = this.fi.getImagesDirectory();
+        URI imageFolderPath = this.fi.getImagesDirectory();
         File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -

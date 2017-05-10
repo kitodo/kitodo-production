@@ -14,7 +14,6 @@ package de.sub.goobi.config;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -94,7 +93,7 @@ public class ConfigCore extends ConfigMain {
 
             /* den Ordner neu anlegen, wenn er nicht existiert */
             try {
-                serviceManager.getFileService().createDirectory(URI.create(fileName), "imagesTemp");
+                serviceManager.getFileService().createMetaDirectory(new File(fileName).toURI(), "imagesTemp");
             } catch (Exception ioe) {
                 logger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());

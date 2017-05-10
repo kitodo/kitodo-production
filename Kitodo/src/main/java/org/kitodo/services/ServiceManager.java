@@ -11,7 +11,20 @@
 
 package org.kitodo.services;
 
-import org.kitodo.services.data.*;
+import org.kitodo.services.data.BatchService;
+import org.kitodo.services.data.DocketService;
+import org.kitodo.services.data.HistoryService;
+import org.kitodo.services.data.LdapGroupService;
+import org.kitodo.services.data.ProcessService;
+import org.kitodo.services.data.ProjectFileGroupService;
+import org.kitodo.services.data.ProjectService;
+import org.kitodo.services.data.PropertyService;
+import org.kitodo.services.data.RulesetService;
+import org.kitodo.services.data.TaskService;
+import org.kitodo.services.data.TemplateService;
+import org.kitodo.services.data.UserGroupService;
+import org.kitodo.services.data.UserService;
+import org.kitodo.services.data.WorkpieceService;
 import org.kitodo.services.file.FileService;
 
 public class ServiceManager {
@@ -281,4 +294,5 @@ public class ServiceManager {
         initializeFileService();
         return fileService;
     }
+
 }

@@ -12,6 +12,7 @@
 package org.kitodo.data.database.persistence.apache;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
 
 import org.kitodo.data.database.exceptions.DAOException;
@@ -189,7 +190,7 @@ public class ProcessObject {
         this.wikiField = wikiField;
     }
 
-    public Fileformat readMetadataFile(String metadataFile, Prefs prefs)
+    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadataHelper.getMetaFileType(metadataFile);
@@ -203,12 +204,12 @@ public class ProcessObject {
         } else {
             ff = new RDFFile(prefs);
         }
-        ff.read(metadataFile);
+        ff.read(metadataFile.toString());
 
         return ff;
     }
 
-    public void writeMetadataFile(Fileformat gdzfile, String metadataFile, Prefs prefs, String fileFormat)
+    public void writeMetadataFile(Fileformat gdzfile, URI metadataFile, Prefs prefs, String fileFormat)
             throws IOException, InterruptedException, SwapException, DAOException, WriteException,
             PreferencesException {
         Fileformat ff;
@@ -226,7 +227,7 @@ public class ProcessObject {
         }
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
-        ff.write(metadataFile);
+        ff.write(metadataFile.toString());
     }
 
 }

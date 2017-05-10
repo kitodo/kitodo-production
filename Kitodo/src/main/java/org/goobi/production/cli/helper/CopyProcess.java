@@ -25,6 +25,8 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,7 +81,7 @@ public class CopyProcess extends ProzesskopieForm {
     /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
     private boolean useOpac;
     private boolean useTemplates;
-    public String metadataFile;
+    public URI metadataFile;
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
@@ -110,7 +112,7 @@ public class CopyProcess extends ProzesskopieForm {
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile);
+            this.myRdf.read(this.metadataFile.toString());
         } catch (PreferencesException e) {
             logger.error(e);
         } catch (ReadException e) {
@@ -153,7 +155,7 @@ public class CopyProcess extends ProzesskopieForm {
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile);
+            this.myRdf.read(this.metadataFile.toString());
         } catch (PreferencesException e) {
             logger.error(e);
         } catch (ReadException e) {
@@ -268,7 +270,7 @@ public class CopyProcess extends ProzesskopieForm {
             Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile);
+            this.myRdf.read(this.metadataFile.toString());
 
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
 
@@ -294,7 +296,7 @@ public class CopyProcess extends ProzesskopieForm {
             Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile);
+            this.myRdf.read(this.metadataFile.toString());
 
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
 
@@ -583,7 +585,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
 
     public Process NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException, CustomResponseException {
+            SwapException, DAOException, WriteException, CustomResponseException, URISyntaxException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -634,7 +636,7 @@ public class CopyProcess extends ProzesskopieForm {
             createNewFileformat();
         }
 
-        serviceManager.getProcessService().writeMetadataFile(this.myRdf, this.prozessKopie);
+        serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
         // Adding process to history
         if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
@@ -664,8 +666,9 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io) throws ReadException, IOException, InterruptedException,
-            PreferencesException, SwapException, DAOException, WriteException, CustomResponseException {
+    public Process createProcess(ImportObject io)
+            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
+            WriteException, CustomResponseException, URISyntaxException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -772,7 +775,7 @@ public class CopyProcess extends ProzesskopieForm {
         Fileformat ff;
         try {
             ff = new MetsMods(myPrefs);
-            ff.read(this.metadataFile);
+            ff.read(this.metadataFile.toString());
         } catch (PreferencesException e) {
             logger.error(e);
         } catch (ReadException e) {

@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence.apache;
 
+import java.net.URI;
 import java.util.Date;
 
 public class ProjectObject {
@@ -122,8 +123,8 @@ public class ProjectObject {
         this.dmsImportRootPath = dmsImportRootPath;
     }
 
-    public String getDmsImportImagesPath() {
-        return this.dmsImportImagesPath;
+    public URI getDmsImportImagesPath() {
+        return URI.create(this.dmsImportImagesPath);
     }
 
     public void setDmsImportImagesPath(String dmsImportImagesPath) {

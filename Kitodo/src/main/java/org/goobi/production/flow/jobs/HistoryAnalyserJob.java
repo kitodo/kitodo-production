@@ -16,6 +16,7 @@ import de.unigoettingen.sub.commons.util.file.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -103,12 +104,14 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
         }
 
         /* metadata */
-        if (updateHistoryEvent(inProcess, HistoryTypeEnum.metadataDiff, inProcess.getSortHelperMetadata().longValue())) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.metadataDiff,
+                inProcess.getSortHelperMetadata().longValue())) {
             updated = true;
         }
 
         /* docstruct */
-        if (updateHistoryEvent(inProcess, HistoryTypeEnum.docstructDiff, inProcess.getSortHelperDocstructs().longValue())) {
+        if (updateHistoryEvent(inProcess, HistoryTypeEnum.docstructDiff,
+                inProcess.getSortHelperDocstructs().longValue())) {
             updated = true;
         }
 
@@ -358,9 +361,9 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      */
     private static long getCurrentStorageSize(Process inProcess)
             throws IOException, InterruptedException, SwapException, DAOException {
-        String dirAsString = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
-        File directory = new File(dirAsString);
-        if (!directory.isDirectory()) {
+        URI dir = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
+        File directory = new File(dir);
+        if (!serviceManager.getFileService().isDirectory(dir)) {
             throw new IOException("History Manager error while calculating size of " + inProcess.getTitle());
         }
         return org.apache.commons.io.FileUtils.sizeOfDirectory(directory);

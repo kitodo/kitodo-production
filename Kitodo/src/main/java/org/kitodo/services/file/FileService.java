@@ -23,7 +23,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -65,12 +64,18 @@ public class FileService {
 
     private static final ServiceManager serviceManager = new ServiceManager();
 
-    public void createDirectory(URI parentFolderUri, String directoryName) throws IOException {
+    public void createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!new File(parentFolderUri + directoryName).exists()) {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
             createDirScript.run(Arrays.asList(new String[] {parentFolderUri + directoryName }));
         }
 
+    }
+
+    public URI createDirectory(URI parentFolderUri, String directoryName) {
+        File file = new File(parentFolderUri.toString(), directoryName);
+        file.mkdir();
+        return file.toURI();
     }
 
     /**
@@ -89,11 +94,11 @@ public class FileService {
      *             If an I/O error occurs.
      */
 
-    public void createDirectoryForUser(String dirName, String userName) throws IOException, InterruptedException {
-        if (!new File(dirName).exists()) {
+    public void createDirectoryForUser(URI dirName, String userName) throws IOException, InterruptedException {
+        if (!serviceManager.getFileService().fileExist(dirName)) {
             ShellScript createDirScript = new ShellScript(
                     new File(ConfigCore.getParameter("script_createDirUserHome")));
-            createDirScript.run(Arrays.asList(userName, dirName));
+            createDirScript.run(Arrays.asList(userName, dirName.toString()));
         }
     }
 
@@ -113,10 +118,11 @@ public class FileService {
      *             exists
      */
     public URI renameFile(URI fileUri, String newFileName) throws IOException {
+
         final int SLEEP_INTERVAL_MILLIS = 20;
         final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
-        File oldFile;
-        File newFile;
+        URI oldFileUri;
+        URI newFileUri;
         boolean success;
         int millisWaited = 0;
 
@@ -124,17 +130,17 @@ public class FileService {
             return null;
         }
 
-        oldFile = new File(fileUri);
-        newFile = new File(newFileName);
+        oldFileUri = fileUri;
+        newFileUri = URI.create(newFileName);
 
-        if (!oldFile.exists()) {
+        if (!fileExist(oldFileUri)) {
             if (logger.isDebugEnabled()) {
-                logger.debug("File " + fileUri + " does not exist for renaming.");
+                logger.debug("File " + fileUri.getPath() + " does not exist for renaming.");
             }
             throw new FileNotFoundException(fileUri + " does not exist for renaming.");
         }
 
-        if (newFile.exists()) {
+        if (fileExist(newFileUri)) {
             String message = "Renaming of " + fileUri + " into " + newFileName + " failed: Destination exists.";
             logger.error(message);
             throw new IOException(message);
@@ -147,7 +153,7 @@ public class FileService {
                         + "Forcing immediate garbage collection now!");
                 System.gc();
             }
-            success = oldFile.renameTo(newFile);
+            success = new File(mapUriToKitodoUri(oldFileUri)).renameTo(new File(mapUriToKitodoUri(newFileUri)));
             if (!success) {
                 if (millisWaited == 0 && logger.isInfoEnabled()) {
                     logger.info("Renaming " + fileUri + " failed. File may be locked. Retrying...");
@@ -212,15 +218,32 @@ public class FileService {
      *            destination file
      * @return Long
      */
-    public void copyDir(File sourceDirectory, File targetDirectory) throws IOException {
+    public void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();
         }
         FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
-    public void copyFile(File srcFile, File destFile) throws IOException {
+    /**
+     * Copy directory.
+     *
+     * @param sourceDirectory
+     *            source file as uri
+     * @param targetDirectory
+     *            destination file as uri
+     * @return Long
+     */
+    public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+        copyDirectory(new File(sourceDirectory), new File(targetDirectory));
+    }
+
+    private void copyFile(File srcFile, File destFile) throws IOException {
         FileUtils.copyFile(srcFile, destFile);
+    }
+
+    public void copyFile(URI srcFile, URI destFile) throws IOException {
+        copyFile(new File(srcFile), new File(destFile));
     }
 
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
@@ -228,7 +251,15 @@ public class FileService {
     }
 
     public OutputStream write(URI uri) throws IOException, URISyntaxException {
+        if (!fileExist(uri)) {
+            createFile(uri);
+        }
         return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
+    }
+
+    private void createFile(URI uri) throws IOException {
+        URI kitodoUri = mapUriToKitodoUri(uri);
+        new File(kitodoUri).createNewFile();
     }
 
     public InputStream read(URI uri) throws IOException {
@@ -237,7 +268,7 @@ public class FileService {
     }
 
     public boolean delete(URI uri) throws IOException {
-        File file = new File(uri);
+        File file = new File(mapUriToKitodoUri(uri));
         if (file.isFile()) {
             return file.delete();
         }
@@ -249,7 +280,9 @@ public class FileService {
     }
 
     public boolean fileExist(URI uri) {
-        return new File(uri).exists();
+        String path = mapUriToKitodoUri(uri).getPath();
+        File file = new File(path);
+        return file.exists();
     }
 
     public String getFileName(URI uri) {
@@ -260,12 +293,22 @@ public class FileService {
         return write(uri);
     }
 
-    public void moveFile(File sourceDirectory, File targetDirectory) throws IOException {
-        FileUtils.moveFile(sourceDirectory, targetDirectory);
+    public void moveFile(File sourceFile, File targetFile) throws IOException {
+        FileUtils.moveFile(sourceFile, targetFile);
     }
 
     public void moveDirectory(File sourceDirectory, File targetDirectory) throws IOException {
         FileUtils.moveDirectory(sourceDirectory, targetDirectory);
+    }
+
+    public void moveDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+        copyDirectory(sourceDirectory, targetDirectory);
+        delete(sourceDirectory);
+    }
+
+    public void moveFile(URI sourceFile, URI targetFile) throws IOException {
+        copyFile(sourceFile, targetFile);
+        delete(sourceFile);
     }
 
     public String[] list(File file) {
@@ -411,8 +454,9 @@ public class FileService {
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
-        String pfad = process.getId() + File.separator;
-        pfad = pfad.replaceAll(" ", "__");
+        String pfad = process.getId().toString();
+        // TODO: File.seperator is not working here
+        pfad = pfad.replaceAll(" ", "__") + "/";
         return URI.create(pfad);
     }
 
@@ -495,7 +539,7 @@ public class FileService {
      *            the process, to get the source directory for
      * @return the source directory as a string
      */
-    public String getSourceDirectory(Process process) {
+    public URI getSourceDirectory(Process process) {
         File dir = new File(getProcessSubTypeURI(process, ProcessSubType.IMAGE, null));
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
@@ -514,11 +558,18 @@ public class FileService {
             sourceFolder = new File(dir, verzeichnisse[0]);
         }
 
-        return sourceFolder.getAbsolutePath();
+        return sourceFolder.toURI();
     }
 
-    private URI mapUriToKitodoUri(URI uri) throws MalformedURLException {
-        return URI.create(ConfigCore.getKitodoDataDirectory() + uri);
+    private URI mapUriToKitodoUri(URI uri) {
+        return new File(ConfigCore.getKitodoDataDirectory() + uri).toURI();
+    }
+
+    private URI unmapUriFromKitodoUri(URI uri) {
+        String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
+        String[] split = uri.toString().split(kitodoDataDirectory);
+        String shortUri = split[1];
+        return URI.create(shortUri);
     }
 
     /**
@@ -529,10 +580,11 @@ public class FileService {
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(URI processSubTypeURI) {
+        processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(new File(processSubTypeURI));
         for (File file : files) {
-            resultList.add(file.toURI());
+            resultList.add(unmapUriFromKitodoUri(file.toURI()));
         }
 
         return resultList;
@@ -546,10 +598,11 @@ public class FileService {
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
+        processSubTypeURI = mapUriToKitodoUri(processSubTypeURI);
         ArrayList<URI> resultList = new ArrayList<>();
         File[] files = listFiles(filter, new File(processSubTypeURI));
         for (File file : files) {
-            resultList.add(file.toURI());
+            resultList.add(unmapUriFromKitodoUri(file.toURI()));
         }
 
         return resultList;
@@ -557,18 +610,19 @@ public class FileService {
 
     /**
      * Creates a new File.
-     * 
+     *
      * @param fileName
      *            the name of the new file
      * @return the uri of the new file
      */
     public URI createResource(String fileName) {
-        return new File(fileName).toURI();
+        String path = new File(fileName).toURI().getPath();
+        return URI.create(path.substring(path.lastIndexOf('/') + 1));
     }
 
     /**
      * Gets the specific IMAGE sub type.
-     * 
+     *
      * @param process
      *            the process to get the imageDirectory for.
      * @return The uri of the Image Directory.
@@ -583,12 +637,97 @@ public class FileService {
 
     /**
      * checks, if a URI leads to a directory.
-     * 
+     *
      * @param dir
      *            the uri to check.
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
         return new File(dir).isDirectory();
+    }
+
+    public boolean canRead(URI uri) {
+        return new File(uri).canRead();
+    }
+
+    public URI getTemporalDirectory() {
+        return URI.create(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/"));
+    }
+
+    public boolean isFile(URI uri) {
+        return new File(uri).isFile();
+    }
+
+    public URI getImportDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
+    }
+
+    public URI getTxtDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
+    }
+
+    public URI getPdfDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
+    }
+
+    public URI getAltoDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
+    }
+
+    public URI getWordDirectory(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
+    }
+
+    public URI getTemplateFile(Process process) {
+        return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
+    }
+
+    public URI createResource(URI targetFolder, String s) throws IOException {
+        File file = new File(mapUriToKitodoUri(targetFolder).resolve(s));
+        file.createNewFile();
+        return file.toURI();
+    }
+
+    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process) throws IOException,
+            InterruptedException, SwapException, DAOException, WriteException, PreferencesException {
+        inFile.write(getTemplateFile(process).toString());
+    }
+
+    /**
+     * Creates a symbolic link.
+     *
+     * @param targetUri
+     *            The target URI for the link.
+     * @param homeUri
+     *            The home URI.
+     * @return true, if link creation was successfull.
+     */
+    public boolean createSymLink(URI targetUri, URI homeUri) {
+        return true;
+    }
+
+    /**
+     * Delets a symbolik link.
+     *
+     * @param homeUri
+     *            The uri of the home folder, where the link should be deleted.
+     * @return true, if deletion was successull.
+     */
+    public boolean deleteSymLink(URI homeUri) {
+        String command = ConfigCore.getParameter("script_deleteSymLink");
+        ShellScript deleteSymLinkScript;
+        try {
+            deleteSymLinkScript = new ShellScript(new File(command));
+            deleteSymLinkScript.run(Arrays.asList(new String[] {homeUri.toString() }));
+        } catch (FileNotFoundException e) {
+            logger.error("FileNotFoundException in deleteSymLink()", e);
+            Helper.setFehlerMeldung("Couldn't find script file, error", e.getMessage());
+            return false;
+        } catch (IOException e) {
+            logger.error("IOException in deleteSymLink()", e);
+            Helper.setFehlerMeldung("Aborted deleteSymLink(), error", e.getMessage());
+            return false;
+        }
+        return true;
     }
 }

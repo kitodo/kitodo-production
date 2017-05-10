@@ -27,9 +27,10 @@ import de.unigoettingen.goobi.module.api.exception.GoobiException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -57,7 +58,6 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.goobi.production.properties.AccessCondition;
-import org.goobi.production.properties.IProperty;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.hibernate.Criteria;
@@ -826,7 +826,7 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
 
-        this.myDav.removeAllFromHome(geprueft, DONEDIRECTORYNAME);
+        this.myDav.removeAllFromHome(geprueft, URI.create(DONEDIRECTORYNAME));
         Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", DONEDIRECTORYNAME);
         return null;
     }
@@ -983,8 +983,9 @@ public class AktuelleSchritteForm extends BasisForm {
                     if (step.getProcessingStatusEnum() == TaskStatus.OPEN) {
                         // gesamtAnzahlImages +=
                         // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
-                        this.gesamtAnzahlImages += serviceManager.getFileService().getNumberOfFiles(
-                                serviceManager.getProcessService().getImagesOrigDirectory(false, step.getProcess()));
+                        this.gesamtAnzahlImages += serviceManager.getFileService().getSubUris(
+                                serviceManager.getProcessService().getImagesOrigDirectory(false, step.getProcess()))
+                                .size();
                     }
                 } catch (Exception e) {
                     logger.error(e);
