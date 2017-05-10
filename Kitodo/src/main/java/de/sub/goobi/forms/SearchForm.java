@@ -20,7 +20,8 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.flow.statistics.hibernate.FilterString;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -39,7 +40,7 @@ public class SearchForm {
     /**
      * Logger instance.
      */
-    private static final Logger logger = Logger.getLogger(SearchForm.class);
+    private static final Logger logger = LogManager.getLogger(SearchForm.class);
 
     private List<String> projects = new ArrayList<String>(); // proj:
     private String project = "";

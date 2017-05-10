@@ -26,7 +26,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
 
@@ -321,7 +322,7 @@ public class User extends BaseBean {
     // Here will be methods which should be in UserService but are used by jsp
     // files
 
-    private static final Logger logger = Logger.getLogger(MySQLHelper.class);
+    private static final Logger logger = LogManager.getLogger(User.class);
 
     /**
      * Adds a new filter to list.

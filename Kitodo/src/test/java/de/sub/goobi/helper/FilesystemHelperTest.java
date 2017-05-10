@@ -17,19 +17,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.log4j.BasicConfigurator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.services.file.FileService;
 
 public class FilesystemHelperTest {
-
-    @BeforeClass
-    public static void oneTimeSetUp() {
-        BasicConfigurator.configure();
-    }
 
     @Before
     public void setUp() throws Exception {

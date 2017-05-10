@@ -25,10 +25,11 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class UghUtils {
-    private static final Logger myLogger = Logger.getLogger(UghUtils.class);
+    private static final Logger logger = LogManager.getLogger(UghUtils.class);
 
     /**
      * In einem String die Umlaute auf den Grundbuchstaben reduzieren.
@@ -43,7 +44,7 @@ public class UghUtils {
                 }
             }
         } catch (IOException e) {
-            myLogger.error("IOException bei Umlautkonvertierung", e);
+            logger.error("IOException bei Umlautkonvertierung", e);
         }
         return line;
     }

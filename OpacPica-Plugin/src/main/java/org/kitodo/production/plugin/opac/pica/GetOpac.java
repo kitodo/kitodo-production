@@ -23,7 +23,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -44,7 +45,7 @@ import org.xml.sax.XMLReader;
  */
 
 class GetOpac {
-    private static final Logger logger = Logger.getLogger(GetOpac.class);
+    private static final Logger logger = LogManager.getLogger(GetOpac.class);
 
     // the output xml
     private static final String PICA_COLLECTION_RECORDS = "collection";

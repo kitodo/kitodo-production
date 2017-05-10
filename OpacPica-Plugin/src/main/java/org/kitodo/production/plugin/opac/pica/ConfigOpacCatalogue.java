@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -33,7 +34,7 @@ import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Node;
 
 class ConfigOpacCatalogue {
-    private static final Logger myLogger = Logger.getLogger(ConfigOpacCatalogue.class);
+    private static final Logger logger = LogManager.getLogger(ConfigOpacCatalogue.class);
     private String title = "";
     private String description = "";
     private String address = "";
@@ -119,7 +120,7 @@ class ConfigOpacCatalogue {
             myHitlist = doutputter.output(doc);
             myHitlist = myHitlist.getFirstChild();
         } catch (JDOMException e) {
-            myLogger.error("JDOMException in executeBeautifier(Node)", e);
+            logger.error("JDOMException in executeBeautifier(Node)", e);
         }
 
         /* Ausgabe des überarbeiteten Opac-Ergebnisses */
@@ -287,9 +288,9 @@ class ConfigOpacCatalogue {
             Document tempDoc = new DOMBuilder().build(inNode.getOwnerDocument());
             outputter.output(tempDoc.getRootElement(), output);
         } catch (FileNotFoundException e) {
-            myLogger.error("debugMyNode(Node, String)", e);
+            logger.error("debugMyNode(Node, String)", e);
         } catch (IOException e) {
-            myLogger.error("debugMyNode(Node, String)", e);
+            logger.error("debugMyNode(Node, String)", e);
         }
 
     }

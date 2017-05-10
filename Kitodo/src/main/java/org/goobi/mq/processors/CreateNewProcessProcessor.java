@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.hibernate.Criteria;
@@ -66,7 +67,7 @@ import org.kitodo.data.database.beans.Process;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
-    private static final Logger logger = Logger.getLogger(CreateNewProcessProcessor.class);
+    private static final Logger logger = LogManager.getLogger(CreateNewProcessProcessor.class);
 
     public CreateNewProcessProcessor() {
         super(ConfigCore.getParameter("activeMQ.createNewProcess.queue", null));

@@ -29,7 +29,8 @@ import javax.faces.el.EvaluationException;
 import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
@@ -53,7 +54,7 @@ public class Helper implements Serializable {
 
     }
 
-    private static final Logger myLogger = Logger.getLogger(Helper.class);
+    private static final Logger logger = LogManager.getLogger(Helper.class);
     private static final long serialVersionUID = -7449236652821237059L;
 
     private String myMetadatenVerzeichnis;
@@ -130,9 +131,9 @@ public class Helper implements Serializable {
                     try {
                         value = vb.getValue(context);
                     } catch (PropertyNotFoundException e) {
-                        myLogger.error(e);
+                        logger.error(e);
                     } catch (EvaluationException e) {
-                        myLogger.error(e);
+                        logger.error(e);
                     }
                 }
             }

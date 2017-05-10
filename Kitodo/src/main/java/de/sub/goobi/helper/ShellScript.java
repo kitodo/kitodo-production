@@ -21,7 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The class ShellScript is intended to run shell scripts (or other system
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ShellScript {
-    private static final Logger logger = Logger.getLogger(ShellScript.class);
+    private static final Logger logger = LogManager.getLogger(ShellScript.class);
 
     public static final int ERRORLEVEL_ERROR = 1;
 

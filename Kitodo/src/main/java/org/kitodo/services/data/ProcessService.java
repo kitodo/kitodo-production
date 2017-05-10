@@ -39,7 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
@@ -87,7 +88,7 @@ public class ProcessService extends TitleSearchService<Process> {
     private final MetadatenSperrung msp = new MetadatenSperrung();
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
-    private static final Logger logger = Logger.getLogger(ProcessService.class);
+    private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
     public static String DIRECTORY_PREFIX = "orig";

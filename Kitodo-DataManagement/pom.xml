@@ -83,19 +83,9 @@
             <version>2.3</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -133,6 +123,7 @@
             <artifactId>hibernate-c3p0</artifactId>
             <version>4.3.11.Final</version>
         </dependency>
+        <!-- it still uses log4j -->
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-ugh</artifactId>

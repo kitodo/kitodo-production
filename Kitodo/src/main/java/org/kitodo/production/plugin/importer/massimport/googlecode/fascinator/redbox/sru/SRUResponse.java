@@ -21,10 +21,10 @@ package org.kitodo.production.plugin.importer.massimport.googlecode.fascinator.r
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SRUResponse {
     /** Logging **/
-    private static Logger log = LoggerFactory.getLogger(SRUResponse.class);
+    private static Logger logger = LogManager.getLogger(SRUResponse.class);
 
     /** Record counts **/
     private int totalRecords = 0;
@@ -65,7 +65,7 @@ public class SRUResponse {
             throw new SRUException("Unable to get result numbers from response XML.");
         }
         totalRecords = Integer.parseInt(number.getText());
-        log.debug("SRU Search found {} results(s)", totalRecords);
+        logger.debug("SRU Search found {} results(s)", totalRecords);
 
         // Results List
         if (totalRecords == 0) {

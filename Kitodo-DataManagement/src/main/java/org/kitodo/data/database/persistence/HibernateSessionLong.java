@@ -11,7 +11,8 @@
 
 package org.kitodo.data.database.persistence;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,7 +22,7 @@ import org.hibernate.cfg.Configuration;
 // TODO: Fix for Hibernate-Session-Management, old Version reactivated
 
 public class HibernateSessionLong {
-    private static final Logger mylogger = Logger.getLogger(HibernateSessionLong.class);
+    private static final Logger logger = LogManager.getLogger(HibernateSessionLong.class);
 
     protected static SessionFactory factory;
     private Session sess;
@@ -39,10 +40,10 @@ public class HibernateSessionLong {
 
         if (this.sess == null) {
             if (factory == null) {
-                mylogger.debug("getSession() - hibernate-Factory initialisieren", null);
+                logger.debug("getSession() - hibernate-Factory initialisation");
                 factory = new Configuration().configure().buildSessionFactory();
             }
-            mylogger.debug("getSession() - hibernate-Session initialisieren", null);
+            logger.debug("getSession() - hibernate-Session initialisation");
             this.sess = factory.openSession();
 
         }
@@ -61,7 +62,7 @@ public class HibernateSessionLong {
     @SuppressWarnings("deprecation")
     public static SessionFactory getSessionFactory() {
         if (factory == null) {
-            mylogger.debug("getSessionFactory() - hibernate-Factory initialisieren", null);
+            logger.debug("getSessionFactory() - hibernate-Factory initialisation");
             factory = new Configuration().configure().buildSessionFactory();
         }
         return factory;

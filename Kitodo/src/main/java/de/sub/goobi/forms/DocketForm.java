@@ -18,7 +18,8 @@ import de.sub.goobi.helper.Page;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -33,7 +34,7 @@ public class DocketForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(DocketForm.class);
+    private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
     public String Neu() {
         this.myDocket = new Docket();

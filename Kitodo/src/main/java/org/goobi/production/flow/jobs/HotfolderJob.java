@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.flow.helper.JobCreation;
 import org.goobi.production.importer.GoobiHotfolder;
@@ -46,7 +47,7 @@ import ugh.exceptions.WriteException;
  */
 @Deprecated
 public class HotfolderJob extends AbstractGoobiJob {
-    private static final Logger logger = Logger.getLogger(HotfolderJob.class);
+    private static final Logger logger = LogManager.getLogger(HotfolderJob.class);
 
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();

@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -37,7 +38,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
  *
  */
 public class HibernateProjectionProjectTaskList implements IProvideProjectTaskList {
-    private static final Logger logger = Logger.getLogger(HibernateProjectionProjectTaskList.class);
+    private static final Logger logger = LogManager.getLogger(HibernateProjectionProjectTaskList.class);
 
     @Override
     public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {

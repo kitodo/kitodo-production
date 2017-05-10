@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Block;
 import org.goobi.production.model.bibliography.course.Course;
@@ -569,7 +570,7 @@ public class CalendarForm {
      */
     protected static String[] ISSUE_COLOURS;
 
-    private static final Logger logger = Logger.getLogger(CalendarForm.class);
+    private static final Logger logger = LogManager.getLogger(CalendarForm.class);
 
     /**
      * The constant field START_RELATION hold the date the course of publication

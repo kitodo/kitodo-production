@@ -21,7 +21,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -43,7 +44,7 @@ import org.kitodo.services.ServiceManager;
  * @version 15.06.2009
  */
 public class HistoryAnalyserJob extends AbstractGoobiJob {
-    private static final Logger logger = Logger.getLogger(HistoryAnalyserJob.class);
+    private static final Logger logger = LogManager.getLogger(HistoryAnalyserJob.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /*

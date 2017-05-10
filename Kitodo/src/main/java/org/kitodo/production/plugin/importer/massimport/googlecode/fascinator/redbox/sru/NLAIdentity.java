@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NLAIdentity {
     /** Logging. **/
-    private static Logger log = LoggerFactory.getLogger(NLAIdentity.class);
+    private static Logger logger = LogManager.getLogger(NLAIdentity.class);
 
     /** DOM4J Node for this person. **/
     private Node eac;
@@ -367,7 +367,7 @@ public class NLAIdentity {
                 response.add(newId);
                 // Only halt if requested
             } catch (SRUException ex) {
-                log.error("Unable to process identity: ", ex);
+                logger.error("Unable to process identity: ", ex);
                 if (haltOnErrors) {
                     throw ex;
                 }

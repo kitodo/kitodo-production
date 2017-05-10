@@ -18,7 +18,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
@@ -29,7 +30,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
  */
 public class SearchRestClient extends KitodoRestClient {
 
-    private static final Logger logger = Logger.getLogger(SearchRestClient.class);
+    private static final Logger logger = LogManager.getLogger(SearchRestClient.class);
 
     /**
      * Count amount of documents responding to given query.

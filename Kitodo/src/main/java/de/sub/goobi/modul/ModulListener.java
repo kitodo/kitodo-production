@@ -16,22 +16,23 @@ import de.sub.goobi.forms.ModuleServerForm;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ModulListener implements ServletContextListener {
-    private static final Logger myLogger = Logger.getLogger(ModulListener.class);
+    private static final Logger logger = LogManager.getLogger(ModulListener.class);
 
     @Override
     public void contextInitialized(ServletContextEvent event) {
-        myLogger.debug("Starte Modularisierung-Server", null);
+        logger.debug("Starte Modularisierung-Server");
         new ModuleServerForm().startAllModules();
-        myLogger.debug("Gestartet: Modularisierung-Server", null);
+        logger.debug("Gestartet: Modularisierung-Server");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent event) {
-        myLogger.debug("Stoppe Modularisierung-Server", null);
+        logger.debug("Stoppe Modularisierung-Server");
         new ModuleServerForm().stopAllModules();
-        myLogger.debug("Gestoppt: Modularisierung-Server", null);
+        logger.debug("Gestoppt: Modularisierung-Server");
     }
 }

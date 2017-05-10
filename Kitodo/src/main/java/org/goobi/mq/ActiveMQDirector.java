@@ -25,7 +25,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.FinaliseStepProcessor;
 
@@ -52,7 +53,7 @@ import org.goobi.mq.processors.FinaliseStepProcessor;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ActiveMQDirector implements ServletContextListener, ExceptionListener {
-    private static final Logger logger = Logger.getLogger(ActiveMQDirector.class);
+    private static final Logger logger = LogManager.getLogger(ActiveMQDirector.class);
 
     // *** CONFIGURATION ***
     // When implementing new Services, add them to this list:

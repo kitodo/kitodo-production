@@ -33,7 +33,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
@@ -48,7 +49,7 @@ import org.kitodo.services.ServiceManager;
 
 public class Multipage {
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger myLogger = Logger.getLogger(Multipage.class);
+    private static final Logger logger = LogManager.getLogger(Multipage.class);
     Helper help = new Helper();
 
     private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
@@ -60,19 +61,19 @@ public class Multipage {
 
         /* keine Tifs vorhanden, also raus */
         if (dateien == null) {
-            myLogger.debug("Verzeichnis ist leer");
+            logger.debug("Verzeichnis ist leer");
             return;
         }
 
         /* alle Bilder in ein Array übernehmen */
         RenderedImage image[] = new PlanarImage[dateien.length];
         for (int i = 0; i < dateien.length; i++) {
-            if (myLogger.isDebugEnabled()) {
-                myLogger.debug(pfad + dateien[i]);
+            if (logger.isDebugEnabled()) {
+                logger.debug(pfad + dateien[i]);
             }
             image[i] = JAI.create("fileload", pfad + dateien[i]);
         }
-        myLogger.debug("Bilder durchlaufen");
+        logger.debug("Bilder durchlaufen");
 
         /*
          * alle Bilder als Multipage erzeugen
@@ -89,7 +90,7 @@ public class Multipage {
         param.setExtraImages(vector.iterator());
         encoder.encode(image[0]);
         out.close();
-        myLogger.debug("fertig");
+        logger.debug("fertig");
     }
 
     /**

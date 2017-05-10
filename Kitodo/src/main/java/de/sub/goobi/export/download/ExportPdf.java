@@ -70,8 +70,8 @@ public class ExportPdf extends ExportMets {
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "mets file created");
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "start pdf generation now");
 
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug("METS file created: " + metsTempFile);
+        if (logger.isDebugEnabled()) {
+            logger.debug("METS file created: " + metsTempFile);
         }
 
         FacesContext context = FacesContext.getCurrentInstance();
@@ -88,9 +88,9 @@ public class ExportPdf extends ExportMets {
             pdf.setMetsURL(metsTempFile.toURI().toURL());
             pdf.setTargetFolder(new File(zielVerzeichnis));
             pdf.setInternalServletPath(myBasisUrl);
-            if (myLogger.isDebugEnabled()) {
-                myLogger.debug("Taget directory: " + zielVerzeichnis);
-                myLogger.debug("Using ContentServer2 base URL: " + myBasisUrl);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Taget directory: " + zielVerzeichnis);
+                logger.debug("Using ContentServer2 base URL: " + myBasisUrl);
             }
             pdf.initialize(myProcess);
             pdf.start();

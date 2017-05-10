@@ -22,7 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -49,7 +50,7 @@ import ugh.fileformats.mets.XStream;
  * @version 1.00 - 10.01.2005
  */
 public class ImportZentralblatt {
-    private static final Logger myLogger = Logger.getLogger(ImportZentralblatt.class);
+    private static final Logger logger = LogManager.getLogger(ImportZentralblatt.class);
     String separator;
     private final Helper help;
     private Prefs myPrefs;
@@ -73,7 +74,7 @@ public class ImportZentralblatt {
     protected void parse(BufferedReader reader, Process inProzess)
             throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, WriteException {
-        myLogger.debug("ParsenZentralblatt() - start");
+        logger.debug("ParsenZentralblatt() - start");
         this.myPrefs = serviceManager.getRulesetService().getPreferences(inProzess.getRuleset());
         String prozessID = String.valueOf(inProzess.getId().intValue());
         String line;
@@ -96,7 +97,7 @@ public class ImportZentralblatt {
          * alle Zeilen durchlaufen
          */
         while ((line = reader.readLine()) != null) {
-            // myLogger.debug(line);
+            // logger.debug(line);
 
             /*
              * wenn die Zeile leer ist, ist es das Ende eines Absatzes
@@ -121,7 +122,7 @@ public class ImportZentralblatt {
                     DocStructType dstLocal = this.myPrefs.getDocStrctTypeByName("Article");
                     DocStruct ds = dd.createDocStruct(dstLocal);
                     listArtikel.add(ds);
-                    // myLogger.debug("--------------- neuer Artikel
+                    // logger.debug("--------------- neuer Artikel
                     // ----------------");
                     istAbsatz = true;
                     istErsterTitel = true;
@@ -131,7 +132,7 @@ public class ImportZentralblatt {
                 int posTrennzeichen = line.indexOf(this.separator);
                 /* wenn kein Trennzeichen vorhanden, Parsingfehler */
                 if (posTrennzeichen == -1) {
-                    myLogger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
+                    logger.error("Import() - Parsingfehler (kein Doppelpunkt) der Importdatei in der Zeile <br/>"
                             + maskHtmlTags(line));
                     throw new WrongImportFileException("Parsingfehler (kein Doppelpunkt) der Importdatei in "
                             + "der Zeile <br/>" + maskHtmlTags(line));
@@ -207,9 +208,9 @@ public class ImportZentralblatt {
             gdzfile.write(ConfigCore.getKitodoDataDirectory() + prozessID + File.separator + "meta.xml");
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
-            myLogger.error(e);
+            logger.error(e);
         }
-        myLogger.debug("ParsenZentralblatt() - Ende");
+        logger.debug("ParsenZentralblatt() - Ende");
     }
 
     private String checkXmlSuitability(String text) {
@@ -265,9 +266,9 @@ public class ImportZentralblatt {
         List<DocStruct> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue", "CurrentNo");
         if (myList != null && myList.size() != 0) {
             for (DocStruct dsIntern : myList) {
-                // myLogger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
+                // logger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
                 Metadata myMD1 = dsIntern.getAllMetadataByType(mdt).get(0);
-                // myLogger.debug("und der Wert ist: " + myMD1.getValue());
+                // logger.debug("und der Wert ist: " + myMD1.getValue());
                 if (myMD1.getValue().equals(myRight)) {
                     dsPeriodicalIssue = dsIntern;
                 }
@@ -292,9 +293,9 @@ public class ImportZentralblatt {
     private void parseGeneral(DocStruct inStruct, String myLeft, String myRight)
             throws WrongImportFileException, TypeNotAllowedForParentException, MetadataTypeNotAllowedException {
 
-        // myLogger.debug(myLeft);
-        // myLogger.debug(myRight);
-        // myLogger.debug("---");
+        // logger.debug(myLeft);
+        // logger.debug(myRight);
+        // logger.debug("---");
         Metadata md;
         MetadataType mdt;
 
@@ -394,9 +395,9 @@ public class ImportZentralblatt {
      */
     private void parseArticle(DocStruct inStruct, String myLeft, String myRight, boolean istErsterTitel)
             throws MetadataTypeNotAllowedException, WrongImportFileException {
-        // myLogger.debug(myLeft);
-        // myLogger.debug(myRight);
-        // myLogger.debug("---");
+        // logger.debug(myLeft);
+        // logger.debug(myRight);
+        // logger.debug("---");
         Metadata md;
         MetadataType mdt;
 

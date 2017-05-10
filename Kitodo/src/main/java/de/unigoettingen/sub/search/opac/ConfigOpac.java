@@ -30,12 +30,13 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
-    private static final Logger myLogger = Logger.getLogger(ConfigOpac.class);
+    private static final Logger logger = LogManager.getLogger(ConfigOpac.class);
 
     private static XMLConfiguration config;
 
@@ -74,7 +75,7 @@ public class ConfigOpac {
                 myList.add(title);
             }
         } catch (Throwable t) {
-            myLogger.error("Error while reading von opac-config", t);
+            logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
         }
         return myList;
@@ -92,7 +93,7 @@ public class ConfigOpac {
                 myList.add(title);
             }
         } catch (Throwable t) {
-            myLogger.error("Error while reading von opac-config", t);
+            logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
         }
         return myList;
@@ -110,7 +111,7 @@ public class ConfigOpac {
                 myList.add(getDoctypeByName(title));
             }
         } catch (Throwable t) {
-            myLogger.error("Error while reading von opac-config", t);
+            logger.error("Error while reading von opac-config", t);
             Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
         }
         return myList;

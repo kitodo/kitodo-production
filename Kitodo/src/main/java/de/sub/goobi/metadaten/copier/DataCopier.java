@@ -16,7 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A data copier is a class that can be parametrised to copy data in goobi
@@ -26,7 +27,7 @@ import org.apache.log4j.Logger;
  */
 public class DataCopier {
 
-    private static final Logger LOG = Logger.getLogger(DataCopier.class);
+    private static final Logger logger = LogManager.getLogger(DataCopier.class);
 
     /**
      * Holds the rules this data copier can apply to a set of working data.
@@ -62,8 +63,8 @@ public class DataCopier {
             try {
                 rule.apply(data);
             } catch (RuntimeException notApplicable) {
-                if (LOG.isInfoEnabled()) {
-                    LOG.info("Rule not applicable for \"" + data.getProcessTitle() + "\", skipped: " + rule);
+                if (logger.isInfoEnabled()) {
+                    logger.info("Rule not applicable for \"" + data.getProcessTitle() + "\", skipped: " + rule);
                 }
             }
         }

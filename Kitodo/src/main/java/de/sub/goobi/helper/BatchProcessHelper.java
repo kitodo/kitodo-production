@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Batch;
@@ -33,7 +34,7 @@ public class BatchProcessHelper {
 
     private final List<Process> processes;
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(BatchProcessHelper.class);
+    private static final Logger logger = LogManager.getLogger(BatchProcessHelper.class);
     private Process currentProcess;
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;

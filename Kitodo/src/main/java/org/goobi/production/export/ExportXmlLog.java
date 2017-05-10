@@ -24,7 +24,8 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.IProcessDataExport;
 import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
@@ -59,7 +60,7 @@ import org.kitodo.services.ServiceManager;
  */
 public class ExportXmlLog implements IProcessDataExport {
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(ExportXmlLog.class);
+    private static final Logger logger = LogManager.getLogger(ExportXmlLog.class);
 
     /**
      * This method exports the production metadata as xml to a given directory.

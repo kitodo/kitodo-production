@@ -31,13 +31,13 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.services.ServiceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FileService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileService.class);
+    private static final Logger logger = LogManager.getLogger(FileService.class);
 
     // program options initialized to default values
     private static final int BUFFER_SIZE = 4 * 1024;

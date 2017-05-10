@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 
 import ugh.dl.DigitalDocument;
@@ -39,7 +40,7 @@ public class ExportDms_CorrectRusdml {
     private List<DocStruct> docStructsOhneSeiten;
     private final Process myProcess;
     private final DigitalDocument myDocument;
-    private static final Logger logger = Logger.getLogger(ExportDms_CorrectRusdml.class);
+    private static final Logger logger = LogManager.getLogger(ExportDms_CorrectRusdml.class);
 
     /**
      * Constructor.

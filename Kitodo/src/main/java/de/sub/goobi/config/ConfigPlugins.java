@@ -14,12 +14,13 @@ package de.sub.goobi.config;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 public class ConfigPlugins {
 
-    private static final Logger logger = Logger.getLogger(ConfigPlugins.class);
+    private static final Logger logger = LogManager.getLogger(ConfigPlugins.class);
 
     /**
      * Get plugin configuration.

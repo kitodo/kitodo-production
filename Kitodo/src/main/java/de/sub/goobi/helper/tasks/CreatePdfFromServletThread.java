@@ -31,7 +31,8 @@ import java.util.Collections;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -45,7 +46,7 @@ import org.kitodo.services.file.FileService;
  * @version 12.02.2009
  */
 public class CreatePdfFromServletThread extends LongRunningTask {
-    private static final Logger logger = Logger.getLogger(CreatePdfFromServletThread.class);
+    private static final Logger logger = LogManager.getLogger(CreatePdfFromServletThread.class);
     private File targetFolder;
     private String internalServletPath;
     private URL metsURL;
@@ -149,7 +150,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
                 int statusCode = httpclient.executeMethod(method);
                 if (statusCode != HttpStatus.SC_OK) {
-                    logger.error("HttpStatus nicht ok", null);
+                    logger.error("HttpStatus not ok");
                     if (logger.isDebugEnabled()) {
                         logger.debug("Response is:\n" + method.getResponseBodyAsString());
                     }

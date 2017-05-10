@@ -14,14 +14,19 @@ package org.goobi.production.chart;
 import de.intranda.commons.chart.results.DataRow;
 import de.intranda.commons.chart.results.DataTable;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * ProjectStatusDraw class creates and paints the chart depending on given
@@ -35,7 +40,7 @@ import org.apache.log4j.Logger;
  * @version 27.10.2009
  */
 public class ProjectStatusDraw {
-    private static final Logger myLogger = Logger.getLogger(ProjectStatusDraw.class);
+    private static final Logger logger = LogManager.getLogger(ProjectStatusDraw.class);
     private static final long MILLICSECS_PER_DAY = 1000 * 60 * 60 * 24;
     private static final int BORDERTOP = 50;
     private static int BORDERRIGHT = 50;
@@ -174,8 +179,8 @@ public class ProjectStatusDraw {
         if (duration == 0) {
             duration = 1;
         }
-        if (myLogger.isDebugEnabled()) {
-            myLogger.debug(datePosition + " / " + duration);
+        if (logger.isDebugEnabled()) {
+            logger.debug(datePosition + " / " + duration);
         }
         float dash1[] = {2.0f };
         BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, dash1, 0.0f);

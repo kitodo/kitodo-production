@@ -16,7 +16,8 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
@@ -37,7 +38,7 @@ public class PropertyService extends TitleSearchService<Property> {
     private PropertyType propertyType = new PropertyType();
     private Indexer<Property, PropertyType> indexer = new Indexer<>(Property.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(PropertyService.class);
+    private static final Logger logger = LogManager.getLogger(PropertyService.class);
 
     /**
      * Constructor with searcher's assigning.

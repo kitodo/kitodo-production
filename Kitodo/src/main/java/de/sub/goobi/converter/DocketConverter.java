@@ -16,14 +16,15 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
 
 public class DocketConverter implements Converter {
     public static final String CONVERTER_ID = "DocketConverter";
-    private static final Logger logger = Logger.getLogger(DocketConverter.class);
+    private static final Logger logger = LogManager.getLogger(DocketConverter.class);
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {

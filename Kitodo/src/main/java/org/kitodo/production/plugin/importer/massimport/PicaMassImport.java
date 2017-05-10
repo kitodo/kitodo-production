@@ -42,7 +42,8 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -87,7 +88,7 @@ import ugh.fileformats.mets.MetsMods;
 @PluginImplementation
 public class PicaMassImport implements IImportPlugin, IPlugin {
 
-    private static final Logger logger = Logger.getLogger(PicaMassImport.class);
+    private static final Logger logger = LogManager.getLogger(PicaMassImport.class);
 
     private static final String NAME = "intranda Pica Massenimport";
     private String data = "";
@@ -99,7 +100,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     private String opacCatalogue;
     private String configDir;
     private static final String PPN_PATTERN = "\\d+X?";
-
     private static final String[] SERIAL_TOTALITY_IDENTIFIER_FIELD = new String[] {"036F", "9" };
     private static final String[] TOTALITY_IDENTIFIER_FIELD = new String[] {"036D", "9" };
 

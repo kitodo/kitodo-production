@@ -32,8 +32,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -53,7 +53,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     private User myClass = new User();
     private boolean hideInactiveUsers = true;
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(BenutzerverwaltungForm.class);
+    private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
 
     /**
      * New user.
@@ -384,7 +384,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             myLdap.createNewUser(this.myClass, this.myClass.getPasswordDecrypted());
         } catch (Exception e) {
-            if (logger.isEnabledFor(Level.WARN)) {
+            if (logger.isWarnEnabled()) {
                 logger.warn("Could not generate ldap entry: " + e.getMessage());
             }
             Helper.setFehlerMeldung(e.getMessage());

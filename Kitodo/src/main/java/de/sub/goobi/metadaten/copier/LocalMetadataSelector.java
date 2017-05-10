@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ugh.dl.DocStruct;
 import ugh.dl.Metadata;
@@ -29,7 +30,7 @@ import ugh.exceptions.MetadataTypeNotAllowedException;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class LocalMetadataSelector extends MetadataSelector {
-    private static final Logger LOG = Logger.getLogger(LocalMetadataSelector.class);
+    private static final Logger logger = LogManager.getLogger(LocalMetadataSelector.class);
 
     /**
      * Metadata type to return.
@@ -189,15 +190,15 @@ public class LocalMetadataSelector extends MetadataSelector {
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot create metadata element " + selector.getName()
+            if (logger.isDebugEnabled()) {
+                logger.debug("Cannot create metadata element " + selector.getName()
                         + ": The type isn’t defined by the rule set used.");
             }
             return;
         } catch (Exception e) {
             // copy rule failed, skip it
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot create metadata element " + selector.getName()
+            if (logger.isDebugEnabled()) {
+                logger.debug("Cannot create metadata element " + selector.getName()
                         + ": Accessing the rule set failed with exception: "
                         + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
             }
@@ -209,8 +210,8 @@ public class LocalMetadataSelector extends MetadataSelector {
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot assign metadata element " + selector.getName() + " (\"" + value
+            if (logger.isDebugEnabled()) {
+                logger.debug("Cannot assign metadata element " + selector.getName() + " (\"" + value
                         + "\") to structural element "
                         + (logicalNode.getType() != null ? logicalNode.getType().getName() : "without type") + ": "
                         + e.getMessage());

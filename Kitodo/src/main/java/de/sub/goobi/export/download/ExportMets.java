@@ -32,7 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -63,7 +64,7 @@ public class ExportMets {
     protected Helper help = new Helper();
     protected Prefs myPrefs;
 
-    protected static final Logger myLogger = Logger.getLogger(ExportMets.class);
+    protected static final Logger logger = LogManager.getLogger(ExportMets.class);
 
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
@@ -319,10 +320,10 @@ public class ExportMets {
                     }
                 }
             } catch (IndexOutOfBoundsException e) {
-                myLogger.error(e);
+                logger.error(e);
                 return false;
             } catch (InvalidImagesException e) {
-                myLogger.error(e);
+                logger.error(e);
                 return false;
             }
         } else {

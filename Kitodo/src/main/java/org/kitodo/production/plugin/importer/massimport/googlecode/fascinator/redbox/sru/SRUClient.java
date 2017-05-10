@@ -34,13 +34,13 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SRUClient {
     /** Logging. **/
-    private static Logger log = LoggerFactory.getLogger(SRUClient.class);
+    private static Logger logger = LogManager.getLogger(SRUClient.class);
 
     /** A SAX Reader for XML parsing. **/
     private SAXReader saxReader;
@@ -176,7 +176,7 @@ public class SRUClient {
             URL url = new URL(baseUrl);
             this.baseUrl = baseUrl;
         } catch (MalformedURLException ex) {
-            log.error("Invalid URL passed to constructor: ", ex);
+            logger.error("Invalid URL passed to constructor: ", ex);
             throw ex;
         }
 
@@ -283,7 +283,7 @@ public class SRUClient {
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             return saxReader.read(in);
         } catch (DocumentException ex) {
-            log.error("Failed to parse XML", ex);
+            logger.error("Failed to parse XML", ex);
             return null;
         }
     }
@@ -301,7 +301,7 @@ public class SRUClient {
         // Parsing
         Document xmlResponse = parseXml(xmlData);
         if (xmlResponse == null) {
-            log.error("Can't get results after XML parsing failed.");
+            logger.error("Can't get results after XML parsing failed.");
             return null;
         }
 
@@ -310,7 +310,7 @@ public class SRUClient {
         try {
             response = new SRUResponse(xmlResponse);
         } catch (SRUException ex) {
-            log.error("Error processing XML response:", ex);
+            logger.error("Error processing XML response:", ex);
         }
         return response;
     }
@@ -328,7 +328,7 @@ public class SRUClient {
     public List<Node> getResultList(String xmlData) {
         SRUResponse response = getResponseObject(xmlData);
         if (response == null) {
-            log.error("Unable to get results from response XML.");
+            logger.error("Unable to get results from response XML.");
             return null;
         }
 
@@ -348,7 +348,7 @@ public class SRUClient {
         try {
             return URLEncoder.encode(value, "UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            log.error("Error UTF-8 encoding value '{}'", value, ex);
+            logger.error("Error UTF-8 encoding value '{}'", value, ex);
             return "";
         }
     }
@@ -455,7 +455,7 @@ public class SRUClient {
         String searchUrl = baseUrl;
 
         if (query == null) {
-            log.error("Cannot generate a search URL without a search! 'query' parameter is required.");
+            logger.error("Cannot generate a search URL without a search! 'query' parameter is required.");
             return null;
         }
         if (operation == null) {
@@ -560,7 +560,7 @@ public class SRUClient {
         // Get a search URL to execute first
         String searchUrl = generateSearchUrl(query, operation, sortKeys, startRecord, maxRecords);
         if (searchUrl == null) {
-            log.error("Invalid search URL. Cannot perform search.");
+            logger.error("Invalid search URL. Cannot perform search.");
             return null;
         }
 
@@ -576,12 +576,12 @@ public class SRUClient {
             int status = get.getStatusCode();
             if (status != 200) {
                 String text = get.getStatusText();
-                log.error("Error access SRU interface, status code '{}' returned with message: {}", status, text);
+                logger.error("Error access SRU interface, status code '{}' returned with message: {}", status, text);
                 return null;
             }
 
         } catch (IOException ex) {
-            log.error("Error during search: ", ex);
+            logger.error("Error during search: ", ex);
             return null;
         }
 
@@ -591,7 +591,7 @@ public class SRUClient {
             byte[] bla = get.getResponseBody();
             response = new String(bla, StandardCharsets.UTF_8);
         } catch (IOException ex) {
-            log.error("Error accessing response body: ", ex);
+            logger.error("Error accessing response body: ", ex);
             return null;
         }
         return response;
@@ -633,11 +633,11 @@ public class SRUClient {
         // Get the results nodes
         List<Node> results = getResultList(rawXml);
         if (results.isEmpty()) {
-            log.warn("This identifier matches no records.");
+            logger.warn("This identifier matches no records.");
             return null;
         }
         if (results.size() > 1) {
-            log.warn("This identifier matches multiple records! Returning only the first.");
+            logger.warn("This identifier matches multiple records! Returning only the first.");
         }
 
         // Return first(only?) record
@@ -750,7 +750,7 @@ public class SRUClient {
         // Search NLA
         String xmlResponse = getSearchResponse(search, null, null, startRecord, maxRecords);
         if (xmlResponse == null) {
-            log.error("Searching NLA failed!");
+            logger.error("Searching NLA failed!");
             return null;
         }
 
@@ -791,7 +791,7 @@ public class SRUClient {
     public List<NLAIdentity> nlaGetIdentitiesBySearch(String search, String startRecord, String maxRecords) {
         SRUResponse response = nlaGetResponseBySearch(search);
         if (response == null) {
-            log.error("Searching NLA failed!");
+            logger.error("Searching NLA failed!");
             return null;
         }
 

@@ -53,8 +53,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -106,7 +106,7 @@ import org.kitodo.services.file.FileService;
  */
 public class ProzessverwaltungForm extends BasisForm {
     private static final long serialVersionUID = 2838270843176821134L;
-    private static final Logger logger = Logger.getLogger(ProzessverwaltungForm.class);
+    private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
     private Process myProzess = new Process();
     private Task mySchritt = new Task();
     private StatisticsManager statisticsManager;
@@ -1100,7 +1100,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void debug(String message, List<Task> bla) {
-        if (!logger.isEnabledFor(Level.WARN)) {
+        if (!logger.isWarnEnabled()) {
             return;
         }
         for (Task s : bla) {
@@ -2105,7 +2105,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             this.myProzess = serviceManager.getProcessService().find(this.myProzess.getId());
         } catch (Exception e) {
-            if (logger.isEnabledFor(Level.WARN)) {
+            if (logger.isWarnEnabled()) {
                 logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
             }
         }

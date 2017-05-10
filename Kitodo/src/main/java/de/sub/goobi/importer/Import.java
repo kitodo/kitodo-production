@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -38,7 +39,7 @@ import ugh.exceptions.WriteException;
  * @version 1.00 - 25.06.2005
  */
 public class Import {
-    private static final Logger myLogger = Logger.getLogger(Import.class);
+    private static final Logger logger = LogManager.getLogger(Import.class);
     private String importFehler = "";
     private String importMeldung = "";
     private Task mySchritt;
@@ -56,7 +57,7 @@ public class Import {
      * @return String
      */
     public String start() {
-        myLogger.info("Import start - start");
+        logger.info("Import start - start");
         this.importFehler = "";
         this.importMeldung = "";
         try {
@@ -64,16 +65,16 @@ public class Import {
             read();
         } catch (Exception e) {
             this.importFehler = "An error occurred: " + e.getMessage();
-            myLogger.error(e);
+            logger.error(e);
         }
-        myLogger.info("Import start - ende");
+        logger.info("Import start - ende");
         return "";
     }
 
     private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
             PreferencesException, SwapException, DAOException, WriteException {
-        myLogger.debug("Einlesen() - start");
+        logger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {
 
@@ -105,12 +106,12 @@ public class Import {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    myLogger.error("Die Datei kann nicht geschlossen werden", e);
+                    logger.error("Die Datei kann nicht geschlossen werden", e);
                 }
             }
         }
         /* wenn alles ok ist, 0 zurückgeben */
-        myLogger.debug("Einlesen() - Ende");
+        logger.debug("Einlesen() - Ende");
     }
 
     /*

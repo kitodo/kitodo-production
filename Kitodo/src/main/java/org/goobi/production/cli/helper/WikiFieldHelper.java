@@ -14,12 +14,13 @@ package org.goobi.production.cli.helper;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 
 public class WikiFieldHelper {
 
-    private static final Logger logger = Logger.getLogger(WikiFieldHelper.class);
+    private static final Logger logger = LogManager.getLogger(WikiFieldHelper.class);
 
     private static final String TAG_ERROR = "<font color=\"#FF0000\">";
     private static final String TAG_WARN = "<font color=\"#FF6600\">";

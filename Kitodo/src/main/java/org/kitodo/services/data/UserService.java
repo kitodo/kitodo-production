@@ -23,7 +23,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -48,7 +49,7 @@ public class UserService extends SearchService<User> {
     private UserType userType = new UserType();
     private Indexer<User, UserType> indexer = new Indexer<>(User.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(UserService.class);
+    private static final Logger logger = LogManager.getLogger(UserService.class);
 
     /**
      * Constructor with searcher's assigning.

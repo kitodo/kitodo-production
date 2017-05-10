@@ -23,8 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.goobi.production.properties.ProcessProperty;
 import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Process;
@@ -48,7 +48,7 @@ public class VariableReplacer {
         ALL, FIRSTCHILD, TOPSTRUCT;
     }
 
-    private static final Logger logger = Logger.getLogger(VariableReplacer.class);
+    private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
     DigitalDocument dd;
     Prefs prefs;
@@ -326,7 +326,7 @@ public class VariableReplacer {
                 case TOPSTRUCT:
                     if (resultTop == null) {
                         result = "";
-                        if (logger.isEnabledFor(Level.WARN)) {
+                        if (logger.isWarnEnabled()) {
                             logger.warn("Can not replace topStruct-variable for METS: " + metadata);
                         }
                     } else {
@@ -341,7 +341,7 @@ public class VariableReplacer {
                         result = resultTop;
                     } else {
                         result = "";
-                        if (logger.isEnabledFor(Level.WARN)) {
+                        if (logger.isWarnEnabled()) {
                             logger.warn("Can not replace variable for METS: " + metadata);
                         }
                     }

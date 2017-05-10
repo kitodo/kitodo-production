@@ -20,12 +20,13 @@ import java.util.NoSuchElementException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ConfigProjects {
     XMLConfiguration config;
     private String projektTitel;
-    private static final Logger logger = Logger.getLogger(ConfigProjects.class);
+    private static final Logger logger = LogManager.getLogger(ConfigProjects.class);
 
     public ConfigProjects(String projectTitle) throws IOException {
         this(projectTitle, ConfigCore.getKitodoConfigDirectory() + "kitodo_projects.xml");

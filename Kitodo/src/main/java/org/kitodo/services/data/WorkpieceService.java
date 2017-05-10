@@ -16,7 +16,8 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -34,7 +35,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
     private WorkpieceType workpieceType = new WorkpieceType();
     private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>(Workpiece.class);
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = Logger.getLogger(WorkpieceService.class);
+    private static final Logger logger = LogManager.getLogger(WorkpieceService.class);
 
     /**
      * Constructor with searcher's assigning.
