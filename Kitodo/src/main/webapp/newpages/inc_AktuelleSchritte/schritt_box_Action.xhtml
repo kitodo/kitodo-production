@@ -121,7 +121,7 @@
                                 <!-- Russland-Export-Schaltknopf -->
                                 <!--
                                 <h:commandLink
-                                        rendered="#{AktuelleSchritteForm.mySchritt.typExportRus && AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
+                                        rendered="#{AktuelleSchritteForm.mySchritt.typExportRus and AktuelleSchritteForm.mySchritt.prozess.benutzerGesperrt == null}"
                                         action="#{AktuelleSchritteForm.DownloadRusExport}"
                                         title="#{msgs.russischeMetadatenExportieren}">
                                     <h:graphicImage value="/newpages/images/buttons/rus.gif"

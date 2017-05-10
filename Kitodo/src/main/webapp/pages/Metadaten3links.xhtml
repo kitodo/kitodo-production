@@ -62,10 +62,10 @@
                                         <t:updateActionListener property="#{item.node.expanded}"
                                                                 value="#{not item.node.expanded}"/>
                                         <h:graphicImage value="/newpages/images/plus.gif"
-                                                        rendered="#{item.node.hasChildren && not item.node.expanded}"
+                                                        rendered="#{item.node.hasChildren and not item.node.expanded}"
                                                         style="border: 0px none;margin-top:0px;margin-right:3px;margin-left:#{item.niveau * 10 + 5}px;"/>
                                         <h:graphicImage value="/newpages/images/minus.gif"
-                                                        rendered="#{item.node.hasChildren && item.node.expanded}"
+                                                        rendered="#{item.node.hasChildren and item.node.expanded}"
                                                         style="border: 0px none;margin-top:0px;margin-right:3px;margin-left:#{item.niveau * 10 + 5}px;"/>
                                     </h:commandLink>
 
@@ -134,9 +134,9 @@
                                                    action="#{Metadaten.loadRightFrame}"
                                                    onclick="if (!styleAnpassen2(this)) return">
                                         <h:outputText value="#{item.node.description}"
-                                                      rendered="#{not Metadaten.treeProperties.showtitle || (Metadaten.treeProperties.showtitle && item.node.mainTitle == '')}"/>
+                                                      rendered="#{not Metadaten.treeProperties.showtitle || (Metadaten.treeProperties.showtitle and item.node.mainTitle == '')}"/>
                                         <h:outputText value="#{item.node.mainTitle}"
-                                                      rendered="#{item.node.mainTitle != '' && Metadaten.treeProperties.showtitle}"/>
+                                                      rendered="#{item.node.mainTitle != '' and Metadaten.treeProperties.showtitle}"/>
                                         <t:updateActionListener
                                                 property="#{Metadaten.myStrukturelement}"
                                                 value="#{item.node.struct}"/>
@@ -144,11 +144,11 @@
 
                                     <h:outputText value="(#{item.node.firstImage}"
                                                   style="color:grey;margin-left:4px"
-                                                  rendered="#{Metadaten.treeProperties.showfirstpagenumber && item.node.firstImage!=''}"/>
+                                                  rendered="#{Metadaten.treeProperties.showfirstpagenumber and item.node.firstImage!=''}"/>
 
                                     <h:outputText value="-#{item.node.lastImage})"
                                                   style="color:grey;margin-left:0px"
-                                                  rendered="#{Metadaten.treeProperties.showfirstpagenumber && item.node.lastImage!=''}"/>
+                                                  rendered="#{Metadaten.treeProperties.showfirstpagenumber and item.node.lastImage!=''}"/>
 
                                 </h:column>
 

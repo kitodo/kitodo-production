@@ -130,7 +130,7 @@
             <!--
             <t:dataList var="process_item" value="#{ProzessverwaltungForm.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
 
-                <tr rendered="#{container != 0 && process_item.container==container}" class="standardTable_Row1">
+                <tr rendered="#{container != 0 and process_item.container==container}" class="standardTable_Row1">
 
                     <td>
                         <h:outputText value="#{process_item.name}" />
@@ -189,7 +189,7 @@
             </t:dataList>
 
             <t:dataList var="process_item" value="#{ProzessverwaltungForm.sortedProperties}" rowCountVar="propCount" rowIndexVar="propInd">
-                <tr rendered="#{container != 0 && process_item.container==container}" class="standardTable_Row1">
+                <tr rendered="#{container != 0 and process_item.container==container}" class="standardTable_Row1">
 
                     <td>
                         <h:outputText value="#{process_item.name}" />
@@ -212,7 +212,7 @@
 
                 </tr>
             </t:dataList>
-            <tr rendered="#{rowIndex + 1 < rowCount}">
+            <tr rendered="#{rowIndex + 1 lt rowCount}">
                 <td colspan="3" class="standardTable_Row1">
                     <h:outputText value="&nbsp;" escape="false" />
                 </td>

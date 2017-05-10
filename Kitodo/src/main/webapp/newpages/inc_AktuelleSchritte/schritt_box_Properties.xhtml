@@ -61,7 +61,7 @@
 
         </x:dataTable>
         -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' && AktuelleSchritteForm.propertyListSize>0}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten!='eigenschaft' and AktuelleSchritteForm.propertyListSize>0}">
             <table cellspacing="1px" cellpadding="1px" width="100%" class="standardTable">
                 <thead class="standardTable_Header">
                     <tr>
@@ -96,7 +96,7 @@
                                 <td class="standardTable_ColumnCentered">
 
                                     <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}"
-                                                   rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id && proc.currentStepAccessCondition != 'READ'}">
+                                                   rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id and proc.currentStepAccessCondition != 'READ'}">
                                         <h:graphicImage value="/newpages/images/buttons/edit.gif"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.processProperty}" value="#{proc}"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.container}" value="0"/>
@@ -121,7 +121,7 @@
                         </ui:fragment>
                     </t:dataList>
 
-                    <ui:fragment rendered="#{rowIndex < rowCount && rowIndex != 0}">
+                    <ui:fragment rendered="#{rowIndex lt rowCount and rowIndex != 0}">
                         <tr>
                             <td colspan="3" class="standardTable_Row1">
                                 <h:outputText value="&nbsp;" escape="false"/>
@@ -148,7 +148,7 @@
                                     <td class="standardTable_ColumnCentered"
                                             rowspan="#{AktuelleSchritteForm.containers[container].propertyListSizeString}">
                                         <h:panelGroup
-                                                rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id && process_item.currentStepAccessCondition != 'READ'}">
+                                                rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id and process_item.currentStepAccessCondition != 'READ'}">
                                             <h:commandLink action="AktuelleSchritteBearbeiten" title="#{msgs.bearbeiten}">
                                                 <h:graphicImage value="/newpages/images/buttons/edit.gif"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.container}"
@@ -179,7 +179,7 @@
             </table>
         </ui:fragment>
 
-        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' && AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.modusBearbeiten=='eigenschaft' and AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen">
                 <tr>
                     <td class="eingabeBoxen_row1" colspan="2">

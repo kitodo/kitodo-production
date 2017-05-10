@@ -20,7 +20,7 @@
     >
 
     <h:panelGroup
-    rendered="#{(not Metadaten.modusHinzufuegen) && (not Metadaten.modusHinzufuegenPerson) && (not Metadaten.addMetadataGroupMode)}">
+    rendered="#{(not Metadaten.modusHinzufuegen) and (not Metadaten.modusHinzufuegenPerson) and (not Metadaten.addMetadataGroupMode)}">
 
 
         <!-- ########################################
@@ -143,7 +143,7 @@
                                                      rendered="#{member.class.simpleName == 'RenderableLineEdit'}"/>
                                     <h:inputText value="#{member.value}" styleClass="metadatenInput"
                                                  readonly="#{Metadaten.nurLesenModus}"
-                                                 rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}"/>
+                                                 rendered="#{member.class.simpleName == 'RenderableEdit' and not member.readonly}"/>
                                     <h:selectManyListbox value="#{member.selectedItems}" readonly="#{Metadaten.nurLesenModus}"
                                                          styleClass="metadatenInput"
                                                          rendered="#{member.class.simpleName == 'RenderableListBox'}">
@@ -157,13 +157,13 @@
                                         <a4j:support event="onmouseup" requestDelay="1"/>
                                     </h:selectOneMenu>
                                     <h:outputText id="myOutput" value="#{member.value}"
-                                                  rendered="#{member.class.simpleName == 'RenderableEdit' && member.readonly}"/>
+                                                  rendered="#{member.class.simpleName == 'RenderableEdit' and member.readonly}"/>
                                 </td>
                                 <ui:fragment rendered="#{member.first}">
                                     <td rowspan="#{aGroup.rowspan}"
                                             class="mdgroup">
                                         <h:commandLink action="#{aGroup.copy}"
-                                                       rendered="#{aGroup.copyable && not Metadaten.nurLesenModus}"
+                                                       rendered="#{aGroup.copyable and not Metadaten.nurLesenModus}"
                                                        title="#{msgs.metadatenKopieren}">
                                             <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
                                         </h:commandLink>
@@ -180,7 +180,7 @@
                         <t:dataList var="innerMember" value="#{member.members}"
                                     rendered="#{member.class.simpleName == 'RenderablePersonMetadataGroup'}">
                             <tr>
-                                <ui:fragment rendered="#{member.first && innerMember.first}">
+                                <ui:fragment rendered="#{member.first and innerMember.first}">
                                     <td rowspan="#{aGroup.rowspan}"
                                             class="mdgroup">
                                         <h:outputText value="#{aGroup.label}"/>
@@ -200,7 +200,7 @@
                                                      rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}"/>
                                     <h:inputText value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
                                                  styleClass="metadatenInput"
-                                                 rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}"/>
+                                                 rendered="#{innerMember.class.simpleName == 'RenderableEdit' and not innerMember.readonly}"/>
                                     <h:selectManyListbox value="#{innerMember.selectedItems}"
                                                          readonly="#{Metadaten.nurLesenModus}"
                                                          styleClass="metadatenInput"
@@ -215,13 +215,13 @@
                                         <a4j:support event="onmouseup" requestDelay="1"/>
                                     </h:selectOneMenu>
                                     <h:outputText id="myOutput" value="#{innerMember.value}"
-                                                  rendered="#{innerMember.class.simpleName == 'RenderableEdit' && innerMember.readonly}"/>
+                                                  rendered="#{innerMember.class.simpleName == 'RenderableEdit' and innerMember.readonly}"/>
                                 </td>
-                                <ui:fragment rendered="#{member.first && innerMember.first}">
+                                <ui:fragment rendered="#{member.first and innerMember.first}">
                                     <td rowspan="#{aGroup.rowspan}"
                                             class="mdgroup">
                                         <h:commandLink action="#{aGroup.copy}"
-                                                       rendered="#{aGroup.copyable && not Metadaten.nurLesenModus}"
+                                                       rendered="#{aGroup.copyable and not Metadaten.nurLesenModus}"
                                                        title="#{msgs.metadatenKopieren}">
                                             <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
                                         </h:commandLink>
@@ -342,7 +342,7 @@
             <tr>
                 <td>
                     <h:panelGroup
-                            rendered="#{not Metadaten.modusHinzufuegen && not Metadaten.modusHinzufuegenPerson && not Metadaten.addMetadataGroupMode && not Metadaten.nurLesenModus}"
+                            rendered="#{not Metadaten.modusHinzufuegen and not Metadaten.modusHinzufuegenPerson and not Metadaten.addMetadataGroupMode and not Metadaten.nurLesenModus}"
                             style="margin-top:10px">
                         <!-- Hinzufuegen-Schaltknopf fuer Person-->
                         <h:commandLink id="l2" action="#{Metadaten.HinzufuegenPerson}" style="margin-left:2px"

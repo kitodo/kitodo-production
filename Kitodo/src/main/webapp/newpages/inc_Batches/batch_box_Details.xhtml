@@ -102,7 +102,7 @@
                                 </td>
                             </tr>
 
-                            <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingBegin !=null && !HelperForm.anonymized}">
+                            <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingBegin !=null and !HelperForm.anonymized}">
                                 <tr>
                                     <td width="150">
                                         <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
@@ -113,7 +113,7 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
+                            <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null and !HelperForm.anonymized}">
                                 <tr>
                                     <td width="150">
                                         <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
@@ -124,7 +124,7 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null && !HelperForm.anonymized}">
+                            <ui:fragment rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingTime !=null and !HelperForm.anonymized}">
                                 <tr>
                                     <td width="150">
                                         <h:outputText value="#{msgs.aktualisierungstyp}:"/>

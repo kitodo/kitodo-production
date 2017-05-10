@@ -77,9 +77,8 @@
                                     <h:outputText value="#{AktuelleSchritteForm.mySchritt.processingStatusEnum.title}"/>
                                 </td>
                             </tr>
-                            <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null && !HelperForm.anonymized}">
+                            <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null and !HelperForm.anonymized}">
                                 <tr>
-                                <!--<tr rendered="#{AktuelleSchritteForm.mySchritt.processingBegin !=null && !HelperForm.anonymized}">-->
                                     <td width="150">
                                         <h:outputText value="#{msgs.bearbeitungsbeginn}:"/>
                                     </td>
@@ -89,9 +88,8 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">
+                            <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null and !HelperForm.anonymized}">
                                 <tr>
-                                <!--<tr rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">-->
                                     <td width="150">
                                         <h:outputText value="#{msgs.zuletztBearbeitet}:"/>
                                     </td>
@@ -101,9 +99,8 @@
                                     </td>
                                 </tr>
                             </ui:fragment>
-                            <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">
+                            <ui:fragment rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null and !HelperForm.anonymized}">
                                 <tr>
-                                <!--<tr rendered="#{AktuelleSchritteForm.mySchritt.processingTime !=null && !HelperForm.anonymized}">-->
                                     <td width="150">
                                         <h:outputText value="#{msgs.aktualisierungstyp}:"/>
                                     </td>

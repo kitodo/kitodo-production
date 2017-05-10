@@ -101,7 +101,7 @@
                                                     <h:outputText id="id4a" value="#{msgs.eigenschaften}"/>
                                                 </h4>
                                                 <h:form>
-                                                    <ui:fragment rendered="#{BatchForm.modusBearbeiten!='eigenschaft' && BatchForm.batchHelper.propertyListSize>0}">
+                                                    <ui:fragment rendered="#{BatchForm.modusBearbeiten!='eigenschaft' and BatchForm.batchHelper.propertyListSize>0}">
                                                         <table cellspacing="1px" cellpadding="1px" width="100%"
                                                                    class="standardTable">
 
@@ -156,10 +156,10 @@
                                                                     </ui:fragment>
                                                                 </t:dataList>
 
-                                                                <ui:fragment rendered="#{rowIndex < rowCount && rowIndex != 0}">
+                                                                <ui:fragment rendered="#{rowIndex lt rowCount and rowIndex != 0}">
                                                                     <tr>
                                                                         <td colspan="3" class="standardTable_Row1">
-                                                                            <h:outputText value="&nbsp;" escape="false"/>
+                                                                            <h:outputText value="&#160;" escape="false"/>
                                                                         </td>
                                                                     </tr>
                                                                 </ui:fragment>

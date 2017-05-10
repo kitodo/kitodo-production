@@ -239,7 +239,7 @@
 
     <t:panelGroup id="myBild" forceId="true">
 
-        <h:panelGroup rendered="#{Metadaten.bildNummer != '-1' && Metadaten.ocrResult!=''}">
+        <h:panelGroup rendered="#{Metadaten.bildNummer != '-1' and Metadaten.ocrResult!=''}">
             <div style="background-color: #ffffff;border-style: solid; border-width: 1px; border-color: #CCCCCC;margin-bottom:15px;padding:5px;">
                 <h3>
                     <h:outputText value="OCR"/>
@@ -266,21 +266,21 @@
         </h:commandButton>
 
         <h:outputText value="#{msgs.currentRepresentative}"
-                      rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}"/>
+                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
         <h:outputText value="#{msgs.noFileSelected}"
-                      rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative && empty Metadaten.currentRepresentativePage}"/>
+                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative and empty Metadaten.currentRepresentativePage}"/>
         <h:outputText value="#{Metadaten.alleSeiten[Metadaten.currentRepresentativePage].label}"
-                      rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative && not empty Metadaten.currentRepresentativePage}"/>
-        <h:outputText value="" rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}"/>
+                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative and not empty Metadaten.currentRepresentativePage}"/>
+        <h:outputText value="" rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
 
         <h:outputText value="#{msgs.setRepresentative} "
-                      rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}"/>
+                      rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
         <h:selectOneMenu style="width: 200px" value="#{Metadaten.currentRepresentativePage}"
-                         rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}">
+                         rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}">
             <f:selectItems value="#{Metadaten.alleSeiten}"/>
         </h:selectOneMenu>
         <h:commandButton action="#{Metadaten.Reload}" value="#{msgs.uebernehmen}"
-                         rendered="#{Metadaten.alleSeiten != null && Metadaten.checkForRepresentative}"/>
+                         rendered="#{Metadaten.alleSeiten != null and Metadaten.checkForRepresentative}"/>
     </h:panelGrid>
 
     </h:form>

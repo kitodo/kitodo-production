@@ -92,7 +92,7 @@
 
                             <h:commandLink target="links" styleClass="document"
                                            action="#{Metadaten.moveNode}"
-                                           rendered="#{item.node.einfuegenErlaubt && not item.node.selected}">
+                                           rendered="#{item.node.einfuegenErlaubt and not item.node.selected}">
                                 <h:outputText value="#{item.node.description}"/>
                                 <t:updateActionListener
                                         property="#{Metadaten.modusStrukturelementVerschieben}"

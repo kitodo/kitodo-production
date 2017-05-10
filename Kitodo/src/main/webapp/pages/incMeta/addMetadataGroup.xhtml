@@ -53,7 +53,7 @@
                             <h:inputTextarea value="#{member.value}"
                                              rendered="#{member.class.simpleName == 'RenderableLineEdit'}"/>
                             <h:inputText value="#{member.value}"
-                                         rendered="#{member.class.simpleName == 'RenderableEdit' && not member.readonly}"/>
+                                         rendered="#{member.class.simpleName == 'RenderableEdit' and not member.readonly}"/>
                             <h:selectManyListbox value="#{member.selectedItems}"
                                                  rendered="#{member.class.simpleName == 'RenderableListBox'}">
                                 <f:selectItems value="#{member.items}"/>
@@ -63,7 +63,7 @@
                                 <f:selectItems value="#{member.items}"/>
                             </h:selectOneMenu>
                             <h:outputText id="myOutput" value="#{member.value}"
-                                          rendered="#{member.class.simpleName == 'RenderableEdit' && member.readonly}"/>
+                                          rendered="#{member.class.simpleName == 'RenderableEdit' and member.readonly}"/>
                         </td>
                     </tr>
                 </ui:fragment>
@@ -82,7 +82,7 @@
                             <h:inputTextarea value="#{innerMember.value}"
                                              rendered="#{innerMember.class.simpleName == 'RenderableLineEdit'}"/>
                             <h:inputText value="#{innerMember.value}"
-                                         rendered="#{innerMember.class.simpleName == 'RenderableEdit' && not innerMember.readonly}"/>
+                                         rendered="#{innerMember.class.simpleName == 'RenderableEdit' and not innerMember.readonly}"/>
                             <h:selectManyListbox value="#{innerMember.selectedItems}"
                                                  rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
                                 <f:selectItems value="#{innerMember.items}"/>
@@ -92,7 +92,7 @@
                                 <f:selectItems value="#{innerMember.items}"/>
                             </h:selectOneMenu>
                             <h:outputText id="myOutput" value="#{innerMember.value}"
-                                          rendered="#{innerMember.class.simpleName == 'RenderableEdit' && innerMember.readonly}"/>
+                                          rendered="#{innerMember.class.simpleName == 'RenderableEdit' and innerMember.readonly}"/>
                         </td>
                     </tr>
                 </t:dataList>

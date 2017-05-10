@@ -159,13 +159,13 @@
 
                                         <h:commandLink id="vdid16" action="#{Metadaten.changeView}"
                                                        value="#{msgs.fileManipulation}" style="font-size: 11px;"
-                                                       rendered="#{Metadaten.modusAnsicht != 'File' && Metadaten.displayFileManipulation}">
+                                                       rendered="#{Metadaten.modusAnsicht != 'File' and Metadaten.displayFileManipulation}">
                                             <f:param id="vdid17" name="Ansicht" value="File"/>
                                         </h:commandLink>
 
                                         <h:outputText id="vdid18" value="#{msgs.fileManipulation}"
                                                       style="font-weight:bold;font-size: 11px;"
-                                                      rendered="#{Metadaten.modusAnsicht == 'File' && Metadaten.displayFileManipulation}"/>
+                                                      rendered="#{Metadaten.modusAnsicht == 'File' and Metadaten.displayFileManipulation}"/>
 
                                     </h:panelGroup>
                                 </td>
