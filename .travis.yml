@@ -1,4 +1,6 @@
-# Travis continuous integration for kitodo-production
+# Travis continuous integration for Kitodo.Production
+
+dist: trusty
 
 language: java
 
@@ -9,6 +11,7 @@ jdk:
 addons:
   apt:
     packages:
+      - ant-optional
       - tomcat7-common
 
 cache:
