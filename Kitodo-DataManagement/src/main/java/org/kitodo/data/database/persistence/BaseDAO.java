@@ -70,7 +70,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @throws DAOException
      *             add description
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("unchecked")
     protected static void removeObject(Class cls, Integer id) throws DAOException {
         Transaction transaction = null;
         try {
