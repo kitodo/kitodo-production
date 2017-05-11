@@ -339,6 +339,11 @@ public class Process extends BaseBean {
         this.workpieces = workpieces;
     }
 
+    /**
+     * Get list of batches or empty list.
+     *
+     * @return list of batches or empty list
+     */
     public List<Batch> getBatches() {
         if (this.batches == null) {
             this.batches = new ArrayList<>();
@@ -346,8 +351,18 @@ public class Process extends BaseBean {
         return this.batches;
     }
 
+    /**
+     * Set batches, if list is empty just set, if not first clear and next set.
+     *
+     * @param batches list
+     */
     public void setBatches(List<Batch> batches) {
-        this.batches = batches;
+        if (this.batches == null) {
+            this.batches = batches;
+        } else {
+            this.batches.clear();
+            this.batches.addAll(batches);
+        }
     }
 
     public List<Property> getProperties() {

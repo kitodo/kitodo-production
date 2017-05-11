@@ -70,7 +70,7 @@ public abstract class BaseDAO implements Serializable {
      * @throws DAOException
      *             add description
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected static void removeObject(Class cls, Integer id) throws DAOException {
         Transaction transaction = null;
         try {
@@ -100,7 +100,7 @@ public abstract class BaseDAO implements Serializable {
      *            object id
      * @return Object may be null if object with ID doesn't exist
      */
-    @SuppressWarnings({"rawtypes" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected static Object retrieveObject(Class cls, Integer id) throws DAOException {
         try {
             Session session = Helper.getHibernateSession();
@@ -124,7 +124,7 @@ public abstract class BaseDAO implements Serializable {
      * @return list of results
 
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected List retrieveObjects(String query) throws DAOException {
         try {
             Session session = Helper.getHibernateSession();
