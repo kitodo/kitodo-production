@@ -65,7 +65,7 @@
             <h:graphicImage value="/newpages/images/check_false.gif" style="margin-right:4px"
                             rendered="#{!item.selected}"/>
             <t:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>
-            <f:ajax listener="org.ajax4jsf.ajax.ForceRender" render="myself1"/>
+            <f:ajax render="myself1"/>
         </h:commandLink>
     </t:column>
     
@@ -111,7 +111,7 @@
             <h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelShown}"/>
             <t:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}"/>
             <h:outputText value="#{item.title}"/>
-            <f:ajax listener="org.ajax4jsf.ajax.ForceRender" render="auflistungIntern,myself"/>
+            <f:ajax render="auflistungIntern myself"/>
         </h:commandLink>
     
         <h:panelGroup id="auflistungIntern">

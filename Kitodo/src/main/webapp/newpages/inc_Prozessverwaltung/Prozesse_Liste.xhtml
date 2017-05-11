@@ -179,16 +179,7 @@
             </t:div>
         </f:facet>
 
-        <!--<a4j:commandLink reRender="auflistungIntern,myself" id="myself" style="color:black">-->
-            <!--<h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelShown}"/>-->
-            <!--<h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelShown}"/>-->
-            <!--<t:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}"/>-->
-            <!--<h:outputText value="#{item.title}"/>-->
-            <!--<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender"/>-->
-        <!--</a4j:commandLink>-->
-
-        <!-- TODO: verify if this is a suitable replacement for the a4j:commandLink above! -->
-        <h:commandLink reRender="auflistungIntern,myself" id="myself" style="color:black">
+        <h:commandLink id="myself" style="color:black">
             <h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" rendered="#{!item.panelShown}"/>
             <h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" rendered="#{item.panelShown}"/>
             <t:updateActionListener value="#{item.panelShown?false:true}" property="#{item.panelShown}"/>
