@@ -44,7 +44,7 @@ public class BatchServiceIT {
 
     @Before
     public void multipleInit() throws InterruptedException {
-        Thread.sleep(2000);
+        Thread.sleep(1000);
     }
 
     @Test
