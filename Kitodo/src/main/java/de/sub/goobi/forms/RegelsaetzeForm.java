@@ -43,7 +43,7 @@ public class RegelsaetzeForm extends BasisForm {
 
     public String Neu() {
         this.myRegelsatz = new Ruleset();
-        return "RegelsaetzeBearbeiten";
+        return "/newpages/RegelsaetzeBearbeiten";
     }
 
     /**
@@ -55,21 +55,21 @@ public class RegelsaetzeForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myRegelsatz, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(myRegelsatz);
-                return "RegelsaetzeAlle";
+                return "/newpages/RegelsaetzeAlle";
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
-                return "";
+                return null;
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (IOException e) {
             logger.error(e);
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             logger.error("ElasticSearch server incorrect response",e);
-            return "";
+            return null;
         }
     }
 
@@ -87,21 +87,21 @@ public class RegelsaetzeForm extends BasisForm {
         try {
             if (hasAssignedProcesses(myRegelsatz)) {
                 Helper.setFehlerMeldung("RulesetInUse");
-                return "";
+                return null;
             } else {
                 serviceManager.getRulesetService().remove(myRegelsatz);
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            return "";
+            return null;
         } catch (IOException e) {
             logger.error(e);
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             logger.error("ElasticSearch server incorrect response",e);
-            return "";
+            return null;
         }
-        return "RegelsaetzeAlle";
+        return "/newpages/RegelsaetzeAlle";
     }
 
     private boolean hasAssignedProcesses(Ruleset r) {
@@ -126,9 +126,9 @@ public class RegelsaetzeForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-            return "";
+            return null;
         }
-        return "RegelsaetzeAlle";
+        return "/newpages/RegelsaetzeAlle";
     }
 
     public String FilterKeinMitZurueck() {

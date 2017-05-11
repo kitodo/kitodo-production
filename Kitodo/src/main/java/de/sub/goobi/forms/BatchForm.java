@@ -221,7 +221,7 @@ public class BatchForm extends BasisForm {
     public String filterAlleStart() throws DAOException {
         filterBatches();
         filterProcesses();
-        return "BatchesAll";
+        return "/newpages/BatchesAll";
     }
 
     /**
@@ -243,7 +243,7 @@ public class BatchForm extends BasisForm {
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                return "";
+                return null;
             }
         } else {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
@@ -269,7 +269,7 @@ public class BatchForm extends BasisForm {
                 facesContext.responseComplete();
             }
         }
-        return "";
+        return null;
     }
 
     /**
@@ -438,10 +438,10 @@ public class BatchForm extends BasisForm {
     public String editProperties() {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
-            return "";
+            return null;
         } else if (this.selectedBatches.size() > 1) {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
-            return "";
+            return null;
         } else {
             if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("")
                     && !this.selectedBatches.get(0).equals("null")) {
@@ -449,15 +449,15 @@ public class BatchForm extends BasisForm {
                 try {
                     batch = serviceManager.getBatchService().find(Integer.valueOf(selectedBatches.get(0)));
                     this.batchHelper = new BatchProcessHelper(batch);
-                    return "BatchProperties";
+                    return "/newpages/BatchProperties";
                 } catch (DAOException e) {
                     logger.error(e);
                     Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                    return "";
+                    return null;
                 }
             } else {
                 Helper.setFehlerMeldung("noBatchSelected");
-                return "";
+                return null;
             }
         }
     }
@@ -490,7 +490,7 @@ public class BatchForm extends BasisForm {
     public String exportBatch() {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
-            return "";
+            return null;
         }
         for (Integer batchID : selectedBatches) {
             try {
@@ -508,21 +508,21 @@ public class BatchForm extends BasisForm {
                         return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
                     case NEWSPAPER:
                         TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-                        return "taskmanager";
+                        return "/newpages/taskmanager";
                     case SERIAL:
                         TaskManager.addTask(new ExportSerialBatchTask(batch));
-                        return "taskmanager";
+                        return "/newpages/taskmanager";
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
             } catch (Exception e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                return "";
+                return null;
             }
         }
         Helper.setFehlerMeldung("noBatchSelected");
-        return "";
+        return null;
     }
 
     /**

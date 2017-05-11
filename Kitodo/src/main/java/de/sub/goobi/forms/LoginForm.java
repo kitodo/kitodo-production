@@ -60,7 +60,7 @@ public class LoginForm {
         if (mySession != null) {
             mySession.invalidate();
         }
-        return "Main";
+        return "/newpages/Main";
     }
 
     /**
@@ -143,7 +143,7 @@ public class LoginForm {
         temp.sessionBenutzerAktualisieren(mySession, this.tempBenutzer);
         this.myBenutzer = this.tempBenutzer;
         this.schonEingeloggt = false;
-        return "";
+        return null;
     }
 
     /**
@@ -159,7 +159,7 @@ public class LoginForm {
         temp.sessionBenutzerAktualisieren(mySession, this.tempBenutzer);
         this.myBenutzer = this.tempBenutzer;
         this.schonEingeloggt = false;
-        return "";
+        return null;
     }
 
     /**
@@ -169,7 +169,7 @@ public class LoginForm {
      */
     public String EinloggenAls() {
         if (getMaximaleBerechtigung() != 1) {
-            return "Main";
+            return "/newpages/Main";
         }
         this.myBenutzer = null;
         Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
@@ -182,9 +182,9 @@ public class LoginForm {
                     this.myBenutzer);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not read database", e.getMessage());
-            return "";
+            return null;
         }
-        return "Main";
+        return "/newpages/Main";
     }
 
     /*
@@ -195,7 +195,7 @@ public class LoginForm {
      * Bearbeitungsvorgang abbrechen.
      */
     public String PasswortAendernAbbrechen() {
-        return "Main";
+        return "/newpages/Main";
     }
 
     /**
@@ -227,7 +227,7 @@ public class LoginForm {
                 Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
             }
         }
-        return "";
+        return null;
     }
 
     /**
@@ -249,7 +249,7 @@ public class LoginForm {
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
         }
-        return "";
+        return null;
     }
 
     private void AlteBilderAufraeumen() throws IOException {

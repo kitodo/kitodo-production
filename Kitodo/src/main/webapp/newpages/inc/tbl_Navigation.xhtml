@@ -40,7 +40,7 @@
                         #########################################-->
 
                         <!-- Startseite -->
-                        <h:commandLink styleClass="mlink" action="Main" id="main"
+                        <h:commandLink styleClass="mlink" action="/newpages/Main" id="main"
                                        style="#{NavigationForm.aktuell == '0' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '0'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -54,7 +54,7 @@
 
                         <h:outputText styleClass="th_menu" value="- #{msgs.allgemeines} -"/>
                         <!-- Bedienungshinweise -->
-                        <h:commandLink styleClass="mlink" action="statischBedienung"
+                        <h:commandLink styleClass="mlink" action="/newpages/statischBedienung"
                                        style="#{NavigationForm.aktuell == '10' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '10'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -65,7 +65,7 @@
                         </h:commandLink>
 
                         <!-- technischer Hintergrund -->
-                        <h:commandLink styleClass="mlink" action="statischTechnischerHintergrund" id="technicalBackground"
+                        <h:commandLink styleClass="mlink" action="/newpages/statischTechnischerHintergrund" id="technicalBackground"
                                        style="#{NavigationForm.aktuell == '11' ? 'font-weight: bold;':'font-weight:normal ;'}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '11'}">
                                 <f:verbatim>&#8250; </f:verbatim>
@@ -76,7 +76,7 @@
                         </h:commandLink>
 
                         <!-- aktive Benutzer -->
-                        <h:commandLink styleClass="mlink" action="aktiveBenutzer" id="currentUsers"
+                        <h:commandLink styleClass="mlink" action="/newpages/aktiveBenutzer" id="currentUsers"
                                        style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}"
                                        rendered="#{!HelperForm.anonymized}">
                             <h:panelGroup rendered="#{NavigationForm.aktuell == '12'}">
@@ -285,17 +285,6 @@
                                                         value="35"/>
                             </h:commandLink>
 
-                            <!-- Administrationsaufgaben
-                            <h:commandLink styleClass="mlink" action="Administrationsaufgaben" id="admin"
-                                           style="#{NavigationForm.aktuell == '37' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '37'}">
-                                    <f:verbatim>&#8250; </f:verbatim>
-                                </h:panelGroup>
-                                <h:outputText value="#{msgs.scripte}" />
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="37" />
-                            </h:commandLink>
-                            -->
                         </h:panelGroup>
 
                         <!-- ################            Benutzereinstellungen              ######################-->
@@ -305,7 +294,7 @@
                                           value="- #{msgs.benutzerdaten} -"/>
 
                             <!-- Benutzerkonfiguration -->
-                            <h:commandLink styleClass="mlink" action="BenutzerKonfiguration" id="userconfig"
+                            <h:commandLink styleClass="mlink" action="/newpages/BenutzerKonfiguration" id="userconfig"
                                            style="#{NavigationForm.aktuell == '40' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                 <h:panelGroup rendered="#{NavigationForm.aktuell == '40'}">
                                     <f:verbatim>&#8250; </f:verbatim>
@@ -316,7 +305,7 @@
                             </h:commandLink>
 
                             <!-- Passwort ändern -->
-                            <h:commandLink styleClass="mlink" action="PasswortAendern" id="changePW"
+                            <h:commandLink styleClass="mlink" action="/newpages/PasswortAendern" id="changePW"
                                            style="#{NavigationForm.aktuell == '41' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                 <h:panelGroup rendered="#{NavigationForm.aktuell == '41'}">
                                     <f:verbatim>&#8250; </f:verbatim>

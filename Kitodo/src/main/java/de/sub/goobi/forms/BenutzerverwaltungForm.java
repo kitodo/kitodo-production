@@ -71,7 +71,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.myClass.setLogin("");
         this.myClass.setLdapLogin("");
         this.myClass.setPasswordDecrypted("Passwort");
-        return "BenutzerBearbeiten";
+        return "/newpages/BenutzerBearbeiten";
     }
 
     /**
@@ -94,9 +94,9 @@ public class BenutzerverwaltungForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-            return "";
+            return null;
         }
-        return "BenutzerAlle";
+        return "/newpages/BenutzerAlle";
     }
 
     public String filterKeinMitZurueck() {
@@ -135,9 +135,9 @@ public class BenutzerverwaltungForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-            return "";
+            return null;
         }
-        return "BenutzerAlle";
+        return "/newpages/BenutzerAlle";
     }
 
     /**
@@ -151,7 +151,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         String bla = this.myClass.getLogin();
 
         if (!isLoginValid(bla)) {
-            return "";
+            return null;
         }
 
         Integer blub = this.myClass.getId();
@@ -162,19 +162,19 @@ public class BenutzerverwaltungForm extends BasisForm {
              */
             if (this.serviceManager.getUserService().count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
                 this.serviceManager.getUserService().save(this.myClass);
-                return "BenutzerAlle";
+                return "/newpages/BenutzerAlle";
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
-                return "";
+                return null;
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (IOException | CustomResponseException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
     }
 
@@ -229,13 +229,13 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (IOException | CustomResponseException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
-        return "BenutzerAlle";
+        return "/newpages/BenutzerAlle";
     }
 
     /**
@@ -254,7 +254,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
         }
         this.myClass.setUserGroups(neu);
-        return "";
+        return null;
     }
 
     /**
@@ -268,7 +268,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             UserGroup usergroup = serviceManager.getUserGroupService().find(gruppenID);
             for (UserGroup b : this.myClass.getUserGroups()) {
                 if (b.equals(usergroup)) {
-                    return "";
+                    return null;
                 }
             }
             this.myClass.getUserGroups().add(usergroup);
@@ -276,7 +276,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
             return null;
         }
-        return "";
+        return null;
     }
 
     /**
@@ -294,7 +294,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
         }
         this.myClass.setProjects(neu);
-        return "";
+        return null;
     }
 
     /**
@@ -308,7 +308,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Project project = serviceManager.getProjectService().find(projektID);
             for (Project p : this.myClass.getProjects()) {
                 if (p.equals(project)) {
-                    return "";
+                    return null;
                 }
             }
             this.myClass.getProjects().add(project);
@@ -316,7 +316,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Helper.setFehlerMeldung("Error on reading database", e.getMessage());
             return null;
         }
-        return "";
+        return null;
     }
 
     /*
@@ -393,7 +393,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             Helper.setFehlerMeldung(e.getMessage());
         }
-        return "";
+        return null;
     }
 
     public boolean isHideInactiveUsers() {

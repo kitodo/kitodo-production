@@ -40,7 +40,7 @@ public class BenutzergruppenForm extends BasisForm {
 
     public String Neu() {
         this.myBenutzergruppe = new UserGroup();
-        return "BenutzergruppenBearbeiten";
+        return "/newpages/BenutzergruppenBearbeiten";
     }
 
     /**
@@ -51,16 +51,16 @@ public class BenutzergruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
-            return "BenutzergruppenAlle";
+            return "/newpages/BenutzergruppenAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-            return "";
+            return null;
         } catch (IOException e) {
             Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
-            return "";
+            return null;
         }
     }
 
@@ -81,20 +81,20 @@ public class BenutzergruppenForm extends BasisForm {
             }
             if (this.myBenutzergruppe.getTasks().size() > 0) {
                 Helper.setFehlerMeldung("userGroupAssignedError");
-                return "";
+                return null;
             }
             this.serviceManager.getUserGroupService().remove(this.myBenutzergruppe);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
-            return "";
+            return null;
         } catch (IOException e) {
             Helper.setFehlerMeldung("Error, could not delete from index", e.getMessage());
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
-            return "";
+            return null;
         }
-        return "BenutzergruppenAlle";
+        return "/newpages/BenutzergruppenAlle";
     }
 
     /**
@@ -111,9 +111,9 @@ public class BenutzergruppenForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("Error, could not read", he.getMessage());
-            return "";
+            return null;
         }
-        return "BenutzergruppenAlle";
+        return "/newpages/BenutzergruppenAlle";
     }
 
     public String FilterKeinMitZurueck() {

@@ -194,7 +194,7 @@ public class ProzesskopieForm {
             } finally {
                 hitlistPage = -1;
             }
-            return "";
+            return null;
         }
     }
 
@@ -276,7 +276,7 @@ public class ProzesskopieForm {
                     Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
                 }
             }
-            return "";
+            return null;
         }
 
         clearValues();
@@ -434,7 +434,7 @@ public class ProzesskopieForm {
             clearValues();
             readProjectConfigs();
             if (!pluginAvailableFor(opacKatalog)) {
-                return "";
+                return null;
             }
 
             String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
@@ -454,10 +454,10 @@ public class ProzesskopieForm {
                     hitlistPage = 0; // show first page of hitlist
                     break;
             }
-            return "";
+            return null;
         } catch (Exception e) {
             Helper.setFehlerMeldung("Error on reading opac ", e);
-            return "";
+            return null;
         }
     }
 
@@ -670,7 +670,7 @@ public class ProzesskopieForm {
              */
         }
 
-        return "";
+        return null;
     }
 
     /**
@@ -760,7 +760,7 @@ public class ProzesskopieForm {
         if (!isContentValid()) {
             return NAVI_FIRST_PAGE;
         } else {
-            return "NewProcess/Page2";
+            return "/newpages/NewProcess/Page2";
         }
     }
 
@@ -809,11 +809,11 @@ public class ProzesskopieForm {
         } catch (DAOException e) {
             logger.error(e);
             logger.error("error on save: ", e);
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
 
         /*
@@ -1053,18 +1053,18 @@ public class ProzesskopieForm {
         // Adding process to history
         if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
             Helper.setFehlerMeldung("historyNotUpdated");
-            return "";
+            return null;
         } else {
             try {
                 serviceManager.getProcessService().save(this.prozessKopie);
             } catch (DAOException e) {
                 logger.error(e);
                 logger.error("error on save: ", e);
-                return "";
+                return null;
             } catch (CustomResponseException e) {
                 Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
                 logger.error(e);
-                return "";
+                return null;
             }
         }
 
@@ -1080,7 +1080,7 @@ public class ProzesskopieForm {
                 myThread.start();
             }
         }
-        return "NewProcess/Page3";
+        return "/newpages/NewProcess/Page3";
 
     }
 

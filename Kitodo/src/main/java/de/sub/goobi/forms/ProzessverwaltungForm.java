@@ -185,7 +185,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess = new Process();
         this.myNewProcessTitle = "";
         this.modusBearbeiten = "prozess";
-        return "ProzessverwaltungBearbeiten";
+        return "/newpages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -198,7 +198,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myNewProcessTitle = "";
         this.myProzess.setTemplate(true);
         this.modusBearbeiten = "prozess";
-        return "ProzessverwaltungBearbeiten";
+        return "/newpages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -209,7 +209,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String editProcess() {
         Reload();
 
-        return "ProzessverwaltungBearbeiten";
+        return "/newpages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -228,7 +228,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 if (!this.myNewProcessTitle.matches(validateRegEx)) {
                     this.modusBearbeiten = "prozess";
                     Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
-                    return "";
+                    return null;
                 } else {
                     /* Prozesseigenschaften */
                     for (Property processProperty : this.myProzess.getProperties()) {
@@ -332,7 +332,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             Helper.setFehlerMeldung("titleEmpty");
         }
-        return "";
+        return null;
     }
 
     /**
@@ -346,7 +346,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().remove(this.myProzess);
         } catch (DAOException | IOException | CustomResponseException e) {
             Helper.setFehlerMeldung("could not delete ", e);
-            return "";
+            return null;
         }
         if (this.modusAnzeige.equals("vorlagen")) {
             return FilterVorlagen();
@@ -376,7 +376,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
 
         Helper.setMeldung("Content deleted");
-        return "";
+        return null;
     }
 
     private void deleteMetadataDirectory() {
@@ -417,10 +417,10 @@ public class ProzessverwaltungForm extends BasisForm {
 
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("ProzessverwaltungForm.FilterAktuelleProzesse", he);
-            return "";
+            return null;
         }
         this.modusAnzeige = "aktuell";
-        return "ProzessverwaltungAlle";
+        return "/newpages/ProzessverwaltungAlle";
     }
 
     /**
@@ -439,10 +439,10 @@ public class ProzessverwaltungForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("ProzessverwaltungForm.FilterVorlagen", he);
-            return "";
+            return null;
         }
         this.modusAnzeige = "vorlagen";
-        return "ProzessverwaltungAlle";
+        return "/newpages/ProzessverwaltungAlle";
     }
 
     /**
@@ -458,7 +458,7 @@ public class ProzessverwaltungForm extends BasisForm {
             pkf.setProzessVorlage(einziger);
             return pkf.prepare();
         } else {
-            return "ProzessverwaltungAlle";
+            return "/newpages/ProzessverwaltungAlle";
         }
     }
 
@@ -512,15 +512,15 @@ public class ProzessverwaltungForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-            return "";
+            return null;
         } catch (NumberFormatException ne) {
             Helper.setFehlerMeldung("Falsche Suchparameter angegeben", ne.getMessage());
-            return "";
+            return null;
         } catch (UnsupportedOperationException e) {
             logger.error(e);
         }
 
-        return "ProzessverwaltungAlle";
+        return "/newpages/ProzessverwaltungAlle";
     }
 
     private void sortList(Criteria inCrit, boolean addCriteria) {
@@ -579,7 +579,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DAOException | IOException | CustomResponseException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
         }
-        return "";
+        return null;
     }
 
     /**
@@ -592,7 +592,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DAOException | IOException | CustomResponseException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
         }
-        return "";
+        return null;
     }
 
     /**
@@ -605,7 +605,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } catch (DAOException | IOException | CustomResponseException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
         }
-        return "";
+        return null;
     }
 
     /**
@@ -613,17 +613,17 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String ProzessEigenschaftNeu() {
         myProzessEigenschaft = new Property();
-        return "";
+        return null;
     }
 
     public String VorlageEigenschaftNeu() {
         myVorlageEigenschaft = new Property();
-        return "";
+        return null;
     }
 
     public String WerkstueckEigenschaftNeu() {
         myWerkstueckEigenschaft = new Property();
-        return "";
+        return null;
     }
 
     /**
@@ -635,7 +635,7 @@ public class ProzessverwaltungForm extends BasisForm {
         serviceManager.getProcessService().getPropertiesInitialized(myProzess).add(myProzessEigenschaft);
         myProzessEigenschaft.getProcesses().add(myProzess);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -647,7 +647,7 @@ public class ProzessverwaltungForm extends BasisForm {
         myVorlage.getProperties().add(myVorlageEigenschaft);
         myVorlageEigenschaft.getTemplates().add(myVorlage);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -659,7 +659,7 @@ public class ProzessverwaltungForm extends BasisForm {
         myWerkstueck.getProperties().add(myWerkstueckEigenschaft);
         myWerkstueckEigenschaft.getWorkpieces().add(myWerkstueck);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -668,7 +668,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String SchrittNeu() {
         this.mySchritt = new Task();
         this.modusBearbeiten = "schritt";
-        return "inc_Prozessverwaltung/schritt";
+        return "/newpages/inc_Prozessverwaltung/schritt";
     }
 
     /**
@@ -695,7 +695,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getTasks().remove(this.mySchritt);
         Speichern();
         deleteSymlinksFromUserHomes();
-        return "ProzessverwaltungBearbeiten";
+        return "/newpages/ProzessverwaltungBearbeiten";
     }
 
     private void deleteSymlinksFromUserHomes() {
@@ -726,7 +726,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String BenutzerLoeschen() {
         this.mySchritt.getUsers().remove(this.myBenutzer);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -737,7 +737,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String BenutzergruppeLoeschen() {
         this.mySchritt.getUserGroups().remove(this.myBenutzergruppe);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -748,7 +748,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String BenutzergruppeHinzufuegen() {
         this.mySchritt.getUserGroups().add(this.myBenutzergruppe);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -759,7 +759,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String BenutzerHinzufuegen() {
         this.mySchritt.getUsers().add(this.myBenutzer);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -770,7 +770,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getTemplates().add(this.myVorlage);
         this.myVorlage.setProcess(this.myProzess);
         Speichern();
-        return "inc_Prozessverwaltung/vorlage";
+        return "/newpages/inc_Prozessverwaltung/vorlage";
     }
 
     /**
@@ -780,7 +780,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getTemplates().add(this.myVorlage);
         this.myVorlage.setProcess(this.myProzess);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -789,7 +789,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String VorlageLoeschen() {
         this.myProzess.getTemplates().remove(this.myVorlage);
         Speichern();
-        return "ProzessverwaltungBearbeiten";
+        return "/newpages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -800,7 +800,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getWorkpieces().add(this.myWerkstueck);
         this.myWerkstueck.setProcess(this.myProzess);
         Speichern();
-        return "ProzessverwaltungBearbeitenWerkstueck";
+        return "/newpages/ProzessverwaltungBearbeitenWerkstueck";
     }
 
     /**
@@ -810,7 +810,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.myProzess.getWorkpieces().add(this.myWerkstueck);
         this.myWerkstueck.setProcess(this.myProzess);
         Speichern();
-        return "";
+        return null;
     }
 
     /**
@@ -819,7 +819,7 @@ public class ProzessverwaltungForm extends BasisForm {
     public String WerkstueckLoeschen() {
         this.myProzess.getWorkpieces().remove(this.myWerkstueck);
         Speichern();
-        return "ProzessverwaltungBearbeiten";
+        return "/newpages/ProzessverwaltungBearbeiten";
     }
 
     /**
@@ -942,7 +942,7 @@ public class ProzessverwaltungForm extends BasisForm {
         List<String> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         myDav.removeAllFromHome(folder, DONEDIRECTORYNAME);
         Helper.setMeldung(null, "directoryRemovedAll", DONEDIRECTORYNAME);
-        return "";
+        return null;
     }
 
     /**
@@ -954,7 +954,7 @@ public class ProzessverwaltungForm extends BasisForm {
         WebDav myDav = new WebDav();
         myDav.uploadFromHome(this.myProzess);
         Helper.setMeldung(null, "directoryRemoved", this.myProzess.getTitle());
-        return "";
+        return null;
     }
 
     /**
@@ -1203,7 +1203,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.mySchritt = serviceManager.getTaskService().setProcessingStatusDown(this.mySchritt);
         Speichern();
         deleteSymlinksFromUserHomes();
-        return "";
+        return null;
     }
 
     /**
@@ -1369,7 +1369,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
         }
-        return "";
+        return null;
     }
 
     public User getMyBenutzer() {
@@ -1659,7 +1659,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String getResetStatistic() {
         this.showStatistics = false;
-        return "";
+        return null;
     }
 
     public String getMyDatasetHoehe() {
@@ -2411,7 +2411,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
         loadProcessProperties();
 
-        return "";
+        return null;
     }
 
     /**

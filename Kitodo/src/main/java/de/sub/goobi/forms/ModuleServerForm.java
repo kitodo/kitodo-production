@@ -207,7 +207,7 @@ public class ModuleServerForm {
         myModule = null;
         if (inSchritt.getTypeModuleName() == null || inSchritt.getTypeModuleName().length() == 0) {
             Helper.setFehlerMeldung("this step has no mudule");
-            return "";
+            return null;
         }
 
         /*
@@ -248,7 +248,7 @@ public class ModuleServerForm {
         }
         if (myModule == null) {
             Helper.setFehlerMeldung("Module not found");
-            return "";
+            return null;
         }
 
         /*

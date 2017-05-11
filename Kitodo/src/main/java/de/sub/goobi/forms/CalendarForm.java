@@ -86,7 +86,7 @@ public class CalendarForm {
          */
         public String getDay() {
             if (date == null) {
-                return "";
+                return null;
             }
             return Integer.toString(date.getDayOfMonth()).concat(".");
         }
@@ -110,7 +110,7 @@ public class CalendarForm {
          */
         public String getStyleClass() {
             if (date == null) {
-                return "";
+                return null;
             }
             if (onBlock) {
                 switch (date.getDayOfWeek()) {
@@ -908,7 +908,7 @@ public class CalendarForm {
         if (blockShowing != null && blockShowing.getFirstAppearance() != null) {
             return DateUtils.DATE_FORMATTER.print(blockShowing.getFirstAppearance());
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -949,7 +949,7 @@ public class CalendarForm {
         if (blockShowing != null && blockShowing.getLastAppearance() != null) {
             return DateUtils.DATE_FORMATTER.print(blockShowing.getLastAppearance());
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -1036,9 +1036,9 @@ public class CalendarForm {
     public String nextClick() {
         if (course == null || course.countIndividualIssues() < 1) {
             Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
-            return "";
+            return null;
         }
-        return "granularity";
+        return "/newpages/granularity";
     }
 
     /**
