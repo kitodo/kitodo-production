@@ -242,7 +242,7 @@ public class MySQLUtils {
             boolean typeAutomatic = rs.getBoolean("typeAutomatic");
             boolean readAccess = rs.getBoolean("typeImagesRead");
             boolean writeAccess = rs.getBoolean("typeImagesWrite");
-            boolean metadataAccess = rs.getBoolean("typMetadata");
+            boolean metadataAccess = rs.getBoolean("typeMetadata");
             boolean typeFinishImmediately = rs.getBoolean("typeAcceptClose");
             String stepPlugin = rs.getString("stepPlugin");
             String validationPlugin = rs.getString("validationPlugin");
