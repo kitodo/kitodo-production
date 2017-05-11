@@ -371,7 +371,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            determine if results should contain given value or should not
      *            contain given value
      * @param operator
-     *            as Operator AND or OR
+     *            as Operator AND or OR - useful when value contains more than one word
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator)
@@ -396,32 +396,67 @@ public abstract class SearchService<T extends BaseBean> {
      * @param date
      *            as Date
      * @param searchCondition
-     *            as SearchCondition
+     *            as SearchCondition - bigger, smaller and so on
      * @return query for searching for date in exact range
      */
     protected QueryBuilder createSimpleCompareDateQuery(String key, Date date, SearchCondition searchCondition)
             throws IOException {
-        QueryBuilder queryBuilder = null;
+        QueryBuilder query = null;
         switch (searchCondition) {
             case EQUAL:
-                queryBuilder = matchQuery(key, formatDate(date));
+                query = matchQuery(key, formatDate(date));
                 break;
             case EQUAL_OR_BIGGER:
-                queryBuilder = rangeQuery(key).gte(formatDate(date));
+                query = rangeQuery(key).gte(formatDate(date));
                 break;
             case EQUAL_OR_SMALLER:
-                queryBuilder = rangeQuery(key).lte(formatDate(date));
+                query = rangeQuery(key).lte(formatDate(date));
                 break;
             case BIGGER:
-                queryBuilder = rangeQuery(key).gt(formatDate(date));
+                query = rangeQuery(key).gt(formatDate(date));
                 break;
             case SMALLER:
-                queryBuilder = rangeQuery(key).lt(formatDate(date));
+                query = rangeQuery(key).lt(formatDate(date));
                 break;
             default:
                 assert false : searchCondition;
         }
-        return queryBuilder;
+        return query;
+    }
+
+    /**
+     * Method for comparing Integer values.
+     *
+     * @param key
+     *            as String
+     * @param value
+     *            as Integer
+     * @param searchCondition
+     *            as SearchCondition - bigger, smaller and so on
+     * @return query for searching for numbers in exact range
+     */
+    protected QueryBuilder createSimpleCompareQuery(String key, Integer value, SearchCondition searchCondition) {
+        QueryBuilder query = null;
+        switch (searchCondition) {
+            case EQUAL:
+                query = matchQuery(key, value);
+                break;
+            case EQUAL_OR_BIGGER:
+                query = rangeQuery(key).gte(value);
+                break;
+            case EQUAL_OR_SMALLER:
+                query = rangeQuery(key).lte(value);
+                break;
+            case BIGGER:
+                query = rangeQuery(key).gt(value);
+                break;
+            case SMALLER:
+                query = rangeQuery(key).lt(value);
+                break;
+            default:
+                assert false : searchCondition;
+        }
+        return query;
     }
 
     /**

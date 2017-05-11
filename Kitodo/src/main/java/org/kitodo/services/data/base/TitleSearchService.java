@@ -14,6 +14,7 @@ package org.kitodo.services.data.base;
 import java.io.IOException;
 import java.util.List;
 
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.BaseBean;
@@ -43,7 +44,7 @@ public abstract class TitleSearchService<T extends BaseBean> extends SearchServi
      */
     public List<SearchResult> findByTitle(String title, boolean contains)
             throws CustomResponseException, IOException, ParseException {
-        QueryBuilder query = createSimpleQuery("title", title, contains);
+        QueryBuilder query = createSimpleQuery("title", title, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
 }

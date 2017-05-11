@@ -16,11 +16,16 @@ import com.sun.research.ws.wadl.HTTPMethods;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -28,6 +33,7 @@ import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -145,6 +151,85 @@ public class BatchService extends TitleSearchService<Batch> {
      */
     public boolean removeAll(Batch batch, Collection<?> processes) {
         return batch.getProcesses().removeAll(processes);
+    }
+
+    /**
+     * Find batches with exact type. Necessary to assure that user pickup type
+     * from the list which contains enums.
+     *
+     * @param type
+     *            of the searched batches
+     * @return list of search results with batches of exact type
+     */
+    public List<SearchResult> findByType(Batch.Type type, boolean contains)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("type", type.toString(), contains);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find batches with exact title and type. Necessary to assure that user
+     * pickup type from the list which contains enums.
+     *
+     * @param title
+     *            of the searched batches
+     * @param type
+     *            of the searched batches
+     * @return list of search results with batches of exact type
+     */
+    public List<SearchResult> findByTitleAndType(String title, Batch.Type type)
+            throws CustomResponseException, IOException, ParseException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("title", title, true, Operator.AND));
+        query.must(createSimpleQuery("type", type.toString(), true));
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find batch with exact title or type.
+     *
+     * @param title
+     *            of the searched batch
+     * @param type
+     *            of the searched batch
+     * @return search result
+     */
+    public List<SearchResult> findByTitleOrType(String title, Batch.Type type)
+            throws CustomResponseException, IOException, ParseException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.should(createSimpleQuery("title", title, true, Operator.AND));
+        query.should(createSimpleQuery("type", type.toString(), true));
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find batches by id of process.
+     *
+     * @param id
+     *            of process
+     * @return list of search results with batches for specific process id
+     */
+    public List<SearchResult> findByProcessId(Integer id) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("processes.id", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find batches by title of process.
+     *
+     * @param title
+     *            of process
+     * @return list of search results with batches for specific process title
+     */
+    public List<SearchResult> findByProcessTitle(String title)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> batches = new ArrayList<>();
+
+        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(title, true);
+        for (SearchResult process : processes) {
+            batches.addAll(findByProcessId(process.getId()));
+        }
+        return batches;
     }
 
     /**

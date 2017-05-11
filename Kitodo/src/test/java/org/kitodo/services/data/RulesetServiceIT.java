@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
@@ -39,6 +40,11 @@ public class RulesetServiceIT {
     @AfterClass
     public static void cleanDatabase() {
         // MockDatabase.cleanDatabase();
+    }
+
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(1000);
     }
 
     @Test

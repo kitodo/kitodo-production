@@ -20,10 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -31,6 +28,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
@@ -48,6 +46,11 @@ public class ProcessServiceIT {
     @AfterClass
     public static void cleanDatabase() {
         // MockDatabase.cleanDatabase();
+    }
+
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(1000);
     }
 
     @Test
@@ -90,6 +93,91 @@ public class ProcessServiceIT {
         processService.remove(6);
         foundProcess = processService.convertSearchResultToObject(processService.findById(6));
         assertEquals("Additional process was not removed from database!", null, foundProcess);
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        SearchResult process = processService.findById(1);
+        Integer actual = process.getId();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitle() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<SearchResult> process = processService.findByTitle("First process", true);
+        Integer actual = process.size();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByOutputName() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<SearchResult> process = processService.findByOutputName("Test");
+        Integer actual = process.size();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByWikiField() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<SearchResult> process = processService.findByWikiField("wiki");
+        Integer actual = process.size();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByBatchId() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<SearchResult> processes = processService.findByBatchId(1);
+        Integer actual = processes.size();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+
+        processes = processService.findByBatchId(2);
+        actual = processes.size();
+        expected = 0;
+        assertEquals("Some processes were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByBatchTitle() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<SearchResult> processes = processService.findByBatchTitle("First batch");
+        Integer actual = processes.size();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+
+        processes = processService.findByBatchTitle("Some batch");
+        actual = processes.size();
+        expected = 0;
+        assertEquals("Process was found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProperty() throws Exception {
+        ProcessService processService = new ProcessService();
+
+        List<SearchResult> processes = processService.findByProperty("Process Property", "first value");
+        Integer actual = processes.size();
+        Integer expected = 1;
+        assertEquals("Process was not found in index!", expected, actual);
+
+        processes = processService.findByProperty("firstTemplate title", "first value");
+        actual = processes.size();
+        expected = 0;
+        assertEquals("Process was not found in index!", expected, actual);
     }
 
     @Test

@@ -14,10 +14,13 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -25,6 +28,7 @@ import org.kitodo.data.database.persistence.WorkpieceDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
@@ -129,6 +133,69 @@ public class WorkpieceService extends SearchService<Workpiece> {
     public void removeFromIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(workpiece, workpieceType);
+    }
+
+    /**
+     * Find workpieces by id of process.
+     *
+     * @param id
+     *            of process
+     * @return search result with workpieces for specific process id
+     */
+    public List<SearchResult> findByProcessId(Integer id) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder queryBuilder = createSimpleQuery("process", id, true);
+        return searcher.findDocuments(queryBuilder.toString());
+    }
+
+    /**
+     * Find workpieces by title of process.
+     *
+     * @param processTitle
+     *            title of process
+     * @return search results with workpieces for specific process title
+     */
+    public List<SearchResult> findByProcessTitle(String processTitle)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> workpieces = new ArrayList<>();
+
+        List<SearchResult> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
+        for (SearchResult process : processes) {
+            workpieces.addAll(findByProcessId(process.getId()));
+        }
+        return workpieces;
+    }
+
+    /**
+     * Find workpieces by property.
+     *
+     * @param title
+     *            of property
+     * @param value
+     *            of property
+     * @return list of search results with workpieces for specific property
+     */
+    public List<SearchResult> findByProperty(String title, String value)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> workpieces = new ArrayList<>();
+
+        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+        for (SearchResult property : properties) {
+            workpieces.addAll(findByPropertyId(property.getId()));
+        }
+        return workpieces;
+    }
+
+    /**
+     * Simulate relationship between property and workpiece type.
+     *
+     * @param id
+     *            of property
+     * @return list of search results with workpieces for specific property id
+     */
+    private List<SearchResult> findByPropertyId(Integer id)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("properties.id", id, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**

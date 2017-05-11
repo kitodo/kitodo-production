@@ -19,6 +19,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Docket;
@@ -121,7 +122,7 @@ public class DocketService extends TitleSearchService<Docket> {
      * @return search result
      */
     public SearchResult findByFile(String file) throws CustomResponseException, IOException, ParseException {
-        QueryBuilder query = createSimpleQuery("file", file, true);
+        QueryBuilder query = createSimpleQuery("file", file, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
 
@@ -137,8 +138,8 @@ public class DocketService extends TitleSearchService<Docket> {
     public SearchResult findByTitleAndFile(String title, String file)
             throws CustomResponseException, IOException, ParseException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("title", title, true));
-        query.must(createSimpleQuery("file", file, true));
+        query.must(createSimpleQuery("title", title, true, Operator.AND));
+        query.must(createSimpleQuery("file", file, true, Operator.AND));
         return searcher.findDocument(query.toString());
     }
 
@@ -154,8 +155,8 @@ public class DocketService extends TitleSearchService<Docket> {
     public List<SearchResult> findByTitleOrFile(String title, String file)
             throws CustomResponseException, IOException, ParseException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery("title", title, true));
-        query.should(createSimpleQuery("file", file, true));
+        query.should(createSimpleQuery("title", title, true, Operator.AND));
+        query.should(createSimpleQuery("file", file, true, Operator.AND));
         return searcher.findDocuments(query.toString());
     }
 

@@ -126,7 +126,6 @@ public class MockDatabase {
         firstProcess.setWikiField("wiki");
         LocalDate localDate = new LocalDate(2016, 10, 20);
         firstProcess.setCreationDate(localDate.toDate());
-
         List<Batch> batches = new ArrayList<>();
         Batch firstBatch = serviceManager.getBatchService().find(1);
         Batch secondBatch = serviceManager.getBatchService().find(3);
@@ -137,7 +136,6 @@ public class MockDatabase {
         batches.add(firstBatch);
         batches.add(secondBatch);
         firstProcess.setBatches(batches);
-
         firstProcess.setDocket(serviceManager.getDocketService().find(1));
         firstProcess.setProject(serviceManager.getProjectService().find(1));
         firstProcess.setRuleset(serviceManager.getRulesetService().find(1));
@@ -187,7 +185,7 @@ public class MockDatabase {
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("secondProcessProperty");
-        secondProcessProperty.setValue("second");
+        secondProcessProperty.setValue("second value");
         secondProcessProperty.setObligatory(false);
         secondProcessProperty.setType(PropertyType.CommandLink);
         secondProcessProperty.setChoice("chosen");
@@ -465,6 +463,7 @@ public class MockDatabase {
         firstUser.setLogin("kowal");
         firstUser.setPassword("test");
         firstUser.setLdapLogin("kowalLDP");
+        firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
         firstUser.setCss("/css/fancy.css");
         serviceManager.getUserService().save(firstUser);
@@ -474,6 +473,7 @@ public class MockDatabase {
         secondUser.setSurname("Nowak");
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
+        secondUser.setLocation("Dresden");
         secondUser.setSessionTimeout(9000);
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().find(1));
         serviceManager.getUserService().save(secondUser);
@@ -483,6 +483,7 @@ public class MockDatabase {
         thirdUser.setSurname("Dora");
         thirdUser.setLogin("dora");
         thirdUser.setLdapLogin("doraLDP");
+        thirdUser.setLocation("Leipzig");
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
     }

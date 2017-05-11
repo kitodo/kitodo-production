@@ -25,7 +25,11 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.Session;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -38,6 +42,7 @@ import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
 import org.kitodo.services.ServiceManager;
@@ -169,6 +174,174 @@ public class UserService extends SearchService<User> {
 
     public Long count(String query) throws DAOException {
         return userDAO.count(query);
+    }
+
+    /**
+     * Find users with exact name.
+     *
+     * @param name
+     *            of the searched user
+     * @return list of search results
+     */
+    public List<SearchResult> findByName(String name) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("name", name, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find users with exact surname.
+     *
+     * @param surname
+     *            of the searched user
+     * @return list of search results
+     */
+    public List<SearchResult> findBySurname(String surname)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("surname", surname, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find users with exact full name.
+     *
+     * @param name
+     *            of the searched user
+     * @param surname
+     *            of the searched user
+     * @return list of search results
+     */
+    public List<SearchResult> findByFullName(String name, String surname)
+            throws CustomResponseException, IOException, ParseException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("name", name, true, Operator.AND));
+        query.must(createSimpleQuery("surname", surname, true, Operator.AND));
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find user with exact login.
+     *
+     * @param login
+     *            of the searched user
+     * @return search results
+     */
+    public SearchResult findByLogin(String login) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("login", login, true, Operator.AND);
+        return searcher.findDocument(query.toString());
+    }
+
+    /**
+     * Find user with exact LDAP login.
+     *
+     * @param ldapLogin
+     *            of the searched user
+     * @return search result
+     */
+    public SearchResult findByLdapLogin(String ldapLogin) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("ldapLogin", ldapLogin, true, Operator.AND);
+        return searcher.findDocument(query.toString());
+    }
+
+    /**
+     * Find active or inactive users.
+     *
+     * @param active
+     *            true -active user or false - inactive user
+     * @return list of search results
+     */
+    public List<SearchResult> findByActive(boolean active) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("active", String.valueOf(active), true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find users with exact location.
+     *
+     * @param location
+     *            of the searched user
+     * @return list of search results
+     */
+    public List<SearchResult> findByLocation(String location)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("location", location, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find users with exact metadata language.
+     *
+     * @param metadataLanguage
+     *            of the searched user
+     * @return list of search results
+     */
+    public List<SearchResult> findByMetadataLanguage(String metadataLanguage)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("metadataLanguage", metadataLanguage, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find users by id of user group.
+     *
+     * @param id
+     *            of user group
+     * @return list of search results with users for specific user group id
+     */
+    public List<SearchResult> findByUserGroupId(Integer id)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find users by title of user group.
+     *
+     * @param title
+     *            of user group
+     * @return list of search results with users for specific user group title
+     */
+    public List<SearchResult> findByUserGroupTitle(String title)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> users = new ArrayList<>();
+
+        List<SearchResult> userGroups = serviceManager.getUserGroupService().findByTitle(title, true);
+        for (SearchResult userGroup : userGroups) {
+            users.addAll(findByUserGroupId(userGroup.getId()));
+        }
+        return users;
+    }
+
+    /**
+     * Find users by property.
+     *
+     * @param title
+     *            of property
+     * @param value
+     *            of property
+     * @return list of search results with users for specific property
+     */
+    public List<SearchResult> findByProperty(String title, String value)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> users = new ArrayList<>();
+
+        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+        for (SearchResult property : properties) {
+            users.addAll(findByPropertyId(property.getId()));
+        }
+        return users;
+    }
+
+    /**
+     * Simulate relationship between property and user type.
+     *
+     * @param id
+     *            of property
+     * @return list of search results with users for specific property id
+     */
+    private List<SearchResult> findByPropertyId(Integer id)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("properties.id", id, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**

@@ -15,8 +15,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
@@ -24,6 +26,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for WorkpieceService class.
@@ -38,6 +41,11 @@ public class WorkpieceServiceIT {
     @AfterClass
     public static void cleanDatabase() {
         // MockDatabase.cleanDatabase();
+    }
+
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(1000);
     }
 
     @Test
@@ -75,6 +83,61 @@ public class WorkpieceServiceIT {
         workpieceService.remove(4);
         foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(4));
         assertEquals("Additional workpiece was not removed from database!", null, foundWorkpiece);
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
+
+        SearchResult workpiece = workpieceService.findById(1);
+        Integer actual = workpiece.getId();
+        Integer expected = 1;
+        assertEquals("Workpiece was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProcessId() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
+
+        List<SearchResult> workpieces = workpieceService.findByProcessId(1);
+        Integer actual = workpieces.size();
+        Integer expected = 2;
+        assertEquals("Workpiece were not found in index!", expected, actual);
+
+        workpieces = workpieceService.findByProcessId(4);
+        actual = workpieces.size();
+        expected = 0;
+        assertEquals("Workpieces were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProcessTitle() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
+
+        List<SearchResult> workpieces = workpieceService.findByProcessTitle("First process");
+        Integer actual = workpieces.size();
+        Integer expected = 2;
+        assertEquals("Workpiece was not found in index!", expected, actual);
+
+        workpieces = workpieceService.findByProcessTitle("DBConnectionTest");
+        actual = workpieces.size();
+        expected = 0;
+        assertEquals("Workpieces were found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByProperty() throws Exception {
+        WorkpieceService workpieceService = new WorkpieceService();
+
+        List<SearchResult> workpieces = workpieceService.findByProperty("FirstWorkpiece Property", "first value");
+        Integer actual = workpieces.size();
+        Integer expected = 1;
+        assertEquals("Workpiece was not found in index!", expected, actual);
+
+        workpieces = workpieceService.findByProperty("FirstUserProperty", "first value");
+        actual = workpieces.size();
+        expected = 0;
+        assertEquals("Workpieces were found in index!", expected, actual);
     }
 
     @Test

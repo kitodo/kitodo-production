@@ -41,12 +41,15 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.io.BackupFileRotation;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
@@ -62,7 +65,9 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
@@ -190,6 +195,140 @@ public class ProcessService extends TitleSearchService<Process> {
 
     public void refresh(Process process) {
         processDAO.refresh(process);
+    }
+
+    /**
+     * Find processes by output name.
+     * 
+     * @param outputName
+     *            as String
+     * @return list of search results
+     */
+    public List<SearchResult> findByOutputName(String outputName)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("outputName", outputName, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes for exact creation date.
+     *
+     * @param creationDate
+     *            of the searched processes as Date
+     * @param searchCondition
+     *            as SearchCondition - bigger, smaller and so on
+     * @return list of search results
+     */
+    public List<SearchResult> findByCreationDate(Date creationDate, SearchCondition searchCondition)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleCompareDateQuery("creationDate", creationDate, searchCondition);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by wiki field.
+     *
+     * @param wikiField
+     *            as String
+     * @return list of search results
+     */
+    public List<SearchResult> findByWikiField(String wikiField)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("wikiField", wikiField, true, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by id of project.
+     *
+     * @param id
+     *            of project
+     * @return list of search results with batches for specific process id
+     */
+    public List<SearchResult> findByProjectId(Integer id) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("project", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by title of project.
+     *
+     * @param title
+     *            of process
+     * @return list of search results with batches for specific process id
+     */
+    public List<SearchResult> findByProjectTitle(String title)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> processes = new ArrayList<>();
+
+        List<SearchResult> projects = serviceManager.getProjectService().findByTitle(title, true);
+        for (SearchResult project : projects) {
+            processes.addAll(findByProjectId(project.getId()));
+        }
+        return processes;
+    }
+
+    /**
+     * Find processes by id of batch.
+     *
+     * @param id
+     *            of process
+     * @return list of search results with processes for specific batch id
+     */
+    public List<SearchResult> findByBatchId(Integer id) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("batches.id", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by title of batch.
+     *
+     * @param title
+     *            of batch
+     * @return list of search results with processes for specific batch title
+     */
+    public List<SearchResult> findByBatchTitle(String title)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> processes = new ArrayList<>();
+
+        List<SearchResult> batches = serviceManager.getBatchService().findByTitle(title, true);
+        for (SearchResult batch : batches) {
+            processes.addAll(findByBatchId(batch.getId()));
+        }
+        return processes;
+    }
+
+    /**
+     * Find processes by property.
+     *
+     * @param title
+     *            of property
+     * @param value
+     *            of property
+     * @return list of search results with processes for specific property
+     */
+    public List<SearchResult> findByProperty(String title, String value)
+            throws CustomResponseException, IOException, ParseException {
+        List<SearchResult> processes = new ArrayList<>();
+
+        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
+        for (SearchResult property : properties) {
+            processes.addAll(findByPropertyId(property.getId()));
+        }
+        return processes;
+    }
+
+    /**
+     * Simulate relationship between property and process type.
+     * 
+     * @param id
+     *            of property
+     * @return list of search results with processes for specific property id
+     */
+    private List<SearchResult> findByPropertyId(Integer id)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("properties.id", id, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**

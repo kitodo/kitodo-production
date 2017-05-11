@@ -17,12 +17,14 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 
 /**
  * Tests for PropertyService class.
@@ -37,6 +39,11 @@ public class PropertyServiceIT {
     @AfterClass
     public static void cleanDatabase() {
         // MockDatabase.cleanDatabase();
+    }
+
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(1000);
     }
 
     @Test
@@ -126,6 +133,46 @@ public class PropertyServiceIT {
         propertyService.remove(10);
         foundProperty = propertyService.convertSearchResultToObject(propertyService.findById(10));
         assertEquals("Additional property was not removed from database!", null, foundProperty);
+    }
+
+    @Test
+    public void shouldFindById() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        SearchResult property = propertyService.findById(1);
+        Integer actual = property.getId();
+        Integer expected = 1;
+        assertEquals("Property was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByValue() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        List<SearchResult> properties = propertyService.findByValue("second", true);
+        Integer actual = properties.size();
+        Integer expected = 4;
+        assertEquals("Properties were not found in index!", expected, actual);
+
+        properties = propertyService.findByValue("second value", true);
+        actual = properties.size();
+        expected = 1;
+        assertEquals("Property was not found in index!", expected, actual);
+    }
+
+    @Test
+    public void shouldFindByTitleAndValue() throws Exception {
+        PropertyService propertyService = new PropertyService();
+
+        List<SearchResult> properties = propertyService.findByTitleAndValue("secondProcessProperty", "second");
+        Integer actual = properties.size();
+        Integer expected = 1;
+        assertEquals("Property was not found in index!", expected, actual);
+
+        properties = propertyService.findByTitleAndValue("secondProcessProperty", "third");
+        actual = properties.size();
+        expected = 0;
+        assertEquals("Property was found in index!", expected, actual);
     }
 
     @Test

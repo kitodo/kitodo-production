@@ -18,6 +18,10 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
@@ -28,6 +32,7 @@ import org.kitodo.data.database.persistence.PropertyDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.PropertyType;
+import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -149,6 +154,48 @@ public class PropertyService extends TitleSearchService<Property> {
     public void removeFromIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(property, propertyType);
+    }
+
+    /**
+     * Find properties with exact value.
+     *
+     * @param value
+     *            of the searched property
+     * @param contains
+     *            of the searched batches
+     * @return list of search results with properties
+     */
+    public List<SearchResult> findByValue(String value, boolean contains)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find batches with exact title and type. Necessary to assure that user
+     * pickup type from the list which contains enums.
+     *
+     * @param title
+     *            of the searched property
+     * @param value
+     *            of the searched property
+     * @return list of search results with batches of exact type
+     */
+    public List<SearchResult> findByTitleAndValue(String title, String value)
+            throws CustomResponseException, IOException, ParseException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(createSimpleQuery("title", title, true, Operator.AND));
+        query.must(createSimpleQuery("value", value, true, Operator.AND));
+        return searcher.findDocuments(query.toString());
+    }
+
+
+    /**
+     * Method adds all object found in database to Elastic Search index.
+     */
+    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+        indexer.setMethod(HTTPMethods.PUT);
+        indexer.performMultipleRequests(findAll(), propertyType);
     }
 
     /**
