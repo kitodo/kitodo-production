@@ -137,11 +137,21 @@ public class IndexRestClient extends KitodoRestClient {
     }
 
     private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {
-        for (String response : responses) {
-            if (!(response.contains("HTTP/1.1 200") || response.contains("HTTP/1.1 201"))) {
-                throw new CustomResponseException(
-                        "ElasticSearch failed to add one or more documents! Reason: " + response);
+        if (responses.size() > 0) {
+            for (String response : responses) {
+                if (response == null || response.equals("")) {
+                    throw new CustomResponseException(
+                            "ElasticSearch failed to add one or more documents for unknown reason!");
+                } else {
+                    if (!(response.contains("HTTP/1.1 200") || response.contains("HTTP/1.1 201"))) {
+                        throw new CustomResponseException(
+                                "ElasticSearch failed to add one or more documents! Reason: " + response);
+                    }
+                }
             }
+        } else {
+            throw new CustomResponseException(
+                    "ElasticSearch failed to add all documents for unknown reason!");
         }
     }
 
