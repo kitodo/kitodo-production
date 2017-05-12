@@ -108,10 +108,8 @@ public class MySQLHelper {
         try {
             Object[] params = {processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<StepObject> ret = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToStepObjectListHandler, params);
-            // (connection, stmt, MySQLUtils.resultSetToStepObjectListHandler);
-            return ret;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectListHandler,
+                    params);
         } finally {
             closeConnection(connection);
         }
@@ -127,14 +125,14 @@ public class MySQLHelper {
     public static List<Property> getProcessPropertiesForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM processProperty WHERE process_id = ?");
-
+        sql.append("SELECT * FROM property AS p ");
+        sql.append("INNER JOIN process_x_property AS pxp ON pxp.property_id = p.id ");
+        sql.append("WHERE pxp.process_id = ?");
         try {
             Object[] params = {processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<Property> answer = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToProcessPropertyListHandler, params);
-            return answer;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessPropertyListHandler,
+                    params);
         } finally {
             closeConnection(connection);
         }
@@ -150,14 +148,15 @@ public class MySQLHelper {
     public static List<Property> getTemplatePropertiesForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM templateProperty WHERE templateProperty.template_id = ");
+        sql.append("SELECT * FROM property AS p ");
+        sql.append("INNER JOIN template_x_property AS txp ON uxp.property_id = p.id ");
+        sql.append("WHERE txp.template_id = ");
         sql.append("(SELECT id FROM template WHERE process_id = ?)");
         try {
             Object[] params = {processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<Property> answer = new QueryRunner().query(connection, sql.toString(),
+            return new QueryRunner().query(connection, sql.toString(),
                     MySQLUtils.resultSetToTemplatePropertyListHandler, params);
-            return answer;
         } finally {
             closeConnection(connection);
         }
@@ -173,14 +172,15 @@ public class MySQLHelper {
     public static List<Property> getProductPropertiesForProcess(int processId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM workpieceProperty WHERE workpieceProperty.workpiece_id = ");
+        sql.append("SELECT * FROM property AS p ");
+        sql.append("INNER JOIN workpiece_x_property AS wxp ON uxp.property_id = p.id ");
+        sql.append("WHERE wxp.workpiece_id = ");
         sql.append("(SELECT id FROM workpiece WHERE process_id = ? )");
         try {
             Object[] params = {processId };
             logger.debug(sql.toString() + ", " + processId);
-            List<Property> answer = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToProductPropertyListHandler, params);
-            return answer;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProductPropertyListHandler,
+                    params);
         } finally {
             closeConnection(connection);
         }
@@ -200,9 +200,7 @@ public class MySQLHelper {
         try {
             Object[] params = {processId };
             logger.debug(sql.toString() + ", " + processId);
-            ProcessObject answer = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToProcessHandler, params);
-            return answer;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProcessHandler, params);
         } finally {
             closeConnection(connection);
         }
@@ -223,9 +221,7 @@ public class MySQLHelper {
         try {
             Object[] params = {rulesetId };
             logger.debug(sql.toString() + ", " + rulesetId);
-            Ruleset ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler,
-                    params);
-            return ret;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToRulesetHandler, params);
         } finally {
             closeConnection(connection);
         }
@@ -243,14 +239,10 @@ public class MySQLHelper {
         StringBuilder sql = new StringBuilder();
 
         sql.append("SELECT * FROM task WHERE id = ?");
-        // sql.append(" ORDER BY Reihenfolge ASC");
-
         try {
             Object[] params = {stepId };
             logger.debug(sql.toString() + ", " + stepId);
-            StepObject ret = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToStepObjectHandler, params);
-            return ret;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToStepObjectHandler, params);
         } finally {
             closeConnection(connection);
         }
@@ -270,9 +262,7 @@ public class MySQLHelper {
         try {
             Object[] params = {stepId };
             logger.debug(sql.toString() + ", " + stepId);
-            List<String> ret = new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptsHandler,
-                    params);
-            return ret;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptsHandler, params);
         } finally {
             closeConnection(connection);
         }
@@ -292,9 +282,7 @@ public class MySQLHelper {
         try {
             Object[] params = {stepId };
             logger.debug(sql.toString() + ", " + stepId);
-            Map<String, String> ret = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToScriptMapHandler, params);
-            return ret;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToScriptMapHandler, params);
         } finally {
             closeConnection(connection);
         }
@@ -466,9 +454,7 @@ public class MySQLHelper {
         try {
             Object[] param = {projectId };
             logger.debug(sql.toString() + ", " + Arrays.toString(param));
-            ProjectObject answer = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToProjectHandler, param);
-            return answer;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToProjectHandler, param);
         } finally {
             closeConnection(connection);
         }
@@ -489,10 +475,8 @@ public class MySQLHelper {
         try {
             Object[] param = {projectId };
             logger.debug(sql.toString() + ", " + Arrays.toString(param));
-            List<ProjectFileGroup> answer = new QueryRunner().query(connection, sql.toString(),
+            return new QueryRunner().query(connection, sql.toString(),
                     MySQLUtils.resultSetToProjectFilegroupListHandler, param);
-            return answer;
-
         } finally {
             closeConnection(connection);
         }
@@ -508,13 +492,13 @@ public class MySQLHelper {
     public static List<String> getFilterForUser(int userId) throws SQLException {
         Connection connection = helper.getConnection();
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM userProperty WHERE title = '_filter' AND user_id = ?");
+        sql.append("SELECT * FROM property AS p ");
+        sql.append("INNER JOIN user_x_property AS uxp ON uxp.property_id = p.id ");
+        sql.append("WHERE p.title = '_filter' AND uxp.user_id = ?");
         try {
             Object[] param = {userId };
             logger.debug(sql.toString() + ", " + Arrays.toString(param));
-            List<String> answer = new QueryRunner().query(connection, sql.toString(),
-                    MySQLUtils.resultSetToFilterListtHandler, param);
-            return answer;
+            return new QueryRunner().query(connection, sql.toString(), MySQLUtils.resultSetToFilterListtHandler, param);
         } finally {
             closeConnection(connection);
         }
@@ -533,9 +517,11 @@ public class MySQLHelper {
         Timestamp datetime = new Timestamp(new Date().getTime());
         try {
             QueryRunner run = new QueryRunner();
-            String propNames = "title, value, obligatory, dataType, choice, creationDate, user_id";
+            String propNames = "title, value, obligatory, dataType, choice, creationDate";
             Object[] param = {"_filter", filterstring, false, 5, null, datetime, userId };
-            String sql = "INSERT INTO " + "userProperty" + " (" + propNames + ") VALUES ( ?, ?,? ,? ,? ,?,? )";
+            String sql = "INSERT INTO property (" + propNames + ") VALUES ( ?, ?,? ,? ,? ,? )"
+                    + "INSERT INTO user_x_property (property_id, user_id) VALUES "
+                    + "( (SELECT id FROM property ORDER BY id DESC LIMIT 1),?)";
             if (logger.isDebugEnabled()) {
                 logger.debug(sql + ", " + Arrays.toString(param));
             }
@@ -558,7 +544,9 @@ public class MySQLHelper {
         try {
             QueryRunner run = new QueryRunner();
             Object[] param = {userId, filterstring };
-            String sql = "DELETE FROM userProperty WHERE title = '_filter' AND user_id = ? AND value = ?";
+            String sql = "DELETE FROM property WHERE id IN " + "(SELECT p.id FROM property AS p "
+                    + "INNER JOIN user_x_property AS uxp ON p.id = uxp.property_id "
+                    + "WHERE p.title = '_filter' AND uxp.user_id = ? AND value = ?)";
             if (logger.isDebugEnabled()) {
                 logger.debug(sql + ", " + Arrays.toString(param));
             }
