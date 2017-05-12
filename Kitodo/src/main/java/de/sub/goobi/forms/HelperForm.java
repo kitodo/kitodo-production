@@ -133,7 +133,7 @@ public class HelperForm {
     public List<SelectItem> getDockets() {
         List<SelectItem> answer = new ArrayList<SelectItem>();
         try {
-            List<Docket> temp = serviceManager.getDocketService().search("from Docket ORDER BY name");
+            List<Docket> temp = serviceManager.getDocketService().search("from Docket ORDER BY title");
             for (Docket d : temp) {
                 answer.add(new SelectItem(d, d.getTitle(), null));
             }
