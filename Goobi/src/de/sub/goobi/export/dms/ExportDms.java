@@ -359,7 +359,7 @@ public class ExportDms extends ExportMets {
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat.findFileFormatsHelperByName(myProzess
                     .getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeWasSuccessful = writeMetsFile(myProzess, benutzerHome + File.separator
+                writeWasSuccessful &= writeMetsFile(myProzess, benutzerHome + File.separator
                         + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 

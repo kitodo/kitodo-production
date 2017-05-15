@@ -258,7 +258,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeWasSuccessful = writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+                writeWasSuccessful &= writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 
             if (!writeWasSuccessful) {
