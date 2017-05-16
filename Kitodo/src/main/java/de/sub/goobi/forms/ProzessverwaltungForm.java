@@ -528,10 +528,10 @@ public class ProzessverwaltungForm extends BasisForm {
             order = Order.desc("title");
         }
         if (this.sortierung.equals("batchAsc")) {
-            order = Order.asc("batchID");
+            order = Order.asc("batch_id");
         }
         if (this.sortierung.equals("batchDesc")) {
-            order = Order.desc("batchID");
+            order = Order.desc("batch_id");
         }
 
         if (this.sortierung.equals("projektAsc")) {
