@@ -56,12 +56,13 @@
         <t:stylesheet media="all" path="/css/system/kitodo.css"/>
         <t:stylesheet media="screen" path="#{LoginForm.myBenutzer == null?'/css/default.css':LoginForm.myBenutzer.css}"/>
         <t:stylesheet media="print" path="/css/system/print.css"/>
+        <t:stylesheet media="all" path="/css/toggle.js.css"/>
         <!--Styles für panelTabbedPane unter Menü Administration- Projekte -->
         <f:loadBundle basename="messages.messages" var="msgs"/>
         <title><h:outputText value="#{HelperForm.applicationHeaderTitle} - #{HelperForm.version}"/></title>
         <!-- <h:outputText value="internal version number: #{HelperForm.buildVersion}"/> -->
         <!--<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />-->
-        <script type="text/javascript" src="/kitodo/js/toggle.js"></script> <!-- TODO: REPLACE ABSOLUTE PATH -->
+        <script type="text/javascript" src="#{request.contextPath}/js/toggle.js"></script>
     </h:head>
 
 </ui:composition>

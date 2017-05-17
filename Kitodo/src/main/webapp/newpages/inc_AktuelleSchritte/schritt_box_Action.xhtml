@@ -274,17 +274,16 @@
 
                                 <!-- Schritt zurückgeben an vorherige Station für Korrekturzwecke -->
                                 <h:panelGroup rendered="#{AktuelleSchritteForm.sizeOfPreviousStepsForProblemReporting > 0}">
-                                    <!-- TODO: find replacement for jd hideable controller and hideable area -->
-                                    <!--<jd:hideableController for="korrektur" id="korrekturswitcher"-->
-                                                           <!--title="#{msgs.korrekturmeldungAnVorherigeStationSenden}">-->
+                                    <span class="toggle" data-for="toggle-1">
                                         <h:graphicImage
                                                 value="/newpages/images/buttons/step_back_20px.gif"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                         <h:outputText
                                                 value="#{msgs.korrekturmeldungAnVorherigeStationSenden}"/>
-                                    <!--</jd:hideableController>-->
+                                    </span>
 
-                                    <!--<jd:hideableArea id="korrektur" saveState="view">-->
+                                    <div class="toggle-1" style="display: none;">
+
                                         <h:panelGrid columns="2" style="margin-left:40px;" id="grid3"
                                                      rowClasses="top"
                                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
@@ -308,23 +307,24 @@
                                                 <h:outputText value="#{msgs.korrekturmeldungSenden}"/>
                                             </h:commandLink>
                                         </h:panelGrid>
-                                    <!--</jd:hideableArea>-->
+                                    </div>
+
                                 </h:panelGroup>
 
                                 <!-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke -->
                                 <h:panelGroup
                                         rendered="#{AktuelleSchritteForm.mySchritt.priority>9 and AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
-                                    <!-- TODO: find replacement for jd hideable controller and hideable area -->
-                                    <!--<jd:hideableController for="solution" id="solutionswitcher"-->
-                                                           <!--title="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}">-->
+
+                                    <span class="toggle" data-for="toggle-2">
+
                                         <h:graphicImage
                                                 value="/newpages/images/buttons/step_for_20px.gif"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                         <h:outputText
                                                 value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}"/>
-                                    <!--</jd:hideableController>-->
+                                    </span>
+                                    <div class="toggle-2" style="display: none;">
 
-                                    <!--<jd:hideableArea id="solution" saveState="view">-->
                                         <h:panelGrid columns="2" style="margin-left:40px;"
                                                      rowClasses="top" id="grid1"
                                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
@@ -348,7 +348,8 @@
                                                 <h:outputText value="#{msgs.meldungUeberProblemloesungSenden}"/>
                                             </h:commandLink>
                                         </h:panelGrid>
-                                    <!--</jd:hideableArea>-->
+                                    </div>
+
                                 </h:panelGroup>
 
                                 <!-- Abschliessen-Schaltknopf -->
