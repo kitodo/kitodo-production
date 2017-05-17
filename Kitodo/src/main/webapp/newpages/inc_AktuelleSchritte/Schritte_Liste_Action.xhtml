@@ -84,12 +84,16 @@
                     <h:panelGroup>
                         <!-- TODO: find replacement for jd hideable controller and hideable area -->
                         <!--<jd:hideableController for="changeSearch" id="viewswitcher2" title="#{msgs.filterAnpassen}">-->
+                        <span class="toggle" data-for="toggle-1">
                             <h:graphicImage value="/newpages/images/buttons/view3.gif"
                                             style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.filterAnpassen}"/>
+                        </span>
+
                         <!--</jd:hideableController>-->
 
                         <!--<jd:hideableArea id="changeSearch" saveState="view">-->
+                        <div class="toggle-1" style="display: none;">
                             <h:panelGrid columns="2" style="margin-left:40px">
 
 
@@ -117,18 +121,23 @@
                                            title="#{msgs.uebernehmen}">
                                 <h:outputText value="#{msgs.uebernehmen}"/>
                             </h:commandLink>
+                        </div>
+
                         <!--</jd:hideableArea>-->
                     </h:panelGroup>
 
                     <h:panelGroup id="viewgroup">
                         <!-- TODO: find replacement for jd hideable controller and hideable area -->
                         <!--<jd:hideableController for="changeView" id="viewswitcher" title="#{msgs.anzeigeAnpassen}">-->
+                        <span class="toggle" data-for="toggle-2">
                             <h:graphicImage value="/newpages/images/buttons/view3.gif"
                                             style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.anzeigeAnpassen}"/>
+                        </span>
                         <!--</jd:hideableController>-->
 
                         <!--<jd:hideableArea id="changeView" saveState="view">-->
+                        <div class="toggle-2" style="display: none;">
                             <h:panelGrid columns="2" style="margin-left:40px">
                                 <h:outputText value="#{msgs.auswahlboxen}" rendered="#{false}"/>
                                 <h:selectBooleanCheckbox rendered="#{false}"
@@ -151,6 +160,7 @@
                                            title="#{msgs.uebernehmen}">
                                 <h:outputText value="#{msgs.uebernehmen}"/>
                             </h:commandLink>
+                        </div>
                         <!--</jd:hideableArea>-->
                     </h:panelGroup>
                 </h:panelGrid>

@@ -20,7 +20,13 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
+
     <ui:fragment rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
+        <style type="text/css">
+            .toggle:hover {
+                cursor: pointer;
+            }
+        </style>
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
             <tr>
                 <td class="eingabeBoxen_row1">
@@ -89,15 +95,19 @@
 
                             <!--<jd:hideableController for="agoradownload" id="agoraswitcher"-->
                                                    <!--title="#{msgs.metadatenFuerDMSExportieren}">-->
-                            <h:commandLink id="agoraswitcher">
-                                <f:ajax render="agoradownload"/>
-                                <h:graphicImage value="/newpages/images/buttons/dms.png"
-                                                style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
-                                <h:outputText value="#{msgs.metadatenFuerDMSExportieren}"/>
-                            </h:commandLink>
+                            <span class="toggle" data-for="toggle-1">
+                                <h:commandLink id="agoraswitcher">
+                                    <f:ajax render="agoradownload"/>
+                                    <h:graphicImage value="/newpages/images/buttons/dms.png"
+                                                    style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.metadatenFuerDMSExportieren}"/>
+                                </h:commandLink>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="agoradownload" saveState="view">-->
+                            <div class="toggle-1" style="display: none;">
+
                                 <h:panelGrid id="agoradownload" columns="1" style="margin-left:40px">
                                     <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
                                     <h:outputText style="back-color:blue; color: red; font-weight: bold;"
@@ -126,6 +136,7 @@
                                     </h:commandLink>
 
                                 </h:panelGrid>
+                            </div>
                         </h:panelGroup>
 
                         <!-- Bearbeitungsstatus hochsetzen-->
@@ -134,13 +145,19 @@
 
                             <!--<jd:hideableController for="statusUp" id="statusswitcher"-->
                                                    <!--title="#{msgs.bearbeitungsstatusHochsetzen}">-->
+                            <span class="toggle" data-for="toggle-2">
                                 <h:graphicImage value="/newpages/images/buttons/step_for_20px.gif"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.bearbeitungsstatusHochsetzen}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="statusUp" saveState="view">-->
+                            <div class="toggle-2" style="display: none;">
+
+
                                 <h:panelGrid columns="1" style="margin-left:40px">
+
                                     <!-- Download-Schaltknopf für Selection-->
                                     <h:commandLink id="action9"
                                                    action="#{ProzessverwaltungForm.BearbeitungsstatusHochsetzenSelection}"
@@ -166,6 +183,7 @@
                                     </h:commandLink>
 
                                 </h:panelGrid>
+                            </div>
                             <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
@@ -173,12 +191,16 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
                             <!--<jd:hideableController for="statusDown" id="downswitcher"-->
                                                    <!--title="#{msgs.bearbeitungsstatusRuntersetzen}">-->
+                            <span class="toggle" data-for="toggle-3">
                                 <h:graphicImage value="/newpages/images/buttons/step_back_20px.gif"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.bearbeitungsstatusRuntersetzen}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="statusDown" saveState="view">-->
+                            <div class="toggle-3" style="display: none;">
+
                                 <h:panelGrid columns="1" style="margin-left:40px">
 
                                     <!-- Download-Schaltknopf für Selection-->
@@ -207,6 +229,8 @@
                                     </h:commandLink>
 
                                 </h:panelGrid>
+
+                            </div>
                             <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
@@ -214,12 +238,16 @@
                                 rendered="#{LoginForm.maximaleBerechtigung == 1 and ProzessverwaltungForm.modusAnzeige=='aktuell'  and ProzessverwaltungForm.page.totalResults > 0 }">
                             <!--<jd:hideableController for="kitodoScript" id="scriptswitcher"-->
                                                    <!--title="#{msgs.kitodoScriptAusfuehren}">-->
+                            <span class="toggle" data-for="toggle-4">
                                 <h:graphicImage value="/newpages/images/buttons/admin4b.gif"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.kitodoScriptAusfuehren}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="kitodoScript" saveState="view">-->
+                            <div class="toggle-4" style="display: none;">
+
                                 <h:panelGrid columns="1" style="margin-left:40px">
 
                                     <h:message for="kitodoScriptfield" errorClass="text_red" infoClass="text_blue"
@@ -305,11 +333,13 @@
                                         </tr>
                                     </table>
                                 </h:panelGrid>
+                            </div>
                             <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
                         <h:panelGroup
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
+
                             <h:graphicImage value="/newpages/images/buttons/excel20.png"
                                             style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                             <h:commandLink action="#{ProzessverwaltungForm.generateResult}" title="#{msgs.createExcel}">
@@ -331,12 +361,16 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
                             <!--<jd:hideableController for="anzahlen" id="countswitcher"-->
                                                    <!--title="#{msgs.anzahlMetadatenUndImagesErmitteln}">-->
+                            <span class="toggle" data-for="toggle-5">
                                 <h:graphicImage value="/newpages/images/buttons/statistik1_20px.gif"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.anzahlMetadatenUndImagesErmitteln}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="anzahlen" saveState="view">-->
+                            <div class="toggle-5" style="display: none;">
+
                                 <h:panelGrid columns="1" style="margin-left:40px">
                                     <!-- Statistische Auswertung-Schaltknopf für Page-->
                                     <h:commandLink id="action20"
@@ -359,20 +393,26 @@
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
                                     </h:commandLink>
                                 </h:panelGrid>
+                            </div>
                             <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
                         <h:panelGroup
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
                             <!--<jd:hideableController for="statistik" id="statswitcher" title="#{msgs.statistischeAuswertung}">-->
+
+                            <span class="toggle" data-for="toggle-6">
                                 <h:graphicImage value="/newpages/images/buttons/statistik4_20px.gif"
                                                 style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.statistischeAuswertung}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="statistik" saveState="view">-->
+                            <div class="toggle-6" style="display: none;">
+
                                 <h:panelGrid columns="1" style="margin-left:40px">
-                                    <!-- StatisticsStatusVolumes-->
+                                <!-- StatisticsStatusVolumes-->
                                     <h:commandLink id="action30" rendered="#{!HelperForm.anonymized}"
                                                    action="#{ProzessverwaltungForm.StatisticsStatusVolumes}"
                                                    title="#{msgs.statusOfVolumes}">
@@ -443,18 +483,23 @@
                                     </h:commandLink>
 
                                 </h:panelGrid>
+                            </div>
                             <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
 
                         <h:panelGroup>
                             <!--<jd:hideableController for="changeSearch" id="changeswitcher2" title="#{msgs.filterAnpassen}">-->
+                            <span class="toggle" data-for="toggle-7">
                                 <h:graphicImage value="/newpages/images/buttons/view3.gif"
                                                 style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.filterAnpassen}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="changeSearch" saveState="view">-->
+                            <div class="toggle-7" style="display: none;">
+
                                 <h:panelGrid columns="2" style="margin-left:40px">
 
                                     <h:outputText value="#{msgs.showArchivedProjects}:"
@@ -469,6 +514,7 @@
                                                title="#{msgs.uebernehmen}">
                                     <h:outputText value="#{msgs.uebernehmen}"/>
                                 </h:commandLink>
+                            </div>
                             <!--</jd:hideableArea>-->
 
                         </h:panelGroup>
@@ -478,12 +524,16 @@
 
 
                             <!--<jd:hideableController for="changeView" id="changeswitcher" title="#{msgs.anzeigeAnpassen}">-->
+                            <span class="toggle" data-for="toggle-8">
                                 <h:graphicImage value="/newpages/images/buttons/view3.gif"
                                                 style="margin-left:5px;margin-right:8px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.anzeigeAnpassen}"/>
+                            </span>
                             <!--</jd:hideableController>-->
 
                             <!--<jd:hideableArea id="changeView" saveState="view">-->
+                            <div class="toggle-8" style="display: none;">
+
                                 <h:panelGrid columns="2" style="margin-left:40px">
                                     <h:outputText value="#{msgs.auswahlboxen}"/>
                                     <h:selectBooleanCheckbox id="check1"
@@ -508,6 +558,7 @@
                                                title="#{msgs.uebernehmen}">
                                     <h:outputText value="#{msgs.uebernehmen}"/>
                                 </h:commandLink>
+                            </div>
                             <!--</jd:hideableArea>-->
                         </h:panelGroup>
 
