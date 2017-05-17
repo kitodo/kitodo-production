@@ -28,6 +28,7 @@ import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -623,8 +624,8 @@ public class AktuelleSchritteForm extends BasisForm {
                     this.mySchritt.getProcess().getWikiField(), "error", message));
             serviceManager.getTaskService().save(temp);
             serviceManager.getProcessService().getHistoryInitialized(this.mySchritt.getProcess())
-                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(), HistoryTypeEnum.taskError,
-                            temp.getProcess()));
+                    .add(new History(myDate, temp.getOrdering().doubleValue(), temp.getTitle(),
+                            HistoryTypeEnum.taskError, temp.getProcess()));
             /*
              * alle Schritte zwischen dem aktuellen und dem Korrekturschritt
              * wieder schliessen
@@ -1312,38 +1313,23 @@ public class AktuelleSchritteForm extends BasisForm {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
-            if (!this.processProperty.isValid()) {
-                List<String> param = new ArrayList<String>();
-                param.add(processProperty.getName());
-                String value = Helper.getTranslation("propertyNotValid", param);
-                Helper.setFehlerMeldung(value);
-                Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+            if (isValidProcessProperty()) {
+                if (this.processProperty.getProzesseigenschaft() == null) {
+                    Property processProperty = new Property();
+                    processProperty.getProcesses().add(this.mySchritt.getProcess());
+                    this.processProperty.setProzesseigenschaft(processProperty);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(processProperty);
+                }
+                this.processProperty.transfer();
+            } else {
                 return;
             }
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.mySchritt.getProcess());
-                this.processProperty.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProcess).add(processProperty);
-            }
-            this.processProperty.transfer();
 
-            List<Property> propertyList = this.mySchritt.getProcess().getProperties();
-            for (Property processProperty : propertyList) {
-                if (processProperty.getTitle() == null) {
-                    // TODO: check carefully how this list is modified
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                            .remove(processProperty);
-                }
-            }
-            if (!serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                    .contains(this.processProperty.getProzesseigenschaft())) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                        .add(this.processProperty.getProzesseigenschaft());
-                this.processProperty.getProzesseigenschaft().getProcesses().add(this.mySchritt.getProcess());
-            }
+            this.mySchritt.getProcess().getProperties().add(this.processProperty.getProzesseigenschaft());
+            this.processProperty.getProzesseigenschaft().getProcesses().add(this.mySchritt.getProcess());
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
+                this.serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
                 Helper.setMeldung("propertySaved");
             } catch (DAOException e) {
                 logger.error(e);
@@ -1353,6 +1339,18 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
         loadProcessProperties();
+    }
+
+    private boolean isValidProcessProperty() {
+        if (this.processProperty.isValid()) {
+            return true;
+        } else {
+            String value = Helper.getTranslation("propertyNotValid",
+                    Arrays.asList(new String[] {processProperty.getName() }));
+            Helper.setFehlerMeldung(value);
+            Helper.setFehlerMeldung("Property " + this.processProperty.getName() + " is not valid");
+            return false;
+        }
     }
 
     public Map<Integer, PropertyListObject> getContainers() {
