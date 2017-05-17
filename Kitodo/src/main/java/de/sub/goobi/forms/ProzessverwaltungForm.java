@@ -2189,35 +2189,29 @@ public class ProzessverwaltungForm extends BasisForm {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
-            if (!this.processProperty.isValid()) {
-                List<String> param = new ArrayList<String>();
-                param.add(processProperty.getName());
-                String value = Helper.getTranslation("propertyNotValid", param);
-                Helper.setFehlerMeldung(value);
+            if (isValidProcessProperty()) {
+                if (this.processProperty.getProzesseigenschaft() == null) {
+                    Property processProperty = new Property();
+                    processProperty.getProcesses().add(this.myProzess);
+                    this.processProperty.setProzesseigenschaft(processProperty);
+                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(processProperty);
+                }
+                this.processProperty.transfer();
+                List<Property> props = this.myProzess.getProperties();
+                for (Property processProperty : props) {
+                    if (processProperty.getTitle() == null) {
+                        serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(processProperty);
+                    }
+                }
+                this.myProzess.getProperties().add(this.processProperty.getProzesseigenschaft());
+                this.processProperty.getProzesseigenschaft().getProcesses().add(this.myProzess);
+            } else {
                 return;
             }
-            if (this.processProperty.getProzesseigenschaft() == null) {
-                Property processProperty = new Property();
-                processProperty.getProcesses().add(this.myProzess);
-                this.processProperty.setProzesseigenschaft(processProperty);
-                serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).add(processProperty);
-            }
-            this.processProperty.transfer();
 
-            List<Property> props = this.myProzess.getProperties();
-            for (Property processProperty : props) {
-                if (processProperty.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(processProperty);
-                }
-            }
-            // null exception
-            for (Process process : this.processProperty.getProzesseigenschaft().getProcesses()) {
-                if (!process.getProperties().contains(this.processProperty.getProzesseigenschaft())) {
-                    process.getProperties().add(this.processProperty.getProzesseigenschaft());
-                }
-            }
             try {
                 serviceManager.getProcessService().save(this.myProzess);
+                serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
                 Helper.setMeldung("propertiesSaved");
             } catch (DAOException e) {
                 logger.error(e);
@@ -2227,6 +2221,18 @@ public class ProzessverwaltungForm extends BasisForm {
             }
         }
         loadProcessProperties();
+    }
+
+    private boolean isValidProcessProperty() {
+        if (this.processProperty.isValid()) {
+            return true;
+        } else {
+            List<String> propertyNames = new ArrayList<>();
+            propertyNames.add(processProperty.getName());
+            String errorMessage = Helper.getTranslation("propertyNotValid", propertyNames);
+            Helper.setFehlerMeldung(errorMessage);
+            return false;
+        }
     }
 
     /**
