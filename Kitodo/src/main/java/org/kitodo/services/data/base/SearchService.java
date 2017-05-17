@@ -166,6 +166,8 @@ public abstract class SearchService<T extends BaseBean> {
             saveToDatabase(baseBean);
             saveToIndex(baseBean);
             saveDependenciesToIndex(baseBean);
+            baseBean.setIndexAction(IndexAction.DONE);
+            saveToDatabase(baseBean);
         } catch (DAOException e) {
             logger.debug(e);
             throw new DAOException(e);
