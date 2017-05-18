@@ -1252,60 +1252,6 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Save process properties.
-     */
-    public void saveProcessProperties() {
-        boolean valid = true;
-        for (IProperty p : this.processPropertyList) {
-            if (!p.isValid()) {
-                List<String> param = new ArrayList<String>();
-                param.add(p.getName());
-                String value = Helper.getTranslation("propertyNotValid", param);
-                Helper.setFehlerMeldung(value);
-                valid = false;
-            }
-        }
-
-        if (valid) {
-            for (ProcessProperty p : this.processPropertyList) {
-                if (p.getProzesseigenschaft() == null) {
-                    Property processProperty = new Property();
-                    processProperty.getProcesses().add(this.mySchritt.getProcess());
-                    p.setProzesseigenschaft(processProperty);
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                            .add(processProperty);
-                }
-                p.transfer();
-                if (!serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                        .contains(p.getProzesseigenschaft())) {
-                    serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                            .add(p.getProzesseigenschaft());
-                }
-            }
-            Process p = this.mySchritt.getProcess();
-            List<Property> propertyList = p.getProperties();
-            for (Property processProperty : propertyList) {
-                if (processProperty.getTitle() == null) {
-                    serviceManager.getProcessService().getPropertiesInitialized(p).remove(processProperty);
-                }
-            }
-
-            try {
-                this.serviceManager.getProcessService().save(p);
-                Helper.setMeldung("propertiesSaved");
-            } catch (DAOException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("propertiesNotSaved");
-            } catch (IOException e) {
-                logger.error(e);
-            } catch (CustomResponseException e) {
-                logger.error(e);
-                Helper.setMeldung("ElasticSearch server incorrect response");
-            }
-        }
-    }
-
-    /**
      * Save current property.
      */
     public void saveCurrentProperty() {
@@ -1384,36 +1330,6 @@ public class AktuelleSchritteForm extends BasisForm {
         Comparator<ProcessProperty> comp = new ProcessProperty.CompareProperties();
         Collections.sort(this.processPropertyList, comp);
         return this.processPropertyList;
-    }
-
-    /**
-     * Delete property.
-     */
-    public void deleteProperty() {
-        this.processPropertyList.remove(this.processProperty);
-        // if (this.processProperty.getProzesseigenschaft().getId() != null) {
-        serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                .remove(this.processProperty.getProzesseigenschaft());
-        // this.mySchritt.getProzess().removeProperty(this.processProperty.getProzesseigenschaft());
-        // }
-
-        List<Property> propertyList = this.mySchritt.getProcess().getProperties();
-        for (Property processProperty : propertyList) {
-            if (processProperty.getTitle() == null) {
-                serviceManager.getProcessService().getPropertiesInitialized(this.mySchritt.getProcess())
-                        .remove(processProperty);
-            }
-        }
-        try {
-            this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotDeleted");
-        } catch (IOException | CustomResponseException e) {
-            logger.error(e);
-        }
-        // saveWithoutValidation();
-        loadProcessProperties();
     }
 
     /**

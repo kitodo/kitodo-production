@@ -304,13 +304,6 @@
                 </h:commandButton>
             </htm:td>
             <htm:td styleClass="eingabeBoxen_row3" align="right">
-                <%--
-                <h:commandButton value="#{msgs.loeschen}" action="#{AktuelleSchritteForm.deleteProperty}"
-                    onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')">
-                    <x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="" />
-                </h:commandButton>
-            --%>
-
                 <h:commandButton value="#{msgs.applyToThisProcess}"
                                  action="#{AktuelleSchritteForm.batchHelper.saveCurrentProperty}">
 
