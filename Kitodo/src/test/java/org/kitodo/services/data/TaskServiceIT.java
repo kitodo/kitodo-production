@@ -17,10 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -195,25 +192,6 @@ public class TaskServiceIT {
         Task task = taskService.find(2);
         String expected = "scriptName; secondScriptName; thirdScriptName";
         String actual = taskService.getListOfPaths(task);
-        assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetCurrentRow() throws Exception {
-        TaskService taskService = new TaskService();
-        UserService userService = new UserService();
-
-        Task task = taskService.find(1);
-        Task currentTask = taskService.getCurrent(task);
-        List<User> expected = userService.findAll();
-        List<User> actual = currentTask.getUsers();
-        // not sure if this getCurrent really changes something, without it also
-        // returns all users
-        // additionally this method doesn't work for user (UserService)
-        // System.out.println(task.getUsers() == currentTask.getUsers()); <-
-        // true
-        // System.out.println("Normal: " + task.getUsers().size());
-        // System.out.println("Current: " + currentTask.getUsers().size());
         assertEquals("Task's scripts doesn't match given plain text!", expected, actual);
     }
 }

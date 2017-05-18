@@ -20,8 +20,11 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -42,6 +45,14 @@ public class UserGroupServiceIT {
         // MockDatabase.cleanDatabase();
     }
 
+    @Before
+    public void multipleInit() throws InterruptedException {
+        Thread.sleep(1000);
+    }
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     @Test
     public void shouldFindUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
@@ -51,11 +62,6 @@ public class UserGroupServiceIT {
         assertTrue("User group was not found in database!", condition);
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(1000);
-    }
-
     @Test
     public void shouldRemoveUserGroup() throws Exception {
         UserGroupService userGroupService = new UserGroupService();
@@ -63,22 +69,54 @@ public class UserGroupServiceIT {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("To Remove");
         userGroupService.save(userGroup);
-        UserGroup foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(4));
+        Thread.sleep(1000);
+        UserGroup foundUserGroup = userGroupService
+                .convertSearchResultToObject(userGroupService.findByTitle("To Remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
 
         userGroupService.remove(foundUserGroup);
-        foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(4));
+        foundUserGroup = userGroupService
+                .convertSearchResultToObject(userGroupService.findById(foundUserGroup.getId()));
         assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
 
         userGroup = new UserGroup();
         userGroup.setTitle("To remove");
         userGroupService.save(userGroup);
-        foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(5));
+        Thread.sleep(1000);
+        foundUserGroup = userGroupService
+                .convertSearchResultToObject(userGroupService.findByTitle("To remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To remove", foundUserGroup.getTitle());
 
-        userGroupService.remove(5);
-        foundUserGroup = userGroupService.convertSearchResultToObject(userGroupService.findById(5));
-        assertEquals("Additional user group was not removed from database!", null, foundUserGroup);
+        userGroupService.remove(foundUserGroup.getId());
+        exception.expect(DAOException.class);
+        userGroupService.convertSearchResultToObject(userGroupService.findByTitle("To remove", true).get(0));
+    }
+
+    @Test
+    public void shouldRemoveUserGroupButNotUser() throws Exception {
+        UserService userService = new UserService();
+        UserGroupService userGroupService = new UserGroupService();
+
+        User user = new User();
+        user.setLogin("Cascados");
+        userService.saveToDatabase(user);
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("Cascados Group");
+        userGroup.getUsers().add(userService.search("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
+        userGroupService.saveToDatabase(userGroup);
+
+        UserGroup foundUserGroup = userGroupService.search("FROM UserGroup WHERE title = 'Cascados Group'").get(0);
+        assertEquals("Additional user was not inserted in database!", "Cascados Group", foundUserGroup.getTitle());
+
+        userGroupService.removeFromDatabase(foundUserGroup);
+        int size = userGroupService.search("FROM UserGroup WHERE title = 'Cascados Group'").size();
+        assertEquals("Additional user was not removed from database!", 0, size);
+
+        size = userService.search("FROM User WHERE login = 'Cascados'").size();
+        assertEquals("User was removed from database!", 1, size);
+
+        userService.removeFromDatabase(userService.search("FROM User WHERE login = 'Cascados'").get(0));
     }
 
     @Test
