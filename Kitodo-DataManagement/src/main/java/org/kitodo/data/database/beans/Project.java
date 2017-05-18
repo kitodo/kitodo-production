@@ -143,7 +143,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     @Column(name = "projectIsArchived")
     private Boolean projectIsArchived = false;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "project_x_user", joinColumns = {
             @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) })

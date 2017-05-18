@@ -61,7 +61,7 @@ public class User extends BaseBean {
     private String location;
 
     @Column(name = "tableSize")
-    private Integer tableSize = Integer.valueOf(10);
+    private Integer tableSize = 10;
 
     @Column(name = "sessionTimeout")
     private Integer sessionTimeout = 7200;
@@ -82,16 +82,16 @@ public class User extends BaseBean {
     @JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
     private LdapGroup ldapGroup;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_x_userGroup", joinColumns = {
             @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
     private List<UserGroup> userGroups;
 
-    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "processingUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Task> processingTasks;
 
     @ManyToMany(mappedBy = "users")

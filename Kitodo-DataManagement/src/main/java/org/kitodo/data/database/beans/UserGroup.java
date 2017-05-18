@@ -42,10 +42,10 @@ public class UserGroup extends BaseBean implements Comparable<UserGroup> {
     @Column(name = "permission")
     private Integer permission;
 
-    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @ManyToMany(mappedBy = "userGroups")
+    @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<Task> tasks;
 
     @Transient

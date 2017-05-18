@@ -50,16 +50,16 @@ public class Property extends BaseBean implements Comparable<Property> {
     @Column(name = "container")
     private Integer container;
 
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<Process> processes;
 
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<Template> templates;
 
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<Workpiece> workpieces;
 
     @Transient
