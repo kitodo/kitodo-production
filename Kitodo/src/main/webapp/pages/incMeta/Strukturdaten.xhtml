@@ -71,12 +71,12 @@
                             <!--</rich:suggestionbox>-->
                         </h:panelGroup>
 
-                        <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-                        <a4j:commandLink action="#{Metadaten.currentStartpage}" reRender="pageStartGroup">
+                        <h:commandLink action="#{Metadaten.currentStartpage}">
+                            <f:ajax render="pageStartGroup"/>
                             <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
                                             style="border: 0px;vertical-align:middle;"/>
                             <t:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
-                        </a4j:commandLink>
+                        </h:commandLink>
 
                         <h:outputText value="#{msgs.letzteSeite}: "/>
                         <h:panelGroup id="pageEndGroup">
@@ -90,12 +90,12 @@
                                 <!--</h:column>-->
                             <!--</rich:suggestionbox>-->
                         </h:panelGroup>
-                        <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-                        <a4j:commandLink action="#{Metadaten.currentEndpage}" reRender="pageEndGroup">
+                        <h:commandLink action="#{Metadaten.currentEndpage}">
+                            <f:ajax render="pageEndGroup"/>
                             <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
                                             style="border: 0px;vertical-align:middle;"/>
                             <t:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
-                        </a4j:commandLink>
+                        </h:commandLink>
                     </h:panelGrid>
                 </td>
             </tr>
@@ -293,10 +293,10 @@
                     <td class="eingabeBoxen_row2">
                         <h:panelGrid id="mygrid5" columns="2" width="100%"
                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
-                            <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-                            <a4j:commandLink action="#{Metadaten.imageShowFirstPage}" reRender="BildArea,myBild">
+                            <h:commandLink action="#{Metadaten.imageShowFirstPage}">
+                                <f:ajax render="BildArea myBild"/>
                                 <h:outputText value="#{msgs.ersteSeite}"/>
-                            </a4j:commandLink>
+                            </h:commandLink>
                             <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
                                 <t:inputText id="pagestart" forceId="true" value="#{Metadaten.ajaxSeiteStart}"/>
                                 <!--
@@ -320,10 +320,10 @@
                                 <f:selectItems value="#{Metadaten.alleSeiten}"/>
                             </h:selectOneMenu>
 
-                            <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-                            <a4j:commandLink action="#{Metadaten.imageShowLastPage}" reRender="BildArea,myBild">
+                            <h:commandLink action="#{Metadaten.imageShowLastPage}">
+                                <f:ajax render="BildArea myBild"/>
                                 <h:outputText value="#{msgs.letzteSeite}"/>
-                            </a4j:commandLink>
+                            </h:commandLink>
                             <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
                                 <t:inputText id="pageend" forceId="true" value="#{Metadaten.ajaxSeiteEnde}"/>
                                 <!-- TODO: replace rich:suggestionbox -->
@@ -348,21 +348,20 @@
                     <td class="eingabeBoxen_row3">
                         <h:panelGrid id="mygrid6" columns="2" width="100%"
                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
-                            <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-                            <a4j:commandLink action="#{Metadaten.SeitenVonChildrenUebernehmen}"
-                                             reRender="menuZugehoerigeSeiten">
+                            <h:commandLink action="#{Metadaten.SeitenVonChildrenUebernehmen}">
+                                <f:ajax render="menuZugehoerigeSeiten"/>
                                 <h:outputText value="#{msgs.seitenVonUnterelementenZuweisen}"/>
-                            </a4j:commandLink>
-                            <a4j:commandLink action="#{Metadaten.SeitenStartUndEndeSetzen}"
-                                             reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                            </h:commandLink>
+                            <h:commandLink action="#{Metadaten.SeitenStartUndEndeSetzen}"
                                              rendered="#{Metadaten.treeProperties.showpagesasajax==false}">
+                                <f:ajax render="menuZugehoerigeSeiten BildArea myBild"/>
                                 <h:outputText value="#{msgs.seitenZuweisen}"/>
-                            </a4j:commandLink>
-                            <a4j:commandLink action="#{Metadaten.ajaxSeitenStartUndEndeSetzen}"
-                                             reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                            </h:commandLink>
+                            <h:commandLink action="#{Metadaten.ajaxSeitenStartUndEndeSetzen}"
                                              rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
+                                <f:ajax render="menuZugehoerigeSeiten BildArea myBild"/>
                                 <h:outputText value="#{msgs.seitenZuweisen}"/>
-                            </a4j:commandLink>
+                            </h:commandLink>
                         </h:panelGrid>
 
                     </td>
@@ -388,18 +387,17 @@
                 <!-- Pfeile zum Verschieben der Seiten -->
                 <h:panelGroup>
                     <!-- nach rechts -->
-                    <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-                    <a4j:commandLink id="s1" action="#{Metadaten.addPages}"
-                                     reRender="menuZugehoerigeSeiten,BildArea,myBild"
-                                     style="margin-top:175px;margin-left:10px;margin-right:10px;display:block">
+                    <h:commandLink id="s1" action="#{Metadaten.addPages}"
+                                   style="margin-top:175px;margin-left:10px;margin-right:10px;display:block">
+                        <f:ajax render="menuZugehoerigeSeiten BildArea myBild"/>
                         <h:graphicImage value="/newpages/images/buttons/order_right.gif"/>
-                    </a4j:commandLink>
+                    </h:commandLink>
                     <!-- nach links -->
-                    <a4j:commandLink id="s2" action="#{Metadaten.removePages}"
-                                     reRender="menuZugehoerigeSeiten,BildArea,myBild"
+                    <h:commandLink id="s2" action="#{Metadaten.removePages}"
                                      style="margin-top:7px;margin-left:10px;margin-right:10px;display:block">
+                        <f:ajax render="menuZugehoerigeSeiten BildArea myBild"/>
                         <h:graphicImage value="/newpages/images/buttons/order_left.gif"/>
-                    </a4j:commandLink>
+                    </h:commandLink>
                 </h:panelGroup>
 
                 <!-- zugewiesene Seiten -->

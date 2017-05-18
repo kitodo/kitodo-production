@@ -149,8 +149,7 @@
                                                                                     <t:updateActionListener
                                                                                             property="#{BatchForm.modusBearbeiten}"
                                                                                             value="eigenschaft"/>
-                                                                                    <!-- TODO: replace a4j:support with f:ajax -->
-                                                                                    <!--<a4j:support event="onchange" reRender="editBatch"/>-->
+                                                                                    <f:ajax render="editBatch"/>
                                                                                 </h:commandLink>
                                                                             </td>
                                                                         </tr>
@@ -192,9 +191,7 @@
                                                                                             <t:updateActionListener
                                                                                                     property="#{BatchForm.modusBearbeiten}"
                                                                                                     value="eigenschaft"/>
-                                                                                            <!-- TODO: replace a4j:support with f:ajax -->
-                                                                                            <!--<a4j:support event="onchange"-->
-                                                                                                         <!--reRender="editBatch"/>-->
+                                                                                            <f:ajax render="editBatch" />
                                                                                         </h:commandLink>
                                                                                     </h:panelGroup>
                                                                                 </td>

@@ -65,9 +65,7 @@
                                         <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="0"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
                                                                 value="eigenschaft"/>
-                                        <!-- TODO: check, if simply replacing "a4j:support" with "f:ajax" and "reRender" with "render" does the trick! -->
-                                        <!--<a4j:support event="onchange" reRender="editBatch"/>-->
-                                        <f:ajax event="onchange" render="editBatch"/>
+                                        <f:ajax render="editBatch"/>
                                     </h:commandLink>
 
 
@@ -120,9 +118,7 @@
                                                                         value="#{container}"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
                                                                         value="eigenschaft"/>
-                                                <!-- TODO: check, if simply replacing "a4j:support" with "f:ajax" and "reRender" with "render" does the trick! -->
-                                                <!--<a4j:support event="onchange" reRender="editBatch"/>-->
-                                                <f:ajax event="onchange" render="editBatch"/>
+                                                <f:ajax render="editBatch"/>
                                             </h:commandLink>
 
                                             <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainer}"

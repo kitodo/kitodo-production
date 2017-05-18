@@ -25,9 +25,9 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <!-- <h:form> -->
-    <!-- TODO: replace a4j:commandButton and a4j:commandLink elements! -->
-    <a4j:commandLink action="#{Metadaten.createPagination}"
-                     reRender="mygrid10,myMessages" value="#{msgs.paginierungEinlesen}"/>
+    <h:commandLink action="#{Metadaten.createPagination}" value="#{msgs.paginierungEinlesen}">
+        <f:ajax render="mygrid10 myMessages"/>
+    </h:commandLink>
     <!-- </h:form> -->
     <h:panelGrid id="mygrid10" columns="2" style="margin:0px;">
 
@@ -93,93 +93,93 @@
                                     <h:outputLabel for="checkbox-fictitious" value="#{msgs.paginationFictitious}"/>
                                 </div>
 
-                                <a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=1}"
-                                                 title="#{msgs.seitenzaehlung}"
-                                                 reRender="PaginierungActionBox,myMessages,mygrid10">
+                                <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=1}"
+                                                 title="#{msgs.seitenzaehlung}">
+                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage
                                             value="/newpages/images/buttons/paginierung_seite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="1"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <h:graphicImage
                                         rendered="#{Metadaten.paginierungSeitenProImage==1}"
                                         value="/newpages/images/buttons/paginierung_seite.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlung}"/>
 
-                                <a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=2}"
-                                                 title="#{msgs.spaltenzaehlung}"
-                                                 reRender="PaginierungActionBox,myMessages,mygrid10">
+                                <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=2}"
+                                                 title="#{msgs.spaltenzaehlung}">
+                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage
                                             value="/newpages/images/buttons/paginierung_spalte_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="2"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <h:graphicImage
                                         rendered="#{Metadaten.paginierungSeitenProImage==2}"
                                         value="/newpages/images/buttons/paginierung_spalte.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.spaltenzaehlung}"/>
 
-                                <a4j:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=3}"
-                                                 title="#{msgs.blattzaehlung}"
-                                                 reRender="PaginierungActionBox,myMessages,mygrid10">
+                                <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=3}"
+                                                 title="#{msgs.blattzaehlung}">
+                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage
                                             value="/newpages/images/buttons/paginierung_blatt_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="3"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <h:graphicImage
                                         rendered="#{Metadaten.paginierungSeitenProImage==3}"
                                         value="/newpages/images/buttons/paginierung_blatt.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.blattzaehlung}"/>
 
-                                <a4j:commandLink
+                                <h:commandLink
                                         rendered="#{Metadaten.paginierungSeitenProImage!=4}"
-                                        title="#{msgs.blattzaehlungrectoverso}"
-                                        reRender="PaginierungActionBox,myMessages,mygrid10">
+                                        title="#{msgs.blattzaehlungrectoverso}">
+                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage
                                             value="/newpages/images/buttons/paginierung_blatt_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="4"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <h:graphicImage
                                         rendered="#{Metadaten.paginierungSeitenProImage==4}"
                                         value="/newpages/images/buttons/paginierung_blatt_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.blattzaehlungrectoverso}"/>
 
-                                <a4j:commandLink
+                                <h:commandLink
                                         rendered="#{Metadaten.paginierungSeitenProImage!=5}"
-                                        title="#{msgs.seitenzaehlungrectoverso}"
-                                        reRender="PaginierungActionBox,myMessages,mygrid10">
+                                        title="#{msgs.seitenzaehlungrectoverso}">
+                                    <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
                                     <h:graphicImage
                                             value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="5"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <h:graphicImage
                                         rendered="#{Metadaten.paginierungSeitenProImage==5}"
                                         value="/newpages/images/buttons/paginierung_seite_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
                                         title="#{msgs.seitenzaehlungrectoverso}"/>
 
-                                <a4j:commandLink
+                                <h:commandLink
                                         rendered="#{Metadaten.paginierungSeitenProImage!=6}"
-                                        title="#{msgs.seitenzaehlungdoppelseiten}"
-                                        reRender="PaginierungActionBox,myMessages,mygrid10">
+                                        title="#{msgs.seitenzaehlungdoppelseiten}">
+                                    <f:ajax render="PaginierungActionBox,myMessages,mygrid10"/>
                                     <h:graphicImage
                                             value="/newpages/images/buttons/paginierung_doppelseite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="6"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <h:graphicImage
                                         rendered="#{Metadaten.paginierungSeitenProImage==6}"
                                         value="/newpages/images/buttons/paginierung_doppelseite.svg"
@@ -198,17 +198,17 @@
                                 </ui:fragment>
                                 <br/>
 
-                                <a4j:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px"
-                                                 reRender="PaginierungAlleImages,myMessages,mygrid10">
+                                <h:commandLink id="s4" action="#{Metadaten.Paginierung}" style="margin-top:15px">
+                                    <f:ajax render="PaginierungAlleImages myMessages mygrid10"/>
                                     <h:outputText value="#{msgs.nurDieMarkiertenSeiten}"/>
                                     <t:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="2"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                                 <br style="margin-top:15px"/>
-                                <a4j:commandLink id="s5" action="#{Metadaten.Paginierung}" style="margin-top:15px"
-                                                 reRender="PaginierungAlleImages,myMessages,mygrid10">
+                                <h:commandLink id="s5" action="#{Metadaten.Paginierung}" style="margin-top:15px">
+                                    <f:ajax render="PaginierungAlleImages,myMessages,mygrid10"/>
                                     <h:outputText value="#{msgs.abDerErstenMarkiertenSeite}"/>
                                     <t:updateActionListener property="#{Metadaten.paginierungAbSeiteOderMarkierung}" value="1"/>
-                                </a4j:commandLink>
+                                </h:commandLink>
                             </td>
                         </tr>
                     </table>

@@ -54,8 +54,7 @@
                 <h:outputText value="#{msgs.personen}"/>
             </h4>
 
-            <!-- TODO: replace a4j:support elements! -->
-            <a4j:support event="onkeyup" requestDelay="1"/>
+            <f:ajax event="keyup"/>
 
             <!-- oeffnen der Tabelle -->
             <h:dataTable value="#{Metadaten.myPersonen}" var="Item" style="background-color:#F0F0F0" styleClass="Tabelle"
@@ -69,7 +68,7 @@
                                          disabled="#{Metadaten.nurLesenModus}"
                                          onchange="styleAnpassenPerson(this)" readonly="#{Metadaten.nurLesenModus}">
                             <f:selectItems value="#{Item.addableRollen}"/>
-                            <a4j:support event="onmouseup" requestDelay="1"/>
+                            <f:ajax event="mouseup"/>
                         </h:selectOneMenu>
                         <h:outputText value="#{msgs.normDataRecord}" style="font-size: 11px"/>
                         <h:inputText value="#{Item.record}" onchange="styleAnpassen(this)" styleClass="metadatenInput"
@@ -121,7 +120,7 @@
                 <h:outputText value="#{msgs.metadataGroups}"/>
             </h4>
 
-            <a4j:support event="onkeyup" requestDelay="1"/>
+            <f:ajax event="keyup"/>
 
             <table style="#{Metadaten.nurLesenModus ? '' : 'min-width: 536px; '}">
                 <t:dataList var="aGroup" value="#{Metadaten.myGroups}"
@@ -148,13 +147,13 @@
                                                          styleClass="metadatenInput"
                                                          rendered="#{member.class.simpleName == 'RenderableListBox'}">
                                         <f:selectItems value="#{member.items}"/>
-                                        <a4j:support event="onmouseup" requestDelay="1"/>
+                                        <f:ajax event="mouseup"/>
                                     </h:selectManyListbox>
                                     <h:selectOneMenu value="#{member.value}" readonly="#{Metadaten.nurLesenModus}"
                                                      styleClass="metadatenInput"
                                                      rendered="#{member.class.simpleName == 'RenderableDropDownList'}">
                                         <f:selectItems value="#{member.items}"/>
-                                        <a4j:support event="onmouseup" requestDelay="1"/>
+                                        <f:ajax event="mouseup"/>
                                     </h:selectOneMenu>
                                     <h:outputText id="myOutput" value="#{member.value}"
                                                   rendered="#{member.class.simpleName == 'RenderableEdit' and member.readonly}"/>
@@ -206,13 +205,13 @@
                                                          styleClass="metadatenInput"
                                                          rendered="#{innerMember.class.simpleName == 'RenderableListbox'}">
                                         <f:selectItems value="#{innerMember.items}"/>
-                                        <a4j:support event="onmouseup" requestDelay="1"/>
+                                        <f:ajax event="mouseup"/>
                                     </h:selectManyListbox>
                                     <h:selectOneMenu value="#{innerMember.value}" readonly="#{Metadaten.nurLesenModus}"
                                                      styleClass="metadatenInput"
                                                      rendered="#{innerMember.class.simpleName == 'RenderableDropDownList'}">
                                         <f:selectItems value="#{innerMember.items}"/>
-                                        <a4j:support event="onmouseup" requestDelay="1"/>
+                                        <f:ajax event="mouseup"/>
                                     </h:selectOneMenu>
                                     <h:outputText id="myOutput" value="#{innerMember.value}"
                                                   rendered="#{innerMember.class.simpleName == 'RenderableEdit' and innerMember.readonly}"/>
@@ -256,7 +255,7 @@
                 <h:outputText value="#{msgs.metadaten}"/>
             </h4>
 
-            <a4j:support event="onkeyup" requestDelay="5"/>
+            <f:ajax event="keyup"/>
 
             <!-- oeffnen der Tabelle -->
             <t:dataTable value="#{Metadaten.myMetadaten}" var="Item" rowClasses="metadatenGrauBackground"
@@ -275,7 +274,7 @@
                         <h:inputTextarea value="#{Item.value}" immediate="true" readonly="#{Metadaten.nurLesenModus}"
                                          onchange="styleAnpassen(this)"
                                          styleClass="metadatenInput" style="width: 350px;height: 45px;">
-                            <a4j:support event="onmouseup" requestDelay="1"/>
+                            <f:ajax event="mouseup"/>
                         </h:inputTextarea>
 
                     </h:panelGrid>
@@ -283,7 +282,7 @@
                         <h:inputText value="#{Item.value}" onchange="styleAnpassen(this)" styleClass="metadatenInput"
                                      style="width: 350px;"
                                      readonly="#{Metadaten.nurLesenModus}"/>
-                        <a4j:support event="onmouseup" requestDelay="1"/>
+                        <f:ajax event="mouseup"/>
 
                     </h:panelGrid>
 
@@ -293,13 +292,13 @@
                                          readonly="#{Metadaten.nurLesenModus}">
                         <f:selectItems value="#{Item.items}" itemValue="#{element.label}" var="element"
                                         itemLabel="#{element.label}"/>
-                        <a4j:support event="onchange" requestDelay="1"/>
+                        <f:ajax event="change"/>
                     </h:selectManyListbox>
                     <h:selectOneMenu value="#{Item.selectedItem}" rendered="#{(Item.outputType == 'select1')}"
                                      readonly="#{Metadaten.nurLesenModus}">
                         <f:selectItems value="#{Item.items}" itemValue="#{element.label}" var="element"
                                         itemLabel="#{element.label}"/>
-                        <a4j:support event="onchange" requestDelay="1"/>
+                        <f:ajax event="change"/>
                     </h:selectOneMenu>
                     <h:outputText id="myOutput" value="#{Item.value}"
                                   rendered="#{(Item.outputType == 'readonly')}"

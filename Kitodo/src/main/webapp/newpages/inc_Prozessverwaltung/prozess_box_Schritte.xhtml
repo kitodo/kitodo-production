@@ -39,7 +39,6 @@
             </f:facet>
             <h:outputText value="#{item.ordering}"/>
             <!-- Schaltknopf: Reihenfolge nach oben -->
-            <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
             <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeUp}"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                 <h:graphicImage value="/newpages/images/buttons/order_up_klein.gif"
@@ -49,7 +48,6 @@
                 <f:ajax render="vorgaenge"/>
             </h:commandLink>
             <!-- Schaltknopf: Reihenfolge nach unten -->
-            <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
             <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeDown}"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                 <h:graphicImage value="/newpages/images/buttons/order_down_klein.gif"
@@ -66,7 +64,6 @@
                 <h:outputText value="#{msgs.title}"/>
             </f:facet>
 
-            <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
             <h:commandLink id="myself" style="color:black">
                 <h:graphicImage value="/newpages/images/plus.gif"
                                 style="margin-right:4px" rendered="#{!item.panelShown}"/>
@@ -145,9 +142,6 @@
                 <h:panelGrid columns="1" cellpadding="0" cellspacing="0"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                     <!-- Bearbeitungsstatus hoch und runter -->
-                    <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
-                    <!--<a4j:commandLink action="#{ProzessverwaltungForm.SchrittStatusUp}"-->
-                                     <!--title="#{msgs.statusHoeherSetzen}" reRender="statuscolumn">-->
                     <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusUp}"
                                      title="#{msgs.statusHoeherSetzen}">
                         <h:graphicImage
@@ -158,9 +152,6 @@
                         <f:ajax render="statuscolumn"/>
                     </h:commandLink>
                     <!-- Bearbeitungsstatus hoch und runter -->
-                    <!-- TODO: verify that this is correct to replace a4j:commandLink! -->
-                    <!--<a4j:commandLink action="#{ProzessverwaltungForm.SchrittStatusDown}"-->
-                                     <!--title="#{msgs.statusRunterSetzen}" reRender="statuscolumn">-->
                     <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusDown}"
                                      title="#{msgs.statusRunterSetzen}">
                         <h:graphicImage
