@@ -136,7 +136,7 @@ public class ProcessService extends TitleSearchService<Process> {
     }
 
     /**
-     * Method saves batches related to modified process.
+     * Method saves batches, tasks and project related to modified process.
      *
      * @param process
      *            object
@@ -144,6 +144,9 @@ public class ProcessService extends TitleSearchService<Process> {
     protected void saveDependenciesToIndex(Process process) throws CustomResponseException, IOException {
         for (Batch batch : process.getBatches()) {
             serviceManager.getBatchService().saveToIndex(batch);
+        }
+        for (Task task : process.getTasks()) {
+            serviceManager.getTaskService().saveToIndex(task);
         }
         if (process.getProject() != null) {
             serviceManager.getProjectService().saveToIndex(process.getProject());
