@@ -332,6 +332,8 @@ public class ExportDms extends ExportMets {
             return false;
         }
 
+        boolean writeWasSuccessful;
+
         /*
          * -------------------------------- zum Schluss Datei an gewünschten Ort
          * exportieren entweder direkt in den Import-Ordner oder ins
@@ -342,22 +344,27 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
             }
+
             if (MetadataFormat.findFileFormatsHelperByName(myProzess
                     .getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
-                writeMetsFile(myProzess, benutzerHome + File.separator
+                writeWasSuccessful = writeMetsFile(myProzess, benutzerHome + File.separator
                         + atsPpnBand + ".xml", gdzfile, false);
             } else {
                 /* ...wenn nicht, nur ein Fileformat schreiben. */
-                gdzfile.write(benutzerHome + File.separator + atsPpnBand
+                writeWasSuccessful = gdzfile.write(benutzerHome + File.separator + atsPpnBand
                         + ".xml");
             }
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat.findFileFormatsHelperByName(myProzess
                     .getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeMetsFile(myProzess, benutzerHome + File.separator
+                writeWasSuccessful &= writeMetsFile(myProzess, benutzerHome + File.separator
                         + atsPpnBand + ".mets.xml", gdzfile, false);
+            }
+
+            if(!writeWasSuccessful) {
+                return false;
             }
 
             Helper.setMeldung(null, myProzess.getTitel() + ": ",
@@ -415,10 +422,14 @@ public class ExportDms extends ExportMets {
             /* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
             if (MetadataFormat.findFileFormatsHelperByName(myProzess
                     .getProjekt().getFileFormatDmsExport()) == MetadataFormat.METS) {
-                writeMetsFile(myProzess, zielVerzeichnis + atsPpnBand + ".xml",
+                writeWasSuccessful = writeMetsFile(myProzess, zielVerzeichnis + atsPpnBand + ".xml",
                         gdzfile, false);
             } else {
-                gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
+                writeWasSuccessful = gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
+            }
+
+            if (!writeWasSuccessful) {
+                return false;
             }
 
             Helper.setMeldung(null, myProzess.getTitel() + ": ",

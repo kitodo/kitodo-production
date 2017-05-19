@@ -245,21 +245,27 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
             if (task != null) {
                 task.setWorkDetail(atsPpnBand + ".xml");
             }
+
+            boolean writeWasSuccessful;
+
             if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
-                writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
+                writeWasSuccessful = writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
             } else {
                 /* ...wenn nicht, nur ein Fileformat schreiben. */
-                gdzfile.write(benutzerHome + File.separator + atsPpnBand + ".xml");
+                writeWasSuccessful = gdzfile.write(benutzerHome + File.separator + atsPpnBand + ".xml");
             }
 
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+                writeWasSuccessful &= writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+            }
+
+            if (!writeWasSuccessful) {
+                return false;
             }
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
-
 
             if (!ConfigMain.getBooleanParameter("exportWithoutTimeLimit")) {
 
