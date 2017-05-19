@@ -23,7 +23,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.kitodo.data.database.exceptions.InfrastructureException;
 
 /**
- * Current version of HibernateUntil.
+ * Current version of HibernateUtil.
  */
 public class HibernateUtil {
     private static StandardServiceRegistry registry;

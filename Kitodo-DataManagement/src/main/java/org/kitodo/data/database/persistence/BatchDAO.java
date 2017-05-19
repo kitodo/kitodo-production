@@ -16,7 +16,7 @@ import java.util.List;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
+import org.kitodo.data.database.helper.HibernateHelper;
 
 /**
  * The class BatchDAO provides for to create, restore, update and delete
@@ -145,7 +145,7 @@ public class BatchDAO extends BaseDAO<Batch> {
      * @return the batch
      */
     public static Batch reattach(Batch batch) {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         session.refresh(batch);
         return batch;
     }

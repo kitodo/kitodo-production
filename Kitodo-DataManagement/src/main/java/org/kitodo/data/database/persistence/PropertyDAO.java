@@ -19,7 +19,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
+import org.kitodo.data.database.helper.HibernateHelper;
 
 public class PropertyDAO extends BaseDAO<Property> {
 
@@ -125,7 +125,7 @@ public class PropertyDAO extends BaseDAO<Property> {
      */
     @SuppressWarnings("unchecked")
     public List<String> findWorkpiecePropertiesTitlesDistinct() {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         Query query = session
                 .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
                         + " as p inner join workpiece_x_property wxp on p.id = wxp.property_id order by title");
@@ -139,7 +139,7 @@ public class PropertyDAO extends BaseDAO<Property> {
      */
     @SuppressWarnings("unchecked")
     public List<String> findTemplatePropertiesTitlesDistinct() {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         Query query = session
                 .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
                         + " as p inner join template_x_property txp on p.id = txp.property_id order by title");
@@ -153,7 +153,7 @@ public class PropertyDAO extends BaseDAO<Property> {
      */
     @SuppressWarnings("unchecked")
     public List<String> findProcessPropertiesTitlesDistinct() {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         Query query = session
                 .createSQLQuery("select distinct p.title from " + Property.class.getAnnotation(Table.class).name()
                         + " as p inner join process_x_property pxp on p.id = pxp.property_id order by title");
