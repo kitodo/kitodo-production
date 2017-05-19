@@ -56,7 +56,9 @@ import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
@@ -147,6 +149,12 @@ public class ProcessService extends TitleSearchService<Process> {
         }
         for (Task task : process.getTasks()) {
             serviceManager.getTaskService().saveToIndex(task);
+        }
+        for (Template template : process.getTemplates()) {
+            serviceManager.getTemplateService().saveToIndex(template);
+        }
+        for (Workpiece workpiece : process.getWorkpieces()) {
+            serviceManager.getWorkpieceService().saveToIndex(workpiece);
         }
         if (process.getProject() != null) {
             serviceManager.getProjectService().saveToIndex(process.getProject());
