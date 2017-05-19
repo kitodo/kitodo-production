@@ -15,6 +15,8 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,12 +81,14 @@ public class BasisForm implements Serializable {
         if (this.filter == null || this.filter.length() == 0) {
             return;
         }
-        serviceManager.getUserService().addFilter(this.user.getId(), this.filter);
-        // try {
-        // new BenutzerDAO().save(this.user);
-        // } catch (DAOException e) {
-        // logger.error(e);
-        // }
+        serviceManager.getUserService().addFilter(getUser(), this.filter);
+    }
+
+    /**
+     * Get user filters.
+     */
+    public List<String> getUserFilters() {
+        return serviceManager.getUserService().getFilters(getUser());
     }
 
     /**
@@ -94,11 +98,6 @@ public class BasisForm implements Serializable {
         if (this.filter == null || this.filter.length() == 0) {
             return;
         }
-        serviceManager.getUserService().removeFilter(this.user.getId(), this.filter);
-        // try {
-        // new BenutzerDAO().save(this.user);
-        // } catch (DAOException e) {
-        // logger.error(e);
-        // }
+        serviceManager.getUserService().removeFilter(getUser(), this.filter);
     }
 }
