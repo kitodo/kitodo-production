@@ -11,24 +11,16 @@
 
 package org.kitodo.data.database.beans;
 
-import java.io.Serializable;
+import org.kitodo.data.database.beans.base.BaseBean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "ldapGroup")
-public class LdapGroup implements Serializable {
+public class LdapGroup extends BaseBean {
     private static final long serialVersionUID = -1657514909731889712L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
     @Column(name = "title")
     private String title;
@@ -88,14 +80,6 @@ public class LdapGroup implements Serializable {
     private String sambaKickoffTime;
 
     public LdapGroup() {
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {

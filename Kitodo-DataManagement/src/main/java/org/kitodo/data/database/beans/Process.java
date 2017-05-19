@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.hibernate.Hibernate;
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -44,7 +45,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 // the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
-public class Process extends BaseBean {
+public class Process extends IndexedBaseBean {
 
     private static final long serialVersionUID = -6503348094655786275L;
 

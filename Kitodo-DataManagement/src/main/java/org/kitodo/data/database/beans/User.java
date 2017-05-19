@@ -19,12 +19,13 @@ import javax.persistence.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseBean {
+public class User extends IndexedBaseBean {
     private static final long serialVersionUID = -7482853955996650586L;
 
     @Column(name = "name")

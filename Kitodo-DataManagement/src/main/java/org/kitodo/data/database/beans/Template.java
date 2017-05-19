@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name = "template")
-public class Template extends BaseBean {
+public class Template extends IndexedBaseBean {
     private static final long serialVersionUID = 1736135433162833277L;
 
     @Column(name = "origin")

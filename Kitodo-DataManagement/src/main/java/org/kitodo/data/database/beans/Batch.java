@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +37,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseBean {
+public class Batch extends IndexedBaseBean {
     private static final long serialVersionUID = -5187947220333984868L;
 
     /**

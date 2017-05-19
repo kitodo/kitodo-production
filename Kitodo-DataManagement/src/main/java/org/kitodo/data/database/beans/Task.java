@@ -26,12 +26,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @Entity
 @Table(name = "task")
-public class Task extends BaseBean {
+public class Task extends IndexedBaseBean {
     private static final long serialVersionUID = 6831844584239811846L;
 
     @Column(name = "title")

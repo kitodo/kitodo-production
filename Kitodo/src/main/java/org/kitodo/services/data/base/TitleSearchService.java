@@ -17,7 +17,7 @@ import java.util.List;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
-import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -26,7 +26,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
  * Class for implementing methods used by service classes which search for title
  * in ElasticSearch index.
  */
-public abstract class TitleSearchService<T extends BaseBean> extends SearchService<T> {
+public abstract class TitleSearchService<T extends IndexedBaseBean> extends SearchService<T> {
 
     public TitleSearchService(Searcher searcher) {
         super(searcher);

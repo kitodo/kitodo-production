@@ -29,7 +29,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.json.simple.parser.ParseException;
-import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -42,7 +42,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseBean> {
+public abstract class SearchService<T extends IndexedBaseBean> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
     protected Searcher searcher;
@@ -283,7 +283,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            name
      * @return list of beans
      */
-    public List<? extends BaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults, String table)
+    public List<? extends IndexedBaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults, String table)
             throws DAOException, IOException {
         StringBuilder query = new StringBuilder();
         query.append("FROM ");
