@@ -2719,8 +2719,14 @@ public class Metadaten {
         String firstFile = firstpage.getImageName();
         String otherFile = secondpage.getImageName();
 
-        firstpage.setImageName(otherFile);
-        secondpage.setImageName(firstFile);
+        try {
+            File first = new File(myProzess.getImagesTifDirectory(true), otherFile);
+            File other = new File(myProzess.getImagesTifDirectory(true), firstFile);
+            firstpage.setImageName(first.toURI().toString());
+            secondpage.setImageName(other.toURI().toString());
+        } catch (InterruptedException | SwapException | DAOException | IOException e) {
+            logger.error("Could not determinate image directory!", e);
+        }
     }
 
     public void moveSeltectedPagesUp() {
