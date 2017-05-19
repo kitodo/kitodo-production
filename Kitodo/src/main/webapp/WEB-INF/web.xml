@@ -146,12 +146,6 @@
         <param-value>blueSky</param-value>
     </context-param>
 
-    <!--<filter>-->
-        <!--<display-name>RichFaces Filter</display-name>-->
-        <!--<filter-name>richfaces</filter-name>-->
-        <!--<filter-class>org.ajax4jsf.Filter</filter-class>-->
-    <!--</filter>-->
-
     <filter>
         <filter-name>Proxy</filter-name>
         <filter-class>net.sf.j2ep.ProxyFilter</filter-class>
@@ -160,15 +154,6 @@
             <param-value>/WEB-INF/reverse-proxy.xml</param-value>
         </init-param>
     </filter>
-
-    <!--<filter-mapping>-->
-        <!--<filter-name>richfaces</filter-name>-->
-        <!--<servlet-name>Faces Servlet</servlet-name>-->
-        <!--<dispatcher>REQUEST</dispatcher>-->
-        <!--<dispatcher>FORWARD</dispatcher>-->
-        <!--<dispatcher>INCLUDE</dispatcher>-->
-    <!--</filter-mapping>-->
-
 
     <filter-mapping>
         <filter-name>extensionsFilter</filter-name>
@@ -249,12 +234,6 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!--<servlet>-->
-        <!--<servlet-name>Jenia internal servlet</servlet-name>-->
-        <!--<servlet-class>org.jenia.faces.util.Servlet</servlet-class>-->
-        <!--<load-on-startup>2</load-on-startup>-->
-    <!--</servlet>-->
-
     <servlet>
         <description>
         </description>
@@ -287,11 +266,6 @@
         <url-pattern>/wi</url-pattern>
     </servlet-mapping>
 
-
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>Jenia internal servlet</servlet-name>-->
-        <!--<url-pattern>/jenia4faces/*</url-pattern>-->
-    <!--</servlet-mapping>-->
     <!-- Faces Servlet Mapping -->
 
     <!-- extension mapping -->
