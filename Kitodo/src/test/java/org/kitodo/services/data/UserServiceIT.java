@@ -20,9 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
@@ -61,7 +66,7 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<User> users = userService.findAll();
-        boolean result = users.size() == 3 || users.size() == 5;
+        boolean result = users.size() == 3 || users.size() == 4 || users.size() == 5 || users.size() == 6;
         assertTrue("Not all users were found in database!", result);
     }
 
@@ -72,22 +77,52 @@ public class UserServiceIT {
         User user = new User();
         user.setLogin("Remove");
         userService.save(user);
-        User foundUser = userService.convertSearchResultToObject(userService.findById(4));
+        Thread.sleep(1000);
+        User foundUser = userService.convertSearchResultToObject(userService.findByLogin("Remove"));
         assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
 
         userService.remove(foundUser);
-        foundUser = userService.convertSearchResultToObject(userService.findById(4));
-        assertEquals("Additional user was not removed from database!", null, foundUser);
+        foundUser = userService.find(foundUser.getId());
+        assertEquals("Additional user was not removed from database!", null, foundUser.getLogin());
 
         user = new User();
         user.setLogin("remove");
         userService.save(user);
-        foundUser = userService.convertSearchResultToObject(userService.findById(5));
+        Thread.sleep(1000);
+        foundUser = userService.convertSearchResultToObject(userService.findByLogin("remove"));
         assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
 
-        userService.remove(5);
-        foundUser = userService.convertSearchResultToObject(userService.findById(5));
-        assertEquals("Additional user was not removed from database!", null, foundUser);
+        userService.remove(foundUser.getId());
+        foundUser = userService.find(foundUser.getId());
+        assertEquals("Additional user was not removed from database!", null, foundUser.getLogin());
+    }
+
+    @Test
+    public void shouldRemoveUserButNotUserGroup() throws Exception {
+        UserService userService = new UserService();
+        UserGroupService userGroupService = new UserGroupService();
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("Cascade Group");
+        userGroupService.saveToDatabase(userGroup);
+
+        User user = new User();
+        user.setLogin("Cascade");
+        user.getUserGroups()
+                .add(userGroupService.search("FROM UserGroup WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
+        userService.saveToDatabase(user);
+        User foundUser = userService.search("FROM User WHERE login = 'Cascade'").get(0);
+        assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
+
+        userService.removeFromDatabase(foundUser);
+        int size = userService.search("FROM User WHERE login = 'Cascade'").size();
+        assertEquals("Additional user was not removed from database!", 0, size);
+
+        size = userGroupService.search("FROM UserGroup WHERE title = 'Cascade Group'").size();
+        assertEquals("User Group was removed from database!", 1, size);
+
+        userGroupService
+                .removeFromDatabase(userGroupService.search("FROM UserGroup WHERE title = 'Cascade Group'").get(0));
     }
 
     @Test
@@ -200,12 +235,12 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         List<SearchResult> users = userService.findByActive(true);
-        boolean result = users.size() == 2 || users.size() == 4;
-        assertTrue("Users was not found in index!", result);
+        boolean result = users.size() == 2 || users.size() == 3 || users.size() == 4 || users.size() == 5;
+        assertTrue("Users were not found in index!", result);
 
         users = userService.findByActive(false);
-        result = users.size() == 1 || users.size() == 3;
-        assertTrue("Users was found in index!", result);
+        result = users.size() == 1 || users.size() == 2 || users.size() == 3 || users.size() == 4;
+        assertTrue("Users were found in index!", result);
     }
 
     @Test
