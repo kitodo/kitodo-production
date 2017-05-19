@@ -449,52 +449,6 @@
             <artifactId>kitodo-contentserver</artifactId>
             <version>2.0.0</version>
         </dependency>
-        <!-- TODO: replace usages of rich:calendar with tag from more modern component library! -->
-        <!--
-        <dependency>
-            <groupId>org.richfaces.framework</groupId>
-            <artifactId>richfaces-api</artifactId>
-            <version>3.1.6.GA</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.richfaces.framework</groupId>
-            <artifactId>richfaces-impl</artifactId>
-            <version>3.1.6.GA</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.faces</groupId>
-                    <artifactId>jsf-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.faces</groupId>
-                    <artifactId>jsf-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.richfaces.ui</groupId>
-            <artifactId>richfaces-ui</artifactId>
-            <version>3.1.6.GA</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        -->
-        <!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
-        <!--<dependency>-->
-            <!--<groupId>org.primefaces</groupId>-->
-            <!--<artifactId>primefaces</artifactId>-->
-            <!--<version>6.0</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.saxon</groupId>
             <artifactId>saxon9</artifactId>
@@ -541,14 +495,6 @@
             <artifactId>j2ep</artifactId>
             <version>1.0</version>
         </dependency>
-        <!-- TODO: replace usages of jp:popupFrame with tag from JSF 2 compatible component library! -->
-        <!--
-        <dependency>
-            <groupId>org.jenia.faces</groupId>
-            <artifactId>jenia4faces</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
