@@ -14,6 +14,8 @@ addons:
       - ant-optional
       - tomcat7-common
 
+sudo: required
+
 cache:
 
 env:
