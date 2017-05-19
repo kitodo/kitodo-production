@@ -152,15 +152,35 @@ public class ProcessService extends TitleSearchService<Process> {
         }
         for (Template template : process.getTemplates()) {
             serviceManager.getTemplateService().saveToIndex(template);
+            saveDependantProperties(template.getProperties());
         }
         for (Workpiece workpiece : process.getWorkpieces()) {
             serviceManager.getWorkpieceService().saveToIndex(workpiece);
+            saveDependantProperties(workpiece.getProperties());
         }
         if (process.getProject() != null) {
             serviceManager.getProjectService().saveToIndex(process.getProject());
         }
     }
 
+    /**
+     * Save to index dependant properties.
+     * 
+     * @param properties
+     *            List
+     */
+    private void saveDependantProperties(List<Property> properties) throws CustomResponseException, IOException {
+        for (Property property : properties) {
+            serviceManager.getPropertyService().saveToIndex(property);
+        }
+    }
+
+    /**
+     * Sav list of processes to database.
+     * 
+     * @param list
+     *            of processes
+     */
     public void saveList(List<Process> list) throws DAOException {
         processDAO.saveList(list);
     }
