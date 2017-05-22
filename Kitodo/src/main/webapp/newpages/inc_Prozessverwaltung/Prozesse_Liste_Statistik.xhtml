@@ -93,8 +93,6 @@
 
                     <h:selectOneMenu style="width:130px" value="#{ProzessverwaltungForm.statisticsManager.sourceTimeUnit}"
                                      converter="StatisticsTimeUnitConverter">
-                        <!--<si:selectItems value="#{ProzessverwaltungForm.statisticsManager.allTimeUnits}" var="unit"-->
-                                        <!--itemLabel="#{unit.title}" itemValue="#{unit}"/>-->
                         <f:selectItems value="#{ProzessverwaltungForm.statisticsManager.allTimeUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -110,8 +108,6 @@
 
                     <h:selectOneMenu style="width:130px" value="#{ProzessverwaltungForm.statisticsManager.targetTimeUnit}"
                                      converter="StatisticsTimeUnitConverter">
-                        <!--<si:selectItems value="#{ProzessverwaltungForm.statisticsManager.allTimeUnits}" var="unit"-->
-                                        <!--itemLabel="#{unit.title}" itemValue="#{unit}"/>-->
                         <f:selectItems value="#{ProzessverwaltungForm.statisticsManager.allTimeUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -121,8 +117,6 @@
                     <h:selectOneMenu style="width:130px"
                                      value="#{ProzessverwaltungForm.statisticsManager.targetCalculationUnit}"
                                      converter="StatisticsCalculationUnitConverter">
-                        <!--<si:selectItems value="#{ProzessverwaltungForm.statisticsManager.allCalculationUnits}" var="unit"-->
-                                        <!--itemLabel="#{unit.title}" itemValue="#{unit}"/>-->
                         <f:selectItems value="#{ProzessverwaltungForm.statisticsManager.allCalculationUnits}" var="unit"
                                         itemLabel="#{unit.title}" itemValue="#{unit}"/>
                     </h:selectOneMenu>
@@ -132,8 +126,6 @@
                     <h:selectOneMenu style="width:130px"
                                      value="#{ProzessverwaltungForm.statisticsManager.targetResultOutput}"
                                      converter="StatisticsResultOutputConverter">
-                        <!--<si:selectItems value="#{ProzessverwaltungForm.statisticsManager.allResultOutputs}" var="out"-->
-                                        <!--itemLabel="#{out.title}" itemValue="#{out}"/>-->
                         <f:selectItems value="#{ProzessverwaltungForm.statisticsManager.allResultOutputs}" var="out"
                                         itemLabel="#{out.title}" itemValue="#{out}"/>
                     </h:selectOneMenu>
