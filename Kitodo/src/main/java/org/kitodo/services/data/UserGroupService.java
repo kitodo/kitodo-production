@@ -86,8 +86,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
-    protected void manageDependenciesForIndex(UserGroup userGroup)
-            throws CustomResponseException, DataException, IOException {
+    protected void manageDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         for (User user : userGroup.getUsers()) {
             serviceManager.getUserService().saveToIndex(user);
         }
