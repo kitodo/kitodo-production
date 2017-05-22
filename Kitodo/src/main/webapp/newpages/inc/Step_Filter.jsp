@@ -21,7 +21,7 @@
         <h:outputText value="#{msgs.selectFilter}: "/>
         <%-- Filter Liste --%>
         <x:selectOneMenu forceId="true" id="select" style="width:18%;" value="#{Form.filter}" onclick="setFilter();">
-            <si:selectItems id="pcid11" value="#{Form.user.filters}" var="item" itemLabel="#{item}"
+            <si:selectItems id="pcid11" value="#{Form.userFilters}" var="item" itemLabel="#{item}"
                             itemValue="#{item}"/>
         </x:selectOneMenu>
 

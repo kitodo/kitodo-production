@@ -40,17 +40,47 @@ public enum PropertyType {
     /**
      * error message.
      */
-    messageError(4, "messageError", false, false), String(5, "String", true, true), Boolean(6, "Boolean", true, true), List(7, "List", true, true), Number(8, "Number", true, true), Container(9, "Container", true, true), Date(10, "Date", true, true), Integer(11, "Integer", true, true), SpecialView(12, "SpecialView", false, true), Textarea(13, "Textarea", true, true), ListMultiSelect(14, "ListMultiSelect", true, true), WikiField(15, "WikiField", false, true),
+    messageError(4, "messageError", false, false),
+
+    String(5, "String", true, true),
+
+    Boolean(6, "Boolean", true, true),
+
+    List(7, "List", true, true),
+
+    Number(8, "Number", true, true),
+
+    Container(9, "Container", true, true),
+
+    Date(10, "Date", true, true),
+
+    Integer(11, "Integer", true, true),
+
+    SpecialView(12, "SpecialView", false, true),
+
+    Textarea(13, "Textarea", true, true),
+
+    ListMultiSelect(14, "ListMultiSelect", true, true),
+
+    WikiField(15, "WikiField", false, true),
+
     // special Properties
-    Hidden(16, "Hidden", false, false), ErrorMessage(17, "ErrorMessage", true, false), CommandLink(18, "CommandLink",
-            true, false), NoEdit(19, "NoEdit", true, false), Filter(20, "Filter", false, false);
+    Hidden(16, "Hidden", false, false),
+
+    ErrorMessage(17, "ErrorMessage", true, false),
+
+    CommandLink(18, "CommandLink", true, false),
+
+    NoEdit(19, "NoEdit", true, false),
+
+    Filter(20, "Filter", false, false);
 
     private int id;
     private String name;
 
     private Boolean showInDisplay;
 
-    private PropertyType(int id, String inName, Boolean showInDisplay, Boolean editable) {
+    PropertyType(int id, String inName, Boolean showInDisplay, Boolean editable) {
         this.id = id;
         this.name = inName;
         this.showInDisplay = showInDisplay;
@@ -65,9 +95,16 @@ public enum PropertyType {
         return this.name();
     }
 
-    public static PropertyType getByName(String inName) {
+    /**
+     * Get property by name.
+     * 
+     * @param name
+     *            of property
+     * @return PropertyType object
+     */
+    public static PropertyType getByName(String name) {
         for (PropertyType p : PropertyType.values()) {
-            if (p.getName().equals(inName.toLowerCase())) {
+            if (p.getName().equals(name.toLowerCase())) {
                 return p;
             }
         }

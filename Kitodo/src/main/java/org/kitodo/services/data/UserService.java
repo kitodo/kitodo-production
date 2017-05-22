@@ -19,9 +19,10 @@ import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.Session;
+import org.joda.time.LocalDateTime;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -36,9 +38,9 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
-import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserType;
@@ -559,54 +561,111 @@ public class UserService extends SearchService<User> {
     /**
      * Adds a new filter to list.
      *
-     * @param inputFilter
+     * @param user object
+     * @param filter
      *            the filter to add
      */
-    public void addFilter(int userId, String inputFilter) {
-        if (getFilters(userId).contains(inputFilter)) {
+    public void addFilter(User user, String filter) {
+        if (getFilters(user).contains(filter)) {
             return;
         }
         try {
-            MySQLHelper.addFilterToUser(userId, inputFilter);
-        } catch (SQLException e) {
-            logger.error("Cannot not add filter to user with id " + userId, e);
+            addFilterToUser(user, filter);
+        } catch (CustomResponseException | DAOException | IOException e) {
+            logger.error("Cannot not add filter to user with id " + user.getId(), e);
         }
-
     }
 
     /**
      * Removes filter from list.
      *
-     * @param inputFilter
+     * @param user objec
+     * @param filter
      *            the filter to remove
      */
-    public void removeFilter(int userId, String inputFilter) {
-        if (!getFilters(userId).contains(inputFilter)) {
+    public void removeFilter(User user, String filter) {
+        if (!getFilters(user).contains(filter)) {
             return;
         }
         try {
-            MySQLHelper.removeFilterFromUser(userId, inputFilter);
-        } catch (SQLException e) {
-            logger.error("Cannot not remove filter from user with id " + userId, e);
+            removeFilterFromUser(user, filter);
+        } catch (CustomResponseException | DAOException | IOException e) {
+            logger.error("Cannot not remove filter from user with id " + user.getId(), e);
         }
-
     }
 
     /**
      * Get list of filters.
      *
-     * @param userId
+     * @param user
      *            object
      * @return List of filters as strings
      */
-    public List<String> getFilters(int userId) {
-        List<String> answer = new ArrayList<>();
+    public List<String> getFilters(User user) {
+        List<String> filters = new ArrayList<>();
         try {
-            answer = MySQLHelper.getFilterForUser(userId);
-        } catch (SQLException e) {
-            logger.error("Cannot not load filter for user with id " + userId, e);
+            filters = getFiltersForUser(user);
+        } catch (CustomResponseException | IOException | ParseException e) {
+            logger.error("Cannot not load filters for user with id " + user.getId(), e);
         }
+        return filters;
+    }
 
-        return answer;
+    /**
+     * Add filter to user. Note: filter is property... Is there some other type
+     * of user property? Maybe it would demand rethink our data model...
+     *
+     * @param user
+     *            object
+     * @param filter
+     *            String
+     */
+    private void addFilterToUser(User user, String filter)
+            throws CustomResponseException, DAOException, IOException {
+        LocalDateTime localDateTime = new LocalDateTime();
+        Property property = new Property();
+        property.setTitle("_filter");
+        property.setValue(filter);
+        property.setObligatory(false);
+        property.setType(PropertyType.String);
+        property.setCreationDate(localDateTime.toDate());
+        serviceManager.getPropertyService().save(property);
+        user.getProperties().add(property);
+        serviceManager.getUserService().save(user);
+    }
+
+    /**
+     * Get filters for user.
+     *
+     * @param user
+     *            object
+     * @return list of filters
+     */
+    private List<String> getFiltersForUser(User user) throws CustomResponseException, IOException, ParseException {
+        List<String> filters = new ArrayList<>();
+        List<Property> properties = user.getProperties();
+        for (Property property : properties) {
+            if (property.getTitle().equals("_filter")) {
+                filters.add(property.getValue());
+            }
+        }
+        return filters;
+    }
+
+    /**
+     * Remove filter from user.
+     *
+     * @param user
+     *            object
+     * @param filter
+     *            String
+     */
+    private void removeFilterFromUser(User user, String filter)
+            throws CustomResponseException, DAOException, IOException {
+        for (Property property : user.getProperties()) {
+            if (property.getTitle().equals("_filter") && property.getValue().equals(filter)) {
+                serviceManager.getPropertyService().remove(property);
+            }
+        }
     }
 }

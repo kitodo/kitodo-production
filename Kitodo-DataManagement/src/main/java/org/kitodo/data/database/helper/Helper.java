@@ -14,14 +14,8 @@ package org.kitodo.data.database.helper;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
@@ -34,9 +28,13 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 
-// TODO: split this class! here should be only parts of Helper which are needed
-// for Beans and Persistence
+/**
+ * Class contains methods needed for beans and persistence.
+ */
 public class Helper implements Serializable {
+
+    private static final Logger logger = LogManager.getLogger(Helper.class);
+    private static final long serialVersionUID = -7449236652821237059L;
 
     /**
      * Always treat de-serialization as a full-blown constructor, by validating
@@ -54,61 +52,25 @@ public class Helper implements Serializable {
 
     }
 
-    private static final Logger logger = LogManager.getLogger(Helper.class);
-    private static final long serialVersionUID = -7449236652821237059L;
-
-    private String myMetadatenVerzeichnis;
-    private String myConfigVerzeichnis;
-    private static Map<Locale, ResourceBundle> commonMessages = null;
-    private static Map<Locale, ResourceBundle> localMessages = null;
-
-    public static Map<String, String> activeMQReporting = null;
-    private static String compoundMessage;
-
     /**
-     * Ermitteln eines bestimmten Parameters des Requests.
+     * Get Hibernate Session.
      *
-     * @return parameter als String
+     * @return Hibernate Session
      */
-    @SuppressWarnings("rawtypes")
-    public static String getRequestParameter(String parameter) {
-        /* einen bestimmten übergebenen parameter ermitteln */
-        FacesContext context = FacesContext.getCurrentInstance();
-        Map requestParams = context.getExternalContext().getRequestParameterMap();
-        String myParameter = (String) requestParams.get(parameter);
-        if (myParameter == null) {
-            myParameter = "";
+    public static Session getHibernateSession() {
+        Session session;
+        try {
+            session = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
+            if (session == null) {
+                session = HibernateUtilOld.getSession();
+            }
+        } catch (Exception e) {
+            session = HibernateUtilOld.getSession();
         }
-        return myParameter;
-    }
-
-    /**
-     * Get stack trace as String.
-     *
-     * @param inException
-     *            input exception
-     * @return stack traces as string
-     */
-    public static String getStacktraceAsString(Exception inException) {
-        StringWriter sw = new StringWriter();
-        inException.printStackTrace(new PrintWriter(sw));
-        return sw.toString();
-    }
-
-    /**
-     * Get Date as formatted String.
-     *
-     * @param inDate
-     *            input date
-     * @return date as formatted string
-     */
-    public static String getDateAsFormattedString(Date inDate) {
-        if (inDate == null) {
-            return "-";
-        } else {
-            return DateFormat.getDateInstance().format(inDate) + " "
-                    + DateFormat.getTimeInstance(DateFormat.MEDIUM).format(inDate);
+        if (!session.isOpen()) {
+            session = HibernateUtilOld.getSession();
         }
+        return session;
     }
 
     /**
@@ -155,39 +117,8 @@ public class Helper implements Serializable {
             if (sessionMap.containsKey(name)) {
                 sessionMap.remove(name);
             }
-        } catch (Exception nothingToDo) {
-        }
-    }
-
-    /**
-     * Get Hibernate Session.
-     *
-     * @return Hibernate Session
-     */
-    public static Session getHibernateSession() {
-        Session sess;
-        try {
-            sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
-            if (sess == null) {
-                sess = HibernateUtilOld.getSession();
-            }
         } catch (Exception e) {
-            sess = HibernateUtilOld.getSession();
+            logger.debug(e);
         }
-        if (!sess.isOpen()) {
-            sess = HibernateUtilOld.getSession();
-        }
-        return sess;
-    }
-
-    /**
-     * The function getLastMessage() returns the last message processed to be
-     * shown to the user. This is a last resort only to show the user why
-     * perhaps something didn’t work if no error message is available otherwise.
-     *
-     * @return the most recent message created to be shown to the user
-     */
-    public static String getLastMessage() {
-        return compoundMessage;
     }
 }
