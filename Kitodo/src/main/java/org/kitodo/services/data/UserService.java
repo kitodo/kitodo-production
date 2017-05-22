@@ -91,7 +91,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
-    protected void saveDependenciesToIndex(User user) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(User user) throws CustomResponseException, DataException, IOException {
         for (UserGroup userGroup : user.getUserGroups()) {
             serviceManager.getUserGroupService().saveToIndex(userGroup);
         }

@@ -84,7 +84,8 @@ public class ProjectService extends TitleSearchService<Project> {
      * @param project
      *            object
      */
-    protected void saveDependenciesToIndex(Project project) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Project project)
+            throws CustomResponseException, DataException, IOException {
         for (Process process : project.getProcesses()) {
             serviceManager.getProcessService().saveToIndex(process);
         }

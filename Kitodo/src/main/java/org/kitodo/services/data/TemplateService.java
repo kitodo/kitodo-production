@@ -75,7 +75,8 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
-    protected void saveDependenciesToIndex(Template template) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Template template)
+            throws CustomResponseException, DataException, IOException {
         if (template.getProcess() != null) {
             serviceManager.getProcessService().saveToIndex(template.getProcess());
         }
