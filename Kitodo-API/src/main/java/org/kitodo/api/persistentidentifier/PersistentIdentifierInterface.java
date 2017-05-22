@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.generator;
+package org.kitodo.api.persistentidentifier;
 
 /** Handles persistent Identifiers. */
 public interface PersistentIdentifierInterface {
@@ -23,7 +23,8 @@ public interface PersistentIdentifierInterface {
      *            the identifier of the specific object to which the URN points.
      * @return a valid URN (including check digit).
      */
-    String generateUnifiedResourceName(String namespace, String identifier);
+    String generateUnifiedResourceName(String namespace, String libraryIdentifier, String subNamespace,
+                                       String identifier);
 
     /**
      * Registers the given urn.
