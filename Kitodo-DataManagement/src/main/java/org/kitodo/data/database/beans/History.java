@@ -20,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 
 /**
@@ -30,7 +31,7 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
  */
 @Entity
 @Table(name = "history")
-public class History extends BaseBean {
+public class History extends IndexedBaseBean {
     private static final long serialVersionUID = 991946177515032238L;
 
     @Column(name = "date")

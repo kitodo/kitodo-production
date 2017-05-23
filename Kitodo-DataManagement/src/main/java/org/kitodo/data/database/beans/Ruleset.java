@@ -11,13 +11,15 @@
 
 package org.kitodo.data.database.beans;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "ruleset")
-public class Ruleset extends BaseBean {
+public class Ruleset extends IndexedBaseBean {
     private static final long serialVersionUID = -6663371963274685060L;
 
     @Column(name = "title")

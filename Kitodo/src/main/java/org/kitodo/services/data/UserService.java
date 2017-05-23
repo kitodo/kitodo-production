@@ -14,22 +14,18 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.hibernate.Session;
 import org.joda.time.LocalDateTime;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Project;
@@ -39,7 +35,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
-import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -355,25 +350,6 @@ public class UserService extends SearchService<User> {
     }
 
     /**
-     * Get the current object for this row.
-     *
-     * @return the current object representing a row.
-     */
-    public User getCurrent(User user) {
-        boolean hasOpen = HibernateUtilOld.hasOpenSession();
-        Session session = Helper.getHibernateSession();
-
-        User current = (User) session.get(User.class, user.getId());
-        if (current == null) {
-            current = (User) session.load(User.class, user.getId());
-        }
-        if (!hasOpen) {
-            session.close();
-        }
-        return current;
-    }
-
-    /**
      * Table size.
      *
      * @return table size
@@ -629,7 +605,7 @@ public class UserService extends SearchService<User> {
         property.setObligatory(false);
         property.setType(PropertyType.String);
         property.setCreationDate(localDateTime.toDate());
-        serviceManager.getPropertyService().save(property);
+        property.getUsers().add(user);
         user.getProperties().add(property);
         serviceManager.getUserService().save(user);
     }

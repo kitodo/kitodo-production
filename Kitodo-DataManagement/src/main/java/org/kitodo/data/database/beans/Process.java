@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 import org.hibernate.Hibernate;
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
 @XmlAccessorType(XmlAccessType.NONE)
@@ -44,7 +45,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 // the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
-public class Process extends BaseBean {
+public class Process extends IndexedBaseBean {
 
     private static final long serialVersionUID = -6503348094655786275L;
 
@@ -339,6 +340,11 @@ public class Process extends BaseBean {
         this.workpieces = workpieces;
     }
 
+    /**
+     * Get list of batches or empty list.
+     *
+     * @return list of batches or empty list
+     */
     public List<Batch> getBatches() {
         if (this.batches == null) {
             this.batches = new ArrayList<>();
@@ -346,8 +352,18 @@ public class Process extends BaseBean {
         return this.batches;
     }
 
+    /**
+     * Set batches, if list is empty just set, if not first clear and next set.
+     *
+     * @param batches list
+     */
     public void setBatches(List<Batch> batches) {
-        this.batches = batches;
+        if (this.batches == null) {
+            this.batches = batches;
+        } else {
+            this.batches.clear();
+            this.batches.addAll(batches);
+        }
     }
 
     public List<Property> getProperties() {

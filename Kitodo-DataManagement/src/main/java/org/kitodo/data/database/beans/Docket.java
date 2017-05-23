@@ -11,13 +11,15 @@
 
 package org.kitodo.data.database.beans;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "docket")
-public class Docket extends BaseBean {
+public class Docket extends IndexedBaseBean {
 
     private static final long serialVersionUID = -5187947220333984868L;
 

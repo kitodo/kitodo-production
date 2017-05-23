@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import org.kitodo.data.database.beans.base.IndexedBaseBean;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ import javax.persistence.Transient;
  */
 @Entity
 @Table(name = "userGroup")
-public class UserGroup extends BaseBean implements Comparable<UserGroup> {
+public class UserGroup extends IndexedBaseBean implements Comparable<UserGroup> {
     private static final long serialVersionUID = -5924845694417474352L;
 
     @Column(name = "title")

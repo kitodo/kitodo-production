@@ -328,11 +328,11 @@ public class MySQLHelper {
             Object[] param = {step.getTitle(), step.getOrdering(), step.getProcessingStatus(), time, start, end,
                     step.getProcessingUser(), step.getEditType(), step.isTypeAutomatic(), step.getId() };
             if (logger.isDebugEnabled()) {
-                logger.debug("saving step: " + sql.toString() + ", " + Arrays.toString(param));
+                logger.debug("saving task: " + sql.toString() + ", " + Arrays.toString(param));
             }
 
             run.update(connection, sql.toString(), param);
-            // logger.debug(sql);
+            logger.debug(sql);
             ret = step.getId();
             return ret;
         } finally {
@@ -357,11 +357,8 @@ public class MySQLHelper {
     public void addHistory(Date date, double order, String value, int type, int processId) throws SQLException {
         Connection connection = helper.getConnection();
         Timestamp datetime = new Timestamp(date.getTime());
-
         try {
             QueryRunner run = new QueryRunner();
-            // String propNames = "numericValue, stringvalue, type, date,
-            // processId";
             Object[] param = {order, value, type, datetime, processId };
             String sql = "INSERT INTO " + "history" + " (numericValue, stringValue, type, date, process_id) VALUES "
                     + "( ?, ?, ?, ? ,?)";

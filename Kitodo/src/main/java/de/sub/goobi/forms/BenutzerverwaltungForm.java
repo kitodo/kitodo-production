@@ -144,19 +144,23 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String save() {
         Session session = Helper.getHibernateSession();
         session.evict(this.myClass);
-        String bla = this.myClass.getLogin();
+        String login = this.myClass.getLogin();
 
-        if (!isLoginValid(bla)) {
+        if (!isLoginValid(login)) {
             return "";
         }
 
-        Integer blub = this.myClass.getId();
+        Integer id = this.myClass.getId();
         try {
             /*
              * prüfen, ob schon ein anderer Benutzer mit gleichem Login
              * existiert
              */
-            if (this.serviceManager.getUserService().count("from User where login='" + bla + "'AND id<>" + blub) == 0) {
+            if (this.serviceManager.getUserService().count("from User where login='" + login + "'AND id<>" + id) == 0) {
+                for (Project project : this.myClass.getProjects()) {
+                    project.getUsers().add(this.myClass);
+                    serviceManager.getProjectService().save(project);
+                }
                 this.serviceManager.getUserService().save(this.myClass);
                 return "BenutzerAlle";
             } else {
@@ -281,12 +285,21 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String ausProjektLoeschen() {
-        int projektID = Integer.parseInt(Helper.getRequestParameter("ID"));
+        int projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
+
         List<Project> neu = new ArrayList<>();
-        for (Iterator<Project> iter = this.myClass.getProjects().iterator(); iter.hasNext();) {
-            Project element = iter.next();
-            if (element.getId() != projektID) {
-                neu.add(element);
+        for (Iterator<Project> iterator = this.myClass.getProjects().iterator(); iterator.hasNext();) {
+            Project project = iterator.next();
+            if (project.getId() != projectId) {
+                neu.add(project);
+            } else {
+                project.getUsers().remove(this.myClass);
+                try {
+                    serviceManager.getProjectService().save(project);
+                } catch (CustomResponseException | DAOException | IOException e) {
+                    Helper.setFehlerMeldung("Error on removing project", e.getMessage());
+                    return null;
+                }
             }
         }
         this.myClass.setProjects(neu);
@@ -299,9 +312,9 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String or null
      */
     public String zuProjektHinzufuegen() {
-        Integer projektID = Integer.valueOf(Helper.getRequestParameter("ID"));
+        Integer projectId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            Project project = serviceManager.getProjectService().find(projektID);
+            Project project = serviceManager.getProjectService().find(projectId);
             for (Project p : this.myClass.getProjects()) {
                 if (p.equals(project)) {
                     return "";
@@ -330,8 +343,6 @@ public class BenutzerverwaltungForm extends BasisForm {
      *            user object
      */
     public void setMyClass(User inMyClass) {
-        Helper.getHibernateSession().flush();
-        Helper.getHibernateSession().clear();
         try {
             this.myClass = serviceManager.getUserService().find(inMyClass.getId());
         } catch (DAOException e) {

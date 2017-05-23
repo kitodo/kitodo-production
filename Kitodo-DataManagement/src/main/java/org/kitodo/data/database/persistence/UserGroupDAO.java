@@ -44,7 +44,7 @@ public class UserGroupDAO extends BaseDAO {
      * @return all persisted dockets
      */
     @SuppressWarnings("unchecked")
-    public List<UserGroup> findAll() {
+    public List<UserGroup> findAll() throws DAOException {
         return retrieveAllObjects(UserGroup.class);
     }
 

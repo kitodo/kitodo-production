@@ -47,7 +47,7 @@ public class ProjectDAO extends BaseDAO {
      * @return all persisted projects
      */
     @SuppressWarnings("unchecked")
-    public List<Project> findAll() {
+    public List<Project> findAll() throws DAOException {
         return retrieveAllObjects(Project.class);
     }
 

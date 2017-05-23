@@ -44,7 +44,7 @@ public class TaskDAO extends BaseDAO {
      * @return all persisted users
      */
     @SuppressWarnings("unchecked")
-    public List<Task> findAll() {
+    public List<Task> findAll() throws DAOException {
         return retrieveAllObjects(Task.class);
     }
 
@@ -101,14 +101,5 @@ public class TaskDAO extends BaseDAO {
     public void refresh(Task task) {
         Object o = task;
         refresh(o);
-    }
-
-    public void update(Task task) {
-        Object o = task;
-        updateObject(o);
-    }
-
-    public Task load(int id) throws DAOException {
-        return (Task) loadObjects(Task.class, id);
     }
 }

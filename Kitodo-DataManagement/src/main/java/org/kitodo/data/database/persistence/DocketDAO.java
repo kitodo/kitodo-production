@@ -44,7 +44,7 @@ public class DocketDAO extends BaseDAO {
      * @return all persisted dockets
      */
     @SuppressWarnings("unchecked")
-    public List<Docket> findAll() {
+    public List<Docket> findAll() throws DAOException {
         return retrieveAllObjects(Docket.class);
     }
 

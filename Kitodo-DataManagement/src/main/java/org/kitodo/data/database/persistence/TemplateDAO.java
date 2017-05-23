@@ -43,7 +43,7 @@ public class TemplateDAO extends BaseDAO {
      * @return all persisted dockets
      */
     @SuppressWarnings("unchecked")
-    public List<Template> findAll() {
+    public List<Template> findAll() throws DAOException {
         return retrieveAllObjects(Template.class);
     }
 

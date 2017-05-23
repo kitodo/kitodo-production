@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
-import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.base.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;

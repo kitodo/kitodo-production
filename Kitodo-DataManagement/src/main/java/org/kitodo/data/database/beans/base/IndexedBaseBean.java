@@ -9,43 +9,27 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.database.beans;
-
-import java.io.Serializable;
+package org.kitodo.data.database.beans.base;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+import org.kitodo.data.database.beans.base.BaseBean;
 import org.kitodo.data.database.helper.enums.IndexAction;
 
 /**
- * Base bean class.
+ * Base bean class for indexed beans.
  */
 @MappedSuperclass
-public abstract class BaseBean implements Serializable {
+public abstract class IndexedBaseBean extends BaseBean {
 
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @Column(name = "id")
-    @GeneratedValue
-    private Integer id;
+    private static final long serialVersionUID = 2L;
 
     @Column(name = "indexAction")
     @Enumerated(EnumType.STRING)
     private IndexAction indexAction;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     /**
      * Get action which should be performed on ElasticSearch index.

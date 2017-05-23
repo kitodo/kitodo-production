@@ -1,17 +1,12 @@
 /*
- * Copyright 2005 Nick Heudecker
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * This file is part of the Kitodo project.
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * It is licensed under GNU General Public License version 3 or later.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
  */
 
 package org.kitodo.data.database.persistence;
@@ -19,28 +14,22 @@ package org.kitodo.data.database.persistence;
 import java.io.Serializable;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
-import org.kitodo.data.database.helper.Util;
+import org.kitodo.data.database.helper.HibernateHelper;
 
 /**
- * Base class for DAOs. This class defines common CRUD methods.
+ * Base class for DAOs.
  *
- * <p>
- * Changes have been made by Steffen Hankiewicz with later changes by Beatrycze
- * Kmiec
- * </p>
- *
- * @author Nick Heudecker &lt;nick@systemmobile.com&gt;
- * @author Steffen Hankiewicz &lt;steffen.hankiewicz@intranda.com&gt;
  * @author Beatrycze Kmiec &lt;beatrycze.kmiec@slub-dresden.de&gt;
  */
 
 public abstract class BaseDAO implements Serializable {
+
     private static final long serialVersionUID = 4676125965631365912L;
 
     /**
@@ -52,16 +41,20 @@ public abstract class BaseDAO implements Serializable {
      *             add description
      */
     protected void removeObject(Object object) throws DAOException {
+        Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
+            transaction = session.beginTransaction();
             synchronized (object) {
                 session.evict(object);
                 session.delete(object);
                 session.flush();
-                session.beginTransaction().commit();
+                transaction.commit();
             }
         } catch (Exception e) {
-            rollback();
+            if (transaction != null) {
+                transaction.rollback();
+            }
             throw new DAOException(e);
         }
     }
@@ -79,43 +72,43 @@ public abstract class BaseDAO implements Serializable {
      */
     @SuppressWarnings("rawtypes")
     protected static void removeObject(Class cls, Integer id) throws DAOException {
+        Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
-            // first load the object with the current session.
-            // the object must be loaded in this session before it is deleted.
+            Session session = HibernateHelper.getHibernateSession();
+            transaction = session.beginTransaction();
             synchronized (cls) {
-                Object obj = session.load(cls, id);
-                session.delete(obj);
+                Object object = session.load(cls, id);
+                session.delete(object);
                 session.flush();
-                session.beginTransaction().commit();
+                transaction.commit();
             }
         } catch (Exception e) {
-            rollback();
+            if (transaction != null) {
+                transaction.rollback();
+            }
             throw new DAOException(e);
         }
     }
 
     /**
-     * Retrieves and <code>Object</code> of the class type specified by
-     * <code>c</code>, and having the given <code>id</code>.
+     * Retrieves an object of the class type specified by <code>cls</code>, and
+     * having the given <code>id</code>.
      *
      * @param cls
      *            the class to load
      * @param id
      *            object id
      * @return Object may be null if object with ID doesn't exist
-     * @throws DAOException
-     *             add description
      */
     @SuppressWarnings({"rawtypes" })
     protected static Object retrieveObject(Class cls, Integer id) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             if (session == null) {
                 session = HibernateUtil.getSessionFactory().openSession();
-                Object o = session.get(cls, id);
+                Object object = session.get(cls, id);
                 session.close();
-                return o;
+                return object;
             }
             return session.get(cls, id);
         } catch (HibernateException he) {
@@ -124,18 +117,16 @@ public abstract class BaseDAO implements Serializable {
     }
 
     /**
-     * Own design one of previous authors for returning the objects.
+     * Retrieve objects by given query.
      *
      * @param query
      *            string
      * @return list of results
-     * @throws DAOException
-     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             return session.createQuery(query).list();
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -143,8 +134,7 @@ public abstract class BaseDAO implements Serializable {
     }
 
     /**
-     * Own design one of previous authors for maximum number of objects
-     * returned.
+     * Retrieve objects by given query for maximum number of objects.
      *
      * @param query
      *            string
@@ -153,13 +143,11 @@ public abstract class BaseDAO implements Serializable {
      * @param max
      *            amount of results
      * @return constrained list of results
-     * @throws DAOException
-     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query, int first, int max) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
@@ -177,13 +165,11 @@ public abstract class BaseDAO implements Serializable {
      * @param parameter
      *            string
      * @return list of results
-     * @throws DAOException
-     *             add description
      */
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query, String parameter) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
             q.setParameter(0, parameter);
             return q.list();
@@ -198,28 +184,31 @@ public abstract class BaseDAO implements Serializable {
      * @param query
      *            string
      * @param namedParameter
-     *            Name of named parameter
+     *            name of named parameter
      * @param parameter
-     *            Parameter value
-     * @return List
-     * @throws DAOException
-     *             add description
+     *            parameter value
+     * @return List of objects
      */
     protected List retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
-            q.setString(namedParameter, parameter);
+            q.setParameter(namedParameter, parameter, StringType.INSTANCE);
             return q.list();
         } catch (HibernateException he) {
             throw new DAOException(he);
         }
     }
 
+    /**
+     * Retrieve all objects fro given class.
+     *
+     * @param cls class
+     * @return List of all objects
+     */
     protected List retrieveAllObjects(Class cls) {
-        Session session = Helper.getHibernateSession();
-        Criteria criteria = session.createCriteria(cls);
-        return criteria.list();
+        Session session = HibernateHelper.getHibernateSession();
+        return session.createQuery("FROM " + cls.getName()).list();
     }
 
     /**
@@ -228,12 +217,10 @@ public abstract class BaseDAO implements Serializable {
      * @param query
      *            string
      * @return amount of results
-     * @throws DAOException
-     *             add description
      */
     protected Long retrieveAmount(String query) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             return (Long) session.createQuery("select count(*) " + query).uniqueResult();
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -241,7 +228,7 @@ public abstract class BaseDAO implements Serializable {
     }
 
     /**
-     * Stores <code>object</code>, making it persistent.
+     * Store given object.
      *
      * @param object
      *            to persist
@@ -249,99 +236,51 @@ public abstract class BaseDAO implements Serializable {
      *             add description
      */
     protected static void storeObject(Object object) throws DAOException {
+        Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
+            transaction = session.beginTransaction();
             session.saveOrUpdate(object);
             session.flush();
-            session.beginTransaction().commit();
+            transaction.commit();
         } catch (HibernateException he) {
-            rollback();
+            if (transaction != null) {
+                transaction.rollback();
+            }
             throw new DAOException(he);
         }
     }
 
+    /**
+     * Store given list of objects.
+     *
+     * @param list of objects
+     */
     protected void storeList(List<Object> list) throws DAOException {
+        Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
+            transaction = session.beginTransaction();
             for (Object obj : list) {
                 session.saveOrUpdate(obj);
             }
             session.flush();
-            session.beginTransaction().commit();
+            transaction.commit();
         } catch (HibernateException he) {
-            rollback();
-            throw new DAOException(he);
-
-        }
-    }
-
-    /**
-     * Performs a rollback on the current session. Exceptions are logged.
-     *
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback.
-     */
-    protected static void rollback() throws DAOException {
-        try {
-            Session session = Helper.getHibernateSession();
-            if (session != null) {
-                session.beginTransaction().rollback();
+            if (transaction != null) {
+                transaction.rollback();
             }
-        } catch (HibernateException he) {
             throw new DAOException(he);
         }
-    }
-
-    /**
-     * Retrieves the HQL query from the resource bundle.
-     *
-     * @param key
-     *            the HQL query to lookup
-     */
-    protected String getQuery(String key) {
-        return Util.getQuery(key);
     }
 
     protected void refresh(Object o) {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         if (session == null) {
             session = HibernateUtil.getSessionFactory().openSession();
             session.refresh(o);
             session.close();
         }
         session.refresh(o);
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected Object loadObjects(Class cls, Integer id) throws DAOException {
-        try {
-            Session session = Helper.getHibernateSession();
-            if (session == null) {
-                session = HibernateUtil.getSessionFactory().openSession();
-                Object o = session.load(cls, id);
-                session.close();
-                return o;
-            }
-            return session.load(cls, id);
-        } catch (HibernateException he) {
-            throw new DAOException(he);
-        }
-    }
-
-    /**
-     * Update of the object.
-     *
-     * @param object
-     *            to update
-     */
-    protected void updateObject(Object object) {
-        Session session = Helper.getHibernateSession();
-        if (session == null) {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.update(object);
-            session.close();
-        }
-        session.update(object);
     }
 }
