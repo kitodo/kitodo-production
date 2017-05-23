@@ -40,26 +40,22 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
 
-import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.PropertyNotFoundException;
-import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.helper.HibernateHelper;
 import org.kitodo.data.database.helper.Util;
-import org.kitodo.data.database.persistence.HibernateUtil;
 
-// TODO: split this class! here should be only parts of Helper which are needed
-// for Beans and Persistence
-public class Helper implements Serializable, Observer {
+/**
+ * Extends HibernateHelper from Kitodo - Data Management module.
+ */
+public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Always treat de-serialization as a full-blown constructor, by validating
@@ -277,75 +273,6 @@ public class Helper implements Serializable, Observer {
         }
     }
 
-    /**
-     * Get managed bean value.
-     *
-     * @param expr
-     *            String
-     * @return Object
-     */
-    public static Object getManagedBeanValue(String expr) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context == null) {
-            return null;
-        } else {
-            Object value = null;
-            Application application = context.getApplication();
-            if (application != null) {
-                ValueBinding vb = application.createValueBinding(expr);
-                if (vb != null) {
-                    try {
-                        value = vb.getValue(context);
-                    } catch (PropertyNotFoundException e) {
-                        logger.error(e);
-                    } catch (EvaluationException e) {
-                        logger.error(e);
-                    }
-                }
-            }
-            return value;
-        }
-    }
-
-    /**
-     * The procedure removeManagedBean() removes a managed bean from the faces
-     * context by name. If nothing such is available, nothing happens.
-     *
-     * @param name
-     *            managed bean to remove
-     */
-    public static void removeManagedBean(String name) {
-        try {
-            @SuppressWarnings("rawtypes")
-            Map sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-            if (sessionMap.containsKey(name)) {
-                sessionMap.remove(name);
-            }
-        } catch (Exception nothingToDo) {
-        }
-    }
-
-    /**
-     * Get Hibernate Session.
-     *
-     * @return Hibernate Session
-     */
-    public static Session getHibernateSession() {
-        Session sess;
-        try {
-            sess = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
-            if (sess == null) {
-                sess = HibernateUtil.getSession();
-            }
-        } catch (Exception e) {
-            sess = HibernateUtil.getSession();
-        }
-        if (!sess.isOpen()) {
-            sess = HibernateUtil.getSession();
-        }
-        return sess;
-    }
-
     private static void loadMsgs() {
         commonMessages = new HashMap<Locale, ResourceBundle>();
         localMessages = new HashMap<Locale, ResourceBundle>();
@@ -463,7 +390,7 @@ public class Helper implements Serializable, Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (!(arg instanceof String)) {
-            Helper.setFehlerMeldung("Usernotification failed by object: '" + arg.toString()
+            Helper.setFehlerMeldung("User notification failed by object: '" + arg.toString()
                     + "' which isn't an expected String Object. This error is caused by an implementation of "
                     + "the Observer Interface in Helper");
         } else {

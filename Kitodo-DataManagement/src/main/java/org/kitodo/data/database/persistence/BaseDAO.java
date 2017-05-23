@@ -20,7 +20,7 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.hibernate.type.StringType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.Helper;
+import org.kitodo.data.database.helper.HibernateHelper;
 
 /**
  * Base class for DAOs.
@@ -43,7 +43,7 @@ public abstract class BaseDAO implements Serializable {
     protected void removeObject(Object object) throws DAOException {
         Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             transaction = session.beginTransaction();
             synchronized (object) {
                 session.evict(object);
@@ -70,11 +70,11 @@ public abstract class BaseDAO implements Serializable {
      * @throws DAOException
      *             add description
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     protected static void removeObject(Class cls, Integer id) throws DAOException {
         Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             transaction = session.beginTransaction();
             synchronized (cls) {
                 Object object = session.load(cls, id);
@@ -100,10 +100,10 @@ public abstract class BaseDAO implements Serializable {
      *            object id
      * @return Object may be null if object with ID doesn't exist
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes" })
     protected static Object retrieveObject(Class cls, Integer id) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             if (session == null) {
                 session = HibernateUtil.getSessionFactory().openSession();
                 Object object = session.get(cls, id);
@@ -122,12 +122,11 @@ public abstract class BaseDAO implements Serializable {
      * @param query
      *            string
      * @return list of results
-
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             return session.createQuery(query).list();
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -148,7 +147,7 @@ public abstract class BaseDAO implements Serializable {
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query, int first, int max) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
@@ -170,7 +169,7 @@ public abstract class BaseDAO implements Serializable {
     @SuppressWarnings("rawtypes")
     protected List retrieveObjects(String query, String parameter) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
             q.setParameter(0, parameter);
             return q.list();
@@ -192,7 +191,7 @@ public abstract class BaseDAO implements Serializable {
      */
     protected List retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             Query q = session.createQuery(query);
             q.setParameter(namedParameter, parameter, StringType.INSTANCE);
             return q.list();
@@ -208,7 +207,7 @@ public abstract class BaseDAO implements Serializable {
      * @return List of all objects
      */
     protected List retrieveAllObjects(Class cls) {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         return session.createQuery("FROM " + cls.getName()).list();
     }
 
@@ -221,7 +220,7 @@ public abstract class BaseDAO implements Serializable {
      */
     protected Long retrieveAmount(String query) throws DAOException {
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             return (Long) session.createQuery("select count(*) " + query).uniqueResult();
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -239,7 +238,7 @@ public abstract class BaseDAO implements Serializable {
     protected static void storeObject(Object object) throws DAOException {
         Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             transaction = session.beginTransaction();
             session.saveOrUpdate(object);
             session.flush();
@@ -260,7 +259,7 @@ public abstract class BaseDAO implements Serializable {
     protected void storeList(List<Object> list) throws DAOException {
         Transaction transaction = null;
         try {
-            Session session = Helper.getHibernateSession();
+            Session session = HibernateHelper.getHibernateSession();
             transaction = session.beginTransaction();
             for (Object obj : list) {
                 session.saveOrUpdate(obj);
@@ -276,7 +275,7 @@ public abstract class BaseDAO implements Serializable {
     }
 
     protected void refresh(Object o) {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateHelper.getHibernateSession();
         if (session == null) {
             session = HibernateUtil.getSessionFactory().openSession();
             session.refresh(o);
