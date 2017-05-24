@@ -323,6 +323,20 @@ public class User extends BaseBean {
     // files
 
     /**
+     * Get size of projects result list.
+     *
+     * @return result size of projects
+     *
+     */
+    public int getProjectsSize() {
+        if (this.getProjects() == null) {
+            return 0;
+        } else {
+            return this.getProjects().size();
+        }
+    }
+
+    /**
      * Get size of user group result.
      *
      * @return size
