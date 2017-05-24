@@ -25,7 +25,7 @@ public class NavigationForm {
     }
 
     public String Reload() {
-        return "";
+        return null;
     }
 
     public String JeniaPopupCloseAction() {
@@ -33,7 +33,7 @@ public class NavigationForm {
     }
 
     public String BenutzerBearbeiten() {
-        return "BenutzerBearbeiten";
+        return "/newpages/BenutzerBearbeiten";
     }
 
     /**

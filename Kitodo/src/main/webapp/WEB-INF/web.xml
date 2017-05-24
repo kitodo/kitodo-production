@@ -12,9 +12,9 @@
     permissions and * limitations under the License.
 -->
 
-<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
 
     <display-name>Kitodo</display-name>
 
@@ -58,6 +58,10 @@
         <param-value>true</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
 
     <!-- WelcomeFile Filter -->
     <!--
@@ -143,12 +147,6 @@
     </context-param>
 
     <filter>
-        <display-name>RichFaces Filter</display-name>
-        <filter-name>richfaces</filter-name>
-        <filter-class>org.ajax4jsf.Filter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>Proxy</filter-name>
         <filter-class>net.sf.j2ep.ProxyFilter</filter-class>
         <init-param>
@@ -156,15 +154,6 @@
             <param-value>/WEB-INF/reverse-proxy.xml</param-value>
         </init-param>
     </filter>
-
-    <filter-mapping>
-        <filter-name>richfaces</filter-name>
-        <servlet-name>Faces Servlet</servlet-name>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
-
 
     <filter-mapping>
         <filter-name>extensionsFilter</filter-name>
@@ -246,12 +235,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>Jenia internal servlet</servlet-name>
-        <servlet-class>org.jenia.faces.util.Servlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
         <description>
         </description>
         <display-name>GoobiContentServer</display-name>
@@ -283,11 +266,6 @@
         <url-pattern>/wi</url-pattern>
     </servlet-mapping>
 
-
-    <servlet-mapping>
-        <servlet-name>Jenia internal servlet</servlet-name>
-        <url-pattern>/jenia4faces/*</url-pattern>
-    </servlet-mapping>
     <!-- Faces Servlet Mapping -->
 
     <!-- extension mapping -->

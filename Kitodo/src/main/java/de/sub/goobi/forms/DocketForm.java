@@ -30,6 +30,11 @@ import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
 public class DocketForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();
@@ -38,7 +43,7 @@ public class DocketForm extends BasisForm {
 
     public String Neu() {
         this.myDocket = new Docket();
-        return "DocketEdit";
+        return "/newpages/DocketEdit";
     }
 
     /**
@@ -50,23 +55,23 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return "DocketList";
+                return "/newpages/DocketList";
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
-                return "";
+                return null;
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (IOException e) {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
     }
 
@@ -84,22 +89,22 @@ public class DocketForm extends BasisForm {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setFehlerMeldung("DocketInUse");
-                return "";
+                return null;
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            return "";
+            return null;
         } catch (IOException e) {
             Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
-        return "DocketList";
+        return "/newpages/DocketList";
     }
 
     private boolean hasAssignedProcesses(Docket d) {
@@ -126,9 +131,9 @@ public class DocketForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("fehlerBeimEinlesen", he.getMessage());
-            return "";
+            return null;
         }
-        return "DocketList";
+        return "/newpages/DocketList";
     }
 
     public String filterKeinMitZurueck() {

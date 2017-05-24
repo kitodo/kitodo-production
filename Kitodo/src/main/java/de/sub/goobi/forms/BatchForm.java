@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
@@ -51,6 +53,8 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
+@ManagedBean
+@ViewScoped
 public class BatchForm extends BasisForm {
 
     private static final long serialVersionUID = 8234897225425856549L;
@@ -60,7 +64,7 @@ public class BatchForm extends BasisForm {
     private List<Process> currentProcesses;
     private List<Process> selectedProcesses;
     private List<Batch> currentBatches;
-    private List<String> selectedBatches;
+    private List<Integer> selectedBatches;
     private String batchfilter;
     private String processfilter;
     private IEvaluableFilter myFilteredDataSource;
@@ -82,15 +86,15 @@ public class BatchForm extends BasisForm {
     public void loadBatchData() throws DAOException {
         if (selectedProcesses == null || selectedProcesses.size() == 0) {
             this.currentBatches = serviceManager.getBatchService().findAll();
-            this.selectedBatches = new ArrayList<String>();
+            this.selectedBatches = new ArrayList<Integer>();
         } else {
-            selectedBatches = new ArrayList<String>();
+            selectedBatches = new ArrayList<Integer>();
             List<Batch> batchesToSelect = new ArrayList<>();
             for (Process process : selectedProcesses) {
                 batchesToSelect.addAll(serviceManager.getProcessService().getBatchesInitialized(process));
             }
             for (Batch batch : batchesToSelect) {
-                selectedBatches.add(serviceManager.getBatchService().getIdString(batch));
+                selectedBatches.add(Integer.valueOf(serviceManager.getBatchService().getIdString(batch)));
             }
         }
     }
@@ -101,8 +105,8 @@ public class BatchForm extends BasisForm {
     public void loadProcessData() {
         List<Process> processes = new ArrayList<>();
         try {
-            for (String b : selectedBatches) {
-                processes.addAll(serviceManager.getBatchService().find(Integer.parseInt(b)).getProcesses());
+            for (int b : selectedBatches) {
+                processes.addAll(serviceManager.getBatchService().find(b).getProcesses());
             }
             currentProcesses = new ArrayList<Process>(processes);
         } catch (Exception e) { // NumberFormatException, DAOException
@@ -201,23 +205,23 @@ public class BatchForm extends BasisForm {
         this.selectedProcesses = selectedProcesses;
     }
 
-    public List<String> getSelectedBatches() {
+    public List<Integer> getSelectedBatches() {
         return this.selectedBatches;
     }
 
-    public void setSelectedBatches(List<String> selectedBatches) {
+    public void setSelectedBatches(List<Integer> selectedBatches) {
         this.selectedBatches = selectedBatches;
     }
 
     /**
      * Filter all start.
-     * 
+     *
      * @return page - all batches
      */
     public String filterAlleStart() throws DAOException {
         filterBatches();
         filterProcesses();
-        return "BatchesAll";
+        return "/newpages/BatchesAll";
     }
 
     /**
@@ -239,7 +243,7 @@ public class BatchForm extends BasisForm {
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                return "";
+                return null;
             }
         } else {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
@@ -265,7 +269,7 @@ public class BatchForm extends BasisForm {
                 facesContext.responseComplete();
             }
         }
-        return "";
+        return null;
     }
 
     /**
@@ -279,8 +283,8 @@ public class BatchForm extends BasisForm {
             return;
         }
         List<Integer> ids = new ArrayList<Integer>(selectedBatchesSize);
-        for (String entry : this.selectedBatches) {
-            ids.add(Integer.parseInt(entry));
+        for (Integer entry : this.selectedBatches) {
+            ids.add(entry);
         }
         try {
             serviceManager.getBatchService().removeAll(ids);
@@ -304,8 +308,8 @@ public class BatchForm extends BasisForm {
             return;
         }
         try {
-            for (String entry : this.selectedBatches) {
-                Batch batch = serviceManager.getBatchService().find(Integer.parseInt(entry));
+            for (Integer entry : this.selectedBatches) {
+                Batch batch = serviceManager.getBatchService().find(entry);
                 serviceManager.getBatchService().addAll(batch, this.selectedProcesses);
                 serviceManager.getBatchService().save(batch);
                 if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
@@ -341,8 +345,8 @@ public class BatchForm extends BasisForm {
             return;
         }
 
-        for (String entry : this.selectedBatches) {
-            Batch batch = serviceManager.getBatchService().find(Integer.parseInt(entry));
+        for (Integer entry : this.selectedBatches) {
+            Batch batch = serviceManager.getBatchService().find(entry);
             serviceManager.getBatchService().removeAll(batch, this.selectedProcesses);
             serviceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
@@ -372,7 +376,7 @@ public class BatchForm extends BasisForm {
             return;
         } else {
             try {
-                Integer selected = Integer.valueOf(selectedBatches.get(0));
+                Integer selected = selectedBatches.get(0);
                 for (Batch batch : currentBatches) {
                     if (selected.equals(batch.getId())) {
                         batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
@@ -434,10 +438,10 @@ public class BatchForm extends BasisForm {
     public String editProperties() {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
-            return "";
+            return null;
         } else if (this.selectedBatches.size() > 1) {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
-            return "";
+            return null;
         } else {
             if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("")
                     && !this.selectedBatches.get(0).equals("null")) {
@@ -445,15 +449,15 @@ public class BatchForm extends BasisForm {
                 try {
                     batch = serviceManager.getBatchService().find(Integer.valueOf(selectedBatches.get(0)));
                     this.batchHelper = new BatchProcessHelper(batch);
-                    return "BatchProperties";
+                    return "/newpages/BatchProperties";
                 } catch (DAOException e) {
                     logger.error(e);
                     Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                    return "";
+                    return null;
                 }
             } else {
                 Helper.setFehlerMeldung("noBatchSelected");
-                return "";
+                return null;
             }
         }
     }
@@ -486,11 +490,11 @@ public class BatchForm extends BasisForm {
     public String exportBatch() {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
-            return "";
+            return null;
         }
-        for (String batchID : selectedBatches) {
+        for (Integer batchID : selectedBatches) {
             try {
-                Batch batch = serviceManager.getBatchService().find(Integer.valueOf(batchID));
+                Batch batch = serviceManager.getBatchService().find(batchID);
                 switch (batch.getType()) {
                     case LOGISTIC:
                         for (Process prozess : batch.getProcesses()) {
@@ -501,24 +505,24 @@ public class BatchForm extends BasisForm {
                                     ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                             dms.startExport(prozess);
                         }
-                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : "";
+                        return ConfigCore.getBooleanParameter("asynchronousAutomaticExport") ? "taskmanager" : null;
                     case NEWSPAPER:
                         TaskManager.addTask(new ExportNewspaperBatchTask(batch));
-                        return "taskmanager";
+                        return "/newpages/taskmanager";
                     case SERIAL:
                         TaskManager.addTask(new ExportSerialBatchTask(batch));
-                        return "taskmanager";
+                        return "/newpages/taskmanager";
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
             } catch (Exception e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
-                return "";
+                return null;
             }
         }
         Helper.setFehlerMeldung("noBatchSelected");
-        return "";
+        return null;
     }
 
     /**

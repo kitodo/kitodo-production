@@ -446,7 +446,7 @@ public class SearchForm {
             form.setModusAnzeige("aktuell");
             return form.FilterAlleStart();
         }
-        return "";
+        return null;
     }
 
     /**

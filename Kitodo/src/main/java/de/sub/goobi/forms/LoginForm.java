@@ -60,7 +60,7 @@ public class LoginForm {
         if (mySession != null) {
             mySession.invalidate();
         }
-        return "newMain";
+        return "/newpages/Main";
     }
 
     /**
@@ -82,7 +82,7 @@ public class LoginForm {
                         this.login);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not read database", e.getMessage());
-                return "";
+                return null;
             }
             if (treffer != null && treffer.size() > 0) {
                 /* Login vorhanden, nun passwort prüfen */
@@ -93,7 +93,7 @@ public class LoginForm {
                  */
                 if (!b.isActive()) {
                     Helper.setFehlerMeldung("login", "", Helper.getTranslation("loginInactive"));
-                    return "";
+                    return null;
                 }
                 /* wenn passwort auch richtig ist, den benutzer übernehmen */
                 if (serviceManager.getUserService().isPasswordCorrect(b, this.password)) {
@@ -126,9 +126,9 @@ public class LoginForm {
             String tempCss = this.myBenutzer.getCss();
             String newCss = new HelperForm().getCssLinkIfExists(tempCss);
             this.myBenutzer.setCss(newCss);
-            return "";
+            return null;
         }
-        return "";
+        return null;
     }
 
     /**
@@ -143,7 +143,7 @@ public class LoginForm {
         temp.sessionBenutzerAktualisieren(mySession, this.tempBenutzer);
         this.myBenutzer = this.tempBenutzer;
         this.schonEingeloggt = false;
-        return "";
+        return null;
     }
 
     /**
@@ -159,7 +159,7 @@ public class LoginForm {
         temp.sessionBenutzerAktualisieren(mySession, this.tempBenutzer);
         this.myBenutzer = this.tempBenutzer;
         this.schonEingeloggt = false;
-        return "";
+        return null;
     }
 
     /**
@@ -169,7 +169,7 @@ public class LoginForm {
      */
     public String EinloggenAls() {
         if (getMaximaleBerechtigung() != 1) {
-            return "newMain";
+            return "/newpages/Main";
         }
         this.myBenutzer = null;
         Integer loginId = Integer.valueOf(Helper.getRequestParameter("ID"));
@@ -182,9 +182,9 @@ public class LoginForm {
                     this.myBenutzer);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not read database", e.getMessage());
-            return "";
+            return null;
         }
-        return "newMain";
+        return "/newpages/Main";
     }
 
     /*
@@ -195,7 +195,7 @@ public class LoginForm {
      * Bearbeitungsvorgang abbrechen.
      */
     public String PasswortAendernAbbrechen() {
-        return "newMain";
+        return "/newpages/Main";
     }
 
     /**
@@ -227,7 +227,7 @@ public class LoginForm {
                 Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
             }
         }
-        return "";
+        return null;
     }
 
     /**
@@ -249,7 +249,7 @@ public class LoginForm {
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
         }
-        return "";
+        return null;
     }
 
     private void AlteBilderAufraeumen() throws IOException {

@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
@@ -80,6 +82,8 @@ import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+@ManagedBean(eager=true)
+@ViewScoped
 public class AktuelleSchritteForm extends BasisForm {
     private static final long serialVersionUID = 5841566727939692509L;
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
@@ -162,9 +166,9 @@ public class AktuelleSchritteForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("error on reading database", he.getMessage());
-            return "";
+            return null;
         }
-        return "AktuelleSchritteAlle";
+        return "/newpages/AktuelleSchritteAlle";
     }
 
     private void sortList(Criteria inCrit) {
@@ -232,7 +236,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
                     Helper.setFehlerMeldung("stepInWorkError");
                     this.flagWait = false;
-                    return "";
+                    return null;
                 } else {
                     this.mySchritt.setProcessingStatusEnum(TaskStatus.INWORK);
                     this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -276,13 +280,13 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
             } else {
                 Helper.setFehlerMeldung("stepInWorkError");
-                return "";
+                return null;
             }
             this.flagWait = false;
         } finally {
             this.flagWaitLock.unlock();
         }
-        return "AktuelleSchritteBearbeiten";
+        return "/newpages/AktuelleSchritteBearbeiten";
     }
 
     /**
@@ -294,7 +298,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
-        return "AktuelleSchritteBearbeiten";
+        return "/newpages/AktuelleSchritteBearbeiten";
     }
 
     /**
@@ -312,7 +316,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 Type.LOGISTIC);
         if (batches.size() > 1) {
             Helper.setFehlerMeldung("multipleBatchesAssigned");
-            return "";
+            return null;
         }
         if (batches.size() != 0) {
             Integer batchNumber = batches.iterator().next().getId();
@@ -335,7 +339,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements
         // in batch");
         if (currentStepsOfBatch.size() == 0) {
-            return "";
+            return null;
         }
         if (currentStepsOfBatch.size() == 1) {
             return schrittDurchBenutzerUebernehmen();
@@ -385,7 +389,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "batchesEdit";
+        return "/newpages/batchesEdit";
     }
 
     /**
@@ -403,7 +407,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 Type.LOGISTIC);
         if (batches.size() > 1) {
             Helper.setFehlerMeldung("multipleBatchesAssigned");
-            return "";
+            return null;
         }
         if (batches.size() != 0) {
             Integer batchNumber = batches.iterator().next().getId();
@@ -420,7 +424,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
             currentStepsOfBatch = crit.list();
         } else {
-            return "AktuelleSchritteBearbeiten";
+            return "/newpages/AktuelleSchritteBearbeiten";
         }
         // if only one step is assigned for this batch, use the single
 
@@ -428,10 +432,10 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return "AktuelleSchritteBearbeiten";
+            return "/newpages/AktuelleSchritteBearbeiten";
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "batchesEdit";
+        return "/newpages/batchesEdit";
     }
 
     @Deprecated
@@ -468,7 +472,7 @@ public class AktuelleSchritteForm extends BasisForm {
             logger.error("task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
-        return "AktuelleSchritteAlle";
+        return "/newpages/AktuelleSchritteAlle";
     }
 
     /**
@@ -484,7 +488,7 @@ public class AktuelleSchritteForm extends BasisForm {
             if (ivp != null) {
                 ivp.setStep(mySchritt);
                 if (!ivp.validate()) {
-                    return "";
+                    return null;
                 }
             } else {
                 Helper.setFehlerMeldung("ErrorLoadingValidationPlugin");
@@ -515,7 +519,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 MetadatenVerifizierung mv = new MetadatenVerifizierung();
                 mv.setAutoSave(true);
                 if (!mv.validate(this.mySchritt.getProcess())) {
-                    return "";
+                    return null;
                 }
             }
 
@@ -525,7 +529,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 try {
                     if (!mih.checkIfImagesValid(this.mySchritt.getProcess().getTitle(), serviceManager
                             .getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()))) {
-                        return "";
+                        return null;
                     }
                 } catch (Exception e) {
                     Helper.setFehlerMeldung("Error on image validation: ", e);
@@ -538,12 +542,12 @@ public class AktuelleSchritteForm extends BasisForm {
                     && (prop.getValue() == null || prop.getValue().equals(""))) {
                 Helper.setFehlerMeldung(Helper.getTranslation("Eigenschaft") + " " + prop.getName() + " "
                         + Helper.getTranslation("requiredValue"));
-                return "";
+                return null;
             } else if (!prop.isValid()) {
                 List<String> parameter = new ArrayList<String>();
                 parameter.add(prop.getName());
                 Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
-                return "";
+                return null;
             }
         }
 
@@ -562,7 +566,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public String sperrungAufheben() {
         MetadatenSperrung.unlockProcess(this.mySchritt.getProcess().getId());
-        return "";
+        return null;
     }
 
     /**
@@ -590,7 +594,7 @@ public class AktuelleSchritteForm extends BasisForm {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             Helper.setFehlerMeldung("userNotFound");
-            return "";
+            return null;
         }
         if (logger.isDebugEnabled()) {
             logger.debug("mySchritt.ID: " + this.mySchritt.getId());
@@ -682,7 +686,7 @@ public class AktuelleSchritteForm extends BasisForm {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             Helper.setFehlerMeldung("userNotFound");
-            return "";
+            return null;
         }
         Date now = new Date();
         this.myDav.uploadFromHome(this.mySchritt.getProcess());
@@ -759,7 +763,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
         this.myDav.uploadFromHome(this.mySchritt.getProcess());
         Helper.setMeldung(null, "Removed directory from user home", this.mySchritt.getProcess().getTitle());
-        return "";
+        return null;
     }
 
     /**
@@ -781,7 +785,7 @@ public class AktuelleSchritteForm extends BasisForm {
         this.myDav.downloadToHome(this.mySchritt.getProcess(), this.mySchritt.getId(),
                 !this.mySchritt.isTypeImagesWrite());
 
-        return "";
+        return null;
     }
 
     /**
@@ -824,7 +828,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         this.myDav.removeAllFromHome(geprueft, DONEDIRECTORYNAME);
         Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", DONEDIRECTORYNAME);
-        return "";
+        return null;
     }
 
     /**
@@ -860,7 +864,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
         // calcHomeImages();
         Helper.setMeldung(null, "Created directies in user home", "");
-        return "";
+        return null;
     }
 
     /**
@@ -897,7 +901,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
         // calcHomeImages();
         Helper.setMeldung(null, "Created directories in user home", "");
-        return "";
+        return null;
     }
 
     public String getScriptPath() {
@@ -1455,7 +1459,7 @@ public class AktuelleSchritteForm extends BasisForm {
             logger.error(e);
         }
         loadProcessProperties();
-        return "";
+        return null;
     }
 
     public boolean getShowAutomaticTasks() {
@@ -1485,6 +1489,6 @@ public class AktuelleSchritteForm extends BasisForm {
             isp.initialize(mySchritt, "");
             isp.execute();
         }
-        return "";
+        return null;
     }
 }

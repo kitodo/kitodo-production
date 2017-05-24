@@ -110,13 +110,13 @@ public class GranularityForm {
         }
         if (course == null || course.getNumberOfProcesses() < 1) {
             Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
-            return "";
+            return null;
         }
         Helper.removeManagedBean("ProzesskopieForm");
         CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course,
                 generateBatches);
         TaskManager.addTask(createProcesses);
-        return "taskmanager";
+        return "/newpages/taskmanager";
     }
 
     /**
@@ -229,7 +229,7 @@ public class GranularityForm {
         long perProcess = ConfigCore.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
         if (getNumberOfProcesses() < 1 || perProcess < 1
                 || (numberOfPages != null && numberOfPages / getNumberOfProcesses() >= perProcess)) {
-            return "";
+            return null;
         }
         double perIssue = (double) perProcess * getNumberOfProcesses() / course.countIndividualIssues();
         List<String> args = Arrays

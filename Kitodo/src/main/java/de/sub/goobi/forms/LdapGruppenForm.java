@@ -22,6 +22,11 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+@ManagedBean
+@ViewScoped
 public class LdapGruppenForm extends BasisForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
@@ -29,7 +34,7 @@ public class LdapGruppenForm extends BasisForm {
 
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
-        return "LdapGruppenBearbeiten";
+        return "/newpages/LdapGruppenBearbeiten";
     }
 
     /**
@@ -40,10 +45,10 @@ public class LdapGruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
-            return "LdapGruppenAlle";
+            return "/newpages/LdapGruppenAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not save", e.getMessage());
-            return "";
+            return null;
         }
     }
 
@@ -57,9 +62,9 @@ public class LdapGruppenForm extends BasisForm {
             this.serviceManager.getLdapGroupService().remove(this.myLdapGruppe);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
-            return "";
+            return null;
         }
-        return "LdapGruppenAlle";
+        return "/newpages/LdapGruppenAlle";
     }
 
     /**
@@ -67,7 +72,7 @@ public class LdapGruppenForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String FilterKein() {
+    public String filterKein() {
         try {
             Session session = Helper.getHibernateSession();
             session.clear();
@@ -76,13 +81,13 @@ public class LdapGruppenForm extends BasisForm {
             this.page = new Page(crit, 0);
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("Error on reading database", he.getMessage());
-            return "";
+            return null;
         }
-        return "LdapGruppenAlle";
+        return "/newpages/LdapGruppenAlle";
     }
 
     public String FilterKeinMitZurueck() {
-        FilterKein();
+        filterKein();
         return this.zurueck;
     }
 

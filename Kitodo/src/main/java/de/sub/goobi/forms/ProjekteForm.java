@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -63,6 +65,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+@ManagedBean
+@ViewScoped
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
@@ -141,12 +145,12 @@ public class ProjekteForm extends BasisForm {
         this.projectProgressImage = null;
         this.projectStatImages = null;
         this.projectStatVolumes = null;
-        return "ProjekteAlle";
+        return "/newpages/ProjekteAlle";
     }
 
     public String newProject() {
         this.myProjekt = new Project();
-        return "ProjekteBearbeiten";
+        return "/newpages/ProjekteBearbeiten";
     }
 
     /**
@@ -159,19 +163,19 @@ public class ProjekteForm extends BasisForm {
         this.commitFileGroups();
         try {
             serviceManager.getProjectService().save(this.myProjekt);
-            return "ProjekteAlle";
+            return "/newpages/ProjekteAlle";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
     }
 
@@ -186,19 +190,19 @@ public class ProjekteForm extends BasisForm {
         this.commitFileGroups();
         try {
             serviceManager.getProjectService().save(this.myProjekt);
-            return "";
+            return null;
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
             logger.error(e.getMessage());
-            return "";
+            return null;
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         } catch (CustomResponseException e) {
             Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
             logger.error(e);
-            return "";
+            return null;
         }
     }
 
@@ -210,24 +214,24 @@ public class ProjekteForm extends BasisForm {
     public String delete() {
         if (this.myProjekt.getUsers().size() > 0) {
             Helper.setFehlerMeldung("userAssignedError");
-            return "";
+            return null;
         } else {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not delete", e.getMessage());
                 logger.error(e.getMessage());
-                return "";
+                return null;
             } catch (IOException e) {
                 Helper.setFehlerMeldung("could not delete from index", e.getMessage());
                 logger.error(e);
             } catch (CustomResponseException e) {
                 Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
                 logger.error(e);
-                return "";
+                return null;
             }
         }
-        return "ProjekteAlle";
+        return "/newpages/ProjekteAlle";
     }
 
     /**
@@ -245,9 +249,9 @@ public class ProjekteForm extends BasisForm {
         } catch (HibernateException he) {
             Helper.setFehlerMeldung("could not read", he.getMessage());
             logger.error(he.getMessage());
-            return "";
+            return null;
         }
-        return "ProjekteAlle";
+        return "/newpages/ProjekteAlle";
     }
 
     /**
@@ -301,7 +305,7 @@ public class ProjekteForm extends BasisForm {
         // to be deleted fileGroups ids are listed
         // and deleted after a commit
         this.deletedFileGroups.add(this.myFilegroup.getId());
-        return "ProjekteBearbeiten";
+        return "/newpages/ProjekteBearbeiten";
     }
 
     /*

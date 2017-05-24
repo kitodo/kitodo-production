@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -59,6 +61,8 @@ import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
 
+@ManagedBean
+@ViewScoped
 public class MassImportForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private Process template;
@@ -111,10 +115,10 @@ public class MassImportForm {
                     Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
                 }
             }
-            return "";
+            return null;
         }
         initializePossibleDigitalCollections();
-        return "MassImport";
+        return "/newpages/MassImport";
     }
 
     /**
@@ -218,7 +222,7 @@ public class MassImportForm {
         this.processList = new ArrayList<Process>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");
-            return "";
+            return null;
         }
         if (testForData()) {
             List<ImportObject> answer = new ArrayList<ImportObject>();
@@ -312,11 +316,11 @@ public class MassImportForm {
             }
             if (answer.size() != this.processList.size()) {
                 // some error on process generation, don't go to next page
-                return "";
+                return null;
             }
         } else {
             Helper.setFehlerMeldung("missingData");
-            return "";
+            return null;
         }
         this.idList = null;
         if (this.importFile != null) {
@@ -327,7 +331,7 @@ public class MassImportForm {
             this.plugin.deleteFiles(this.selectedFilenames);
         }
         this.records = "";
-        return "MassImportFormPage3";
+        return "/newpages/MassImportFormPage3";
     }
 
     /**
@@ -418,7 +422,7 @@ public class MassImportForm {
         if (this.format != null) {
             return this.format.getTitle();
         } else {
-            return "";
+            return null;
         }
     }
 
@@ -626,7 +630,7 @@ public class MassImportForm {
      */
     public String getFormat() {
         if (this.format == null) {
-            return "";
+            return null;
         }
         return this.format.getTitle();
     }
@@ -756,7 +760,7 @@ public class MassImportForm {
     public String nextPage() {
         if (!testForData()) {
             Helper.setFehlerMeldung("missingData");
-            return "";
+            return null;
         }
         java.lang.reflect.Method method;
         try {
@@ -765,11 +769,11 @@ public class MassImportForm {
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
             if (list != null) {
-                return "MultiMassImportPage2";
+                return "/newpages/MultiMassImportPage2";
             }
         } catch (Exception e) {
         }
-        return "MassImportFormPage2";
+        return "/newpages/MassImportFormPage2";
     }
 
     /**
@@ -831,7 +835,7 @@ public class MassImportForm {
 
             facesContext.responseComplete();
         }
-        return "";
+        return null;
     }
 
     /**
