@@ -480,7 +480,7 @@ public class ProcessService extends TitleSearchService<Process> {
      */
     public URI getImagesTifDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
-        File dir = new File(fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null));
+        URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -491,21 +491,21 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         };
 
-        String tifOrdner = "";
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
+        URI tifOrdner = null;
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
 
         if (verzeichnisse != null) {
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                tifOrdner = verzeichnisse[i];
+            for (URI aVerzeichnisse : verzeichnisse) {
+                tifOrdner = aVerzeichnisse;
             }
         }
 
-        if (tifOrdner.equals("") && useFallBack) {
+        if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = fileService.list(dir);
-                for (String folder : folderList) {
-                    if (folder.endsWith(suffix)) {
+                ArrayList<URI> folderList = fileService.getSubUris(dir);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
                         break;
                     }
@@ -513,15 +513,15 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         }
 
-        if (!tifOrdner.equals("") && useFallBack) {
+        if (!(tifOrdner == null) && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                File tif = new File(tifOrdner);
-                String[] files = fileService.list(tif);
-                if (files == null || files.length == 0) {
-                    String[] folderList = fileService.list(dir);
-                    for (String folder : folderList) {
-                        if (folder.endsWith(suffix) && !folder.startsWith(DIRECTORY_PREFIX)) {
+                URI tif = tifOrdner;
+                ArrayList<URI> files = fileService.getSubUris(tif);
+                if (files == null || files.size() == 0) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
                             tifOrdner = folder;
                             break;
                         }
@@ -530,15 +530,15 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         }
 
-        if (tifOrdner.equals("")) {
-            tifOrdner = process.getTitle() + "_" + DIRECTORY_SUFFIX;
+        if (tifOrdner == null) {
+            tifOrdner = URI.create(process.getTitle() + "_" + DIRECTORY_SUFFIX);
         }
 
         URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            fileService.createMetaDirectory(result, tifOrdner);
+            fileService.createMetaDirectory(result, tifOrdner.toString());
         }
         return result;
     }
@@ -549,13 +549,14 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean checkIfTifDirectoryExists(Process process) {
-        File testMe;
+        URI testMe;
         try {
-            testMe = new File(getImagesTifDirectory(true, process));
+            testMe = getImagesTifDirectory(true, process);
         } catch (DAOException | IOException | InterruptedException | SwapException e) {
             return false;
         }
-        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
+        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                && fileService.getSubUris(testMe).size() > 0;
 
     }
 
@@ -569,7 +570,7 @@ public class ProcessService extends TitleSearchService<Process> {
     public URI getImagesOrigDirectory(boolean useFallBack, Process process)
             throws IOException, InterruptedException, SwapException, DAOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
-            File dir = new File(fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null));
+            URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -580,18 +581,18 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             };
 
-            String origOrdner = "";
-            String[] verzeichnisse = fileService.list(filterVerz, dir);
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                origOrdner = verzeichnisse[i];
+            URI origOrdner = null;
+            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+            for (URI aVerzeichnisse : verzeichnisse) {
+                origOrdner = aVerzeichnisse;
             }
 
-            if (origOrdner.equals("") && useFallBack) {
+            if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = fileService.list(dir);
-                    for (String folder : folderList) {
-                        if (folder.endsWith(suffix)) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix)) {
                             origOrdner = folder;
                             break;
                         }
@@ -599,15 +600,15 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
 
-            if (!origOrdner.equals("") && useFallBack) {
+            if (!(origOrdner == null) && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    File tif = new File(origOrdner);
-                    String[] files = fileService.list(tif);
-                    if (files == null || files.length == 0) {
-                        String[] folderList = fileService.list(dir);
-                        for (String folder : folderList) {
-                            if (folder.endsWith(suffix)) {
+                    URI tif = origOrdner;
+                    ArrayList<URI> files = fileService.getSubUris(tif);
+                    if (files == null || files.size() == 0) {
+                        ArrayList<URI> folderList = fileService.getSubUris(dir);
+                        for (URI folder : folderList) {
+                            if (folder.toString().endsWith(suffix)) {
                                 origOrdner = folder;
                                 break;
                             }
@@ -616,13 +617,13 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
 
-            if (origOrdner.equals("")) {
-                origOrdner = DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX;
+            if (origOrdner == null) {
+                origOrdner = URI.create(DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX);
             }
             URI rueckgabe = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                fileService.createMetaDirectory(rueckgabe, origOrdner);
+                fileService.createMetaDirectory(rueckgabe, origOrdner.toString());
             }
             return rueckgabe;
         } else {

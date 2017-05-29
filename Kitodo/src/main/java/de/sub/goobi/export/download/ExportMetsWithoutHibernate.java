@@ -218,8 +218,9 @@ public class ExportMetsWithoutHibernate {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    File folder = new File(this.fi.getMethodFromName(pfg.getFolder()));
-                    if (folder.exists() && serviceManager.getFileService().list(folder).length > 0) {
+                    URI folder = URI.create(this.fi.getMethodFromName(pfg.getFolder()));
+                    if (serviceManager.getFileService().fileExist(folder)
+                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));

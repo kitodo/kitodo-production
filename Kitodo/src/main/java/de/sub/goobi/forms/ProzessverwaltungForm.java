@@ -275,13 +275,13 @@ public class ProzessverwaltungForm extends BasisForm {
                         {
                             // renaming ocr directories
                             URI ocrDirectory = fileService.getOcrDirectory(myProzess);
-                            File dir = new File(ocrDirectory);
-                            if (dir.isDirectory()) {
-                                File[] subdirs = fileService.listFiles(dir);
-                                for (File imagedir : subdirs) {
-                                    if (imagedir.isDirectory()) {
-                                        imagedir.renameTo(new File(imagedir.getAbsolutePath()
-                                                .replace(myProzess.getTitle(), myNewProcessTitle)));
+                            URI dir = ocrDirectory;
+                            if (fileService.isDirectory(dir)) {
+                                ArrayList<URI> subdirs = fileService.getSubUris(dir);
+                                for (URI imagedir : subdirs) {
+                                    if (fileService.isDirectory(imagedir)) {
+                                        fileService.renameFile(imagedir,
+                                                imagedir.toString().replace(myProzess.getTitle(), myNewProcessTitle));
                                     }
                                 }
                             }
@@ -1868,15 +1868,15 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return list of Strings
      */
-    public List<String> getXsltList() {
-        List<String> answer = new ArrayList<String>();
-        File folder = new File("xsltFolder");
-        if (folder.isDirectory() && folder.exists()) {
-            String[] files = fileService.list(folder);
+    public List<URI> getXsltList() {
+        List<URI> answer = new ArrayList<>();
+        URI folder = fileService.createDirectory("xsltFolder");
+        if (fileService.isDirectory(folder) && fileService.fileExist(folder)) {
+            ArrayList<URI> files = fileService.getSubUris(folder);
 
-            for (String file : files) {
-                if (file.endsWith(".xslt") || file.endsWith(".xsl")) {
-                    answer.add(file);
+            for (URI uri : files) {
+                if (uri.toString().endsWith(".xslt") || uri.toString().endsWith(".xsl")) {
+                    answer.add(uri);
                 }
             }
         }

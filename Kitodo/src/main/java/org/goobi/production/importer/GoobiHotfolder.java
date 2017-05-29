@@ -18,7 +18,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.configuration.XMLConfiguration;
@@ -35,7 +34,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     private static final Logger logger = LogManager.getLogger(GoobiHotfolder.class);
 
     private String name;
-    private File folder;
+    private URI folder;
     private Integer template;
     private String updateStrategy;
     private String collection;
@@ -57,7 +56,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @param collection
      *            String
      */
-    public GoobiHotfolder(String name, File folder, Integer template, String updateStrategy, String collection) {
+    public GoobiHotfolder(String name, URI folder, Integer template, String updateStrategy, String collection) {
         this.setName(name);
         this.folder = folder;
         this.setTemplate(template);
@@ -71,8 +70,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @return a list with all xml files in GoobiHotfolder
      */
     @Override
-    public List<File> getCurrentFiles() {
-        return Arrays.asList(fileService.listFiles(this.folder));
+    public List<URI> getCurrentFiles() {
+        return fileService.getSubUris(this.folder);
     }
 
     /**
@@ -84,11 +83,11 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
 
     @Override
-    public List<String> getFilesByName(String name) {
-        List<String> files = Arrays.asList(fileService.list(this.folder));
-        List<String> answer = new ArrayList<String>();
-        for (String file : files) {
-            if (file.contains(name) && !file.contains("anchor")) {
+    public List<URI> getFilesByName(String name) {
+        ArrayList<URI> files = fileService.getSubUris(this.folder);
+        List<URI> answer = new ArrayList<>();
+        for (URI file : files) {
+            if (file.toString().contains(name) && !file.toString().contains("anchor")) {
                 answer.add(file);
             }
         }
@@ -103,8 +102,8 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @return a list with all filenames matching the filter
      */
     @Override
-    public List<String> getFileNamesByFilter(FilenameFilter filter) {
-        return Arrays.asList(fileService.list(filter, this.folder));
+    public List<URI> getFileNamesByFilter(FilenameFilter filter) {
+        return fileService.getSubUris(filter, this.folder);
     }
 
     /**
@@ -115,13 +114,13 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * @return a list with all file matching the filter
      */
     @Override
-    public List<File> getFilesByFilter(FilenameFilter filter) {
-        return Arrays.asList(fileService.listFiles(filter, this.folder));
+    public List<URI> getFilesByFilter(FilenameFilter filter) {
+        return fileService.getSubUris(filter, this.folder);
     }
 
     @Override
     public String getFolderAsString() {
-        return this.folder.getAbsolutePath() + File.separator;
+        return this.folder.getPath() + File.separator;
     }
 
     @Override
@@ -131,7 +130,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
     @Override
     public URI getFolderAsUri() {
-        return this.folder.toURI();
+        return this.folder;
     }
 
     /**
@@ -178,7 +177,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
                 logger.trace("config 7");
                 String name = config.getString("hotfolder(" + i + ")[@name]");
                 logger.trace("config 8");
-                File folder = new File(config.getString("hotfolder(" + i + ")[@folder]"));
+                URI folder = URI.create(config.getString("hotfolder(" + i + ")[@folder]"));
                 logger.trace("config 9");
                 Integer template = config.getInt("hotfolder(" + i + ")[@template]");
                 logger.trace("config 10");
@@ -291,22 +290,23 @@ public class GoobiHotfolder implements IGoobiHotfolder {
         return this.collection;
     }
 
-    public File getLockFile() {
-        return new File(this.folder, ".lock");
+    public URI getLockFile() throws IOException {
+        URI resource = fileService.createResource(this.folder, ".lock");
+        return resource;
 
     }
 
-    public boolean isLocked() {
-        return getLockFile().exists();
+    public boolean isLocked() throws IOException {
+        return fileService.fileExist(getLockFile());
     }
 
     /**
      * Lock.
      */
     public void lock() throws IOException {
-        File f = getLockFile();
-        if (!f.exists()) {
-            f.createNewFile();
+        URI f = getLockFile();
+        if (!fileService.fileExist(f)) {
+            fileService.createResource(f.toString());
         }
     }
 
@@ -314,9 +314,9 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      * Unlock.
      */
     public void unlock() throws IOException {
-        File f = getLockFile();
-        if (f.exists()) {
-            fileService.delete(f.toURI());
+        URI f = getLockFile();
+        if (fileService.fileExist(f)) {
+            fileService.delete(f);
         }
     }
 }

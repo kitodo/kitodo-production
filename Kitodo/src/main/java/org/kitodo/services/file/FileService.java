@@ -16,7 +16,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ShellScript;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -28,8 +27,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -57,23 +54,52 @@ public class FileService {
 
     private static final Logger logger = LogManager.getLogger(FileService.class);
 
-    // program options initialized to default values
-    private static final int BUFFER_SIZE = 4 * 1024;
-
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
     private static final ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Creates a MetaDirectory.
+     * 
+     * @param parentFolderUri
+     *            The URI, where the
+     * @param directoryName
+     *            the name of the directory
+     * @throws IOException
+     *             an IOException
+     */
     public void createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
-        if (!new File(parentFolderUri + directoryName).exists()) {
+        if (!fileExist(parentFolderUri.resolve(directoryName))) {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
             createDirScript.run(Arrays.asList(new String[] {parentFolderUri + directoryName }));
         }
 
     }
 
+    /**
+     * Creates a Directory at a given uri with a given name.
+     * 
+     * @param parentFolderUri
+     *            The uri, where the directory should be created
+     * @param directoryName
+     *            the name of the directory.
+     * @return The URI of the new directory.
+     */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
         File file = new File(parentFolderUri.toString(), directoryName);
+        file.mkdir();
+        return file.toURI();
+    }
+
+    /**
+     * Creates a Directory with a given name.
+     *
+     * @param directoryName
+     *            the name of the directory.
+     * @return The URI of the new directory.
+     */
+    public URI createDirectory(String directoryName) {
+        File file = new File(directoryName);
         file.mkdir();
         return file.toURI();
     }
@@ -108,7 +134,7 @@ public class FileService {
      * Sometimes running the JVM’s garbage collector puts things right.
      *
      * @param fileUri
-     *            File to move or rename
+     *            File to rename
      * @param newFileName
      *            New file name / destination
      * @throws IOException
@@ -161,6 +187,7 @@ public class FileService {
                 try {
                     Thread.sleep(SLEEP_INTERVAL_MILLIS);
                 } catch (InterruptedException e) {
+                    logger.warn("The thread was interrupted");
                 }
                 millisWaited += SLEEP_INTERVAL_MILLIS;
             }
@@ -186,43 +213,23 @@ public class FileService {
      *            the directory to run through
      * @return number of files as Integer
      */
-    public Integer getNumberOfFiles(File directory) {
+    public Integer getNumberOfFiles(URI directory) {
         int count = 0;
-        if (directory.isDirectory()) {
+        if (isDirectory(directory)) {
             /*
              * die Images zählen
              */
-            count = list(Helper.imageNameFilter, directory).length;
+            count = getSubUris(Helper.imageNameFilter, directory).size();
 
             /*
              * die Unterverzeichnisse durchlaufen
              */
-            String[] children = list(directory);
-            for (int i = 0; i < children.length; i++) {
-                count += getNumberOfFiles(new File(directory, children[i]));
+            ArrayList<URI> children = getSubUris(directory);
+            for (URI aChildren : children) {
+                count += getNumberOfFiles(directory.resolve(aChildren));
             }
         }
         return count;
-    }
-
-    public Integer getNumberOfFiles(String inDir) {
-        return getNumberOfFiles(new File(inDir));
-    }
-
-    /**
-     * Copy directory.
-     *
-     * @param sourceDirectory
-     *            source file
-     * @param targetDirectory
-     *            destination file
-     * @return Long
-     */
-    public void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
-        if (!targetDirectory.exists()) {
-            targetDirectory.mkdirs();
-        }
-        FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
     /**
@@ -232,10 +239,16 @@ public class FileService {
      *            source file as uri
      * @param targetDirectory
      *            destination file as uri
-     * @return Long
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
+    }
+
+    private void copyDirectory(File sourceDirectory, File targetDirectory) throws IOException {
+        if (!targetDirectory.exists()) {
+            targetDirectory.mkdirs();
+        }
+        FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
     }
 
     private void copyFile(File srcFile, File destFile) throws IOException {
@@ -250,6 +263,17 @@ public class FileService {
         FileUtils.copyFileToDirectory(new File(sourceDirectory), new File(targetDirectory));
     }
 
+    /**
+     * Writes to a File at a given URI.
+     * 
+     * @param uri
+     *            The Uri, to write to.
+     * @return An Outputstream to the file at the given URI.
+     * @throws IOException
+     *             If file cannot be accessed
+     * @throws URISyntaxException
+     *             If URI is created wrong
+     */
     public OutputStream write(URI uri) throws IOException, URISyntaxException {
         if (!fileExist(uri)) {
             createFile(uri);
@@ -257,16 +281,34 @@ public class FileService {
         return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
     }
 
-    private void createFile(URI uri) throws IOException {
+    private boolean createFile(URI uri) throws IOException {
         URI kitodoUri = mapUriToKitodoUri(uri);
-        new File(kitodoUri).createNewFile();
+        return new File(kitodoUri).createNewFile();
     }
 
+    /**
+     * Reads a file at a given URI.
+     * 
+     * @param uri
+     *            The uri to reas
+     * @return an InputStream to read from.
+     * @throws IOException
+     *             if File cannot be accessed.
+     */
     public InputStream read(URI uri) throws IOException {
         URL url = mapUriToKitodoUri(uri).toURL();
         return url.openStream();
     }
 
+    /**
+     * Deletes a resource at a given uri.
+     * 
+     * @param uri
+     *            The uri to delete-
+     * @return True, if successfull, false otherwise.
+     * @throws IOException
+     *             If the File cannot be accessed.
+     */
     public boolean delete(URI uri) throws IOException {
         File file = new File(mapUriToKitodoUri(uri));
         if (file.isFile()) {
@@ -279,41 +321,58 @@ public class FileService {
         return false;
     }
 
+    /**
+     * Checks, if a file exists.
+     * 
+     * @param uri
+     *            The uri, to check, if there is a file.
+     * @return True, is the file exists.
+     */
     public boolean fileExist(URI uri) {
         String path = mapUriToKitodoUri(uri).getPath();
         File file = new File(path);
         return file.exists();
     }
 
+    /**
+     * Returns the name of a file at a given uri.
+     * 
+     * @param uri
+     *            The uri, to get the filename from.
+     * @return The name of the file.
+     */
     public String getFileName(URI uri) {
         return uri.toString();
     }
 
-    public OutputStream writeOrCreate(URI uri) throws IOException, URISyntaxException {
-        return write(uri);
+    /**
+     * Moves a directory from a given URI to a given URI
+     * 
+     * @param sourceUri
+     *            The source URI.
+     * @param targetUri
+     *            The target URI.
+     * @throws IOException
+     *             if directory cannot be accessed.
+     */
+    public void moveDirectory(URI sourceUri, URI targetUri) throws IOException {
+        copyDirectory(sourceUri, targetUri);
+        delete(sourceUri);
     }
 
-    public void moveFile(File sourceFile, File targetFile) throws IOException {
-        FileUtils.moveFile(sourceFile, targetFile);
-    }
-
-    public void moveDirectory(File sourceDirectory, File targetDirectory) throws IOException {
-        FileUtils.moveDirectory(sourceDirectory, targetDirectory);
-    }
-
-    public void moveDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        copyDirectory(sourceDirectory, targetDirectory);
-        delete(sourceDirectory);
-    }
-
-    public void moveFile(URI sourceFile, URI targetFile) throws IOException {
-        copyFile(sourceFile, targetFile);
-        delete(sourceFile);
-    }
-
-    public String[] list(File file) {
-        String[] unchecked = file.list();
-        return unchecked != null ? unchecked : new String[0];
+    /**
+     * Moves a file from a given URI to a given URI
+     *
+     * @param sourceUri
+     *            The source URI.
+     * @param targetUri
+     *            The target URI.
+     * @throws IOException
+     *             if directory cannot be accessed.
+     */
+    public void moveFile(URI sourceUri, URI targetUri) throws IOException {
+        copyFile(sourceUri, targetUri);
+        delete(sourceUri);
     }
 
     public String[] list(FilenameFilter filter, File file) {
@@ -326,37 +385,14 @@ public class FileService {
         return unchecked != null ? unchecked : new File[0];
     }
 
-    public File[] listFiles(FileFilter filter, File file) {
+    private File[] listFiles(FilenameFilter filter, File file) {
         File[] unchecked = file.listFiles(filter);
         return unchecked != null ? unchecked : new File[0];
-    }
-
-    public File[] listFiles(FilenameFilter filter, File file) {
-        File[] unchecked = file.listFiles(filter);
-        return unchecked != null ? unchecked : new File[0];
-    }
-
-    public List<File> getCurrentFiles(File file) {
-        File[] result = file.listFiles();
-        if (result != null) {
-            return Arrays.asList(result);
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    public List<File> getFilesByFilter(File file, FilenameFilter filter) {
-        File[] result = file.listFiles(filter);
-        if (result != null) {
-            return Arrays.asList(result);
-        } else {
-            return Collections.emptyList();
-        }
     }
 
     public void writeMetadataFile(Fileformat gdzfile, Process process) throws IOException, PreferencesException,
             InterruptedException, DAOException, SwapException, WriteException, URISyntaxException {
-        OutputStream write = serviceManager.getFileService().write(process.getProcessBaseUri());
+        serviceManager.getFileService().write(process.getProcessBaseUri()).close();
 
         RulesetService rulesetService = new RulesetService();
         boolean backupCondition;
@@ -730,4 +766,5 @@ public class FileService {
         }
         return true;
     }
+
 }

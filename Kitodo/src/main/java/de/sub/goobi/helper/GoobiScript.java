@@ -17,6 +17,7 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -249,21 +250,21 @@ public class GoobiScript {
             return;
         }
 
-        File sourceFolder = new File(this.myParameters.get("sourcefolder"));
-        if (!sourceFolder.isDirectory()) {
+        URI sourceFolder = URI.create(this.myParameters.get("sourcefolder"));
+        if (!fileService.isDirectory(sourceFolder)) {
             Helper.setFehlerMeldung("kitodoScriptfield",
                     "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
         }
         try {
             for (Process p : inProzesse) {
-                File imagesFolder = new File(serviceManager.getProcessService().getImagesOrigDirectory(false, p));
-                if (fileService.list(imagesFolder).length > 0) {
+                URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, p);
+                if (fileService.getSubUris(imagesFolder).size() > 0) {
                     Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
                             + p.getId().intValue() + "] has already data in image folder");
                 } else {
-                    File sourceFolderProzess = new File(sourceFolder, p.getTitle());
-                    if (!sourceFolder.isDirectory()) {
+                    URI sourceFolderProzess = fileService.createResource(sourceFolder, p.getTitle());
+                    if (!fileService.isDirectory(sourceFolder)) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
                                 + " [" + p.getId().intValue() + "] is not existing");
                     } else {

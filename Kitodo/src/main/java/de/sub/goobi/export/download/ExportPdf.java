@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 import javax.faces.context.FacesContext;
@@ -130,14 +131,13 @@ public class ExportPdf extends ExportMets {
                         contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
                     }
                     FilenameFilter filter = new FileListFilter("\\d*\\.tif");
-                    File imagesDir = new File(
-                            serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
-                    File[] meta = fileService.listFiles(filter, imagesDir);
-                    int capacity = contentServerUrl.length() + (meta.length - 1) + AND_TARGET_FILE_NAME_IS.length()
+                    URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
+                    ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
+                    int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();
                     TreeSet<String> filenames = new TreeSet<String>(new MetadatenHelper(null, null));
-                    for (File data : meta) {
-                        String file = data.toURI().toURL().toString();
+                    for (URI data : meta) {
+                        String file = data.toURL().toString();
                         filenames.add(file);
                         capacity += file.length();
                     }

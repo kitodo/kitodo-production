@@ -820,8 +820,8 @@ public class Metadaten {
                 .setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
         this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
-            this.myProzess.setSortHelperImages(fileService.getNumberOfFiles(
-                    new File(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess))));
+            this.myProzess.setSortHelperImages(fileService
+                    .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess)));
             serviceManager.getProcessService().save(this.myProzess);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);

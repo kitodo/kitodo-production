@@ -132,7 +132,7 @@ public class FileManipulation {
             }
 
             inputStream = fileService.read(uploadedFile.toURI());
-            outputStream = fileService.writeOrCreate(filename);
+            outputStream = fileService.write(filename);
 
             byte[] buf = new byte[1024];
             int len;

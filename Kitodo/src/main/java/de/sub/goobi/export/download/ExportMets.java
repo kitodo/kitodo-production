@@ -25,7 +25,6 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -249,9 +248,8 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    File folder = new File(
-                            serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
-                    if (folder.exists() && fileService.list(folder).length > 0) {
+                    URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess);
+                    if (fileService.fileExist(folder) && fileService.getSubUris(folder).size() > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));

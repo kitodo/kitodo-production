@@ -78,9 +78,9 @@ public class HotfolderJob extends AbstractGoobiJob {
             logger.trace("2");
             for (GoobiHotfolder hotfolder : hotlist) {
                 logger.trace("3");
-                List<File> list = hotfolder.getCurrentFiles();
+                List<URI> list = hotfolder.getCurrentFiles();
                 logger.trace("4");
-                long size = getSize(list);
+                long size = list.size();
                 logger.trace("5");
                 try {
                     if (size > 0) {
@@ -91,29 +91,30 @@ public class HotfolderJob extends AbstractGoobiJob {
                             logger.trace("7");
                             list = hotfolder.getCurrentFiles();
                             logger.trace("8");
-                            if (size == getSize(list)) {
+                            if (size == list.size()) {
                                 hotfolder.lock();
                                 logger.trace("9");
                                 Process template = serviceManager.getProcessService().find(hotfolder.getTemplate());
                                 serviceManager.getProcessService().refresh(template);
                                 logger.trace("10");
-                                List<String> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
+                                List<URI> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
                                 logger.trace("11");
                                 HashMap<String, Integer> failedData = new HashMap<String, Integer>();
                                 logger.trace("12");
 
-                                for (String filename : metsfiles) {
+                                for (URI filename : metsfiles) {
                                     if (logger.isDebugEnabled()) {
                                         logger.debug("found file: " + filename);
                                     }
                                     logger.trace("13");
 
-                                    int returnValue = generateProcess(filename, template, hotfolder.getFolderAsUri(),
-                                            hotfolder.getCollection(), hotfolder.getUpdateStrategy());
+                                    int returnValue = generateProcess(filename.toString(), template,
+                                            hotfolder.getFolderAsUri(), hotfolder.getCollection(),
+                                            hotfolder.getUpdateStrategy());
                                     logger.trace("14");
                                     if (returnValue != 0) {
                                         logger.trace("15");
-                                        failedData.put(filename, returnValue);
+                                        failedData.put(filename.toString(), returnValue);
                                         logger.trace("16");
                                     } else {
                                         if (logger.isDebugEnabled()) {
@@ -155,21 +156,6 @@ public class HotfolderJob extends AbstractGoobiJob {
             }
 
         }
-    }
-
-    private long getSize(List<File> list) {
-        long size = 0;
-        for (File f : list) {
-            if (f.isDirectory()) {
-                File[] subdir = fileService.listFiles(f);
-                for (File sub : subdir) {
-                    size += sub.length();
-                }
-            } else {
-                size += f.length();
-            }
-        }
-        return size;
     }
 
     /**

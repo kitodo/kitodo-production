@@ -205,25 +205,25 @@ public class JobCreation {
             }
 
             // copy pdf files
-            File pdfs = new File(basepath + "_pdf" + File.separator);
-            if (pdfs.isDirectory()) {
-                fileService.moveDirectory(pdfs, new File(serviceManager.getFileService().getPdfDirectory(p)));
+            URI pdfs = (basepath.resolve("_pdf" + File.separator));
+            if (fileService.isDirectory(pdfs)) {
+                fileService.moveDirectory(pdfs, serviceManager.getFileService().getPdfDirectory(p));
             }
 
             // copy fulltext files
 
-            File fulltext = new File(basepath + "_txt");
+            URI fulltext = basepath.resolve("_txt");
 
-            if (fulltext.isDirectory()) {
+            if (fileService.isDirectory(fulltext)) {
 
-                fileService.moveDirectory(fulltext, new File(serviceManager.getFileService().getTxtDirectory(p)));
+                fileService.moveDirectory(fulltext, serviceManager.getFileService().getTxtDirectory(p));
             }
 
             // copy source files
 
-            File sourceDir = new File(basepath + "_src" + File.separator);
-            if (sourceDir.isDirectory()) {
-                fileService.moveDirectory(sourceDir, new File((serviceManager.getFileService().getImportDirectory(p))));
+            URI sourceDir = basepath.resolve("_src" + File.separator);
+            if (fileService.isDirectory(sourceDir)) {
+                fileService.moveDirectory(sourceDir, (serviceManager.getFileService().getImportDirectory(p)));
             }
 
             try {

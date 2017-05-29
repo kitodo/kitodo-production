@@ -18,7 +18,6 @@ import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -176,10 +175,9 @@ public class HelperSchritteWithoutHibernate {
         ProcessObject po = ProcessManager.getProcessObjectForId(processId);
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
         if (po.getSortHelperImages() != serviceManager.getFileService()
-                .getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
+                .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
             ProcessManager.updateImages(
-                    serviceManager.getFileService().getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))),
-                    processId);
+                    serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)), processId);
         }
         logger.debug("update process status");
         updateProcessStatus(processId);
