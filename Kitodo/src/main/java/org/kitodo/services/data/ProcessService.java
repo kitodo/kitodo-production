@@ -882,8 +882,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return filer format
      */
-    public Fileformat readMetadataFile(Process process)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
+    public Fileformat readMetadataFile(Process process) throws ReadException, IOException, PreferencesException {
         URI metadataFileUri = serviceManager.getFileService().getMetadataFilePath(process);
         if (!checkForMetadataFile(process)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
@@ -931,8 +930,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return fileFormat;
     }
 
-    private boolean checkForMetadataFile(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException, PreferencesException {
+    private boolean checkForMetadataFile(Process process) {
         boolean result = true;
         File f = new File(fileService.getMetadataFilePath(process));
         if (!f.exists()) {
@@ -950,7 +948,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return file format
      */
     public Fileformat readMetadataAsTemplateFile(Process process)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
+            throws ReadException, IOException, PreferencesException {
         RulesetService rulesetService = new RulesetService();
         Hibernate.initialize(process.getRuleset());
         if (new File(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null)).exists()) {

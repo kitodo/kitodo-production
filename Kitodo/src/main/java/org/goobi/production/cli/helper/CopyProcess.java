@@ -112,7 +112,7 @@ public class CopyProcess extends ProzesskopieForm {
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.toString());
+            this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException e) {
             logger.error(e);
         } catch (ReadException e) {
@@ -155,7 +155,7 @@ public class CopyProcess extends ProzesskopieForm {
         Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
         try {
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.toString());
+            this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException e) {
             logger.error(e);
         } catch (ReadException e) {
@@ -270,7 +270,7 @@ public class CopyProcess extends ProzesskopieForm {
             Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.toString());
+            this.myRdf.read(this.metadataFile.getPath());
 
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
 
@@ -296,7 +296,7 @@ public class CopyProcess extends ProzesskopieForm {
             Prefs myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = new MetsMods(myPrefs);
-            this.myRdf.read(this.metadataFile.toString());
+            this.myRdf.read(this.metadataFile.getPath());
 
             this.docType = this.myRdf.getDigitalDocument().getLogicalDocStruct().getType().getName();
 
@@ -775,7 +775,7 @@ public class CopyProcess extends ProzesskopieForm {
         Fileformat ff;
         try {
             ff = new MetsMods(myPrefs);
-            ff.read(this.metadataFile.toString());
+            ff.read(this.metadataFile.getPath());
         } catch (PreferencesException e) {
             logger.error(e);
         } catch (ReadException e) {

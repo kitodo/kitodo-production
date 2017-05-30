@@ -15,7 +15,6 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,7 +23,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
@@ -68,10 +66,9 @@ public class ImportRussland {
      * @param inProzess
      *            Process object
      */
-    protected void parse(BufferedReader reader, Process inProzess)
-            throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
-            TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
-            PreferencesException, SwapException, DAOException, WriteException, URISyntaxException {
+    protected void parse(BufferedReader reader, Process inProzess) throws IOException, WrongImportFileException,
+            TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException,
+            ReadException, InterruptedException, PreferencesException, SwapException, WriteException {
 
         /*
          * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess

@@ -204,7 +204,7 @@ public class ProcessObject {
         } else {
             ff = new RDFFile(prefs);
         }
-        ff.read(metadataFile.toString());
+        ff.read(metadataFile.getPath());
 
         return ff;
     }
@@ -227,7 +227,7 @@ public class ProcessObject {
         }
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
-        ff.write(metadataFile.toString());
+        ff.write(metadataFile.getPath());
     }
 
 }
