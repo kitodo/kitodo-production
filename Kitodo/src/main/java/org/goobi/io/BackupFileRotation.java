@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +62,7 @@ public class BackupFileRotation {
      * @throws IOException
      *             if a file system operation fails
      */
-    public void performBackup() throws IOException, URISyntaxException {
+    public void performBackup() throws IOException {
         ArrayList<URI> metaFiles;
 
         if (numberOfBackups < 1) {
@@ -117,16 +116,16 @@ public class BackupFileRotation {
         this.process = process;
     }
 
-    private void createBackupForFile(URI fileName) throws IOException, URISyntaxException {
+    private void createBackupForFile(URI fileName) throws IOException {
         rotateBackupFilesFor(fileName);
 
         String newName = fileName + ".1";
         fileService.renameFile(fileName, newName);
     }
 
-    private void rotateBackupFilesFor(URI fileName) throws IOException, URISyntaxException {
+    private void rotateBackupFilesFor(URI fileName) throws IOException {
 
-        URI oldest = new URI(fileName + "." + numberOfBackups);
+        URI oldest = URI.create(fileName + "." + numberOfBackups);
         if (fileService.fileExist(oldest)) {
             boolean deleted = fileService.delete(oldest);
             if (!deleted) {
@@ -137,7 +136,7 @@ public class BackupFileRotation {
         }
 
         for (int count = numberOfBackups; count > 1; count--) {
-            URI oldName = new URI(fileName + "." + (count - 1));
+            URI oldName = URI.create(fileName + "." + (count - 1));
             String newName = fileName + "." + count;
             try {
                 fileService.renameFile(oldName, newName);

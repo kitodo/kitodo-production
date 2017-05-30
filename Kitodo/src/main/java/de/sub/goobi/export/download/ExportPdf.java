@@ -23,7 +23,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -188,9 +187,7 @@ public class ExportPdf extends ExportMets {
                 try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                     output.write(text);
                 } catch (IOException e1) {
-                } catch (URISyntaxException e1) {
-                    logger.error("An error occured while writing to the output stream", e1);
-                    e1.printStackTrace();
+                    logger.error(e1);
                 }
                 return false;
             } finally {

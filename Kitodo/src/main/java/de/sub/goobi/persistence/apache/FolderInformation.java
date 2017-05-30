@@ -249,25 +249,25 @@ public class FolderInformation {
      * @return path
      */
     public URI getSourceDirectory() {
-        File dir = new File(getImagesDirectory());
+        URI dir = getImagesDirectory();
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith("_" + "source"));
             }
         };
-        File sourceFolder = null;
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
-        if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new File(dir, title + "_source");
+        URI sourceFolder = null;
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+        if (verzeichnisse == null || verzeichnisse.size() == 0) {
+            sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                sourceFolder.mkdir();
+                fileService.createDirectory(dir, title + "_source");
             }
         } else {
-            sourceFolder = new File(dir, verzeichnisse[0]);
+            sourceFolder = dir.resolve(verzeichnisse.get(0));
         }
 
-        return URI.create(sourceFolder.getAbsolutePath());
+        return sourceFolder;
     }
 
     /**
@@ -305,24 +305,23 @@ public class FolderInformation {
      *
      * @return String
      */
-    public List<String> getDataFiles() throws InvalidImagesException {
-        File dir;
+    public List<URI> getDataFiles() throws InvalidImagesException {
+        URI dir;
         try {
-            dir = new File(getImagesTifDirectory(true));
+            dir = getImagesTifDirectory(true);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = fileService.list(Helper.dataFilter, dir);
-        ArrayList<String> dataList = new ArrayList<String>();
-        if (dateien != null && dateien.length > 0) {
-            for (int i = 0; i < dateien.length; i++) {
-                String s = dateien[i];
+        ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, dir);
+        ArrayList<URI> dataList = new ArrayList<>();
+        if (dateien != null && dateien.size() > 0) {
+            for (URI s : dateien) {
                 dataList.add(s);
             }
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                Collections.sort(dataList, new GoobiImageURIComparator());
             }
             return dataList;
         } else {
@@ -330,10 +329,12 @@ public class FolderInformation {
         }
     }
 
-    public static class GoobiImageFileComparator implements Comparator<String> {
+    private static class GoobiImageURIComparator implements Comparator<URI> {
 
         @Override
-        public int compare(String firstString, String secondString) {
+        public int compare(URI firstUri, URI secondUri) {
+            String firstString = firstUri.toString();
+            String secondString = secondUri.toString();
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             firstString = firstString.substring(0, firstString.lastIndexOf("."));
             secondString = secondString.substring(0, secondString.lastIndexOf("."));

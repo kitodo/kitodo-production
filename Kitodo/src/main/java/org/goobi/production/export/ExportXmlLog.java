@@ -46,8 +46,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -420,15 +418,7 @@ public class ExportXmlLog implements IProcessDataExport {
             metsElement.addContent(metadataElements);
             processElements.add(metsElement);
 
-        } catch (SwapException e) {
-            logger.error(e);
-        } catch (DAOException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
-            logger.error(e);
-        } catch (JDOMException e) {
+        } catch (IOException | JDOMException e) {
             logger.error(e);
         } catch (JaxenException e) {
             logger.error(e);

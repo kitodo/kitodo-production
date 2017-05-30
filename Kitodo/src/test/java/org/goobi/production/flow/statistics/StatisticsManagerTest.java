@@ -19,6 +19,9 @@ import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigCore;
 
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -76,7 +79,7 @@ public class StatisticsManagerTest {
     }
 
     @AfterClass
-    public static void tearDown() {
+    public static void tearDown() throws IOException {
         ServiceManager serviceManager = new ServiceManager();
         File dir = new File(tempPath);
         FilenameFilter filter = new FilenameFilter() {
@@ -84,14 +87,14 @@ public class StatisticsManagerTest {
                 return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"));
             }
         };
-        String[] data = serviceManager.getFileService().list(filter, dir);
+        ArrayList<URI> data = serviceManager.getFileService().getSubUris(filter, dir.toURI());
         File file;
-        if (data == null || data.length == 0) {
+        if (data == null || data.size() == 0) {
             return;
         }
-        for (String aData : data) {
+        for (URI aData : data) {
             file = new File(tempPath + aData);
-            boolean success = file.delete();
+            boolean success = serviceManager.getFileService().delete(file.toURI());
             if (!success) {
                 throw new IllegalArgumentException("Delete: deletion failed");
             }

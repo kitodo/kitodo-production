@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -191,8 +192,8 @@ public class HelperForm {
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String filename = session.getServletContext().getRealPath("/css") + File.separator;
-        File cssDir = new File(filename);
+        URI filename = URI.create(session.getServletContext().getRealPath("/css") + File.separator);
+        URI cssDir = filename;
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -200,9 +201,9 @@ public class HelperForm {
             }
         };
 
-        String[] dateien = serviceManager.getFileService().list(filter, cssDir);
-        for (String string : dateien) {
-            myList.add(new SelectItem("/css/" + string, string));
+        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, cssDir);
+        for (URI uri : dateien) {
+            myList.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
         }
         return myList;
     }
@@ -219,8 +220,8 @@ public class HelperForm {
     public String getCssLinkIfExists(String cssFileName) {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String filename = session.getServletContext().getRealPath(CSS_PATH) + File.separator;
-        File cssDir = new File(filename);
+        URI filename = URI.create(session.getServletContext().getRealPath(CSS_PATH) + File.separator);
+        URI cssDir = filename;
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -228,9 +229,9 @@ public class HelperForm {
             }
         };
 
-        String[] dateien = serviceManager.getFileService().list(filter, cssDir);
-        for (String string : dateien) {
-            if ((CSS_PATH + "/" + string).equals(cssFileName)) {
+        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, cssDir);
+        for (URI uri : dateien) {
+            if ((CSS_PATH + "/" + uri).equals(cssFileName)) {
                 return cssFileName;
             }
         }

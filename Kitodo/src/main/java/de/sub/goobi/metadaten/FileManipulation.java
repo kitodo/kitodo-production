@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class FileManipulation {
 
     private boolean moveFilesInAllFolder = true;
 
-    private List<String> allImportFolder = new ArrayList<String>();
+    private List<URI> allImportFolder = new ArrayList<>();
 
     private String currentFolder = "";
 
@@ -493,19 +492,19 @@ public class FileManipulation {
      * import files from folder.
      *
      */
-    public List<String> getAllImportFolder() {
+    public List<URI> getAllImportFolder() {
 
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
-        File fileuploadFolder = new File(tempDirectory + "fileupload");
+        URI tempDirectory = URI.create(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/"));
+        URI fileuploadFolder = tempDirectory.resolve("fileupload");
 
-        allImportFolder = new ArrayList<String>();
-        if (fileuploadFolder.isDirectory()) {
-            allImportFolder.addAll(Arrays.asList(fileService.list(directoryFilter, fileuploadFolder)));
+        allImportFolder = new ArrayList<>();
+        if (fileService.isDirectory(fileuploadFolder)) {
+            allImportFolder.addAll(fileService.getSubUris(directoryFilter, fileuploadFolder));
         }
         return allImportFolder;
     }
 
-    public void setAllImportFolder(List<String> allImportFolder) {
+    public void setAllImportFolder(List<URI> allImportFolder) {
         this.allImportFolder = allImportFolder;
     }
 

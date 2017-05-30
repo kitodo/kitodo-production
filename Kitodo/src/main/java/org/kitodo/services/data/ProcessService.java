@@ -94,8 +94,8 @@ public class ProcessService extends TitleSearchService<Process> {
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
-    public static String DIRECTORY_PREFIX = "orig";
-    public static String DIRECTORY_SUFFIX = "images";
+    private static String DIRECTORY_PREFIX = "orig";
+    private static String DIRECTORY_SUFFIX = "images";
 
     /**
      * Constructor with searcher's assigning.

@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,20 +52,20 @@ public class WebDav implements Serializable {
      * Retrieve all folders from one directory.
      */
 
-    public List<String> uploadAllFromHome(String inVerzeichnis) {
-        List<String> rueckgabe = new ArrayList<String>();
+    public List<URI> uploadAllFromHome(String inVerzeichnis) {
+        List<URI> rueckgabe = new ArrayList<>();
         User aktuellerBenutzer = Helper.getCurrentUser();
-        String directoryName;
+        URI directoryName;
 
         try {
-            directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer) + inVerzeichnis;
+            directoryName = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer).resolve(inVerzeichnis);
         } catch (Exception ioe) {
             logger.error("Exception uploadFromHomeAlle()", ioe);
             Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
             return rueckgabe;
         }
 
-        File benutzerHome = new File(directoryName);
+        URI benutzerHome = directoryName;
 
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -74,16 +73,17 @@ public class WebDav implements Serializable {
                 return name.endsWith("]");
             }
         };
-        String[] dateien = fileService.list(filter, benutzerHome);
-        for (String data : dateien) {
-            if (data.endsWith("/") || data.endsWith("\\")) {
-                data = data.substring(0, data.length() - 1);
+        ArrayList<URI> dateien = fileService.getSubUris(filter, benutzerHome);
+        for (URI data : dateien) {
+            String dataString = data.toString();
+            if (dataString.endsWith("/") || dataString.endsWith("\\")) {
+                data = URI.create(dataString.substring(0, dataString.length() - 1));
             }
-            if (data.contains("/")) {
-                data = data.substring(data.lastIndexOf("/"));
+            if (data.toString().contains("/")) {
+                data = URI.create(dataString.substring(dataString.lastIndexOf("/")));
             }
         }
-        return new ArrayList<String>(Arrays.asList(dateien));
+        return dateien;
 
     }
 
@@ -279,16 +279,16 @@ public class WebDav implements Serializable {
     public int getAnzahlBaende(String inVerzeichnis) {
         try {
             User aktuellerBenutzer = Helper.getCurrentUser();
-            String verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
-                    + inVerzeichnis;
-            File benutzerHome = new File(verzeichnisAlle);
+            URI verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(aktuellerBenutzer)
+                    .resolve(inVerzeichnis);
+            URI benutzerHome = verzeichnisAlle;
             FilenameFilter filter = new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String name) {
                     return name.endsWith("]");
                 }
             };
-            return fileService.list(filter, benutzerHome).length;
+            return fileService.getSubUris(filter, benutzerHome).size();
         } catch (Exception e) {
             logger.error(e);
             return 0;

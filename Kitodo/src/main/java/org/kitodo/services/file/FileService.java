@@ -23,10 +23,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -37,8 +37,6 @@ import org.goobi.io.BackupFileRotation;
 import org.hibernate.Hibernate;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.RulesetService;
@@ -60,29 +58,24 @@ public class FileService {
 
     /**
      * Creates a MetaDirectory.
-     * 
-     * @param parentFolderUri
-     *            The URI, where the
-     * @param directoryName
-     *            the name of the directory
-     * @throws IOException
-     *             an IOException
+     *
+     * @param parentFolderUri The URI, where the
+     * @param directoryName the name of the directory
+     * @throws IOException an IOException
      */
     public void createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
             ShellScript createDirScript = new ShellScript(new File(ConfigCore.getParameter("script_createDirMeta")));
-            createDirScript.run(Arrays.asList(new String[] {parentFolderUri + directoryName }));
+            createDirScript.run(Collections.singletonList(parentFolderUri + directoryName));
         }
 
     }
 
     /**
      * Creates a Directory at a given uri with a given name.
-     * 
-     * @param parentFolderUri
-     *            The uri, where the directory should be created
-     * @param directoryName
-     *            the name of the directory.
+     *
+     * @param parentFolderUri The uri, where the directory should be created
+     * @param directoryName the name of the directory.
      * @return The URI of the new directory.
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
@@ -94,8 +87,7 @@ public class FileService {
     /**
      * Creates a Directory with a given name.
      *
-     * @param directoryName
-     *            the name of the directory.
+     * @param directoryName the name of the directory.
      * @return The URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
@@ -110,17 +102,11 @@ public class FileService {
      * permissions accordingly. This cannot be done from within java code before
      * version 1.7.
      *
-     * @param dirName
-     *            Name of directory to create
-     * @throws InterruptedException
-     *             If the thread running the script is interrupted by another
-     *             thread while it is waiting, then the wait is ended and an
-     *             InterruptedException is thrown.
-     * @throws IOException
-     *             If an I/O error occurs.
+     * @param dirName Name of directory to create
+     * @throws IOException If an I/O error occurs.
      */
 
-    public void createDirectoryForUser(URI dirName, String userName) throws IOException, InterruptedException {
+    public void createDirectoryForUser(URI dirName, String userName) throws IOException {
         if (!serviceManager.getFileService().fileExist(dirName)) {
             ShellScript createDirScript = new ShellScript(
                     new File(ConfigCore.getParameter("script_createDirUserHome")));
@@ -133,15 +119,9 @@ public class FileService {
      * mischief under Windows which unaccountably holds locks on files.
      * Sometimes running the JVM’s garbage collector puts things right.
      *
-     * @param fileUri
-     *            File to rename
-     * @param newFileName
-     *            New file name / destination
-     * @throws IOException
-     *             is thrown if the rename fails permanently
-     * @throws FileNotFoundException
-     *             is thrown if old file (source file of renaming) does not
-     *             exists
+     * @param fileUri File to rename
+     * @param newFileName New file name / destination
+     * @throws IOException is thrown if the rename fails permanently
      */
     public URI renameFile(URI fileUri, String newFileName) throws IOException {
 
@@ -149,7 +129,6 @@ public class FileService {
         final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
         URI oldFileUri;
         URI newFileUri;
-        boolean success;
         int millisWaited = 0;
 
         if ((fileUri == null) || (newFileName == null)) {
@@ -158,6 +137,7 @@ public class FileService {
 
         oldFileUri = fileUri;
         newFileUri = URI.create(newFileName);
+        boolean success;
 
         if (!fileExist(oldFileUri)) {
             if (logger.isDebugEnabled()) {
@@ -191,7 +171,8 @@ public class FileService {
                 }
                 millisWaited += SLEEP_INTERVAL_MILLIS;
             }
-        } while (!success && millisWaited < MAX_WAIT_MILLIS);
+        }
+        while (!success && millisWaited < MAX_WAIT_MILLIS);
 
         if (!success) {
             logger.error("Rename " + fileUri + " failed. This is a permanent error. Giving up.");
@@ -209,8 +190,7 @@ public class FileService {
      * calculate all files with given file extension at specified directory
      * recursively.
      *
-     * @param directory
-     *            the directory to run through
+     * @param directory the directory to run through
      * @return number of files as Integer
      */
     public Integer getNumberOfFiles(URI directory) {
@@ -235,10 +215,8 @@ public class FileService {
     /**
      * Copy directory.
      *
-     * @param sourceDirectory
-     *            source file as uri
-     * @param targetDirectory
-     *            destination file as uri
+     * @param sourceDirectory source file as uri
+     * @param targetDirectory destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
@@ -255,30 +233,41 @@ public class FileService {
         FileUtils.copyFile(srcFile, destFile);
     }
 
+    /**
+     * Copies a File from a given URI to a given uri.
+     *
+     * @param srcFile the uri to copy from
+     * @param destFile the uri to copy to
+     * @throws IOException if copying fails
+     */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
         copyFile(new File(srcFile), new File(destFile));
     }
 
+    /**
+     * Copies a file to a directory.
+     *
+     * @param sourceDirectory The source directory
+     * @param targetDirectory the target directory
+     * @throws IOException if copying fails.
+     */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         FileUtils.copyFileToDirectory(new File(sourceDirectory), new File(targetDirectory));
     }
 
     /**
      * Writes to a File at a given URI.
-     * 
-     * @param uri
-     *            The Uri, to write to.
+     *
+     * @param uri The Uri, to write to.
      * @return An Outputstream to the file at the given URI.
-     * @throws IOException
-     *             If file cannot be accessed
-     * @throws URISyntaxException
-     *             If URI is created wrong
+     * @throws IOException If file cannot be accessed
      */
-    public OutputStream write(URI uri) throws IOException, URISyntaxException {
-        if (!fileExist(uri)) {
-            createFile(uri);
+    public OutputStream write(URI uri) throws IOException {
+        URI kitodoUri = mapUriToKitodoUri(uri);
+        if (!fileExist(kitodoUri)) {
+            createFile(kitodoUri);
         }
-        return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
+        return new FileOutputStream(new File(mapUriToKitodoUri(kitodoUri)));
     }
 
     private boolean createFile(URI uri) throws IOException {
@@ -288,12 +277,10 @@ public class FileService {
 
     /**
      * Reads a file at a given URI.
-     * 
-     * @param uri
-     *            The uri to reas
+     *
+     * @param uri The uri to reas
      * @return an InputStream to read from.
-     * @throws IOException
-     *             if File cannot be accessed.
+     * @throws IOException if File cannot be accessed.
      */
     public InputStream read(URI uri) throws IOException {
         URL url = mapUriToKitodoUri(uri).toURL();
@@ -302,12 +289,10 @@ public class FileService {
 
     /**
      * Deletes a resource at a given uri.
-     * 
-     * @param uri
-     *            The uri to delete-
+     *
+     * @param uri The uri to delete-
      * @return True, if successfull, false otherwise.
-     * @throws IOException
-     *             If the File cannot be accessed.
+     * @throws IOException If the File cannot be accessed.
      */
     public boolean delete(URI uri) throws IOException {
         File file = new File(mapUriToKitodoUri(uri));
@@ -323,9 +308,8 @@ public class FileService {
 
     /**
      * Checks, if a file exists.
-     * 
-     * @param uri
-     *            The uri, to check, if there is a file.
+     *
+     * @param uri The uri, to check, if there is a file.
      * @return True, is the file exists.
      */
     public boolean fileExist(URI uri) {
@@ -336,9 +320,8 @@ public class FileService {
 
     /**
      * Returns the name of a file at a given uri.
-     * 
-     * @param uri
-     *            The uri, to get the filename from.
+     *
+     * @param uri The uri, to get the filename from.
      * @return The name of the file.
      */
     public String getFileName(URI uri) {
@@ -347,13 +330,10 @@ public class FileService {
 
     /**
      * Moves a directory from a given URI to a given URI
-     * 
-     * @param sourceUri
-     *            The source URI.
-     * @param targetUri
-     *            The target URI.
-     * @throws IOException
-     *             if directory cannot be accessed.
+     *
+     * @param sourceUri The source URI.
+     * @param targetUri The target URI.
+     * @throws IOException if directory cannot be accessed.
      */
     public void moveDirectory(URI sourceUri, URI targetUri) throws IOException {
         copyDirectory(sourceUri, targetUri);
@@ -363,24 +343,22 @@ public class FileService {
     /**
      * Moves a file from a given URI to a given URI
      *
-     * @param sourceUri
-     *            The source URI.
-     * @param targetUri
-     *            The target URI.
-     * @throws IOException
-     *             if directory cannot be accessed.
+     * @param sourceUri The source URI.
+     * @param targetUri The target URI.
+     * @throws IOException if directory cannot be accessed.
      */
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
         copyFile(sourceUri, targetUri);
         delete(sourceUri);
     }
 
-    public String[] list(FilenameFilter filter, File file) {
-        String[] unchecked = file.list(filter);
-        return unchecked != null ? unchecked : new String[0];
-    }
-
-    public File[] listFiles(File file) {
+    /**
+     * Lists all Files at the given Path.
+     *
+     * @param file The Directory to get the Files from.
+     * @return an Array of Files.
+     */
+    private File[] listFiles(File file) {
         File[] unchecked = file.listFiles();
         return unchecked != null ? unchecked : new File[0];
     }
@@ -390,17 +368,22 @@ public class FileService {
         return unchecked != null ? unchecked : new File[0];
     }
 
+    /**
+     * Writes a metadata file.
+     *
+     * @param gdzfile the file format
+     * @param process the process
+     * @throws IOException if error occurs
+     * @throws PreferencesException if error occurs
+     * @throws WriteException if error occurs
+     */
     public void writeMetadataFile(Fileformat gdzfile, Process process) throws IOException, PreferencesException,
-            InterruptedException, DAOException, SwapException, WriteException, URISyntaxException {
+            WriteException {
         serviceManager.getFileService().write(process.getProcessBaseUri()).close();
 
         RulesetService rulesetService = new RulesetService();
-        boolean backupCondition;
-        boolean writeResult;
-        File temporaryMetadataFile;
         Fileformat ff;
         URI metadataFileUri;
-        String temporaryMetadataFileName;
 
         Hibernate.initialize(process.getRuleset());
         switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
@@ -416,13 +399,13 @@ public class FileService {
         }
         // createBackupFile();
         metadataFileUri = getMetadataFilePath(process);
-        temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
+        String temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileUri);
 
         ff.setDigitalDocument(gdzfile.getDigitalDocument());
         // ff.write(getMetadataFilePath());
-        writeResult = ff.write(temporaryMetadataFileName);
-        temporaryMetadataFile = new File(temporaryMetadataFileName);
-        backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
+        boolean writeResult = ff.write(temporaryMetadataFileName);
+        File temporaryMetadataFile = new File(temporaryMetadataFileName);
+        boolean backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
         if (backupCondition) {
             createBackupFile(process);
             renameFile(metadataFileUri, temporaryMetadataFileName);
@@ -449,7 +432,7 @@ public class FileService {
 
     // backup of meta.xml
     private void createBackupFile(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException, URISyntaxException {
+            throws IOException {
         int numberOfBackups = 0;
 
         if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
@@ -467,8 +450,13 @@ public class FileService {
         }
     }
 
-    public URI getMetadataFilePath(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    /**
+     * Gets the URI of the metadata.xml of a given process.
+     *
+     * @param process the process to get the metadata.xml for.
+     * @return The URI to the metadata.xml
+     */
+    public URI getMetadataFilePath(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
     }
 
@@ -485,13 +473,12 @@ public class FileService {
      * This method is needed for migraion purposes. It mappes existing
      * filePathes to the Correct URI.
      *
-     * @param process
-     *            the process, the uri is needed for.
+     * @param process the process, the uri is needed for.
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
         String pfad = process.getId().toString();
-        // TODO: File.seperator is not working here
+        // TODO: Find out, why File.seperator is not working here
         pfad = pfad.replaceAll(" ", "__") + "/";
         return URI.create(pfad);
     }
@@ -500,13 +487,10 @@ public class FileService {
      * Get's the URI for a Process Sub-location. Possible Locations are listed
      * in ProcessSubType
      *
-     * @param process
-     *            the process to get the sublocation for.
-     * @param processSubType
-     *            The subType.
-     * @param id
-     *            the id of the single object (e.g. image) if null, the root
-     *            folder of the sublocation is returned
+     * @param process the process to get the sublocation for.
+     * @param processSubType The subType.
+     * @param id the id of the single object (e.g. image) if null, the root
+     * folder of the sublocation is returned
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String id) {
@@ -551,8 +535,7 @@ public class FileService {
     /**
      * deletes all process directorys and their content.
      *
-     * @param process
-     *            the processt o delete the doirectorys for.
+     * @param process the processt o delete the doirectorys for.
      * @return true, if deletion was successfull.
      */
     public boolean deleteProcessContent(Process process) {
@@ -569,32 +552,31 @@ public class FileService {
     }
 
     /**
-     * Gets the image source directory
+     * Gets the image source directory.
      *
-     * @param process
-     *            the process, to get the source directory for
+     * @param process the process, to get the source directory for
      * @return the source directory as a string
      */
     public URI getSourceDirectory(Process process) {
-        File dir = new File(getProcessSubTypeURI(process, ProcessSubType.IMAGE, null));
+        URI dir = getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith("_" + "source"));
             }
         };
-        File sourceFolder = null;
-        String[] verzeichnisse = list(filterVerz, dir);
-        if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new File(dir, process.getTitle() + "_source");
+        URI sourceFolder;
+        ArrayList<URI> verzeichnisse = getSubUris(filterVerz, dir);
+        if (verzeichnisse == null || verzeichnisse.size() == 0) {
+            sourceFolder = dir.resolve(process.getTitle() + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                sourceFolder.mkdir();
+                createDirectory(dir, process.getTitle() + "_source");
             }
         } else {
-            sourceFolder = new File(dir, verzeichnisse[0]);
+            sourceFolder = dir.resolve(verzeichnisse.get(0));
         }
 
-        return sourceFolder.toURI();
+        return sourceFolder;
     }
 
     private URI mapUriToKitodoUri(URI uri) {
@@ -611,8 +593,7 @@ public class FileService {
     /**
      * gets all sub URIs of an uri.
      *
-     * @param processSubTypeURI
-     *            the uri, to get the subUris from.
+     * @param processSubTypeURI the uri, to get the subUris from.
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(URI processSubTypeURI) {
@@ -626,11 +607,12 @@ public class FileService {
         return resultList;
     }
 
+
     /**
-     * gets all sub URIs of an uri.
+     * gets all sub URIs of an uri with a given filter.
      *
-     * @param processSubTypeURI
-     *            the uri, to get the subUris from.
+     * @param filter the filter to filter the subUris
+     * @param processSubTypeURI the uri, to get the subUris from.
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
@@ -647,8 +629,7 @@ public class FileService {
     /**
      * Creates a new File.
      *
-     * @param fileName
-     *            the name of the new file
+     * @param fileName the name of the new file
      * @return the uri of the new file
      */
     public URI createResource(String fileName) {
@@ -657,16 +638,35 @@ public class FileService {
     }
 
     /**
+     * Creates a resource at a given uri with a given name
+     *
+     * @param targetFolder the target folder.
+     * @param name the name of the new resource
+     * @return The uri of the created resource
+     * @throws IOException if creation failed.
+     */
+    public URI createResource(URI targetFolder, String name) throws IOException {
+        File file = new File(mapUriToKitodoUri(targetFolder).resolve(name));
+        file.createNewFile();
+        return file.toURI();
+    }
+
+    /**
      * Gets the specific IMAGE sub type.
      *
-     * @param process
-     *            the process to get the imageDirectory for.
+     * @param process the process to get the imageDirectory for.
      * @return The uri of the Image Directory.
      */
     public URI getImagesDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
     }
 
+    /**
+     * Gets the URI to the ocr directory.
+     *
+     * @param process the process tog et the ocr directory for.
+     * @return the uri to the ocr directory.
+     */
     public URI getOcrDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR, null);
     }
@@ -674,68 +674,111 @@ public class FileService {
     /**
      * checks, if a URI leads to a directory.
      *
-     * @param dir
-     *            the uri to check.
+     * @param dir the uri to check.
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
         return new File(dir).isDirectory();
     }
 
+    /**
+     * Checks if an uri is readable.
+     *
+     * @param uri the uri to check.
+     * @return true, if it's readable, false otherwise.
+     */
     public boolean canRead(URI uri) {
         return new File(uri).canRead();
     }
 
+    /**
+     * Gets the uri to the temporal directory.
+     *
+     * @return the uri to the temporal directory.
+     */
     public URI getTemporalDirectory() {
         return URI.create(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/"));
     }
 
+    /**
+     * Checks if a resource at a given uri is a file.
+     *
+     * @param uri the uri to check, if there is a file.
+     * @return true, if it is a file, false otherwise
+     */
     public boolean isFile(URI uri) {
         return new File(uri).isFile();
     }
 
+    /**
+     * Gets the URI to the import directory.
+     *
+     * @param process the process to get the import directory for.
+     * @return the uri of the import directory
+     */
     public URI getImportDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.IMPORT, null);
     }
 
+    /**
+     * Gets the URI to the text directory.
+     *
+     * @param process the process to get the text directory for.
+     * @return the uri of the text directory
+     */
     public URI getTxtDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_TXT, null);
     }
 
+    /**
+     * Gets the URI to the pdf directory.
+     *
+     * @param process the process to get the pdf directory for.
+     * @return the uri of the pdf directory
+     */
     public URI getPdfDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_PDF, null);
     }
 
+    /**
+     * Gets the URI to the alto directory.
+     *
+     * @param process the process to get the alto directory for.
+     * @return the uri of the alto directory
+     */
     public URI getAltoDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_ALTO, null);
     }
 
+    /**
+     * Gets the URI to the word directory.
+     *
+     * @param process the process to get the word directory for.
+     * @return the uri of the word directory
+     */
     public URI getWordDirectory(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.OCR_WORD, null);
     }
 
+    /**
+     * Gets the URI to the template file.
+     *
+     * @param process the process to get the template file for.
+     * @return the uri of the template file
+     */
     public URI getTemplateFile(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
-    public URI createResource(URI targetFolder, String s) throws IOException {
-        File file = new File(mapUriToKitodoUri(targetFolder).resolve(s));
-        file.createNewFile();
-        return file.toURI();
-    }
-
-    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process) throws IOException,
-            InterruptedException, SwapException, DAOException, WriteException, PreferencesException {
+    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process) throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }
 
     /**
      * Creates a symbolic link.
      *
-     * @param targetUri
-     *            The target URI for the link.
-     * @param homeUri
-     *            The home URI.
+     * @param targetUri The target URI for the link.
+     * @param homeUri The home URI.
      * @return true, if link creation was successfull.
      */
     public boolean createSymLink(URI targetUri, URI homeUri) {
@@ -745,8 +788,7 @@ public class FileService {
     /**
      * Delets a symbolik link.
      *
-     * @param homeUri
-     *            The uri of the home folder, where the link should be deleted.
+     * @param homeUri The uri of the home folder, where the link should be deleted.
      * @return true, if deletion was successull.
      */
     public boolean deleteSymLink(URI homeUri) {
@@ -754,7 +796,7 @@ public class FileService {
         ShellScript deleteSymLinkScript;
         try {
             deleteSymLinkScript = new ShellScript(new File(command));
-            deleteSymLinkScript.run(Arrays.asList(new String[] {homeUri.toString() }));
+            deleteSymLinkScript.run(Collections.singletonList(homeUri.toString()));
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException in deleteSymLink()", e);
             Helper.setFehlerMeldung("Couldn't find script file, error", e.getMessage());
