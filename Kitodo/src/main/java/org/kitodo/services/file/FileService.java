@@ -84,7 +84,7 @@ public class FileService {
      * @return The URI of the new directory.
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
-        File file = new File(parentFolderUri.toString(), directoryName);
+        File file = new File(parentFolderUri.getPath(), directoryName);
         file.mkdir();
         return file.toURI();
     }

@@ -42,6 +42,7 @@ public class BackupFileRotationTest {
     public void setUp() throws Exception {
         Process process = new Process();
         process.setId(2);
+        fileService.createDirectory(processService.getProcessDataDirectory(process), "2");
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
     }
 
