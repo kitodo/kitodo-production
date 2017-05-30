@@ -111,22 +111,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getMetadataFile(String sessionId) throws GoobiException {
         super.getMetadataFile(sessionId);
-        try {
-            return serviceManager.getFileService()
-                    .getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId)).toString();
-        } catch (IOException e) {
-            throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (InterruptedException e) {
-            throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (SwapException e) {
-            throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (DAOException e) {
-            throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        }
+        return serviceManager.getFileService()
+                .getMetadataFilePath(ModuleServerForm.getProcessFromShortSession(sessionId)).toString();
     }
 
     /**

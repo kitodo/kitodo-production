@@ -102,7 +102,7 @@ public class BackupFileRotationTest {
 
         fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
         runBackup(numberOfBackups, process);
-
+        System.out.println(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
         assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1");
         assertFileExists(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".2");
     }

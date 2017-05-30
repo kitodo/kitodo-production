@@ -82,7 +82,7 @@ import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
-@ManagedBean(eager=true)
+@ManagedBean(eager = true)
 @ViewScoped
 public class AktuelleSchritteForm extends BasisForm {
     private static final long serialVersionUID = 5841566727939692509L;
@@ -795,8 +795,8 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public String uploadFromHomeAlle() throws NumberFormatException, DAOException {
-        List<String> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
-        List<String> geprueft = new ArrayList<String>();
+        List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
+        List<URI> geprueft = new ArrayList<>();
         /*
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
          * setzen
@@ -805,12 +805,11 @@ public class AktuelleSchritteForm extends BasisForm {
             this.nurOffeneSchritte = false;
             filterAlleStart();
         }
-        for (Iterator<String> iter = fertigListe.iterator(); iter.hasNext();) {
-            String element = iter.next();
-            String myID = element.substring(element.indexOf("[") + 1, element.indexOf("]")).trim();
+        for (URI element : fertigListe) {
+            String myID = element.toString()
+                    .substring(element.toString().indexOf("[") + 1, element.toString().indexOf("]")).trim();
 
-            for (Iterator<Task> iterator = this.page.getCompleteList().iterator(); iterator.hasNext();) {
-                Task step = iterator.next();
+            for (Task step : (Iterable<Task>) this.page.getCompleteList()) {
                 /*
                  * nur wenn der Schritt bereits im Bearbeitungsmodus ist,
                  * abschliessen

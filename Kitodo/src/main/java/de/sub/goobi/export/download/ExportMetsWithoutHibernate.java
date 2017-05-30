@@ -275,7 +275,11 @@ public class ExportMetsWithoutHibernate {
 
         try {
             // TODO andere Dateigruppen nicht mit image Namen ersetzen
-            List<String> images = this.fi.getDataFiles();
+            List<URI> imageUris = this.fi.getDataFiles();
+            List<String> images = new ArrayList<>();
+            for (URI imageUri : imageUris) {
+                images.add(imageUri.toString());
+            }
             if (images != null) {
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
                 int sizeOfImages = images.size();
@@ -289,10 +293,7 @@ public class ExportMetsWithoutHibernate {
                     return false;
                 }
             }
-        } catch (IndexOutOfBoundsException e) {
-
-            logger.error(e);
-        } catch (InvalidImagesException e) {
+        } catch (IndexOutOfBoundsException | InvalidImagesException e) {
             logger.error(e);
         }
         mm.write(targetFileName);

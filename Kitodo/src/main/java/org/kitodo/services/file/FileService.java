@@ -59,9 +59,12 @@ public class FileService {
     /**
      * Creates a MetaDirectory.
      *
-     * @param parentFolderUri The URI, where the
-     * @param directoryName the name of the directory
-     * @throws IOException an IOException
+     * @param parentFolderUri
+     *            The URI, where the
+     * @param directoryName
+     *            the name of the directory
+     * @throws IOException
+     *             an IOException
      */
     public void createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
@@ -74,8 +77,10 @@ public class FileService {
     /**
      * Creates a Directory at a given uri with a given name.
      *
-     * @param parentFolderUri The uri, where the directory should be created
-     * @param directoryName the name of the directory.
+     * @param parentFolderUri
+     *            The uri, where the directory should be created
+     * @param directoryName
+     *            the name of the directory.
      * @return The URI of the new directory.
      */
     public URI createDirectory(URI parentFolderUri, String directoryName) {
@@ -87,7 +92,8 @@ public class FileService {
     /**
      * Creates a Directory with a given name.
      *
-     * @param directoryName the name of the directory.
+     * @param directoryName
+     *            the name of the directory.
      * @return The URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
@@ -102,8 +108,10 @@ public class FileService {
      * permissions accordingly. This cannot be done from within java code before
      * version 1.7.
      *
-     * @param dirName Name of directory to create
-     * @throws IOException If an I/O error occurs.
+     * @param dirName
+     *            Name of directory to create
+     * @throws IOException
+     *             If an I/O error occurs.
      */
 
     public void createDirectoryForUser(URI dirName, String userName) throws IOException {
@@ -119,9 +127,12 @@ public class FileService {
      * mischief under Windows which unaccountably holds locks on files.
      * Sometimes running the JVM’s garbage collector puts things right.
      *
-     * @param fileUri File to rename
-     * @param newFileName New file name / destination
-     * @throws IOException is thrown if the rename fails permanently
+     * @param fileUri
+     *            File to rename
+     * @param newFileName
+     *            New file name / destination
+     * @throws IOException
+     *             is thrown if the rename fails permanently
      */
     public URI renameFile(URI fileUri, String newFileName) throws IOException {
 
@@ -171,8 +182,7 @@ public class FileService {
                 }
                 millisWaited += SLEEP_INTERVAL_MILLIS;
             }
-        }
-        while (!success && millisWaited < MAX_WAIT_MILLIS);
+        } while (!success && millisWaited < MAX_WAIT_MILLIS);
 
         if (!success) {
             logger.error("Rename " + fileUri + " failed. This is a permanent error. Giving up.");
@@ -190,7 +200,8 @@ public class FileService {
      * calculate all files with given file extension at specified directory
      * recursively.
      *
-     * @param directory the directory to run through
+     * @param directory
+     *            the directory to run through
      * @return number of files as Integer
      */
     public Integer getNumberOfFiles(URI directory) {
@@ -215,8 +226,10 @@ public class FileService {
     /**
      * Copy directory.
      *
-     * @param sourceDirectory source file as uri
-     * @param targetDirectory destination file as uri
+     * @param sourceDirectory
+     *            source file as uri
+     * @param targetDirectory
+     *            destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
@@ -236,9 +249,12 @@ public class FileService {
     /**
      * Copies a File from a given URI to a given uri.
      *
-     * @param srcFile the uri to copy from
-     * @param destFile the uri to copy to
-     * @throws IOException if copying fails
+     * @param srcFile
+     *            the uri to copy from
+     * @param destFile
+     *            the uri to copy to
+     * @throws IOException
+     *             if copying fails
      */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
         copyFile(new File(srcFile), new File(destFile));
@@ -247,9 +263,12 @@ public class FileService {
     /**
      * Copies a file to a directory.
      *
-     * @param sourceDirectory The source directory
-     * @param targetDirectory the target directory
-     * @throws IOException if copying fails.
+     * @param sourceDirectory
+     *            The source directory
+     * @param targetDirectory
+     *            the target directory
+     * @throws IOException
+     *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
         FileUtils.copyFileToDirectory(new File(sourceDirectory), new File(targetDirectory));
@@ -258,29 +277,32 @@ public class FileService {
     /**
      * Writes to a File at a given URI.
      *
-     * @param uri The Uri, to write to.
+     * @param uri
+     *            The Uri, to write to.
      * @return An Outputstream to the file at the given URI.
-     * @throws IOException If file cannot be accessed
+     * @throws IOException
+     *             If file cannot be accessed
      */
     public OutputStream write(URI uri) throws IOException {
         URI kitodoUri = mapUriToKitodoUri(uri);
         if (!fileExist(kitodoUri)) {
             createFile(kitodoUri);
         }
-        return new FileOutputStream(new File(mapUriToKitodoUri(kitodoUri)));
+        return new FileOutputStream(new File(kitodoUri));
     }
 
-    private boolean createFile(URI uri) throws IOException {
-        URI kitodoUri = mapUriToKitodoUri(uri);
+    private boolean createFile(URI kitodoUri) throws IOException {
         return new File(kitodoUri).createNewFile();
     }
 
     /**
      * Reads a file at a given URI.
      *
-     * @param uri The uri to reas
+     * @param uri
+     *            The uri to reas
      * @return an InputStream to read from.
-     * @throws IOException if File cannot be accessed.
+     * @throws IOException
+     *             if File cannot be accessed.
      */
     public InputStream read(URI uri) throws IOException {
         URL url = mapUriToKitodoUri(uri).toURL();
@@ -290,9 +312,11 @@ public class FileService {
     /**
      * Deletes a resource at a given uri.
      *
-     * @param uri The uri to delete-
+     * @param uri
+     *            The uri to delete-
      * @return True, if successfull, false otherwise.
-     * @throws IOException If the File cannot be accessed.
+     * @throws IOException
+     *             If the File cannot be accessed.
      */
     public boolean delete(URI uri) throws IOException {
         File file = new File(mapUriToKitodoUri(uri));
@@ -309,11 +333,13 @@ public class FileService {
     /**
      * Checks, if a file exists.
      *
-     * @param uri The uri, to check, if there is a file.
+     * @param uri
+     *            The uri, to check, if there is a file.
      * @return True, is the file exists.
      */
     public boolean fileExist(URI uri) {
         String path = mapUriToKitodoUri(uri).getPath();
+        System.out.println(path);
         File file = new File(path);
         return file.exists();
     }
@@ -321,7 +347,8 @@ public class FileService {
     /**
      * Returns the name of a file at a given uri.
      *
-     * @param uri The uri, to get the filename from.
+     * @param uri
+     *            The uri, to get the filename from.
      * @return The name of the file.
      */
     public String getFileName(URI uri) {
@@ -331,9 +358,12 @@ public class FileService {
     /**
      * Moves a directory from a given URI to a given URI
      *
-     * @param sourceUri The source URI.
-     * @param targetUri The target URI.
-     * @throws IOException if directory cannot be accessed.
+     * @param sourceUri
+     *            The source URI.
+     * @param targetUri
+     *            The target URI.
+     * @throws IOException
+     *             if directory cannot be accessed.
      */
     public void moveDirectory(URI sourceUri, URI targetUri) throws IOException {
         copyDirectory(sourceUri, targetUri);
@@ -343,9 +373,12 @@ public class FileService {
     /**
      * Moves a file from a given URI to a given URI
      *
-     * @param sourceUri The source URI.
-     * @param targetUri The target URI.
-     * @throws IOException if directory cannot be accessed.
+     * @param sourceUri
+     *            The source URI.
+     * @param targetUri
+     *            The target URI.
+     * @throws IOException
+     *             if directory cannot be accessed.
      */
     public void moveFile(URI sourceUri, URI targetUri) throws IOException {
         copyFile(sourceUri, targetUri);
@@ -355,7 +388,8 @@ public class FileService {
     /**
      * Lists all Files at the given Path.
      *
-     * @param file The Directory to get the Files from.
+     * @param file
+     *            The Directory to get the Files from.
      * @return an Array of Files.
      */
     private File[] listFiles(File file) {
@@ -371,14 +405,19 @@ public class FileService {
     /**
      * Writes a metadata file.
      *
-     * @param gdzfile the file format
-     * @param process the process
-     * @throws IOException if error occurs
-     * @throws PreferencesException if error occurs
-     * @throws WriteException if error occurs
+     * @param gdzfile
+     *            the file format
+     * @param process
+     *            the process
+     * @throws IOException
+     *             if error occurs
+     * @throws PreferencesException
+     *             if error occurs
+     * @throws WriteException
+     *             if error occurs
      */
-    public void writeMetadataFile(Fileformat gdzfile, Process process) throws IOException, PreferencesException,
-            WriteException {
+    public void writeMetadataFile(Fileformat gdzfile, Process process)
+            throws IOException, PreferencesException, WriteException {
         serviceManager.getFileService().write(process.getProcessBaseUri()).close();
 
         RulesetService rulesetService = new RulesetService();
@@ -431,8 +470,7 @@ public class FileService {
     }
 
     // backup of meta.xml
-    private void createBackupFile(Process process)
-            throws IOException {
+    private void createBackupFile(Process process) throws IOException {
         int numberOfBackups = 0;
 
         if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
@@ -453,7 +491,8 @@ public class FileService {
     /**
      * Gets the URI of the metadata.xml of a given process.
      *
-     * @param process the process to get the metadata.xml for.
+     * @param process
+     *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
     public URI getMetadataFilePath(Process process) {
@@ -473,7 +512,8 @@ public class FileService {
      * This method is needed for migraion purposes. It mappes existing
      * filePathes to the Correct URI.
      *
-     * @param process the process, the uri is needed for.
+     * @param process
+     *            the process, the uri is needed for.
      * @return the URI.
      */
     public URI getProcessBaseUriForExistingProcess(Process process) {
@@ -487,10 +527,13 @@ public class FileService {
      * Get's the URI for a Process Sub-location. Possible Locations are listed
      * in ProcessSubType
      *
-     * @param process the process to get the sublocation for.
-     * @param processSubType The subType.
-     * @param id the id of the single object (e.g. image) if null, the root
-     * folder of the sublocation is returned
+     * @param process
+     *            the process to get the sublocation for.
+     * @param processSubType
+     *            The subType.
+     * @param id
+     *            the id of the single object (e.g. image) if null, the root
+     *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
     public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String id) {
@@ -535,7 +578,8 @@ public class FileService {
     /**
      * deletes all process directorys and their content.
      *
-     * @param process the processt o delete the doirectorys for.
+     * @param process
+     *            the processt o delete the doirectorys for.
      * @return true, if deletion was successfull.
      */
     public boolean deleteProcessContent(Process process) {
@@ -554,7 +598,8 @@ public class FileService {
     /**
      * Gets the image source directory.
      *
-     * @param process the process, to get the source directory for
+     * @param process
+     *            the process, to get the source directory for
      * @return the source directory as a string
      */
     public URI getSourceDirectory(Process process) {
@@ -593,7 +638,8 @@ public class FileService {
     /**
      * gets all sub URIs of an uri.
      *
-     * @param processSubTypeURI the uri, to get the subUris from.
+     * @param processSubTypeURI
+     *            the uri, to get the subUris from.
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(URI processSubTypeURI) {
@@ -607,12 +653,13 @@ public class FileService {
         return resultList;
     }
 
-
     /**
      * gets all sub URIs of an uri with a given filter.
      *
-     * @param filter the filter to filter the subUris
-     * @param processSubTypeURI the uri, to get the subUris from.
+     * @param filter
+     *            the filter to filter the subUris
+     * @param processSubTypeURI
+     *            the uri, to get the subUris from.
      * @return A List of sub uris.
      */
     public ArrayList<URI> getSubUris(FilenameFilter filter, URI processSubTypeURI) {
@@ -629,7 +676,8 @@ public class FileService {
     /**
      * Creates a new File.
      *
-     * @param fileName the name of the new file
+     * @param fileName
+     *            the name of the new file
      * @return the uri of the new file
      */
     public URI createResource(String fileName) {
@@ -640,10 +688,13 @@ public class FileService {
     /**
      * Creates a resource at a given uri with a given name
      *
-     * @param targetFolder the target folder.
-     * @param name the name of the new resource
+     * @param targetFolder
+     *            the target folder.
+     * @param name
+     *            the name of the new resource
      * @return The uri of the created resource
-     * @throws IOException if creation failed.
+     * @throws IOException
+     *             if creation failed.
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
         File file = new File(mapUriToKitodoUri(targetFolder).resolve(name));
@@ -654,7 +705,8 @@ public class FileService {
     /**
      * Gets the specific IMAGE sub type.
      *
-     * @param process the process to get the imageDirectory for.
+     * @param process
+     *            the process to get the imageDirectory for.
      * @return The uri of the Image Directory.
      */
     public URI getImagesDirectory(Process process) {
@@ -664,7 +716,8 @@ public class FileService {
     /**
      * Gets the URI to the ocr directory.
      *
-     * @param process the process tog et the ocr directory for.
+     * @param process
+     *            the process tog et the ocr directory for.
      * @return the uri to the ocr directory.
      */
     public URI getOcrDirectory(Process process) {
@@ -674,7 +727,8 @@ public class FileService {
     /**
      * checks, if a URI leads to a directory.
      *
-     * @param dir the uri to check.
+     * @param dir
+     *            the uri to check.
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
@@ -684,7 +738,8 @@ public class FileService {
     /**
      * Checks if an uri is readable.
      *
-     * @param uri the uri to check.
+     * @param uri
+     *            the uri to check.
      * @return true, if it's readable, false otherwise.
      */
     public boolean canRead(URI uri) {
@@ -703,7 +758,8 @@ public class FileService {
     /**
      * Checks if a resource at a given uri is a file.
      *
-     * @param uri the uri to check, if there is a file.
+     * @param uri
+     *            the uri to check, if there is a file.
      * @return true, if it is a file, false otherwise
      */
     public boolean isFile(URI uri) {
@@ -713,7 +769,8 @@ public class FileService {
     /**
      * Gets the URI to the import directory.
      *
-     * @param process the process to get the import directory for.
+     * @param process
+     *            the process to get the import directory for.
      * @return the uri of the import directory
      */
     public URI getImportDirectory(Process process) {
@@ -723,7 +780,8 @@ public class FileService {
     /**
      * Gets the URI to the text directory.
      *
-     * @param process the process to get the text directory for.
+     * @param process
+     *            the process to get the text directory for.
      * @return the uri of the text directory
      */
     public URI getTxtDirectory(Process process) {
@@ -733,7 +791,8 @@ public class FileService {
     /**
      * Gets the URI to the pdf directory.
      *
-     * @param process the process to get the pdf directory for.
+     * @param process
+     *            the process to get the pdf directory for.
      * @return the uri of the pdf directory
      */
     public URI getPdfDirectory(Process process) {
@@ -743,7 +802,8 @@ public class FileService {
     /**
      * Gets the URI to the alto directory.
      *
-     * @param process the process to get the alto directory for.
+     * @param process
+     *            the process to get the alto directory for.
      * @return the uri of the alto directory
      */
     public URI getAltoDirectory(Process process) {
@@ -753,7 +813,8 @@ public class FileService {
     /**
      * Gets the URI to the word directory.
      *
-     * @param process the process to get the word directory for.
+     * @param process
+     *            the process to get the word directory for.
      * @return the uri of the word directory
      */
     public URI getWordDirectory(Process process) {
@@ -763,22 +824,26 @@ public class FileService {
     /**
      * Gets the URI to the template file.
      *
-     * @param process the process to get the template file for.
+     * @param process
+     *            the process to get the template file for.
      * @return the uri of the template file
      */
     public URI getTemplateFile(Process process) {
         return getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
     }
 
-    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process) throws WriteException, PreferencesException {
+    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process)
+            throws WriteException, PreferencesException {
         inFile.write(getTemplateFile(process).toString());
     }
 
     /**
      * Creates a symbolic link.
      *
-     * @param targetUri The target URI for the link.
-     * @param homeUri The home URI.
+     * @param targetUri
+     *            The target URI for the link.
+     * @param homeUri
+     *            The home URI.
      * @return true, if link creation was successfull.
      */
     public boolean createSymLink(URI targetUri, URI homeUri) {
@@ -788,7 +853,8 @@ public class FileService {
     /**
      * Delets a symbolik link.
      *
-     * @param homeUri The uri of the home folder, where the link should be deleted.
+     * @param homeUri
+     *            The uri of the home folder, where the link should be deleted.
      * @return true, if deletion was successull.
      */
     public boolean deleteSymLink(URI homeUri) {

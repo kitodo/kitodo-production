@@ -20,6 +20,7 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -229,7 +230,7 @@ public class MetadatenVerifizierungWithoutHibernate {
          */
 
         try {
-            List<String> images = fi.getDataFiles();
+            List<URI> images = fi.getDataFiles();
             if (images != null) {
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
                 int sizeOfImages = images.size();

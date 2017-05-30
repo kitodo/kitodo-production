@@ -26,7 +26,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -1043,9 +1042,6 @@ public class ProzesskopieForm {
             } catch (MetadataTypeNotAllowedException e) {
                 Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
                 logger.error("creation of new process throws an error: ", e);
-            } catch (URISyntaxException e) {
-                Helper.setFehlerMeldung("URI creation failed", e.getMessage());
-                logger.error("creation of uri throws an error: ", e);
             }
 
         }

@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -212,8 +211,6 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                 output.write(text);
             } catch (IOException e1) {
-                logger.error("Error while reporting error to user in file " + uri, e);
-            } catch (URISyntaxException e1) {
                 logger.error("Error while reporting error to user in file " + uri, e);
             }
             return;

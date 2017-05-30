@@ -938,7 +938,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String UploadFromHomeAlle() {
         WebDav myDav = new WebDav();
-        List<String> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
+        List<URI> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         myDav.removeAllFromHome(folder, URI.create(DONEDIRECTORYNAME));
         Helper.setMeldung(null, "directoryRemovedAll", DONEDIRECTORYNAME);
         return null;

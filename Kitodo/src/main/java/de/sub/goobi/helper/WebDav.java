@@ -91,7 +91,7 @@ public class WebDav implements Serializable {
      * Remove Folders from Directory.
      */
     // TODO: Use generic types
-    public void removeAllFromHome(List<String> inList, URI inVerzeichnis) {
+    public void removeAllFromHome(List<URI> inList, URI inVerzeichnis) {
         URI verzeichnisAlle;
         User aktuellerBenutzer = Helper.getCurrentUser();
         try {
@@ -103,8 +103,8 @@ public class WebDav implements Serializable {
             return;
         }
 
-        for (Iterator<String> it = inList.iterator(); it.hasNext();) {
-            String myname = it.next();
+        for (Iterator<URI> it = inList.iterator(); it.hasNext();) {
+            URI myname = it.next();
             fileService.deleteSymLink(verzeichnisAlle.resolve(myname));
         }
     }
