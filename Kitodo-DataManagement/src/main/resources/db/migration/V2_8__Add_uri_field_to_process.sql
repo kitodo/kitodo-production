@@ -9,4 +9,4 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
-ALTER TABLE process ADD processBaseUri VARCHAR(255);
+ALTER TABLE process ADD processBaseUri tinyblob;
