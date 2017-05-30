@@ -284,11 +284,10 @@ public class FileService {
      *             If file cannot be accessed
      */
     public OutputStream write(URI uri) throws IOException {
-        URI kitodoUri = mapUriToKitodoUri(uri);
-        if (!fileExist(kitodoUri)) {
-            createFile(kitodoUri);
+        if (!fileExist(uri)) {
+            createFile(mapUriToKitodoUri(uri));
         }
-        return new FileOutputStream(new File(kitodoUri));
+        return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
     }
 
     private boolean createFile(URI kitodoUri) throws IOException {
