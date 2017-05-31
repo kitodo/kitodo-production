@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.joda.time.LocalDateTime;
 import org.json.simple.parser.ParseException;
@@ -643,11 +644,17 @@ public class UserService extends SearchService<User> {
      */
     private List<String> getFiltersForUser(User user) throws CustomResponseException, IOException, ParseException {
         List<String> filters = new ArrayList<>();
-        List<Property> properties = user.getProperties();
-        for (Property property : properties) {
-            if (property.getTitle().equals("_filter")) {
-                filters.add(property.getValue());
+        // FIXME: fix reason for exception
+        try {
+            List<Property> properties = user.getProperties();
+            for (Property property : properties) {
+                if (property.getTitle().equals("_filter")) {
+                    filters.add(property.getValue());
+                }
             }
+        }
+        catch (LazyInitializationException e) {
+            logger.error("LazyInitializationException: " + e.getMessage());
         }
         return filters;
     }
