@@ -13,6 +13,10 @@ package org.kitodo.api.ruleseteditor;
 
 import java.net.URI;
 
+/**
+ * The ruleseteditor gives the possibility to edit existing rulesets and create
+ * new rulesets.
+ */
 public interface RulesetEditorInterface {
 
     /** Creates a new rulesetFile. */
