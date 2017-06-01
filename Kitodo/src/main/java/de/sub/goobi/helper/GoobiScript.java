@@ -65,7 +65,8 @@ public class GoobiScript {
     /**
      * Starten des Scripts.
      */
-    public void execute(List<Process> inProzesse, String inScript) throws IOException, CustomResponseException {
+    public void execute(List<Process> inProzesse, String inScript)
+            throws IOException, CustomResponseException, DAOException {
         this.myParameters = new HashMap<String, String>();
         /*
          * alle Suchparameter zerlegen und erfassen
@@ -215,18 +216,18 @@ public class GoobiScript {
         serviceManager.getFileService().deleteProcessContent(process);
     }
 
-    private void runScript(List<Process> inProzesse, String stepname, String scriptname) {
-        HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
+    private void runScript(List<Process> inProzesse, String stepname, String scriptname)
+            throws CustomResponseException, DAOException, IOException {
         for (Process p : inProzesse) {
             for (Task step : p.getTasks()) {
                 if (step.getTitle().equalsIgnoreCase(stepname)) {
                     if (scriptname != null) {
                         if (serviceManager.getTaskService().getAllScripts(step).containsKey(scriptname)) {
                             String path = serviceManager.getTaskService().getAllScripts(step).get(scriptname);
-                            hs.executeScriptForStepObject(step, path, false);
+                            serviceManager.getTaskService().executeScript(step, path, false);
                         }
                     } else {
-                        hs.executeAllScriptsForStep(step, false);
+                        serviceManager.getTaskService().executeAllScripts(step, false);
                     }
                 }
             }

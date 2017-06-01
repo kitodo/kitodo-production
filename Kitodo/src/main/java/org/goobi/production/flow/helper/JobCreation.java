@@ -30,6 +30,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -54,7 +55,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Process vorlage)
-            throws IOException, ParseException, CustomResponseException, URISyntaxException {
+            throws IOException, ParseException, CustomResponseException, URISyntaxException, DAOException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -110,12 +111,12 @@ public class JobCreation {
                     List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
                     for (Task t : tasks) {
                         if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                            Thread myThread = new ScriptThreadWithoutHibernate(s);
+                            Thread myThread = new TaskScriptThread(t);
                             myThread.start();
                         }
                     }
                 }
-            } catch (ReadException e) {
+            } catch (ReadException | PreferencesException | IOException e) {
                 Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
                 logger.error(e);
             } catch (PreferencesException e) {
@@ -125,9 +126,6 @@ public class JobCreation {
                 Helper.setFehlerMeldung("Cannot save process " + processTitle, e);
                 logger.error(e);
             } catch (WriteException e) {
-                Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
-                logger.error(e);
-            } catch (IOException e) {
                 Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
                 logger.error(e);
             } catch (InterruptedException e) {
@@ -150,10 +148,9 @@ public class JobCreation {
      *            String
      * @return boolean
      */
-    public static boolean testTitle(String title) throws IOException, ParseException, CustomResponseException {
+    private static boolean testTitle(String title) throws IOException, ParseException, DAOException {
         if (title != null) {
-            int anzahl = 0;
-            anzahl = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
+            Long anzahl = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
             if (anzahl > 0) {
                 Helper.setFehlerMeldung("processTitleAllreadyInUse");
                 return false;

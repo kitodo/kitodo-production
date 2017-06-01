@@ -32,6 +32,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -291,7 +292,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
                         for (Task t : tasks) {
                             if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                                ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(t);
+                                TaskScriptThread myThread = new TaskScriptThread(t);
                                 myThread.start();
                             }
                         }

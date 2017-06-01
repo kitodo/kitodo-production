@@ -13,8 +13,11 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ShellScript;
+import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
@@ -25,15 +28,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
@@ -41,8 +50,16 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task> {
 
@@ -337,6 +354,114 @@ public class TaskService extends TitleSearchService<Task> {
     }
 
     /**
+     * Execute script for StepObject.
+     *
+     * @param task
+     *            StepObject
+     * @param script
+     *            String
+     * @param automatic
+     *            boolean
+     * @return int
+     */
+    public int executeScript(Task task, String script, boolean automatic) throws DAOException, CustomResponseException {
+        if (script == null || script.length() == 0) {
+            return -1;
+        }
+        script = script.replace("{", "(").replace("}", ")");
+        DigitalDocument dd = null;
+        Process po = task.getProcess();
+
+        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
+        Prefs prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
+
+        try {
+            dd = serviceManager.getProcessService().readMetadataFile(fi.getMetadataFilePath(), prefs)
+                    .getDigitalDocument();
+        } catch (PreferencesException | ReadException e2) {
+            logger.error(e2);
+        } catch (IOException e2) {
+            logger.error(e2);
+        }
+        VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
+
+        script = replacer.replace(script);
+        int rueckgabe = -1;
+        try {
+            if (logger.isInfoEnabled()) {
+                logger.info("Calling the shell: " + script);
+            }
+            rueckgabe = ShellScript.legacyCallShell2(script);
+            if (automatic) {
+                if (rueckgabe == 0) {
+                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                    task.setProcessingStatus(TaskStatus.DONE.getValue());
+                    if (task.getValidationPlugin() != null && task.getValidationPlugin().length() > 0) {
+                        IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
+                                task.getValidationPlugin());
+                        ivp.setStep(task);
+                        if (!ivp.validate()) {
+                            task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                            save(task);
+                        } else {
+                            close(task, false);
+                        }
+                    } else {
+                        close(task, false);
+                    }
+
+                } else {
+                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                    task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                    save(task);
+                }
+            }
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("IOException: ", e.getMessage());
+        } catch (InterruptedException e) {
+            Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
+        }
+        return rueckgabe;
+    }
+
+    /**
+     * Execute all scripts for step.
+     *
+     * @param task
+     *            StepObject
+     * @param automatic
+     *            boolean
+     */
+    public void executeAllScripts(Task task, boolean automatic)
+            throws CustomResponseException, IOException, DAOException {
+        List<String> scriptpaths = getAllScriptPaths(task);
+        int count = 1;
+        int size = scriptpaths.size();
+        int returnParameter = 0;
+        for (String script : scriptpaths) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("starting script " + script);
+            }
+            if (returnParameter != 0) {
+                abortTask(task);
+                break;
+            }
+            if (script != null && !script.equals(" ") && script.length() != 0) {
+                returnParameter = executeScript(task, script, automatic && (count == size));
+            }
+            count++;
+        }
+    }
+
+    private void abortTask(Task task) throws IOException, CustomResponseException, DAOException {
+
+        task.setProcessingStatus(TaskStatus.OPEN.getValue());
+        task.setEditType(TaskEditType.AUTOMATIC.getValue());
+
+        save(task);
+    }
+
+    /**
      * Set all scripts and their paths.
      *
      * @param paths
@@ -516,7 +641,7 @@ public class TaskService extends TitleSearchService<Task> {
                     if (myTask.isTypeAutomatic()) {
                         logger.debug("add step to list of automatic tasks");
                         automatischeSchritte.add(myTask);
-                    } else if (myTask.isTypeFinishImmediately()) {
+                    } else if (myTask.isTypeAcceptClose()) {
                         stepsToFinish.add(myTask);
                     }
                     logger.debug("");
@@ -547,7 +672,7 @@ public class TaskService extends TitleSearchService<Task> {
                 logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
                         + automaticStep.getId());
             }
-            Thread myThread = new Thread(automaticStep);
+            TaskScriptThread myThread = new TaskScriptThread(automaticStep);
             TaskManager.addTask(myThread);
         }
         for (Task finish : stepsToFinish) {
@@ -596,6 +721,59 @@ public class TaskService extends TitleSearchService<Task> {
         process.setSortHelperStatus(value);
         serviceManager.getProcessService().save(process);
 
+    }
+
+    /**
+     * Execute DMS export.
+     *
+     * @param step
+     *            StepObject
+     * @param automatic
+     *            boolean
+     */
+    public void executeDmsExport(Task step, boolean automatic)
+            throws CustomResponseException, IOException, DAOException, ConfigurationException {
+        ConfigCore.getBooleanParameter("automaticExportWithImages", true);
+        if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
+        }
+        Process po = step.getProcess();
+        try {
+            boolean validate = serviceManager.getProcessService().startDmsExport(po,
+                    ConfigCore.getBooleanParameter("automaticExportWithImages", true), false);
+            if (validate) {
+                close(step, true);
+            } else {
+                abortTask(step);
+            }
+        } catch (DAOException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (PreferencesException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (WriteException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (SwapException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (TypeNotAllowedForParentException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (IOException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (InterruptedException e) {
+            // validation error
+            abortTask(step);
+            return;
+        }
     }
 
 }

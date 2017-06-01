@@ -834,13 +834,13 @@ public class BatchStepHelper {
     /**
      * Execute script.
      */
-    public void executeScript() {
+    public void executeScript() throws CustomResponseException, DAOException {
         for (Task step : this.steps) {
 
             if (serviceManager.getTaskService().getAllScripts(step).containsKey(this.script)) {
                 String scriptPath = serviceManager.getTaskService().getAllScripts(step).get(this.script);
 
-                new HelperSchritteWithoutHibernate().executeScriptForStepObject(step, scriptPath, false);
+                serviceManager.getTaskService().executeScript(step, scriptPath, false);
 
             }
         }

@@ -55,10 +55,13 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
@@ -220,7 +223,8 @@ public class MassImportForm {
      *
      * @return String
      */
-    public String convertData() throws IOException, URISyntaxException {
+    public String convertData()
+            throws IOException, ParseException, CustomResponseException, DAOException, URISyntaxException {
         this.processList = new ArrayList<Process>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");

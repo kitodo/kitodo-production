@@ -91,7 +91,16 @@ public class HistoryDAO extends BaseDAO {
         return retrieveObjects(query);
     }
 
-    public Integer count(String query) throws DAOException {
+    /**
+     * Counts the amount of results from the query.
+     * 
+     * @param query
+     *            The given query.
+     * @return the amount of results.
+     * @throws DAOException
+     *             if database throws an error.
+     */
+    public Long count(String query) throws DAOException {
         return retrieveAmount(query);
     }
 }

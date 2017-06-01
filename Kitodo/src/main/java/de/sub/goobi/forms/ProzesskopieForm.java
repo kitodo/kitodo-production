@@ -72,6 +72,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -1072,7 +1073,7 @@ public class ProzesskopieForm {
         List<Task> tasks = serviceManager.getProcessService().find(prozessKopie.getId()).getTasks();
         for (Task t : tasks) {
             if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(t);
+                TaskScriptThread myThread = new TaskScriptThread(t);
                 myThread.start();
             }
         }

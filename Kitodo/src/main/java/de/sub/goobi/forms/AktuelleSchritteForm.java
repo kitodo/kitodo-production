@@ -912,10 +912,9 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Execute script.
      */
-    public void executeScript() throws DAOException {
-        Task so = serviceManager.getTaskService().find(this.mySchritt.getId());
-        new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, this.scriptPath, false);
-
+    public void executeScript() throws DAOException, CustomResponseException {
+        Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
+        serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
     /**

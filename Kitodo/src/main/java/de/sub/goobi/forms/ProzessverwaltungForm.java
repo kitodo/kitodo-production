@@ -1558,6 +1558,8 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(this.page.getCompleteList(), this.kitodoScript);
         } catch (IOException | CustomResponseException e) {
             logger.error("ElasticSearch", e);
+        } catch (DAOException e) {
+            logger.error("DatabaseException", e);
         }
     }
 
@@ -1571,6 +1573,8 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(this.page.getListReload(), this.kitodoScript);
         } catch (IOException | CustomResponseException e) {
             logger.error("ElasticSearch", e);
+        } catch (DAOException e) {
+            logger.error("DatabaseException", e);
         }
     }
 
@@ -1590,6 +1594,8 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(auswahl, this.kitodoScript);
         } catch (IOException | CustomResponseException e) {
             logger.error("ElasticSearch", e);
+        } catch (DAOException e) {
+            logger.error("DatabaseException", e);
         }
     }
 
