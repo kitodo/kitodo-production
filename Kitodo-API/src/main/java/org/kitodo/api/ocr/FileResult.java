@@ -13,6 +13,9 @@ package org.kitodo.api.ocr;
 
 import java.net.URI;
 
+/**
+ * The result of the file generation.
+ */
 public class FileResult {
 
     /**

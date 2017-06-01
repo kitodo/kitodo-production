@@ -11,6 +11,9 @@
 
 package org.kitodo.api.ocr;
 
+/**
+ * Possible states after an ocr processing.
+ */
 public enum State {
 
     SUCCESS, WARNING, ERROR;
