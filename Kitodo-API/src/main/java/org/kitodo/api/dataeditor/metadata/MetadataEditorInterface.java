@@ -13,5 +13,8 @@ package org.kitodo.api.dataeditor.metadata;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
+/**
+ * Enables the user to read and write metadata.
+ */
 public interface MetadataEditorInterface extends DataEditorInterface {
 }
