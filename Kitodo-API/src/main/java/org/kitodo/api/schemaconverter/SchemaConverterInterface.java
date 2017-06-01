@@ -13,6 +13,7 @@ package org.kitodo.api.schemaconverter;
 
 import java.net.URI;
 
+/** Enables the conversion of a file from one format to another. */
 public interface SchemaConverterInterface {
 
     /**
