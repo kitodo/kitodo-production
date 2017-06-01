@@ -16,6 +16,7 @@ import java.net.URI;
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
+/** Validates a metadata file against a given ruleset. */
 public interface MetadataValidationInterface extends ValidationInterface {
 
     /**

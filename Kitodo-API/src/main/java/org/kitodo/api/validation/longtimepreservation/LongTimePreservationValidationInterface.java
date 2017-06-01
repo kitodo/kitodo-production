@@ -16,17 +16,18 @@ import java.net.URI;
 import org.kitodo.api.validation.ValidationInterface;
 import org.kitodo.api.validation.ValidationResult;
 
+/** Validation for LongTimePreservation. */
 public interface LongTimePreservationValidationInterface extends ValidationInterface {
 
     /**
-     * Validates an image for longTimePreservation.
+     * Validates a file for longTimePreservation.
      *
-     * @param imageFileUri
+     * @param fileUri
      *            The uri to the image, which should be validated.
      * @param fileType
      *            The fileType of the image at the given path.
      * @return A validation result.
      */
-    ValidationResult validate(URI imageFileUri, FileType fileType);
+    ValidationResult validate(URI fileUri, FileType fileType);
 
 }

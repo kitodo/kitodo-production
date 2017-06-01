@@ -11,33 +11,28 @@
 
 package org.kitodo.api.validation;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 public class ValidationResult {
 
-    /** If the validation is valid. */
-    private State valid;
+    /** The state of the validation. */
+    private State state;
 
     /** A list of result messages. */
-    private ArrayList<String> resultMessages;
+    private Collection<String> resultMessages;
+
+    ValidationResult(State state, Collection<String> resultMessages) {
+        this.state = state;
+        this.resultMessages = resultMessages;
+    }
 
     /**
      * Gets valid.
      * 
      * @return The valid.
      */
-    public State isValid() {
-        return valid;
-    }
-
-    /**
-     * Sets valid.
-     * 
-     * @param valid
-     *            The valid.
-     */
-    public void setValid(State valid) {
-        this.valid = valid;
+    public State getState() {
+        return state;
     }
 
     /**
@@ -45,17 +40,7 @@ public class ValidationResult {
      * 
      * @return The resultMessages.
      */
-    public ArrayList<String> getResultMessages() {
+    public Collection<String> getResultMessages() {
         return resultMessages;
-    }
-
-    /**
-     * Sets the resultMessages.
-     * 
-     * @param resultMessages
-     *            The resultMessages.
-     */
-    public void setResultMessages(ArrayList<String> resultMessages) {
-        this.resultMessages = resultMessages;
     }
 }

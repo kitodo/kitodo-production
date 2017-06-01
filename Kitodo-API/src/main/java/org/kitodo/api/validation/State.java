@@ -11,6 +11,7 @@
 
 package org.kitodo.api.validation;
 
+/** The possible validation states. */
 public enum State {
 
     SUCCESS, WARNING, ERROR;
