@@ -110,7 +110,7 @@ public class DocketService extends TitleSearchService<Docket> {
         return docketDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
+    public Integer count(String query) throws DAOException {
         return docketDAO.count(query);
     }
 

@@ -59,7 +59,7 @@ public class StatistikForm {
      *             thrown while performing the rollback.
      */
 
-    public Long getAnzahlBenutzer() {
+    public Integer getAnzahlBenutzer() {
         try {
             return serviceManager.getUserService().count("from User where visible is null");
         } catch (DAOException e) {
@@ -73,7 +73,7 @@ public class StatistikForm {
      *
      * @return Anzahl der Benutzer
      */
-    public Long getAnzahlBenutzergruppen() {
+    public Integer getAnzahlBenutzergruppen() {
         try {
             return serviceManager.getUserService().count("from UserGroup");
         } catch (DAOException e) {
@@ -87,7 +87,7 @@ public class StatistikForm {
      *
      * @return amount of processes
      */
-    public Long getAnzahlProzesse() {
+    public Integer getAnzahlProzesse() {
         try {
             return serviceManager.getProcessService().count("from Process");
         } catch (DAOException e) {
@@ -101,13 +101,13 @@ public class StatistikForm {
      *
      * @return amount of tasks
      */
-    public Long getAnzahlSchritte() {
+    public Integer getAnzahlSchritte() {
         try {
             return serviceManager.getTaskService().count("from Task");
         } catch (DAOException e) {
             logger.error("Hibernate error", e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen", e);
-            return Long.valueOf(-1);
+            return -1;
         }
     }
 

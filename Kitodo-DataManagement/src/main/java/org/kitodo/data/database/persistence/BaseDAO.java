@@ -231,10 +231,10 @@ public abstract class BaseDAO implements Serializable {
      * @throws DAOException
      *             add description
      */
-    protected Long retrieveAmount(String query) throws DAOException {
+    protected Integer retrieveAmount(String query) throws DAOException {
         try {
             Session session = Helper.getHibernateSession();
-            return (Long) session.createQuery("select count(*) " + query).uniqueResult();
+            return (Integer) session.createQuery("select count(*) " + query).uniqueResult();
         } catch (HibernateException he) {
             throw new DAOException(he);
         }

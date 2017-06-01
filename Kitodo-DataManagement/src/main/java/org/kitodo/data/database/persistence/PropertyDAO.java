@@ -98,7 +98,7 @@ public class PropertyDAO extends BaseDAO {
      *            as String
      * @return amount of objects as Long
      */
-    public Long count(String query) throws DAOException {
+    public Integer count(String query) throws DAOException {
         return retrieveAmount(query);
     }
 }

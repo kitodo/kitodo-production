@@ -220,7 +220,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return processDAO.search(query);
     }
 
-    public Long count(String query) throws DAOException {
+    public Integer count(String query) throws DAOException {
         return processDAO.count(query);
     }
 
