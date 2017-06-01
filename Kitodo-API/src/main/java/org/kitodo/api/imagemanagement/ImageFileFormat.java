@@ -11,8 +11,11 @@
 
 package org.kitodo.api.imagemanagement;
 
+/**
+ * Possible File formats.
+ */
 public enum ImageFileFormat {
 
-    JPEG, JPEG2000, GIF, PNG, BMP, PDF, TIFF;
+    JPEG, JPEG2000, GIF, PNG, BMP, TIFF;
 
 }
