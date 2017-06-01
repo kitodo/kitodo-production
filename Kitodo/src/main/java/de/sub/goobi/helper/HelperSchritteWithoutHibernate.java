@@ -175,9 +175,9 @@ public class HelperSchritteWithoutHibernate {
         ProcessObject po = ProcessManager.getProcessObjectForId(processId);
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
         if (po.getSortHelperImages() != serviceManager.getFileService()
-                .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
+                .getNumberOfImageFiles(fi.getImagesOrigDirectory(true))) {
             ProcessManager.updateImages(
-                    serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)), processId);
+                    serviceManager.getFileService().getNumberOfImageFiles(fi.getImagesOrigDirectory(true)), processId);
         }
         logger.debug("update process status");
         updateProcessStatus(processId);

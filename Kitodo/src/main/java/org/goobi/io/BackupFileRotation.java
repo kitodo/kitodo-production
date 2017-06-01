@@ -137,7 +137,7 @@ public class BackupFileRotation {
 
         for (int count = numberOfBackups; count > 1; count--) {
             URI oldName = URI.create(fileName + "." + (count - 1));
-            String newName = fileName + "." + count;
+            String newName = fileService.getFileNameWithExtension(fileName) + "." + count;
             try {
                 fileService.renameFile(oldName, newName);
             } catch (FileNotFoundException oldNameNotYetPresent) {

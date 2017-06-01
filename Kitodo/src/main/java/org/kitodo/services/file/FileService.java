@@ -86,7 +86,7 @@ public class FileService {
     public URI createDirectory(URI parentFolderUri, String directoryName) {
         File file = new File(mapUriToKitodoUri(parentFolderUri).getPath(), directoryName);
         file.mkdir();
-        return file.toURI();
+        return unmapUriFromKitodoUri(file.toURI());
     }
 
     /**
@@ -97,9 +97,9 @@ public class FileService {
      * @return The URI of the new directory.
      */
     public URI createDirectory(String directoryName) {
-        File file = new File(directoryName);
+        File file = new File(mapUriToKitodoUri(URI.create(directoryName)));
         file.mkdir();
-        return file.toURI();
+        return unmapUriFromKitodoUri(file.toURI());
     }
 
     /**
@@ -147,7 +147,8 @@ public class FileService {
         }
 
         oldFileUri = fileUri;
-        newFileUri = URI.create(newFileName);
+        String substring = fileUri.toString().substring(0, fileUri.toString().lastIndexOf('/') + 1);
+        newFileUri = URI.create(substring + newFileName);
         boolean success;
 
         if (!fileExist(oldFileUri)) {
@@ -208,6 +209,32 @@ public class FileService {
         int count = 0;
         if (isDirectory(directory)) {
             /*
+             * die Unterverzeichnisse durchlaufen
+             */
+            ArrayList<URI> children = getSubUris(directory);
+            for (URI aChildren : children) {
+                if (isDirectory(aChildren)) {
+                    count += getNumberOfFiles(aChildren);
+                } else {
+                    count += 1;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * calculate all files with given file extension at specified directory
+     * recursively.
+     *
+     * @param directory
+     *            the directory to run through
+     * @return number of files as Integer
+     */
+    public Integer getNumberOfImageFiles(URI directory) {
+        int count = 0;
+        if (isDirectory(directory)) {
+            /*
              * die Images zählen
              */
             count = getSubUris(Helper.imageNameFilter, directory).size();
@@ -217,7 +244,7 @@ public class FileService {
              */
             ArrayList<URI> children = getSubUris(directory);
             for (URI aChildren : children) {
-                count += getNumberOfFiles(directory.resolve(aChildren));
+                count += getNumberOfImageFiles(aChildren);
             }
         }
         return count;
@@ -232,6 +259,8 @@ public class FileService {
      *            destination file as uri
      */
     public void copyDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
+        sourceDirectory = mapUriToKitodoUri(sourceDirectory);
+        targetDirectory = mapUriToKitodoUri(targetDirectory);
         copyDirectory(new File(sourceDirectory), new File(targetDirectory));
     }
 
@@ -240,10 +269,6 @@ public class FileService {
             targetDirectory.mkdirs();
         }
         FileUtils.copyDirectory(sourceDirectory, targetDirectory, false);
-    }
-
-    private void copyFile(File srcFile, File destFile) throws IOException {
-        FileUtils.copyFile(srcFile, destFile);
     }
 
     /**
@@ -257,7 +282,7 @@ public class FileService {
      *             if copying fails
      */
     public void copyFile(URI srcFile, URI destFile) throws IOException {
-        copyFile(new File(srcFile), new File(destFile));
+        FileUtils.copyFile(new File(mapUriToKitodoUri(srcFile)), new File(mapUriToKitodoUri(destFile)));
     }
 
     /**
@@ -271,7 +296,8 @@ public class FileService {
      *             if copying fails.
      */
     public void copyFileToDirectory(URI sourceDirectory, URI targetDirectory) throws IOException {
-        FileUtils.copyFileToDirectory(new File(sourceDirectory), new File(targetDirectory));
+        FileUtils.copyFileToDirectory(new File(mapUriToKitodoUri(sourceDirectory)),
+                new File(mapUriToKitodoUri(targetDirectory)));
     }
 
     /**
@@ -285,13 +311,9 @@ public class FileService {
      */
     public OutputStream write(URI uri) throws IOException {
         if (!fileExist(uri)) {
-            createFile(mapUriToKitodoUri(uri));
+            new File(mapUriToKitodoUri(uri)).createNewFile();
         }
         return new FileOutputStream(new File(mapUriToKitodoUri(uri)));
-    }
-
-    private boolean createFile(URI kitodoUri) throws IOException {
-        return new File(kitodoUri).createNewFile();
     }
 
     /**
@@ -318,6 +340,9 @@ public class FileService {
      *             If the File cannot be accessed.
      */
     public boolean delete(URI uri) throws IOException {
+        if (!fileExist(uri)) {
+            return true;
+        }
         File file = new File(mapUriToKitodoUri(uri));
         if (file.isFile()) {
             return file.delete();
@@ -334,11 +359,10 @@ public class FileService {
      *
      * @param uri
      *            The uri, to check, if there is a file.
-     * @return True, is the file exists.
+     * @return True, if the file exists.
      */
     public boolean fileExist(URI uri) {
         String path = mapUriToKitodoUri(uri).getPath();
-        System.out.println(path);
         File file = new File(path);
         return file.exists();
     }
@@ -351,7 +375,18 @@ public class FileService {
      * @return The name of the file.
      */
     public String getFileName(URI uri) {
-        return uri.toString();
+        return FilenameUtils.getBaseName(uri.getPath());
+    }
+
+    /**
+     * Returns the name of a file at a given uri.
+     *
+     * @param uri
+     *            The uri, to get the filename from.
+     * @return The name of the file.
+     */
+    public String getFileNameWithExtension(URI uri) {
+        return FilenameUtils.getName(uri.getPath());
     }
 
     /**
@@ -469,12 +504,10 @@ public class FileService {
     }
 
     // backup of meta.xml
-    private void createBackupFile(Process process) throws IOException {
+    void createBackupFile(Process process) throws IOException {
         int numberOfBackups = 0;
 
-        if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
-            numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
-        }
+        numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
 
         if (numberOfBackups != 0) {
             BackupFileRotation bfr = new BackupFileRotation();
@@ -623,11 +656,11 @@ public class FileService {
         return sourceFolder;
     }
 
-    private URI mapUriToKitodoUri(URI uri) {
+    URI mapUriToKitodoUri(URI uri) {
         return new File(ConfigCore.getKitodoDataDirectory() + uri).toURI();
     }
 
-    private URI unmapUriFromKitodoUri(URI uri) {
+    URI unmapUriFromKitodoUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
         String[] split = uri.toString().split(kitodoDataDirectory);
         String shortUri = split[1];
@@ -697,8 +730,8 @@ public class FileService {
      */
     public URI createResource(URI targetFolder, String name) throws IOException {
         File file = new File(mapUriToKitodoUri(targetFolder).resolve(name));
-        file.createNewFile();
-        return file.toURI();
+        boolean newFile = file.createNewFile();
+        return unmapUriFromKitodoUri(file.toURI());
     }
 
     /**
@@ -731,7 +764,7 @@ public class FileService {
      * @return true, if it is a directory.
      */
     public boolean isDirectory(URI dir) {
-        return new File(dir).isDirectory();
+        return new File(mapUriToKitodoUri(dir)).isDirectory();
     }
 
     /**
