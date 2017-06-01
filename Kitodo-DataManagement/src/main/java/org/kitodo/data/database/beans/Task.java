@@ -229,8 +229,7 @@ public class Task extends BaseBean {
      * @param editType
      *            as Integer
      */
-    @SuppressWarnings("unused")
-    private void setEditType(Integer editType) {
+    public void setEditType(Integer editType) {
         this.editType = editType;
     }
 

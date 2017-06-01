@@ -1087,7 +1087,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 t.setProcessingStatus(t.getProcessingStatus() + 1);
                 t.setEditType(TaskEditType.ADMIN.getValue());
                 if (t.getProcessingStatus() == TaskStatus.DONE.getValue()) {
-                    new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(t, true);
+                    serviceManager.getTaskService().close(t, true);
                 } else {
                     User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                     if (user != null) {
@@ -1166,13 +1166,13 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Task status up.
      */
-    public void SchrittStatusUp() throws DAOException {
+    public void SchrittStatusUp() throws DAOException, IOException, CustomResponseException {
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.DONE) {
             this.mySchritt = serviceManager.getTaskService().setProcessingStatusUp(this.mySchritt);
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
             Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
             if (this.mySchritt.getProcessingStatusEnum() == TaskStatus.DONE) {
-                new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(task, true);
+                serviceManager.getTaskService().close(task, true);
             } else {
                 mySchritt.setProcessingTime(new Date());
                 User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");

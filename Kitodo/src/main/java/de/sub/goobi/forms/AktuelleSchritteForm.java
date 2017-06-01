@@ -477,7 +477,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() throws DAOException {
+    public String schrittDurchBenutzerAbschliessen() throws DAOException, IOException, CustomResponseException {
 
         if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
             IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
@@ -556,8 +556,7 @@ public class AktuelleSchritteForm extends BasisForm {
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         // it returns null! - not possible to close task
         Task t = serviceManager.getTaskService().find(this.mySchritt.getId());
-        new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(t, true);
-        // new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
+        serviceManager.getTaskService().close(t, true);
         return filterAlleStart();
     }
 
@@ -791,7 +790,8 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws NumberFormatException, DAOException {
+    public String uploadFromHomeAlle()
+            throws NumberFormatException, DAOException, IOException, CustomResponseException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*

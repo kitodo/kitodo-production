@@ -54,7 +54,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Process vorlage)
-            throws IOException, ParseException, URISyntaxException {
+            throws IOException, ParseException, CustomResponseException, URISyntaxException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -110,7 +110,7 @@ public class JobCreation {
                     List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
                     for (Task t : tasks) {
                         if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                            ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+                            Thread myThread = new ScriptThreadWithoutHibernate(s);
                             myThread.start();
                         }
                     }
@@ -153,8 +153,7 @@ public class JobCreation {
     public static boolean testTitle(String title) throws IOException, ParseException, CustomResponseException {
         if (title != null) {
             int anzahl = 0;
-            anzahl = serviceManager.getProcessService().count(serviceManager.getProcessService().cre).findByTitle(title,
-                    true);
+            anzahl = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
             if (anzahl > 0) {
                 Helper.setFehlerMeldung("processTitleAllreadyInUse");
                 return false;

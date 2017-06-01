@@ -18,20 +18,21 @@ import de.sub.goobi.helper.Page;
 import java.io.File;
 import java.io.IOException;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import org.kitodo.services.data.ProcessService;
 
 @ManagedBean
 @ViewScoped
@@ -85,7 +86,7 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String deleteDocket() {
+    public String deleteDocket() throws ParseException {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setFehlerMeldung("DocketInUse");
@@ -107,8 +108,9 @@ public class DocketForm extends BasisForm {
         return "/newpages/DocketList";
     }
 
-    private boolean hasAssignedProcesses(Docket d) {
-        Integer number = ProcessManager.getNumberOfProcessesWithDocket(d.getId());
+    private boolean hasAssignedProcesses(Docket d) throws ParseException, CustomResponseException, IOException {
+        ProcessService processService = serviceManager.getProcessService();
+        Integer number = processService.findByDocket(d).size();
         if (number != null && number > 0) {
             return true;
         }

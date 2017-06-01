@@ -36,8 +36,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -222,14 +220,13 @@ public class GoobiScript {
         for (Process p : inProzesse) {
             for (Task step : p.getTasks()) {
                 if (step.getTitle().equalsIgnoreCase(stepname)) {
-                    StepObject so = StepManager.getStepById(step.getId());
                     if (scriptname != null) {
                         if (serviceManager.getTaskService().getAllScripts(step).containsKey(scriptname)) {
                             String path = serviceManager.getTaskService().getAllScripts(step).get(scriptname);
-                            hs.executeScriptForStepObject(so, path, false);
+                            hs.executeScriptForStepObject(step, path, false);
                         }
                     } else {
-                        hs.executeAllScriptsForStep(so, false);
+                        hs.executeAllScriptsForStep(step, false);
                     }
                 }
             }

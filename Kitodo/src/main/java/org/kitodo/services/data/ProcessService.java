@@ -50,9 +50,11 @@ import org.json.simple.parser.ParseException;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -269,10 +271,35 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param id
      *            of project
-     * @return list of search results with batches for specific process id
+     * @return list of search results with processes for specific process id
      */
     public List<SearchResult> findByProjectId(Integer id) throws CustomResponseException, IOException, ParseException {
         QueryBuilder query = createSimpleQuery("project", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by docket.
+     *
+     * @param docket
+     *            of project
+     * @return list of search results with processes for specific docket
+     */
+    public List<SearchResult> findByDocket(Docket docket) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("docket_id", docket.getId(), true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by ruleset.
+     *
+     * @param ruleset
+     *            of project
+     * @return list of search results with processes for specific ruleset
+     */
+    public List<SearchResult> findByRuleset(Ruleset ruleset)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("ruleset", ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -281,7 +308,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param title
      *            of process
-     * @return list of search results with batches for specific process id
+     * @return list of search results with processes for specific process id
      */
     public List<SearchResult> findByProjectTitle(String title)
             throws CustomResponseException, IOException, ParseException {
@@ -970,7 +997,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * user or user group.
      */
     public boolean getContainsUnreachableSteps(Process process) {
-        TaskService taskService = new TaskService();
+        TaskService taskService = serviceManager.getTaskService();
         if (process.getTasks().size() == 0) {
             return true;
         }
@@ -1281,5 +1308,9 @@ public class ProcessService extends TitleSearchService<Process> {
         });
 
         return new ArrayList<>(filteredList);
+    }
+
+    public int getNumberOfProcessesWithTitle(String title) throws IOException, DAOException {
+        return count(createSimpleQuery("title", title, true).toString());
     }
 }

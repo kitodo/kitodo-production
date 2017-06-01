@@ -25,15 +25,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
 @Table(name = "user")
 public class User extends BaseBean {
     private static final long serialVersionUID = -7482853955996650586L;
-
-    private static final Logger logger = Logger.getLogger(User.class);
 
     @Column(name = "name")
     private String name;

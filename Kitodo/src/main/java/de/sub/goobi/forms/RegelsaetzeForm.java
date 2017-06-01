@@ -18,20 +18,20 @@ import de.sub.goobi.helper.Page;
 import java.io.File;
 import java.io.IOException;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
-
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
 
 @ManagedBean
 @ViewScoped
@@ -68,7 +68,7 @@ public class RegelsaetzeForm extends BasisForm {
             logger.error(e);
             return null;
         } catch (CustomResponseException e) {
-            logger.error("ElasticSearch server incorrect response",e);
+            logger.error("ElasticSearch server incorrect response", e);
             return null;
         }
     }
@@ -83,7 +83,7 @@ public class RegelsaetzeForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Loeschen() {
+    public String Loeschen() throws ParseException {
         try {
             if (hasAssignedProcesses(myRegelsatz)) {
                 Helper.setFehlerMeldung("RulesetInUse");
@@ -98,14 +98,14 @@ public class RegelsaetzeForm extends BasisForm {
             logger.error(e);
             return null;
         } catch (CustomResponseException e) {
-            logger.error("ElasticSearch server incorrect response",e);
+            logger.error("ElasticSearch server incorrect response", e);
             return null;
         }
         return "/newpages/RegelsaetzeAlle";
     }
 
-    private boolean hasAssignedProcesses(Ruleset r) {
-        Integer number = ProcessManager.getNumberOfProcessesWithRuleset(r.getId());
+    private boolean hasAssignedProcesses(Ruleset r) throws ParseException, CustomResponseException, IOException {
+        Integer number = serviceManager.getProcessService().findByRuleset(r).size();
         if (number != null && number > 0) {
             return true;
         }

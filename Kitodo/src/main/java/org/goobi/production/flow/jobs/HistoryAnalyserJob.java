@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
-import org.kitodo.data.database.persistence.apache.StepManager;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -81,7 +81,8 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return true, if any history event is updated, so the process has to be
      *         saved to database
      */
-    public static Boolean updateHistory(Process inProcess) throws IOException, InterruptedException, DAOException {
+    public static Boolean updateHistory(Process inProcess)
+            throws IOException, InterruptedException, CustomResponseException, DAOException {
         boolean updated = false;
         /* storage */
         if (updateHistoryEvent(inProcess, HistoryTypeEnum.storageDifference, getCurrentStorageSize(inProcess))) {
@@ -339,13 +340,15 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      *
      * @return true if value is different and history got updated, else false
      */
-    private static Boolean updateHistoryEvent(Process inProcess, HistoryTypeEnum inType, Long inCurrentValue) {
+    private static Boolean updateHistoryEvent(Process inProcess, HistoryTypeEnum inType, Long inCurrentValue)
+            throws IOException, CustomResponseException, DAOException {
         long storedValue = getStoredValue(inProcess, inType);
         long diff = inCurrentValue - storedValue;
 
         // if storedValue is different to current value - update history
         if (diff != 0) {
-            StepManager.addHistory(new Date(), diff, null, inType.getValue(), inProcess.getId());
+            History history = new History(new Date(), diff, null, inType, inProcess);
+            serviceManager.getHistoryService().save(history);
             return true;
         } else {
             return false;
