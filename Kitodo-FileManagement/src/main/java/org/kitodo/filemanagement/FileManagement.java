@@ -21,7 +21,7 @@ import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.kitodo.api.filemanagement.FileManagementInterface;
-import org.kitodo.api.filemanagement.ProcessLocation;
+import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.config.Config;
 
 public class FileManagement implements FileManagementInterface {
@@ -52,8 +52,20 @@ public class FileManagement implements FileManagementInterface {
         return false;
     }
 
+    // Correct changes to the following methods are made in a separate Pull
+    // Request.
     @Override
-    public ProcessLocation createProcessLocation(String processId) throws IOException {
+    public boolean rename(URI uri, String newName) {
+        return false;
+    }
+
+    @Override
+    public URI getProcessSubTypeUri(URI processUri, ProcessSubType subType, int id) {
+        return null;
+    }
+
+    @Override
+    public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(
                 (Config.getConfig().getString(METADATA_DIRECTORY) + File.separator + processId));
         if (!processRootDirectory.mkdir()) {
@@ -70,7 +82,7 @@ public class FileManagement implements FileManagementInterface {
             throw new IOException();
         }
 
-        return new ProcessLocation(processRootDirectory.toURI(), processImageDirectory.toURI(), processMetaFileUri);
+        return processRootDirectory.toURI();
 
     }
 
@@ -86,5 +98,20 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public URI createResource(URI parentFolderUri, String fileName) {
         return new File(parentFolderUri.getPath() + File.separator + fileName).toURI();
+    }
+
+    @Override
+    public boolean createSymLink(URI targetUri, URI homeUri) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteSymLink(URI homeUri) {
+        return false;
+    }
+
+    @Override
+    public URI createUriForExistingProcess(String processId) {
+        return null;
     }
 }
