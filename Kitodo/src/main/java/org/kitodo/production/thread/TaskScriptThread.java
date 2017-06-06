@@ -11,6 +11,7 @@
 
 package org.kitodo.production.thread;
 
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
 import java.io.IOException;
@@ -110,5 +111,15 @@ public class TaskScriptThread extends EmptyTask {
     @Override
     public TaskScriptThread replace() {
         return new TaskScriptThread(this);
+    }
+
+    /**
+     * Returns the display name of the task to show to the user.
+     *
+     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     */
+    @Override
+    public String getDisplayName() {
+        return Helper.getTranslation("TaskScriptThread");
     }
 }
