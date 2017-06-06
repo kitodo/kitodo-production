@@ -23,7 +23,6 @@ import java.util.HashMap;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -72,9 +71,6 @@ public class ExtendedProzessImpl extends ProcessImpl {
                     + Helper.getStacktraceAsString(e));
         } catch (InterruptedException e) {
             throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (SwapException e) {
-            throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
             throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
@@ -139,9 +135,6 @@ public class ExtendedProzessImpl extends ProcessImpl {
                     + Helper.getStacktraceAsString(e));
         } catch (InterruptedException e) {
             throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (SwapException e) {
-            throw new GoobiException(1300, "******** wrapped SwapException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         } catch (DAOException e) {
             throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"

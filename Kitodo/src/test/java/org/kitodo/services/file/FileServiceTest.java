@@ -44,7 +44,7 @@ public class FileServiceTest {
     @Test
     @Ignore("Script is not working")
     public void testCreateMetaDirectory() throws IOException {
-        fileService.createMetaDirectory(URI.create("fileServiceTest/"), "testMetaScript");
+        fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
         File file = new File(fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMetaScript")));
 
         Assert.assertTrue(file.isDirectory());
@@ -54,7 +54,7 @@ public class FileServiceTest {
 
     @Test
     public void testCreateDirectory() {
-        URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest/"), "testMeta");
+        URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMeta");
         File file = new File(fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMeta")));
 
         Assert.assertTrue(file.isDirectory());
@@ -65,7 +65,7 @@ public class FileServiceTest {
 
     @Test
     public void testCreateDirectoryWithMissingRoot() {
-        fileService.createDirectory(URI.create("fileServiceTestMissing/"), "testMeta");
+        fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
         File file = new File(fileService.mapUriToKitodoUri(URI.create("fileServiceTestMissing/testMeta")));
 
         Assert.assertFalse(file.exists());
@@ -73,12 +73,12 @@ public class FileServiceTest {
 
     @Test
     public void testCreateDirectoryWithAlreadyExistingDirectory() {
-        fileService.createDirectory(URI.create("fileServiceTest/"), "testMetaExisting");
+        fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
 
         URI file = fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMetaExisting"));
         Assert.assertTrue(new File(file).exists());
 
-        URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest/"), "testMetaExisting");
+        URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMetaExisting");
         file = fileService.mapUriToKitodoUri(URI.create("fileServiceTest/testMetaExisting"));
 
         Assert.assertTrue(new File(file).exists());
@@ -471,9 +471,27 @@ public class FileServiceTest {
         Process process = new Process();
         process.setId(2);
 
-        fileService.createBackupFile(process);
-        System.out.println("test");
+        Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.1")));
+        Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.2")));
 
+        fileService.createBackupFile(process);
+
+        Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.1")));
+        Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.2")));
+
+        fileService.createResource(URI.create("2"), "meta.xml");
+        fileService.createBackupFile(process);
+
+        Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.1")));
+        Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.2")));
+
+        // No third backup file is created, when numberOfBackups is set to two
+        fileService.createResource(URI.create("2"), "meta.xml");
+        fileService.createBackupFile(process);
+
+        Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.1")));
+        Assert.assertTrue(fileService.fileExist(URI.create("2/meta.xml.2")));
+        Assert.assertFalse(fileService.fileExist(URI.create("2/meta.xml.3")));
     }
 
 }

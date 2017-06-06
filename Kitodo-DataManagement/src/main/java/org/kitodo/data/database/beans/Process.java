@@ -57,9 +57,6 @@ public class Process extends BaseBean {
     @Column(name = "template")
     private Boolean template;
 
-    @Column(name = "swappedOut")
-    private Boolean swappedOut = false;
-
     @Column(name = "inChoiceListShown")
     private Boolean inChoiceListShown;
 
@@ -133,7 +130,6 @@ public class Process extends BaseBean {
      * Constructor.
      */
     public Process() {
-        this.swappedOut = false;
         this.title = "";
         this.template = false;
         this.inChoiceListShown = false;
@@ -169,31 +165,6 @@ public class Process extends BaseBean {
 
     public void setTemplate(boolean template) {
         this.template = template;
-    }
-
-    /**
-     * Here different Getters and Setters for the same value (swappedOut),
-     * because Hibernate does not like bit-fields with null values (that's why
-     * Boolean) and MyFaces seams not to like Boolean (that's why boolean for
-     * the GUI).
-     */
-    public Boolean isSwappedOutHibernate() {
-        return this.swappedOut;
-    }
-
-    public void setSwappedOutHibernate(Boolean inSwappedOut) {
-        this.swappedOut = inSwappedOut;
-    }
-
-    public boolean isSwappedOutGui() {
-        if (this.swappedOut == null) {
-            this.swappedOut = false;
-        }
-        return this.swappedOut;
-    }
-
-    public void setSwappedOutGui(boolean inSwappedOut) {
-        this.swappedOut = inSwappedOut;
     }
 
     public boolean isInChoiceListShown() {

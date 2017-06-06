@@ -51,7 +51,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -585,7 +584,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
 
     public Process NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException, CustomResponseException, URISyntaxException {
+            DAOException, WriteException, CustomResponseException, URISyntaxException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -666,9 +665,8 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException,
-            WriteException, CustomResponseException, URISyntaxException {
+    public Process createProcess(ImportObject io) throws ReadException, IOException, InterruptedException,
+            PreferencesException, DAOException, WriteException, CustomResponseException, URISyntaxException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);

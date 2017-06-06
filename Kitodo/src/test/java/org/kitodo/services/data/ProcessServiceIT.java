@@ -361,18 +361,6 @@ public class ProcessServiceIT {
         assertTrue("Import directory doesn't match to given directory!", condition);
     }
 
-    @Ignore("travis doesn't have this folder")
-    @Test
-    public void shouldGetProcessDataDirectoryIgnoreSwapping() throws Exception {
-        ProcessService processService = new ProcessService();
-        FileService fileService = new FileService();
-
-        Process process = processService.find(1);
-        URI directory = fileService.getProcessBaseUriForExistingProcess(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\");
-        assertTrue("Process data directory ignore swapping doesn't match to given directory!", condition);
-    }
-
     @Test
     public void shouldGetBatchId() throws Exception {
         ProcessService processService = new ProcessService();

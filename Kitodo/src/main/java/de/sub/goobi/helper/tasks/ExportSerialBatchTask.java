@@ -25,7 +25,6 @@ import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -203,8 +202,6 @@ public class ExportSerialBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -226,7 +223,7 @@ public class ExportSerialBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private static DigitalDocument buildExportDocument(Process process, Iterable<String> allPointers)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException,
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException,
             MetadataTypeNotAllowedException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
         DigitalDocument result = serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument();
         DocStruct root = result.getLogicalDocStruct();

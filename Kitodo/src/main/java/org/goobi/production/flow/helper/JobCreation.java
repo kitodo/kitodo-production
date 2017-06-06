@@ -28,7 +28,6 @@ import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
@@ -123,9 +122,6 @@ public class JobCreation {
             } catch (PreferencesException e) {
                 Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
                 logger.error(e);
-            } catch (SwapException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Cannot save process " + processTitle, e);
                 logger.error(e);
@@ -181,7 +177,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static void moveFiles(URI metsfile, URI basepath, Process p)
-            throws SwapException, DAOException, IOException, InterruptedException {
+            throws DAOException, IOException, InterruptedException {
         if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {

@@ -505,7 +505,7 @@ public class FileService {
 
     // backup of meta.xml
     void createBackupFile(Process process) throws IOException {
-        int numberOfBackups = 0;
+        int numberOfBackups;
 
         numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
 

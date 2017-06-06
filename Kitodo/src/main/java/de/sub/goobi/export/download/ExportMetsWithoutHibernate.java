@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.data.database.persistence.apache.ProjectManager;
@@ -68,10 +67,9 @@ public class ExportMetsWithoutHibernate {
      * @param process
      *            ProcessObject
      */
-    public boolean startExport(ProcessObject process)
-            throws IOException, InterruptedException, DocStructHasNoTypeException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
-            DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(ProcessObject process) throws IOException, InterruptedException,
+            DocStructHasNoTypeException, PreferencesException, WriteException, MetadataTypeNotAllowedException,
+            ExportFileException, UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         URI benutzerHome = null;
         if (login != null) {
@@ -88,10 +86,9 @@ public class ExportMetsWithoutHibernate {
      * @param inZielVerzeichnis
      *            String
      */
-    public boolean startExport(ProcessObject process, URI inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
-            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
-            DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(ProcessObject process, URI inZielVerzeichnis) throws IOException, InterruptedException,
+            PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+            ExportFileException, UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -139,7 +136,7 @@ public class ExportMetsWithoutHibernate {
      */
     protected boolean writeMetsFile(ProcessObject process, String targetFileName, Fileformat gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
-            SwapException, DAOException, TypeNotAllowedForParentException {
+            DAOException, TypeNotAllowedForParentException {
         this.fi = new FolderInformation(process.getId(), process.getTitle());
         this.myPrefs = serviceManager.getRulesetService()
                 .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));

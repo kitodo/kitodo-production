@@ -92,7 +92,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
@@ -1435,7 +1434,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images pages.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesPage() throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesPage() throws IOException, InterruptedException, DAOException {
         CalcMetadataAndImages(this.page.getListReload());
     }
 
@@ -1443,7 +1442,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images selection.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesSelection() throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesSelection() throws IOException, InterruptedException, DAOException {
         ArrayList<Process> auswahl = new ArrayList<Process>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
@@ -1457,12 +1456,11 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images hits.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesHits() throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesHits() throws IOException, InterruptedException, DAOException {
         CalcMetadataAndImages(this.page.getCompleteList());
     }
 
-    private void CalcMetadataAndImages(List<Process> inListe)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    private void CalcMetadataAndImages(List<Process> inListe) throws IOException, InterruptedException, DAOException {
 
         this.myAnzahlList = new ArrayList<ProcessCounterObject>();
         int allMetadata = 0;
@@ -1688,7 +1686,7 @@ public class ProzessverwaltungForm extends BasisForm {
         tiff.exportStart();
     }
 
-    public void DownloadMultiTiff() throws IOException, InterruptedException, SwapException, DAOException {
+    public void DownloadMultiTiff() throws IOException, InterruptedException, DAOException {
         Multipage mp = new Multipage();
         mp.startExport(this.myProzess);
     }

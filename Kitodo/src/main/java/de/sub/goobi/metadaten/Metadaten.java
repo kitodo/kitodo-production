@@ -57,7 +57,6 @@ import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -690,9 +689,6 @@ public class Metadaten {
         this.tree3 = null;
         try {
             readXmlStart();
-        } catch (SwapException e) {
-            Helper.setFehlerMeldung(e);
-            return Helper.getRequestParameter("zurueck");
         } catch (ReadException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return Helper.getRequestParameter("zurueck");
@@ -723,7 +719,7 @@ public class Metadaten {
      */
 
     public String readXmlStart() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException {
+            DAOException, WriteException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.myProzess.getRuleset());
         this.modusAnsicht = "Metadaten";
@@ -1319,7 +1315,7 @@ public class Metadaten {
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
     public String createPagination()
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+            throws TypeNotAllowedForParentException, IOException, InterruptedException, DAOException {
         this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1677,7 +1673,7 @@ public class Metadaten {
     /**
      * Read all tif folders.
      */
-    public void readAllTifFolders() throws IOException, InterruptedException, SwapException, DAOException {
+    public void readAllTifFolders() throws IOException, InterruptedException, DAOException {
         this.allTifFolders = new ArrayList<>();
         URI dir = fileService.getProcessSubTypeURI(this.myProzess, ProcessSubType.IMAGE, null);
 
@@ -1739,8 +1735,6 @@ public class Metadaten {
                 createPagination();
                 dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
             } catch (TypeNotAllowedForParentException e) {
-                logger.error(e);
-            } catch (SwapException e) {
                 logger.error(e);
             } catch (DAOException e) {
                 logger.error(e);

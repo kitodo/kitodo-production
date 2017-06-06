@@ -45,7 +45,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -85,7 +84,7 @@ public class MetadatenImagesHelper {
      * delete pages from the end of pyhsicalDocStruct.
      */
     public void createPagination(Process process, URI directory)
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+            throws TypeNotAllowedForParentException, IOException, InterruptedException, DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
         DocStruct log = this.mydocument.getLogicalDocStruct();
@@ -422,8 +421,7 @@ public class MetadatenImagesHelper {
     /**
      * Die Images eines Prozesses auf Vollständigkeit prüfen.
      */
-    public boolean checkIfImagesValid(String title, URI folder)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public boolean checkIfImagesValid(String title, URI folder) throws IOException, InterruptedException, DAOException {
         boolean isValid = true;
         this.myLastImage = 0;
 

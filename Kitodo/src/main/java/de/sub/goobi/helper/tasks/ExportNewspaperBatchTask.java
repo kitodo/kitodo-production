@@ -36,7 +36,6 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -142,8 +141,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -156,7 +153,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             finish
      */
     public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException,
-            SwapException, DAOException, IOException, InterruptedException {
+            DAOException, IOException, InterruptedException {
         super(batch.getLabel());
         batchId = batch.getId();
         action = 1;
@@ -335,8 +332,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws ReadException
      *             if the no node corresponding to the file format is available
      *             in the rule set configured
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -349,7 +344,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             finish
      */
     private static String getMetsYearAnchorPointerURL(Process process)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
         VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
                 serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         String metsPointerPathAnchor = process.getProject().getMetsPointerPath();
@@ -375,8 +370,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -389,7 +382,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             finish
      */
     private static List<LocalDate> getIssueDates(DigitalDocument act)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
         List<LocalDate> result = new LinkedList<>();
         DocStruct logicalDocStruct = act.getLogicalDocStruct();
         for (DocStruct annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {
@@ -451,8 +444,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -465,7 +456,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             finish
      */
     static String getMetsPointerURL(Process process)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
         VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
                 serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         return replacer.replace(process.getProject().getMetsPointerPathAnchor());
@@ -490,8 +481,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -514,7 +503,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private MetsMods buildExportableMetsMods(Process process, HashMap<Integer, String> years,
             ArrayListMap<LocalDate, String> issues)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException,
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException,
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());

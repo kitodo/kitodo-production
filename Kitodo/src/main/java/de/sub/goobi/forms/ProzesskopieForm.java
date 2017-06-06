@@ -70,7 +70,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
@@ -768,7 +767,7 @@ public class ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public String createNewProcess() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException {
+            DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);

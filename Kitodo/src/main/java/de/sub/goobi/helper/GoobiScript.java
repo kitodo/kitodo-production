@@ -35,7 +35,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
@@ -980,8 +979,6 @@ public class GoobiScript {
                 logger.error("ExportFileException", e);
             } catch (UghHelperException e) {
                 logger.error("UghHelperException", e);
-            } catch (SwapException e) {
-                logger.error("SwapException", e);
             } catch (DAOException e) {
                 logger.error("DAOException", e);
             }

@@ -31,7 +31,6 @@ import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.services.ServiceManager;
@@ -82,8 +81,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return true, if any history event is updated, so the process has to be
      *         saved to database
      */
-    public static Boolean updateHistory(Process inProcess)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public static Boolean updateHistory(Process inProcess) throws IOException, InterruptedException, DAOException {
         boolean updated = false;
         /* storage */
         if (updateHistoryEvent(inProcess, HistoryTypeEnum.storageDifference, getCurrentStorageSize(inProcess))) {
@@ -360,7 +358,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return size in bytes, or 0 if error.
      */
     private static long getCurrentStorageSize(Process inProcess)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
         URI dir = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
         File directory = new File(dir);
         if (!serviceManager.getFileService().isDirectory(dir)) {
@@ -387,16 +385,6 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
                     logger.debug("updating history entries for " + proc.getTitle());
                 }
                 try {
-                    if (!proc.isSwappedOutGui()) {
-                        boolean processHistoryChanged = (true == updateHistory(proc));
-                        Boolean stepsHistoryChanged = updateHistoryForSteps(proc);
-                        if (processHistoryChanged || stepsHistoryChanged) {
-                            session.saveOrUpdate(proc);
-                            if (logger.isDebugEnabled()) {
-                                logger.debug("history updated for process " + proc.getId());
-                            }
-                        }
-                    }
 
                     // commit transaction every 50 items
                     if (!it.hasNext() || i % 50 == 0) {

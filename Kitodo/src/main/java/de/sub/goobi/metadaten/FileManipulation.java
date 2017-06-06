@@ -36,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -157,9 +156,6 @@ public class FileManipulation {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("uploadFailed", e);
-        } catch (SwapException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed", e);
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("uploadFailed", e);
@@ -200,7 +196,7 @@ public class FileManipulation {
     }
 
     private void updatePagination(URI filename) throws TypeNotAllowedForParentException, IOException,
-            InterruptedException, SwapException, DAOException, MetadataTypeNotAllowedException {
+            InterruptedException, DAOException, MetadataTypeNotAllowedException {
         if (!matchesFileConfiguration(filename)) {
             return;
         }
@@ -553,9 +549,6 @@ public class FileManipulation {
                             for (URI file : sortedList) {
                                 fileService.copyFileToDirectory(file, masterDirectory);
                             }
-                        } catch (SwapException e) {
-                            logger.error(e);
-                            Helper.setFehlerMeldung("", e);
                         } catch (DAOException e) {
                             logger.error(e);
                         } catch (IOException e) {
@@ -584,8 +577,6 @@ public class FileManipulation {
                                         fileService.copyFileToDirectory(file, directory);
                                     }
                                 } catch (IOException e) {
-                                    logger.error(e);
-                                } catch (SwapException e) {
                                     logger.error(e);
                                 } catch (DAOException e) {
                                     logger.error(e);
@@ -617,8 +608,6 @@ public class FileManipulation {
                                     fileService.copyFileToDirectory(file, directory);
                                 } catch (IOException e) {
                                     logger.error(e);
-                                } catch (SwapException e) {
-                                    logger.error(e);
                                 } catch (DAOException e) {
                                     logger.error(e);
                                 } catch (InterruptedException e) {
@@ -642,8 +631,6 @@ public class FileManipulation {
                 }
             }
         } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-        } catch (SwapException e) {
             logger.error(e);
         } catch (DAOException e) {
             logger.error(e);

@@ -30,7 +30,6 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -413,13 +412,6 @@ public class HelperSchritteWithoutHibernate {
             abortStep(step);
             return;
         } catch (WriteException e) {
-            if (task != null) {
-                task.setException(e);
-            }
-            logger.error(e);
-            abortStep(step);
-            return;
-        } catch (SwapException e) {
             if (task != null) {
                 task.setException(e);
             }

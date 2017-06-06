@@ -36,7 +36,6 @@ import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -90,7 +89,7 @@ public class ExportDms extends ExportMets {
      */
     @Override
     public boolean startExport(Process process, URI inZielVerzeichnis) throws IOException, InterruptedException,
-            WriteException, PreferencesException, SwapException, DAOException, TypeNotAllowedForParentException {
+            WriteException, PreferencesException, DAOException, TypeNotAllowedForParentException {
 
         Hibernate.initialize(process.getProject().getProjectFileGroups());
         if (process.getProject().isUseDmsImport()
@@ -130,9 +129,6 @@ public class ExportDms extends ExportMets {
      *             if the file format selected for DMS export in the project of
      *             the process to export that implements
      *             {@link ugh.dl.Fileformat#getDigitalDocument()} throws it
-     * @throws SwapException
-     *             if after swapping a process back in neither a file system
-     *             entry "images" nor "meta.xml" exists
      * @throws DAOException
      *             if saving the fact that a process has been swapped back in to
      *             the database fails
@@ -142,9 +138,8 @@ public class ExportDms extends ExportMets {
      *             but never thrown, see
      *             https://github.com/kitodo/kitodo-ugh/issues/2
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask)
-            throws IOException, InterruptedException, WriteException, PreferencesException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) throws IOException,
+            InterruptedException, WriteException, PreferencesException, TypeNotAllowedForParentException {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, inZielVerzeichnis,
@@ -171,9 +166,8 @@ public class ExportDms extends ExportMets {
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocument newFile)
-            throws IOException, InterruptedException, WriteException, PreferencesException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocument newFile) throws IOException,
+            InterruptedException, WriteException, PreferencesException, DAOException, TypeNotAllowedForParentException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         this.cp = new ConfigProjects(process.getProject().getTitle());
@@ -445,7 +439,7 @@ public class ExportDms extends ExportMets {
      *            String
      */
     public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
 
         // download sources
         URI sources = serviceManager.getFileService().getSourceDirectory(process);
@@ -509,7 +503,7 @@ public class ExportDms extends ExportMets {
      *            String
      */
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
 
         /*
          * dann den Ausgangspfad ermitteln
@@ -587,7 +581,7 @@ public class ExportDms extends ExportMets {
      *
      */
     private void directoryDownload(Process process, URI zielVerzeichnis)
-            throws SwapException, DAOException, IOException, InterruptedException {
+            throws DAOException, IOException, InterruptedException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 

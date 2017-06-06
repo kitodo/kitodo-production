@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.Date;
 
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.MetadataHelper;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 
@@ -210,8 +209,7 @@ public class ProcessObject {
     }
 
     public void writeMetadataFile(Fileformat gdzfile, URI metadataFile, Prefs prefs, String fileFormat)
-            throws IOException, InterruptedException, SwapException, DAOException, WriteException,
-            PreferencesException {
+            throws IOException, InterruptedException, DAOException, WriteException, PreferencesException {
         Fileformat ff;
 
         switch (MetadataFormat.findFileFormatsHelperByName(fileFormat)) {

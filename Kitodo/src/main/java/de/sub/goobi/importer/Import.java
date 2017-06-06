@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
@@ -74,7 +73,7 @@ public class Import {
 
     private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
             TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
-            PreferencesException, SwapException, DAOException, WriteException, URISyntaxException {
+            PreferencesException, DAOException, WriteException, URISyntaxException {
         logger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {

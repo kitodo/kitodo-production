@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
@@ -88,7 +87,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
     @Override
     public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException,
-            WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
+            WriteException, TypeNotAllowedForParentException, InterruptedException {
         this.myPrefs = serviceManager.getRulesetService()
                 .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
         ;
@@ -300,7 +299,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      *            String
      */
     public void fulltextDownload(ProcessObject myProcess, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
 
         // download sources
         URI sources = fi.getSourceDirectory();
@@ -355,7 +354,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      *            String
      */
     public void imageDownload(ProcessObject myProcess, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
         /*
          * den Ausgangspfad ermitteln
          */

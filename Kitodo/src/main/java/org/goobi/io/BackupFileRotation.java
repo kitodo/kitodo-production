@@ -119,7 +119,7 @@ public class BackupFileRotation {
     private void createBackupForFile(URI fileName) throws IOException {
         rotateBackupFilesFor(fileName);
 
-        String newName = fileName + ".1";
+        String newName = fileService.getFileNameWithExtension(fileName) + ".1";
         fileService.renameFile(fileName, newName);
     }
 

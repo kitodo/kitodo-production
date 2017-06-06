@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.file.FileService;
 
@@ -40,20 +39,13 @@ public class BackupFileRotationTest {
 
     @Before
     public void setUp() throws Exception {
-        Process process = new Process();
-        process.setId(2);
-        fileService.createDirectory(processService.getProcessDataDirectory(process), "2");
-        fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
+        URI directory = fileService.createDirectory(URI.create(""), "2");
+        fileService.createResource(directory, BACKUP_FILE_NAME);
     }
 
     @After
     public void tearDown() throws Exception {
-        Process process = new Process();
-        process.setId(2);
-        fileService.delete(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME));
-        fileService.delete(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME + ".1"));
-        fileService.delete(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME + ".2"));
-        fileService.delete(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME + ".3"));
+        fileService.delete(URI.create("2"));
     }
 
     @Test
@@ -67,7 +59,7 @@ public class BackupFileRotationTest {
 
     @Test
     public void backupFileShouldContainSameContentAsOriginalFile()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+            throws IOException, URISyntaxException, InterruptedException, DAOException {
         Process process = new Process();
         process.setId(2);
         int numberOfBackups = 1;
@@ -79,7 +71,7 @@ public class BackupFileRotationTest {
 
     @Test
     public void modifiedDateShouldNotChangedOnBackup()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+            throws IOException, URISyntaxException, InterruptedException, DAOException {
         Process process = new Process();
         process.setId(2);
         int numberOfBackups = 1;
@@ -91,8 +83,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void shouldWriteTwoBackupFiles()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+    public void shouldWriteTwoBackupFiles() throws IOException, URISyntaxException, InterruptedException, DAOException {
         int numberOfBackups = 2;
         FileService fileService = new FileService();
 
@@ -109,13 +100,13 @@ public class BackupFileRotationTest {
 
     @Test
     public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+            throws IOException, URISyntaxException, InterruptedException, DAOException {
         String content1 = "Test One.";
         int numberOfBackups = 2;
         Process process = new Process();
         process.setId(2);
-
-        writeFile(processService.getProcessDataDirectory(process).resolve(BACKUP_FILE_NAME), content1);
+        URI resolve = fileService.createResource(processService.getProcessDataDirectory(process), BACKUP_FILE_NAME);
+        writeFile(resolve, content1);
         runBackup(numberOfBackups, process);
 
         assertFileHasContent(processService.getProcessDataDirectory(process) + BACKUP_FILE_NAME + ".1", content1);
@@ -128,7 +119,7 @@ public class BackupFileRotationTest {
 
     @Test
     public void secondBackupFileCorrectModifiedDate()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+            throws IOException, URISyntaxException, InterruptedException, DAOException {
         long expectedLastModifiedDate;
         int numberOfBackups = 2;
         Process process = new Process();
@@ -146,7 +137,7 @@ public class BackupFileRotationTest {
 
     @Test
     public void threeBackupRunsCreateThreeBackupFiles()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+            throws IOException, URISyntaxException, InterruptedException, DAOException {
         int numberOfBackups = 3;
 
         Process process = new Process();
@@ -164,7 +155,7 @@ public class BackupFileRotationTest {
 
     @Test
     public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns()
-            throws IOException, URISyntaxException, InterruptedException, DAOException, SwapException {
+            throws IOException, URISyntaxException, InterruptedException, DAOException {
         int numberOfBackups = 3;
         String content1 = "Test One.";
 

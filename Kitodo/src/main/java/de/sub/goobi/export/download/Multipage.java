@@ -40,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -54,7 +53,7 @@ public class Multipage {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(Multipage.class);
 
-    private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
+    private void create(Process process) throws IOException, InterruptedException, DAOException {
         /* alle tifs durchlaufen */
         URI pfad = serviceManager.getFileService().getImagesDirectory(process);
 
@@ -98,7 +97,7 @@ public class Multipage {
      * @param process
      *            object
      */
-    public void startExport(Process process) throws IOException, InterruptedException, SwapException, DAOException {
+    public void startExport(Process process) throws IOException, InterruptedException, DAOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();

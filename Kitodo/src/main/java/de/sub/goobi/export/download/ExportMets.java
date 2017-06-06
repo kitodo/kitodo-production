@@ -40,7 +40,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -75,7 +74,7 @@ public class ExportMets {
      */
     public boolean startExport(Process myProcess) throws IOException, InterruptedException, DocStructHasNoTypeException,
             PreferencesException, WriteException, MetadataTypeNotAllowedException, ExportFileException,
-            UghHelperException, ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
+            UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         URI userHome = null;
         if (login != null) {
@@ -92,10 +91,9 @@ public class ExportMets {
      * @param inZielVerzeichnis
      *            String
      */
-    public boolean startExport(Process myProcess, URI inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
-            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
-            DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process myProcess, URI inZielVerzeichnis) throws IOException, InterruptedException,
+            PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+            ExportFileException, UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -163,7 +161,7 @@ public class ExportMets {
      */
 
     protected boolean writeMetsFile(Process myProcess, URI metaFile, Fileformat gdzfile, boolean writeLocalFilegroup)
-            throws PreferencesException, WriteException, IOException, InterruptedException, SwapException, DAOException,
+            throws PreferencesException, WriteException, IOException, InterruptedException, DAOException,
             TypeNotAllowedForParentException {
 
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);

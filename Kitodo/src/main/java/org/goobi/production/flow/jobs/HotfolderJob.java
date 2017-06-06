@@ -31,7 +31,6 @@ import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -305,9 +304,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 } catch (PreferencesException e) {
                     logger.error(e);
                     return 21;
-                } catch (SwapException e) {
-                    logger.error(e);
-                    return 22;
                 } catch (DAOException e) {
                     logger.error(e);
                     return 22;
@@ -398,9 +394,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 Helper.setFehlerMeldung(e);
                 logger.error(e);
             } catch (PreferencesException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (SwapException e) {
                 Helper.setFehlerMeldung(e);
                 logger.error(e);
             } catch (DAOException e) {

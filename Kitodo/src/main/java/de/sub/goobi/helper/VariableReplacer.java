@@ -33,7 +33,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -272,8 +271,6 @@ public class VariableReplacer {
 
             }
 
-        } catch (SwapException e) {
-            logger.error(e);
         } catch (DAOException e) {
             logger.error(e);
         } catch (IOException e) {

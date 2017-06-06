@@ -10,3 +10,4 @@
 --
 
 ALTER TABLE process ADD processBaseUri tinyblob;
+ALTER TABLE process DROP COLUMN swappedOut;

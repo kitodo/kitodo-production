@@ -58,7 +58,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -479,7 +478,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return tif directory
      */
     public URI getImagesTifDirectory(boolean useFallBack, Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
         URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
@@ -552,7 +551,7 @@ public class ProcessService extends TitleSearchService<Process> {
         URI testMe;
         try {
             testMe = getImagesTifDirectory(true, process);
-        } catch (DAOException | IOException | InterruptedException | SwapException e) {
+        } catch (DAOException | IOException | InterruptedException e) {
             return false;
         }
         return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
@@ -568,7 +567,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return path
      */
     public URI getImagesOrigDirectory(boolean useFallBack, Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+            throws IOException, InterruptedException, DAOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -870,8 +869,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
-    public String getFulltextFilePath(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public String getFulltextFilePath(Process process) throws IOException, InterruptedException, DAOException {
         return getProcessDataDirectory(process) + "fulltext.xml";
     }
 
@@ -1101,7 +1099,7 @@ public class ProcessService extends TitleSearchService<Process> {
             if (fileService.fileExist(folder)) {
                 return folder;
             }
-        } catch (DAOException | InterruptedException | IOException | SwapException ex) {
+        } catch (DAOException | InterruptedException | IOException ex) {
             logger.debug("exception: " + ex);
         }
         return null;
@@ -1182,8 +1180,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * The method createProcessDirs() starts creation of directories configured
      * by parameter processDirs within kitodo_config.properties
      */
-    public void createProcessDirs(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
+    public void createProcessDirs(Process process) throws DAOException, IOException, InterruptedException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
@@ -1204,8 +1201,6 @@ public class ProcessService extends TitleSearchService<Process> {
      *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -1218,7 +1213,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *             finish
      */
     public DigitalDocument getDigitalDocument(Process process)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
         return readMetadataFile(process).getDigitalDocument();
     }
 
