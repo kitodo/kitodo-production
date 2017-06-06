@@ -13,6 +13,9 @@ package org.kitodo.api.dataeditor;
 
 import java.net.URI;
 
+/**
+ * Enables the user to read and write Metadata in an editor.
+ */
 public interface DataEditorInterface {
 
     /**

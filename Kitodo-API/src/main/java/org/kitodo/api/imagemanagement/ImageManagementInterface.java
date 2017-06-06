@@ -42,4 +42,26 @@ public interface ImageManagementInterface {
      */
     boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri, ImageFileFormat resultFileFormat);
 
+    /**
+     * Changes the dpi of an image at a given uri.
+     * 
+     * @param imagefileUri
+     *            The uri of the image.
+     * @param dpi
+     *            the new dpi.
+     * @return the image with the new dpi.
+     */
+    Image changeDpi(URI imagefileUri, int dpi);
+
+    /**
+     * changes the size (in pixel) of the image.
+     * 
+     * @param imageFileUri
+     *            The uri of the image to size.
+     * @param pixelWidth
+     *            The new pixelWidth.
+     * @return The new sized image
+     */
+    Image getSizedWebImage(URI imageFileUri, int pixelWidth);
+
 }

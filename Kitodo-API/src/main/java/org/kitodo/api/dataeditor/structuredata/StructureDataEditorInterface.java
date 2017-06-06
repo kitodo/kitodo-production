@@ -13,5 +13,8 @@ package org.kitodo.api.dataeditor.structuredata;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
+/**
+ * Enables the user to read and write structuredata.
+ */
 public interface StructureDataEditorInterface extends DataEditorInterface {
 }

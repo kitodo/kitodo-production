@@ -21,7 +21,6 @@ import java.net.URI;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kitodo.api.filemanagement.ProcessLocation;
 
 public class FileManagementTest {
 
@@ -133,14 +132,9 @@ public class FileManagementTest {
     public void testCreateProcessLocation() throws IOException {
         FileManagement fileManagement = new FileManagement();
         String processFolder = "src/test/testProcess";
-        String imageFolder = "src/test/testProcess/images/";
-        String metaLocation = "src/test/testProcess/meta.xml";
 
-        ProcessLocation processLocation = fileManagement.createProcessLocation("testProcess");
-        Assert.assertTrue("wrong processLocation",
-                processLocation.getProcessFolder().toString().contains(processFolder));
-        Assert.assertTrue("wrong imageLocation", processLocation.getImageFolder().toString().contains(imageFolder));
-        Assert.assertTrue("wrong metaXmlLocation", processLocation.getMetaXmlUri().toString().contains(metaLocation));
+        URI processLocation = fileManagement.createProcessLocation("testProcess");
+        Assert.assertTrue("wrong processLocation", processLocation.toString().contains(processFolder));
 
         File testFolder = new File(processFolder);
         FileUtils.deleteDirectory(testFolder);

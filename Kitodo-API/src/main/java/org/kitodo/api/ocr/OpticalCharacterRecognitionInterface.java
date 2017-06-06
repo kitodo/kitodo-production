@@ -11,6 +11,9 @@
 
 package org.kitodo.api.ocr;
 
+/**
+ * Processes the given input with ocr.
+ */
 public interface OpticalCharacterRecognitionInterface {
 
     /**

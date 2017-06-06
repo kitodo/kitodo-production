@@ -9,7 +9,12 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.generator;
+package org.kitodo.api.filemanagement;
 
-public interface GeneratorInterface {
+/**
+ * The sub types of processes, which are represented in seperate folders or
+ * files on the filemanagement.
+ */
+public enum ProcessSubType {
+    IMAGE, IMAGE_SOURCE, META_XML, TEMPLATE, IMPORT, OCR, OCR_PDF, OCR_TXT, OCR_WORD, OCR_ALTO;
 }

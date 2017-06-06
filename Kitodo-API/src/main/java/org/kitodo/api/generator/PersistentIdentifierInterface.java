@@ -11,9 +11,11 @@
 
 package org.kitodo.api.generator;
 
-public interface URNGeneratorInterface extends GeneratorInterface {
+/** Handles persistent Identifiers. */
+public interface PersistentIdentifierInterface {
 
     /**
+     * Generates a URN for the given namespace and id.
      *
      * @param namespace
      *            the URN-namespace (usually unique within an organisation).
@@ -22,5 +24,14 @@ public interface URNGeneratorInterface extends GeneratorInterface {
      * @return a valid URN (including check digit).
      */
     String generateUnifiedResourceName(String namespace, String identifier);
+
+    /**
+     * Registers the given urn.
+     * 
+     * @param urn
+     *            the urn to register.
+     * @return true, if successful, false otherwise.
+     */
+    boolean registerUnifiedResourceName(String urn);
 
 }

@@ -11,18 +11,21 @@
 
 package org.kitodo.api.ocr;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
+/**
+ * The properties of the ocr processing.
+ */
 public class OCRInput {
 
     /** The process id. */
     private Integer processId;
     /** The font type. */
-    private String fontType;
+    private Collection<String> fontType;
     /** The used languages. */
-    private ArrayList<String> languages;
+    private Collection<String> languages;
     /** Properties for given and returned files. */
-    private ArrayList<FileProperty> fileProperties;
+    private Collection<FileProperty> fileProperties;
     /** The type of the result xml file. */
     private String resultType;
     /**
@@ -55,7 +58,7 @@ public class OCRInput {
      * 
      * @return The fontType.
      */
-    public String getFontType() {
+    public Collection<String> getFontType() {
         return fontType;
     }
 
@@ -65,7 +68,7 @@ public class OCRInput {
      * @param fontType
      *            The fontType.
      */
-    public void setFontType(String fontType) {
+    public void setFontType(Collection<String> fontType) {
         this.fontType = fontType;
     }
 
@@ -74,7 +77,7 @@ public class OCRInput {
      * 
      * @return The languages.
      */
-    public ArrayList<String> getLanguages() {
+    public Collection<String> getLanguages() {
         return languages;
     }
 
@@ -84,7 +87,7 @@ public class OCRInput {
      * @param languages
      *            The languages.
      */
-    public void setLanguages(ArrayList<String> languages) {
+    public void setLanguages(Collection<String> languages) {
         this.languages = languages;
     }
 
@@ -93,7 +96,7 @@ public class OCRInput {
      * 
      * @return The fileProperties.
      */
-    public ArrayList<FileProperty> getFileProperties() {
+    public Collection<FileProperty> getFileProperties() {
         return fileProperties;
     }
 
@@ -103,7 +106,7 @@ public class OCRInput {
      * @param fileProperties
      *            The fileProperties.
      */
-    public void setFileProperties(ArrayList<FileProperty> fileProperties) {
+    public void setFileProperties(Collection<FileProperty> fileProperties) {
         this.fileProperties = fileProperties;
     }
 

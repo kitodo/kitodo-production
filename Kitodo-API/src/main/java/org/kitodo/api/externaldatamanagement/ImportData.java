@@ -11,23 +11,22 @@
 
 package org.kitodo.api.externaldatamanagement;
 
-import java.net.URI;
-import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * The imported data, transformed to a Map.
+ */
 public class ImportData {
 
     /** The data imported from the source as a map. */
-    private HashMap<String, String> data;
-
-    /** The imported data as a file. */
-    private URI resultFileUri;
+    private Map<String, String> data;
 
     /**
      * Gets the data.
      * 
      * @return The data.
      */
-    public HashMap<String, String> getData() {
+    public Map<String, String> getData() {
         return data;
     }
 
@@ -37,26 +36,7 @@ public class ImportData {
      * @param data
      *            The data.
      */
-    public void setData(HashMap<String, String> data) {
+    public void setData(Map<String, String> data) {
         this.data = data;
-    }
-
-    /**
-     * Gets the resultFileUri.
-     * 
-     * @return The resultFileUri.
-     */
-    public URI getResultFileUri() {
-        return resultFileUri;
-    }
-
-    /**
-     * Sets the resultFileUri.
-     * 
-     * @param resultFileUri
-     *            The resultFileUri.
-     */
-    public void setResultFileUri(URI resultFileUri) {
-        this.resultFileUri = resultFileUri;
     }
 }

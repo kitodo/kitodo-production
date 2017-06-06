@@ -11,5 +11,6 @@
 
 package org.kitodo.api.validation;
 
+/** Enables validation of any kind. */
 public interface ValidationInterface {
 }
