@@ -268,10 +268,19 @@ public class Process extends BaseBean {
         return this.wikiField;
     }
 
+    /**
+     * Gets the process Base Uri.
+     */
     public URI getProcessBaseUri() {
         return processBaseUri;
     }
 
+    /**
+     * Sets the process base uri
+     * 
+     * @param processBaseUri
+     *            the given process base uri
+     */
     public void setProcessBaseUri(URI processBaseUri) {
         this.processBaseUri = processBaseUri;
     }
