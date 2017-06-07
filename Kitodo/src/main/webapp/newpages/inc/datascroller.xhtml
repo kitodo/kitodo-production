@@ -21,11 +21,11 @@
     <h:panelGroup rendered="#{mypage.totalResults > LoginForm.myBenutzer.tableSize}">
     <!-- erste und vorherige Seite -->
     <h:commandLink action="#{mypage.cmdMoveFirst}" id="gofirst">
-        <h:graphicImage url="/newpages/images/datascroller/arrow-first.gif"
+        <h:graphicImage alt="go to first page" url="/newpages/images/datascroller/arrow-first.gif"
                         style="margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
     <h:commandLink action="#{mypage.cmdMovePrevious}" id="goprevious">
-        <h:graphicImage url="/newpages/images/datascroller/arrow-previous.gif"
+        <h:graphicImage alt="go to previous page" url="/newpages/images/datascroller/arrow-previous.gif"
                         style="margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
 
@@ -48,11 +48,11 @@
 
     <!-- nächste und letzte Seite -->
     <h:commandLink action="#{mypage.cmdMoveNext}" id="gonext">
-        <h:graphicImage url="/newpages/images/datascroller/arrow-next.gif"
+        <h:graphicImage alt="go to next page" url="/newpages/images/datascroller/arrow-next.gif"
                         style="margin-left:4px;margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
     <h:commandLink action="#{mypage.cmdMoveLast}" id="golast">
-        <h:graphicImage url="/newpages/images/datascroller/arrow-last.gif"
+        <h:graphicImage alt="go to last page" url="/newpages/images/datascroller/arrow-last.gif"
                         style="margin-right:4px;vertical-align: middle;"/>
     </h:commandLink>
     </h:panelGroup>

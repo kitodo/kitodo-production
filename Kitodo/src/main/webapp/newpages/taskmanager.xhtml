@@ -71,7 +71,7 @@
 
                                                 <h:commandLink id="id8" action="#{NavigationForm.Reload}"
                                                                style="margin-right:15px">
-                                                    <h:graphicImage id="id9"
+                                                    <h:graphicImage id="id9" alt="reload"
                                                                     value="/newpages/images/icons/reload.png"
                                                                     style="margin-right:3px;margin-left:15px;vertical-align:bottom"/>
                                                     <h:outputText id="id10" value="#{msgs.listeAktualisieren}"/>
@@ -80,7 +80,7 @@
                                                 <h:commandLink
                                                         action="#{LongRunningTasksForm.clearFinishedTasks}"
                                                         style="margin-right:15px">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="clear finished tasks"
                                                             value="/newpages/images/icons/progress_remAll.gif"
                                                             style="margin-right:3px;vertical-align:bottom"/>
                                                     <h:outputText
@@ -90,7 +90,7 @@
                                                 <h:commandLink id="id11"
                                                                action="#{LongRunningTasksForm.clearAllTasks}"
                                                                style="margin-right:15px">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="clear all tasks"
                                                             value="/newpages/images/icons/progress_remAll2.gif"
                                                             style="margin-right:3px;vertical-align:bottom"/>
                                                     <h:outputText id="id12"
@@ -99,11 +99,11 @@
 
                                                 <h:commandLink id="id13"
                                                                action="#{LongRunningTasksForm.toggleRunning}">
-                                                    <h:graphicImage id="id14"
+                                                    <h:graphicImage id="id14" alt="start task"
                                                                     rendered="#{!LongRunningTasksForm.running}"
                                                                     value="/newpages/images/icons/start_task.gif"
                                                                     style="margin-right:3px;vertical-align:bottom"/>
-                                                    <h:graphicImage id="id15"
+                                                    <h:graphicImage id="id15" alt="stop task"
                                                                     rendered="#{LongRunningTasksForm.running}"
                                                                     value="/newpages/images/icons/stop_task.gif"
                                                                     style="margin-right:3px;vertical-align:bottom"/>
@@ -145,22 +145,22 @@
                                                     <h:outputText id="id24" value="#{msgs.fortschritt}"/>
                                                 </f:facet>
 
-                                                <h:graphicImage
+                                                <h:graphicImage alt=""
                                                         value="/newpages/images/fortschritt/ende_links.gif"
                                                         rendered="true"/>
-                                                <h:graphicImage id="id25"
+                                                <h:graphicImage id="id25" alt=""
                                                                 value="/newpages/images/fortschritt/gr.gif"
                                                                 style="width:#{item.progress * 0.8}px;height:10px"
                                                                 rendered="#{item.progress!=-1}"/>
-                                                <h:graphicImage id="id26"
+                                                <h:graphicImage id="id26" alt=""
                                                                 value="/newpages/images/fortschritt/ge.gif"
                                                                 style="width:#{(100 - item.progress) * 0.8}px;height:10px"
                                                                 rendered="#{item.progress!=-1}"/>
-                                                <h:graphicImage id="id27"
+                                                <h:graphicImage id="id27" alt=""
                                                                 value="/newpages/images/fortschritt/rt.gif"
                                                                 style="width:#{100 * 0.8}px;height:10px"
                                                                 rendered="#{item.progress==-1}"/>
-                                                <h:graphicImage
+                                                <h:graphicImage alt=""
                                                         value="/newpages/images/fortschritt/ende_rechts.gif"
                                                         rendered="true"/>
                                             </t:column>
@@ -182,7 +182,7 @@
                                                             </h:panelGrid>
                                                         </div>
                                                     </f:facet>
-                                                    <h:graphicImage id="id32" style="margin-right:5px"
+                                                    <h:graphicImage id="id32" style="margin-right:5px" alt=""
                                                                     value="/newpages/images/icons/exclamation.png"/>
                                                 </t:popup>
 
@@ -199,7 +199,7 @@
                                                 <h:commandLink id="id36"
                                                                action="#{LongRunningTasksForm.moveTaskUp}"
                                                                title="#{msgs.start}">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="move task up"
                                                             value="/newpages/images/buttons/order_up_klein.gif"/>
                                                     <t:updateActionListener value="#{item}"
                                                                             property="#{LongRunningTasksForm.task}"/>
@@ -208,7 +208,7 @@
                                                 <h:commandLink id="id37"
                                                                action="#{LongRunningTasksForm.moveTaskDown}"
                                                                style="margin-right:5px" title="#{msgs.start}">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="move task down"
                                                             value="/newpages/images/buttons/order_down_klein.gif"/>
                                                     <t:updateActionListener value="#{item}"
                                                                             property="#{LongRunningTasksForm.task}"/>
@@ -218,7 +218,7 @@
                                                 <h:commandLink id="id39"
                                                                action="#{LongRunningTasksForm.executeTask}"
                                                                title="#{msgs.start}" rendered="#{item.startable}">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="start task"
                                                             value="/newpages/images/icons/start_task.gif"/>
                                                     <t:updateActionListener value="#{item}"
                                                                             property="#{LongRunningTasksForm.task}"/>
@@ -229,7 +229,7 @@
                                                                action="#{LongRunningTasksForm.cancelTask}"
                                                                title="#{msgs.stop}"
                                                                rendered="#{item.stopable}">
-                                                    <h:graphicImage id="id41"
+                                                    <h:graphicImage id="id41" alt="stop task"
                                                                     value="/newpages/images/icons/stop_task.gif"/>
                                                     <t:updateActionListener value="#{item}"
                                                                             property="#{LongRunningTasksForm.task}"/>
@@ -240,7 +240,7 @@
                                                                action="#{LongRunningTasksForm.removeTask}"
                                                                title="#{msgs.loeschen}"
                                                                rendered="#{item.deleteable}">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="remove task"
                                                             value="/newpages/images/icons/progress_rem.gif"/>
                                                     <t:updateActionListener value="#{item}"
                                                                             property="#{LongRunningTasksForm.task}"/>

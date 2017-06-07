@@ -87,7 +87,7 @@
                                                 </td>
                                                 <td class="eingabeBoxen_row1" align="right">
                                                     <h:commandLink id="id10" action="#{NavigationForm.Reload}">
-                                                        <h:graphicImage id="id11"
+                                                        <h:graphicImage id="id11" alt="reload"
                                                                         value="/newpages/images/reload.gif"/>
                                                     </h:commandLink>
                                                 </td>
@@ -598,7 +598,7 @@
                                                                                             action="#{ProjekteForm.filegroupDelete}"
                                                                                             title="#{msgs.filegroupLoeschen}"
                                                                                             onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}?')) return">
-                                                                                        <h:graphicImage
+                                                                                        <h:graphicImage alt="delete"
                                                                                                 value="images/buttons/waste1a_20px.gif"/>
                                                                                         <t:updateActionListener
                                                                                                 property="#{ProjekteForm.myFilegroup}"
@@ -887,7 +887,7 @@
                                                                                 </h:panelGrid>
 
                                                                                 <h:panelGroup id="pcid16">
-                                                                                    <t:graphicImage forceId="true" id="vzid36"
+                                                                                    <t:graphicImage forceId="true" id="vzid36" alt=""
                                                                                                     rendered="#{ProjekteForm.projectProgressImage != ''}"
                                                                                                     value="#{HelperForm.servletPathWithHostAsUrl}/pages/imagesTemp/#{ProjekteForm.projectProgressImage}"/>
 

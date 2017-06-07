@@ -21,9 +21,9 @@
 
     <h:commandLink  style="color:black" id="plusminusbutton">
         <f:ajax render="auflistung">
-            <h:graphicImage value="/newpages/images/plus.gif"
+            <h:graphicImage value="/newpages/images/plus.gif" alt="show details"
                             style="margin-right:4px" rendered="#{!item.panelShown}"/>
-            <h:graphicImage value="/newpages/images/minus.gif"
+            <h:graphicImage value="/newpages/images/minus.gif" alt="hide details"
                             style="margin-right:4px" rendered="#{item.panelShown}"/>
             <t:updateActionListener value="#{item.panelShown?false:true}"
                                     property="#{item.panelShown}"/>
