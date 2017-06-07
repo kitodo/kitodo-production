@@ -34,6 +34,10 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 @ManagedBean
 @ViewScoped
 public class DocketForm extends BasisForm {
@@ -136,6 +140,14 @@ public class DocketForm extends BasisForm {
             return null;
         }
         return "/newpages/DocketList";
+    }
+
+    /**
+     * This method initializes the docket list without any filter whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeDocketList() {
+        filterKein();
     }
 
     public String filterKeinMitZurueck() {

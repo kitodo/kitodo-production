@@ -46,9 +46,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf" id="projgrid112">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink value="#{msgs.startseite}" action="Main"/>
+                                    <h:link value="#{msgs.startseite}" outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink value="#{msgs.prozessverwaltung}" action="ProzessverwaltungAlle"/>
+                                    <h:link value="#{msgs.prozessverwaltung}" outcome="/newpages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.MassImport}"/>
                                 </h:panelGroup>

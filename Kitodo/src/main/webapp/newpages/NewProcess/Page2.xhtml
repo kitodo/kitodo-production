@@ -41,10 +41,10 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup>
-                                    <h:commandLink value="#{msgs.startseite}" action="Main"/>
+                                    <h:link value="#{msgs.startseite}" outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink value="#{msgs.prozessverwaltung}"
-                                                   action="/newpages/ProzessverwaltungAlle"/>
+                                    <h:link value="#{msgs.prozessverwaltung}"
+                                                   outcome="/newpages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.einenNeuenProzessAnlegen}"/>
                                 </h:panelGroup>

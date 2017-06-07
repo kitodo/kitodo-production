@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -98,6 +99,15 @@ public class BenutzerverwaltungForm extends BasisForm {
         }
         return "/newpages/BenutzerAlle";
     }
+
+    /**
+     * This method initializes the user list without any filters whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeUserList() {
+        filterKein();
+    }
+
 
     public String filterKeinMitZurueck() {
         filterKein();

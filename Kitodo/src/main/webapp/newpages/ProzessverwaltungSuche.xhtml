@@ -39,7 +39,7 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup>
-                                    <h:commandLink value="#{msgs.startseite}" action="newMain" id="mainlink"/>
+                                    <h:link value="#{msgs.startseite}" outcome="/newpages/Main" id="mainlink"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText value="#{msgs.prozessverwaltung}"/>
                                 </h:panelGroup>

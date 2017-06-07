@@ -33,6 +33,10 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 @ManagedBean
 @ViewScoped
 public class RegelsaetzeForm extends BasisForm {
@@ -129,6 +133,14 @@ public class RegelsaetzeForm extends BasisForm {
             return null;
         }
         return "/newpages/RegelsaetzeAlle";
+    }
+
+    /**
+     * This method initializes the ruleset list without applying any filters whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeRulesetList() {
+        filterKein();
     }
 
     public String FilterKeinMitZurueck() {

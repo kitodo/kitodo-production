@@ -40,52 +40,44 @@
                         #########################################-->
 
                         <!-- Startseite -->
-                        <h:commandLink styleClass="mlink" action="/newpages/Main" id="main"
-                                       style="#{NavigationForm.aktuell == '0' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '0'}">
+                        <h:link styleClass="mlink" outcome="/newpages/Main" id="main"
+                                       style="#{view.viewId == '/newpages/Main.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                            <h:panelGroup rendered="#{view.viewId == '/newpages/Main.xhtml'}">
                                 <f:verbatim>&#8250; </f:verbatim>
                             </h:panelGroup>
                             <h:outputText value="#{msgs.startseite}"/>
-                            <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                    value="0"/>
-                        </h:commandLink>
+                        </h:link>
 
                         <!-- ################            allgemeines             ######################-->
 
                         <h:outputText styleClass="th_menu" value="- #{msgs.allgemeines} -"/>
                         <!-- Bedienungshinweise -->
-                        <h:commandLink styleClass="mlink" action="/newpages/statischBedienung"
-                                       style="#{NavigationForm.aktuell == '10' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '10'}">
+                        <h:link styleClass="mlink" outcome="/newpages/statischBedienung"
+                                       style="#{view.viewId == '/newpages/statischBedienung.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                            <h:panelGroup rendered="#{view.viewId == '/newpages/statischBedienung.xhtml'}">
                                 <f:verbatim>&#8250; </f:verbatim>
                             </h:panelGroup>
                             <h:outputText value="#{msgs.bedienungshinweise}" />
-                            <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                    value="10" />
-                        </h:commandLink>
+                        </h:link>
 
                         <!-- technischer Hintergrund -->
-                        <h:commandLink styleClass="mlink" action="/newpages/statischTechnischerHintergrund" id="technicalBackground"
-                                       style="#{NavigationForm.aktuell == '11' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '11'}">
+                        <h:link styleClass="mlink" outcome="/newpages/statischTechnischerHintergrund" id="technicalBackground"
+                                       style="#{view.viewId == '/newpages/statischTechnischerHintergrund.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                            <h:panelGroup rendered="#{view.viewId == '/newpages/statischTechnischerHintergrund.xhtml'}">
                                 <f:verbatim>&#8250; </f:verbatim>
                             </h:panelGroup>
                             <h:outputText value="#{msgs.technischerHintergrund}"/>
-                            <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                    value="11"/>
-                        </h:commandLink>
+                        </h:link>
 
                         <!-- aktive Benutzer -->
-                        <h:commandLink styleClass="mlink" action="/newpages/aktiveNutzer" id="currentUsers"
-                                       style="#{NavigationForm.aktuell == '12' ? 'font-weight: bold;':'font-weight:normal ;'}"
+                        <h:link styleClass="mlink" outcome="/newpages/aktiveNutzer" id="currentUsers"
+                                       style="#{view.viewId == '/newpages/aktiveNutzer.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}"
                                        rendered="#{!HelperForm.anonymized}">
-                            <h:panelGroup rendered="#{NavigationForm.aktuell == '12'}">
+                            <h:panelGroup rendered="#{view.viewId == '/newpages/aktiveNutzer.xhtml'}">
                                 <f:verbatim>&#8250; </f:verbatim>
                             </h:panelGroup>
                             <h:outputText value="#{msgs.aktiveBenutzer}"/>
-                            <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                    value="12"/>
-                        </h:commandLink>
+                        </h:link>
 
                         <!-- ################            Workflow              ######################-->
 
@@ -93,91 +85,70 @@
                             <h:outputText styleClass="th_menu" value="- #{msgs.workflow} -"/>
 
                             <!-- aktuelle Schritte -->
-                            <h:commandLink styleClass="mlink" id="myTasks"
-                                           action="#{AktuelleSchritteForm.filterAlleStart}"
-                                           style="#{NavigationForm.aktuell == '20' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '20'}">
+                            <h:link styleClass="mlink" id="myTasks"
+                                           outcome="/newpages/AktuelleSchritteAlle"
+                                           style="#{view.viewId == '/newpages/AktuelleSchritteAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/AktuelleSchritteAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.aktuelleSchritte}"/>
-                                <t:updateActionListener property="#{AktuelleSchritteForm.filter}"
-                                                        value=""/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="20"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Prozess suchen -->
-                            <h:commandLink styleClass="mlink" action="ProzessverwaltungSuche" id="searchProcesses"
-                                           style="#{NavigationForm.aktuell == '21' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '21'}">
+                            <h:link styleClass="mlink" outcome="/newpages/ProzessverwaltungSuche" id="searchProcesses"
+                                           style="#{view.viewId == '/newpages/ProzessverwaltungSuche.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/ProzessverwaltungSuche.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.nachEinemBandSuchen}"/>
-                                <t:updateActionListener
-                                        property="#{ProzessverwaltungForm.filter}" value=""/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="21"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Prozessübersicht -->
-                            <h:commandLink styleClass="mlink" id="allProcesses"
+                            <h:link styleClass="mlink" id="allProcesses"
                                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                           action="#{ProzessverwaltungForm.FilterAktuelleProzesse}"
-                                           style="#{NavigationForm.aktuell == '22' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '22'}">
+                                           outcome="/newpages/ProzessverwaltungAlle"
+                                           style="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <f:param name="linkId" value="allProcesses"/>
+                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.aktuelleProzesse}"/>
-                                <t:updateActionListener
-                                        property="#{ProzessverwaltungForm.filter}" value=""/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="22"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- batches -->
-                            <h:commandLink styleClass="mlink"
+                            <h:link styleClass="mlink"
                                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                                           action="#{BatchForm.filterAlleStart}"
-                                           style="#{NavigationForm.aktuell == '44' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '44'}">
+                                           outcome="/newpages/BatchesAll"
+                                           style="#{view.viewId == '/newpages/BatchesAll.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/BatchesAll.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.batches}"/>
-                                <t:updateActionListener
-                                        property="#{BatchForm.modusBearbeiten}" value=""/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="44"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- neuen Vorgang anlegen -->
-                            <h:commandLink styleClass="mlink" id="newProcess"
+                            <h:link styleClass="mlink" id="newProcess"
                                            rendered="#{LoginForm.maximaleBerechtigung == 2}"
-                                           action="#{ProzessverwaltungForm.NeuenVorgangAnlegen}"
-                                           style="#{NavigationForm.aktuell == '23' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '23'}">
+                                           outcome="/newpages/ProzessverwaltungAlle"
+                                           style="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <f:param name="linkId" value="newProcess"/>
+                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.neuenVorgangAnlegen}"/>
-                                <t:updateActionListener
-                                        property="#{ProzessverwaltungForm.filter}" value=""/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="23"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Prozessvorlagen -->
-                            <h:commandLink styleClass="mlink" id="templates"
+                            <h:link styleClass="mlink" id="templates"
                                            rendered="#{LoginForm.maximaleBerechtigung == 1}"
-                                           action="#{ProzessverwaltungForm.FilterVorlagen}"
-                                           style="#{NavigationForm.aktuell == '24' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '24'}">
+                                           outcome="/newpages/ProzessverwaltungAlle"
+                                           style="#{request.getParameter('linkId') == 'templates' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <f:param name="linkId" value="templates"/>
+                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'templates' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.prozessvorlagen}"/>
-                                <t:updateActionListener
-                                        property="#{ProzessverwaltungForm.filter}" value=""/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="24"/>
-                            </h:commandLink>
+                            </h:link>
 
                         </h:panelGroup>
 
@@ -188,102 +159,86 @@
                                           value="- #{msgs.administration} -"/>
 
                             <!-- Menu Administration / Users -->
-                            <h:commandLink styleClass="mlink" id="users"
-                                           action="#{BenutzerverwaltungForm.filterKein}"
-                                           style="#{NavigationForm.aktuell == '30' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '30'}">
+                            <h:link styleClass="mlink" id="users"
+                                           outcome="/newpages/BenutzerAlle"
+                                           style="#{view.viewId == '/newpages/BenutzerAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzerAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.users}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="30"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Benutzergruppen -->
-                            <h:commandLink styleClass="mlink" id="groups"
-                                           action="#{BenutzergruppenForm.filterKein}"
-                                           style="#{NavigationForm.aktuell == '31' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '31'}">
+                            <h:link styleClass="mlink" id="groups"
+                                           outcome="/newpages/BenutzergruppenAlle"
+                                           style="#{view.viewId == '/newpages/BenutzergruppenAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzergruppenAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.benutzergruppen}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="31"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Projekte -->
-                            <h:commandLink styleClass="mlink" id="projects"
-                                           action="#{ProjekteForm.filterKein}"
-                                           style="#{NavigationForm.aktuell == '32' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '32'}">
+                            <h:link styleClass="mlink" id="projects"
+                                           outcome="/newpages/ProjekteAlle"
+                                           style="#{view.viewId == '/newpages/ProjekteAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/ProjekteAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.projekte}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="32"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Regelsätze -->
-                            <h:commandLink styleClass="mlink" id="rulesets"
-                                           action="#{RegelsaetzeForm.filterKein}"
-                                           style="#{NavigationForm.aktuell == '33' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '33'}">
+                            <h:link styleClass="mlink" id="rulesets"
+                                           outcome="/newpages/RegelsaetzeAlle"
+                                           style="#{view.viewId == '/newpages/RegelsaetzeAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/RegelsaetzeAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.regelsaetze}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="33"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Dockets -->
-                            <h:commandLink styleClass="mlink" id="navigation"
-                                           action="#{DocketForm.filterKein}"
-                                           style="#{NavigationForm.aktuell == '45' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '45'}">
+                            <h:link styleClass="mlink" id="navigation"
+                                           outcome="/newpages/DocketList"
+                                           style="#{view.viewId == '/newpages/DocketList.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/DocketList.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.dockets}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="45"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Ldapgruppen -->
-                            <h:commandLink styleClass="mlink" id="ldapgroups"
-                                           action="#{LdapGruppenForm.filterKein}"
-                                           style="#{NavigationForm.aktuell == '34' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '34'}">
+                            <h:link styleClass="mlink" id="ldapgroups"
+                                           outcome="/newpages/LdapGruppenAlle"
+                                           style="#{view.viewId == '/newpages/LdapGruppenAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/LdapGruppenAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.ldapgruppen}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="34"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- aktive Tasks -->
-                            <h:commandLink styleClass="mlink" action="taskmanager"
+                            <h:link styleClass="mlink" outcome="/newpages/taskmanager"
                                            rendered="#{NavigationForm.showTaskManager}"
-                                           style="#{NavigationForm.aktuell == '36' ? 'font-weight: bold;':'font-weight:normal ;'}"
+                                           style="#{view.viewId == '/newpages/taskmanager.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}"
                                            id="taskmanager">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '36'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/taskmanager.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.taskmanager}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="36"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- aktive Module -->
-                            <h:commandLink styleClass="mlink" action="modulemanager"
+                            <h:link styleClass="mlink" outcome="/newpages/modulemanager"
                                            rendered="#{NavigationForm.showModuleManager}"
-                                           style="#{NavigationForm.aktuell == '35' ? 'font-weight: bold;':'font-weight:normal ;'}"
+                                           style="#{view.viewId == '/newpages/modulemanager.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}"
                                            id="modules">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '35'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/modulemanager.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.modulemanager}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="35"/>
-                            </h:commandLink>
+                            </h:link>
 
                         </h:panelGroup>
 
@@ -294,26 +249,22 @@
                                           value="- #{msgs.benutzerdaten} -"/>
 
                             <!-- Benutzerkonfiguration -->
-                            <h:commandLink styleClass="mlink" action="/newpages/BenutzerKonfiguration" id="userconfig"
-                                           style="#{NavigationForm.aktuell == '40' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '40'}">
+                            <h:link styleClass="mlink" outcome="/newpages/BenutzerKonfiguration" id="userconfig"
+                                           style="#{view.viewId == '/newpages/BenutzerKonfiguration.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzerKonfiguration.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.benutzerkonfiguration}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="40"/>
-                            </h:commandLink>
+                            </h:link>
 
                             <!-- Passwort ändern -->
-                            <h:commandLink styleClass="mlink" action="/newpages/PasswortAendern" id="changePW"
-                                           style="#{NavigationForm.aktuell == '41' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{NavigationForm.aktuell == '41'}">
+                            <h:link styleClass="mlink" outcome="/newpages/PasswortAendern" id="changePW"
+                                           style="#{view.viewId == '/newpages/PasswortAendern.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/PasswortAendern.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.passwortAendern}"/>
-                                <t:updateActionListener property="#{NavigationForm.aktuell}"
-                                                        value="41"/>
-                            </h:commandLink>
+                            </h:link>
                         </h:panelGroup>
 
                     </h:form>

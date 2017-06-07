@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -166,6 +167,14 @@ public class AktuelleSchritteForm extends BasisForm {
             return null;
         }
         return "/newpages/AktuelleSchritteAlle";
+    }
+
+    /**
+     * This method initializes the task list without any filter whenever the bean is created.
+     */
+    @PostConstruct
+    public void initializeTaskList() {
+        filterAlleStart();
     }
 
     private void sortList(Criteria inCrit) {

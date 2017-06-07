@@ -22,6 +22,7 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -84,6 +85,14 @@ public class LdapGruppenForm extends BasisForm {
             return null;
         }
         return "/newpages/LdapGruppenAlle";
+    }
+
+    /**
+     * This method initializes the ldap group list without applying any filters whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeLdapGroupList() {
+        filterKein();
     }
 
     public String FilterKeinMitZurueck() {

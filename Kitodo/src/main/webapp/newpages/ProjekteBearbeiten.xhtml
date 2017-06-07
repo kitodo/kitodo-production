@@ -49,11 +49,11 @@
                             <h:panelGrid width="100%" columns="1"
                                          styleClass="layoutInhaltKopf" id="projectgrid1">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink id="id2" value="#{msgs.startseite}"
-                                                   action="newMain"/>
+                                    <h:link id="id2" value="#{msgs.startseite}"
+                                                   outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink id="id3" value="#{msgs.projekte}"
-                                                   action="ProjekteAlle"/>
+                                    <h:link id="id3" value="#{msgs.projekte}"
+                                                   outcome="/newpages/ProjekteAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.neuesProjektAnlegen}"
                                                   rendered="#{ProjekteForm.myProjekt.id == null}"/>

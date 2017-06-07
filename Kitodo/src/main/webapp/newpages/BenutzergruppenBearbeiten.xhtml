@@ -47,11 +47,11 @@
                             <h:panelGrid id="id0" width="100%" columns="1"
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink id="id2" value="#{msgs.startseite}"
-                                                   action="Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}"
+                                                   outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink id="id3" value="#{msgs.benutzergruppen}"
-                                                   action="BenutzergruppenAlle"/>
+                                    <h:link id="id3" value="#{msgs.benutzergruppen}"
+                                                   outcome="/newpages/BenutzergruppenAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.neueBenutzergruppeAnlegen}"
                                                   rendered="#{BenutzergruppenForm.myBenutzergruppe.id == null}"/>

@@ -28,6 +28,7 @@ import org.kitodo.data.database.persistence.SimpleDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -114,6 +115,14 @@ public class BenutzergruppenForm extends BasisForm {
             return null;
         }
         return "/newpages/BenutzergruppenAlle";
+    }
+
+    /**
+     * This method the user group list without applying any filters whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeUserGroupList() {
+        filterKein();
     }
 
     public String FilterKeinMitZurueck() {

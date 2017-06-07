@@ -35,16 +35,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -439,6 +432,28 @@ public class ProzessverwaltungForm extends BasisForm {
         }
         this.modusAnzeige = "vorlagen";
         return "/newpages/ProzessverwaltungAlle";
+    }
+
+    /**
+     * This method initializes the process list without any filter whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeProcessList() {
+        Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String originLink = params.get("linkId");
+        if (Objects.equals(originLink, "newProcess")) {
+            NeuenVorgangAnlegen();
+        }
+        else if (Objects.equals(originLink, "templates")) {
+            FilterVorlagen();
+        }
+        else if (Objects.equals(originLink, "allProcesses")) {
+            FilterAktuelleProzesse();
+        }
+        else {
+            System.err.println("ERROR: did not recognize link ID '"+originLink+"'.");
+        }
+        setFilter("");
     }
 
     /**

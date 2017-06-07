@@ -42,11 +42,11 @@
                             <h:panelGrid id="utid31" width="100%" columns="1"
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="utid32">
-                                    <h:commandLink id="utid33" value="#{msgs.startseite}"
-                                                   action="Main"/>
+                                    <h:link id="utid33" value="#{msgs.startseite}"
+                                                   outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink id="utid34" value="#{msgs.prozessverwaltung}"
-                                                   action="/newpages/ProzessverwaltungAlle"/>
+                                    <h:link id="utid34" value="#{msgs.prozessverwaltung}"
+                                                   outcome="/newpages/ProzessverwaltungAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="utid35"
                                                   value="#{msgs.einenNeuenProzessAnlegen}"/>
