@@ -23,14 +23,14 @@ import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.persistence.apache.ProcessManager;
 import org.kitodo.data.database.persistence.apache.ProcessObject;
@@ -87,7 +87,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
     @Override
     public boolean startExport(ProcessObject process) throws DAOException, IOException, PreferencesException,
-            WriteException, SwapException, TypeNotAllowedForParentException, InterruptedException {
+            WriteException, TypeNotAllowedForParentException, InterruptedException {
         this.myPrefs = serviceManager.getRulesetService()
                 .getPreferences(ProcessManager.getRuleset(process.getRulesetId()));
         ;
@@ -104,7 +104,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
         Fileformat newfile;
         try {
             this.fi = new FolderInformation(process.getId(), process.getTitle());
-            String metadataPath = this.fi.getMetadataFilePath();
+            URI metadataPath = this.fi.getMetadataFilePath();
             gdzfile = process.readMetadataFile(metadataPath, this.myPrefs);
             switch (MetadataFormat.findFileFormatsHelperByName(this.project.getFileFormatDmsExport())) {
                 case METS:
@@ -164,18 +164,18 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
         /*
          * Speicherort vorbereiten und downloaden
          */
-        String zielVerzeichnis;
-        File benutzerHome;
+        URI zielVerzeichnis;
+        URI benutzerHome;
 
         zielVerzeichnis = this.project.getDmsImportImagesPath();
-        benutzerHome = new File(zielVerzeichnis);
+        benutzerHome = zielVerzeichnis;
 
         /* ggf. noch einen Vorgangsordner anlegen */
         if (this.project.isDmsImportCreateProcessFolder()) {
-            benutzerHome = new File(benutzerHome + File.separator + process.getTitle());
-            zielVerzeichnis = benutzerHome.getAbsolutePath();
+            URI benutzerProcessHome = benutzerHome.resolve(File.separator + process.getTitle());
+            zielVerzeichnis = benutzerHome;
             /* alte Import-Ordner löschen */
-            if (!fileService.delete(benutzerHome.toURI())) {
+            if (!fileService.delete(benutzerHome)) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Import folder could not be cleared");
                 return false;
@@ -195,8 +195,8 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                 return false;
             }
 
-            if (!benutzerHome.exists()) {
-                benutzerHome.mkdir();
+            if (!fileService.fileExist(benutzerProcessHome)) {
+                fileService.createDirectory(benutzerHome, process.getTitle());
             }
             if (task != null) {
                 task.setProgress(1);
@@ -298,40 +298,42 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      * @param ordnerEndung
      *            String
      */
-    public void fulltextDownload(ProcessObject myProcess, File userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void fulltextDownload(ProcessObject myProcess, URI userHome, String atsPpnBand, final String ordnerEndung)
+            throws IOException, InterruptedException, DAOException {
 
         // download sources
-        File sources = new File(fi.getSourceDirectory());
-        if (sources.exists() && fileService.list(sources).length > 0) {
-            File destination = new File(userHome + File.separator + atsPpnBand + "_src");
-            if (!destination.exists()) {
-                destination.mkdir();
+        URI sources = fi.getSourceDirectory();
+        if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
+            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
+            if (!fileService.fileExist(destination)) {
+                fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            File[] dateien = fileService.listFiles(sources);
-            for (int i = 0; i < dateien.length; i++) {
-                if (dateien[i].isFile()) {
-                    File meinZiel = new File(destination + File.separator + dateien[i].getName());
-                    fileService.copyFile(dateien[i], meinZiel);
+            ArrayList<URI> dateien = fileService.getSubUris(sources);
+            for (int i = 0; i < dateien.size(); i++) {
+                if (fileService.isFile(dateien.get(i))) {
+                    URI meinZiel = destination.resolve(File.separator + fileService.getFileName(dateien.get(i)));
+                    fileService.copyFile(dateien.get(i), meinZiel);
                 }
             }
         }
 
-        File ocr = new File(fi.getOcrDirectory());
-        if (ocr.exists()) {
-            File[] folder = fileService.listFiles(ocr);
-            for (File dir : folder) {
-                if (dir.isDirectory() && fileService.list(dir).length > 0 && dir.getName().contains("_")) {
-                    String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-                    File destination = new File(userHome + File.separator + atsPpnBand + suffix);
-                    if (!destination.exists()) {
-                        destination.mkdir();
+        URI ocr = fi.getOcrDirectory();
+        if (fileService.fileExist(ocr)) {
+            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            for (URI dir : folder) {
+                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
+                        && fileService.getFileName(dir).contains("_")) {
+                    String suffix = fileService.getFileName(dir)
+                            .substring(fileService.getFileName(dir).lastIndexOf("_"));
+                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
+                    if (!fileService.fileExist(destination)) {
+                        fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
-                    File[] files = fileService.listFiles(dir);
-                    for (int i = 0; i < files.length; i++) {
-                        if (files[i].isFile()) {
-                            File target = new File(destination + File.separator + files[i].getName());
-                            fileService.copyFile(files[i], target);
+                    ArrayList<URI> files = fileService.getSubUris(dir);
+                    for (int i = 0; i < files.size(); i++) {
+                        if (fileService.isFile(files.get(i))) {
+                            URI target = destination.resolve(File.separator + fileService.getFileName(files.get(i)));
+                            fileService.copyFile(files.get(i), target);
                         }
                     }
                 }
@@ -351,23 +353,23 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(ProcessObject myProcess, File userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void imageDownload(ProcessObject myProcess, URI userHome, String atsPpnBand, final String ordnerEndung)
+            throws IOException, InterruptedException, DAOException {
         /*
          * den Ausgangspfad ermitteln
          */
-        File tifOrdner = new File(this.fi.getImagesTifDirectory(true));
+        URI tifOrdner = this.fi.getImagesTifDirectory(true);
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (tifOrdner.exists() && fileService.list(tifOrdner).length > 0) {
-            File zielTif = new File(userHome + File.separator + atsPpnBand + ordnerEndung);
+        if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
+            URI zielTif = userHome.resolve(File.separator).resolve(atsPpnBand).resolve(ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
             if (this.project.isUseDmsImport()) {
-                if (!zielTif.exists()) {
-                    zielTif.mkdir();
+                if (!fileService.fileExist(zielTif)) {
+                    fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
                 }
             } else {
                 /*
@@ -376,7 +378,7 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
-                    fileService.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
+                    fileService.createDirectoryForUser(zielTif, myUser.getLogin());
                 } catch (Exception e) {
                     if (task != null) {
                         task.setException(e);
@@ -388,17 +390,17 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
 
             /* jetzt den eigentlichen Kopiervorgang */
 
-            File[] dateien = fileService.listFiles(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < dateien.length; i++) {
+            ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            for (int i = 0; i < dateien.size(); i++) {
                 if (task != null) {
-                    task.setWorkDetail(dateien[i].getName());
+                    task.setWorkDetail(fileService.getFileName(dateien.get(i)));
                 }
-                if (dateien[i].isFile()) {
-                    File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
-                    fileService.copyFile(dateien[i], meinZiel);
+                if (fileService.isFile(dateien.get(i))) {
+                    URI meinZiel = zielTif.resolve(File.separator + fileService.getFileName(dateien.get(i)));
+                    fileService.copyFile(dateien.get(i), meinZiel);
                 }
                 if (task != null) {
-                    task.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
+                    task.setProgress((int) ((i + 1) * 98d / dateien.size() + 1));
                     if (task.isInterrupted()) {
                         throw new InterruptedException();
                     }
@@ -419,17 +421,16 @@ public class AutomaticDmsExportWithoutHibernate extends ExportMetsWithoutHiberna
      * @param zielVerzeichnis
      *            the destination directory
      */
-    private void directoryDownload(ProcessObject myProcess, String zielVerzeichnis) throws IOException {
+    private void directoryDownload(ProcessObject myProcess, URI zielVerzeichnis) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
+            String directoryTitle = processDir.replace("(processtitle)", myProcess.getTitle());
 
-            File srcDir = new File(FilenameUtils.concat(fi.getProcessDataDirectory(),
-                    processDir.replace("(processtitle)", myProcess.getTitle())));
-            File dstDir = new File(
-                    FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
+            URI srcDir = fi.getProcessDataDirectory().resolve(directoryTitle);
+            URI dstDir = zielVerzeichnis.resolve(directoryTitle);
 
-            if (srcDir.isDirectory()) {
+            if (fileService.isDirectory(srcDir)) {
                 fileService.copyFile(srcDir, dstDir);
             }
         }

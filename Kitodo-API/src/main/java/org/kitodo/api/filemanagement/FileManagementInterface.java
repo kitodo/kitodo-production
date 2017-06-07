@@ -50,7 +50,7 @@ public interface FileManagementInterface {
 
     /**
      * Renames a resource at a given URI.
-     * 
+     *
      * @param uri
      *            The uri to the ressource to rename.
      * @param newName
@@ -61,7 +61,7 @@ public interface FileManagementInterface {
 
     /**
      * Returns the uri to a given subtype of a process.
-     * 
+     *
      * @param processUri
      *            The base uri of the process.
      * @param subType
@@ -128,7 +128,7 @@ public interface FileManagementInterface {
      * processlocation needs to be created. This method is for migration
      * purposes, because when this interface is used, there will be already
      * processes in the filesystem.
-     * 
+     *
      * @param processId
      *            the id of the process.
      * @return The uri of the process location.

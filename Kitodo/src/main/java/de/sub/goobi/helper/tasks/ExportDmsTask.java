@@ -14,6 +14,8 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.Helper;
 
+import java.net.URI;
+
 import org.kitodo.data.database.beans.Process;
 
 /**
@@ -28,7 +30,7 @@ public class ExportDmsTask extends EmptyTask {
 
     private final ExportDms exportDms;
     private final Process process;
-    private final String userHome;
+    private final URI userHome;
 
     /**
      * ExportDmsTask constructor. Creates a ExportDmsTask.
@@ -40,7 +42,7 @@ public class ExportDmsTask extends EmptyTask {
      * @param userHome
      *            home directory of the user who started the export
      */
-    public ExportDmsTask(ExportDms exportDms, Process process, String userHome) {
+    public ExportDmsTask(ExportDms exportDms, Process process, URI userHome) {
         super(process.getTitle());
         this.exportDms = exportDms;
         this.process = process;

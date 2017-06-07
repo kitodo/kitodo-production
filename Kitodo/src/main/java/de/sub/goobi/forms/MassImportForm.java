@@ -17,6 +17,8 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -218,7 +220,7 @@ public class MassImportForm {
      *
      * @return String
      */
-    public String convertData() throws IOException {
+    public String convertData() throws IOException, URISyntaxException {
         this.processList = new ArrayList<Process>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");
@@ -288,7 +290,8 @@ public class MassImportForm {
                 if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
                     Process p = JobCreation.generateProcess(io, this.template);
                     if (p == null) {
-                        if (io.getImportFileName() != null && !io.getImportFileName().isEmpty()
+                        if (io.getImportFileName() != null
+                                && !serviceManager.getFileService().getFileName(io.getImportFileName()).isEmpty()
                                 && selectedFilenames != null && !selectedFilenames.isEmpty()) {
                             if (selectedFilenames.contains(io.getImportFileName())) {
                                 selectedFilenames.remove(io.getImportFileName());
@@ -306,8 +309,9 @@ public class MassImportForm {
                     param.add(io.getProcessTitle());
                     param.add(io.getErrorMessage());
                     Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
-                    if (io.getImportFileName() != null && !io.getImportFileName().isEmpty() && selectedFilenames != null
-                            && !selectedFilenames.isEmpty()) {
+                    if (io.getImportFileName() != null
+                            && !serviceManager.getFileService().getFileName(io.getImportFileName()).isEmpty()
+                            && selectedFilenames != null && !selectedFilenames.isEmpty()) {
                         if (selectedFilenames.contains(io.getImportFileName())) {
                             selectedFilenames.remove(io.getImportFileName());
                         }
@@ -354,9 +358,10 @@ public class MassImportForm {
         if (basename.contains("\\")) {
             basename = basename.substring(basename.lastIndexOf("\\") + 1);
         }
-        String fileName = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename;
+        URI temporalFile = serviceManager.getFileService()
+                .createResource(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename);
 
-        serviceManager.getFileService().copyFile(new File(this.uploadedFile.getName()), new File(fileName));
+        serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
 
     }
 

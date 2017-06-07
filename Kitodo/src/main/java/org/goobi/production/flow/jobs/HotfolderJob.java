@@ -17,6 +17,8 @@ import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,6 @@ import org.goobi.production.importer.GoobiHotfolder;
 import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -76,9 +77,9 @@ public class HotfolderJob extends AbstractGoobiJob {
             logger.trace("2");
             for (GoobiHotfolder hotfolder : hotlist) {
                 logger.trace("3");
-                List<File> list = hotfolder.getCurrentFiles();
+                List<URI> list = hotfolder.getCurrentFiles();
                 logger.trace("4");
-                long size = getSize(list);
+                long size = list.size();
                 logger.trace("5");
                 try {
                     if (size > 0) {
@@ -89,29 +90,30 @@ public class HotfolderJob extends AbstractGoobiJob {
                             logger.trace("7");
                             list = hotfolder.getCurrentFiles();
                             logger.trace("8");
-                            if (size == getSize(list)) {
+                            if (size == list.size()) {
                                 hotfolder.lock();
                                 logger.trace("9");
                                 Process template = serviceManager.getProcessService().find(hotfolder.getTemplate());
                                 serviceManager.getProcessService().refresh(template);
                                 logger.trace("10");
-                                List<String> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
+                                List<URI> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
                                 logger.trace("11");
                                 HashMap<String, Integer> failedData = new HashMap<String, Integer>();
                                 logger.trace("12");
 
-                                for (String filename : metsfiles) {
+                                for (URI filename : metsfiles) {
                                     if (logger.isDebugEnabled()) {
                                         logger.debug("found file: " + filename);
                                     }
                                     logger.trace("13");
 
-                                    int returnValue = generateProcess(filename, template, hotfolder.getFolderAsFile(),
-                                            hotfolder.getCollection(), hotfolder.getUpdateStrategy());
+                                    int returnValue = generateProcess(filename.toString(), template,
+                                            hotfolder.getFolderAsUri(), hotfolder.getCollection(),
+                                            hotfolder.getUpdateStrategy());
                                     logger.trace("14");
                                     if (returnValue != 0) {
                                         logger.trace("15");
-                                        failedData.put(filename, returnValue);
+                                        failedData.put(filename.toString(), returnValue);
                                         logger.trace("16");
                                     } else {
                                         if (logger.isDebugEnabled()) {
@@ -155,21 +157,6 @@ public class HotfolderJob extends AbstractGoobiJob {
         }
     }
 
-    private long getSize(List<File> list) {
-        long size = 0;
-        for (File f : list) {
-            if (f.isDirectory()) {
-                File[] subdir = fileService.listFiles(f);
-                for (File sub : subdir) {
-                    size += sub.length();
-                }
-            } else {
-                size += f.length();
-            }
-        }
-        return size;
-    }
-
     /**
      * Generate process.
      *
@@ -185,64 +172,64 @@ public class HotfolderJob extends AbstractGoobiJob {
      *            String
      * @return int
      */
-    public static int generateProcess(String processTitle, Process vorlage, File dir, String digitalCollection,
-            String updateStrategy) throws CustomResponseException, IOException {
+    public static int generateProcess(String processTitle, Process vorlage, URI dir, String digitalCollection,
+            String updateStrategy) throws CustomResponseException, IOException, URISyntaxException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
                 boolean test = testTitle(processTitle.substring(0, processTitle.length() - 4));
                 if (!test && updateStrategy.equals("error")) {
-                    File images = new File(dir.getAbsoluteFile() + File.separator
-                            + processTitle.substring(0, processTitle.length() - 4) + File.separator);
-                    List<String> imageDir = new ArrayList<String>();
-                    if (images.isDirectory()) {
-                        String[] files = fileService.list(images);
-                        for (int i = 0; i < files.length; i++) {
-                            imageDir.add(files[i]);
+                    URI images = fileService.createResource(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + File.separator);
+                    List<URI> imageDir = new ArrayList<>();
+                    if (fileService.isDirectory(images)) {
+                        ArrayList<URI> files = fileService.getSubUris(images);
+                        for (URI file : files) {
+                            imageDir.add(file);
                         }
-                        fileService.delete(images.toURI());
+                        fileService.delete(images);
                     }
                     try {
-                        fileService.delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
+                        fileService.delete(dir.resolve(File.separator + processTitle));
                     } catch (Exception e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
                     }
-                    File anchor = new File(dir.getAbsolutePath() + File.separator
-                            + processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
-                    if (anchor.exists()) {
-                        fileService.delete(anchor.toURI());
+                    URI anchor = fileService.createResource(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                    if (fileService.fileExist(anchor)) {
+                        fileService.delete(anchor);
                     }
                     return 27;
                 } else if (!test && updateStrategy.equals("update")) {
                     // TODO UPDATE mets data
-                    File images = new File(dir.getAbsoluteFile() + File.separator
-                            + processTitle.substring(0, processTitle.length() - 4) + File.separator);
-                    List<String> imageDir = new ArrayList<String>();
-                    if (images.isDirectory()) {
-                        String[] files = fileService.list(images);
-                        for (int i = 0; i < files.length; i++) {
-                            imageDir.add(files[i]);
+                    URI images = fileService.createResource(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + File.separator);
+                    List<URI> imageDir = new ArrayList<>();
+                    if (fileService.isDirectory(images)) {
+                        ArrayList<URI> files = fileService.getSubUris(images);
+                        for (URI file : files) {
+                            imageDir.add(file);
                         }
-                        fileService.delete(images.toURI());
+                        fileService.delete(images);
                     }
                     try {
-                        fileService.delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
+                        fileService.delete(dir.resolve(File.separator + processTitle));
                     } catch (Exception e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
                     }
-                    File anchor = new File(dir.getAbsolutePath() + File.separator
-                            + processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
-                    if (anchor.exists()) {
-                        fileService.delete(anchor.toURI());
+                    URI anchor = fileService.createResource(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                    if (fileService.fileExist(anchor)) {
+                        fileService.delete(anchor);
                     }
                     return 28;
                 }
             }
             CopyProcess form = new CopyProcess();
             form.setProzessVorlage(vorlage);
-            form.metadataFile = dir.getAbsolutePath() + File.separator + processTitle;
+            form.metadataFile = dir.resolve(File.separator + processTitle);
             form.prepare();
             form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
             if (form.testTitle()) {
@@ -261,54 +248,48 @@ public class HotfolderJob extends AbstractGoobiJob {
                     if (p.getId() != null) {
 
                         // copy image files to new directory
-                        File images = new File(dir.getAbsoluteFile() + File.separator
-                                + processTitle.substring(0, processTitle.length() - 4) + File.separator);
-                        List<String> imageDir = new ArrayList<String>();
-                        if (images.isDirectory()) {
-                            String[] files = fileService.list(images);
-                            for (int i = 0; i < files.length; i++) {
-                                imageDir.add(files[i]);
+                        URI images = fileService.createResource(dir,
+                                processTitle.substring(0, processTitle.length() - 4) + File.separator);
+                        List<URI> imageDir = new ArrayList<>();
+                        if (fileService.isDirectory(images)) {
+                            ArrayList<URI> files = fileService.getSubUris(images);
+                            for (URI file : files) {
+                                imageDir.add(file);
                             }
-                            for (String file : imageDir) {
-                                File image = new File(images, file);
-                                File dest = new File(serviceManager.getProcessService().getImagesOrigDirectory(false, p)
-                                        + image.getName());
+                            for (URI file : imageDir) {
+                                URI image = fileService.createResource(images, fileService.getFileName(file));
+                                URI dest = fileService.createResource(
+                                        serviceManager.getProcessService().getImagesOrigDirectory(false, p),
+                                        fileService.getFileName(image));
                                 fileService.moveFile(image, dest);
                             }
-                            fileService.delete(images.toURI());
+                            fileService.delete(images);
                         }
 
                         // copy fulltext files
 
-                        File fulltext = new File(dir.getAbsoluteFile() + File.separator
-                                + processTitle.substring(0, processTitle.length() - 4) + "_txt" + File.separator);
-                        if (fulltext.isDirectory()) {
+                        URI textDirectory = fileService.createDirectory(dir,
+                                processTitle.substring(0, processTitle.length() - 4) + "_txt");
 
-                            fileService.moveDirectory(fulltext,
-                                    new File(serviceManager.getProcessService().getTxtDirectory(p)));
-                        }
+                        fileService.moveDirectory(textDirectory, serviceManager.getFileService().getTxtDirectory(p));
 
                         // copy source files
 
-                        File sourceDir = new File(dir.getAbsoluteFile() + File.separator
-                                + processTitle.substring(0, processTitle.length() - 4) + "_src" + File.separator);
-                        if (sourceDir.isDirectory()) {
-                            fileService.moveDirectory(sourceDir,
-                                    new File(serviceManager.getProcessService().getImportDirectory(p)));
-                        }
+                        URI sourceDirectory = fileService.createDirectory(dir,
+                                processTitle.substring(0, processTitle.length() - 4) + "_src");
+                        fileService.moveDirectory(sourceDirectory,
+                                serviceManager.getFileService().getImportDirectory(p));
 
                         try {
-                            fileService.delete(new File(dir.getAbsolutePath() + File.separator + processTitle).toURI());
-                        } catch (Exception e) {
+                            fileService.delete(dir.resolve(File.separator + processTitle));
+                        } catch (IOException e) {
                             logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
                                     + " into kitodo", e);
                             return 30;
                         }
-                        File anchor = new File(dir.getAbsolutePath() + File.separator
-                                + processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
-                        if (anchor.exists()) {
-                            fileService.delete(anchor.toURI());
-                        }
+                        URI anchorUri = fileService.createResource(dir,
+                                processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                        fileService.delete(anchorUri);
                         List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
                         for (StepObject s : steps) {
                             if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
@@ -323,9 +304,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 } catch (PreferencesException e) {
                     logger.error(e);
                     return 21;
-                } catch (SwapException e) {
-                    logger.error(e);
-                    return 22;
                 } catch (DAOException e) {
                     logger.error(e);
                     return 22;
@@ -359,35 +337,35 @@ public class HotfolderJob extends AbstractGoobiJob {
      */
     @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Process vorlage)
-            throws CustomResponseException, IOException {
+            throws CustomResponseException, IOException, URISyntaxException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
         }
-        String metsfilename = io.getMetsFilename();
+        URI metsfilename = io.getMetsFilename();
         if (logger.isTraceEnabled()) {
             logger.trace("mets filename is " + metsfilename);
         }
-        String basepath = metsfilename.substring(0, metsfilename.length() - 4);
+        URI basepath = URI.create(metsfilename.toString().substring(0, metsfilename.toString().length() - 4));
         if (logger.isTraceEnabled()) {
             logger.trace("basepath is " + basepath);
         }
-        File metsfile = new File(metsfilename);
+        URI metsfile = metsfilename;
         Process p = null;
         if (!testTitle(processTitle)) {
             logger.trace("wrong title");
             // removing all data
-            File imagesFolder = new File(basepath);
-            if (imagesFolder.isDirectory()) {
-                fileService.delete(imagesFolder.toURI());
+            URI imagesFolder = basepath;
+            if (fileService.isDirectory(imagesFolder)) {
+                fileService.delete(imagesFolder);
             } else {
-                imagesFolder = new File(basepath + "_" + vorlage.DIRECTORY_SUFFIX);
-                if (imagesFolder.isDirectory()) {
-                    fileService.delete(imagesFolder.toURI());
+                imagesFolder = fileService.createResource(basepath, "_" + vorlage.DIRECTORY_SUFFIX);
+                if (fileService.isDirectory(imagesFolder)) {
+                    fileService.delete(imagesFolder);
                 }
             }
             try {
-                fileService.delete(metsfile.toURI());
+                fileService.delete(metsfile);
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
@@ -416,9 +394,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 Helper.setFehlerMeldung(e);
                 logger.error(e);
             } catch (PreferencesException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (SwapException e) {
                 Helper.setFehlerMeldung(e);
                 logger.error(e);
             } catch (DAOException e) {

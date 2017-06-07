@@ -23,7 +23,7 @@ public interface IGoobiHotfolder {
      * @return a list with all xml files in GoobiHotfolder
      */
 
-    public List<File> getCurrentFiles();
+    public List<URI> getCurrentFiles();
 
     /**
      * 
@@ -31,7 +31,7 @@ public interface IGoobiHotfolder {
      * @return a list with all filenames containing the name in GoobiHotfolder
      */
 
-    public List<String> getFilesByName(String name);
+    public List<URI> getFilesByName(String name);
 
     /**
      * 
@@ -39,7 +39,7 @@ public interface IGoobiHotfolder {
      * @return a list with all filenames matching the filter
      */
 
-    public List<String> getFileNamesByFilter(FilenameFilter filter);
+    public List<URI> getFileNamesByFilter(FilenameFilter filter);
 
     /**
      * 
@@ -47,7 +47,7 @@ public interface IGoobiHotfolder {
      * @return a list with all file matching the filter
      */
 
-    public List<File> getFilesByFilter(FilenameFilter filter);
+    public List<URI> getFilesByFilter(FilenameFilter filter);
 
     /**
      * 

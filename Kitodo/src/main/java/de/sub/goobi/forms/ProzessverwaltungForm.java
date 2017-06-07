@@ -33,6 +33,7 @@ import de.sub.goobi.helper.WebDav;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -92,7 +92,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
@@ -261,28 +260,27 @@ public class ProzessverwaltungForm extends BasisForm {
                     try {
                         {
                             // renaming image directories
-                            String imageDirectory = serviceManager.getProcessService().getImagesDirectory(myProzess);
-                            File dir = new File(imageDirectory);
-                            if (dir.isDirectory()) {
-                                File[] subdirs = fileService.listFiles(dir);
-                                for (File imagedir : subdirs) {
-                                    if (imagedir.isDirectory()) {
-                                        imagedir.renameTo(new File(imagedir.getAbsolutePath()
-                                                .replace(myProzess.getTitle(), myNewProcessTitle)));
+                            URI imageDirectory = fileService.getImagesDirectory(myProzess);
+                            if (fileService.isDirectory(imageDirectory)) {
+                                ArrayList<URI> subdirs = fileService.getSubUris(imageDirectory);
+                                for (URI imagedir : subdirs) {
+                                    if (fileService.isDirectory(imagedir)) {
+                                        fileService.renameFile(imagedir, fileService.getFileName(imagedir)
+                                                .replace(myProzess.getTitle(), myNewProcessTitle));
                                     }
                                 }
                             }
                         }
                         {
                             // renaming ocr directories
-                            String ocrDirectory = serviceManager.getProcessService().getOcrDirectory(myProzess);
-                            File dir = new File(ocrDirectory);
-                            if (dir.isDirectory()) {
-                                File[] subdirs = fileService.listFiles(dir);
-                                for (File imagedir : subdirs) {
-                                    if (imagedir.isDirectory()) {
-                                        imagedir.renameTo(new File(imagedir.getAbsolutePath()
-                                                .replace(myProzess.getTitle(), myNewProcessTitle)));
+                            URI ocrDirectory = fileService.getOcrDirectory(myProzess);
+                            URI dir = ocrDirectory;
+                            if (fileService.isDirectory(dir)) {
+                                ArrayList<URI> subdirs = fileService.getSubUris(dir);
+                                for (URI imagedir : subdirs) {
+                                    if (fileService.isDirectory(imagedir)) {
+                                        fileService.renameFile(imagedir,
+                                                imagedir.toString().replace(myProzess.getTitle(), myNewProcessTitle));
                                     }
                                 }
                             }
@@ -292,9 +290,9 @@ public class ProzessverwaltungForm extends BasisForm {
                             String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
                             for (String processDir : processDirs) {
 
-                                String processDirAbsolut = FilenameUtils.concat(
-                                        serviceManager.getProcessService().getProcessDataDirectory(myProzess),
-                                        processDir.replace("(processtitle)", myProzess.getTitle()));
+                                URI processDirAbsolut = serviceManager.getProcessService()
+                                        .getProcessDataDirectory(myProzess)
+                                        .resolve(processDir.replace("(processtitle)", myProzess.getTitle()));
 
                                 File dir = new File(processDirAbsolut);
                                 if (dir.isDirectory()) {
@@ -363,13 +361,13 @@ public class ProzessverwaltungForm extends BasisForm {
     public String ContentLoeschen() {
         // deleteMetadataDirectory();
         try {
-            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
-            if (ocr.exists()) {
-                fileService.delete(ocr.toURI());
+            URI ocr = fileService.getOcrDirectory(this.myProzess);
+            if (fileService.fileExist(ocr)) {
+                fileService.delete(ocr);
             }
-            File images = new File(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
-            if (images.exists()) {
-                fileService.delete(images.toURI());
+            URI images = fileService.getImagesDirectory(this.myProzess);
+            if (fileService.fileExist(images)) {
+                fileService.delete(images);
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Can not delete metadata directory", e);
@@ -387,7 +385,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             fileService.delete(
                     new File(serviceManager.getProcessService().getProcessDataDirectory(this.myProzess)).toURI());
-            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(this.myProzess));
+            File ocr = new File(fileService.getOcrDirectory(this.myProzess));
             if (ocr.exists()) {
                 fileService.delete(ocr.toURI());
             }
@@ -939,8 +937,8 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String UploadFromHomeAlle() {
         WebDav myDav = new WebDav();
-        List<String> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
-        myDav.removeAllFromHome(folder, DONEDIRECTORYNAME);
+        List<URI> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
+        myDav.removeAllFromHome(folder, URI.create(DONEDIRECTORYNAME));
         Helper.setMeldung(null, "directoryRemovedAll", DONEDIRECTORYNAME);
         return null;
     }
@@ -1436,7 +1434,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images pages.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesPage() throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesPage() throws IOException, InterruptedException, DAOException {
         CalcMetadataAndImages(this.page.getListReload());
     }
 
@@ -1444,7 +1442,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images selection.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesSelection() throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesSelection() throws IOException, InterruptedException, DAOException {
         ArrayList<Process> auswahl = new ArrayList<Process>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
@@ -1458,12 +1456,11 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images hits.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesHits() throws IOException, InterruptedException, SwapException, DAOException {
+    public void CalcMetadataAndImagesHits() throws IOException, InterruptedException, DAOException {
         CalcMetadataAndImages(this.page.getCompleteList());
     }
 
-    private void CalcMetadataAndImages(List<Process> inListe)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    private void CalcMetadataAndImages(List<Process> inListe) throws IOException, InterruptedException, DAOException {
 
         this.myAnzahlList = new ArrayList<ProcessCounterObject>();
         int allMetadata = 0;
@@ -1689,7 +1686,7 @@ public class ProzessverwaltungForm extends BasisForm {
         tiff.exportStart();
     }
 
-    public void DownloadMultiTiff() throws IOException, InterruptedException, SwapException, DAOException {
+    public void DownloadMultiTiff() throws IOException, InterruptedException, DAOException {
         Multipage mp = new Multipage();
         mp.startExport(this.myProzess);
     }
@@ -1869,15 +1866,15 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return list of Strings
      */
-    public List<String> getXsltList() {
-        List<String> answer = new ArrayList<String>();
-        File folder = new File("xsltFolder");
-        if (folder.isDirectory() && folder.exists()) {
-            String[] files = fileService.list(folder);
+    public List<URI> getXsltList() {
+        List<URI> answer = new ArrayList<>();
+        URI folder = fileService.createDirectory("xsltFolder");
+        if (fileService.isDirectory(folder) && fileService.fileExist(folder)) {
+            ArrayList<URI> files = fileService.getSubUris(folder);
 
-            for (String file : files) {
-                if (file.endsWith(".xslt") || file.endsWith(".xsl")) {
-                    answer.add(file);
+            for (URI uri : files) {
+                if (uri.toString().endsWith(".xslt") || uri.toString().endsWith(".xsl")) {
+                    answer.add(uri);
                 }
             }
         }
@@ -2204,7 +2201,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 List<Property> props = this.myProzess.getProperties();
                 for (Property processProperty : props) {
                     if (processProperty.getTitle() == null) {
-                        serviceManager.getProcessService().getPropertiesInitialized(this.myProzess).remove(processProperty);
+                        serviceManager.getProcessService().getPropertiesInitialized(this.myProzess)
+                                .remove(processProperty);
                     }
                 }
                 this.myProzess.getProperties().add(this.processProperty.getProzesseigenschaft());

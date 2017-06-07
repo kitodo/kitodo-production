@@ -18,7 +18,6 @@ import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.persistence.apache.FolderInformation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,7 +30,6 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -176,10 +174,9 @@ public class HelperSchritteWithoutHibernate {
         ProcessObject po = ProcessManager.getProcessObjectForId(processId);
         FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
         if (po.getSortHelperImages() != serviceManager.getFileService()
-                .getNumberOfFiles(new File(fi.getImagesOrigDirectory(true)))) {
+                .getNumberOfImageFiles(fi.getImagesOrigDirectory(true))) {
             ProcessManager.updateImages(
-                    serviceManager.getFileService().getNumberOfFiles(new File(fi.getImagesOrigDirectory(true))),
-                    processId);
+                    serviceManager.getFileService().getNumberOfImageFiles(fi.getImagesOrigDirectory(true)), processId);
         }
         logger.debug("update process status");
         updateProcessStatus(processId);
@@ -415,13 +412,6 @@ public class HelperSchritteWithoutHibernate {
             abortStep(step);
             return;
         } catch (WriteException e) {
-            if (task != null) {
-                task.setException(e);
-            }
-            logger.error(e);
-            abortStep(step);
-            return;
-        } catch (SwapException e) {
             if (task != null) {
                 task.setException(e);
             }

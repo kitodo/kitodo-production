@@ -18,14 +18,12 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.SystemUtils;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -52,8 +50,8 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public String getImagesTifDirectory(boolean useFallBack) {
-        File dir = new File(getImagesDirectory());
+    public URI getImagesTifDirectory(boolean useFallBack) {
+        URI dir = getImagesDirectory();
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -64,36 +62,36 @@ public class FolderInformation {
             }
         };
 
-        String tifOrdner = "";
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
+        URI tifOrdner = null;
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
 
         if (verzeichnisse != null) {
-            for (String aVerzeichnisse : verzeichnisse) {
+            for (URI aVerzeichnisse : verzeichnisse) {
                 tifOrdner = aVerzeichnisse;
             }
         }
 
-        if (tifOrdner.equals("") && useFallBack) {
+        if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = fileService.list(dir);
-                for (String folder : folderList) {
-                    if (folder.endsWith(suffix)) {
+                ArrayList<URI> folderList = fileService.getSubUris(dir);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
                         break;
                     }
                 }
             }
         }
-        if (!tifOrdner.equals("") && useFallBack) {
+        if (!(tifOrdner == null) && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                File tif = new File(tifOrdner);
-                String[] files = fileService.list(tif);
-                if (files == null || files.length == 0) {
-                    String[] folderList = fileService.list(dir);
-                    for (String folder : folderList) {
-                        if (folder.endsWith(suffix)) {
+                URI tif = tifOrdner;
+                ArrayList<URI> files = fileService.getSubUris(tif);
+                if (files == null || files.size() == 0) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix)) {
                             tifOrdner = folder;
                             break;
                         }
@@ -102,14 +100,14 @@ public class FolderInformation {
             }
         }
 
-        if (tifOrdner.equals("")) {
-            tifOrdner = this.title + "_" + DIRECTORY_SUFFIX;
+        if (tifOrdner == null) {
+            tifOrdner = URI.create(this.title + "_" + DIRECTORY_SUFFIX);
         }
 
-        String rueckgabe = getImagesDirectory() + tifOrdner;
+        URI rueckgabe = getImagesDirectory().resolve(tifOrdner);
 
-        if (!rueckgabe.endsWith(File.separator)) {
-            rueckgabe += File.separator;
+        if (!rueckgabe.toString().endsWith(File.separator)) {
+            rueckgabe = rueckgabe.resolve(File.separator);
         }
 
         return rueckgabe;
@@ -121,11 +119,12 @@ public class FolderInformation {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean getTifDirectoryExists() {
-        File testMe;
+        URI testMe;
 
-        testMe = new File(getImagesTifDirectory(true));
+        testMe = getImagesTifDirectory(true);
 
-        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
+        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                && fileService.getSubUris(testMe).size() > 0;
     }
 
     /**
@@ -135,9 +134,9 @@ public class FolderInformation {
      *            boolean
      * @return String
      */
-    public String getImagesOrigDirectory(boolean useFallBack) {
+    public URI getImagesOrigDirectory(boolean useFallBack) {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
-            File dir = new File(getImagesDirectory());
+            URI dir = getImagesDirectory();
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -148,32 +147,32 @@ public class FolderInformation {
                 }
             };
 
-            String origOrdner = "";
-            String[] verzeichnisse = fileService.list(filterVerz, dir);
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                origOrdner = verzeichnisse[i];
+            URI origOrdner = null;
+            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+            for (int i = 0; i < verzeichnisse.size(); i++) {
+                origOrdner = verzeichnisse.get(i);
             }
-            if (origOrdner.equals("") && useFallBack) {
+            if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = fileService.list(dir);
-                    for (String folder : folderList) {
-                        if (folder.endsWith(suffix)) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix)) {
                             origOrdner = folder;
                             break;
                         }
                     }
                 }
             }
-            if (!origOrdner.equals("") && useFallBack) {
+            if (!(origOrdner == null) && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    File tif = new File(origOrdner);
-                    String[] files = fileService.list(tif);
-                    if (files == null || files.length == 0) {
-                        String[] folderList = fileService.list(dir);
-                        for (String folder : folderList) {
-                            if (folder.endsWith(suffix)) {
+                    URI tif = origOrdner;
+                    ArrayList<URI> files = fileService.getSubUris(tif);
+                    if (files == null || files.size() == 0) {
+                        ArrayList<URI> folderList = fileService.getSubUris(dir);
+                        for (URI folder : folderList) {
+                            if (folder.toString().endsWith(suffix)) {
                                 origOrdner = folder;
                                 break;
                             }
@@ -182,11 +181,11 @@ public class FolderInformation {
                 }
             }
 
-            if (origOrdner.equals("")) {
-                origOrdner = DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX;
+            if (origOrdner == null) {
+                origOrdner = URI.create(DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX);
             }
 
-            String rueckgabe = getImagesDirectory() + origOrdner + File.separator;
+            URI rueckgabe = getImagesDirectory().resolve(origOrdner + File.separator);
 
             return rueckgabe;
         } else {
@@ -199,10 +198,10 @@ public class FolderInformation {
      *
      * @return path
      */
-    public String getImagesDirectory() {
+    public URI getImagesDirectory() {
         String pfad = getProcessDataDirectory() + "images" + File.separator;
 
-        return pfad;
+        return URI.create(pfad);
     }
 
     /**
@@ -210,38 +209,38 @@ public class FolderInformation {
      *
      * @return path
      */
-    public String getProcessDataDirectory() {
+    public URI getProcessDataDirectory() {
         String pfad = metadataPath + this.id + File.separator;
         pfad = pfad.replaceAll(" ", "__");
-        return pfad;
+        return URI.create(pfad);
     }
 
-    public String getOcrDirectory() {
-        return getProcessDataDirectory() + "ocr" + File.separator;
+    public URI getOcrDirectory() {
+        return URI.create(getProcessDataDirectory() + "ocr" + File.separator);
     }
 
-    public String getTxtDirectory() {
-        return getOcrDirectory() + this.title + "_txt" + File.separator;
+    public URI getTxtDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_txt" + File.separator);
     }
 
-    public String getWordDirectory() {
-        return getOcrDirectory() + this.title + "_wc" + File.separator;
+    public URI getWordDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_wc" + File.separator);
     }
 
-    public String getPdfDirectory() {
-        return getOcrDirectory() + this.title + "_pdf" + File.separator;
+    public URI getPdfDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_pdf" + File.separator);
     }
 
-    public String getAltoDirectory() {
-        return getOcrDirectory() + this.title + "_alto" + File.separator;
+    public URI getAltoDirectory() {
+        return URI.create(getOcrDirectory() + this.title + "_alto" + File.separator);
     }
 
-    public String getImportDirectory() {
-        return getProcessDataDirectory() + "import" + File.separator;
+    public URI getImportDirectory() {
+        return URI.create(getProcessDataDirectory() + "import" + File.separator);
     }
 
-    public String getMetadataFilePath() {
-        return getProcessDataDirectory() + "meta.xml";
+    public URI getMetadataFilePath() {
+        return URI.create(getProcessDataDirectory() + "meta.xml");
     }
 
     /**
@@ -249,94 +248,26 @@ public class FolderInformation {
      *
      * @return path
      */
-    public String getSourceDirectory() {
-        File dir = new File(getImagesDirectory());
+    public URI getSourceDirectory() {
+        URI dir = getImagesDirectory();
         FilenameFilter filterVerz = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
                 return (name.endsWith("_" + "source"));
             }
         };
-        File sourceFolder = null;
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
-        if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new File(dir, title + "_source");
+        URI sourceFolder = null;
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+        if (verzeichnisse == null || verzeichnisse.size() == 0) {
+            sourceFolder = dir.resolve(title + "_source");
             if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                sourceFolder.mkdir();
+                fileService.createDirectory(dir, title + "_source");
             }
         } else {
-            sourceFolder = new File(dir, verzeichnisse[0]);
+            sourceFolder = dir.resolve(verzeichnisse.get(0));
         }
 
-        return sourceFolder.getAbsolutePath();
-    }
-
-    /**
-     * Get folder for process.
-     *
-     * @param useFallBack
-     *            boolean
-     * @return Map of paths
-     */
-    public Map<String, String> getFolderForProcess(boolean useFallBack) {
-        Map<String, String> answer = new HashMap<String, String>();
-        String processpath = getProcessDataDirectory().replace("\\", "/");
-        String tifpath = getImagesTifDirectory(useFallBack).replace("\\", "/");
-        String imagepath = getImagesDirectory().replace("\\", "/");
-        String origpath = getImagesOrigDirectory(useFallBack).replace("\\", "/");
-        String metaFile = getMetadataFilePath().replace("\\", "/");
-        String ocrBasisPath = getOcrDirectory().replace("\\", "/");
-        String ocrPlaintextPath = getTxtDirectory().replace("\\", "/");
-        String sourcepath = getSourceDirectory().replace("\\", "/");
-        String importpath = getImportDirectory().replace("\\", "/");
-        if (tifpath.endsWith(File.separator)) {
-            tifpath = tifpath.substring(0, tifpath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (imagepath.endsWith(File.separator)) {
-            imagepath = imagepath.substring(0, imagepath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (origpath.endsWith(File.separator)) {
-            origpath = origpath.substring(0, origpath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (processpath.endsWith(File.separator)) {
-            processpath = processpath.substring(0, processpath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (sourcepath.endsWith(File.separator)) {
-            sourcepath = sourcepath.substring(0, sourcepath.length() - File.separator.length()).replace("\\", "/");
-        }
-        if (ocrBasisPath.endsWith(File.separator)) {
-            ocrBasisPath = ocrBasisPath.substring(0, ocrBasisPath.length() - File.separator.length()).replace("\\",
-                    "/");
-        }
-        if (ocrPlaintextPath.endsWith(File.separator)) {
-            ocrPlaintextPath = ocrPlaintextPath.substring(0, ocrPlaintextPath.length() - File.separator.length())
-                    .replace("\\", "/");
-        }
-        if (SystemUtils.IS_OS_WINDOWS) {
-            answer.put("(tifurl)", "file:/" + tifpath);
-        } else {
-            answer.put("(tifurl)", "file://" + tifpath);
-        }
-        if (SystemUtils.IS_OS_WINDOWS) {
-            answer.put("(origurl)", "file:/" + origpath);
-        } else {
-            answer.put("(origurl)", "file://" + origpath);
-        }
-        if (SystemUtils.IS_OS_WINDOWS) {
-            answer.put("(imageurl)", "file:/" + imagepath);
-        } else {
-            answer.put("(imageurl)", "file://" + imagepath);
-        }
-        answer.put("(tifpath)", tifpath);
-        answer.put("(origpath)", origpath);
-        answer.put("(imagepath)", imagepath);
-        answer.put("(processpath)", processpath);
-        answer.put("(sourcepath)", sourcepath);
-        answer.put("(importpath)", importpath);
-        answer.put("(ocrbasispath)", ocrBasisPath);
-        answer.put("(ocrplaintextpath)", ocrPlaintextPath);
-        answer.put("(metaFile)", metaFile);
-        return answer;
+        return sourceFolder;
     }
 
     /**
@@ -360,7 +291,7 @@ public class FolderInformation {
         } catch (IllegalAccessException e) {
         } catch (InvocationTargetException e) {
         }
-        String folder = this.getImagesTifDirectory(false);
+        String folder = this.getImagesTifDirectory(false).toString();
         folder = folder.substring(0, folder.lastIndexOf("_"));
         folder = folder + "_" + methodName;
         if (new File(folder).exists()) {
@@ -374,24 +305,23 @@ public class FolderInformation {
      *
      * @return String
      */
-    public List<String> getDataFiles() throws InvalidImagesException {
-        File dir;
+    public List<URI> getDataFiles() throws InvalidImagesException {
+        URI dir;
         try {
-            dir = new File(getImagesTifDirectory(true));
+            dir = getImagesTifDirectory(true);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = fileService.list(Helper.dataFilter, dir);
-        ArrayList<String> dataList = new ArrayList<String>();
-        if (dateien != null && dateien.length > 0) {
-            for (int i = 0; i < dateien.length; i++) {
-                String s = dateien[i];
+        ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, dir);
+        ArrayList<URI> dataList = new ArrayList<>();
+        if (dateien != null && dateien.size() > 0) {
+            for (URI s : dateien) {
                 dataList.add(s);
             }
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                Collections.sort(dataList, new GoobiImageURIComparator());
             }
             return dataList;
         } else {
@@ -399,10 +329,12 @@ public class FolderInformation {
         }
     }
 
-    public static class GoobiImageFileComparator implements Comparator<String> {
+    private static class GoobiImageURIComparator implements Comparator<URI> {
 
         @Override
-        public int compare(String firstString, String secondString) {
+        public int compare(URI firstUri, URI secondUri) {
+            String firstString = firstUri.toString();
+            String secondString = secondUri.toString();
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             firstString = firstString.substring(0, firstString.lastIndexOf("."));
             secondString = secondString.substring(0, secondString.lastIndexOf("."));

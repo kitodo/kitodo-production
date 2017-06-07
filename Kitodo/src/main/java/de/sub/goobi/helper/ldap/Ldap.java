@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.MessageDigest;
@@ -49,7 +50,6 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.JDKMessageDigest.MD4;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;
-
 
 public class Ldap {
     private static final Logger logger = LogManager.getLogger(Ldap.class);
@@ -98,7 +98,7 @@ public class Ldap {
              * check if HomeDir exists, else create it
              */
             logger.debug("HomeVerzeichnis pruefen");
-            String homePath = getUserHomeDirectory(inBenutzer);
+            URI homePath = URI.create(getUserHomeDirectory(inBenutzer));
             if (!new File(homePath).exists()) {
                 logger.debug("HomeVerzeichnis existiert noch nicht");
                 serviceManager.getFileService().createDirectoryForUser(homePath, inBenutzer.getLogin());

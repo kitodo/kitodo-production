@@ -70,7 +70,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
@@ -768,7 +767,7 @@ public class ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
     public String createNewProcess() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException {
+            DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -1015,22 +1014,22 @@ public class ProzesskopieForm {
                 }
                 Metadata newmd = new Metadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newmd.setValue("file:/" + serviceManager.getProcessService().getImagesDirectory(this.prozessKopie)
+                    newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 } else {
-                    newmd.setValue("file://" + serviceManager.getProcessService().getImagesDirectory(this.prozessKopie)
+                    newmd.setValue("file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
                             + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 }
                 this.myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
 
                 /* Rdf-File schreiben */
-                serviceManager.getProcessService().writeMetadataFile(this.myRdf, this.prozessKopie);
+                serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
                 /*
                  * soll der Prozess als Vorlage verwendet werden?
                  */
                 if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
-                    serviceManager.getProcessService().writeMetadataAsTemplateFile(this.myRdf, this.prozessKopie);
+                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.myRdf, this.prozessKopie);
                 }
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {

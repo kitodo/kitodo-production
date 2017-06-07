@@ -21,14 +21,14 @@ import de.unigoettingen.sub.commons.contentlib.imagelib.JpegInterpreter;
 
 import java.awt.image.RenderedImage;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -42,9 +42,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -68,8 +68,8 @@ public class MetadatenImagesHelper {
     private final Prefs myPrefs;
     private final DigitalDocument mydocument;
     private int myLastImage = 0;
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private static final ServiceManager serviceManager = new ServiceManager();
+    private static final FileService fileService = serviceManager.getFileService();
 
     public MetadatenImagesHelper(Prefs inPrefs, DigitalDocument inDocument) {
         this.myPrefs = inPrefs;
@@ -83,8 +83,8 @@ public class MetadatenImagesHelper {
      * DocStructs are less add new pages to physicalDocStruct if images are less
      * delete pages from the end of pyhsicalDocStruct.
      */
-    public void createPagination(Process process, String directory)
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+    public void createPagination(Process process, URI directory)
+            throws TypeNotAllowedForParentException, IOException, InterruptedException, DAOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
         DocStruct log = this.mydocument.getLogicalDocStruct();
@@ -124,7 +124,7 @@ public class MetadatenImagesHelper {
                     serviceManager.getProcessService().getImagesTifDirectory(true, process));
         } else {
             checkIfImagesValid(process.getTitle(),
-                    serviceManager.getProcessService().getImagesDirectory(process) + directory);
+                    fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
         /*
@@ -146,21 +146,21 @@ public class MetadatenImagesHelper {
 
         String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
         Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
-        List<DocStruct> pageElementsWithoutImages = new ArrayList<DocStruct>();
-        List<String> imagesWithoutPageElements = new ArrayList<String>();
+        List<DocStruct> pageElementsWithoutImages = new ArrayList<>();
+        List<URI> imagesWithoutPageElements = new ArrayList<>();
 
         if (physicaldocstruct.getAllChildren() != null && !physicaldocstruct.getAllChildren().isEmpty()) {
             for (DocStruct page : physicaldocstruct.getAllChildren()) {
                 if (page.getImageName() != null) {
-                    File imageFile = null;
+                    URI imageFile = null;
                     if (directory == null) {
-                        imageFile = new File(serviceManager.getProcessService().getImagesTifDirectory(true, process),
-                                page.getImageName());
+                        imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process)
+                                .resolve(page.getImageName());
                     } else {
-                        imageFile = new File(serviceManager.getProcessService().getImagesDirectory(process) + directory,
-                                page.getImageName());
+                        imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE,
+                                directory + page.getImageName());
                     }
-                    if (imageFile.exists()) {
+                    if (fileService.fileExist(imageFile)) {
                         assignedImages.put(page.getImageName(), page);
                     } else {
                         try {
@@ -178,9 +178,9 @@ public class MetadatenImagesHelper {
 
         }
         try {
-            List<String> imageNamesInMediaFolder = getDataFiles(process);
+            List<URI> imageNamesInMediaFolder = getDataFiles(process);
             if (imageNamesInMediaFolder != null) {
-                for (String imageName : imageNamesInMediaFolder) {
+                for (URI imageName : imageNamesInMediaFolder) {
                     if (!assignedImages.containsKey(imageName)) {
                         imagesWithoutPageElements.add(imageName);
                     }
@@ -205,7 +205,7 @@ public class MetadatenImagesHelper {
         // case 2: no page docs but images (some images are added)
         else if (pageElementsWithoutImages.isEmpty() && !imagesWithoutPageElements.isEmpty()) {
             int currentPhysicalOrder = assignedImages.size();
-            for (String newImage : imagesWithoutPageElements) {
+            for (URI newImage : imagesWithoutPageElements) {
                 DocStruct dsPage = this.mydocument.createDocStruct(newPage);
                 try {
                     // physical page no
@@ -256,7 +256,7 @@ public class MetadatenImagesHelper {
             for (DocStruct page : pageElementsWithoutImages) {
                 if (!imagesWithoutPageElements.isEmpty()) {
                     // assign new image name to page
-                    String newImageName = imagesWithoutPageElements.get(0);
+                    URI newImageName = imagesWithoutPageElements.get(0);
                     imagesWithoutPageElements.remove(0);
                     ContentFile cf = new ContentFile();
                     if (SystemUtils.IS_OS_WINDOWS) {
@@ -282,7 +282,7 @@ public class MetadatenImagesHelper {
                 // create new page elements
 
                 int currentPhysicalOrder = physicaldocstruct.getAllChildren().size();
-                for (String newImage : imagesWithoutPageElements) {
+                for (URI newImage : imagesWithoutPageElements) {
                     DocStruct dsPage = this.mydocument.createDocStruct(newPage);
                     try {
                         // physical page no
@@ -351,8 +351,8 @@ public class MetadatenImagesHelper {
     /**
      * scale given image file to png using internal embedded content server.
      */
-    public void scaleFile(String inFileName, String outFileName, int inSize, int intRotation)
-            throws ImageManagerException, IOException, ImageManipulatorException {
+    public void scaleFile(URI inFileName, URI outFileName, int inSize, int intRotation)
+            throws ImageManagerException, IOException, ImageManipulatorException, URISyntaxException {
         logger.trace("start scaleFile");
         int tmpSize = inSize / 3;
         if (tmpSize < 1) {
@@ -363,13 +363,13 @@ public class MetadatenImagesHelper {
         }
         if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
             logger.trace("api");
-            ImageManager im = new ImageManager(new File(inFileName).toURI().toURL());
+            ImageManager im = new ImageManager(inFileName.toURL());
             logger.trace("im");
             RenderedImage ri = im.scaleImageByPixel(tmpSize, tmpSize, ImageManager.SCALE_BY_PERCENT, intRotation);
             logger.trace("ri");
             JpegInterpreter pi = new JpegInterpreter(ri);
             logger.trace("pi");
-            FileOutputStream outputFileStream = (FileOutputStream) fileService.write(URI.create(outFileName));
+            FileOutputStream outputFileStream = (FileOutputStream) fileService.write(outFileName);
             logger.trace("output");
             pi.writeToStream(null, outputFileStream);
             logger.trace("write stream");
@@ -398,7 +398,7 @@ public class MetadatenImagesHelper {
             InputStream inStream = method.getResponseBodyAsStream();
             logger.trace("inStream");
             try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                    FileOutputStream fos = new FileOutputStream(outFileName);) {
+                    OutputStream fos = fileService.write(outFileName);) {
                 logger.trace("BufferedInputStream");
                 logger.trace("FileOutputStream");
                 byte[] bytes = new byte[8192];
@@ -421,36 +421,36 @@ public class MetadatenImagesHelper {
     /**
      * Die Images eines Prozesses auf Vollständigkeit prüfen.
      */
-    public boolean checkIfImagesValid(String title, String folder)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public boolean checkIfImagesValid(String title, URI folder) throws IOException, InterruptedException, DAOException {
         boolean isValid = true;
         this.myLastImage = 0;
 
         /*
          * alle Bilder durchlaufen und dafür die Seiten anlegen
          */
-        File dir = new File(folder);
-        if (dir.exists()) {
-            String[] dateien = fileService.list(Helper.dataFilter, dir);
-            if (dateien == null || dateien.length == 0) {
+        if (fileService.fileExist(folder)) {
+            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
+            if (files == null || files.size() == 0) {
                 Helper.setFehlerMeldung("[" + title + "] No objects found");
                 return false;
             }
 
-            this.myLastImage = dateien.length;
+            this.myLastImage = files.size();
             if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
-                List<String> filesDirs = Arrays.asList(dateien);
+                List<URI> filesDirs = files;
                 Collections.sort(filesDirs);
                 int counter = 1;
                 int myDiff = 0;
-                String curFile = null;
+                String currentFileName = null;
                 try {
-                    for (Iterator<String> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
-                        curFile = iterator.next();
-                        int curFileNumber = Integer.parseInt(curFile.substring(0, curFile.indexOf(".")));
+                    for (Iterator<URI> iterator = filesDirs.iterator(); iterator.hasNext(); counter++) {
+                        currentFileName = fileService.getFileName(iterator.next());
+
+                        int curFileNumber = Integer
+                                .parseInt(currentFileName.substring(0, currentFileName.indexOf(".")));
                         if (curFileNumber != counter + myDiff) {
                             Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
-                                    + " but found File " + curFile);
+                                    + " but found File " + currentFileName);
                             myDiff = curFileNumber - counter;
                             isValid = false;
                         }
@@ -458,7 +458,7 @@ public class MetadatenImagesHelper {
                 } catch (NumberFormatException e1) {
                     isValid = false;
                     Helper.setFehlerMeldung(
-                            "[" + title + "] Filename of image wrong - not an 8-digit-number: " + curFile);
+                            "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
                 }
                 return isValid;
             }
@@ -468,10 +468,12 @@ public class MetadatenImagesHelper {
         return false;
     }
 
-    public static class GoobiImageFileComparator implements Comparator<String> {
+    public static class GoobiImageFileComparator implements Comparator<URI> {
 
         @Override
-        public int compare(String firstString, String secondString) {
+        public int compare(URI firstUri, URI secondUri) {
+            String firstString = fileService.getFileName(firstUri);
+            String secondString = fileService.getFileName(secondUri);
             String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
             firstString = firstString.substring(0, firstString.lastIndexOf("."));
             secondString = secondString.substring(0, secondString.lastIndexOf("."));
@@ -498,69 +500,37 @@ public class MetadatenImagesHelper {
      *
      * @param myProcess
      *            current process
-     * @return sorted list with strings representing images of process
-     */
-
-    public ArrayList<String> getImageFiles(Process myProcess) throws InvalidImagesException {
-        File dir;
-        try {
-            dir = new File(serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
-        } catch (Exception e) {
-            throw new InvalidImagesException(e);
-        }
-        /* Verzeichnis einlesen */
-        String[] dateien = fileService.list(Helper.imageNameFilter, dir);
-        ArrayList<String> dataList = new ArrayList<String>();
-        if (dateien != null && dateien.length > 0) {
-            for (int i = 0; i < dateien.length; i++) {
-                String s = dateien[i];
-                dataList.add(s);
-            }
-            /* alle Dateien durchlaufen */
-            if (dataList.size() != 0) {
-                Collections.sort(dataList, new GoobiImageFileComparator());
-            }
-            return dataList;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Get image files.
-     *
-     * @param myProcess
-     *            current process
      * @param directory
      *            current folder
      * @return sorted list with strings representing images of process
      */
-    public List<String> getImageFiles(Process myProcess, String directory) throws InvalidImagesException {
-        File dir;
+    public List<URI> getImageFiles(Process myProcess, URI directory) throws InvalidImagesException {
+        URI dir;
         try {
-            dir = new File(serviceManager.getProcessService().getImagesDirectory(myProcess) + directory);
+            dir = fileService.getProcessSubTypeURI(myProcess, ProcessSubType.IMAGE, null).resolve(directory);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = fileService.list(Helper.imageNameFilter, dir);
-        List<String> dataList = new ArrayList<String>();
-        if (dateien != null && dateien.length > 0) {
-            for (int i = 0; i < dateien.length; i++) {
-                String s = dateien[i];
-                dataList.add(s);
+        ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, dir);
+        List<URI> dataList = new ArrayList<>();
+        if (files != null && files.size() > 0) {
+            for (int i = 0; i < files.size(); i++) {
+                dataList.add(files.get(i));
             }
             /* alle Dateien durchlaufen */
         }
-        List<String> orderedFilenameList = new ArrayList<String>();
+        List<URI> orderedFilenameList = new ArrayList<>();
         if (dataList.size() != 0) {
             List<DocStruct> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
             if (pagesList != null) {
                 for (DocStruct page : pagesList) {
                     String filename = page.getImageName();
                     String filenamePrefix = filename.replace(Metadaten.getFileExtension(filename), "");
-                    for (String currentImage : dataList) {
-                        String currentImagePrefix = currentImage.replace(Metadaten.getFileExtension(currentImage), "");
+                    for (URI currentImage : dataList) {
+                        String currentFileName = fileService.getFileName(currentImage);
+                        String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),
+                                "");
                         if (currentImagePrefix.equals(filenamePrefix)) {
                             orderedFilenameList.add(currentImage);
                             break;
@@ -589,12 +559,12 @@ public class MetadatenImagesHelper {
      *            DocStruct object
      * @return list of Strings
      */
-    public List<String> getImageFiles(DocStruct physical) {
-        List<String> orderedFileList = new ArrayList<String>();
+    public List<URI> getImageFiles(DocStruct physical) {
+        List<URI> orderedFileList = new ArrayList<>();
         List<DocStruct> pages = physical.getAllChildren();
         if (pages != null) {
             for (DocStruct page : pages) {
-                String filename = page.getImageName();
+                URI filename = URI.create(page.getImageName());
                 if (filename != null) {
                     orderedFileList.add(filename);
                 } else {
@@ -612,20 +582,19 @@ public class MetadatenImagesHelper {
      *            Process object
      * @return list of Strings
      */
-    public List<String> getDataFiles(Process myProcess) throws InvalidImagesException {
-        File dir;
+    public List<URI> getDataFiles(Process myProcess) throws InvalidImagesException {
+        URI dir;
         try {
-            dir = new File(serviceManager.getProcessService().getImagesTifDirectory(true, myProcess));
+            dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */
-        String[] dateien = fileService.list(Helper.dataFilter, dir);
-        ArrayList<String> dataList = new ArrayList<String>();
-        if (dateien != null && dateien.length > 0) {
-            for (int i = 0; i < dateien.length; i++) {
-                String s = dateien[i];
-                dataList.add(s);
+        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        ArrayList<URI> dataList = new ArrayList<>();
+        if (files != null && files.size() > 0) {
+            for (int i = 0; i < files.size(); i++) {
+                dataList.add(files.get(i));
             }
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {

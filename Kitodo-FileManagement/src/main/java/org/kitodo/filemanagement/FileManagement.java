@@ -60,11 +60,6 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public URI getProcessSubTypeUri(URI processUri, ProcessSubType subType, int id) {
-        return null;
-    }
-
-    @Override
     public URI createProcessLocation(String processId) throws IOException {
         File processRootDirectory = new File(
                 (Config.getConfig().getString(METADATA_DIRECTORY) + File.separator + processId));
@@ -72,18 +67,13 @@ public class FileManagement implements FileManagementInterface {
             throw new IOException("Could not create processRoot directory.");
         }
 
-        File processImageDirectory = new File(processRootDirectory.getPath() + File.separator + "images");
-        if (!processImageDirectory.mkdir()) {
-            throw new IOException("Could not create image directory");
-        }
-        URI processMetaFileUri = createResource(processRootDirectory.toURI(), "meta.xml");
-        File processMetaFile = new File(processMetaFileUri);
-        if (!processMetaFile.createNewFile()) {
-            throw new IOException();
-        }
-
         return processRootDirectory.toURI();
 
+    }
+
+    @Override
+    public URI getProcessSubTypeUri(URI processBaseUri, ProcessSubType subType, int id) {
+        return null;
     }
 
     @Override

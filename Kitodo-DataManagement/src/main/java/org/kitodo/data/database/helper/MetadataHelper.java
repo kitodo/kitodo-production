@@ -12,9 +12,9 @@
 package org.kitodo.data.database.helper;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,7 +31,7 @@ public class MetadataHelper {
      *
      * @return meta file type
      */
-    public static String getMetaFileType(String file) throws IOException {
+    public static String getMetaFileType(URI file) throws IOException {
         /*
          * Typen und Suchbegriffe festlegen
          */
@@ -41,7 +41,7 @@ public class MetadataHelper {
         types.put("rdf", "<RDF:RDF ".toLowerCase());
         types.put("xstream", "<ugh.dl.DigitalDocument>".toLowerCase());
 
-        try (InputStreamReader input = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
+        try (InputStreamReader input = new InputStreamReader(file.toURL().openStream(), StandardCharsets.UTF_8);
                 BufferedReader bufRead = new BufferedReader(input);) {
             char[] buffer = new char[200];
             while ((bufRead.read(buffer)) >= 0) {

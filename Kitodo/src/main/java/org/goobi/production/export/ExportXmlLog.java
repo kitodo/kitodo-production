@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +46,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 
@@ -375,14 +374,15 @@ public class ExportXmlLog implements IProcessDataExport {
         ArrayList<Element> metadataElements = new ArrayList<Element>();
 
         try {
-            String filename = serviceManager.getProcessService().getMetadataFilePath(process);
-            Document metsDoc = new SAXBuilder().build(filename);
+            URI filename = serviceManager.getFileService().getMetadataFilePath(process);
+            Document metsDoc = new SAXBuilder().build(filename.toString());
             Document anchorDoc = null;
-            String anchorfilename = serviceManager.getProcessService().getMetadataFilePath(process).replace("meta.xml",
-                    "meta_anchor.xml");
-            File anchorFile = new File(anchorfilename);
-            if (anchorFile.exists() && anchorFile.canRead()) {
-                anchorDoc = new SAXBuilder().build(anchorfilename);
+            URI anchorfilename = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
+                    .replace("meta.xml", "meta_anchor.xml"));
+            URI anchorFile = anchorfilename;
+            if (serviceManager.getFileService().fileExist(anchorFile)
+                    && serviceManager.getFileService().canRead(anchorFile)) {
+                anchorDoc = new SAXBuilder().build(anchorfilename.toString());
             }
             HashMap<String, Namespace> namespaces = new HashMap<String, Namespace>();
 
@@ -418,15 +418,7 @@ public class ExportXmlLog implements IProcessDataExport {
             metsElement.addContent(metadataElements);
             processElements.add(metsElement);
 
-        } catch (SwapException e) {
-            logger.error(e);
-        } catch (DAOException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
-            logger.error(e);
-        } catch (JDOMException e) {
+        } catch (IOException | JDOMException e) {
             logger.error(e);
         } catch (JaxenException e) {
             logger.error(e);

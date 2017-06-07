@@ -14,12 +14,10 @@ package de.sub.goobi.helper;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.helper.tasks.ProcessSwapInTask;
-import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
-import de.sub.goobi.helper.tasks.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +35,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.apache.StepManager;
 import org.kitodo.data.database.persistence.apache.StepObject;
@@ -103,10 +100,6 @@ public class GoobiScript {
          */
         if (this.myParameters.get("action").equals("swapSteps")) {
             swapSteps(inProzesse);
-        } else if (this.myParameters.get("action").equals("swapProzessesOut")) {
-            swapOutProzesses(inProzesse);
-        } else if (this.myParameters.get("action").equals("swapProzessesIn")) {
-            swapInProzesses(inProzesse);
         } else if (this.myParameters.get("action").equals("importFromFileSystem")) {
             importFromFileSystem(inProzesse);
         } else if (this.myParameters.get("action").equals("addUser")) {
@@ -176,7 +169,7 @@ public class GoobiScript {
             try {
                 Fileformat myRdf = serviceManager.getProcessService().readMetadataFile(proz);
                 myRdf.getDigitalDocument().addAllContentFiles();
-                serviceManager.getProcessService().writeMetadataFile(myRdf, proz);
+                serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ContentFiles updated: ", proz.getTitle());
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
                 Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
@@ -193,11 +186,11 @@ public class GoobiScript {
             String title = p.getTitle();
             if (contentOnly) {
                 try {
-                    File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
+                    File ocr = new File(serviceManager.getFileService().getOcrDirectory(p));
                     if (ocr.exists()) {
                         fileService.delete(ocr.toURI());
                     }
-                    File images = new File(serviceManager.getProcessService().getImagesDirectory(p));
+                    File images = new File(serviceManager.getFileService().getImagesDirectory(p));
                     if (images.exists()) {
                         fileService.delete(images.toURI());
                     }
@@ -220,16 +213,8 @@ public class GoobiScript {
         }
     }
 
-    private void deleteMetadataDirectory(Process p) {
-        try {
-            fileService.delete(new File(serviceManager.getProcessService().getProcessDataDirectory(p)).toURI());
-            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(p));
-            if (ocr.exists()) {
-                fileService.delete(ocr.toURI());
-            }
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("Can not delete metadata directory", e);
-        }
+    private void deleteMetadataDirectory(Process process) {
+        serviceManager.getFileService().deleteProcessContent(process);
     }
 
     private void runScript(List<Process> inProzesse, String stepname, String scriptname) {
@@ -253,30 +238,6 @@ public class GoobiScript {
     }
 
     /**
-     * Prozesse auslagern.
-     */
-    private void swapOutProzesses(List<Process> inProzesse) {
-        for (Process p : inProzesse) {
-            ProcessSwapOutTask task = new ProcessSwapOutTask();
-            task.initialize(p);
-            TaskManager.addTask(task);
-            task.start();
-        }
-    }
-
-    /**
-     * Prozesse wieder einlagern.
-     */
-    private void swapInProzesses(List<Process> inProzesse) {
-        for (Process p : inProzesse) {
-            ProcessSwapInTask task = new ProcessSwapInTask();
-            task.initialize(p);
-            TaskManager.addTask(task);
-            task.start();
-        }
-    }
-
-    /**
      * von allen gewählten Prozessen die Daten aus einem Verzeichnis einspielen.
      */
     private void importFromFileSystem(List<Process> inProzesse) {
@@ -288,25 +249,25 @@ public class GoobiScript {
             return;
         }
 
-        File sourceFolder = new File(this.myParameters.get("sourcefolder"));
-        if (!sourceFolder.isDirectory()) {
+        URI sourceFolder = URI.create(this.myParameters.get("sourcefolder"));
+        if (!fileService.isDirectory(sourceFolder)) {
             Helper.setFehlerMeldung("kitodoScriptfield",
                     "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");
             return;
         }
         try {
             for (Process p : inProzesse) {
-                File imagesFolder = new File(serviceManager.getProcessService().getImagesOrigDirectory(false, p));
-                if (fileService.list(imagesFolder).length > 0) {
+                URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, p);
+                if (fileService.getSubUris(imagesFolder).size() > 0) {
                     Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
                             + p.getId().intValue() + "] has already data in image folder");
                 } else {
-                    File sourceFolderProzess = new File(sourceFolder, p.getTitle());
-                    if (!sourceFolder.isDirectory()) {
+                    URI sourceFolderProzess = fileService.createResource(sourceFolder, p.getTitle());
+                    if (!fileService.isDirectory(sourceFolder)) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
                                 + " [" + p.getId().intValue() + "] is not existing");
                     } else {
-                        fileService.copyDir(sourceFolderProzess, imagesFolder);
+                        fileService.copyDirectory(sourceFolderProzess, imagesFolder);
                         Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
                                 + p.getId().intValue() + "] is copied");
                     }
@@ -930,7 +891,7 @@ public class GoobiScript {
         for (Process proz : inProzesse) {
             try {
                 File tiffheaderfile = new File(
-                        serviceManager.getProcessService().getImagesDirectory(proz) + "tiffwriter.conf");
+                        serviceManager.getFileService().getImagesDirectory(proz) + "tiffwriter.conf");
                 if (tiffheaderfile.exists()) {
                     tiffheaderfile.delete();
                 }
@@ -960,14 +921,14 @@ public class GoobiScript {
                 }
                 Metadata newmd = new Metadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
-                    newmd.setValue("file:/" + serviceManager.getProcessService().getImagesDirectory(proz)
-                            + proz.getTitle() + DIRECTORY_SUFFIX);
+                    newmd.setValue("file:/" + serviceManager.getFileService().getImagesDirectory(proz) + proz.getTitle()
+                            + DIRECTORY_SUFFIX);
                 } else {
-                    newmd.setValue("file://" + serviceManager.getProcessService().getImagesDirectory(proz)
+                    newmd.setValue("file://" + serviceManager.getFileService().getImagesDirectory(proz)
                             + proz.getTitle() + DIRECTORY_SUFFIX);
                 }
                 myRdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newmd);
-                serviceManager.getProcessService().writeMetadataFile(myRdf, proz);
+                serviceManager.getFileService().writeMetadataFile(myRdf, proz);
                 Helper.setMeldung("kitodoScriptfield", "ImagePath updated: ", proz.getTitle());
 
             } catch (ugh.exceptions.DocStructHasNoTypeException e) {
@@ -1018,8 +979,6 @@ public class GoobiScript {
                 logger.error("ExportFileException", e);
             } catch (UghHelperException e) {
                 logger.error("UghHelperException", e);
-            } catch (SwapException e) {
-                logger.error("SwapException", e);
             } catch (DAOException e) {
                 logger.error("DAOException", e);
             }

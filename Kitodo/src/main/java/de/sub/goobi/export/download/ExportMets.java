@@ -25,8 +25,8 @@ import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +34,12 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -74,9 +74,9 @@ public class ExportMets {
      */
     public boolean startExport(Process myProcess) throws IOException, InterruptedException, DocStructHasNoTypeException,
             PreferencesException, WriteException, MetadataTypeNotAllowedException, ExportFileException,
-            UghHelperException, ReadException, SwapException, DAOException, TypeNotAllowedForParentException {
+            UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        String userHome = "";
+        URI userHome = null;
         if (login != null) {
             userHome = serviceManager.getUserService().getHomeDirectory(login.getMyBenutzer());
         }
@@ -91,10 +91,9 @@ public class ExportMets {
      * @param inZielVerzeichnis
      *            String
      */
-    public boolean startExport(Process myProcess, String inZielVerzeichnis)
-            throws IOException, InterruptedException, PreferencesException, WriteException, DocStructHasNoTypeException,
-            MetadataTypeNotAllowedException, ExportFileException, UghHelperException, ReadException, SwapException,
-            DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process myProcess, URI inZielVerzeichnis) throws IOException, InterruptedException,
+            PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
+            ExportFileException, UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -123,10 +122,11 @@ public class ExportMets {
             atsPpnBand = expcorr.correctionStart();
         }
 
-        String zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
+        URI zielVerzeichnis = prepareUserDirectory(inZielVerzeichnis);
 
         String targetFileName = zielVerzeichnis + atsPpnBand + "_mets.xml";
-        return writeMetsFile(myProcess, targetFileName, gdzfile, false);
+        URI metaFile = fileService.getProcessSubTypeURI(myProcess, ProcessSubType.META_XML, targetFileName);
+        return writeMetsFile(myProcess, metaFile, gdzfile, false);
     }
 
     /**
@@ -135,8 +135,8 @@ public class ExportMets {
      * @param inTargetFolder
      *            the folder to prove and maybe create it
      */
-    protected String prepareUserDirectory(String inTargetFolder) {
-        String target = inTargetFolder;
+    protected URI prepareUserDirectory(URI inTargetFolder) {
+        URI target = inTargetFolder;
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (myBenutzer != null) {
             try {
@@ -154,20 +154,20 @@ public class ExportMets {
      *
      * @param myProcess
      *            the Process to use
-     * @param targetFileName
-     *            the filename where the metsfile should be written
+     * @param metaFile
+     *            the meta file which should be written
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
      */
 
-    protected boolean writeMetsFile(Process myProcess, String targetFileName, Fileformat gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
-            SwapException, DAOException, TypeNotAllowedForParentException {
+    protected boolean writeMetsFile(Process myProcess, URI metaFile, Fileformat gdzfile, boolean writeLocalFilegroup)
+            throws PreferencesException, WriteException, IOException, InterruptedException, DAOException,
+            TypeNotAllowedForParentException {
 
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
-        String imageFolderPath = serviceManager.getProcessService().getImagesDirectory(myProcess);
-        File imageFolder = new File(imageFolderPath);
+        URI imageFolderPath = serviceManager.getFileService().getImagesDirectory(myProcess);
+        URI imageFolder = imageFolderPath;
         /*
          * before creating mets file, change relative path to absolute -
          */
@@ -226,8 +226,9 @@ public class ExportMets {
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
-            cf.setLocation(f.toURI().toString());
+            URI uri = !url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : URI.create("");
+            uri = uri.resolve(url);
+            cf.setLocation(uri.toString());
         }
 
         mm.setDigitalDocument(dd);
@@ -245,9 +246,8 @@ public class ExportMets {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    File folder = new File(
-                            serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess));
-                    if (folder.exists() && fileService.list(folder).length > 0) {
+                    URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), myProcess);
+                    if (fileService.fileExist(folder) && fileService.getSubUris(folder).size() > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -305,12 +305,16 @@ public class ExportMets {
         if (ConfigCore.getBooleanParameter("ExportValidateImages", true)) {
             try {
                 // TODO andere Dateigruppen nicht mit image Namen ersetzen
-                List<String> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProcess);
+                List<URI> images = new MetadatenImagesHelper(this.myPrefs, dd).getDataFiles(myProcess);
+                List<String> imageStrings = new ArrayList<>();
+                for (URI uri : images) {
+                    imageStrings.add(uri.toString());
+                }
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
                 if (images != null) {
                     int sizeOfImages = images.size();
                     if (sizeOfPagination == sizeOfImages) {
-                        dd.overrideContentFiles(images);
+                        dd.overrideContentFiles(imageStrings);
                     } else {
                         List<String> param = new ArrayList<String>();
                         param.add(String.valueOf(sizeOfPagination));
@@ -331,7 +335,8 @@ public class ExportMets {
             dd.addAllContentFiles();
 
         }
-        mm.write(targetFileName);
+
+        mm.write(metaFile.toString());
         Helper.setMeldung(null, myProcess.getTitle() + ": ", "ExportFinished");
         return true;
     }

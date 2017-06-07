@@ -24,6 +24,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.faces.context.FacesContext;
@@ -37,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -50,14 +52,12 @@ import org.kitodo.services.ServiceManager;
 public class Multipage {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(Multipage.class);
-    Helper help = new Helper();
 
-    private void create(Process process) throws IOException, InterruptedException, SwapException, DAOException {
+    private void create(Process process) throws IOException, InterruptedException, DAOException {
         /* alle tifs durchlaufen */
-        String pfad = serviceManager.getProcessService().getImagesDirectory(process);
-        File dir = new File(pfad);
+        URI pfad = serviceManager.getFileService().getImagesDirectory(process);
 
-        String[] dateien = serviceManager.getFileService().list(Helper.imageNameFilter, dir);
+        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, pfad);
 
         /* keine Tifs vorhanden, also raus */
         if (dateien == null) {
@@ -66,12 +66,12 @@ public class Multipage {
         }
 
         /* alle Bilder in ein Array übernehmen */
-        RenderedImage image[] = new PlanarImage[dateien.length];
-        for (int i = 0; i < dateien.length; i++) {
+        RenderedImage[] image = new PlanarImage[dateien.size()];
+        for (int i = 0; i < dateien.size(); i++) {
             if (logger.isDebugEnabled()) {
-                logger.debug(pfad + dateien[i]);
+                logger.debug(pfad + dateien.get(i).toString());
             }
-            image[i] = JAI.create("fileload", pfad + dateien[i]);
+            image[i] = JAI.create("fileload", pfad + dateien.get(i).toString());
         }
         logger.debug("Bilder durchlaufen");
 
@@ -83,10 +83,8 @@ public class Multipage {
         TIFFEncodeParam param = new TIFFEncodeParam();
         param.setCompression(4);
         ImageEncoder encoder = ImageCodec.createImageEncoder("TIFF", out, param);
-        Vector<RenderedImage> vector = new Vector<RenderedImage>();
-        for (int i = 1; i < image.length; i++) {
-            vector.add(image[i]);
-        }
+        Vector<RenderedImage> vector = new Vector<>();
+        vector.addAll(Arrays.asList(image).subList(1, image.length));
         param.setExtraImages(vector.iterator());
         encoder.encode(image[0]);
         out.close();
@@ -99,7 +97,7 @@ public class Multipage {
      * @param process
      *            object
      */
-    public void startExport(Process process) throws IOException, InterruptedException, SwapException, DAOException {
+    public void startExport(Process process) throws IOException, InterruptedException, DAOException {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();

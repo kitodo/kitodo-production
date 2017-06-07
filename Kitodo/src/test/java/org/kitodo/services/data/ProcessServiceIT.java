@@ -20,7 +20,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -210,7 +214,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        String directory = processService.getImagesTifDirectory(true, process);
+        URI directory = processService.getImagesTifDirectory(true, process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\First process_media\\");
         assertTrue("Images TIF directory doesn't match to given directory!", condition);
 
@@ -229,7 +233,7 @@ public class ProcessServiceIT {
 
         Process process = processService.find(1);
         // it is weird but it says that it doesn't exist....
-        fileService.createDirectory(URI.create("C:\\dev\\kitodo\\metadata\\1\\images\\"), "First process_media\\");
+        fileService.createMetaDirectory(URI.create("C:\\dev\\kitodo\\metadata\\1\\images\\"), "First process_media\\");
         boolean condition = processService.checkIfTifDirectoryExists(process);
         assertTrue("Images TIF directory doesn't exist!", condition);
 
@@ -244,7 +248,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         Process process = processService.find(1);
-        String directory = processService.getImagesOrigDirectory(false, process);
+        URI directory = processService.getImagesOrigDirectory(false, process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\master_First process_media\\");
         assertTrue("Images orig directory doesn't match to given directory!", condition);
     }
@@ -253,9 +257,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetImagesDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getImagesDirectory(process);
+        URI directory = fileService.getImagesDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\");
         assertTrue("Images directory doesn't match to given directory!", condition);
     }
@@ -264,9 +269,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetSourceDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getSourceDirectory(process);
+        URI directory = fileService.getSourceDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\images\\First process_source");
         assertTrue("Source directory doesn't match to given directory!", condition);
     }
@@ -275,9 +281,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetProcessDataDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getProcessDataDirectory(process);
+        URI directory = fileService.getProcessBaseUriForExistingProcess(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\");
         assertTrue("Process data directory doesn't match to given directory!", condition);
     }
@@ -286,9 +293,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetOcrDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getOcrDirectory(process);
+        URI directory = fileService.getOcrDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\");
         assertTrue("OCR directory doesn't match to given directory!", condition);
     }
@@ -297,9 +305,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetTxtDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getTxtDirectory(process);
+        URI directory = fileService.getTxtDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_txt\\");
         assertTrue("TXT directory doesn't match to given directory!", condition);
     }
@@ -308,9 +317,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetWordDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getWordDirectory(process);
+        URI directory = fileService.getWordDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_wc\\");
         assertTrue("Word directory doesn't match to given directory!", condition);
     }
@@ -319,9 +329,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetPdfDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getPdfDirectory(process);
+        URI directory = fileService.getPdfDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_pdf\\");
         assertTrue("PDF directory doesn't match to given directory!", condition);
     }
@@ -330,9 +341,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetAltoDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getAltoDirectory(process);
+        URI directory = fileService.getAltoDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\ocr\\First process_alto\\");
         assertTrue("Alto directory doesn't match to given directory!", condition);
     }
@@ -341,22 +353,12 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetImportDirectory() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getImportDirectory(process);
+        URI directory = fileService.getImportDirectory(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\import\\");
         assertTrue("Import directory doesn't match to given directory!", condition);
-    }
-
-    @Ignore("travis doesn't have this folder")
-    @Test
-    public void shouldGetProcessDataDirectoryIgnoreSwapping() throws Exception {
-        ProcessService processService = new ProcessService();
-
-        Process process = processService.find(1);
-        String directory = processService.getProcessDataDirectoryIgnoreSwapping(process);
-        boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\");
-        assertTrue("Process data directory ignore swapping doesn't match to given directory!", condition);
     }
 
     @Test
@@ -491,10 +493,11 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetMetadataFilePath() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         // TODO: solve problem of paths - it will be done with Path class!
         Process process = processService.find(1);
-        String directory = processService.getMetadataFilePath(process);
+        URI directory = fileService.getMetadataFilePath(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\meta.xml");
         assertTrue("Metadata file path doesn't match to given file path!", condition);
     }
@@ -503,9 +506,10 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetTemplateFilePath() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
-        String directory = processService.getTemplateFilePath(process);
+        URI directory = fileService.getTemplateFile(process);
         boolean condition = directory.equals("C:\\dev\\kitodo\\metadata\\1\\template.xml");
         assertTrue("Template file path doesn't match to given file path!", condition);
     }
@@ -558,10 +562,11 @@ public class ProcessServiceIT {
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
         ProcessService processService = new ProcessService();
+        FileService fileService = new FileService();
 
         Process process = processService.find(1);
         // should return true or false
-        processService.writeMetadataAsTemplateFile(null, process);
+        fileService.writeMetadataAsTemplateFile(null, process);
         boolean condition = false;
         assertTrue("It was not possible to write metadata as template file!", condition);
     }
@@ -659,8 +664,7 @@ public class ProcessServiceIT {
         ProcessService processService = new ProcessService();
 
         List<Property> expected = new ArrayList<>();
-        List<Property> actual = processService
-                .filterForCorrectionSolutionMessages(new ArrayList<Property>());
+        List<Property> actual = processService.filterForCorrectionSolutionMessages(new ArrayList<Property>());
         assertEquals("Process properties are not equal to given process properties!", expected, actual);
     }
 

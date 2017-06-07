@@ -24,6 +24,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,7 +49,7 @@ import org.kitodo.services.file.FileService;
  */
 public class CreatePdfFromServletThread extends LongRunningTask {
     private static final Logger logger = LogManager.getLogger(CreatePdfFromServletThread.class);
-    private File targetFolder;
+    private URI targetFolder;
     private String internalServletPath;
     private URL metsURL;
     private final ServiceManager serviceManager = new ServiceManager();
@@ -93,8 +95,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             URL kitodoContentServerUrl = null;
             String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
             new File("");
-            File tempPdf = File.createTempFile(this.getProcess().getTitle(), ".pdf");
-            File finalPdf = new File(this.targetFolder, this.getProcess().getTitle() + ".pdf");
+            URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
+            URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
             Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 
             /*
@@ -119,13 +121,12 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 }
                 String url = "";
                 FilenameFilter filter = Helper.imageNameFilter;
-                File imagesDir = new File(
-                        serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess()));
-                File[] meta = fileService.listFiles(filter, imagesDir);
+                URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
+                ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
                 ArrayList<String> filenames = new ArrayList<String>();
-                for (File data : meta) {
+                for (URI data : meta) {
                     String file = "";
-                    file += data.toURI().toURL();
+                    file += data.toURL();
                     filenames.add(file);
                 }
                 Collections.sort(filenames, new MetadatenHelper(null, null));
@@ -159,7 +160,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
 
                 InputStream inStream = method.getResponseBodyAsStream();
                 try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                        FileOutputStream fos = (FileOutputStream) fileService.write(tempPdf.toURI())) {
+                        FileOutputStream fos = (FileOutputStream) fileService.write(tempPdf)) {
                     byte[] bytes = new byte[8192];
                     int count = bis.read(bytes);
                     while ((count != -1) && (count <= 8192)) {
@@ -178,14 +179,13 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              * copy pdf from temp to final destination
              */
             if (logger.isDebugEnabled()) {
-                logger.debug("pdf file created: " + tempPdf.getAbsolutePath() + "; now copy it to "
-                        + finalPdf.getAbsolutePath());
+                logger.debug("pdf file created: " + tempPdf + "; now copy it to " + finalPdf);
             }
             fileService.copyFile(tempPdf, finalPdf);
             if (logger.isDebugEnabled()) {
-                logger.debug("pdf copied to " + finalPdf.getAbsolutePath() + "; now start cleaning up");
+                logger.debug("pdf copied to " + finalPdf + "; now start cleaning up");
             }
-            tempPdf.delete();
+            fileService.delete(tempPdf);
             if (this.metsURL != null) {
                 File tempMets = new File(this.metsURL.toString());
                 tempMets.delete();
@@ -199,11 +199,19 @@ public class CreatePdfFromServletThread extends LongRunningTask {
              * report Error to User as Error-Log
              */
             String text = "error while pdf creation: " + e.getMessage();
-            File file = new File(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
-            try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(file.toURI())))) {
+            URI uri = null;
+            try {
+                uri = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
+            } catch (MalformedURLException e1) {
+                logger.error("URI " + this.targetFolder + this.getProcess().getTitle() + ".PDF-ERROR.log is malformed",
+                        e1);
+            } catch (IOException e1) {
+                logger.error("Ressource " + uri + " could not be created", e);
+            }
+            try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                 output.write(text);
             } catch (IOException e1) {
-                logger.error("Error while reporting error to user in file " + file.getAbsolutePath(), e);
+                logger.error("Error while reporting error to user in file " + uri, e);
             }
             return;
         } finally {
@@ -222,7 +230,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
      * @param targetFolder
      *            the targetFolder to set
      */
-    public void setTargetFolder(File targetFolder) {
+    public void setTargetFolder(URI targetFolder) {
         this.targetFolder = targetFolder;
     }
 

@@ -14,14 +14,15 @@
 <!-- ++++++++++++++++     Action      ++++++++++++++++ -->
 
 <ui:composition
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:t="http://myfaces.apache.org/tomahawk"
-    >
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:t="http://myfaces.apache.org/tomahawk"
+>
 
-    <ui:fragment rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
+    <ui:fragment
+            rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and (LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}">
 
         <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
             <tr>
@@ -60,7 +61,8 @@
                                 <h:panelGrid id="download" columns="1" style="margin-left:40px">
 
                                     <!-- Download-Schaltknopf für Selection-->
-                                    <h:commandLink id="action2" action="#{ProzessverwaltungForm.DownloadToHomeSelection}"
+                                    <h:commandLink id="action2"
+                                                   action="#{ProzessverwaltungForm.DownloadToHomeSelection}"
                                                    rendered="#{ProzessverwaltungForm.anzeigeAnpassen['selectionBoxes']}"
                                                    title="#{msgs.auswahl2}"
                                                    onclick="if (!confirm('#{msgs.download}?')) return">
@@ -248,16 +250,12 @@
                                                               onclick="document.getElementById('kitodoScriptfield').value='action:swapSteps swap1nr:ORDER_NUMBER_FIRST_STEP \x22swap1title:TITLE_FIRST_STEP\x22swap2nr:ORDER_NUMBER_SECOND_STEP \x22swap2title:TITLE_SECOND_STEP\x22'"/>
                                                 <h:outputText styleClass="kitodoScriptLink" value="importFromFileSystem"
                                                               onclick="document.getElementById('kitodoScriptfield').value='action:importFromFileSystem sourcefolder:SOURCE_FOLDER'"/>
-                                                <h:outputText styleClass="kitodoScriptLink" value="swapProzessesOut"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:swapProzessesOut'"/>
                                                 <h:outputText styleClass="kitodoScriptLink" value="setRuleset"
                                                               onclick="document.getElementById('kitodoScriptfield').value='action:setRuleset \x22ruleset:TITLE_RULESET\x22'"/>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="3">
-                                                <h:outputText styleClass="kitodoScriptLink" value="swapProzessesIn"
-                                                              onclick="document.getElementById('kitodoScriptfield').value='action:swapProzessesIn'"/>
                                                 <h:outputText styleClass="kitodoScriptLink" value="deleteStep"
                                                               onclick="document.getElementById('kitodoScriptfield').value='action:deleteStep \x22steptitle:TITLE_STEP\x22'"/>
                                                 <h:outputText styleClass="kitodoScriptLink" value="addStep"
@@ -298,7 +296,8 @@
 
                                             <td>
                                                 <!-- GoobiScript für Treffer der Seite -->
-                                                <h:commandLink id="script2" action="#{ProzessverwaltungForm.kitodoScriptPage}"
+                                                <h:commandLink id="script2"
+                                                               action="#{ProzessverwaltungForm.kitodoScriptPage}"
                                                                title="#{msgs.trefferDieserSeite}">
                                                     <h:outputText value="#{msgs.trefferDieserSeite}"/>
                                                 </h:commandLink>
@@ -306,7 +305,8 @@
 
                                             <td align="right">
                                                 <!-- GoobiScript für alle Treffer -->
-                                                <h:commandLink id="script3" action="#{ProzessverwaltungForm.kitodoScriptHits}"
+                                                <h:commandLink id="script3"
+                                                               action="#{ProzessverwaltungForm.kitodoScriptHits}"
                                                                title="#{msgs.gesamtesTrefferset}"
                                                                onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                                     <h:outputText value="#{msgs.gesamtesTrefferset}"/>
@@ -333,7 +333,8 @@
                                 rendered="#{ProzessverwaltungForm.modusAnzeige=='aktuell' and ProzessverwaltungForm.page.totalResults > 0 }">
                             <h:graphicImage value="/newpages/images/buttons/pdf.png"
                                             style="margin-left:0px;margin-right:0px;vertical-align:middle"/>
-                            <h:commandLink action="#{ProzessverwaltungForm.generateResultAsPdf}" title="#{msgs.createPdf}">
+                            <h:commandLink action="#{ProzessverwaltungForm.generateResultAsPdf}"
+                                           title="#{msgs.createPdf}">
                                 <h:outputText value="#{msgs.createPdf}"/>
                             </h:commandLink>
                         </h:panelGroup>
@@ -360,13 +361,15 @@
                                     </h:commandLink>
 
                                     <!-- Statistische Auswertung-Schaltknopf für Page-->
-                                    <h:commandLink id="action21" action="#{ProzessverwaltungForm.CalcMetadataAndImagesPage}"
+                                    <h:commandLink id="action21"
+                                                   action="#{ProzessverwaltungForm.CalcMetadataAndImagesPage}"
                                                    title="#{msgs.trefferDieserSeite}">
                                         <h:outputText value="- #{msgs.trefferDieserSeite}"/>
                                     </h:commandLink>
 
                                     <!-- Statistische Auswertung-Schaltknopf für gesamtes Trefferset -->
-                                    <h:commandLink id="action22" action="#{ProzessverwaltungForm.CalcMetadataAndImagesHits}"
+                                    <h:commandLink id="action22"
+                                                   action="#{ProzessverwaltungForm.CalcMetadataAndImagesHits}"
                                                    title="#{msgs.gesamtesTrefferset}"
                                                    onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                         <h:outputText value="- #{msgs.gesamtesTrefferset}"/>
@@ -388,7 +391,7 @@
                             <div class="toggle-6" style="display: none;">
 
                                 <h:panelGrid columns="1" style="margin-left:40px">
-                                <!-- StatisticsStatusVolumes-->
+                                    <!-- StatisticsStatusVolumes-->
                                     <h:commandLink id="action30" rendered="#{!HelperForm.anonymized}"
                                                    action="#{ProzessverwaltungForm.StatisticsStatusVolumes}"
                                                    title="#{msgs.statusOfVolumes}">
@@ -484,7 +487,8 @@
                                     <h:outputText value="#{msgs.showClosedProcesses}:"/>
                                     <h:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}"/>
                                 </h:panelGrid>
-                                <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" style="margin-left:44px"
+                                <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}"
+                                               style="margin-left:44px"
                                                title="#{msgs.uebernehmen}">
                                     <h:outputText value="#{msgs.uebernehmen}"/>
                                 </h:commandLink>
@@ -523,7 +527,8 @@
                                     <h:selectBooleanCheckbox id="check5"
                                                              value="#{ProzessverwaltungForm.anzeigeAnpassen['swappedOut']}"/>
                                 </h:panelGrid>
-                                <h:commandLink action="#{NavigationForm.Reload}" id="reloadcheck" style="margin-left:44px"
+                                <h:commandLink action="#{NavigationForm.Reload}" id="reloadcheck"
+                                               style="margin-left:44px"
                                                title="#{msgs.uebernehmen}">
                                     <h:outputText value="#{msgs.uebernehmen}"/>
                                 </h:commandLink>
@@ -540,4 +545,4 @@
 
 </ui:composition>
 
-<!-- ++++++++++++++++     // Action      ++++++++++++++++ -->
+        <!-- ++++++++++++++++     // Action      ++++++++++++++++ -->

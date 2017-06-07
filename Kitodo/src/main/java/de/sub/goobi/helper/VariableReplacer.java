@@ -33,8 +33,8 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -58,6 +58,7 @@ public class VariableReplacer {
     private Process process;
     private Task task;
     private final ServiceManager serviceManager = new ServiceManager();
+    private final FileService fileService = serviceManager.getFileService();
 
     @SuppressWarnings("unused")
     private VariableReplacer() {
@@ -108,20 +109,25 @@ public class VariableReplacer {
 
         // replace paths and files
         try {
-            String processpath = serviceManager.getProcessService().getProcessDataDirectory(this.process).replace("\\",
-                    "/");
-            String tifpath = serviceManager.getProcessService().getImagesTifDirectory(false, this.process).replace("\\",
-                    "/");
-            String imagepath = serviceManager.getProcessService().getImagesDirectory(this.process).replace("\\", "/");
-            String origpath = serviceManager.getProcessService().getImagesOrigDirectory(false, this.process)
+            String processpath = fileService
+                    .getFileName(serviceManager.getProcessService().getProcessDataDirectory(this.process))
                     .replace("\\", "/");
-            String metaFile = serviceManager.getProcessService().getMetadataFilePath(this.process).replace("\\", "/");
-            String ocrBasisPath = serviceManager.getProcessService().getOcrDirectory(this.process).replace("\\", "/");
-            String ocrPlaintextPath = serviceManager.getProcessService().getTxtDirectory(this.process).replace("\\",
+            String tifpath = fileService
+                    .getFileName(serviceManager.getProcessService().getImagesTifDirectory(false, this.process))
+                    .replace("\\", "/");
+            String imagepath = fileService.getFileName(fileService.getImagesDirectory(this.process)).replace("\\", "/");
+            String origpath = fileService
+                    .getFileName(serviceManager.getProcessService().getImagesOrigDirectory(false, this.process))
+                    .replace("\\", "/");
+            String metaFile = fileService.getFileName(fileService.getMetadataFilePath(this.process)).replace("\\", "/");
+            String ocrBasisPath = fileService.getFileName(fileService.getOcrDirectory(this.process)).replace("\\", "/");
+            String ocrPlaintextPath = fileService.getFileName(fileService.getTxtDirectory(this.process)).replace("\\",
                     "/");
             // TODO name ändern?
-            String sourcePath = serviceManager.getProcessService().getSourceDirectory(this.process).replace("\\", "/");
-            String importPath = serviceManager.getProcessService().getImportDirectory(this.process).replace("\\", "/");
+            String sourcePath = fileService.getFileName(fileService.getSourceDirectory(this.process)).replace("\\",
+                    "/");
+            String importPath = fileService.getFileName(fileService.getImportDirectory(this.process)).replace("\\",
+                    "/");
             String myprefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
 
             /*
@@ -265,8 +271,6 @@ public class VariableReplacer {
 
             }
 
-        } catch (SwapException e) {
-            logger.error(e);
         } catch (DAOException e) {
             logger.error(e);
         } catch (IOException e) {

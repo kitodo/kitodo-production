@@ -15,7 +15,6 @@ import com.sun.research.ws.wadl.HTTPMethods;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 
@@ -37,19 +36,18 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.goobi.io.BackupFileRotation;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.json.simple.parser.ParseException;
+import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.History;
@@ -60,8 +58,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
-import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -78,7 +74,6 @@ import ugh.dl.DigitalDocument;
 import ugh.dl.Fileformat;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import ugh.exceptions.WriteException;
 import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
@@ -98,8 +93,8 @@ public class ProcessService extends TitleSearchService<Process> {
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
 
-    public static String DIRECTORY_PREFIX = "orig";
-    public static String DIRECTORY_SUFFIX = "images";
+    private static String DIRECTORY_PREFIX = "orig";
+    private static String DIRECTORY_SUFFIX = "images";
 
     /**
      * Constructor with searcher's assigning.
@@ -165,7 +160,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Save to index dependant properties.
-     * 
+     *
      * @param properties
      *            List
      */
@@ -177,7 +172,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Sav list of processes to database.
-     * 
+     *
      * @param list
      *            of processes
      */
@@ -230,7 +225,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Find processes by output name.
-     * 
+     *
      * @param outputName
      *            as String
      * @return list of search results
@@ -351,7 +346,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
     /**
      * Simulate relationship between property and process type.
-     * 
+     *
      * @param id
      *            of property
      * @return list of search results with processes for specific property id
@@ -482,9 +477,9 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return tif directory
      */
-    public String getImagesTifDirectory(boolean useFallBack, Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        File dir = new File(getImagesDirectory(process));
+    public URI getImagesTifDirectory(boolean useFallBack, Process process)
+            throws IOException, InterruptedException, DAOException {
+        URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
@@ -495,21 +490,21 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         };
 
-        String tifOrdner = "";
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
+        URI tifOrdner = null;
+        ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
 
         if (verzeichnisse != null) {
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                tifOrdner = verzeichnisse[i];
+            for (URI aVerzeichnisse : verzeichnisse) {
+                tifOrdner = aVerzeichnisse;
             }
         }
 
-        if (tifOrdner.equals("") && useFallBack) {
+        if (tifOrdner == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                String[] folderList = fileService.list(dir);
-                for (String folder : folderList) {
-                    if (folder.endsWith(suffix)) {
+                ArrayList<URI> folderList = fileService.getSubUris(dir);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(suffix)) {
                         tifOrdner = folder;
                         break;
                     }
@@ -517,15 +512,15 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         }
 
-        if (!tifOrdner.equals("") && useFallBack) {
+        if (!(tifOrdner == null) && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                File tif = new File(tifOrdner);
-                String[] files = fileService.list(tif);
-                if (files == null || files.length == 0) {
-                    String[] folderList = fileService.list(dir);
-                    for (String folder : folderList) {
-                        if (folder.endsWith(suffix) && !folder.startsWith(DIRECTORY_PREFIX)) {
+                URI tif = tifOrdner;
+                ArrayList<URI> files = fileService.getSubUris(tif);
+                if (files == null || files.size() == 0) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
                             tifOrdner = folder;
                             break;
                         }
@@ -534,18 +529,15 @@ public class ProcessService extends TitleSearchService<Process> {
             }
         }
 
-        if (tifOrdner.equals("")) {
-            tifOrdner = process.getTitle() + "_" + DIRECTORY_SUFFIX;
+        if (tifOrdner == null) {
+            tifOrdner = URI.create(process.getTitle() + "_" + DIRECTORY_SUFFIX);
         }
 
-        String result = getImagesDirectory(process);
+        URI result = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
-        if (!result.endsWith(File.separator)) {
-            result += File.separator;
-        }
         if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
                 && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
-            fileService.createDirectory(URI.create(result), tifOrdner);
+            fileService.createMetaDirectory(result, tifOrdner.toString());
         }
         return result;
     }
@@ -556,13 +548,14 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return true if the Tif-Image-Directory exists, false if not
      */
     public Boolean checkIfTifDirectoryExists(Process process) {
-        File testMe;
+        URI testMe;
         try {
-            testMe = new File(getImagesTifDirectory(true, process));
-        } catch (DAOException | IOException | InterruptedException | SwapException e) {
+            testMe = getImagesTifDirectory(true, process);
+        } catch (DAOException | IOException | InterruptedException e) {
             return false;
         }
-        return testMe.list() != null && testMe.exists() && fileService.list(testMe).length > 0;
+        return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
+                && fileService.getSubUris(testMe).size() > 0;
 
     }
 
@@ -573,10 +566,10 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      * @return path
      */
-    public String getImagesOrigDirectory(boolean useFallBack, Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public URI getImagesOrigDirectory(boolean useFallBack, Process process)
+            throws IOException, InterruptedException, DAOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
-            File dir = new File(getImagesDirectory(process));
+            URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
             DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -587,18 +580,18 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             };
 
-            String origOrdner = "";
-            String[] verzeichnisse = fileService.list(filterVerz, dir);
-            for (int i = 0; i < verzeichnisse.length; i++) {
-                origOrdner = verzeichnisse[i];
+            URI origOrdner = null;
+            ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
+            for (URI aVerzeichnisse : verzeichnisse) {
+                origOrdner = aVerzeichnisse;
             }
 
-            if (origOrdner.equals("") && useFallBack) {
+            if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    String[] folderList = fileService.list(dir);
-                    for (String folder : folderList) {
-                        if (folder.endsWith(suffix)) {
+                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    for (URI folder : folderList) {
+                        if (folder.toString().endsWith(suffix)) {
                             origOrdner = folder;
                             break;
                         }
@@ -606,15 +599,15 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
 
-            if (!origOrdner.equals("") && useFallBack) {
+            if (!(origOrdner == null) && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    File tif = new File(origOrdner);
-                    String[] files = fileService.list(tif);
-                    if (files == null || files.length == 0) {
-                        String[] folderList = fileService.list(dir);
-                        for (String folder : folderList) {
-                            if (folder.endsWith(suffix)) {
+                    URI tif = origOrdner;
+                    ArrayList<URI> files = fileService.getSubUris(tif);
+                    if (files == null || files.size() == 0) {
+                        ArrayList<URI> folderList = fileService.getSubUris(dir);
+                        for (URI folder : folderList) {
+                            if (folder.toString().endsWith(suffix)) {
                                 origOrdner = folder;
                                 break;
                             }
@@ -623,32 +616,18 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
 
-            if (origOrdner.equals("")) {
-                origOrdner = DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX;
+            if (origOrdner == null) {
+                origOrdner = URI.create(DIRECTORY_PREFIX + "_" + process.getTitle() + "_" + DIRECTORY_SUFFIX);
             }
-            String rueckgabe = getImagesDirectory(process);
+            URI rueckgabe = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
                     && process.getSortHelperStatus().equals("100000000")) {
-                fileService.createDirectory(URI.create(rueckgabe), origOrdner);
+                fileService.createMetaDirectory(rueckgabe, origOrdner.toString());
             }
             return rueckgabe;
         } else {
             return getImagesTifDirectory(useFallBack, process);
         }
-    }
-
-    /**
-     * Get images directory.
-     *
-     * @param process
-     *            object
-     * @return path
-     */
-    public String getImagesDirectory(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = getProcessDataDirectory(process);
-        fileService.createDirectory(URI.create(pfad), "images");
-        return pfad;
     }
 
     /**
@@ -658,28 +637,6 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return path
      */
-    public String getSourceDirectory(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        File dir = new File(getImagesDirectory(process));
-        FilenameFilter filterVerz = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return (name.endsWith("_" + "source"));
-            }
-        };
-        File sourceFolder = null;
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
-        if (verzeichnisse == null || verzeichnisse.length == 0) {
-            sourceFolder = new File(dir, process.getTitle() + "_source");
-            if (ConfigCore.getBooleanParameter("createSourceFolder", false)) {
-                sourceFolder.mkdir();
-            }
-        } else {
-            sourceFolder = new File(dir, verzeichnisse[0]);
-        }
-
-        return sourceFolder.getAbsolutePath();
-    }
 
     /**
      * Get process data directory.
@@ -688,73 +645,12 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return path
      */
-    public String getProcessDataDirectory(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        String path = getProcessDataDirectoryIgnoreSwapping(process);
-
-        if (process.isSwappedOutGui()) {
-            ProcessSwapInTask pst = new ProcessSwapInTask();
-            pst.initialize(process);
-            pst.setProgress(1);
-            pst.setShowMessages(true);
-            pst.run();
-            if (pst.getException() != null) {
-                if (!new File(path, "images").exists() && !new File(path, "meta.xml").exists()) {
-                    throw new SwapException(pst.getException().getMessage());
-                } else {
-                    process.setSwappedOutGui(false);
-                }
-                new ProcessDAO().save(process, this.getProgress(process));
-            }
+    public URI getProcessDataDirectory(Process process) {
+        URI processBaseUri = process.getProcessBaseUri();
+        if (processBaseUri == null) {
+            process.setProcessBaseUri(serviceManager.getFileService().getProcessBaseUriForExistingProcess(process));
         }
-        return path;
-    }
-
-    public String getOcrDirectory(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
-        return getProcessDataDirectory(process) + "ocr" + File.separator;
-    }
-
-    public String getTxtDirectory(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
-        return getOcrDirectory(process) + process.getTitle() + "_txt" + File.separator;
-    }
-
-    public String getWordDirectory(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
-        return getOcrDirectory(process) + process.getTitle() + "_wc" + File.separator;
-    }
-
-    public String getPdfDirectory(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
-        return getOcrDirectory(process) + process.getTitle() + "_pdf" + File.separator;
-    }
-
-    public String getAltoDirectory(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
-        return getOcrDirectory(process) + process.getTitle() + "_alto" + File.separator;
-    }
-
-    public String getImportDirectory(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
-        return getProcessDataDirectory(process) + "import" + File.separator;
-    }
-
-    /**
-     * Get process data directory ignoring swapping.
-     *
-     * @param process
-     *            object
-     * @return path
-     */
-    public String getProcessDataDirectoryIgnoreSwapping(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        String pfad = ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator;
-        pfad = pfad.replaceAll(" ", "__");
-        String processId = process.getId().toString();
-        processId = processId.replaceAll(" ", "__");
-        fileService.createDirectory(URI.create(pfad), processId);
-        return pfad;
+        return process.getProcessBaseUri();
     }
 
     /**
@@ -973,18 +869,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
-    public String getMetadataFilePath(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        return getProcessDataDirectory(process) + "meta.xml";
-    }
-
-    public String getTemplateFilePath(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        return getProcessDataDirectory(process) + "template.xml";
-    }
-
-    public String getFulltextFilePath(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public String getFulltextFilePath(Process process) throws IOException, InterruptedException, DAOException {
         return getProcessDataDirectory(process) + "fulltext.xml";
     }
 
@@ -995,14 +880,14 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return filer format
      */
-    public Fileformat readMetadataFile(Process process)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
+    public Fileformat readMetadataFile(Process process) throws ReadException, IOException, PreferencesException {
+        URI metadataFileUri = serviceManager.getFileService().getMetadataFilePath(process);
         if (!checkForMetadataFile(process)) {
-            throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + getMetadataFilePath(process));
+            throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
         }
         Hibernate.initialize(process.getRuleset());
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadatenHelper.getMetaFileType(getMetadataFilePath(process));
+        String type = MetadatenHelper.getMetaFileType(metadataFileUri);
         if (logger.isDebugEnabled()) {
             logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
         }
@@ -1010,7 +895,8 @@ public class ProcessService extends TitleSearchService<Process> {
         Fileformat ff = determineFileFormat(type, process);
 
         try {
-            ff.read(getMetadataFilePath(process));
+            // TODO: this is not working anymore because uri is not full path
+            ff.read(metadataFileUri.toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
                 Helper.setFehlerMeldung("metadataCorrupt");
@@ -1042,111 +928,14 @@ public class ProcessService extends TitleSearchService<Process> {
         return fileFormat;
     }
 
-    // backup of meta.xml
-    private void createBackupFile(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException {
-        int numberOfBackups = 0;
-
-        if (ConfigCore.getIntParameter("numberOfMetaBackups") != 0) {
-            numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
-        }
-
-        if (numberOfBackups != 0) {
-            BackupFileRotation bfr = new BackupFileRotation();
-            bfr.setNumberOfBackups(numberOfBackups);
-            bfr.setFormat("meta.*\\.xml");
-            bfr.setProcessDataDirectory(getProcessDataDirectory(process));
-            bfr.performBackup();
-        } else {
-            logger.warn("No backup configured for meta data files.");
-        }
-    }
-
-    private boolean checkForMetadataFile(Process process)
-            throws IOException, InterruptedException, SwapException, DAOException, PreferencesException {
+    private boolean checkForMetadataFile(Process process) {
         boolean result = true;
-        File f = new File(getMetadataFilePath(process));
+        File f = new File(fileService.getMetadataFilePath(process));
         if (!f.exists()) {
             result = false;
         }
 
         return result;
-    }
-
-    private String getTemporaryMetadataFileName(String fileName) {
-
-        File temporaryFile = new File(fileName);
-        String directoryPath = temporaryFile.getParentFile().getPath();
-        String temporaryFileName = TEMPORARY_FILENAME_PREFIX + temporaryFile.getName();
-
-        return directoryPath + File.separator + temporaryFileName;
-    }
-
-    private void removePrefixFromRelatedMetsAnchorFilesFor(String temporaryMetadataFilename) throws IOException {
-        File temporaryFile = new File(temporaryMetadataFilename);
-        File directoryPath = new File(temporaryFile.getParentFile().getPath());
-        for (File temporaryAnchorFile : fileService.listFiles(directoryPath)) {
-            String temporaryAnchorFileName = temporaryAnchorFile.toString();
-            if (temporaryAnchorFile.isFile()
-                    && FilenameUtils.getBaseName(temporaryAnchorFileName).startsWith(TEMPORARY_FILENAME_PREFIX)) {
-                String anchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
-                        temporaryAnchorFileName.replace(TEMPORARY_FILENAME_PREFIX, ""));
-                temporaryAnchorFileName = FilenameUtils.concat(FilenameUtils.getFullPath(temporaryAnchorFileName),
-                        temporaryAnchorFileName);
-                fileService.renameFile(temporaryAnchorFileName, anchorFileName);
-            }
-        }
-    }
-
-    /**
-     * Write metadata file.
-     *
-     * @param gdzfile
-     *            file format
-     * @param process
-     *            object
-     */
-    public void writeMetadataFile(Fileformat gdzfile, Process process) throws IOException, InterruptedException,
-            SwapException, DAOException, WriteException, PreferencesException {
-        RulesetService rulesetService = new RulesetService();
-        boolean backupCondition;
-        boolean writeResult;
-        File temporaryMetadataFile;
-        Fileformat ff;
-        String metadataFileName;
-        String temporaryMetadataFileName;
-
-        Hibernate.initialize(process.getRuleset());
-        switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatInternal())) {
-            case METS:
-                ff = new MetsMods(rulesetService.getPreferences(process.getRuleset()));
-                break;
-            case RDF:
-                ff = new RDFFile(rulesetService.getPreferences(process.getRuleset()));
-                break;
-            default:
-                ff = new XStream(rulesetService.getPreferences(process.getRuleset()));
-                break;
-        }
-        // createBackupFile();
-        metadataFileName = getMetadataFilePath(process);
-        temporaryMetadataFileName = getTemporaryMetadataFileName(metadataFileName);
-
-        ff.setDigitalDocument(gdzfile.getDigitalDocument());
-        // ff.write(getMetadataFilePath());
-        writeResult = ff.write(temporaryMetadataFileName);
-        temporaryMetadataFile = new File(temporaryMetadataFileName);
-        backupCondition = writeResult && temporaryMetadataFile.exists() && (temporaryMetadataFile.length() > 0);
-        if (backupCondition) {
-            createBackupFile(process);
-            fileService.renameFile(temporaryMetadataFileName, metadataFileName);
-            removePrefixFromRelatedMetsAnchorFilesFor(temporaryMetadataFileName);
-        }
-    }
-
-    public void writeMetadataAsTemplateFile(Fileformat inFile, Process process) throws IOException,
-            InterruptedException, SwapException, DAOException, WriteException, PreferencesException {
-        inFile.write(getTemplateFilePath(process));
     }
 
     /**
@@ -1157,28 +946,22 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return file format
      */
     public Fileformat readMetadataAsTemplateFile(Process process)
-            throws ReadException, IOException, InterruptedException, PreferencesException, SwapException, DAOException {
+            throws ReadException, IOException, PreferencesException {
         RulesetService rulesetService = new RulesetService();
         Hibernate.initialize(process.getRuleset());
-        if (new File(getTemplateFilePath(process)).exists()) {
+        if (new File(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null)).exists()) {
             Fileformat ff = null;
-            String type = MetadatenHelper.getMetaFileType(getTemplateFilePath(process));
+            String type = MetadatenHelper
+                    .getMetaFileType(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null));
             if (logger.isDebugEnabled()) {
                 logger.debug("current template.xml file type: " + type);
             }
             ff = determineFileFormat(type, process);
-            /*
-             * if (type.equals("mets")) { ff = new
-             * MetsMods(rulesetService.getPreferences(process.getRuleset())); }
-             * else if (type.equals("xstream")) { ff = new
-             * XStream(rulesetService.getPreferences(process.getRuleset())); }
-             * else { ff = new
-             * RDFFile(rulesetService.getPreferences(process.getRuleset())); }
-             */
-            ff.read(getTemplateFilePath(process));
+            ff.read(fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null).toString());
             return ff;
         } else {
-            throw new IOException("File does not exist: " + getTemplateFilePath(process));
+            throw new IOException(
+                    "File does not exist: " + fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null));
         }
     }
 
@@ -1297,24 +1080,26 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return method from name
      */
-    public String getMethodFromName(String methodName, Process process) {
+    public URI getMethodFromName(String methodName, Process process) {
         java.lang.reflect.Method method;
         try {
             method = this.getClass().getMethod(methodName);
             Object o = method.invoke(this);
-            return (String) o;
+            return (URI) o;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
                 | SecurityException e) {
             logger.debug("exception: " + e);
         }
         try {
-            String folder = this.getImagesTifDirectory(false, process);
-            folder = folder.substring(0, folder.lastIndexOf("_"));
-            folder = folder + "_" + methodName;
-            if (new File(folder).exists()) {
+            URI folder = this.getImagesTifDirectory(false, process);
+            String folderName = fileService.getFileName(folder);
+            folderName = folderName.substring(0, folderName.lastIndexOf("_"));
+            folderName = folderName + "_" + methodName;
+            folder = fileService.renameFile(folder, folderName);
+            if (fileService.fileExist(folder)) {
                 return folder;
             }
-        } catch (DAOException | InterruptedException | IOException | SwapException ex) {
+        } catch (DAOException | InterruptedException | IOException ex) {
             logger.debug("exception: " + ex);
         }
         return null;
@@ -1395,13 +1180,12 @@ public class ProcessService extends TitleSearchService<Process> {
      * The method createProcessDirs() starts creation of directories configured
      * by parameter processDirs within kitodo_config.properties
      */
-    public void createProcessDirs(Process process)
-            throws SwapException, DAOException, IOException, InterruptedException {
+    public void createProcessDirs(Process process) throws DAOException, IOException, InterruptedException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            fileService.createDirectory(URI.create(this.getProcessDataDirectory(process)),
+            fileService.createMetaDirectory(this.getProcessDataDirectory(process),
                     processDir.replace("(processtitle)", process.getTitle()));
         }
 
@@ -1417,8 +1201,6 @@ public class ProcessService extends TitleSearchService<Process> {
      *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws SwapException
-     *             if an error occurs while the process is swapped back in
      * @throws DAOException
      *             if an error occurs while saving the fact that the process has
      *             been swapped back in to the database
@@ -1431,7 +1213,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *             finish
      */
     public DigitalDocument getDigitalDocument(Process process)
-            throws PreferencesException, ReadException, SwapException, DAOException, IOException, InterruptedException {
+            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
         return readMetadataFile(process).getDigitalDocument();
     }
 

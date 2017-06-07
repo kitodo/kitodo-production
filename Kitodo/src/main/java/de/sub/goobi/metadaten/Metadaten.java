@@ -23,6 +23,7 @@ import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.api.display.Modes;
@@ -52,9 +54,9 @@ import org.goobi.api.display.helper.ConfigDispayRules;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -108,8 +110,8 @@ public class Metadaten {
     private String tempPersonVorname;
     private String tempPersonNachname;
     private String tempPersonRolle;
-    private String currentTifFolder;
-    private List<String> allTifFolders;
+    private URI currentTifFolder;
+    private List<URI> allTifFolders;
     /* Variablen für die Zuweisung der Seiten zu Strukturelementen */
     private String alleSeitenAuswahl_ersteSeite;
     private String alleSeitenAuswahl_letzteSeite;
@@ -138,7 +140,7 @@ public class Metadaten {
     private boolean modusHinzufuegenPerson = false;
     private String modusAnsicht = "Metadaten";
     private TreeNodeStruct3 tree3;
-    private String myBild;
+    private URI myBild;
 
     private int myBildNummer = 0;
     private int myBildLetztes = 0;
@@ -335,8 +337,7 @@ public class Metadaten {
             } catch (TypeNotAllowedAsChildException e) {
                 Helper.setFehlerMeldung("Error while changing DocStructTypes (TypeNotAllowedAsChildException): ",
                         e.getMessage());
-                logger.error(
-                        "Error while changing DocStructTypes (TypeNotAllowedAsChildException): " + e.getMessage());
+                logger.error("Error while changing DocStructTypes (TypeNotAllowedAsChildException): " + e.getMessage());
             } catch (TypeNotAllowedForParentException e) {
                 Helper.setFehlerMeldung("Error while changing DocStructTypes (TypeNotAllowedForParentException): ",
                         e.getMessage());
@@ -688,9 +689,6 @@ public class Metadaten {
         this.tree3 = null;
         try {
             readXmlStart();
-        } catch (SwapException e) {
-            Helper.setFehlerMeldung(e);
-            return Helper.getRequestParameter("zurueck");
         } catch (ReadException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return Helper.getRequestParameter("zurueck");
@@ -721,7 +719,7 @@ public class Metadaten {
      */
 
     public String readXmlStart() throws ReadException, IOException, InterruptedException, PreferencesException,
-            SwapException, DAOException, WriteException {
+            DAOException, WriteException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.myProzess.getRuleset());
         this.modusAnsicht = "Metadaten";
@@ -818,8 +816,8 @@ public class Metadaten {
                 .setSortHelperDocstructs(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.DOCSTRUCT));
         this.myProzess.setSortHelperMetadata(zaehlen.getNumberOfUghElements(this.logicalTopstruct, CountType.METADATA));
         try {
-            this.myProzess.setSortHelperImages(fileService.getNumberOfFiles(
-                    new File(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess))));
+            this.myProzess.setSortHelperImages(fileService
+                    .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess)));
             serviceManager.getProcessService().save(this.myProzess);
         } catch (DAOException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
@@ -867,7 +865,7 @@ public class Metadaten {
     private boolean storeMetadata() {
         boolean result = true;
         try {
-            serviceManager.getProcessService().writeMetadataFile(this.gdzfile, this.myProzess);
+            fileService.writeMetadataFile(this.gdzfile, this.myProzess);
         } catch (Exception e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
             logger.error(e);
@@ -1317,7 +1315,7 @@ public class Metadaten {
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
     public String createPagination()
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, SwapException, DAOException {
+            throws TypeNotAllowedForParentException, IOException, InterruptedException, DAOException {
         this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1668,16 +1666,16 @@ public class Metadaten {
         return ConfigCore.getTempImagesPath() + session.getId() + "_" + this.myBildCounter + ".png";
     }
 
-    public List<String> getAllTifFolders() {
+    public List<URI> getAllTifFolders() {
         return this.allTifFolders;
     }
 
     /**
      * Read all tif folders.
      */
-    public void readAllTifFolders() throws IOException, InterruptedException, SwapException, DAOException {
-        this.allTifFolders = new ArrayList<String>();
-        File dir = new File(serviceManager.getProcessService().getImagesDirectory(this.myProzess));
+    public void readAllTifFolders() throws IOException, InterruptedException, DAOException {
+        this.allTifFolders = new ArrayList<>();
+        URI dir = fileService.getProcessSubTypeURI(this.myProzess, ProcessSubType.IMAGE, null);
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
         // TODO: Remove this, we have several implementions of this, use an
@@ -1689,24 +1687,23 @@ public class Metadaten {
             }
         };
 
-        String[] verzeichnisse = fileService.list(filterVerz, dir);
-        for (String aVerzeichnisse : verzeichnisse) {
-            this.allTifFolders.add(aVerzeichnisse);
+        ArrayList<URI> subUris = fileService.getSubUris(filterVerz, dir);
+        for (URI uri : subUris) {
+            this.allTifFolders.add(uri);
         }
 
         if (ConfigCore.getParameter("MetsEditorDefaultSuffix", null) != null) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix");
-            for (String directory : this.allTifFolders) {
-                if (directory.endsWith(suffix)) {
-                    this.currentTifFolder = directory;
+            for (URI directoryUri : this.allTifFolders) {
+                if (directoryUri.toString().endsWith(suffix)) {
+                    this.currentTifFolder = directoryUri;
                     break;
                 }
             }
         }
 
         if (!this.allTifFolders.contains(this.currentTifFolder)) {
-            this.currentTifFolder = new File(
-                    serviceManager.getProcessService().getImagesTifDirectory(true, this.myProzess)).getName();
+            this.currentTifFolder = serviceManager.getProcessService().getImagesTifDirectory(true, this.myProzess);
         }
     }
 
@@ -1730,7 +1727,7 @@ public class Metadaten {
         this.ocrResult = "";
 
         logger.trace("dataList");
-        List<String> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
+        List<URI> dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (dataList == null || dataList.isEmpty())) {
@@ -1738,8 +1735,6 @@ public class Metadaten {
                 createPagination();
                 dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
             } catch (TypeNotAllowedForParentException e) {
-                logger.error(e);
-            } catch (SwapException e) {
                 logger.error(e);
             } catch (DAOException e) {
                 logger.error(e);
@@ -1763,11 +1758,13 @@ public class Metadaten {
                 if (logger.isTraceEnabled()) {
                     logger.trace("myBild: " + this.myBild);
                 }
-                String index = dataList.get(i).substring(0, dataList.get(i).lastIndexOf("."));
+                String index = fileService.getFileName(dataList.get(i)).substring(0,
+                        fileService.getFileName(dataList.get(i)).lastIndexOf("."));
                 if (logger.isTraceEnabled()) {
                     logger.trace("index: " + index);
                 }
-                String myPicture = this.myBild.substring(0, this.myBild.lastIndexOf("."));
+                String myPicture = fileService.getFileName(this.myBild).substring(0,
+                        fileService.getFileName(this.myBild).lastIndexOf("."));
                 if (logger.isTraceEnabled()) {
                     logger.trace("myPicture: " + myPicture);
                 }
@@ -1834,21 +1831,21 @@ public class Metadaten {
 
                     /* das neue Bild zuweisen */
                     try {
-                        String tiffconverterpfad = serviceManager.getProcessService().getImagesDirectory(this.myProzess)
-                                + this.currentTifFolder + File.separator + this.myBild;
+                        URI tiffconverterpfad = fileService.getImagesDirectory(this.myProzess)
+                                .resolve(this.currentTifFolder + File.separator + this.myBild);
                         if (logger.isTraceEnabled()) {
                             logger.trace("tiffconverterpfad: " + tiffconverterpfad);
                         }
-                        if (!new File(tiffconverterpfad).exists()) {
-                            tiffconverterpfad = serviceManager.getProcessService().getImagesTifDirectory(true,
-                                    this.myProzess) + this.myBild;
+                        if (!fileService.fileExist(tiffconverterpfad)) {
+                            tiffconverterpfad = serviceManager.getProcessService()
+                                    .getImagesTifDirectory(true, this.myProzess).resolve(this.myBild);
                             Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
                                     "image " + this.myBild + " does not exist in folder " + this.currentTifFolder
                                             + ", using image from " + new File(serviceManager.getProcessService()
                                                     .getImagesTifDirectory(true, this.myProzess)).getName());
                         }
-                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad + mySession, this.myBildGroesse,
-                                this.myImageRotation);
+                        this.imagehelper.scaleFile(tiffconverterpfad, URI.create(myPfad + mySession),
+                                this.myBildGroesse, this.myImageRotation);
                         logger.trace("scaleFile");
                     } catch (Exception e) {
                         Helper.setFehlerMeldung("could not find image folder", e);
@@ -1866,8 +1863,8 @@ public class Metadaten {
         boolean exists = false;
         try {
             if (this.currentTifFolder != null && this.myBild != null) {
-                exists = (new File(serviceManager.getProcessService().getImagesDirectory(this.myProzess)
-                        + this.currentTifFolder + File.separator + this.myBild)).exists();
+                exists = fileService.fileExist(fileService.getImagesDirectory(this.myProzess)
+                        .resolve(this.currentTifFolder + File.separator + this.myBild));
             }
         } catch (Exception e) {
             this.myBildNummer = -1;
@@ -2889,11 +2886,11 @@ public class Metadaten {
         this.paginierungSeitenProImage = paginierungSeitenProImage;
     }
 
-    public String getCurrentTifFolder() {
+    public URI getCurrentTifFolder() {
         return this.currentTifFolder;
     }
 
-    public void setCurrentTifFolder(String currentTifFolder) {
+    public void setCurrentTifFolder(URI currentTifFolder) {
         this.currentTifFolder = currentTifFolder;
     }
 
@@ -3011,7 +3008,7 @@ public class Metadaten {
         if (selectedPages.isEmpty()) {
             return;
         }
-        List<String> newSelectionList = new ArrayList<String>();
+        List<String> newSelectionList = new ArrayList<>();
         for (Integer pageIndex : selectedPages) {
             DocStruct firstpage = allPages.get(pageIndex + 1);
             DocStruct secondpage = allPages.get(pageIndex);
@@ -3027,8 +3024,8 @@ public class Metadaten {
     /**
      * Delete selected pages.
      */
-    public void deleteSeltectedPages() {
-        List<Integer> selectedPages = new ArrayList<Integer>();
+    public void deleteSeltectedPages() throws IOException {
+        List<Integer> selectedPages = new ArrayList<>();
         List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
         List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
         Collections.reverse(pagesList);
@@ -3095,138 +3092,103 @@ public class Metadaten {
     /**
      * Reorder pagination.
      */
-    public void reOrderPagination() {
-        String imageDirectory = "";
-        try {
-            imageDirectory = serviceManager.getProcessService().getImagesDirectory(myProzess);
-        } catch (SwapException e) {
-            logger.error(e);
-        } catch (DAOException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
-            logger.error(e);
-
-        }
+    public void reOrderPagination() throws IOException {
+        URI imageDirectory;
+        imageDirectory = fileService.getImagesDirectory(myProzess);
         if (imageDirectory.equals("")) {
             Helper.setFehlerMeldung("ErrorMetsEditorImageRenaming");
             return;
         }
 
-        List<String> oldfilenames = new ArrayList<String>();
+        List<URI> oldfilenames = new ArrayList<>();
         for (DocStruct page : mydocument.getPhysicalDocStruct().getAllChildren()) {
-            oldfilenames.add(page.getImageName());
+            oldfilenames.add(URI.create(page.getImageName()));
         }
 
-        for (String imagename : oldfilenames) {
-            for (String folder : allTifFolders) {
-                File filename = new File(imageDirectory + folder, imagename);
-                File newFileName = new File(imageDirectory + folder, imagename + "_bak");
-                filename.renameTo(newFileName);
+        for (URI imagename : oldfilenames) {
+            for (URI folder : allTifFolders) {
+                URI filename = imageDirectory.resolve(folder).resolve(imagename);
+                String newFileName = filename + "_bak";
+                fileService.renameFile(filename, newFileName);
             }
-
-            try {
-                File ocr = new File(serviceManager.getProcessService().getOcrDirectory(myProzess));
-                if (ocr.exists()) {
-                    File[] allOcrFolder = fileService.listFiles(ocr);
-                    for (File folder : allOcrFolder) {
-                        File filename = new File(folder, imagename);
-                        File newFileName = new File(folder, imagename + "_bak");
-                        filename.renameTo(newFileName);
-                    }
+            URI ocrFolder = fileService.getProcessSubTypeURI(myProzess, ProcessSubType.OCR, null);
+            if (fileService.fileExist(ocrFolder)) {
+                ArrayList<URI> allOcrFolder = fileService.getSubUris(ocrFolder);
+                for (URI folder : allOcrFolder) {
+                    URI filename = folder.resolve(imagename);
+                    String newFileName = filename + "_bak";
+                    fileService.renameFile(filename, newFileName);
                 }
-            } catch (SwapException e) {
-                logger.error(e);
-            } catch (DAOException e) {
-                logger.error(e);
-            } catch (IOException e) {
-                logger.error(e);
-            } catch (InterruptedException e) {
-                logger.error(e);
             }
 
-        }
-        int counter = 1;
-        for (String imagename : oldfilenames) {
-            String newfilenamePrefix = generateFileName(counter);
-            for (String folder : allTifFolders) {
-                File fileToSort = new File(imageDirectory + folder, imagename);
-                String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
-                File tempFileName = new File(imageDirectory + folder, fileToSort.getName() + "_bak");
-                File sortedName = new File(imageDirectory + folder, newfilenamePrefix + fileExtension.toLowerCase());
-                tempFileName.renameTo(sortedName);
-                mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1)
-                        .setImageName(sortedName.toURI().toString());
-            }
-            try {
-                File ocr = new File(serviceManager.getProcessService().getOcrDirectory(myProzess));
-                if (ocr.exists()) {
-                    File[] allOcrFolder = fileService.listFiles(ocr);
-                    for (File folder : allOcrFolder) {
-                        File fileToSort = new File(folder, imagename);
-                        String fileExtension = Metadaten.getFileExtension(fileToSort.getName().replace("_bak", ""));
-                        File tempFileName = new File(folder, fileToSort.getName() + "_bak");
-                        File sortedName = new File(folder, newfilenamePrefix + fileExtension.toLowerCase());
-                        tempFileName.renameTo(sortedName);
-                    }
+            int counter = 1;
+            for (URI oldImagename : oldfilenames) {
+                String newfilenamePrefix = generateFileName(counter);
+                for (URI folder : allTifFolders) {
+                    URI fileToSort = imageDirectory.resolve(folder).resolve(oldImagename);
+                    String fileExtension = Metadaten
+                            .getFileExtension(fileService.getFileName(fileToSort).replace("_bak", ""));
+                    URI tempFileName = imageDirectory.resolve(folder)
+                            .resolve(fileService.getFileName(fileToSort) + "_bak");
+                    String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
+                    fileService.renameFile(tempFileName, sortedName);
+                    mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1)
+                            .setImageName(sortedName.toString());
                 }
-            } catch (SwapException e) {
-                logger.error(e);
-            } catch (DAOException e) {
-                logger.error(e);
-            } catch (IOException e) {
-                logger.error(e);
-            } catch (InterruptedException e) {
-                logger.error(e);
+                try {
+                    URI ocr = fileService.getProcessSubTypeURI(myProzess, ProcessSubType.OCR, null);
+                    if (fileService.fileExist(ocr)) {
+                        ArrayList<URI> allOcrFolder = fileService.getSubUris(ocr);
+                        for (URI folder : allOcrFolder) {
+                            URI fileToSort = folder.resolve(imagename);
+                            String fileExtension = Metadaten
+                                    .getFileExtension(fileService.getFileName(fileToSort).replace("_bak", ""));
+                            URI tempFileName = fileToSort.resolve("_bak");
+                            String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
+                            fileService.renameFile(tempFileName, sortedName);
+                        }
+                    }
+                } catch (IOException e) {
+                    logger.error(e);
+                }
+                counter++;
             }
-            counter++;
-        }
-        retrieveAllImages();
+            retrieveAllImages();
 
-        identifyImage(0);
+            identifyImage(0);
+        }
     }
 
-    private void removeImage(String fileToDelete) {
-        try {
-            // TODO check what happens with .tar.gz
-            String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
-            for (String folder : allTifFolders) {
-                File[] filesInFolder = fileService
-                        .listFiles(new File(serviceManager.getProcessService().getImagesDirectory(myProzess) + folder));
-                for (File currentFile : filesInFolder) {
-                    String filename = currentFile.getName();
-                    String filenamePrefix = filename.replace(getFileExtension(filename), "");
-                    if (filenamePrefix.equals(fileToDeletePrefix)) {
-                        currentFile.delete();
-                    }
+    private void removeImage(String fileToDelete) throws IOException {
+        // TODO check what happens with .tar.gz
+        String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf("."));
+        for (URI folder : allTifFolders) {
+            ArrayList<URI> filesInFolder = fileService
+                    .getSubUris(fileService.getImagesDirectory(myProzess).resolve(folder));
+            for (URI currentFile : filesInFolder) {
+                String filename = fileService.getFileName(currentFile);
+                String filenamePrefix = filename.replace(getFileExtension(filename), "");
+                if (filenamePrefix.equals(fileToDeletePrefix)) {
+                    fileService.delete(currentFile);
                 }
             }
+        }
 
-            File ocr = new File(serviceManager.getProcessService().getOcrDirectory(myProzess));
-            if (ocr.exists()) {
-                File[] folder = fileService.listFiles(ocr);
-                for (File dir : folder) {
-                    if (dir.isDirectory() && fileService.list(dir).length > 0) {
-                        File[] filesInFolder = fileService.listFiles(dir);
-                        for (File currentFile : filesInFolder) {
-                            String filename = currentFile.getName();
-                            String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
-                            if (filenamePrefix.equals(fileToDeletePrefix)) {
-                                currentFile.delete();
-                            }
+        URI ocr = serviceManager.getFileService().getOcrDirectory(myProzess);
+        if (fileService.fileExist(ocr)) {
+            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            for (URI dir : folder) {
+                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0) {
+                    ArrayList<URI> filesInFolder = fileService.getSubUris(dir);
+                    for (URI currentFile : filesInFolder) {
+                        String filename = fileService.getFileName(currentFile);
+                        String filenamePrefix = filename.substring(0, filename.lastIndexOf("."));
+                        if (filenamePrefix.equals(fileToDeletePrefix)) {
+                            fileService.delete(currentFile);
                         }
                     }
                 }
             }
-        } catch (SwapException e) {
-            logger.error(e);
-        } catch (DAOException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
-            logger.error(e);
         }
 
     }
@@ -3285,13 +3247,7 @@ public class Metadaten {
      * @return String
      */
     public static String getFileExtension(String filename) {
-        if (filename == null) {
-            return "";
-        }
-        String afterLastSlash = filename.substring(filename.lastIndexOf('/') + 1);
-        int afterLastBackslash = afterLastSlash.lastIndexOf('\\') + 1;
-        int dotIndex = afterLastSlash.indexOf('.', afterLastBackslash);
-        return (dotIndex == -1) ? "" : afterLastSlash.substring(dotIndex);
+        return FilenameUtils.getExtension(filename);
     }
 
     public Boolean getDisplayFileManipulation() {

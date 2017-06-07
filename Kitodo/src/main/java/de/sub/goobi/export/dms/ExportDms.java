@@ -26,16 +26,16 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URI;
+import java.util.ArrayList;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -88,8 +88,8 @@ public class ExportDms extends ExportMets {
      *            String
      */
     @Override
-    public boolean startExport(Process process, String inZielVerzeichnis) throws IOException, InterruptedException,
-            WriteException, PreferencesException, SwapException, DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis) throws IOException, InterruptedException,
+            WriteException, PreferencesException, DAOException, TypeNotAllowedForParentException {
 
         Hibernate.initialize(process.getProject().getProjectFileGroups());
         if (process.getProject().isUseDmsImport()
@@ -129,9 +129,6 @@ public class ExportDms extends ExportMets {
      *             if the file format selected for DMS export in the project of
      *             the process to export that implements
      *             {@link ugh.dl.Fileformat#getDigitalDocument()} throws it
-     * @throws SwapException
-     *             if after swapping a process back in neither a file system
-     *             entry "images" nor "meta.xml" exists
      * @throws DAOException
      *             if saving the fact that a process has been swapped back in to
      *             the database fails
@@ -141,9 +138,8 @@ public class ExportDms extends ExportMets {
      *             but never thrown, see
      *             https://github.com/kitodo/kitodo-ugh/issues/2
      */
-    public boolean startExport(Process process, String inZielVerzeichnis, ExportDmsTask exportDmsTask)
-            throws IOException, InterruptedException, WriteException, PreferencesException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) throws IOException,
+            InterruptedException, WriteException, PreferencesException, TypeNotAllowedForParentException {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, inZielVerzeichnis,
@@ -170,9 +166,8 @@ public class ExportDms extends ExportMets {
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, String inZielVerzeichnis, DigitalDocument newFile)
-            throws IOException, InterruptedException, WriteException, PreferencesException, SwapException, DAOException,
-            TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocument newFile) throws IOException,
+            InterruptedException, WriteException, PreferencesException, DAOException, TypeNotAllowedForParentException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         this.cp = new ConfigProjects(process.getProject().getTitle());
@@ -243,18 +238,18 @@ public class ExportDms extends ExportMets {
         /*
          * Speicherort vorbereiten und downloaden
          */
-        String zielVerzeichnis;
-        File userHome;
+        URI zielVerzeichnis;
+        URI userHome;
         if (process.getProject().isUseDmsImport()) {
-            zielVerzeichnis = process.getProject().getDmsImportImagesPath();
-            userHome = new File(zielVerzeichnis);
+            zielVerzeichnis = URI.create(process.getProject().getDmsImportImagesPath());
+            userHome = zielVerzeichnis;
 
             /* ggf. noch einen Vorgangsordner anlegen */
             if (process.getProject().isDmsImportCreateProcessFolder()) {
-                userHome = new File(userHome + File.separator + process.getTitle());
-                zielVerzeichnis = userHome.getAbsolutePath();
+                URI userHomeProcess = fileService.createResource(userHome, File.separator + process.getTitle());
+                zielVerzeichnis = userHomeProcess;
                 /* alte Import-Ordner löschen */
-                if (!fileService.delete(userHome.toURI())) {
+                if (!fileService.delete(userHomeProcess)) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                             "Import folder could not be cleared");
                     return false;
@@ -276,16 +271,16 @@ public class ExportDms extends ExportMets {
                     return false;
                 }
 
-                if (!userHome.exists()) {
-                    userHome.mkdir();
+                if (!fileService.fileExist(userHomeProcess)) {
+                    fileService.createDirectory(userHome, process.getTitle());
                 }
             }
 
         } else {
-            zielVerzeichnis = inZielVerzeichnis + atsPpnBand + File.separator;
+            zielVerzeichnis = URI.create(inZielVerzeichnis + atsPpnBand + File.separator);
             // wenn das Home existiert, erst löschen und dann neu anlegen
-            userHome = new File(zielVerzeichnis);
-            if (!fileService.delete(userHome.toURI())) {
+            userHome = zielVerzeichnis;
+            if (!fileService.delete(userHome)) {
                 Helper.setFehlerMeldung("Export canceled: " + process.getTitle(), "could not delete home directory");
                 return false;
             }
@@ -327,7 +322,8 @@ public class ExportDms extends ExportMets {
             if (MetadataFormat.findFileFormatsHelperByName(
                     process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
                 /* Wenn METS, dann per writeMetsFile schreiben... */
-                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
+                writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"),
+                        gdzfile, false);
             } else {
                 /* ...wenn nicht, nur ein Fileformat schreiben. */
                 gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
@@ -336,7 +332,8 @@ public class ExportDms extends ExportMets {
             /* ggf. sollen im Export mets und rdf geschrieben werden */
             if (MetadataFormat.findFileFormatsHelperByName(
                     process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
-                writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+                writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".mets.xml"),
+                        gdzfile, false);
             }
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
@@ -385,7 +382,8 @@ public class ExportDms extends ExportMets {
             /* ohne Agora-Import die xml-Datei direkt ins Home schreiben */
             if (MetadataFormat.findFileFormatsHelperByName(
                     process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
-                writeMetsFile(process, zielVerzeichnis + atsPpnBand + ".xml", gdzfile, false);
+                writeMetsFile(process, fileService.createResource(zielVerzeichnis, atsPpnBand + ".xml"), gdzfile,
+                        false);
             } else {
                 gdzfile.write(zielVerzeichnis + atsPpnBand + ".xml");
             }
@@ -440,46 +438,48 @@ public class ExportDms extends ExportMets {
      * @param ordnerEndung
      *            String
      */
-    public void fulltextDownload(Process process, File userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
+            throws IOException, InterruptedException, DAOException {
 
         // download sources
-        File sources = new File(serviceManager.getProcessService().getSourceDirectory(process));
-        if (sources.exists() && fileService.list(sources).length > 0) {
-            File destination = new File(userHome + File.separator + atsPpnBand + "_src");
-            if (!destination.exists()) {
-                destination.mkdir();
+        URI sources = serviceManager.getFileService().getSourceDirectory(process);
+        if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
+            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
+            if (!fileService.fileExist(destination)) {
+                fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            File[] files = fileService.listFiles(sources);
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isFile()) {
+            ArrayList<URI> files = fileService.getSubUris(sources);
+            for (int i = 0; i < files.size(); i++) {
+                if (fileService.isFile(files.get(i))) {
                     if (exportDmsTask != null) {
-                        exportDmsTask.setWorkDetail(files[i].getName());
+                        exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
                     }
-                    File meinZiel = new File(destination + File.separator + files[i].getName());
-                    fileService.copyFile(files[i], meinZiel);
+                    URI meinZiel = destination.resolve(File.separator + fileService.getFileName(files.get(i)));
+                    fileService.copyFile(files.get(i), meinZiel);
                 }
             }
         }
 
-        File ocr = new File(serviceManager.getProcessService().getOcrDirectory(process));
-        if (ocr.exists()) {
-            File[] folder = fileService.listFiles(ocr);
-            for (File dir : folder) {
-                if (dir.isDirectory() && fileService.list(dir).length > 0 && dir.getName().contains("_")) {
-                    String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-                    File destination = new File(userHome + File.separator + atsPpnBand + suffix);
-                    if (!destination.exists()) {
-                        destination.mkdir();
+        URI ocr = serviceManager.getFileService().getOcrDirectory(process);
+        if (fileService.fileExist(ocr)) {
+            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            for (URI dir : folder) {
+                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
+                        && fileService.getFileName(dir).contains("_")) {
+                    String suffix = fileService.getFileName(dir)
+                            .substring(fileService.getFileName(dir).lastIndexOf("_"));
+                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
+                    if (!fileService.fileExist(destination)) {
+                        fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
-                    File[] files = fileService.listFiles(dir);
-                    for (int i = 0; i < files.length; i++) {
-                        if (files[i].isFile()) {
+                    ArrayList<URI> files = fileService.getSubUris(dir);
+                    for (int i = 0; i < files.size(); i++) {
+                        if (fileService.isFile(files.get(i))) {
                             if (exportDmsTask != null) {
-                                exportDmsTask.setWorkDetail(files[i].getName());
+                                exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
                             }
-                            File target = new File(destination + File.separator + files[i].getName());
-                            fileService.copyFile(files[i], target);
+                            URI target = destination.resolve(File.separator + fileService.getFileName(files.get(i)));
+                            fileService.copyFile(files.get(i), target);
                         }
                     }
                 }
@@ -502,24 +502,24 @@ public class ExportDms extends ExportMets {
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(Process process, File userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
+            throws IOException, InterruptedException, DAOException {
 
         /*
          * dann den Ausgangspfad ermitteln
          */
-        File tifOrdner = new File(serviceManager.getProcessService().getImagesTifDirectory(true, process));
+        URI tifOrdner = serviceManager.getProcessService().getImagesTifDirectory(true, process);
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (tifOrdner.exists() && fileService.list(tifOrdner).length > 0) {
-            File zielTif = new File(userHome + File.separator + atsPpnBand + ordnerEndung);
+        if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
+            URI zielTif = userHome.resolve(File.separator + atsPpnBand + ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
             if (process.getProject().isUseDmsImport()) {
-                if (!zielTif.exists()) {
-                    zielTif.mkdir();
+                if (!fileService.fileExist(zielTif)) {
+                    fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
                 }
             } else {
                 /*
@@ -528,7 +528,7 @@ public class ExportDms extends ExportMets {
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
-                    fileService.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
+                    fileService.createDirectoryForUser(zielTif, myUser.getLogin());
                 } catch (Exception e) {
                     if (exportDmsTask != null) {
                         exportDmsTask.setException(e);
@@ -550,15 +550,15 @@ public class ExportDms extends ExportMets {
 
             /* jetzt den eigentlichen Kopiervorgang */
 
-            File[] dateien = fileService.listFiles(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < dateien.length; i++) {
+            ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            for (int i = 0; i < dateien.size(); i++) {
                 if (exportDmsTask != null) {
-                    exportDmsTask.setWorkDetail(dateien[i].getName());
+                    exportDmsTask.setWorkDetail(fileService.getFileName(dateien.get(i)));
                 }
-                File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
-                fileService.copyFile(dateien[i], meinZiel);
+                URI meinZiel = zielTif.resolve(File.separator + fileService.getFileName(dateien.get(i)));
+                fileService.copyFile(dateien.get(i), meinZiel);
                 if (exportDmsTask != null) {
-                    exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.length + 1));
+                    exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.size() + 1));
                     if (exportDmsTask.isInterrupted()) {
                         throw new InterruptedException();
                     }
@@ -580,20 +580,18 @@ public class ExportDms extends ExportMets {
      *            the destination directory
      *
      */
-    private void directoryDownload(Process process, String zielVerzeichnis)
-            throws SwapException, DAOException, IOException, InterruptedException {
+    private void directoryDownload(Process process, URI zielVerzeichnis)
+            throws DAOException, IOException, InterruptedException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
-            File srcDir = new File(
-                    FilenameUtils.concat(serviceManager.getProcessService().getProcessDataDirectory(process),
-                            processDir.replace("(processtitle)", process.getTitle())));
-            File dstDir = new File(
-                    FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", process.getTitle())));
+            URI srcDir = serviceManager.getProcessService().getProcessDataDirectory(process)
+                    .resolve(processDir.replace("(processtitle)", process.getTitle()));
+            URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", process.getTitle()));
 
-            if (srcDir.isDirectory()) {
-                fileService.copyDir(srcDir, dstDir);
+            if (fileService.isDirectory(srcDir)) {
+                fileService.copyDirectory(srcDir, dstDir);
             }
         }
     }

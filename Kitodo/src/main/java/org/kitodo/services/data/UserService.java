@@ -17,12 +17,10 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.Ldap;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -536,22 +534,19 @@ public class UserService extends SearchService<User> {
      * @throws IOException
      *             add description
      */
-    public String getHomeDirectory(User user) throws IOException, InterruptedException {
-        String result;
+    public URI getHomeDirectory(User user) throws IOException, InterruptedException {
+        URI result;
         if (ConfigCore.getBooleanParameter("ldap_use")) {
             Ldap ldap = new Ldap();
-            result = ldap.getUserHomeDirectory(user);
+            result = URI.create(ldap.getUserHomeDirectory(user));
         } else {
-            result = ConfigCore.getParameter("dir_Users") + user.getLogin();
+            result = URI.create(ConfigCore.getParameter("dir_Users") + user.getLogin());
         }
 
         if (result.equals("")) {
-            return "";
+            return URI.create("");
         }
 
-        if (!result.endsWith(File.separator)) {
-            result += File.separator;
-        }
         // if the directory is not "", but does not yet exist, then create it
         // now
         serviceManager.getFileService().createDirectoryForUser(result, user.getLogin());
@@ -561,7 +556,8 @@ public class UserService extends SearchService<User> {
     /**
      * Adds a new filter to list.
      *
-     * @param user object
+     * @param user
+     *            object
      * @param filter
      *            the filter to add
      */
@@ -579,7 +575,8 @@ public class UserService extends SearchService<User> {
     /**
      * Removes filter from list.
      *
-     * @param user objec
+     * @param user
+     *            objec
      * @param filter
      *            the filter to remove
      */
@@ -620,8 +617,7 @@ public class UserService extends SearchService<User> {
      * @param filter
      *            String
      */
-    private void addFilterToUser(User user, String filter)
-            throws CustomResponseException, DAOException, IOException {
+    private void addFilterToUser(User user, String filter) throws CustomResponseException, DAOException, IOException {
         LocalDateTime localDateTime = new LocalDateTime();
         Property property = new Property();
         property.setTitle("_filter");
