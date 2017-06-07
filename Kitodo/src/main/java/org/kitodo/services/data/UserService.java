@@ -173,7 +173,7 @@ public class UserService extends SearchService<User> {
         return userDAO.search(query, namedParameter, parameter);
     }
 
-    public Long count(String query) throws DAOException {
+    public Integer count(String query) throws DAOException {
         return userDAO.count(query);
     }
 

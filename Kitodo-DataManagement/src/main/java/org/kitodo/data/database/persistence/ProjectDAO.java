@@ -84,7 +84,7 @@ public class ProjectDAO extends BaseDAO {
         return retrieveObjects(query);
     }
 
-    public Long count(String query) throws DAOException {
+    public Integer count(String query) throws DAOException {
         return retrieveAmount(query);
     }
 }
