@@ -40,7 +40,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.exceptions.SwapException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -754,10 +753,6 @@ public class TaskService extends TitleSearchService<Task> {
             abortTask(step);
             return;
         } catch (WriteException e) {
-            logger.error(e);
-            abortTask(step);
-            return;
-        } catch (SwapException e) {
             logger.error(e);
             abortTask(step);
             return;

@@ -119,9 +119,6 @@ public class JobCreation {
             } catch (ReadException | PreferencesException | IOException e) {
                 Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
                 logger.error(e);
-            } catch (PreferencesException e) {
-                Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
-                logger.error(e);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Cannot save process " + processTitle, e);
                 logger.error(e);

@@ -94,6 +94,7 @@ import ugh.dl.VirtualFileGroup;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
@@ -1344,7 +1345,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @throws PreferencesException
      * @throws ReadException
      */
-    public Fileformat readMetadataFile(String metadataFile, Prefs prefs)
+    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
         String type = MetadataHelper.getMetaFileType(metadataFile);
@@ -1363,7 +1364,7 @@ public class ProcessService extends TitleSearchService<Process> {
                 ff = new RDFFile(prefs);
                 break;
         }
-        ff.read(metadataFile);
+        ff.read(metadataFile.getPath());
 
         return ff;
     }
@@ -1376,9 +1377,8 @@ public class ProcessService extends TitleSearchService<Process> {
      */
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
-            throws DAOException, IOException, PreferencesException, WriteException, SwapException,
-            TypeNotAllowedForParentException, InterruptedException,
-            org.apache.commons.configuration.ConfigurationException {
+            throws DAOException, IOException, PreferencesException, TypeNotAllowedForParentException,
+            InterruptedException, org.apache.commons.configuration.ConfigurationException, WriteException {
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
 
         Project project = process.getProject();
@@ -1393,7 +1393,7 @@ public class ProcessService extends TitleSearchService<Process> {
         Fileformat newfile;
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         try {
-            String metadataPath = fi.getMetadataFilePath();
+            URI metadataPath = fi.getMetadataFilePath();
             gdzfile = readMetadataFile(metadataPath, preferences);
             switch (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport())) {
                 case METS:
@@ -1444,18 +1444,17 @@ public class ProcessService extends TitleSearchService<Process> {
         /*
          * Speicherort vorbereiten und downloaden
          */
-        String zielVerzeichnis;
-        File benutzerHome;
+        URI zielVerzeichnis;
+        URI benutzerHome;
 
-        zielVerzeichnis = project.getDmsImportImagesPath();
-        benutzerHome = new File(zielVerzeichnis);
+        zielVerzeichnis = URI.create(project.getDmsImportImagesPath());
+        benutzerHome = zielVerzeichnis;
 
         /* ggf. noch einen Vorgangsordner anlegen */
         if (project.isDmsImportCreateProcessFolder()) {
-            benutzerHome = new File(benutzerHome + File.separator + process.getTitle());
-            zielVerzeichnis = benutzerHome.getAbsolutePath();
+            zielVerzeichnis = benutzerHome.resolve(File.separator + process.getTitle());
             /* alte Import-Ordner löschen */
-            if (!fileService.delete(benutzerHome.toURI())) {
+            if (!fileService.delete(benutzerHome)) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Import folder could not be cleared");
                 return false;
@@ -1475,8 +1474,8 @@ public class ProcessService extends TitleSearchService<Process> {
                 return false;
             }
 
-            if (!benutzerHome.exists()) {
-                benutzerHome.mkdir();
+            if (!fileService.fileExist(benutzerHome)) {
+                fileService.createDirectory(benutzerHome, File.separator + process.getTitle());
             }
         }
 
@@ -1561,40 +1560,43 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param atsPpnBand
      *            String
      */
-    private void fulltextDownload(File userHome, String atsPpnBand, FolderInformation fi)
-            throws IOException, InterruptedException, SwapException, DAOException {
+    private void fulltextDownload(URI userHome, String atsPpnBand, FolderInformation fi)
+            throws IOException, InterruptedException, DAOException {
 
         // download sources
-        File sources = new File(fi.getSourceDirectory());
-        if (sources.exists() && fileService.list(sources).length > 0) {
-            File destination = new File(userHome + File.separator + atsPpnBand + "_src");
-            if (!destination.exists()) {
-                destination.mkdir();
+        URI sources = fi.getSourceDirectory();
+        if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
+            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
+            if (!fileService.fileExist(destination)) {
+                fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            File[] dateien = fileService.listFiles(sources);
-            for (File aDateien : dateien) {
-                if (aDateien.isFile()) {
-                    File meinZiel = new File(destination + File.separator + aDateien.getName());
+            ArrayList<URI> dateien = fileService.getSubUris(sources);
+            for (URI aDateien : dateien) {
+                if (fileService.isFile(aDateien)) {
+                    URI meinZiel = destination.resolve(File.separator + fileService.getFileNameWithExtension(aDateien));
                     fileService.copyFile(aDateien, meinZiel);
                 }
             }
         }
 
-        File ocr = new File(fi.getOcrDirectory());
-        if (ocr.exists()) {
-            File[] folder = fileService.listFiles(ocr);
-            for (File dir : folder) {
-                if (dir.isDirectory() && fileService.list(dir).length > 0 && dir.getName().contains("_")) {
-                    String suffix = dir.getName().substring(dir.getName().lastIndexOf("_"));
-                    File destination = new File(userHome + File.separator + atsPpnBand + suffix);
-                    if (!destination.exists()) {
-                        destination.mkdir();
+        URI ocr = fi.getOcrDirectory();
+        if (fileService.fileExist(ocr)) {
+            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            for (URI dir : folder) {
+                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
+                        && fileService.getFileName(dir).contains("_")) {
+                    String suffix = fileService.getFileNameWithExtension(dir)
+                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf("_"));
+                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
+                    if (!fileService.fileExist(destination)) {
+                        fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
-                    File[] files = fileService.listFiles(dir);
-                    for (int i = 0; i < files.length; i++) {
-                        if (files[i].isFile()) {
-                            File target = new File(destination + File.separator + files[i].getName());
-                            fileService.copyFile(files[i], target);
+                    ArrayList<URI> files = fileService.getSubUris(dir);
+                    for (URI file : files) {
+                        if (fileService.isFile(file)) {
+                            URI target = destination
+                                    .resolve(File.separator + fileService.getFileNameWithExtension(file));
+                            fileService.copyFile(file, target);
                         }
                     }
                 }
@@ -1614,25 +1616,25 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param ordnerEndung
      *            String
      */
-    public void imageDownload(Process process, File userHome, String atsPpnBand, final String ordnerEndung,
-            FolderInformation fi) throws IOException, InterruptedException, SwapException, DAOException {
+    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung,
+            FolderInformation fi) throws IOException, InterruptedException, DAOException {
 
         Project project = process.getProject();
         /*
          * den Ausgangspfad ermitteln
          */
-        File tifOrdner = new File(fi.getImagesTifDirectory(true));
+        URI tifOrdner = fi.getImagesTifDirectory(true);
 
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (tifOrdner.exists() && fileService.list(tifOrdner).length > 0) {
-            File zielTif = new File(userHome + File.separator + atsPpnBand + ordnerEndung);
+        if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
+            URI zielTif = userHome.resolve(File.separator + atsPpnBand + ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
             if (project.isUseDmsImport()) {
-                if (!zielTif.exists()) {
-                    zielTif.mkdir();
+                if (!fileService.fileExist(zielTif)) {
+                    fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
                 }
             } else {
                 /*
@@ -1641,7 +1643,7 @@ public class ProcessService extends TitleSearchService<Process> {
                  */
                 User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
                 try {
-                    fileService.createDirectoryForUser(zielTif.getAbsolutePath(), myUser.getLogin());
+                    fileService.createDirectoryForUser(zielTif, myUser.getLogin());
                 } catch (Exception e) {
                     Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
                     logger.error("could not create destination directory", e);
@@ -1650,11 +1652,12 @@ public class ProcessService extends TitleSearchService<Process> {
 
             /* jetzt den eigentlichen Kopiervorgang */
 
-            File[] dateien = fileService.listFiles(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < dateien.length; i++) {
-                if (dateien[i].isFile()) {
-                    File meinZiel = new File(zielTif + File.separator + dateien[i].getName());
-                    fileService.copyFile(dateien[i], meinZiel);
+            ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            for (int i = 0; i < dateien.size(); i++) {
+                if (fileService.isFile(dateien.get(i))) {
+                    URI meinZiel = zielTif
+                            .resolve(File.separator + fileService.getFileNameWithExtension(dateien.get(i)));
+                    fileService.copyFile(dateien.get(i), meinZiel);
                 }
             }
         }
@@ -1672,13 +1675,13 @@ public class ProcessService extends TitleSearchService<Process> {
      */
     protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
-            SwapException, DAOException, TypeNotAllowedForParentException {
+            DAOException, TypeNotAllowedForParentException, WriteException {
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
         MetsModsImportExport mm = new MetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
-        String imageFolderPath = fi.getImagesDirectory();
+        URI imageFolderPath = fi.getImagesDirectory();
         File imageFolder = new File(imageFolderPath);
         /*
          * before creating mets file, change relative path to absolute -
@@ -1749,8 +1752,9 @@ public class ProcessService extends TitleSearchService<Process> {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    File folder = new File(fi.getMethodFromName(pfg.getFolder()));
-                    if (folder.exists() && serviceManager.getFileService().list(folder).length > 0) {
+                    URI folder = URI.create(fi.getMethodFromName(pfg.getFolder()));
+                    if (fileService.fileExist(folder)
+                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();
                         v.setName(pfg.getName());
                         v.setPathToFiles(vp.replace(pfg.getPath()));
@@ -1805,12 +1809,16 @@ public class ProcessService extends TitleSearchService<Process> {
 
         try {
             // TODO andere Dateigruppen nicht mit image Namen ersetzen
-            List<String> images = fi.getDataFiles();
+            List<URI> images = fi.getDataFiles();
+            List<String> imageStrings = new ArrayList<>();
+            for (URI image : images) {
+                imageStrings.add(image.getPath());
+            }
             if (images != null) {
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
                 int sizeOfImages = images.size();
                 if (sizeOfPagination == sizeOfImages) {
-                    dd.overrideContentFiles(images);
+                    dd.overrideContentFiles(imageStrings);
                 } else {
                     List<String> param = new ArrayList<String>();
                     param.add(String.valueOf(sizeOfPagination));
@@ -1823,7 +1831,7 @@ public class ProcessService extends TitleSearchService<Process> {
 
             logger.error(e);
         }
-        mm.write(targetFileName);
+        mm.write(targetFileName.toString());
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
         return true;
     }
@@ -1837,18 +1845,17 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param zielVerzeichnis
      *            the destination directory
      */
-    private void directoryDownload(Process myProcess, String zielVerzeichnis)
-            throws IOException, InterruptedException, DAOException, SwapException {
+    private void directoryDownload(Process myProcess, URI zielVerzeichnis)
+            throws IOException, InterruptedException, DAOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {
 
-            File srcDir = new File(FilenameUtils.concat(getProcessDataDirectory(myProcess),
-                    processDir.replace("(processtitle)", myProcess.getTitle())));
-            File dstDir = new File(
-                    FilenameUtils.concat(zielVerzeichnis, processDir.replace("(processtitle)", myProcess.getTitle())));
+            URI srcDir = getProcessDataDirectory(myProcess)
+                    .resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
+            URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
 
-            if (srcDir.isDirectory()) {
+            if (fileService.isDirectory(srcDir)) {
                 fileService.copyFile(srcDir, dstDir);
             }
         }
