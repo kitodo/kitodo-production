@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Page;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -38,10 +39,12 @@ public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private UserGroup myBenutzergruppe = new UserGroup();
     private final ServiceManager serviceManager = new ServiceManager();
+    private int userGroupId;
 
     public String Neu() {
         this.myBenutzergruppe = new UserGroup();
-        return "/newpages/BenutzergruppenBearbeiten";
+        this.userGroupId = 0;
+        return "/newpages/BenutzergruppenBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -52,7 +55,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
-            return "/newpages/BenutzergruppenAlle";
+            return "/newpages/BenutzergruppenAlle?faces-redirect=true";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             return null;
@@ -95,7 +98,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
             return null;
         }
-        return "/newpages/BenutzergruppenAlle";
+        return "/newpages/BenutzergruppenAlle?faces-redirect=true";
     }
 
     /**
@@ -130,6 +133,16 @@ public class BenutzergruppenForm extends BasisForm {
         return this.zurueck;
     }
 
+    public void loadUserGroup() {
+        try {
+            if(!Objects.equals(this.userGroupId, 0)) {
+                setMyBenutzergruppe(this.serviceManager.getUserGroupService().find(this.userGroupId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving project with ID '" + this.userGroupId + "'; ", e.getMessage());
+        }
+    }
+
     /*
      * Getter und Setter
      */
@@ -142,5 +155,9 @@ public class BenutzergruppenForm extends BasisForm {
         Helper.getHibernateSession().clear();
         this.myBenutzergruppe = myBenutzergruppe;
     }
+
+    public void setUserGroupId(int id) { this.userGroupId = id; }
+
+    public int getUserGroupId() { return this.userGroupId; }
 
 }

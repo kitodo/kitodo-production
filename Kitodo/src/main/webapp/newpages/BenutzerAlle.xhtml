@@ -173,14 +173,12 @@
                                                     <h:outputText id="id31" value="#{msgs.auswahl}"/>
                                                 </f:facet>
                                                 <!-- Bearbeiten-Schaltknopf -->
-                                                <h:commandLink id="id32" action="BenutzerBearbeiten"
+                                                <h:link id="id32" outcome="/newpages/BenutzerBearbeiten"
                                                                title="#{msgs.benutzerBearbeiten}">
+                                                    <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage id="id33" alt="edit"
                                                                     value="/newpages/images/buttons/edit.gif"/>
-                                                    <t:updateActionListener
-                                                            property="#{BenutzerverwaltungForm.myClass}"
-                                                            value="#{item}"/>
-                                                </h:commandLink>
+                                                </h:link>
 
                                                 <!-- LdapKonfiguration schreiben-Schaltknopf -->
                                                 <!-- 										<h:commandLink id="id34" title="#{msgs.ldapKonfigurationSchreiben}"

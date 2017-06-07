@@ -112,14 +112,12 @@
                                                     <h:outputText id="id15" value="#{msgs.auswahl}"/>
                                                 </f:facet>
                                                 <!-- Bearbeiten-Schaltknopf -->
-                                                <h:commandLink id="id16" action="BenutzergruppenBearbeiten"
+                                                <h:link id="id16" outcome="/newpages/BenutzergruppenBearbeiten"
                                                                title="#{msgs.benutzerBearbeiten}">
+                                                    <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage id="id17" alt="edit"
                                                                     value="/newpages/images/buttons/edit.gif"/>
-                                                    <t:updateActionListener
-                                                            property="#{BenutzergruppenForm.myBenutzergruppe}"
-                                                            value="#{item}"/>
-                                                </h:commandLink>
+                                                </h:link>
                                             </h:column>
 
                                         </t:dataTable>

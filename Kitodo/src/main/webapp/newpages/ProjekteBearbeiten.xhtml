@@ -27,6 +27,10 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
+    <f:metadata>
+        <f:viewParam name="id" value="#{ProjekteForm.itemId}"/>
+        <f:viewAction action="#{ProjekteForm.loadProject}"/>
+    </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <!-- css filepath configured for mac os x -->
@@ -1039,8 +1043,8 @@
 
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
-                                                    <h:commandButton id="id121" value="#{msgs.abbrechen}"
-                                                                     action="ProjekteAlle" immediate="true"/>
+                                                    <h:button id="id121" value="#{msgs.abbrechen}"
+                                                              outcome="/newpages/ProjekteAlle" immediate="true"/>
                                                 </td>
                                                 <td class="eingabeBoxen_row3" align="right">
                                                     <h:commandButton id="id122" value="#{msgs.loeschen}"

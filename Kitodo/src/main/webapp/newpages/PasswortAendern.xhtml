@@ -120,8 +120,8 @@
 
                                             <tr>
                                                 <td class="eingabeBoxen_row3">
-                                                    <h:commandButton
-                                                            action="#{LoginForm.PasswortAendernAbbrechen}"
+                                                    <h:button
+                                                            outcome="/newpages/Main"
                                                             value="#{msgs.abbrechen}" immediate="true"/>
                                                     <t:commandButton id="absenden" forceId="true" type="submit"
                                                                      action="#{LoginForm.PasswortAendernSpeichern}"

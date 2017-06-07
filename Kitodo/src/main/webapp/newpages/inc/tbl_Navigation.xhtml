@@ -132,7 +132,7 @@
                                            outcome="/newpages/ProzessverwaltungAlle"
                                            style="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                 <f:param name="linkId" value="newProcess"/>
-                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'allProcesses' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml'}">
+                                <h:panelGroup rendered="#{request.getParameter('linkId') == 'newProcess' and view.viewId == '/newpages/ProzessverwaltungAlle.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.neuenVorgangAnlegen}"/>
@@ -161,8 +161,10 @@
                             <!-- Menu Administration / Users -->
                             <h:link styleClass="mlink" id="users"
                                            outcome="/newpages/BenutzerAlle"
-                                           style="#{view.viewId == '/newpages/BenutzerAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzerAlle.xhtml'}">
+                                           style="#{view.viewId == '/newpages/BenutzerAlle.xhtml' or
+                                                    view.viewId == '/newpages/BenutzerBearbeiten.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzerAlle.xhtml' or
+                                                          view.viewId == '/newpages/BenutzerBearbeiten.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.users}"/>
@@ -171,8 +173,10 @@
                             <!-- Benutzergruppen -->
                             <h:link styleClass="mlink" id="groups"
                                            outcome="/newpages/BenutzergruppenAlle"
-                                           style="#{view.viewId == '/newpages/BenutzergruppenAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzergruppenAlle.xhtml'}">
+                                           style="#{view.viewId == '/newpages/BenutzergruppenAlle.xhtml' or
+                                                    view.viewId == '/newpages/BenutzergruppenBearbeiten.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/BenutzergruppenAlle.xhtml' or
+                                                          view.viewId == '/newpages/BenutzergruppenBearbeiten.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.benutzergruppen}"/>
@@ -181,8 +185,10 @@
                             <!-- Projekte -->
                             <h:link styleClass="mlink" id="projects"
                                            outcome="/newpages/ProjekteAlle"
-                                           style="#{view.viewId == '/newpages/ProjekteAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{view.viewId == '/newpages/ProjekteAlle.xhtml'}">
+                                           style="#{view.viewId == '/newpages/ProjekteAlle.xhtml' or
+                                                    view.viewId == '/newpages/ProjekteBearbeiten.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/ProjekteAlle.xhtml' or
+                                                          view.viewId == '/newpages/ProjekteBearbeiten.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.projekte}"/>
@@ -191,8 +197,10 @@
                             <!-- Regelsätze -->
                             <h:link styleClass="mlink" id="rulesets"
                                            outcome="/newpages/RegelsaetzeAlle"
-                                           style="#{view.viewId == '/newpages/RegelsaetzeAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{view.viewId == '/newpages/RegelsaetzeAlle.xhtml'}">
+                                           style="#{view.viewId == '/newpages/RegelsaetzeAlle.xhtml' or
+                                                    view.viewId == '/newpages/RegelsaetzeBearbeiten.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/RegelsaetzeAlle.xhtml' or
+                                                          view.viewId == '/newpages/RegelsaetzeBearbeiten.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.regelsaetze}"/>
@@ -201,8 +209,10 @@
                             <!-- Dockets -->
                             <h:link styleClass="mlink" id="navigation"
                                            outcome="/newpages/DocketList"
-                                           style="#{view.viewId == '/newpages/DocketList.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{view.viewId == '/newpages/DocketList.xhtml'}">
+                                           style="#{view.viewId == '/newpages/DocketList.xhtml' or
+                                                    view.viewId == '/newpages/DocketEdit.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/DocketList.xhtml' or
+                                                          view.viewId == '/newpages/DocketEdit.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.dockets}"/>
@@ -211,8 +221,10 @@
                             <!-- Ldapgruppen -->
                             <h:link styleClass="mlink" id="ldapgroups"
                                            outcome="/newpages/LdapGruppenAlle"
-                                           style="#{view.viewId == '/newpages/LdapGruppenAlle.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
-                                <h:panelGroup rendered="#{view.viewId == '/newpages/LdapGruppenAlle.xhtml'}">
+                                           style="#{view.viewId == '/newpages/LdapGruppenAlle.xhtml' or
+                                                    view.viewId == '/newpages/LdapGruppenBearbeiten.xhtml' ? 'font-weight: bold;':'font-weight:normal ;'}">
+                                <h:panelGroup rendered="#{view.viewId == '/newpages/LdapGruppenAlle.xhtml' or
+                                                          view.viewId == '/newpages/LdapGruppenBearbeiten.xhtml'}">
                                     <f:verbatim>&#8250; </f:verbatim>
                                 </h:panelGroup>
                                 <h:outputText value="#{msgs.ldapgruppen}"/>

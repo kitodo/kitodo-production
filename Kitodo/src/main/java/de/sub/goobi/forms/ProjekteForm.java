@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
@@ -94,6 +95,8 @@ public class ProjekteForm extends BasisForm {
     private String projectStatVolumes;
     private boolean showStatistics;
 
+    private int itemId;
+
     public ProjekteForm() {
         super();
     }
@@ -152,7 +155,8 @@ public class ProjekteForm extends BasisForm {
 
     public String newProject() {
         this.myProjekt = new Project();
-        return "/newpages/ProjekteBearbeiten";
+        this.itemId = 0;
+        return "/newpages/ProjekteBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -808,5 +812,20 @@ public class ProjekteForm extends BasisForm {
     public void setShowStatistics(boolean showStatistics) {
         this.showStatistics = showStatistics;
     }
+
+    public void loadProject() {
+        try {
+            if(!Objects.equals(this.itemId, 0)) {
+                setMyProjekt(this.serviceManager.getProjectService().find(this.itemId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving project with ID '" + this.itemId + "'; ", e.getMessage());
+        }
+
+    }
+
+    public void setItemId(int id) { this.itemId = id; }
+
+    public int getItemId() { return this.itemId; }
 
 }

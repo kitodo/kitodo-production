@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +60,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     private boolean hideInactiveUsers = true;
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
+    private int userId;
 
     /**
      * New user.
@@ -72,7 +74,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.myClass.setLogin("");
         this.myClass.setLdapLogin("");
         this.myClass.setPasswordDecrypted("Passwort");
-        return "/newpages/BenutzerBearbeiten";
+        this.userId = 0;
+        return "/newpages/BenutzerBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -417,5 +420,23 @@ public class BenutzerverwaltungForm extends BasisForm {
     public boolean getLdapUsage() {
         return ConfigCore.getBooleanParameter("ldap_use");
     }
+
+    /**
+     * Method being used as viewAction for user edit form.
+     * If 'userId' is '0', the form for creating a new user will be displayed.
+     */
+    public void loadMyClass() {
+        try {
+            if(!Objects.equals(this.userId, 0)) {
+                setMyClass(this.serviceManager.getUserService().find(this.userId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving user with ID '" + this.userId + "'; ", e.getMessage());
+        }
+    }
+
+    public int getUserId() { return this.userId; }
+
+    public void setUserId(int id) { this.userId = id; }
 
 }
