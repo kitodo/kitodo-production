@@ -256,7 +256,8 @@ public class LoginForm {
 
     private void AlteBilderAufraeumen() throws IOException {
         /* Pages-Verzeichnis mit den temporären Images ermitteln */
-        URI myPfad = URI.create(ConfigCore.getTempImagesPathAsCompleteDirectory());
+        URI myPfad = serviceManager.getFileService()
+                .getInternUri(new File(ConfigCore.getTempImagesPathAsCompleteDirectory()).toURI());
 
         /* Verzeichnis einlesen */
         FilenameFilter filter = new FilenameFilter() {

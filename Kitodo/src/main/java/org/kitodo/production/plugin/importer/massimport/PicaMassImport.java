@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -493,7 +492,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                         logger.debug("Writing '" + fileName + "' into given folder...");
                     }
                     mm.write(fileName);
-                    io.setMetsFilename(URI.create(fileName));
+                    io.setMetsFilename(new File(fileName).toURI());
                     io.setImportReturnValue(ImportReturnValue.ExportFinished);
 
                 } catch (PreferencesException e) {

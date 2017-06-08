@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
 
 import javax.imageio.ImageIO;
 
@@ -38,7 +39,7 @@ public class StatisticsRenderingElement implements Serializable {
     private HtmlTableRenderer htmlTableRenderer;
     private CSVRenderer csvRenderer;
     private ExcelRenderer excelRenderer;
-    private String localImagePath;
+    private URI localImagePath;
     private String imageUrl;
     private static final Logger logger = LogManager.getLogger(StatisticsRenderingElement.class);
 

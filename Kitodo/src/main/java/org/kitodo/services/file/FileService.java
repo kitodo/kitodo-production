@@ -662,9 +662,13 @@ public class FileService {
 
     URI unmapUriFromKitodoUri(URI uri) {
         String kitodoDataDirectory = ConfigCore.getKitodoDataDirectory();
-        String[] split = uri.toString().split(kitodoDataDirectory);
-        String shortUri = split[1];
-        return URI.create(shortUri);
+        if (uri.toString().contains(kitodoDataDirectory)) {
+            String[] split = uri.toString().split(kitodoDataDirectory);
+            String shortUri = split[1];
+            return URI.create(shortUri);
+        }
+
+        return uri;
     }
 
     /**
@@ -907,4 +911,14 @@ public class FileService {
         return true;
     }
 
+    /**
+     * Returns the version used in the core code, without direkt File mapping.
+     * 
+     * @param uri
+     *            the uri to unmapp
+     * @return the (shorter) intern uri
+     */
+    public URI getInternUri(URI uri) {
+        return unmapUriFromKitodoUri(uri);
+    }
 }

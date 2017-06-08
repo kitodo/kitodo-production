@@ -192,7 +192,7 @@ public class HelperForm {
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI filename = URI.create(session.getServletContext().getRealPath("/css") + File.separator);
+        URI filename = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
         URI cssDir = filename;
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -220,7 +220,8 @@ public class HelperForm {
     public String getCssLinkIfExists(String cssFileName) {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI filename = URI.create(session.getServletContext().getRealPath(CSS_PATH) + File.separator);
+        URI filename = serviceManager.getFileService()
+                .getInternUri(new File(session.getServletContext().getRealPath(CSS_PATH) + File.separator).toURI());
         URI cssDir = filename;
         FilenameFilter filter = new FilenameFilter() {
             @Override

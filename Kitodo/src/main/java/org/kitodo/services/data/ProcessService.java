@@ -1447,7 +1447,7 @@ public class ProcessService extends TitleSearchService<Process> {
         URI zielVerzeichnis;
         URI benutzerHome;
 
-        zielVerzeichnis = URI.create(project.getDmsImportImagesPath());
+        zielVerzeichnis = new File(project.getDmsImportImagesPath()).toURI();
         benutzerHome = zielVerzeichnis;
 
         /* ggf. noch einen Vorgangsordner anlegen */
@@ -1752,7 +1752,7 @@ public class ProcessService extends TitleSearchService<Process> {
             for (ProjectFileGroup pfg : myFilegroups) {
                 // check if source files exists
                 if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    URI folder = URI.create(fi.getMethodFromName(pfg.getFolder()));
+                    URI folder = new File(fi.getMethodFromName(pfg.getFolder())).toURI();
                     if (fileService.fileExist(folder)
                             && serviceManager.getFileService().getSubUris(folder).size() > 0) {
                         VirtualFileGroup v = new VirtualFileGroup();

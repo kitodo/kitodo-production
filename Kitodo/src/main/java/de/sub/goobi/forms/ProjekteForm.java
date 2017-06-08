@@ -17,10 +17,11 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -669,9 +670,9 @@ public class ProjekteForm extends BasisForm {
             cr.setDataTable(this.projectProgressData.getSelectedTable());
             BufferedImage bi = (BufferedImage) cr.getRendering();
             this.projectProgressImage = System.currentTimeMillis() + ".png";
-            String localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
+            URI localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
 
-            File outputfile = new File(localImagePath + this.projectProgressImage);
+            File outputfile = new File(localImagePath.resolve(this.projectProgressImage));
             try {
                 ImageIO.write(bi, "png", outputfile);
             } catch (IOException e) {
@@ -737,8 +738,8 @@ public class ProjekteForm extends BasisForm {
         projectStatusDraw.paint();
 
         // write image to temporary file
-        String localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
-        File outputfile = new File(localImagePath + inName);
+        URI localImagePath = ConfigCore.getTempImagesPathAsCompleteDirectory();
+        File outputfile = new File(localImagePath.resolve(inName));
         ImageIO.write(image, "png", outputfile);
     }
 

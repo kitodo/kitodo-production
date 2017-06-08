@@ -490,7 +490,7 @@ public class FileManipulation {
      */
     public List<URI> getAllImportFolder() {
 
-        URI tempDirectory = URI.create(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/"));
+        URI tempDirectory = new File(ConfigCore.getParameter("tempfolder")).toURI().resolve("/usr/local/kitodo/tmp/");
         URI fileuploadFolder = tempDirectory.resolve("fileupload");
 
         allImportFolder = new ArrayList<>();

@@ -247,7 +247,7 @@ public class GoobiScript {
             return;
         }
 
-        URI sourceFolder = URI.create(this.myParameters.get("sourcefolder"));
+        URI sourceFolder = new File(this.myParameters.get("sourcefolder")).toURI();
         if (!fileService.isDirectory(sourceFolder)) {
             Helper.setFehlerMeldung("kitodoScriptfield",
                     "Directory " + this.myParameters.get("sourcefolder") + " does not exisist");

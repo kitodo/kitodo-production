@@ -226,7 +226,7 @@ public class ExportMets {
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            URI uri = !url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : URI.create("");
+            URI uri = !url.startsWith(imageFolder.getPath()) ? imageFolder : URI.create("");
             uri = uri.resolve(url);
             cf.setLocation(uri.toString());
         }
