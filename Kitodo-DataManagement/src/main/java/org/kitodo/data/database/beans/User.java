@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +25,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.persistence.apache.MySQLHelper;
 import org.kitodo.data.encryption.DesEncrypter;
 
 @Entity
@@ -100,7 +96,7 @@ public class User extends BaseBean {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_x_property", joinColumns = {
             @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_property_user_id")) }, inverseJoinColumns = {
-            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_user_x_property_property_id")) })
+                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_user_x_property_property_id")) })
     private List<Property> properties;
 
     /**

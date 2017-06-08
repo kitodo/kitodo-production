@@ -14,8 +14,6 @@ package de.sub.goobi.metadaten.copier;
 import java.sql.SQLException;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.persistence.apache.MySQLHelper;
-import org.kitodo.data.database.persistence.apache.ProcessObject;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -48,7 +46,7 @@ public class CopierData {
     /**
      * The Goobi process corresponding to the workspace file.
      */
-    private final Object process;
+    private final Process process;
 
     /**
      * Creates a new CopierData bean with an additional destination metadata
@@ -73,7 +71,7 @@ public class CopierData {
      * @param process
      *            the related goobi process
      */
-    public CopierData(Fileformat fileformat, Object process) {
+    public CopierData(Fileformat fileformat, Process process) {
         this.fileformat = fileformat;
         this.process = process;
         this.destination = null;
@@ -118,11 +116,10 @@ public class CopierData {
      * @return the required ruleset.
      */
     public Prefs getPreferences() throws SQLException {
-        if (process instanceof ProcessObject) {
-            return serviceManager.getRulesetService()
-                    .getPreferences(MySQLHelper.getRulesetForId(((ProcessObject) process).getRulesetId()));
+        if (process instanceof Process) {
+            return serviceManager.getRulesetService().getPreferences((process).getRuleset());
         } else {
-            return serviceManager.getRulesetService().getPreferences(((Process) process).getRuleset());
+            return serviceManager.getRulesetService().getPreferences((process).getRuleset());
         }
     }
 
@@ -132,13 +129,8 @@ public class CopierData {
      * @return the process title
      */
     public String getProcessTitle() {
-        if (process instanceof Process) {
-            return ((Process) process).getTitle();
-        } else if (process instanceof ProcessObject) {
-            return ((ProcessObject) process).getTitle();
-        } else {
-            return String.valueOf(process);
-        }
+        return (process).getTitle();
+
     }
 
     /**

@@ -13,7 +13,6 @@ package org.goobi.production.flow.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,12 +25,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
+import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.apache.ProcessManager;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -55,7 +54,8 @@ public class JobCreation {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException, URISyntaxException {
+    public static Process generateProcess(ImportObject io, Process vorlage)
+            throws IOException, ParseException, CustomResponseException, URISyntaxException, DAOException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -108,27 +108,21 @@ public class JobCreation {
                 p = cp.createProcess(io);
                 if (p != null && p.getId() != null) {
                     moveFiles(metsfile, basepath, p);
-                    List<StepObject> steps = StepManager.getStepsForProcess(p.getId());
-                    for (StepObject s : steps) {
-                        if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
-                            ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+                    List<Task> tasks = serviceManager.getProcessService().find(p.getId()).getTasks();
+                    for (Task t : tasks) {
+                        if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
+                            Thread myThread = new TaskScriptThread(t);
                             myThread.start();
                         }
                     }
                 }
-            } catch (ReadException e) {
-                Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
-                logger.error(e);
-            } catch (PreferencesException e) {
+            } catch (ReadException | PreferencesException | IOException e) {
                 Helper.setFehlerMeldung("Cannot read file " + processTitle, e);
                 logger.error(e);
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("Cannot save process " + processTitle, e);
                 logger.error(e);
             } catch (WriteException e) {
-                Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
-                logger.error(e);
-            } catch (IOException e) {
                 Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
                 logger.error(e);
             } catch (InterruptedException e) {
@@ -147,14 +141,13 @@ public class JobCreation {
     /**
      * Test title.
      *
-     * @param titel
+     * @param title
      *            String
      * @return boolean
      */
-    public static boolean testTitle(String titel) {
-        if (titel != null) {
-            int anzahl = 0;
-            anzahl = ProcessManager.getNumberOfProcessesWithTitle(titel);
+    private static boolean testTitle(String title) throws IOException, ParseException, DAOException {
+        if (title != null) {
+            Long anzahl = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
             if (anzahl > 0) {
                 Helper.setFehlerMeldung("processTitleAllreadyInUse");
                 return false;

@@ -16,13 +16,10 @@ import java.util.HashMap;
 import org.goobi.production.enums.PluginGuiType;
 import org.goobi.production.enums.StepReturnValue;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 public interface IStepPlugin extends IPlugin {
 
-    public void initialize(Task step, String returnPath);
-
-    public void initialize(StepObject stepobject, String returnPath);
+    public void initialize(Task stepobject, String returnPath);
 
     public boolean execute();
 

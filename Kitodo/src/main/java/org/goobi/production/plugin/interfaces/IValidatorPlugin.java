@@ -13,7 +13,6 @@ package org.goobi.production.plugin.interfaces;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.persistence.apache.StepObject;
 
 public interface IValidatorPlugin extends IPlugin {
 
@@ -24,9 +23,5 @@ public interface IValidatorPlugin extends IPlugin {
     public Task getStep();
 
     public void setStep(Task step);
-
-    public StepObject getStepObject();
-
-    public void setStepObject(StepObject so);
 
 }

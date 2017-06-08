@@ -15,7 +15,6 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.copier.CopierData;
@@ -72,9 +71,8 @@ import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -1072,10 +1070,10 @@ public class ProzesskopieForm {
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
 
-        List<StepObject> steps = StepManager.getStepsForProcess(prozessKopie.getId());
-        for (StepObject s : steps) {
-            if (s.getProcessingStatus() == 1 && s.isTypeAutomatic()) {
-                ScriptThreadWithoutHibernate myThread = new ScriptThreadWithoutHibernate(s);
+        List<Task> tasks = serviceManager.getProcessService().find(prozessKopie.getId()).getTasks();
+        for (Task t : tasks) {
+            if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
+                TaskScriptThread myThread = new TaskScriptThread(t);
                 myThread.start();
             }
         }

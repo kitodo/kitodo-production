@@ -36,8 +36,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -67,7 +65,8 @@ public class GoobiScript {
     /**
      * Starten des Scripts.
      */
-    public void execute(List<Process> inProzesse, String inScript) throws IOException, CustomResponseException {
+    public void execute(List<Process> inProzesse, String inScript)
+            throws IOException, CustomResponseException, DAOException {
         this.myParameters = new HashMap<String, String>();
         /*
          * alle Suchparameter zerlegen und erfassen
@@ -217,19 +216,18 @@ public class GoobiScript {
         serviceManager.getFileService().deleteProcessContent(process);
     }
 
-    private void runScript(List<Process> inProzesse, String stepname, String scriptname) {
-        HelperSchritteWithoutHibernate hs = new HelperSchritteWithoutHibernate();
+    private void runScript(List<Process> inProzesse, String stepname, String scriptname)
+            throws CustomResponseException, DAOException, IOException {
         for (Process p : inProzesse) {
             for (Task step : p.getTasks()) {
                 if (step.getTitle().equalsIgnoreCase(stepname)) {
-                    StepObject so = StepManager.getStepById(step.getId());
                     if (scriptname != null) {
                         if (serviceManager.getTaskService().getAllScripts(step).containsKey(scriptname)) {
                             String path = serviceManager.getTaskService().getAllScripts(step).get(scriptname);
-                            hs.executeScriptForStepObject(so, path, false);
+                            serviceManager.getTaskService().executeScript(step, path, false);
                         }
                     } else {
-                        hs.executeAllScriptsForStep(so, false);
+                        serviceManager.getTaskService().executeAllScripts(step, false);
                     }
                 }
             }

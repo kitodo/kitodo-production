@@ -53,8 +53,7 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
+import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
@@ -835,14 +834,13 @@ public class BatchStepHelper {
     /**
      * Execute script.
      */
-    public void executeScript() {
+    public void executeScript() throws CustomResponseException, DAOException {
         for (Task step : this.steps) {
 
             if (serviceManager.getTaskService().getAllScripts(step).containsKey(this.script)) {
-                StepObject so = StepManager.getStepById(step.getId());
                 String scriptPath = serviceManager.getTaskService().getAllScripts(step).get(this.script);
 
-                new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, scriptPath, false);
+                serviceManager.getTaskService().executeScript(step, scriptPath, false);
 
             }
         }
@@ -900,13 +898,12 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() {
+    public String batchDurchBenutzerAbschliessen() throws DAOException, IOException, CustomResponseException {
 
         // for (ProcessProperty pp : this.processPropertyList) {
         // this.processProperty = pp;
         // saveCurrentPropertyForAll();
         // }
-        HelperSchritteWithoutHibernate helper = new HelperSchritteWithoutHibernate();
         for (Task s : this.steps) {
             boolean error = false;
             if (s.getValidationPlugin() != null && s.getValidationPlugin().length() > 0) {
@@ -972,9 +969,10 @@ public class BatchStepHelper {
             }
             if (!error) {
                 this.myDav.uploadFromHome(s.getProcess());
-                StepObject so = StepManager.getStepById(s.getId());
-                so.setEditType(TaskEditType.MANUAL_MULTI.getValue());
-                helper.closeStepObjectAutomatic(so, true);
+                TaskDAO taskDAO = new TaskDAO();
+                Task task = taskDAO.find(s.getId());
+                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+                serviceManager.getTaskService().close(s, true);
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");

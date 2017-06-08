@@ -26,7 +26,6 @@ import de.sub.goobi.export.download.Multipage;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
@@ -63,6 +62,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.elasticsearch.client.ResponseException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -94,8 +94,6 @@ import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -1052,7 +1050,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenPage() throws DAOException {
+    public void BearbeitungsstatusHochsetzenPage() throws DAOException, IOException, CustomResponseException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             stepStatusUp(proz.getId());
         }
@@ -1062,7 +1060,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenSelection() throws DAOException {
+    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, IOException, CustomResponseException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 stepStatusUp(proz.getId());
@@ -1074,26 +1072,27 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenHits() throws DAOException {
+    public void BearbeitungsstatusHochsetzenHits() throws DAOException, IOException, CustomResponseException {
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             stepStatusUp(proz.getId());
         }
     }
 
-    private void stepStatusUp(int processId) throws DAOException {
-        List<StepObject> stepList = StepManager.getStepsForProcess(processId);
+    private void stepStatusUp(int processId)
+            throws DAOException, IOException, ResponseException, CustomResponseException {
+        List<Task> taskList = serviceManager.getProcessService().find(processId).getTasks();
 
-        for (StepObject so : stepList) {
-            if (so.getProcessingStatus() != TaskStatus.DONE.getValue()) {
-                so.setProcessingStatus(so.getProcessingStatus() + 1);
-                so.setEditType(TaskEditType.ADMIN.getValue());
-                if (so.getProcessingStatus() == TaskStatus.DONE.getValue()) {
-                    new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(so, true);
+        for (Task t : taskList) {
+            if (t.getProcessingStatus() != TaskStatus.DONE.getValue()) {
+                t.setProcessingStatus(t.getProcessingStatus() + 1);
+                t.setEditType(TaskEditType.ADMIN.getValue());
+                if (t.getProcessingStatus() == TaskStatus.DONE.getValue()) {
+                    serviceManager.getTaskService().close(t, true);
                 } else {
-                    User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
-                    if (ben != null) {
-                        so.setProcessingUser(ben.getId());
-                        StepManager.updateStep(so);
+                    User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+                    if (user != null) {
+                        t.setProcessingUser(user);
+                        serviceManager.getTaskService().save(t);
                     }
                 }
                 break;
@@ -1167,13 +1166,13 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Task status up.
      */
-    public void SchrittStatusUp() {
+    public void SchrittStatusUp() throws DAOException, IOException, CustomResponseException {
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.DONE) {
             this.mySchritt = serviceManager.getTaskService().setProcessingStatusUp(this.mySchritt);
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
-            StepObject so = StepManager.getStepById(this.mySchritt.getId());
+            Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
             if (this.mySchritt.getProcessingStatusEnum() == TaskStatus.DONE) {
-                new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(so, true);
+                serviceManager.getTaskService().close(task, true);
             } else {
                 mySchritt.setProcessingTime(new Date());
                 User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
@@ -1559,6 +1558,8 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(this.page.getCompleteList(), this.kitodoScript);
         } catch (IOException | CustomResponseException e) {
             logger.error("ElasticSearch", e);
+        } catch (DAOException e) {
+            logger.error("DatabaseException", e);
         }
     }
 
@@ -1572,6 +1573,8 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(this.page.getListReload(), this.kitodoScript);
         } catch (IOException | CustomResponseException e) {
             logger.error("ElasticSearch", e);
+        } catch (DAOException e) {
+            logger.error("DatabaseException", e);
         }
     }
 
@@ -1591,6 +1594,8 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(auswahl, this.kitodoScript);
         } catch (IOException | CustomResponseException e) {
             logger.error("ElasticSearch", e);
+        } catch (DAOException e) {
+            logger.error("DatabaseException", e);
         }
     }
 

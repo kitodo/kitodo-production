@@ -154,7 +154,8 @@ public abstract class SearchService<T extends BaseBean> {
      * it continues to fail, method breaks. If save to index was successful,
      * indexAction flag is changed to Done and database is again updated. There
      * is possibility that last step fails and in that case, even if index is up
-     * to date, in some point of the future it will be reindexed by administrator.
+     * to date, in some point of the future it will be reindexed by
+     * administrator.
      * </p>
      *
      * @param baseBean
@@ -307,7 +308,8 @@ public abstract class SearchService<T extends BaseBean> {
      */
     public T convertSearchResultToObject(SearchResult searchResult) throws DAOException, IOException {
         if (searchResult.getId() == null) {
-            //TODO: maybe here could be used some instancing of generic class...
+            // TODO: maybe here could be used some instancing of generic
+            // class...
             return null;
         } else {
             return find(searchResult.getId());
@@ -352,7 +354,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            contain given value
      * @return query
      */
-    protected QueryBuilder createSimpleQuery(String key, String value, boolean contains) throws IOException {
+    protected QueryBuilder createSimpleQuery(String key, String value, boolean contains) {
         if (contains) {
             return matchQuery(key, value);
         } else {
@@ -373,7 +375,8 @@ public abstract class SearchService<T extends BaseBean> {
      *            determine if results should contain given value or should not
      *            contain given value
      * @param operator
-     *            as Operator AND or OR - useful when value contains more than one word
+     *            as Operator AND or OR - useful when value contains more than
+     *            one word
      * @return query
      */
     protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator)

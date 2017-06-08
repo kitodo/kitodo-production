@@ -16,7 +16,6 @@ import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperSchritteWithoutHibernate;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.PropertyListObject;
 import de.sub.goobi.helper.WebDav;
@@ -77,8 +76,6 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.apache.StepManager;
-import org.kitodo.data.database.persistence.apache.StepObject;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
@@ -480,7 +477,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() {
+    public String schrittDurchBenutzerAbschliessen() throws DAOException, IOException, CustomResponseException {
 
         if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
             IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
@@ -558,9 +555,8 @@ public class AktuelleSchritteForm extends BasisForm {
         this.myDav.uploadFromHome(this.mySchritt.getProcess());
         this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         // it returns null! - not possible to close task
-        StepObject so = StepManager.getStepById(this.mySchritt.getId());
-        new HelperSchritteWithoutHibernate().closeStepObjectAutomatic(so, true);
-        // new HelperSchritte().SchrittAbschliessen(this.mySchritt, true);
+        Task t = serviceManager.getTaskService().find(this.mySchritt.getId());
+        serviceManager.getTaskService().close(t, true);
         return filterAlleStart();
     }
 
@@ -794,7 +790,8 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle() throws NumberFormatException, DAOException {
+    public String uploadFromHomeAlle()
+            throws NumberFormatException, DAOException, IOException, CustomResponseException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*
@@ -915,10 +912,9 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Execute script.
      */
-    public void executeScript() {
-        StepObject so = StepManager.getStepById(this.mySchritt.getId());
-        new HelperSchritteWithoutHibernate().executeScriptForStepObject(so, this.scriptPath, false);
-
+    public void executeScript() throws DAOException, CustomResponseException {
+        Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
+        serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
     /**

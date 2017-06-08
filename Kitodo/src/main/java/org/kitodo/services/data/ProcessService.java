@@ -14,15 +14,23 @@ package org.kitodo.services.data;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.metadaten.MetadatenVerifizierung;
+import de.sub.goobi.metadaten.copier.CopierData;
+import de.sub.goobi.metadaten.copier.DataCopier;
+import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.ConfigurationException;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -50,14 +59,20 @@ import org.json.simple.parser.ParseException;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.MetadataHelper;
+import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -70,10 +85,16 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
 
+import ugh.dl.ContentFile;
 import ugh.dl.DigitalDocument;
+import ugh.dl.DocStruct;
 import ugh.dl.Fileformat;
+import ugh.dl.Prefs;
+import ugh.dl.VirtualFileGroup;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
 import ugh.fileformats.mets.MetsModsImportExport;
@@ -269,10 +290,35 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param id
      *            of project
-     * @return list of search results with batches for specific process id
+     * @return list of search results with processes for specific process id
      */
     public List<SearchResult> findByProjectId(Integer id) throws CustomResponseException, IOException, ParseException {
         QueryBuilder query = createSimpleQuery("project", id, true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by docket.
+     *
+     * @param docket
+     *            of project
+     * @return list of search results with processes for specific docket
+     */
+    public List<SearchResult> findByDocket(Docket docket) throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("docket_id", docket.getId(), true);
+        return searcher.findDocuments(query.toString());
+    }
+
+    /**
+     * Find processes by ruleset.
+     *
+     * @param ruleset
+     *            of project
+     * @return list of search results with processes for specific ruleset
+     */
+    public List<SearchResult> findByRuleset(Ruleset ruleset)
+            throws CustomResponseException, IOException, ParseException {
+        QueryBuilder query = createSimpleQuery("ruleset", ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -281,7 +327,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *
      * @param title
      *            of process
-     * @return list of search results with batches for specific process id
+     * @return list of search results with processes for specific process id
      */
     public List<SearchResult> findByProjectTitle(String title)
             throws CustomResponseException, IOException, ParseException {
@@ -970,7 +1016,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * user or user group.
      */
     public boolean getContainsUnreachableSteps(Process process) {
-        TaskService taskService = new TaskService();
+        TaskService taskService = serviceManager.getTaskService();
         if (process.getTasks().size() == 0) {
             return true;
         }
@@ -1281,5 +1327,537 @@ public class ProcessService extends TitleSearchService<Process> {
         });
 
         return new ArrayList<>(filteredList);
+    }
+
+    public Long getNumberOfProcessesWithTitle(String title) throws DAOException {
+        return count(createSimpleQuery("title", title, true).toString());
+    }
+
+    /**
+     * Reads the metadata File.
+     *
+     * @param metadataFile
+     *            The given metadataFile.
+     * @param prefs
+     *            The Preferences
+     * @return The fileFormat.
+     * @throws IOException
+     * @throws PreferencesException
+     * @throws ReadException
+     */
+    public Fileformat readMetadataFile(URI metadataFile, Prefs prefs)
+            throws IOException, PreferencesException, ReadException {
+        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
+        String type = MetadataHelper.getMetaFileType(metadataFile);
+        Fileformat ff;
+        switch (type) {
+            case "metsmods":
+                ff = new MetsModsImportExport(prefs);
+                break;
+            case "mets":
+                ff = new MetsMods(prefs);
+                break;
+            case "xstream":
+                ff = new XStream(prefs);
+                break;
+            default:
+                ff = new RDFFile(prefs);
+                break;
+        }
+        ff.read(metadataFile.getPath());
+
+        return ff;
+    }
+
+    /**
+     * DMS-Export an eine gewünschte Stelle.
+     *
+     * @param process
+     *            object
+     */
+
+    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
+            throws DAOException, IOException, PreferencesException, TypeNotAllowedForParentException,
+            InterruptedException, org.apache.commons.configuration.ConfigurationException, WriteException {
+        Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+
+        Project project = process.getProject();
+
+        ConfigProjects configProjects = new ConfigProjects(project.getTitle());
+        String atsPpnBand = process.getTitle();
+
+        /*
+         * Dokument einlesen
+         */
+        Fileformat gdzfile;
+        Fileformat newfile;
+        FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
+        try {
+            URI metadataPath = fi.getMetadataFilePath();
+            gdzfile = readMetadataFile(metadataPath, preferences);
+            switch (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport())) {
+                case METS:
+                    newfile = new MetsModsImportExport(preferences);
+                    break;
+                case METS_AND_RDF:
+                default:
+                    newfile = new RDFFile(preferences);
+                    break;
+            }
+
+            newfile.setDigitalDocument(gdzfile.getDigitalDocument());
+            gdzfile = newfile;
+
+        } catch (Exception e) {
+            Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
+            logger.error("Export abgebrochen, xml-LeseFehler", e);
+            return false;
+        }
+
+        String rules = ConfigCore.getParameter("copyData.onExport");
+        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+            try {
+                new DataCopier(rules).process(new CopierData(newfile, process));
+            } catch (ConfigurationException e) {
+                Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+                return false;
+            } catch (RuntimeException e) {
+                Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+                return false;
+            }
+        }
+
+        trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
+
+        /*
+         * Metadaten validieren
+         */
+
+        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
+            MetadatenVerifizierung mv = new MetadatenVerifizierung();
+            if (!mv.validate(gdzfile, preferences, process)) {
+                return false;
+
+            }
+        }
+
+        /*
+         * Speicherort vorbereiten und downloaden
+         */
+        URI zielVerzeichnis;
+        URI benutzerHome;
+
+        zielVerzeichnis = URI.create(project.getDmsImportImagesPath());
+        benutzerHome = zielVerzeichnis;
+
+        /* ggf. noch einen Vorgangsordner anlegen */
+        if (project.isDmsImportCreateProcessFolder()) {
+            zielVerzeichnis = benutzerHome.resolve(File.separator + process.getTitle());
+            /* alte Import-Ordner löschen */
+            if (!fileService.delete(benutzerHome)) {
+                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                        "Import folder could not be cleared");
+                return false;
+            }
+            /* alte Success-Ordner löschen */
+            File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+            if (!fileService.delete(successFile.toURI())) {
+                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                        "Success folder could not be cleared");
+                return false;
+            }
+            /* alte Error-Ordner löschen */
+            File errorfile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
+            if (!fileService.delete(errorfile.toURI())) {
+                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                        "Error folder could not be cleared");
+                return false;
+            }
+
+            if (!fileService.fileExist(benutzerHome)) {
+                fileService.createDirectory(benutzerHome, File.separator + process.getTitle());
+            }
+        }
+
+        /*
+         * der eigentliche Download der Images
+         */
+        try {
+            if (exportWithImages) {
+                imageDownload(process, benutzerHome, atsPpnBand, DIRECTORY_SUFFIX, fi);
+                fulltextDownload(benutzerHome, atsPpnBand, fi);
+            } else if (exportFullText) {
+                fulltextDownload(benutzerHome, atsPpnBand, fi);
+            }
+
+            directoryDownload(process, zielVerzeichnis);
+        } catch (Exception e) {
+            Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
+            return false;
+        }
+
+        /*
+         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in
+         * den Import-Ordner oder ins Benutzerhome anschliessend den
+         * Import-Thread starten
+         */
+        if (project.isUseDmsImport()) {
+            if (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS) {
+                /* Wenn METS, dann per writeMetsFile schreiben... */
+                writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".xml", gdzfile, false);
+            } else {
+                /* ...wenn nicht, nur ein Fileformat schreiben. */
+                gdzfile.write(benutzerHome + File.separator + atsPpnBand + ".xml");
+            }
+
+            /* ggf. sollen im Export mets und rdf geschrieben werden */
+            if (MetadataFormat
+                    .findFileFormatsHelperByName(project.getFileFormatDmsExport()) == MetadataFormat.METS_AND_RDF) {
+                writeMetsFile(process, benutzerHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
+            }
+
+            Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
+
+            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
+                /* Success-Ordner wieder löschen */
+                if (project.isDmsImportCreateProcessFolder()) {
+                    File successFile = new File(
+                            project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+                    fileService.delete(successFile.toURI());
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Run through all metadata and children of given docstruct to trim the
+     * strings calls itself recursively.
+     */
+    private void trimAllMetadata(DocStruct inStruct) {
+        /* trim all metadata values */
+        if (inStruct.getAllMetadata() != null) {
+            for (ugh.dl.Metadata md : inStruct.getAllMetadata()) {
+                if (md.getValue() != null) {
+                    md.setValue(md.getValue().trim());
+                }
+            }
+        }
+
+        /* run through all children of docstruct */
+        if (inStruct.getAllChildren() != null) {
+            for (DocStruct child : inStruct.getAllChildren()) {
+                trimAllMetadata(child);
+            }
+        }
+    }
+
+    /**
+     * Download full text.
+     *
+     * @param userHome
+     *            safe file
+     * @param atsPpnBand
+     *            String
+     */
+    private void fulltextDownload(URI userHome, String atsPpnBand, FolderInformation fi)
+            throws IOException, InterruptedException, DAOException {
+
+        // download sources
+        URI sources = fi.getSourceDirectory();
+        if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
+            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
+            if (!fileService.fileExist(destination)) {
+                fileService.createDirectory(userHome, atsPpnBand + "_src");
+            }
+            ArrayList<URI> dateien = fileService.getSubUris(sources);
+            for (URI aDateien : dateien) {
+                if (fileService.isFile(aDateien)) {
+                    URI meinZiel = destination.resolve(File.separator + fileService.getFileNameWithExtension(aDateien));
+                    fileService.copyFile(aDateien, meinZiel);
+                }
+            }
+        }
+
+        URI ocr = fi.getOcrDirectory();
+        if (fileService.fileExist(ocr)) {
+            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            for (URI dir : folder) {
+                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
+                        && fileService.getFileName(dir).contains("_")) {
+                    String suffix = fileService.getFileNameWithExtension(dir)
+                            .substring(fileService.getFileNameWithExtension(dir).lastIndexOf("_"));
+                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
+                    if (!fileService.fileExist(destination)) {
+                        fileService.createDirectory(userHome, atsPpnBand + suffix);
+                    }
+                    ArrayList<URI> files = fileService.getSubUris(dir);
+                    for (URI file : files) {
+                        if (fileService.isFile(file)) {
+                            URI target = destination
+                                    .resolve(File.separator + fileService.getFileNameWithExtension(file));
+                            fileService.copyFile(file, target);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Download image.
+     *
+     * @param process
+     *            process object
+     * @param userHome
+     *            safe file
+     * @param atsPpnBand
+     *            String
+     * @param ordnerEndung
+     *            String
+     */
+    public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung,
+            FolderInformation fi) throws IOException, InterruptedException, DAOException {
+
+        Project project = process.getProject();
+        /*
+         * den Ausgangspfad ermitteln
+         */
+        URI tifOrdner = fi.getImagesTifDirectory(true);
+
+        /*
+         * jetzt die Ausgangsordner in die Zielordner kopieren
+         */
+        if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
+            URI zielTif = userHome.resolve(File.separator + atsPpnBand + ordnerEndung);
+
+            /* bei Agora-Import einfach den Ordner anlegen */
+            if (project.isUseDmsImport()) {
+                if (!fileService.fileExist(zielTif)) {
+                    fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
+                }
+            } else {
+                /*
+                 * wenn kein Agora-Import, dann den Ordner mit
+                 * Benutzerberechtigung neu anlegen
+                 */
+                User myUser = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+                try {
+                    fileService.createDirectoryForUser(zielTif, myUser.getLogin());
+                } catch (Exception e) {
+                    Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+                    logger.error("could not create destination directory", e);
+                }
+            }
+
+            /* jetzt den eigentlichen Kopiervorgang */
+
+            ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            for (int i = 0; i < dateien.size(); i++) {
+                if (fileService.isFile(dateien.get(i))) {
+                    URI meinZiel = zielTif
+                            .resolve(File.separator + fileService.getFileNameWithExtension(dateien.get(i)));
+                    fileService.copyFile(dateien.get(i), meinZiel);
+                }
+            }
+        }
+    }
+
+    /**
+     * write MetsFile to given Path.
+     *
+     * @param process
+     *            the Process to use
+     * @param targetFileName
+     *            the filename where the metsfile should be written
+     * @param gdzfile
+     *            the FileFormat-Object to use for Mets-Writing
+     */
+    protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
+            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
+            DAOException, TypeNotAllowedForParentException, WriteException {
+        FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
+        Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
+        Project project = process.getProject();
+        MetsModsImportExport mm = new MetsModsImportExport(preferences);
+        mm.setWriteLocal(writeLocalFilegroup);
+        URI imageFolderPath = fi.getImagesDirectory();
+        File imageFolder = new File(imageFolderPath);
+        /*
+         * before creating mets file, change relative path to absolute -
+         */
+        DigitalDocument dd = gdzfile.getDigitalDocument();
+        if (dd.getFileSet() == null) {
+            Helper.setFehlerMeldung(process.getTitle() + ": digital document does not contain images; aborting");
+            return false;
+        }
+
+        /*
+         * get the topstruct element of the digital document depending on anchor
+         * property
+         */
+        DocStruct topElement = dd.getLogicalDocStruct();
+        if (preferences.getDocStrctTypeByName(topElement.getType().getName()).getAnchorClass() != null) {
+            if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
+                throw new PreferencesException(process.getTitle()
+                        + ": the topstruct element is marked as anchor, but does not have any children for "
+                        + "physical docstrucs");
+            } else {
+                topElement = topElement.getAllChildren().get(0);
+            }
+        }
+
+        /*
+         * if the top element does not have any image related, set them all
+         */
+        if (topElement.getAllToReferences("logical_physical") == null
+                || topElement.getAllToReferences("logical_physical").size() == 0) {
+            if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
+                Helper.setMeldung(process.getTitle()
+                        + ": topstruct element does not have any referenced images yet; temporarily adding them "
+                        + "for mets file creation");
+                for (DocStruct mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
+                    topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
+                }
+            } else {
+                Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
+                return false;
+            }
+        }
+
+        for (ContentFile cf : dd.getFileSet().getAllFiles()) {
+            String location = cf.getLocation();
+            // If the file's location string shoes no sign of any protocol,
+            // use the file protocol.
+            if (!location.contains("://")) {
+                location = "file://" + location;
+            }
+            String url = new URL(location).getFile();
+            File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
+            cf.setLocation(f.toURI().toString());
+        }
+
+        mm.setDigitalDocument(dd);
+
+        /*
+         * wenn Filegroups definiert wurden, werden diese jetzt in die
+         * Metsstruktur übernommen
+         */
+        // Replace all paths with the given VariableReplacer, also the file
+        // group paths!
+        VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
+        List<ProjectFileGroup> myFilegroups = project.getProjectFileGroups();
+
+        if (myFilegroups != null && myFilegroups.size() > 0) {
+            for (ProjectFileGroup pfg : myFilegroups) {
+                // check if source files exists
+                if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
+                    URI folder = URI.create(fi.getMethodFromName(pfg.getFolder()));
+                    if (fileService.fileExist(folder)
+                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
+                        VirtualFileGroup v = new VirtualFileGroup();
+                        v.setName(pfg.getName());
+                        v.setPathToFiles(vp.replace(pfg.getPath()));
+                        v.setMimetype(pfg.getMimeType());
+                        v.setFileSuffix(pfg.getSuffix());
+                        mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+                    }
+                } else {
+
+                    VirtualFileGroup v = new VirtualFileGroup();
+                    v.setName(pfg.getName());
+                    v.setPathToFiles(vp.replace(pfg.getPath()));
+                    v.setMimetype(pfg.getMimeType());
+                    v.setFileSuffix(pfg.getSuffix());
+                    mm.getDigitalDocument().getFileSet().addVirtualFileGroup(v);
+                }
+            }
+        }
+
+        // Replace rights and digiprov entries.
+        mm.setRightsOwner(vp.replace(project.getMetsRightsOwner()));
+        mm.setRightsOwnerLogo(vp.replace(project.getMetsRightsOwnerLogo()));
+        mm.setRightsOwnerSiteURL(vp.replace(project.getMetsRightsOwnerSite()));
+        mm.setRightsOwnerContact(vp.replace(project.getMetsRightsOwnerMail()));
+        mm.setDigiprovPresentation(vp.replace(project.getMetsDigiprovPresentation()));
+        mm.setDigiprovReference(vp.replace(project.getMetsDigiprovReference()));
+        mm.setDigiprovPresentationAnchor(vp.replace(project.getMetsDigiprovPresentationAnchor()));
+        mm.setDigiprovReferenceAnchor(vp.replace(project.getMetsDigiprovReferenceAnchor()));
+
+        mm.setPurlUrl(vp.replace(project.getMetsPurl()));
+        mm.setContentIDs(vp.replace(project.getMetsContentIDs()));
+
+        // Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
+        // pointer used to point to the superordinate (anchor) file, that is
+        // representing a “virtual” group such as a series. Several anchors
+        // pointer paths can be defined/ since it is possible to define several
+        // levels of superordinate structures (such as the complete edition of
+        // a daily newspaper, one year ouf of that edition, …)
+        String anchorPointersToReplace = project.getMetsPointerPath();
+        mm.setMptrUrl(null);
+        for (String anchorPointerToReplace : anchorPointersToReplace.split(Project.ANCHOR_SEPARATOR)) {
+            String anchorPointer = vp.replace(anchorPointerToReplace);
+            mm.setMptrUrl(anchorPointer);
+        }
+
+        // metsPointerPathAnchor or mptrAnchorUrl is the pointer used to point
+        // from the (lowest) superordinate (anchor) file to the lowest level
+        // file (the non-anchor file).
+        String anchor = project.getMetsPointerPathAnchor();
+        String pointer = vp.replace(anchor);
+        mm.setMptrAnchorUrl(pointer);
+
+        try {
+            // TODO andere Dateigruppen nicht mit image Namen ersetzen
+            List<URI> images = fi.getDataFiles();
+            List<String> imageStrings = new ArrayList<>();
+            for (URI image : images) {
+                imageStrings.add(image.getPath());
+            }
+            if (images != null) {
+                int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
+                int sizeOfImages = images.size();
+                if (sizeOfPagination == sizeOfImages) {
+                    dd.overrideContentFiles(imageStrings);
+                } else {
+                    List<String> param = new ArrayList<String>();
+                    param.add(String.valueOf(sizeOfPagination));
+                    param.add(String.valueOf(sizeOfImages));
+                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                    return false;
+                }
+            }
+        } catch (IndexOutOfBoundsException | InvalidImagesException e) {
+
+            logger.error(e);
+        }
+        mm.write(targetFileName.toString());
+        Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
+        return true;
+    }
+
+    /**
+     * Starts copying all directories configured in kitodo_config.properties
+     * parameter "processDirs" to export folder.
+     *
+     * @param myProcess
+     *            the process object
+     * @param zielVerzeichnis
+     *            the destination directory
+     */
+    private void directoryDownload(Process myProcess, URI zielVerzeichnis)
+            throws IOException, InterruptedException, DAOException {
+        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+
+        for (String processDir : processDirs) {
+
+            URI srcDir = getProcessDataDirectory(myProcess)
+                    .resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
+            URI dstDir = zielVerzeichnis.resolve(processDir.replace("(processtitle)", myProcess.getTitle()));
+
+            if (fileService.isDirectory(srcDir)) {
+                fileService.copyFile(srcDir, dstDir);
+            }
+        }
     }
 }

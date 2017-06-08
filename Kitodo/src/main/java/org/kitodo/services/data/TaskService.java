@@ -13,7 +13,13 @@ package org.kitodo.services.data;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
+import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.ShellScript;
+import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.persistence.apache.FolderInformation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,10 +28,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.goobi.production.enums.PluginType;
+import org.goobi.production.plugin.PluginLoader;
+import org.goobi.production.plugin.interfaces.IValidatorPlugin;
 import org.hibernate.Session;
-import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.History;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
+import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.TaskDAO;
@@ -33,13 +49,24 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.production.thread.TaskScriptThread;
+import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
+
+import ugh.dl.DigitalDocument;
+import ugh.dl.Prefs;
+import ugh.exceptions.PreferencesException;
+import ugh.exceptions.ReadException;
+import ugh.exceptions.TypeNotAllowedForParentException;
+import ugh.exceptions.WriteException;
 
 public class TaskService extends TitleSearchService<Task> {
 
     private TaskDAO taskDAO = new TaskDAO();
     private TaskType taskType = new TaskType();
     private Indexer<Task, TaskType> indexer = new Indexer<>(Task.class);
+    private static final Logger logger = LogManager.getLogger(TaskService.class);
+    private ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor with searcher's assigning.
@@ -326,6 +353,114 @@ public class TaskService extends TitleSearchService<Task> {
     }
 
     /**
+     * Execute script for StepObject.
+     *
+     * @param task
+     *            StepObject
+     * @param script
+     *            String
+     * @param automatic
+     *            boolean
+     * @return int
+     */
+    public int executeScript(Task task, String script, boolean automatic) throws DAOException, CustomResponseException {
+        if (script == null || script.length() == 0) {
+            return -1;
+        }
+        script = script.replace("{", "(").replace("}", ")");
+        DigitalDocument dd = null;
+        Process po = task.getProcess();
+
+        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
+        Prefs prefs = serviceManager.getRulesetService().getPreferences(po.getRuleset());
+
+        try {
+            dd = serviceManager.getProcessService().readMetadataFile(fi.getMetadataFilePath(), prefs)
+                    .getDigitalDocument();
+        } catch (PreferencesException | ReadException e2) {
+            logger.error(e2);
+        } catch (IOException e2) {
+            logger.error(e2);
+        }
+        VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
+
+        script = replacer.replace(script);
+        int rueckgabe = -1;
+        try {
+            if (logger.isInfoEnabled()) {
+                logger.info("Calling the shell: " + script);
+            }
+            rueckgabe = ShellScript.legacyCallShell2(script);
+            if (automatic) {
+                if (rueckgabe == 0) {
+                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                    task.setProcessingStatus(TaskStatus.DONE.getValue());
+                    if (task.getValidationPlugin() != null && task.getValidationPlugin().length() > 0) {
+                        IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
+                                task.getValidationPlugin());
+                        ivp.setStep(task);
+                        if (!ivp.validate()) {
+                            task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                            save(task);
+                        } else {
+                            close(task, false);
+                        }
+                    } else {
+                        close(task, false);
+                    }
+
+                } else {
+                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                    task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                    save(task);
+                }
+            }
+        } catch (IOException e) {
+            Helper.setFehlerMeldung("IOException: ", e.getMessage());
+        } catch (InterruptedException e) {
+            Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
+        }
+        return rueckgabe;
+    }
+
+    /**
+     * Execute all scripts for step.
+     *
+     * @param task
+     *            StepObject
+     * @param automatic
+     *            boolean
+     */
+    public void executeAllScripts(Task task, boolean automatic)
+            throws CustomResponseException, IOException, DAOException {
+        List<String> scriptpaths = getAllScriptPaths(task);
+        int count = 1;
+        int size = scriptpaths.size();
+        int returnParameter = 0;
+        for (String script : scriptpaths) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("starting script " + script);
+            }
+            if (returnParameter != 0) {
+                abortTask(task);
+                break;
+            }
+            if (script != null && !script.equals(" ") && script.length() != 0) {
+                returnParameter = executeScript(task, script, automatic && (count == size));
+            }
+            count++;
+        }
+    }
+
+    private void abortTask(Task task) throws IOException, CustomResponseException, DAOException {
+
+        task.setProcessingStatus(TaskStatus.OPEN.getValue());
+        task.setEditType(TaskEditType.AUTOMATIC.getValue());
+
+        save(task);
+    }
+
+    /**
      * Set all scripts and their paths.
      *
      * @param paths
@@ -422,4 +557,218 @@ public class TaskService extends TitleSearchService<Task> {
         ProcessService processService = new ProcessService();
         return processService.getBatchesInitialized(task.getProcess()).size() > 0;
     }
+
+    public void close(Task task, boolean requestFromGUI) throws IOException, CustomResponseException, DAOException {
+        Integer processId = task.getProcess().getId();
+        if (logger.isDebugEnabled()) {
+            logger.debug("closing step with id " + task.getId() + " and process id " + processId);
+        }
+        task.setProcessingStatus(3);
+        Date myDate = new Date();
+        logger.debug("set new date for edit time");
+        task.setProcessingTime(myDate);
+        LoginForm lf = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        if (lf != null) {
+            User ben = lf.getMyBenutzer();
+            if (ben != null) {
+                logger.debug("set new user");
+                task.setProcessingUser(ben);
+            }
+        }
+        logger.debug("set new end date");
+        task.setProcessingEnd(myDate);
+        logger.debug("saving step");
+        serviceManager.getTaskService().save(task);
+        List<Task> automatischeSchritte = new ArrayList<>();
+        List<Task> stepsToFinish = new ArrayList<>();
+
+        logger.debug("create history events for step");
+
+        History history = new History(myDate, task.getOrdering(), task.getTitle(), HistoryTypeEnum.taskDone,
+                task.getProcess());
+        serviceManager.getHistoryService().save(history);
+        /*
+         * prüfen, ob es Schritte gibt, die parallel stattfinden aber noch nicht
+         * abgeschlossen sind
+         */
+
+        List<Task> steps = task.getProcess().getTasks();
+        List<Task> allehoeherenSchritte = new ArrayList<>();
+        int offeneSchritteGleicherReihenfolge = 0;
+        for (Task so : steps) {
+            if (so.getOrdering() == task.getOrdering() && so.getProcessingStatus() != 3 && so.getId() != task.getId()) {
+                offeneSchritteGleicherReihenfolge++;
+            } else if (so.getOrdering() > task.getOrdering()) {
+                allehoeherenSchritte.add(so);
+            }
+        }
+        /*
+         * wenn keine offenen parallelschritte vorhanden sind, die nächsten
+         * Schritte aktivieren
+         */
+        if (offeneSchritteGleicherReihenfolge == 0) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("found " + allehoeherenSchritte.size() + " tasks");
+            }
+            int reihenfolge = 0;
+            boolean matched = false;
+            for (Task myTask : allehoeherenSchritte) {
+                if (reihenfolge < myTask.getOrdering() && !matched) {
+                    reihenfolge = myTask.getOrdering();
+                }
+
+                if (reihenfolge == myTask.getOrdering() && myTask.getProcessingStatus() != 3
+                        && myTask.getProcessingStatus() != 2) {
+                    /*
+                     * den Schritt aktivieren, wenn es kein vollautomatischer
+                     * ist
+                     */
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("open step " + myTask.getTitle());
+                    }
+                    myTask.setProcessingStatus(1);
+                    myTask.setProcessingTime(myDate);
+                    myTask.setEditType(4);
+                    logger.debug("create history events for next step");
+                    History historyOpen = new History(myDate, myTask.getOrdering(), myTask.getTitle(),
+                            HistoryTypeEnum.taskOpen, task.getProcess());
+                    serviceManager.getHistoryService().save(history);
+                    /* wenn es ein automatischer Schritt mit Script ist */
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("check if step is an automatic task: " + myTask.isTypeAutomatic());
+                    }
+                    if (myTask.isTypeAutomatic()) {
+                        logger.debug("add step to list of automatic tasks");
+                        automatischeSchritte.add(myTask);
+                    } else if (myTask.isTypeAcceptClose()) {
+                        stepsToFinish.add(myTask);
+                    }
+                    logger.debug("");
+                    serviceManager.getTaskService().save(myTask);
+                    matched = true;
+
+                } else {
+                    if (matched) {
+                        break;
+                    }
+                }
+            }
+        }
+        Process po = task.getProcess();
+        FolderInformation fi = new FolderInformation(po.getId(), po.getTitle());
+        if (po.getSortHelperImages() != serviceManager.getFileService()
+                .getNumberOfFiles(fi.getImagesOrigDirectory(true))) {
+            po.setSortHelperImages(serviceManager.getFileService().getNumberOfFiles(fi.getImagesOrigDirectory(true)));
+            serviceManager.getProcessService().save(po);
+        }
+        logger.debug("update process status");
+        updateProcessStatus(po);
+        if (logger.isDebugEnabled()) {
+            logger.debug("start " + automatischeSchritte.size() + " automatic tasks");
+        }
+        for (Task automaticStep : automatischeSchritte) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("creating scripts task for step with stepId " + automaticStep.getId() + " and processId "
+                        + automaticStep.getId());
+            }
+            TaskScriptThread myThread = new TaskScriptThread(automaticStep);
+            TaskManager.addTask(myThread);
+        }
+        for (Task finish : stepsToFinish) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("closing task " + finish.getTitle());
+            }
+            serviceManager.getTaskService().close(finish, false);
+        }
+    }
+
+    /**
+     * Update process status.
+     *
+     * @param process
+     *            the process
+     */
+    public void updateProcessStatus(Process process) throws IOException, CustomResponseException, DAOException {
+        int offen = 0;
+        int inBearbeitung = 0;
+        int abgeschlossen = 0;
+        List<Task> stepsForProcess = process.getTasks();
+        for (Task task : stepsForProcess) {
+            if (task.getProcessingStatus() == 3) {
+                abgeschlossen++;
+            } else if (task.getProcessingStatus() == 0) {
+                offen++;
+            } else {
+                inBearbeitung++;
+            }
+        }
+        double offen2 = 0;
+        double inBearbeitung2 = 0;
+        double abgeschlossen2 = 0;
+
+        if ((offen + inBearbeitung + abgeschlossen) == 0) {
+            offen = 1;
+        }
+
+        offen2 = (offen * 100) / (double) (offen + inBearbeitung + abgeschlossen);
+        inBearbeitung2 = (inBearbeitung * 100) / (double) (offen + inBearbeitung + abgeschlossen);
+        abgeschlossen2 = 100 - offen2 - inBearbeitung2;
+        // (abgeschlossen * 100) / (offen + inBearbeitung + abgeschlossen);
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#000");
+        String value = df.format(abgeschlossen2) + df.format(inBearbeitung2) + df.format(offen2);
+
+        process.setSortHelperStatus(value);
+        serviceManager.getProcessService().save(process);
+
+    }
+
+    /**
+     * Execute DMS export.
+     *
+     * @param step
+     *            StepObject
+     * @param automatic
+     *            boolean
+     */
+    public void executeDmsExport(Task step, boolean automatic)
+            throws CustomResponseException, IOException, DAOException, ConfigurationException {
+        ConfigCore.getBooleanParameter("automaticExportWithImages", true);
+        if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
+        }
+        Process po = step.getProcess();
+        try {
+            boolean validate = serviceManager.getProcessService().startDmsExport(po,
+                    ConfigCore.getBooleanParameter("automaticExportWithImages", true), false);
+            if (validate) {
+                close(step, true);
+            } else {
+                abortTask(step);
+            }
+        } catch (DAOException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (PreferencesException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (WriteException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (TypeNotAllowedForParentException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (IOException e) {
+            logger.error(e);
+            abortTask(step);
+            return;
+        } catch (InterruptedException e) {
+            // validation error
+            abortTask(step);
+            return;
+        }
+    }
+
 }
