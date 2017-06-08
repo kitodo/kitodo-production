@@ -29,7 +29,7 @@ public class ProjectFileGroupService {
         return projectFileGroupDAO.find(id);
     }
 
-    public List<ProjectFileGroup> findAll() throws DAOException {
+    public List<ProjectFileGroup> findAll() {
         return projectFileGroupDAO.findAll();
     }
 

@@ -128,7 +128,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return processDAO.find(id);
     }
 
-    public List<Process> findAll() throws DAOException {
+    public List<Process> findAll() {
         return processDAO.findAll();
     }
 
@@ -523,8 +523,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      * @return tif directory
      */
-    public URI getImagesTifDirectory(boolean useFallBack, Process process)
-            throws IOException, InterruptedException, DAOException {
+    public URI getImagesTifDirectory(boolean useFallBack, Process process) throws IOException {
         URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
         DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
         DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
@@ -597,7 +596,7 @@ public class ProcessService extends TitleSearchService<Process> {
         URI testMe;
         try {
             testMe = getImagesTifDirectory(true, process);
-        } catch (DAOException | IOException | InterruptedException e) {
+        } catch (IOException e) {
             return false;
         }
         return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
@@ -915,7 +914,7 @@ public class ProcessService extends TitleSearchService<Process> {
         return (int) closed;
     }
 
-    public String getFulltextFilePath(Process process) throws IOException, InterruptedException, DAOException {
+    public String getFulltextFilePath(Process process) {
         return getProcessDataDirectory(process) + "fulltext.xml";
     }
 
@@ -1145,7 +1144,7 @@ public class ProcessService extends TitleSearchService<Process> {
             if (fileService.fileExist(folder)) {
                 return folder;
             }
-        } catch (DAOException | InterruptedException | IOException ex) {
+        } catch (IOException ex) {
             logger.debug("exception: " + ex);
         }
         return null;
@@ -1226,7 +1225,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * The method createProcessDirs() starts creation of directories configured
      * by parameter processDirs within kitodo_config.properties
      */
-    public void createProcessDirs(Process process) throws DAOException, IOException, InterruptedException {
+    public void createProcessDirs(Process process) throws IOException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
@@ -1258,8 +1257,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *             it is waiting for the shell script to create the directory to
      *             finish
      */
-    public DigitalDocument getDigitalDocument(Process process)
-            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
+    public DigitalDocument getDigitalDocument(Process process) throws PreferencesException, ReadException, IOException {
         return readMetadataFile(process).getDigitalDocument();
     }
 
@@ -1560,8 +1558,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param atsPpnBand
      *            String
      */
-    private void fulltextDownload(URI userHome, String atsPpnBand, FolderInformation fi)
-            throws IOException, InterruptedException, DAOException {
+    private void fulltextDownload(URI userHome, String atsPpnBand, FolderInformation fi) throws IOException {
 
         // download sources
         URI sources = fi.getSourceDirectory();
@@ -1617,7 +1614,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            String
      */
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung,
-            FolderInformation fi) throws IOException, InterruptedException, DAOException {
+            FolderInformation fi) throws IOException {
 
         Project project = process.getProject();
         /*
@@ -1674,8 +1671,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            the FileFormat-Object to use for Mets-Writing
      */
     protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, InterruptedException,
-            DAOException, TypeNotAllowedForParentException, WriteException {
+            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, WriteException {
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
@@ -1845,8 +1841,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param zielVerzeichnis
      *            the destination directory
      */
-    private void directoryDownload(Process myProcess, URI zielVerzeichnis)
-            throws IOException, InterruptedException, DAOException {
+    private void directoryDownload(Process myProcess, URI zielVerzeichnis) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {

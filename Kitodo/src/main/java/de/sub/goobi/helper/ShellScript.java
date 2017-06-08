@@ -244,7 +244,7 @@ public class ShellScript {
      * @throws IOException
      *             If an I/O error happens
      */
-    public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException, InterruptedException {
+    public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException {
         String[] tokenisedCommand = nonSpacesafeScriptingCommand.split("\\s");
         ShellScript s;
         int err = ShellScript.ERRORLEVEL_ERROR;

@@ -78,7 +78,6 @@ import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
 import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
-import ugh.exceptions.WriteException;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -692,19 +691,7 @@ public class Metadaten {
         } catch (ReadException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return Helper.getRequestParameter("zurueck");
-        } catch (PreferencesException e) {
-            Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-            return Helper.getRequestParameter("zurueck");
-        } catch (WriteException e) {
-            Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-            return Helper.getRequestParameter("zurueck");
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-            return Helper.getRequestParameter("zurueck");
-        } catch (InterruptedException e) {
-            Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
-            return Helper.getRequestParameter("zurueck");
-        } catch (DAOException e) {
+        } catch (PreferencesException | IOException | DAOException | InterruptedException e) {
             Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
             return Helper.getRequestParameter("zurueck");
         }
@@ -718,8 +705,8 @@ public class Metadaten {
      * Metadaten Einlesen.
      */
 
-    public String readXmlStart() throws ReadException, IOException, InterruptedException, PreferencesException,
-            DAOException, WriteException {
+    public String readXmlStart()
+            throws ReadException, IOException, InterruptedException, PreferencesException, DAOException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.myProzess.getRuleset());
         this.modusAnsicht = "Metadaten";
@@ -1150,7 +1137,7 @@ public class Metadaten {
     /**
      * Knoten nach oben schieben.
      */
-    public String deleteNode() throws IOException {
+    public String deleteNode() {
         if (this.myDocStruct != null && this.myDocStruct.getParent() != null) {
             DocStruct tempParent = this.myDocStruct.getParent();
             this.myDocStruct.getParent().removeChild(this.myDocStruct);

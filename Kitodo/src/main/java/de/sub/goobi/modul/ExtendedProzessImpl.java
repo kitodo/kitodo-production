@@ -22,7 +22,6 @@ import java.net.URI;
 import java.util.HashMap;
 
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -63,19 +62,8 @@ public class ExtendedProzessImpl extends ProcessImpl {
     @Override
     public String getFullTextFile(String sessionId) throws GoobiException {
         super.getFullTextFile(sessionId);
-        try {
-            return serviceManager.getProcessService()
-                    .getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
-        } catch (IOException e) {
-            throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (InterruptedException e) {
-            throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (DAOException e) {
-            throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        }
+        return serviceManager.getProcessService()
+                .getFulltextFilePath(ModuleServerForm.getProcessFromShortSession(sessionId));
     }
 
     /**
@@ -132,12 +120,6 @@ public class ExtendedProzessImpl extends ProcessImpl {
             myMap.put("tifdirectory", serviceManager.getProcessService().getImagesTifDirectory(false, p));
         } catch (IOException e) {
             throw new GoobiException(1300, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (InterruptedException e) {
-            throw new GoobiException(1300, "******** wrapped InterruptedException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (DAOException e) {
-            throw new GoobiException(1300, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return myMap;

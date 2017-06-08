@@ -23,7 +23,7 @@ public interface IGoobiJob {
      *
      * @throws JobExecutionException
      */
-    public abstract void execute(JobExecutionContext context) throws JobExecutionException;
+    public abstract void execute(JobExecutionContext context);
 
     /**
      * override this method to let the job be called automatically.

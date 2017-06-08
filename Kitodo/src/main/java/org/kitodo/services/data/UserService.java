@@ -126,7 +126,7 @@ public class UserService extends SearchService<User> {
         return userDAO.find(id);
     }
 
-    public List<User> findAll() throws DAOException {
+    public List<User> findAll() {
         return userDAO.findAll();
     }
 
@@ -535,7 +535,7 @@ public class UserService extends SearchService<User> {
      * @throws IOException
      *             add description
      */
-    public URI getHomeDirectory(User user) throws IOException, InterruptedException {
+    public URI getHomeDirectory(User user) throws IOException {
         URI result;
         if (ConfigCore.getBooleanParameter("ldap_use")) {
             Ldap ldap = new Ldap();
@@ -600,13 +600,7 @@ public class UserService extends SearchService<User> {
      * @return List of filters as strings
      */
     public List<String> getFilters(User user) {
-        List<String> filters = new ArrayList<>();
-        try {
-            filters = getFiltersForUser(user);
-        } catch (CustomResponseException | IOException | ParseException e) {
-            logger.error("Cannot not load filters for user with id " + user.getId(), e);
-        }
-        return filters;
+        return getFiltersForUser(user);
     }
 
     /**
@@ -638,7 +632,7 @@ public class UserService extends SearchService<User> {
      *            object
      * @return list of filters
      */
-    private List<String> getFiltersForUser(User user) throws CustomResponseException, IOException, ParseException {
+    private List<String> getFiltersForUser(User user) {
         List<String> filters = new ArrayList<>();
         // FIXME: fix reason for exception
         try {
@@ -648,8 +642,7 @@ public class UserService extends SearchService<User> {
                     filters.add(property.getValue());
                 }
             }
-        }
-        catch (LazyInitializationException e) {
+        } catch (LazyInitializationException e) {
             logger.error("LazyInitializationException: " + e.getMessage());
         }
         return filters;

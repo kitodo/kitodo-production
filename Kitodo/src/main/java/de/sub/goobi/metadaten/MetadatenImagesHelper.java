@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -352,7 +351,7 @@ public class MetadatenImagesHelper {
      * scale given image file to png using internal embedded content server.
      */
     public void scaleFile(URI inFileName, URI outFileName, int inSize, int intRotation)
-            throws ImageManagerException, IOException, ImageManipulatorException, URISyntaxException {
+            throws ImageManagerException, IOException, ImageManipulatorException {
         logger.trace("start scaleFile");
         int tmpSize = inSize / 3;
         if (tmpSize < 1) {
@@ -421,7 +420,7 @@ public class MetadatenImagesHelper {
     /**
      * Die Images eines Prozesses auf Vollständigkeit prüfen.
      */
-    public boolean checkIfImagesValid(String title, URI folder) throws IOException, InterruptedException, DAOException {
+    public boolean checkIfImagesValid(String title, URI folder) {
         boolean isValid = true;
         this.myLastImage = 0;
 

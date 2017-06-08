@@ -77,7 +77,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
         return rulesetDAO.find(id);
     }
 
-    public List<Ruleset> findAll() throws DAOException {
+    public List<Ruleset> findAll() {
         return rulesetDAO.findAll();
     }
 

@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Helper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.CopyProcess;
 import org.goobi.production.importer.ImportObject;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -55,7 +53,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Process vorlage)
-            throws IOException, ParseException, CustomResponseException, URISyntaxException, DAOException {
+            throws IOException, DAOException, CustomResponseException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -128,9 +126,6 @@ public class JobCreation {
             } catch (InterruptedException e) {
                 Helper.setFehlerMeldung(e);
                 logger.error(e);
-            } catch (CustomResponseException e) {
-                Helper.setFehlerMeldung("ElasticSearch server response incorrect", e);
-                logger.error(e);
             }
         } else {
             logger.error("title " + processTitle + "is invalid");
@@ -145,7 +140,7 @@ public class JobCreation {
      *            String
      * @return boolean
      */
-    private static boolean testTitle(String title) throws IOException, ParseException, DAOException {
+    private static boolean testTitle(String title) throws DAOException {
         if (title != null) {
             Long anzahl = serviceManager.getProcessService().getNumberOfProcessesWithTitle(title);
             if (anzahl > 0) {

@@ -360,8 +360,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      *
      * @return size in bytes, or 0 if error.
      */
-    private static long getCurrentStorageSize(Process inProcess)
-            throws IOException, InterruptedException, DAOException {
+    private static long getCurrentStorageSize(Process inProcess) throws IOException {
         URI dir = serviceManager.getProcessService().getProcessDataDirectory(inProcess);
         File directory = new File(dir);
         if (!serviceManager.getFileService().isDirectory(dir)) {

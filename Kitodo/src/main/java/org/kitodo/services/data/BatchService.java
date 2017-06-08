@@ -90,7 +90,7 @@ public class BatchService extends TitleSearchService<Batch> {
         return batchDAO.find(id);
     }
 
-    public List<Batch> findAll() throws DAOException {
+    public List<Batch> findAll() {
         return batchDAO.findAll();
     }
 

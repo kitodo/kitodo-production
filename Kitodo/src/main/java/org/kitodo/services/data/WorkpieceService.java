@@ -89,7 +89,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
         return workpieceDAO.find(id);
     }
 
-    public List<Workpiece> findAll() throws DAOException {
+    public List<Workpiece> findAll() {
         return workpieceDAO.findAll();
     }
 

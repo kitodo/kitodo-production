@@ -488,7 +488,7 @@ public class ExportXmlLog implements IProcessDataExport {
     }
 
     public void startTransformation(Process p, OutputStream out, String filename)
-            throws ConfigurationException, XSLTransformException, IOException {
+            throws XSLTransformException, IOException {
         Document doc = createDocument(p, true);
         xmlTransformation(out, doc, filename);
     }

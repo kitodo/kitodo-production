@@ -11,8 +11,6 @@
 
 package de.sub.goobi.metadaten.copier;
 
-import java.sql.SQLException;
-
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -115,7 +113,7 @@ public class CopierData {
      *
      * @return the required ruleset.
      */
-    public Prefs getPreferences() throws SQLException {
+    public Prefs getPreferences() {
         if (process instanceof Process) {
             return serviceManager.getRulesetService().getPreferences((process).getRuleset());
         } else {

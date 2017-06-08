@@ -138,8 +138,7 @@ public class ExportDms extends ExportMets {
      *             but never thrown, see
      *             https://github.com/kitodo/kitodo-ugh/issues/2
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) throws IOException,
-            InterruptedException, WriteException, PreferencesException, TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, inZielVerzeichnis,
@@ -439,7 +438,7 @@ public class ExportDms extends ExportMets {
      *            String
      */
     public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, DAOException {
+            throws IOException {
 
         // download sources
         URI sources = serviceManager.getFileService().getSourceDirectory(process);
@@ -580,8 +579,7 @@ public class ExportDms extends ExportMets {
      *            the destination directory
      *
      */
-    private void directoryDownload(Process process, URI zielVerzeichnis)
-            throws DAOException, IOException, InterruptedException {
+    private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 

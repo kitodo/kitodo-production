@@ -684,7 +684,7 @@ public class ProjekteForm extends BasisForm {
     /**
      * Static Statistics.
      */
-    public String getProjectStatImages() throws IOException, InterruptedException {
+    public String getProjectStatImages() throws IOException {
         if (this.projectStatImages == null) {
             this.projectStatImages = System.currentTimeMillis() + "images.png";
             calcProjectStats(this.projectStatImages, true);
@@ -698,7 +698,7 @@ public class ProjekteForm extends BasisForm {
      * @return string of image file projectStatVolumes
      */
 
-    public String getProjectStatVolumes() throws IOException, InterruptedException {
+    public String getProjectStatVolumes() throws IOException {
         if (this.projectStatVolumes == null) {
             this.projectStatVolumes = System.currentTimeMillis() + "volumes.png";
             calcProjectStats(this.projectStatVolumes, false);

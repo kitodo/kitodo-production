@@ -53,7 +53,7 @@ public class Multipage {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(Multipage.class);
 
-    private void create(Process process) throws IOException, InterruptedException, DAOException {
+    private void create(Process process) throws IOException {
         /* alle tifs durchlaufen */
         URI pfad = serviceManager.getFileService().getImagesDirectory(process);
 

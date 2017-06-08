@@ -11,7 +11,6 @@
 
 package org.kitodo.api.docket;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collection;
@@ -27,7 +26,7 @@ public interface DocketInterface {
      *            - the uri to the schema xsl file
      * @return a docket file
      */
-    OutputStream generateDocket(DocketData docketData, URI xslFileUri) throws IOException;
+    OutputStream generateDocket(DocketData docketData, URI xslFileUri);
 
     /**
      * Generates multiple dockets
@@ -38,6 +37,6 @@ public interface DocketInterface {
      *            - the uri to the schema xsl file
      * @return a list of docket files.
      */
-    OutputStream generateMultipleDockets(Collection<DocketData> docketData, URI xslFileUri) throws IOException;
+    OutputStream generateMultipleDockets(Collection<DocketData> docketData, URI xslFileUri);
 
 }

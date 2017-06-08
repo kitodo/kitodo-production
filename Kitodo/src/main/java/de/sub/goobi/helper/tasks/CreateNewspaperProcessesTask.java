@@ -308,8 +308,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             getAddableMetadataTypes()
      */
     private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues,
-            String publicationRun)
-            throws TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException {
+            String publicationRun) {
 
         // initialise
         Prefs ruleset = serviceManager.getRulesetService().getPreferences(newProcess.getProzessKopie().getRuleset());

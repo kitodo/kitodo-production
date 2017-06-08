@@ -381,8 +381,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             it is waiting for the shell script to create the directory to
      *             finish
      */
-    private static List<LocalDate> getIssueDates(DigitalDocument act)
-            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
+    private static List<LocalDate> getIssueDates(DigitalDocument act) {
         List<LocalDate> result = new LinkedList<>();
         DocStruct logicalDocStruct = act.getLogicalDocStruct();
         for (DocStruct annualNode : skipIfNull(logicalDocStruct.getAllChildren())) {

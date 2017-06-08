@@ -34,8 +34,6 @@ import ugh.dl.Person;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 
 /**
@@ -66,8 +64,7 @@ public class ImportRussland {
      *            Process object
      */
     protected void parse(BufferedReader reader, Process inProzess) throws IOException, WrongImportFileException,
-            TypeNotAllowedForParentException, TypeNotAllowedAsChildException, MetadataTypeNotAllowedException,
-            ReadException, InterruptedException, PreferencesException, WriteException {
+            MetadataTypeNotAllowedException, ReadException, PreferencesException, WriteException {
 
         /*
          * prüfen, ob die Importdatei korrekt ist und wirklich zu dem Prozess

@@ -100,7 +100,7 @@ public class TaskService extends TitleSearchService<Task> {
         return taskDAO.find(id);
     }
 
-    public List<Task> findAll() throws DAOException {
+    public List<Task> findAll() {
         return taskDAO.findAll();
     }
 
@@ -417,8 +417,6 @@ public class TaskService extends TitleSearchService<Task> {
             }
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException: ", e.getMessage());
-        } catch (InterruptedException e) {
-            Helper.setFehlerMeldung("InterruptedException: ", e.getMessage());
         }
         return rueckgabe;
     }

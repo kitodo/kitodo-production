@@ -15,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 /**
  * SimpleGoobiJob as basis class for all big jobs
@@ -37,7 +36,7 @@ public abstract class AbstractGoobiJob implements Job, IGoobiJob {
      * JobExecutionContext)
      */
     @Override
-    public void execute(JobExecutionContext context) throws JobExecutionException {
+    public void execute(JobExecutionContext context) {
         if (getIsRunning() == false) {
             if (logger.isTraceEnabled()) {
                 logger.trace("start scheduled Job: " + getJobName());

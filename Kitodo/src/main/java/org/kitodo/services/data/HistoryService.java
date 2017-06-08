@@ -94,7 +94,7 @@ public class HistoryService extends SearchService<History> {
      *            object
      */
     protected void saveDependenciesToIndex(History history) throws CustomResponseException, IOException {
-        //TODO: is it possible that  process is modified during save to history?
+        // TODO: is it possible that process is modified during save to history?
         serviceManager.getProcessService().saveToIndex(history.getProcess());
     }
 
@@ -102,7 +102,7 @@ public class HistoryService extends SearchService<History> {
         return historyDAO.find(id);
     }
 
-    public List<History> findAll() throws DAOException {
+    public List<History> findAll() {
         return historyDAO.findAll();
     }
 

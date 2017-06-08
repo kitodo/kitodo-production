@@ -89,7 +89,7 @@ public class TemplateService extends SearchService<Template> {
         return templateDAO.find(id);
     }
 
-    public List<Template> findAll() throws DAOException {
+    public List<Template> findAll() {
         return templateDAO.findAll();
     }
 

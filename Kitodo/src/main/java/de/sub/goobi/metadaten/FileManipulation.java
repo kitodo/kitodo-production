@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +83,7 @@ public class FileManipulation {
     /**
      * File upload with binary copying.
      */
-    public void uploadFile() throws URISyntaxException {
+    public void uploadFile() {
         InputStream inputStream = null;
         OutputStream outputStream = null;
         try {
@@ -578,10 +577,6 @@ public class FileManipulation {
                                     }
                                 } catch (IOException e) {
                                     logger.error(e);
-                                } catch (DAOException e) {
-                                    logger.error(e);
-                                } catch (InterruptedException e) {
-                                    logger.error(e);
                                 }
 
                             }
@@ -607,10 +602,6 @@ public class FileManipulation {
                                     }
                                     fileService.copyFileToDirectory(file, directory);
                                 } catch (IOException e) {
-                                    logger.error(e);
-                                } catch (DAOException e) {
-                                    logger.error(e);
-                                } catch (InterruptedException e) {
                                     logger.error(e);
                                 }
                             }
