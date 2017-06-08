@@ -42,7 +42,6 @@ import ugh.dl.DocStruct;
 import ugh.dl.Prefs;
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
-import ugh.exceptions.TypeNotAllowedAsChildException;
 import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.fileformats.mets.MetsModsImportExport;
 
@@ -300,12 +299,6 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            verbal description of the course of appearance
      * @throws TypeNotAllowedForParentException
      *             if this DocStruct is not allowed for a parent
-     * @throws TypeNotAllowedAsChildException
-     *             if a child should be added, but it's DocStruct type isn't
-     *             member of this instance's DocStruct type
-     * @throws MetadataTypeNotAllowedException
-     *             if no corresponding MetadataType object is returned by
-     *             getAddableMetadataTypes()
      */
     private void createLogicalStructure(ProzesskopieForm newProcess, List<IndividualIssue> issues,
             String publicationRun) {

@@ -239,8 +239,6 @@ public class ShellScript {
      *            A single line command which mustn’t contain parameters
      *            containing white spaces.
      * @return error level on success, 1 if an error occurs
-     * @throws InterruptedException
-     *             In case the script was interrupted due to concurrency
      * @throws IOException
      *             If an I/O error happens
      */

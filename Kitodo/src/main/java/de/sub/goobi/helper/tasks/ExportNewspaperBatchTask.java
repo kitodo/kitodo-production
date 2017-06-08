@@ -365,21 +365,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * interpreted as an integer.
      *
      * @return a list with the dates of all issues in this process
-     * @throws PreferencesException
-     *             if the no node corresponding to the file format is available
-     *             in the rule set used
-     * @throws ReadException
-     *             if the meta data file cannot be read
-     * @throws DAOException
-     *             if an error occurs while saving the fact that the process has
-     *             been swapped back in to the database
-     * @throws IOException
-     *             if creating the process directory or reading the meta data
-     *             file fails
-     * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to
-     *             finish
      */
     private static List<LocalDate> getIssueDates(DigitalDocument act) {
         List<LocalDate> result = new LinkedList<>();
@@ -682,8 +667,6 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *            the root of the logical document hierarchy to modify
      * @param currentYear
      *            a map of all issue dates along with their pointer URLs
-     * @param ownMetsPointerURL
-     *            the current year—issues of other years are skipped
      * @param ownMetsPointerURL
      *            my own METS pointer URL—issues that share the same URL are
      *            also skipped

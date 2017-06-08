@@ -530,8 +530,6 @@ public class UserService extends SearchService<User> {
      * configuration.
      *
      * @return path as String
-     * @throws InterruptedException
-     *             add description
      * @throws IOException
      *             add description
      */
