@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
@@ -109,7 +108,7 @@ public class Indexer<T extends BaseBean, S extends BaseType> extends Index {
      */
     @SuppressWarnings("unchecked")
     public String performMultipleRequests(List<T> baseBeans, S baseType)
-            throws DAOException, IOException, InterruptedException, CustomResponseException {
+            throws IOException, InterruptedException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
         String response;
 

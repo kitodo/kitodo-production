@@ -13,7 +13,6 @@ package org.goobi.production.flow.jobs;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 public interface IGoobiJob {
 
@@ -21,9 +20,8 @@ public interface IGoobiJob {
      * execute this {@link Job} for all database and metadata content don't
      * overwrite this method.
      *
-     * @throws JobExecutionException
      */
-    public abstract void execute(JobExecutionContext context) throws JobExecutionException;
+    public abstract void execute(JobExecutionContext context);
 
     /**
      * override this method to let the job be called automatically.

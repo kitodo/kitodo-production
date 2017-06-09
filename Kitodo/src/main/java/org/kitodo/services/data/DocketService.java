@@ -50,7 +50,7 @@ public class DocketService extends TitleSearchService<Docket> {
         return docketDAO.find(id);
     }
 
-    public List<Docket> findAll() throws DAOException {
+    public List<Docket> findAll() {
         return docketDAO.findAll();
     }
 

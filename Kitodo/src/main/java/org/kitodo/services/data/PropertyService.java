@@ -110,7 +110,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * 
      * @return list of all properties
      */
-    public List<Property> findAll() throws DAOException {
+    public List<Property> findAll() {
         return propertyDAO.findAll();
     }
 
@@ -188,7 +188,6 @@ public class PropertyService extends TitleSearchService<Property> {
         query.must(createSimpleQuery("value", value, true, Operator.AND));
         return searcher.findDocuments(query.toString());
     }
-
 
     /**
      * Method adds all object found in database to Elastic Search index.

@@ -94,7 +94,7 @@ public class ProjectService extends TitleSearchService<Project> {
         return projectDAO.find(id);
     }
 
-    public List<Project> findAll() throws DAOException {
+    public List<Project> findAll() {
         return projectDAO.findAll();
     }
 

@@ -13,7 +13,6 @@ package de.sub.goobi.helper.ldap;
 
 import de.sub.goobi.config.ConfigCore;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -76,7 +75,7 @@ public class LdapUser implements DirContext {
      *            String
      */
     public void configure(User inUser, String inPassword, String inUidNumber)
-            throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
+            throws NamingException, NoSuchAlgorithmException {
         MD4 digester = new MD4();
         if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
 

@@ -52,7 +52,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
         return userGroupDAO.find(id);
     }
 
-    public List<UserGroup> findAll() throws DAOException {
+    public List<UserGroup> findAll() {
         return userGroupDAO.findAll();
     }
 
@@ -139,7 +139,8 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            of the searched user group
      * @return list of search results
      */
-    public List<SearchResult> findByPermission(Integer permission) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByPermission(Integer permission)
+            throws CustomResponseException, IOException, ParseException {
         QueryBuilder query = createSimpleQuery("permission", permission, true);
         return searcher.findDocuments(query.toString());
     }

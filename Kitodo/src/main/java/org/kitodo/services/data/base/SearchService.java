@@ -285,7 +285,7 @@ public abstract class SearchService<T extends BaseBean> {
      * @return list of beans
      */
     public List<? extends BaseBean> convertSearchResultsToObjectList(List<SearchResult> searchResults, String table)
-            throws DAOException, IOException {
+            throws DAOException {
         StringBuilder query = new StringBuilder();
         query.append("FROM ");
         query.append(table);
@@ -306,7 +306,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            result from ElasticSearch
      * @return bean object
      */
-    public T convertSearchResultToObject(SearchResult searchResult) throws DAOException, IOException {
+    public T convertSearchResultToObject(SearchResult searchResult) throws DAOException {
         if (searchResult.getId() == null) {
             // TODO: maybe here could be used some instancing of generic
             // class...
@@ -330,7 +330,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            contain given value
      * @return query
      */
-    protected QueryBuilder createSimpleQuery(String key, Integer id, boolean contains) throws IOException {
+    protected QueryBuilder createSimpleQuery(String key, Integer id, boolean contains) {
         if (contains && id != null) {
             return matchQuery(key, id);
         } else if (!contains && id != null) {
@@ -379,8 +379,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            one word
      * @return query
      */
-    protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator)
-            throws IOException {
+    protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator) {
         if (operator == null) {
             operator = Operator.OR;
         }
@@ -404,8 +403,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            as SearchCondition - bigger, smaller and so on
      * @return query for searching for date in exact range
      */
-    protected QueryBuilder createSimpleCompareDateQuery(String key, Date date, SearchCondition searchCondition)
-            throws IOException {
+    protected QueryBuilder createSimpleCompareDateQuery(String key, Date date, SearchCondition searchCondition) {
         QueryBuilder query = null;
         switch (searchCondition) {
             case EQUAL:

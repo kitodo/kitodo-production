@@ -42,7 +42,6 @@ import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
-import ugh.dl.DocStructType;
 import ugh.dl.Fileformat;
 import ugh.dl.Metadata;
 import ugh.exceptions.PreferencesException;
@@ -117,29 +116,8 @@ public class ExportDms extends ExportMets {
      * @param exportDmsTask
      *            ExportDmsTask object to submit progress updates and errors
      * @return false if an error condition was caught, true otherwise
-     * @throws IOException
-     *             if “kitodo_projects.xml” could not be read
-     * @throws InterruptedException
-     *             if the thread running the script to create a directory is
-     *             interrupted by another thread while it is waiting
-     * @throws WriteException
-     *             if a FileNotFoundException occurs when opening the
-     *             FileOutputStream to write the METS/MODS object
-     * @throws PreferencesException
-     *             if the file format selected for DMS export in the project of
-     *             the process to export that implements
-     *             {@link ugh.dl.Fileformat#getDigitalDocument()} throws it
-     * @throws DAOException
-     *             if saving the fact that a process has been swapped back in to
-     *             the database fails
-     * @throws TypeNotAllowedForParentException
-     *             declared in
-     *             {@link ugh.dl.DigitalDocument#createDocStruct(DocStructType)}
-     *             but never thrown, see
-     *             https://github.com/kitodo/kitodo-ugh/issues/2
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) throws IOException,
-            InterruptedException, WriteException, PreferencesException, TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, ExportDmsTask exportDmsTask) {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process, inZielVerzeichnis,
@@ -439,7 +417,7 @@ public class ExportDms extends ExportMets {
      *            String
      */
     public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, DAOException {
+            throws IOException {
 
         // download sources
         URI sources = serviceManager.getFileService().getSourceDirectory(process);
@@ -580,8 +558,7 @@ public class ExportDms extends ExportMets {
      *            the destination directory
      *
      */
-    private void directoryDownload(Process process, URI zielVerzeichnis)
-            throws DAOException, IOException, InterruptedException {
+    private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
 
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 

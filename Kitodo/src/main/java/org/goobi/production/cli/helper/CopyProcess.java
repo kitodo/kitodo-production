@@ -26,7 +26,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -583,8 +582,8 @@ public class CopyProcess extends ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
 
-    public Process NeuenProzessAnlegen2() throws ReadException, IOException, InterruptedException, PreferencesException,
-            DAOException, WriteException, CustomResponseException, URISyntaxException {
+    public Process NeuenProzessAnlegen2()
+            throws ReadException, IOException, PreferencesException, WriteException, CustomResponseException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -665,8 +664,8 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return Process object
      */
-    public Process createProcess(ImportObject io) throws ReadException, IOException, InterruptedException,
-            PreferencesException, DAOException, WriteException, CustomResponseException, URISyntaxException {
+    public Process createProcess(ImportObject io)
+            throws ReadException, IOException, PreferencesException, WriteException, CustomResponseException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);

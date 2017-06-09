@@ -17,6 +17,7 @@ import de.sub.goobi.export.download.TiffHeader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.URI;
@@ -240,13 +241,9 @@ public class WebDav implements Serializable {
         }
         try {
             ShellScript.legacyCallShell2(command);
-        } catch (java.io.IOException ioe) {
+        } catch (IOException ioe) {
             logger.error("IOException downloadToHome()", ioe);
             Helper.setFehlerMeldung("Download aborted, IOException", ioe.getMessage());
-        } catch (InterruptedException e) {
-            logger.error("InterruptedException downloadToHome()", e);
-            Helper.setFehlerMeldung("Download aborted, InterruptedException", e.getMessage());
-            logger.error(e);
         }
     }
 

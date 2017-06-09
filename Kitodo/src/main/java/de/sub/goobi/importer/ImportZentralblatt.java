@@ -291,7 +291,7 @@ public class ImportZentralblatt {
      * General parsing.
      */
     private void parseGeneral(DocStruct inStruct, String myLeft, String myRight)
-            throws WrongImportFileException, TypeNotAllowedForParentException, MetadataTypeNotAllowedException {
+            throws WrongImportFileException, MetadataTypeNotAllowedException {
 
         // logger.debug(myLeft);
         // logger.debug(myRight);

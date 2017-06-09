@@ -16,14 +16,12 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
 
 import ugh.exceptions.MetadataTypeNotAllowedException;
 import ugh.exceptions.PreferencesException;
@@ -72,8 +70,8 @@ public class Import {
     }
 
     private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
-            TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, InterruptedException,
-            PreferencesException, DAOException, WriteException, URISyntaxException {
+            TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, PreferencesException,
+            WriteException {
         logger.debug("Einlesen() - start");
         BufferedReader reader = null;
         try {

@@ -239,12 +239,10 @@ public class ShellScript {
      *            A single line command which mustn’t contain parameters
      *            containing white spaces.
      * @return error level on success, 1 if an error occurs
-     * @throws InterruptedException
-     *             In case the script was interrupted due to concurrency
      * @throws IOException
      *             If an I/O error happens
      */
-    public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException, InterruptedException {
+    public static int legacyCallShell2(String nonSpacesafeScriptingCommand) throws IOException {
         String[] tokenisedCommand = nonSpacesafeScriptingCommand.split("\\s");
         ShellScript s;
         int err = ShellScript.ERRORLEVEL_ERROR;

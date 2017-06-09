@@ -1459,7 +1459,7 @@ public class ProzessverwaltungForm extends BasisForm {
         CalcMetadataAndImages(this.page.getCompleteList());
     }
 
-    private void CalcMetadataAndImages(List<Process> inListe) throws IOException, InterruptedException, DAOException {
+    private void CalcMetadataAndImages(List<Process> inListe) {
 
         this.myAnzahlList = new ArrayList<ProcessCounterObject>();
         int allMetadata = 0;
@@ -1826,8 +1826,6 @@ public class ProzessverwaltungForm extends BasisForm {
             xmlExport.startExport(this.myProzess, ziel);
         } catch (IOException e) {
             Helper.setFehlerMeldung("could not write logfile to home directory: ", e);
-        } catch (InterruptedException e) {
-            Helper.setFehlerMeldung("could not execute command to write logfile to home directory", e);
         }
     }
 

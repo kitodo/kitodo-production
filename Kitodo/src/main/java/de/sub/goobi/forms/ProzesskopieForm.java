@@ -380,7 +380,7 @@ public class ProzesskopieForm {
      *
      * @return list of SelectItem objects
      */
-    public List<SelectItem> getProzessTemplates() throws DAOException {
+    public List<SelectItem> getProzessTemplates() {
         List<SelectItem> myProzessTemplates = new ArrayList<SelectItem>();
         Session session = Helper.getHibernateSession();
         Criteria crit = session.createCriteria(Process.class);

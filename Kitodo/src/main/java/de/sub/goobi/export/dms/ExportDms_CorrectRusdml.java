@@ -282,8 +282,7 @@ public class ExportDms_CorrectRusdml {
      * @param myProcess
      *            Process object
      */
-    private void rusdmlAddMissingMetadata(DocStruct inTopStruct, Process myProcess)
-            throws ExportFileException, UghHelperException {
+    private void rusdmlAddMissingMetadata(DocStruct inTopStruct, Process myProcess) throws ExportFileException {
         /*
          * bei fehlender digitaler PPN: Fehlermeldung und raus
          */

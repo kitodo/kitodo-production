@@ -609,7 +609,7 @@ public class BatchStepHelper {
      * @return list of selected items
      */
     @SuppressWarnings("unchecked")
-    public List<SelectItem> getNextStepsForProblemSolution() throws CustomResponseException {
+    public List<SelectItem> getNextStepsForProblemSolution() {
         List<SelectItem> answer = new ArrayList<SelectItem>();
         List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
                 .add(Restrictions.gt("ordering", this.currentStep.getOrdering())).add(Restrictions.eq("priority", 10))
