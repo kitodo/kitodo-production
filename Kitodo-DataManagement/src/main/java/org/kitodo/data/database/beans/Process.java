@@ -13,6 +13,8 @@ package org.kitodo.data.database.beans;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -558,5 +560,69 @@ public class Process extends BaseBean {
      */
     public Boolean getTifDirectoryExists() {
         return false;
+    }
+
+    /**
+     * Filter and sort after creation date list of process properties for
+     * correction and solution messages.
+     *
+     * @return list of Prozesseigenschaft objects
+     */
+    public List<Property> getSortedCorrectionSolutionMessages() {
+        List<Property> filteredList;
+        List<Property> lpe = this.getProperties();
+
+        if (lpe.isEmpty()) {
+            return new ArrayList<Property>();
+        }
+
+        filteredList = filterForCorrectionSolutionMessages(lpe);
+
+        // sorting after creation date
+        Collections.sort(filteredList, new Comparator<Property>() {
+            @Override
+            public int compare(Property o1, Property o2) {
+                Date o1Date = o1.getCreationDate();
+                Date o2Date = o2.getCreationDate();
+                if (o1Date == null) {
+                    o1Date = new Date();
+                }
+                if (o2Date == null) {
+                    o2Date = new Date();
+                }
+                return o1Date.compareTo(o2Date);
+            }
+        });
+
+        return new ArrayList<Property>(filteredList);
+    }
+
+    /**
+     * Filter for correction / solution messages.
+     *
+     * @param propertyList
+     *            List of process properties
+     * @return List of filtered correction / solution messages
+     */
+    private List<Property> filterForCorrectionSolutionMessages(List<Property> propertyList) {
+        ArrayList<Property> filteredList = new ArrayList<Property>();
+        List<String> listOfTranslations = new ArrayList<String>();
+        String propertyTitle = "";
+
+        listOfTranslations.add("Korrektur notwendig");
+        listOfTranslations.add("Korrektur durchgefuehrt");
+
+        if ((propertyList == null) || (propertyList.size() == 0)) {
+            return filteredList;
+        }
+
+        // filtering for correction and solution messages
+        for (Property property : propertyList) {
+            propertyTitle = property.getTitle();
+            if (listOfTranslations.contains(propertyTitle)) {
+                filteredList.add(property);
+            }
+        }
+        return filteredList;
     }
 }
