@@ -1810,7 +1810,7 @@ public class Metadaten {
                         logger.trace("myBildNummer: " + this.myBildNummer);
                     }
                     /* Pages-Verzeichnis ermitteln */
-                    String myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
+                    URI myPfad = ConfigCore.getTempImagesPathAsCompleteDirectory();
                     if (logger.isTraceEnabled()) {
                         logger.trace("myPfad: " + myPfad);
                     }
@@ -1844,8 +1844,8 @@ public class Metadaten {
                                             + ", using image from " + new File(serviceManager.getProcessService()
                                                     .getImagesTifDirectory(true, this.myProzess)).getName());
                         }
-                        this.imagehelper.scaleFile(tiffconverterpfad, URI.create(myPfad + mySession),
-                                this.myBildGroesse, this.myImageRotation);
+                        this.imagehelper.scaleFile(tiffconverterpfad, myPfad.resolve(mySession), this.myBildGroesse,
+                                this.myImageRotation);
                         logger.trace("scaleFile");
                     } catch (Exception e) {
                         Helper.setFehlerMeldung("could not find image folder", e);

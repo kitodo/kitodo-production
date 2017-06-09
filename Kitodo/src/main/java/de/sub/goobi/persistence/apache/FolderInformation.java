@@ -199,9 +199,9 @@ public class FolderInformation {
      * @return path
      */
     public URI getImagesDirectory() {
-        String pfad = getProcessDataDirectory() + "images" + File.separator;
+        URI pfad = getProcessDataDirectory().resolve("images" + File.separator);
 
-        return URI.create(pfad);
+        return pfad;
     }
 
     /**
@@ -212,31 +212,11 @@ public class FolderInformation {
     public URI getProcessDataDirectory() {
         String pfad = metadataPath + this.id + File.separator;
         pfad = pfad.replaceAll(" ", "__");
-        return URI.create(pfad);
+        return new File(pfad).toURI();
     }
 
     public URI getOcrDirectory() {
         return URI.create(getProcessDataDirectory() + "ocr" + File.separator);
-    }
-
-    public URI getTxtDirectory() {
-        return URI.create(getOcrDirectory() + this.title + "_txt" + File.separator);
-    }
-
-    public URI getWordDirectory() {
-        return URI.create(getOcrDirectory() + this.title + "_wc" + File.separator);
-    }
-
-    public URI getPdfDirectory() {
-        return URI.create(getOcrDirectory() + this.title + "_pdf" + File.separator);
-    }
-
-    public URI getAltoDirectory() {
-        return URI.create(getOcrDirectory() + this.title + "_alto" + File.separator);
-    }
-
-    public URI getImportDirectory() {
-        return URI.create(getProcessDataDirectory() + "import" + File.separator);
     }
 
     public URI getMetadataFilePath() {

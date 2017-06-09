@@ -45,12 +45,12 @@ public class StatisticsManagerTest {
     static StatisticsManager testManager2;
     static Locale locale = new Locale("GERMAN");
     static IDataSource testFilter = new UserDefinedFilter("stepdone:5");
-    private static String tempPath;
+    private static URI tempPath;
 
     @BeforeClass
     public static void setUp() {
-        File f = new File("pages/imagesTemp");
-        tempPath = f.getAbsolutePath() + File.separator;
+        File f = new File("pages/imagesTemp/");
+        tempPath = f.toURI();
 
         testManager = new StatisticsManager(StatisticsMode.THROUGHPUT, testFilter, locale);
         testManager2 = new StatisticsManager(StatisticsMode.PRODUCTION, testFilter, locale);
@@ -88,13 +88,11 @@ public class StatisticsManagerTest {
             }
         };
         ArrayList<URI> data = serviceManager.getFileService().getSubUris(filter, dir.toURI());
-        File file;
         if (data == null || data.size() == 0) {
             return;
         }
         for (URI aData : data) {
-            file = new File(tempPath + aData);
-            boolean success = serviceManager.getFileService().delete(file.toURI());
+            boolean success = serviceManager.getFileService().delete(tempPath.resolve(aData));
             if (!success) {
                 throw new IllegalArgumentException("Delete: deletion failed");
             }

@@ -18,6 +18,7 @@ import de.intranda.commons.chart.results.DataTable;
 import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigCore;
 
+import java.net.URI;
 import java.util.Locale;
 
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -36,12 +37,12 @@ public class StatisticsRenderingElementTest {
     private DataTable inDataTable = new DataTable("testTable");
     private IStatisticalQuestion inQuestion = testManager.getStatisticMode().getStatisticalQuestion();
     private StatisticsRenderingElement testElement = new StatisticsRenderingElement(inDataTable, inQuestion);
-    private static String tempPath;
+    private static URI tempPath;
 
     @BeforeClass
     public static void setUp() {
-        File f = new File("pages/imagesTemp");
-        tempPath = f.getAbsolutePath() + File.pathSeparator;
+        File f = new File("pages/imagesTemp/");
+        tempPath = f.toURI();
     }
 
     @Test

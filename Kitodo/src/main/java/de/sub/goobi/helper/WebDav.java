@@ -149,7 +149,7 @@ public class WebDav implements Serializable {
             if (!fileService.fileExist(projectDirectory)
                     && !fileService.isDirectory(fileService.createResource(projectDirectory.toString()))) {
                 List<String> param = new ArrayList<>();
-                param.add(String.valueOf(URI.create(nach.toString().replaceAll(" ", "__"))));
+                param.add(nach.toString().replaceAll(" ", "__"));
                 Helper.setFehlerMeldung(Helper.getTranslation("MassDownloadProjectCreationError", param));
                 logger.error("Can not create project directory " + URI.create(nach.toString().replaceAll(" ", "__")));
                 return;
@@ -258,8 +258,8 @@ public class WebDav implements Serializable {
             }
             TiffHeader tif = new TiffHeader(inProcess);
             try (BufferedWriter outfile = new BufferedWriter(new OutputStreamWriter(
-                    fileService.write(URI
-                            .create(serviceManager.getFileService().getImagesDirectory(inProcess) + "tiffwriter.conf")),
+                    fileService.write(
+                            serviceManager.getFileService().getImagesDirectory(inProcess).resolve("tiffwriter.conf")),
                     StandardCharsets.UTF_8));) {
                 outfile.write(tif.getTiffAlles());
             }

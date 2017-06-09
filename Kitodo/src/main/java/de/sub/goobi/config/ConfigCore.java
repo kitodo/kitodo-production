@@ -28,7 +28,7 @@ import org.kitodo.services.ServiceManager;
 
 public class ConfigCore extends ConfigMain {
     private static final Logger logger = LogManager.getLogger(ConfigCore.class);
-    private static String imagesPath = null;
+    private static URI imagesPath = null;
     private static ServiceManager serviceManager = new ServiceManager();
     private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
     public static final String CONFIG_DIR = "KonfigurationVerzeichnis";
@@ -83,27 +83,29 @@ public class ConfigCore extends ConfigMain {
     /**
      * den absoluten Pfad für die temporären Images zurückgeben.
      */
-    public static String getTempImagesPathAsCompleteDirectory() {
+    public static URI getTempImagesPathAsCompleteDirectory() {
         FacesContext context = FacesContext.getCurrentInstance();
         String fileName;
+        URI internUri = null;
         if (imagesPath != null) {
-            fileName = imagesPath;
+            internUri = imagesPath;
         } else {
             HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
             fileName = session.getServletContext().getRealPath("/pages") + File.separator;
 
             /* den Ordner neu anlegen, wenn er nicht existiert */
             try {
-                serviceManager.getFileService().createDirectory(URI.create(fileName), "imagesTemp");
+                internUri = serviceManager.getFileService().getInternUri(new File(fileName).toURI());
+                serviceManager.getFileService().createDirectory(internUri, "imagesTemp");
             } catch (Exception ioe) {
                 logger.error("IO error: " + ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
             }
         }
-        return fileName;
+        return internUri;
     }
 
-    public static void setImagesPath(String path) {
+    public static void setImagesPath(URI path) {
         imagesPath = path;
     }
 
