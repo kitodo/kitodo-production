@@ -290,7 +290,7 @@
                                                 <!-- Buttons to copy and remove blocks -->
                                                 <h:commandLink title="#{msgs['calendar.block.addFirst']}"
                                                                rendered="#{CalendarForm.blank}" styleClass="actionLink">
-                                                    <h:graphicImage style="vertical-align: text-bottom;"
+                                                    <h:graphicImage style="vertical-align: text-bottom;" alt=""
                                                                     value="/newpages/images/buttons/edit_20.gif"
                                                                     rendered="#{CalendarForm.blank}"/>
                                                 </h:commandLink>
@@ -298,7 +298,7 @@
                                                                action="#{CalendarForm.copyBlockClick}"
                                                                onclick="if(!addClickQuery()){return false;}"
                                                                rendered="#{not CalendarForm.blank}" styleClass="actionLink">
-                                                    <h:graphicImage style="vertical-align: text-bottom;"
+                                                    <h:graphicImage style="vertical-align: text-bottom;" alt=""
                                                                     value="/newpages/images/buttons/star_blue.gif"
                                                                     rendered="#{not CalendarForm.blank}"/>
                                                 </h:commandLink>
@@ -307,7 +307,7 @@
                                                                action="#{CalendarForm.removeBlockClick}"
                                                                onclick="if(!removeClickQuery()){return false;}"
                                                                styleClass="actionLink">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="delete"
                                                             value="/newpages/images/buttons/waste1_20px.gif"/>
                                                 </h:commandLink>
                                             </div>
@@ -335,7 +335,7 @@
                                                                        onclick="if(!deleteClickQuery()){return false;}"
                                                                        styleClass="rightText"
                                                                        style="margin-left: 8px; margin-top: -2px;">
-                                                            <h:graphicImage
+                                                            <h:graphicImage alt="delete"
                                                                     value="/newpages/images/buttons/waste1_20px.gif"/>
                                                         </h:commandLink>
 
@@ -413,7 +413,7 @@
                                                 <!-- Add button -->
                                                 <h:commandLink title="#{msgs['calendar.issue.add']}"
                                                                action="#{CalendarForm.addIssueClick}">
-                                                    <h:graphicImage style="margin-left: -5px;"
+                                                    <h:graphicImage style="margin-left: -5px;" alt="add"
                                                                     value="/newpages/images/buttons/star_blue.gif"/>
                                                 </h:commandLink>
 

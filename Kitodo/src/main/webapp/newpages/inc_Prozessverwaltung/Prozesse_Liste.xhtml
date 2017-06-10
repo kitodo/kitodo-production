@@ -94,9 +94,9 @@
                 <!--<f:ajax render="myself1"/>-->
             </h:commandLink>
             <!--<a4j:commandLink reRender="myself1" id="myself1">-->
-            <!--<h:graphicImage value="/newpages/images/check_true.gif" style="margin-right:4px"-->
+            <!--<h:graphicImage value="/newpages/images/check_true.gif" alt="select all" style="margin-right:4px"-->
             <!--rendered="#{item.selected}"/>-->
-            <!--<h:graphicImage value="/newpages/images/check_false.gif" style="margin-right:4px"-->
+            <!--<h:graphicImage value="/newpages/images/check_false.gif" alt="select none" style="margin-right:4px"-->
             <!--rendered="#{!item.selected}"/>-->
             <!--<x:updateActionListener value="#{item.selected?false:true}" property="#{item.selected}"/>-->
             <!--<a4j:ajaxListener type="org.ajax4jsf.ajax.ForceRender"/>-->
@@ -215,13 +215,13 @@
                         <f:facet name="header">
                             <h:outputText value="#{msgs.status}"/>
                         </f:facet>
-                        <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}"
+                        <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}" alt=""
                                         title="#{step.processingStatusEnum.title}"
                                         rendered="#{step.processingStatusEnum == 'OPEN' || step.processingStatusEnum == 'LOCKED'}"/>
-                        <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}"
+                        <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}" alt=""
                                         title="#{step.processingStatusEnum.title}: #{step.processingUser!=null and step.processingUser.id!=0?step.processingUser.fullName:''} (#{step.processingTime !=null?step.processingTimeAsFormattedString:''})  - #{step.editTypeEnum.title}"
                                         rendered="#{(step.processingStatusEnum == 'DONE' || step.processingStatusEnum == 'INWORK') and !HelperForm.anonymized}"/>
-                        <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}"
+                        <h:graphicImage value="#{step.processingStatusEnum.smallImagePath}" alt=""
                                         title="#{step.processingStatusEnum.title}: #{step.editTypeEnum.title}"
                                         rendered="#{(step.processingStatusEnum == 'DONE' || step.processingStatusEnum == 'INWORK') and HelperForm.anonymized}"/>
                     </h:column>

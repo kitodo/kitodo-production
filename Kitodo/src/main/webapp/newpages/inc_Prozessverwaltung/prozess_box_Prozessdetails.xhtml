@@ -31,7 +31,7 @@
                                 </td>
                                 <td class="main_statistikboxen_row1" align="right">
                                     <h:commandLink action="#{ProzessverwaltungForm.Reload}">
-                                        <h:graphicImage value="/newpages/images/reload.gif"/>
+                                        <h:graphicImage value="/newpages/images/reload.gif" alt="reload"/>
                                     </h:commandLink>
                                 </td>
                             </tr>
@@ -50,7 +50,7 @@
                                                 <td rowspan="2" align="right">
                                                     <h:commandLink title="#{msgs.prozessdetailsBearbeiten}"
                                                                    action="#{NavigationForm.Reload}" style=";margin-right:20px">
-                                                        <h:graphicImage value="/newpages/images/buttons/edit_20.gif"/>
+                                                        <h:graphicImage value="/newpages/images/buttons/edit_20.gif" alt="edit"/>
                                                         <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}"
                                                                                 value="prozess"/>
                                                     </h:commandLink>
@@ -101,9 +101,9 @@
                                                 <h:outputText value="#{msgs.inAuswahllisteAnzeigen}:"/>
                                             </td>
                                             <td>
-                                                <h:graphicImage value="/newpages/images/check_false.gif"
+                                                <h:graphicImage value="/newpages/images/check_false.gif" alt="do not show in list"
                                                                 rendered="#{not ProzessverwaltungForm.myProzess.inChoiceListShown}"/>
-                                                <h:graphicImage value="/newpages/images/check_true.gif"
+                                                <h:graphicImage value="/newpages/images/check_true.gif" alt="show in list"
                                                                 rendered="#{ProzessverwaltungForm.myProzess.inChoiceListShown}"/>
                                             </td>
                                         </tr>
@@ -113,9 +113,9 @@
                                                 <h:outputText value="#{msgs.istTemplate}:"/>
                                             </td>
                                             <td>
-                                                <h:graphicImage value="/newpages/images/check_false.gif"
+                                                <h:graphicImage value="/newpages/images/check_false.gif" alt="is not template"
                                                                 rendered="#{not ProzessverwaltungForm.myProzess.template}"/>
-                                                <h:graphicImage value="/newpages/images/check_true.gif"
+                                                <h:graphicImage value="/newpages/images/check_true.gif" alt="is template"
                                                                 rendered="#{ProzessverwaltungForm.myProzess.template}"/>
                                             </td>
                                         </tr>

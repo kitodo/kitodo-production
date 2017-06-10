@@ -66,13 +66,13 @@
                 <h:outputText value="#{msgs.auswahl}"/>
             </f:facet>
             <h:commandLink action="#{MassImportForm.plugin.addDocstruct}">
-                <h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px"/>
+                <h:graphicImage value="/newpages/images/plus.gif" style="margin-right:4px" alt="add docstruct"/>
 
             </h:commandLink>
 
             <h:commandLink action="#{MassImportForm.plugin.deleteDocstruct}"
                            rendered="#{MassImportForm.docstructssize > 1}">
-                <h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px"/>
+                <h:graphicImage value="/newpages/images/minus.gif" style="margin-right:4px" alt="remove docstruct"/>
                 <t:updateActionListener property="#{MassImportForm.plugin.docstruct}" value="#{docstruct}"/>
             </h:commandLink>
         </h:column>

@@ -154,7 +154,7 @@
         <h:panelGrid columns="2">
             <!-- Bearbeiten-Schaltknopf: konkrete Prozesse -->
             <h:commandLink action="ProzessverwaltungBearbeiten" id="edit1" title="#{msgs.prozessBearbeiten}">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif" style="margin-right:3px" alt="Edit"/>
+                <h:graphicImage value="/newpages/images/buttons/goInto.gif" style="margin-right:3px" alt="edit"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.myProzess}" value="#{item.process}"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.modusBearbeiten}" value=""/>
             </h:commandLink>
@@ -348,7 +348,8 @@
             </t:div>
         </f:facet>
     
-        <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}" title="#{item.processingStatusEnum.title}"/>
+        <h:graphicImage alt="" value="#{item.processingStatusEnum.bigImagePath}"
+                        title="#{item.processingStatusEnum.title}"/>
     
         <h:outputText value="!" style="color:red;font-weight:bold;font-size:20px;margin-left:5px"
                       rendered="#{item.priority == 1}"/>
