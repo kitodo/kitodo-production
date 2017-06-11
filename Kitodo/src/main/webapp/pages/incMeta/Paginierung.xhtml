@@ -126,13 +126,13 @@
                                 <h:commandLink rendered="#{Metadaten.paginierungSeitenProImage!=3}"
                                                  title="#{msgs.blattzaehlung}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage
+                                    <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_blatt_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="3"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
                                 </h:commandLink>
-                                <h:graphicImage
+                                <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginierungSeitenProImage==3}"
                                         value="/newpages/images/buttons/paginierung_blatt.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
@@ -148,7 +148,7 @@
                                     <t:updateActionListener value="4"
                                                             property="#{Metadaten.paginierungSeitenProImage}"/>
                                 </h:commandLink>
-                                <h:graphicImage
+                                <h:graphicImage alt=""
                                         rendered="#{Metadaten.paginierungSeitenProImage==4}"
                                         value="/newpages/images/buttons/paginierung_blatt_rectoverso.svg"
                                         style="margin-left:4px;margin-right:6px;vertical-align:middle"
@@ -158,7 +158,7 @@
                                         rendered="#{Metadaten.paginierungSeitenProImage!=5}"
                                         title="#{msgs.seitenzaehlungrectoverso}">
                                     <f:ajax render="PaginierungActionBox myMessages mygrid10"/>
-                                    <h:graphicImage
+                                    <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_seite_rectoverso_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="5"
@@ -174,7 +174,7 @@
                                         rendered="#{Metadaten.paginierungSeitenProImage!=6}"
                                         title="#{msgs.seitenzaehlungdoppelseiten}">
                                     <f:ajax render="PaginierungActionBox,myMessages,mygrid10"/>
-                                    <h:graphicImage
+                                    <h:graphicImage alt=""
                                             value="/newpages/images/buttons/paginierung_doppelseite_inactive.svg"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                     <t:updateActionListener value="6"
