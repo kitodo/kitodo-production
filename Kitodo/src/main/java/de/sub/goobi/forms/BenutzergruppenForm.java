@@ -121,7 +121,7 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * This method the user group list without applying any filters whenever the bean is constructed.
+     * This method initializes the user group list without applying any filters whenever the bean is constructed.
      */
     @PostConstruct
     public void initializeUserGroupList() {
@@ -133,6 +133,10 @@ public class BenutzergruppenForm extends BasisForm {
         return this.zurueck;
     }
 
+    /**
+     * Method being used as viewAction for user group edit form.
+     * If 'userGroupId' is '0', the form for creating a new user group will be displayed.
+     */
     public void loadUserGroup() {
         try {
             if(!Objects.equals(this.userGroupId, 0)) {

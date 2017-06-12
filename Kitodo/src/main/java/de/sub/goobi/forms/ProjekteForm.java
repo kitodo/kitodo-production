@@ -813,6 +813,10 @@ public class ProjekteForm extends BasisForm {
         this.showStatistics = showStatistics;
     }
 
+    /**
+     * Method being used as viewAction for project edit form.
+     * If 'itemId' is '0', the form for creating a new project will be displayed.
+     */
     public void loadProject() {
         try {
             if(!Objects.equals(this.itemId, 0)) {

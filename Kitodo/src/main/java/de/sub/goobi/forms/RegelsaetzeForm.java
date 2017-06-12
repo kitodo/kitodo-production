@@ -151,6 +151,10 @@ public class RegelsaetzeForm extends BasisForm {
         return this.zurueck;
     }
 
+    /**
+     * Method being used as viewAction for ruleset edit form.
+     * If 'rulesetId' is '0', the form for creating a new ruleset will be displayed.
+     */
     public void loadRuleset() {
         try {
             if(!Objects.equals(this.rulesetId, 0)) {
