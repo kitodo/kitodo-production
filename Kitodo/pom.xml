@@ -481,16 +481,6 @@
             <version>3.2.2</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jsfcomp.easysi</groupId>
-            <artifactId>easysi</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.exadel.htmLib</groupId>
-            <artifactId>htmLib</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.j2ep</groupId>
             <artifactId>j2ep</artifactId>
             <version>1.0</version>
@@ -548,6 +538,21 @@
             <artifactId>mockito-all</artifactId>
             <version>2.0.2-beta</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld.servlet</groupId>
+            <artifactId>weld-servlet</artifactId>
+            <version>2.4.3.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.4.1.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jandex</artifactId>
+            <version>1.2.2.Final</version>
         </dependency>
     </dependencies>
 

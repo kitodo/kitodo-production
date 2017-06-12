@@ -79,7 +79,7 @@ public class CopyProcess extends ProzesskopieForm {
     /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
     private boolean useOpac;
     private boolean useTemplates;
-    public URI metadataFile;
+    private URI metadataFile;
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
@@ -92,7 +92,6 @@ public class CopyProcess extends ProzesskopieForm {
     private static final String atstsl = "";
     private List<String> possibleDigitalCollection;
     private final ServiceManager serviceManager = new ServiceManager();
-    public static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
      * Prepare import object.
@@ -1344,4 +1343,8 @@ public class CopyProcess extends ProzesskopieForm {
         newProperty.setType(property.getType());
         return newProperty;
     }
+
+    public void setMetadataFile(URI mdFile) { this.metadataFile = mdFile; }
+
+    public URI getMetadataFile() { return this.metadataFile; }
 }

@@ -25,6 +25,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,7 +36,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.FilenameUtils;
@@ -93,7 +96,9 @@ import ugh.exceptions.UGHException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.mets.XStream;
 
-public class ProzesskopieForm {
+@Named("ProzesskopieForm")
+@SessionScoped
+public class ProzesskopieForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private final ServiceManager serviceManager = new ServiceManager();
 

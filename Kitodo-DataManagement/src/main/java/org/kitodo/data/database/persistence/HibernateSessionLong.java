@@ -19,9 +19,15 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+import java.io.Serializable;
+
 // TODO: Fix for Hibernate-Session-Management, old Version reactivated
 
-public class HibernateSessionLong {
+@Named("HibernateSessionLong")
+@SessionScoped
+public class HibernateSessionLong implements Serializable {
     private static final Logger logger = LogManager.getLogger(HibernateSessionLong.class);
 
     protected static SessionFactory factory;

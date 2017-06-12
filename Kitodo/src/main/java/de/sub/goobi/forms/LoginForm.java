@@ -19,13 +19,16 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
 import org.kitodo.data.database.beans.User;
@@ -34,7 +37,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
-public class LoginForm {
+@Named("LoginForm")
+@SessionScoped
+public class LoginForm implements Serializable{
     private String login;
     private String password;
     private User myBenutzer;

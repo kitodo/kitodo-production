@@ -26,6 +26,7 @@ import de.unigoettingen.goobi.module.api.util.UniqueID;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,7 +34,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.text.StrTokenizer;
@@ -49,7 +52,9 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
-public class ModuleServerForm {
+@Named("ModuleServerForm")
+@SessionScoped
+public class ModuleServerForm implements Serializable {
     private Boolean running = false;
     private static volatile GoobiModuleManager modulmanager = null;
     private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();

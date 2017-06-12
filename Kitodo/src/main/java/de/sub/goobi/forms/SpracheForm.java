@@ -14,17 +14,23 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
+import java.io.Serializable;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
  * user in the running application.
  */
-public class SpracheForm {
+
+@Named("SpracheForm")
+@SessionScoped
+public class SpracheForm implements Serializable {
 
     public static final String SESSION_LOCALE_FIELD_ID = "lang";
 
@@ -117,16 +123,15 @@ public class SpracheForm {
     }
 
     /**
-     * The procedure switchLanguage is called from /pages/Metadaten2oben.jsp to
+     * The procedure switchLanguage is called from /pages/Metadaten2oben.xhtml to
      * switch the language.
      *
      * @return the empty String to point to the JSF framework to remain on the
      *         current page
      */
-    public String switchLanguage() {
-        String languageCodeCombined = Helper.getRequestParameter("locale");
+    public void switchLanguage() {
+        String languageCodeCombined = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale().toLanguageTag();
         switchLanguage(languageCodeCombined);
-        return Helper.getRequestParameter("ziel");
     }
 
     /**
@@ -139,14 +144,15 @@ public class SpracheForm {
         @SuppressWarnings("rawtypes")
         Map session = fac.getExternalContext().getSessionMap();
         UIViewRoot frame = fac.getViewRoot();
-        if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
-            Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
-            if (frame.getLocale() != locale) {
-                frame.setLocale(locale);
-            }
-            return locale;
-        } else if (!Objects.equals(frame, null)) {
-            return frame.getLocale();
+        if (!Objects.equals(frame, null)) {
+            if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
+                Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
+                if (frame.getLocale() != locale) {
+                    frame.setLocale(locale);
+                }
+                return locale;
+            } else
+                return frame.getLocale();
         } else {
             // workaround for session object not containing 'locale' value
             return Locale.GERMAN;

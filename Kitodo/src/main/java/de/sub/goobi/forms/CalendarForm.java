@@ -18,6 +18,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +29,8 @@ import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +53,9 @@ import org.xml.sax.SAXException;
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class CalendarForm {
+@Named("CalendarForm")
+@SessionScoped
+public class CalendarForm implements Serializable {
     /**
      * The class Cell represents a single table cell on the calendar sheet.
      *

@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.xml.transform.TransformerException;
 
@@ -40,6 +43,8 @@ import org.w3c.dom.Document;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
+@ManagedBean(name = "GranularityForm")
+@SessionScoped
 public class GranularityForm {
     private static final Logger logger = LogManager.getLogger(GranularityForm.class);
 
@@ -56,9 +61,8 @@ public class GranularityForm {
      * calendar form instance that from the information about the issues that
      * appeared is taken to be shown. This field is a managed property which is
      * automatically populated by JSF upon form creation by calling setCourse().
-     * This behaviour is configured in faces-config.xml
      */
-    // @ManagedProperty(value = "#{CalendarForm.course}")
+    @ManagedProperty(name = "course", value = "#{CalendarForm.course}")
     protected Course course;
 
     /**

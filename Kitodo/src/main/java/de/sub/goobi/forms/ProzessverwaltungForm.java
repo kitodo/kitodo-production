@@ -38,10 +38,10 @@ import java.text.NumberFormat;
 import java.util.*;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -96,8 +96,9 @@ import org.kitodo.services.file.FileService;
  *
  * @author Wulf Riebensahm
  */
-@ManagedBean
-@ViewScoped
+
+@Named("ProzessverwaltungForm")
+@SessionScoped
 public class ProzessverwaltungForm extends BasisForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);

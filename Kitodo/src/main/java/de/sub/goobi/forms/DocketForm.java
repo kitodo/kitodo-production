@@ -19,9 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
@@ -36,11 +33,11 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 
-@ManagedBean
-@ViewScoped
+@Named("DocketForm")
+@SessionScoped
 public class DocketForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();

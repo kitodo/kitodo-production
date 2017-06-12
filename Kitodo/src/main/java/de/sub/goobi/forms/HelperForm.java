@@ -16,14 +16,17 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -39,7 +42,9 @@ import org.kitodo.services.ServiceManager;
 /**
  * @author Wulf Riebensahm
  */
-public class HelperForm {
+@Named("HelperForm")
+@SessionScoped
+public class HelperForm implements Serializable {
     private final ServiceManager serviceManager = new ServiceManager();
 
     public static final String MAIN_JSF_PATH = "/newpages";
