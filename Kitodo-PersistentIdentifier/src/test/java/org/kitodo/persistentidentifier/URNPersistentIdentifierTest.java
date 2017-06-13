@@ -18,12 +18,12 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests for PersistentIdentifier.
  */
-public class DNBURNIdentifierGeneratorTest {
+public class URNPersistentIdentifierTest {
 
     @Test
     public void shouldGenerateUnifiedResourceName() throws Exception {
-        DNBURNIdentifierGenerator dnburnIdentifierGenerator = new DNBURNIdentifierGenerator();
-        String urn = dnburnIdentifierGenerator.generateUnifiedResourceName("bsz", "14", "db", "378704842");
+        URNPersistentIdentifier urnPersistentIdentifier = new URNPersistentIdentifier();
+        String urn = urnPersistentIdentifier.generateUnifiedResourceName("bsz", "14", "db", "378704842");
         assertEquals("Incorrect check digit in URN ", "urn:nbn:de:bsz:14-db-id3787048428", urn);
     }
 }

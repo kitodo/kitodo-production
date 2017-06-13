@@ -18,7 +18,7 @@ import org.kitodo.api.persistentidentifier.PersistentIdentifierInterface;
 /**
  * Class for generation and registration DBNURN identifier.
  */
-public class DNBURNIdentifierGenerator implements PersistentIdentifierInterface {
+public class URNPersistentIdentifier implements PersistentIdentifierInterface {
 
     private static final String SCHEME = "urn:nbn:de";
     private static final int URN_NBN_DE_PART_CHECKSUM = 801;
