@@ -32,7 +32,6 @@
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
         <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
-        <phase.prop>install</phase.prop>
     </properties>
 
     <dependencies>
