@@ -61,10 +61,10 @@
                                     <h:commandLink action="#{NavigationForm.Reload}" target="links">
                                         <t:updateActionListener property="#{item.node.expanded}"
                                                                 value="#{not item.node.expanded}"/>
-                                        <h:graphicImage value="/newpages/images/plus.gif"
+                                        <h:graphicImage value="/newpages/images/plus.gif" alt=""
                                                         rendered="#{item.node.hasChildren and not item.node.expanded}"
                                                         style="border: 0px none;margin-top:0px;margin-right:3px;margin-left:#{item.niveau * 10 + 5}px;"/>
-                                        <h:graphicImage value="/newpages/images/minus.gif"
+                                        <h:graphicImage value="/newpages/images/minus.gif" alt=""
                                                         rendered="#{item.node.hasChildren and item.node.expanded}"
                                                         style="border: 0px none;margin-top:0px;margin-right:3px;margin-left:#{item.niveau * 10 + 5}px;"/>
                                     </h:commandLink>
@@ -116,10 +116,10 @@
                                             </div>
                                         </f:facet>
 
-                                        <h:graphicImage value="/newpages/images/document.png"
+                                        <h:graphicImage value="/newpages/images/document.png" alt=""
                                                         rendered="#{item.node.hasChildren}"
                                                         style="margin-right:2px;vertical-align:middle"/>
-                                        <h:graphicImage value="/newpages/images/document.png"
+                                        <h:graphicImage value="/newpages/images/document.png" alt=""
                                                         rendered="#{!item.node.hasChildren}"
                                                         style="margin-right:2px;vertical-align:middle;margin-left:#{item.niveau * 10 + 17}px;"/>
 

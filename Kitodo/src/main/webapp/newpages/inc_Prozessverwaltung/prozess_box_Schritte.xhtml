@@ -41,7 +41,7 @@
             <!-- Schaltknopf: Reihenfolge nach oben -->
             <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeUp}"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                <h:graphicImage value="/newpages/images/buttons/order_up_klein.gif"
+                <h:graphicImage value="/newpages/images/buttons/order_up_klein.gif" alt="sort ascending"
                                 style="margin-left:5px;vertical-align:middle"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.mySchritt}"
                                         value="#{item}"/>
@@ -50,7 +50,7 @@
             <!-- Schaltknopf: Reihenfolge nach unten -->
             <h:commandLink action="#{ProzessverwaltungForm.reihenfolgeDown}"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
-                <h:graphicImage value="/newpages/images/buttons/order_down_klein.gif"
+                <h:graphicImage value="/newpages/images/buttons/order_down_klein.gif" alt="sort descending"
                                 style="vertical-align:middle"/>
                 <t:updateActionListener property="#{ProzessverwaltungForm.mySchritt}"
                                         value="#{item}"/>
@@ -65,9 +65,9 @@
             </f:facet>
 
             <h:commandLink id="myself" style="color:black">
-                <h:graphicImage value="/newpages/images/plus.gif"
+                <h:graphicImage value="/newpages/images/plus.gif" alt="show details"
                                 style="margin-right:4px" rendered="#{!item.panelShown}"/>
-                <h:graphicImage value="/newpages/images/minus.gif"
+                <h:graphicImage value="/newpages/images/minus.gif" alt="hide details"
                                 style="margin-right:4px" rendered="#{item.panelShown}"/>
                 <t:updateActionListener value="#{item.panelShown?false:true}"
                                         property="#{item.panelShown}"/>
@@ -89,9 +89,9 @@
             <f:facet name="header">
                 <t:div>
                     <t:headerLink immediate="true">
-                        <h:graphicImage value="/newpages/images/plus.gif"
+                        <h:graphicImage value="/newpages/images/plus.gif" alt="show"
                                         style="margin-right:4px;" rendered="#{isCollapsed}"/>
-                        <h:graphicImage value="/newpages/images/minus.gif"
+                        <h:graphicImage value="/newpages/images/minus.gif" alt="hide"
                                         style="margin-right:4px;" rendered="#{!isCollapsed}"/>
                     </t:headerLink>
                     <h:outputText value="#{item.localizedTitle}"
@@ -105,14 +105,14 @@
                 <!--<p:commandButton onclick="PF('detailsSmall').toggle()" value="Testbutton" type="button" />-->
                     <f:facet name="show">
                         <h:panelGroup>
-                            <h:graphicImage value="/newpages/images/minus.gif"
+                            <h:graphicImage value="/newpages/images/minus.gif" alt="hide"
                                             style="margin-right:5px"/>
                             <h:outputText value="#{item.localizedTitle}"/>
                         </h:panelGroup>
                     </f:facet>
                     <f:facet name="hide">
                         <h:panelGroup>
-                            <h:graphicImage value="/newpages/images/plus.gif"
+                            <h:graphicImage value="/newpages/images/plus.gif" alt="show"
                                             style="margin-right:5px"/>
                             <h:outputText value="#{item.localizedTitle}"/>
                         </h:panelGroup>
@@ -137,14 +137,14 @@
             <h:panelGrid columns="2" id="statuscolumn">
 
                 <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
-                                title="#{item.processingStatusEnum.title}"/>
+                                title="#{item.processingStatusEnum.title}" alt=""/>
 
                 <h:panelGrid columns="1" cellpadding="0" cellspacing="0"
                              rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
                     <!-- Bearbeitungsstatus hoch und runter -->
                     <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusUp}"
                                      title="#{msgs.statusHoeherSetzen}">
-                        <h:graphicImage
+                        <h:graphicImage alt="status up"
                                 value="/newpages/images/buttons/order_right_klein.gif"/>
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.mySchrittReload}"
@@ -154,7 +154,7 @@
                     <!-- Bearbeitungsstatus hoch und runter -->
                     <h:commandLink action="#{ProzessverwaltungForm.SchrittStatusDown}"
                                      title="#{msgs.statusRunterSetzen}">
-                        <h:graphicImage
+                        <h:graphicImage alt="status down"
                                 value="/newpages/images/buttons/order_left_klein.gif"/>
                         <t:updateActionListener
                                 property="#{ProzessverwaltungForm.mySchrittReload}"
@@ -173,7 +173,7 @@
             <!-- Bearbeiten-Schaltknopf -->
             <h:commandLink action="inc_Prozessverwaltung/schritt"
                            title="#{msgs.detailsDesSchritts}">
-                <h:graphicImage value="/newpages/images/buttons/goInto.gif"/>
+                <h:graphicImage value="/newpages/images/buttons/goInto.gif" alt="details"/>
                 <t:updateActionListener
                         property="#{ProzessverwaltungForm.mySchrittReload}" value="#{item}"/>
                 <t:updateActionListener

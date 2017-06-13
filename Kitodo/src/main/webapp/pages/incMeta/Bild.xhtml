@@ -179,7 +179,7 @@
                 <h:commandLink action="#{Metadaten.zoomImageOut}" id="zoomMinus"
                                  style="margin-left: 0px;margin-right:5px">
                     <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage value="/newpages/images/zoom-.gif" style="border: 0px;vertical-align:middle"/>
+                    <h:graphicImage alt="zoom out" value="/newpages/images/zoom-.gif" style="border: 0px;vertical-align:middle"/>
                 </h:commandLink>
 
                 <!-- aktuelle Seite anzeigen -->
@@ -201,7 +201,7 @@
                 <h:commandLink action="#{Metadaten.zoomImageIn}" id="zoomPlus"
                                  style="margin-left: 7px;margin-right:9px">
                     <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage value="/newpages/images/zoom+.gif" style="border: 0px;vertical-align:middle"/>
+                    <h:graphicImage alt="zoom in" value="/newpages/images/zoom+.gif" style="border: 0px;vertical-align:middle"/>
                 </h:commandLink>
                 <!-- // Zoom -->
 
@@ -209,13 +209,13 @@
                 <h:commandLink action="#{Metadaten.rotateLeft}" id="rotateLeft"
                                  style="margin-left: 7px;margin-right:0px">
                     <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage value="/newpages/images/rotateLeft.gif" style="border: 0px;vertical-align:middle"/>
+                    <h:graphicImage alt="rotate left" value="/newpages/images/rotateLeft.gif" style="border: 0px;vertical-align:middle"/>
                 </h:commandLink>
 
                 <h:commandLink action="#{Metadaten.rotateRight}" id="rotateRight"
                                  style="margin-left: 0px;margin-right:9px">
                     <f:ajax render="BildArea myBild imageform"/>
-                    <h:graphicImage value="/newpages/images/rotateRight.gif" style="border: 0px;vertical-align:middle"/>
+                    <h:graphicImage alt="rotate right" value="/newpages/images/rotateRight.gif" style="border: 0px;vertical-align:middle"/>
                 </h:commandLink>
                 <!-- // rotation-->
 
@@ -235,7 +235,7 @@
                 <h:commandLink id="ocrButton" action="#{Metadaten.showOcrResult}"
                                  rendered="#{Metadaten.showOcrButton}">
                     <f:ajax render="BildArea myBild"/>
-                    <h:graphicImage value="/newpages/images/buttons/ocr.png"
+                    <h:graphicImage alt="ocr" value="/newpages/images/buttons/ocr.png"
                                     style="margin-left:14px;vertical-align:middle"/>
                 </h:commandLink>
 
@@ -265,7 +265,7 @@
         </h:panelGroup>
 
         <!-- das Bild selbst -->
-        <h:graphicImage value="#{Metadaten.bild}" rendered="#{Metadaten.bildNummer != '-1'}" onclick="focusForPicture()"/>
+        <h:graphicImage alt="" value="#{Metadaten.bild}" rendered="#{Metadaten.bildNummer != '-1'}" onclick="focusForPicture()"/>
     </t:panelGroup>
 
 

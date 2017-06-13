@@ -77,7 +77,8 @@
                                                 </td>
                                                 <td class="eingabeBoxen_row1" align="right">
                                                     <h:commandLink id="id10" action="#{NavigationForm.Reload}">
-                                                        <h:graphicImage id="id11" value="/newpages/images/reload.gif"/>
+                                                        <h:graphicImage alt="reload" id="id11"
+                                                                        value="/newpages/images/reload.gif"/>
                                                     </h:commandLink>
                                                 </td>
                                             </tr>
@@ -170,7 +171,7 @@
                                                             <h:commandLink id="id32" title="#{msgs.ldapKonfigurationSchreiben}"
                                                                            action="#{BenutzerverwaltungForm.ldapKonfigurationSchreiben}"
                                                                            rendered="#{BenutzerverwaltungForm.myClass.id != null}">
-                                                                <h:graphicImage id="id33"
+                                                                <h:graphicImage alt="save configuration" id="id33"
                                                                                 value="/newpages/images/buttons/key3.gif"/>
                                                                 <t:updateActionListener
                                                                         property="#{BenutzerverwaltungForm.myClass}"
@@ -242,7 +243,7 @@
                                                                 <h:commandLink
                                                                         action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                                                         title="#{msgs.ausGruppeLoeschen}">
-                                                                    <h:graphicImage id="id49"
+                                                                    <h:graphicImage alt="delete from group" id="id49"
                                                                                     value="images/buttons/waste1a_20px.gif"/>
                                                                     <f:param id="id50" name="ID" value="#{item.id}"/>
                                                                 </h:commandLink>
@@ -280,7 +281,7 @@
                                                                 <h:commandLink
                                                                         action="#{BenutzerverwaltungForm.ausProjektLoeschen}"
                                                                         title="#{msgs.ausProjektLoeschen}">
-                                                                    <h:graphicImage id="id56"
+                                                                    <h:graphicImage alt="delete from project" id="id56"
                                                                                     value="images/buttons/waste1a_20px.gif"/>
                                                                     <f:param id="id57" name="ID" value="#{item.id}"/>
                                                                 </h:commandLink>

@@ -120,7 +120,7 @@
                                                                                action="#{ModuleServerForm.startModule}"
                                                                                rendered="#{item.moduleClient.status=='not active'}"
                                                                                title="initialize">
-                                                                    <h:graphicImage
+                                                                    <h:graphicImage alt="start task"
                                                                             value="/newpages/images/icons/start_task.gif"/>
                                                                     <t:updateActionListener value="#{item}"
                                                                                             property="#{ModuleServerForm.myModule}"/>
@@ -129,7 +129,7 @@
                                                                                action="#{ModuleServerForm.stopModule}"
                                                                                rendered="#{item.moduleClient.status=='active'}"
                                                                                title="shutdown">
-                                                                    <h:graphicImage id="id20"
+                                                                    <h:graphicImage id="id20" alt="stop task"
                                                                                     value="/newpages/images/icons/stop_task.gif"/>
                                                                     <t:updateActionListener value="#{item}"
                                                                                             property="#{ModuleServerForm.myModule}"/>
@@ -138,7 +138,7 @@
                                                                         rendered="#{item.moduleClient.status=='active'}"
                                                                         action="#{ModuleServerForm.startShortSessionTest}"
                                                                         title="shortsession">
-                                                                    <h:graphicImage
+                                                                    <h:graphicImage alt="execute task"
                                                                             value="/newpages/images/icons/execute_task.gif"/>
                                                                     <t:updateActionListener value="#{item}"
                                                                                             property="#{ModuleServerForm.myModule}"/>

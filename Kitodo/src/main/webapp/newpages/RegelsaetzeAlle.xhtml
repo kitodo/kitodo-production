@@ -105,10 +105,12 @@
                                             </f:facet>
                                             <h:graphicImage id="id17"
                                                             value="/newpages/images/check_true.gif"
-                                                            rendered="#{item.orderMetadataByRuleset}"/>
+                                                            rendered="#{item.orderMetadataByRuleset}"
+                                                            alt="order metadata by ruleset"/>
                                             <h:graphicImage id="id18"
                                                             value="/newpages/images/check_false.gif"
-                                                            rendered="#{!item.orderMetadataByRuleset}"/>
+                                                            rendered="#{!item.orderMetadataByRuleset}"
+                                                            alt="do not order metadata by ruleset"/>
                                         </t:column>
 
                                         <h:column id="id19"
@@ -119,7 +121,7 @@
                                             <!-- Bearbeiten-Schaltknopf -->
                                             <h:commandLink id="id21" action="RegelsaetzeBearbeiten"
                                                            title="#{msgs.regelsatzBearbeiten}">
-                                                <h:graphicImage id="id22"
+                                                <h:graphicImage id="id22" alt="edit ruleset"
                                                                 value="/newpages/images/buttons/edit.gif"/>
                                                 <t:updateActionListener
                                                         property="#{RegelsaetzeForm.myRegelsatz}" value="#{item}"/>

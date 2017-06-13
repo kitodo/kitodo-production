@@ -73,7 +73,7 @@
 
                         <h:commandLink action="#{Metadaten.currentStartpage}">
                             <f:ajax render="pageStartGroup"/>
-                            <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
+                            <h:graphicImage value="/newpages/images/buttons/left_20px.gif" alt="start page"
                                             style="border: 0px;vertical-align:middle;"/>
                             <t:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
                         </h:commandLink>
@@ -92,7 +92,7 @@
                         </h:panelGroup>
                         <h:commandLink action="#{Metadaten.currentEndpage}">
                             <f:ajax render="pageEndGroup"/>
-                            <h:graphicImage value="/newpages/images/buttons/left_20px.gif"
+                            <h:graphicImage value="/newpages/images/buttons/left_20px.gif" alt="end page"
                                             style="border: 0px;vertical-align:middle;"/>
                             <t:updateActionListener value="#{Metadaten.bildNummer}" property="#{Metadaten.pageNumber}"/>
                         </h:commandLink>
@@ -123,7 +123,7 @@
                         <!-- Knoten nach oben -->
                         <h:commandLink action="#{Metadaten.nodeUp}" title="#{msgs.docstructNachObenSchieben}"
                                        target="links">
-                            <h:graphicImage value="/newpages/images/buttons/sort_up_20px.gif"
+                            <h:graphicImage value="/newpages/images/buttons/sort_up_20px.gif" alt="move up"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.docstructNachObenSchieben}"/>
                         </h:commandLink>
@@ -131,7 +131,7 @@
                         <!-- Knoten nach unten -->
                         <h:commandLink action="#{Metadaten.nodeDown}" title="#{msgs.docstructNachUntenSchieben}"
                                        target="links">
-                            <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
+                            <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif" alt="move down"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.docstructNachUntenSchieben}"/>
                         </h:commandLink>
@@ -139,7 +139,7 @@
                         <!-- Knoten an andere Stelle schieben -->
                         <h:commandLink action="Metdaten2rechts" title="#{msgs.docstructAnAndereStelleSchieben}"
                                        target="rechts">
-                            <h:graphicImage value="/newpages/images/buttons/sort_left_20px.gif"
+                            <h:graphicImage value="/newpages/images/buttons/sort_left_20px.gif" alt="move"
                                             style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.docstructAnAndereStelleSchieben}"/>
                             <t:updateActionListener property="#{Metadaten.modusStrukturelementVerschieben}" value="true"/>
@@ -148,7 +148,7 @@
                         <!-- DocstructType ändern -->
                         <h:panelGroup>
                             <jd:hideableController for="changeDocStructType" title="#{msgs.docstructTypeAendern}">
-                                <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
+                                <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif" alt="change type"
                                                 style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.docstructTypeAendern}"/>
                             </jd:hideableController>
@@ -174,7 +174,7 @@
                         <h:panelGroup>
                             <jd:hideableController for="addZusaetzlicheDocstructs"
                                                    title="#{msgs.strukturelementeAusOpacHinzufuegen}">
-                                <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif"
+                                <h:graphicImage value="/newpages/images/buttons/sort_down_20px.gif" alt="add structural elements from opac"
                                                 style="margin-left:4px;margin-right:6px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.strukturelementeAusOpacHinzufuegen}"/>
                             </jd:hideableController>
@@ -233,7 +233,7 @@
                         <!-- OCR-Button -->
                         <h:outputLink rendered="#{Metadaten.showOcrButton}" target="_blank" value="#{Metadaten.ocrAcdress}"
                                       title="#{msgs.ocr}">
-                            <h:graphicImage value="/newpages/images/buttons/ocr.png"
+                            <h:graphicImage value="/newpages/images/buttons/ocr.png" alt="ocr"
                                             style="margin-left:4px;margin-right:7px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.ocr}"/>
                         </h:outputLink>
@@ -247,7 +247,7 @@
                                            style="margin-top:2px;display:block; text-decoration:none"
                                            actionOpen="#{Metadaten.showOcrPopup}" center="true"
                                            title="#{msgs.ocr}" immediate="true">
-                                <h:graphicImage value="/newpages/images/buttons/ocr.png"
+                                <h:graphicImage value="/newpages/images/buttons/ocr.png" alt="ocr"
                                                 style="margin-left:4px;margin-right:7px;vertical-align:middle" />
                                 <h:outputText style="border-bottom: #a24033 dashed 1px;"
                                               value="#{msgs.ocr}" />
@@ -257,7 +257,7 @@
                         <!-- Knoten löschen -->
                         <h:commandLink rendered="#{Metadaten.isNotRootElement}" action="#{Metadaten.deleteNode}"
                                        title="#{msgs.strukturelementLoeschen}" target="links">
-                            <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif"
+                            <h:graphicImage value="/newpages/images/buttons/waste1a_20px.gif" alt="delete"
                                             style="margin-left:4px;margin-right:7px;vertical-align:middle"/>
                             <h:outputText value="#{msgs.strukturelementLoeschen}"/>
                         </h:commandLink>
@@ -300,7 +300,7 @@
                             <h:panelGroup rendered="#{Metadaten.treeProperties.showpagesasajax==true}">
                                 <t:inputText id="pagestart" forceId="true" value="#{Metadaten.ajaxSeiteStart}"/>
                                 <!--
-                                <h:graphicImage value="/newpages/images/calendarImages/drop1.gif"
+                                <h:graphicImage value="/newpages/images/calendarImages/drop1.gif" alt=""
                                                 onclick="document.getElementById('formular2:suggestion').callSuggestion(true);"
                                                 alt="" />
                                 -->
@@ -390,13 +390,13 @@
                     <h:commandLink id="s1" action="#{Metadaten.addPages}"
                                    style="margin-top:175px;margin-left:10px;margin-right:10px;display:block">
                         <f:ajax render="menuZugehoerigeSeiten BildArea myBild"/>
-                        <h:graphicImage value="/newpages/images/buttons/order_right.gif"/>
+                        <h:graphicImage value="/newpages/images/buttons/order_right.gif" alt="move left"/>
                     </h:commandLink>
                     <!-- nach links -->
                     <h:commandLink id="s2" action="#{Metadaten.removePages}"
                                      style="margin-top:7px;margin-left:10px;margin-right:10px;display:block">
                         <f:ajax render="menuZugehoerigeSeiten BildArea myBild"/>
-                        <h:graphicImage value="/newpages/images/buttons/order_left.gif"/>
+                        <h:graphicImage value="/newpages/images/buttons/order_left.gif" alt="move right"/>
                     </h:commandLink>
                 </h:panelGroup>
 

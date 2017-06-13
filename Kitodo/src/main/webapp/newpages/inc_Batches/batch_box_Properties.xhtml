@@ -59,7 +59,7 @@
 
                                     <h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}"
                                                    rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id and proc.currentStepAccessCondition != 'READ'}">
-                                        <h:graphicImage value="/newpages/images/buttons/edit.gif"/>
+                                        <h:graphicImage value="/newpages/images/buttons/edit.gif" alt="edit"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}"
                                                                 value="#{proc}"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="0"/>
@@ -71,7 +71,7 @@
 
                                     <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateProperty}"
                                                    title="#{msgs.duplicate}" rendered="#{proc.duplicationAllowed}">
-                                        <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
+                                        <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}"
                                                                 value="#{proc}"/>
                                         <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="0"/>
@@ -113,7 +113,7 @@
                                         <h:panelGroup
                                                 rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id and process_item.currentStepAccessCondition != 'READ'}">
                                             <h:commandLink action="BatchesEdit" title="#{msgs.bearbeiten}">
-                                                <h:graphicImage value="/newpages/images/buttons/edit.gif"/>
+                                                <h:graphicImage value="/newpages/images/buttons/edit.gif" alt="edit"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}"
                                                                         value="#{container}"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}"
@@ -124,7 +124,7 @@
                                             <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainer}"
                                                            title="#{msgs.duplicate}"
                                                            rendered="#{process_item.duplicationAllowed}">
-                                                <h:graphicImage value="/newpages/images/buttons/copy.gif"/>
+                                                <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
                                                 <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}"
                                                                         value="#{container}"/>
                                             </h:commandLink>
@@ -164,7 +164,7 @@
 
                         <h:commandLink action="batchesEdit" title="#{msgs.bearbeiten}"
                                        rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-                            <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                            <h:graphicImage value="/newpages/images/buttons/edit.gif" alt="edit"/>
                             <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
                             <x:updateActionListener property="#{BatchForm.batchHelper.container}" value="0" />
                             <x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
@@ -173,7 +173,7 @@
 
                         <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}"
                                        rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id}">
-                            <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                            <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
                             <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.processProperty}" value="#{proc}" />
                         </h:commandLink>
                     </htm:td>
@@ -195,13 +195,13 @@
                         <h:panelGroup
                                 rendered="#{AktuelleSchritteForm.batchHelper.currentStep.bearbeitungsbenutzer.id == LoginForm.myBenutzer.id and propInd + 1 == propCount}">
                             <h:commandLink action="batchesEdit" title="#{msgs.bearbeiten}">
-                                <h:graphicImage value="/newpages/images/buttons/edit.gif" />
+                                <h:graphicImage value="/newpages/images/buttons/edit.gif" alt="edit"/>
                                 <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
                                 <x:updateActionListener property="#{AktuelleSchritteForm.modusBearbeiten}" value="eigenschaft" />
                                 <a4j:support event="onchange" reRender="editBatch" />
                             </h:commandLink>
                             <h:commandLink action="#{AktuelleSchritteForm.batchHelper.duplicateContainerForAll}" title="#{msgs.duplicateForAll}">
-                                <h:graphicImage value="/newpages/images/buttons/copy.gif" />
+                                <h:graphicImage value="/newpages/images/buttons/copy.gif" alt="copy"/>
                                 <x:updateActionListener property="#{AktuelleSchritteForm.batchHelper.container}" value="#{container}" />
                             </h:commandLink>
                         </h:panelGroup>

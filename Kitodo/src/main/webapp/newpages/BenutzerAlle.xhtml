@@ -101,7 +101,7 @@
                                                 <h:commandLink
                                                         action="#{BenutzerverwaltungForm.filterAlleStart}"
                                                         title="#{msgs.filterAnwenden}" style="margin-left:5px">
-                                                    <h:graphicImage id="id13"
+                                                    <h:graphicImage id="id13" alt="reload"
                                                                     value="/newpages/images/buttons/reload.gif"/>
                                                 </h:commandLink>
 
@@ -175,7 +175,7 @@
                                                 <!-- Bearbeiten-Schaltknopf -->
                                                 <h:commandLink id="id32" action="BenutzerBearbeiten"
                                                                title="#{msgs.benutzerBearbeiten}">
-                                                    <h:graphicImage id="id33"
+                                                    <h:graphicImage id="id33" alt="edit"
                                                                     value="/newpages/images/buttons/edit.gif"/>
                                                     <t:updateActionListener
                                                             property="#{BenutzerverwaltungForm.myClass}"
@@ -193,7 +193,7 @@
                                                 <!-- Benutzerprofil laden-Schaltknopf -->
                                                 <h:commandLink id="id36" title="#{msgs.benutzerprofilLaden}"
                                                                action="#{LoginForm.EinloggenAls}" style="margin-left:15px">
-                                                    <h:graphicImage
+                                                    <h:graphicImage alt="load user profile"
                                                             value="/newpages/images/buttons/change_user3_20px.gif"/>
                                                     <f:param id="id37" name="ID" value="#{item.id}"/>
                                                 </h:commandLink>

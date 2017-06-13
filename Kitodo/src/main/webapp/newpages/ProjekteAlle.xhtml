@@ -131,10 +131,12 @@
 
                                                 <h:graphicImage id="id2341"
                                                                 value="/newpages/images/check_true.gif"
-                                                                rendered="#{item.projectIsArchived}"/>
+                                                                rendered="#{item.projectIsArchived}"
+                                                                alt="archived"/>
                                                 <h:graphicImage id="id2342"
                                                                 value="/newpages/images/check_false.gif"
-                                                                rendered="#{!item.projectIsArchived}"/>
+                                                                rendered="#{!item.projectIsArchived}"
+                                                                alt="not archived"/>
                                             </t:column>
                                             <t:column id="id26" style="text-align:center"
                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
@@ -144,7 +146,7 @@
                                                 <!-- Bearbeiten-Schaltknopf -->
                                                 <h:commandLink id="id28" action="ProjekteBearbeiten"
                                                                title="#{msgs.projektBearbeiten}">
-                                                    <h:graphicImage id="id29"
+                                                    <h:graphicImage alt="edit" id="id29"
                                                                     value="/newpages/images/buttons/edit.gif"/>
                                                     <t:updateActionListener property="#{ProjekteForm.myProjekt}"
                                                                             value="#{item}"/>
