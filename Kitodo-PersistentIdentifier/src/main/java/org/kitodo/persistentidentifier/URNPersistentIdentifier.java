@@ -88,8 +88,8 @@ public class URNPersistentIdentifier implements PersistentIdentifierInterface {
     @Override
     public String generateUnifiedResourceName(String namespace, String libraryIdentifier, String subNamespace,
             String identifier) {
-        String urn = SCHEME + ':' + namespace + ':' + libraryIdentifier + '-' + subNamespace + "-id" + identifier;
-        return urn + getCheckDigit(urn);
+        String urn = namespace + ':' + libraryIdentifier + '-' + subNamespace + "-" + identifier;
+        return SCHEME + ':' + urn + getCheckDigit(urn);
     }
 
     @Override
@@ -106,8 +106,8 @@ public class URNPersistentIdentifier implements PersistentIdentifierInterface {
      * @return check digit
      */
     private String getCheckDigit(final String urn) {
-        float sum = URN_NBN_DE_PART_CHECKSUM;
-        float index = 22;
+        int sum = URN_NBN_DE_PART_CHECKSUM;
+        int index = 22;
         int charCode = 0;
         for (Character c : urn.toCharArray()) {
             charCode = CHAR_MAP.get(c);
@@ -117,9 +117,8 @@ public class URNPersistentIdentifier implements PersistentIdentifierInterface {
                 sum += (charCode / 10 * ++index) + (charCode % 10 * ++index);
             }
         }
-        float lastDigit = ((charCode < 10) ? (charCode) : (charCode % 10));
-        float checkDigit = Math.round((sum / lastDigit));
-        int checkIntDigit = (int) checkDigit % 10;
-        return String.valueOf(checkIntDigit);
+        int lastDigit = ((charCode < 10) ? (charCode) : (charCode % 10));
+        int checkDigit = (sum / lastDigit) % 10;
+        return String.valueOf(checkDigit);
     }
 }
