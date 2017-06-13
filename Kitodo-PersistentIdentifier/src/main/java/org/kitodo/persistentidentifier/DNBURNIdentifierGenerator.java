@@ -9,16 +9,16 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.identifiergenerator;
+package org.kitodo.persistentidentifier;
 
 import java.util.HashMap;
 
-import org.kitodo.api.identifiergenerator.URNGeneratorInterface;
+import org.kitodo.api.persistentidentifier.PersistentIdentifierInterface;
 
 /**
  * Class for generation and registration DBNURN identifier.
  */
-public class DNBURNIdentifierGenerator implements URNGeneratorInterface {
+public class DNBURNIdentifierGenerator implements PersistentIdentifierInterface {
 
     private static final String SCHEME = "urn:nbn:de";
     private static final int URN_NBN_DE_PART_CHECKSUM = 801;
