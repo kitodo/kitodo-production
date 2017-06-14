@@ -205,7 +205,7 @@ public class ProzesskopieForm {
 
     public static final String DIRECTORY_SUFFIX = "_tif";
 
-    static final String NAVI_FIRST_PAGE = "NewProcess/Page1";
+    static final String NAVI_FIRST_PAGE = "/newpages/NewProcess/Page1";
 
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
