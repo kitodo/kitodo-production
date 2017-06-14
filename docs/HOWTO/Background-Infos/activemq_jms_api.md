@@ -135,7 +135,7 @@ folder are required on the classpath:
 * activemq-core
 * geronimo-j2ee-management_1.1_spec
 * genonimo-jms_1.1_spec
-* log4j
+* log4j2
 * slf4j-api
 * slf4j-log4j12
 
