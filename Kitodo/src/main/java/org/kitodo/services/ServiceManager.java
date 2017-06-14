@@ -28,6 +28,7 @@ import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkpieceService;
 import org.kitodo.services.file.FileService;
+import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.validation.FileStructureValidationService;
 import org.kitodo.services.validation.LongTimePreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
@@ -51,6 +52,7 @@ public class ServiceManager {
     private WorkpieceService workpieceService;
     private FileService fileService;
     private CommandService commandService;
+    private SchemaService schemaService;
     private FileStructureValidationService fileStructureValidationService;
     private LongTimePreservationValidationService longTimePreservationValidationService;
     private MetadataValidationService metadataValidationService;
@@ -154,6 +156,12 @@ public class ServiceManager {
     private void initializeCommandService() {
         if (commandService == null) {
             commandService = new CommandService();
+        }
+    }
+
+    private void initializeSchemaService() {
+        if (schemaService == null) {
+            schemaService = new SchemaService();
         }
     }
 
@@ -353,6 +361,16 @@ public class ServiceManager {
     public CommandService getCommandService() {
         initializeCommandService();
         return commandService;
+    }
+
+    /**
+     * Initialize SchemaService if it is not yet initialized and next return it.
+     *
+     * @return SchemaService object
+     */
+    public SchemaService getSchemaService() {
+        initializeSchemaService();
+        return schemaService;
     }
 
     /**
