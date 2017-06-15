@@ -451,7 +451,7 @@ public class ProzessverwaltungForm extends BasisForm {
             FilterAktuelleProzesse();
         }
         else {
-            System.err.println("ERROR: did not recognize link ID '"+originLink+"'.");
+            logger.error("ERROR: did not recognize link ID '" + originLink + "'.");
         }
         setFilter("");
     }
