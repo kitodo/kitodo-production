@@ -566,16 +566,17 @@ public class MetadatenImagesHelper {
     }
 
     /**
-     * Get data files.
+     * Get data files. First read them all and next if their size is bigger than
+     * zero sort them with use of GoobiImageFileComparator.
      *
-     * @param myProcess
+     * @param process
      *            Process object
      * @return list of Strings
      */
-    public List<URI> getDataFiles(Process myProcess) throws InvalidImagesException {
+    public List<URI> getDataFiles(Process process) throws InvalidImagesException {
         URI dir;
         try {
-            dir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
+            dir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
         } catch (Exception e) {
             throw new InvalidImagesException(e);
         }

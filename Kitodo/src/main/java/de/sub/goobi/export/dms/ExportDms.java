@@ -424,15 +424,7 @@ public class ExportDms extends ExportMets {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
             ArrayList<URI> files = fileService.getSubUris(sources);
-            for (URI file : files) {
-                if (fileService.isFile(file)) {
-                    if (exportDmsTask != null) {
-                        exportDmsTask.setWorkDetail(fileService.getFileName(file));
-                    }
-                    URI target = destination.resolve(File.separator + fileService.getFileName(file));
-                    fileService.copyFile(file, target);
-                }
-            }
+            copyFiles(files, destination);
         }
 
         URI ocr = serviceManager.getFileService().getOcrDirectory(process);
@@ -448,20 +440,24 @@ public class ExportDms extends ExportMets {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
                     ArrayList<URI> files = fileService.getSubUris(dir);
-                    for (URI file : files) {
-                        if (fileService.isFile(file)) {
-                            if (exportDmsTask != null) {
-                                exportDmsTask.setWorkDetail(fileService.getFileName(file));
-                            }
-                            URI target = destination.resolve(File.separator + fileService.getFileName(file));
-                            fileService.copyFile(file, target);
-                        }
-                    }
+                    copyFiles(files, destination);
                 }
             }
         }
         if (exportDmsTask != null) {
             exportDmsTask.setWorkDetail(null);
+        }
+    }
+
+    private void copyFiles(ArrayList<URI> files, URI destination) throws IOException {
+        for (int i = 0; i < files.size(); i++) {
+            if (fileService.isFile(files.get(i))) {
+                if (exportDmsTask != null) {
+                    exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
+                }
+                URI target = destination.resolve(File.separator + fileService.getFileName(files.get(i)));
+                fileService.copyFile(files.get(i), target);
+            }
         }
     }
 
