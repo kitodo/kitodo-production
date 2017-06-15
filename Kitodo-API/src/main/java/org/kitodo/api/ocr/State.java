@@ -16,5 +16,5 @@ package org.kitodo.api.ocr;
  */
 public enum State {
 
-    SUCCESS, WARNING, ERROR;
+    SUCCESS, WARNING, ERROR
 }

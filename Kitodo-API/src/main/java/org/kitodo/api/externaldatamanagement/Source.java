@@ -12,15 +12,9 @@
 package org.kitodo.api.externaldatamanagement;
 
 /**
- * Determines the possible sources of external Data. Needs to be implemented by
- * an Emun.
+ * Determines the possible sources of external Data.
  */
-public interface Source {
+public enum Source {
 
-    /**
-     * returns the enum values, is overwritten by enums default 'values()'
-     * method
-     */
-    Source[] values();
 
 }
