@@ -23,6 +23,12 @@ public class SchemaConverter implements SchemaConverterInterface {
 
     @Override
     public URI convert(URI inputFileUri, SchemaFormat baseFormat, SchemaFormat resultFormat) {
-        return null;
+        if (resultFormat == SchemaFormat.DMS) {
+            return null;
+        } else if (resultFormat == SchemaFormat.DMSRUSDML) {
+            return null;
+        } else {
+            return null;
+        }
     }
 }
