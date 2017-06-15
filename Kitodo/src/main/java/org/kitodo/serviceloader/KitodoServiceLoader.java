@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.serviceloader;
 
 import java.io.File;
@@ -12,7 +23,7 @@ public class KitodoServiceLoader<T> {
     private ServiceLoader<T> loader;
     private Class clazz;
 
-    public KitodoServiceLoader(Class clazz){
+    public KitodoServiceLoader(Class clazz) {
         this.clazz = clazz;
     }
 
@@ -28,9 +39,9 @@ public class KitodoServiceLoader<T> {
             }
         Class<URLClassLoader> sysClass = URLClassLoader.class;
         try {
-            Method method = sysClass.getDeclaredMethod("addURL", new Class[]{URL.class});
+            Method method = sysClass.getDeclaredMethod("addURL", new Class[] {URL.class });
             method.setAccessible(true);
-            method.invoke(sysLoader, new Object[] {udir});
+            method.invoke(sysLoader, new Object[] {udir });
         } catch (Throwable t) {
             t.printStackTrace();
         }

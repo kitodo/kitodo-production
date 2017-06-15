@@ -1975,6 +1975,13 @@ public class ProcessService extends TitleSearchService<Process> {
         }
     }
 
+    /**
+     * Creates a List of Docket data for the given processes.
+     * 
+     * @param processes
+     *            the process to create the docket data for.
+     * @return A List of docketdata
+     */
     public ArrayList<DocketData> getDocketData(ArrayList<Process> processes) {
         ArrayList<DocketData> docketdata = new ArrayList<>();
         for (Process process : processes) {
@@ -1983,7 +1990,14 @@ public class ProcessService extends TitleSearchService<Process> {
         return docketdata;
     }
 
-    public DocketData getDocketData(Process process) {
+    /**
+     * Creates the DocketData for a given Process.
+     * 
+     * @param process
+     *            The process to create the docket data for.
+     * @return The DocketData for the process.
+     */
+    private DocketData getDocketData(Process process) {
         DocketData docketdata = new DocketData();
 
         docketdata.setCreationDate(process.getCreationDate().toString());
