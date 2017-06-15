@@ -103,8 +103,8 @@ public class ExportMets {
         // only for the metadata of the RUSDML project
         ConfigProjects cp = new ConfigProjects(myProcess.getProject().getTitle());
         if (cp.getParamList("dmsImport.check").contains("rusdml")) {
-            ExportDms_CorrectRusdml expcorr = new ExportDms_CorrectRusdml(myProcess, this.myPrefs, gdzfile);
-            atsPpnBand = expcorr.correctionStart();
+            ExportDms_CorrectRusdml exportCorrect = new ExportDms_CorrectRusdml(myProcess, this.myPrefs, gdzfile);
+            atsPpnBand = exportCorrect.correctionStart();
         }
 
         prepareUserDirectory(inZielVerzeichnis);
