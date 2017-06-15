@@ -17,6 +17,7 @@ package org.kitodo.api.schemaconverter;
 public enum SchemaFormat {
 
     METS,
-    MODS
-
+    MODS,
+    DMS,
+    DMSRUSDML
 }
