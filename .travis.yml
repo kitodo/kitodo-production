@@ -28,4 +28,4 @@ before_script:
   - mysql -u root -e "CREATE USER 'kitodo'@'localhost' IDENTIFIED BY 'kitodo';"
   - mysql -u root -e "GRANT ALL ON kitodo.* TO 'kitodo'@'localhost';"
   - mysql -u root kitodo < Kitodo/setup/schema.sql
-  - mkdir -p /usr/local/kitodo/plugins
+  - mkdir -p '/usr/local/kitodo/plugins'
