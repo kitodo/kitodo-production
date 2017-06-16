@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -155,12 +154,6 @@ public class FileManipulation {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("uploadFailed", e);
-        } catch (DAOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed", e);
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed", e);
         } catch (TypeNotAllowedForParentException e) {
             logger.error(e);
             Helper.setFehlerMeldung("uploadFailed", e);
@@ -195,7 +188,7 @@ public class FileManipulation {
     }
 
     private void updatePagination(URI filename) throws TypeNotAllowedForParentException, IOException,
-            InterruptedException, DAOException, MetadataTypeNotAllowedException {
+            MetadataTypeNotAllowedException {
         if (!matchesFileConfiguration(filename)) {
             return;
         }
@@ -403,7 +396,7 @@ public class FileManipulation {
                 int index = Integer.parseInt(fileIndex);
                 filenamesToMove.add(allPages.get(index).getImageName());
             } catch (NumberFormatException e) {
-
+                logger.error(e);
             }
         }
         URI tempDirectory = fileService.getTemporalDirectory();
@@ -548,11 +541,7 @@ public class FileManipulation {
                             for (URI file : sortedList) {
                                 fileService.copyFileToDirectory(file, masterDirectory);
                             }
-                        } catch (DAOException e) {
-                            logger.error(e);
                         } catch (IOException e) {
-                            logger.error(e);
-                        } catch (InterruptedException e) {
                             logger.error(e);
                         }
                     } else {
@@ -621,15 +610,7 @@ public class FileManipulation {
                     insertPage = String.valueOf(++indexToImport);
                 }
             }
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-        } catch (DAOException e) {
-            logger.error(e);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
+        } catch (TypeNotAllowedForParentException | MetadataTypeNotAllowedException | IOException e) {
             logger.error(e);
         }
 

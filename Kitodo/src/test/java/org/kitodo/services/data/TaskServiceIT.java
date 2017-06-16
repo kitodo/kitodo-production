@@ -14,16 +14,17 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for TaskService class.
@@ -31,7 +32,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 public class TaskServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -55,7 +56,7 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldFindAllTasks() throws Exception {
+    public void shouldFindAllTasks() {
         TaskService taskService = new TaskService();
 
         List<Task> tasks = taskService.findAll();

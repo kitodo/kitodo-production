@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -151,7 +150,7 @@ public class ExportXmlLog implements IProcessDataExport {
 
             outp.output(answer, outputStream);
         } catch (IOException e) {
-
+            logger.error(e);
         } finally {
             if (outputStream != null) {
                 try {
@@ -483,7 +482,7 @@ public class ExportXmlLog implements IProcessDataExport {
     }
 
     public void startTransformation(OutputStream out, Process p, String filename)
-            throws ConfigurationException, XSLTransformException, IOException {
+            throws XSLTransformException, IOException {
         startTransformation(p, out, filename);
     }
 

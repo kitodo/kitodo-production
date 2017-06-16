@@ -14,7 +14,6 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -405,8 +404,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *             if the current session can't be retrieved or an exception is
      *             thrown while performing the rollback
      */
-    private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle)
-            throws DAOException, IOException, CustomResponseException {
+    private void addToBatches(Process process, List<IndividualIssue> issues, String processTitle) throws DataException {
         if (createBatches != null) {
             int lastIndex = issues.size() - 1;
             int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
@@ -429,11 +427,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *
      * @param processTitle
      *            the title of the process
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
      */
-    private void flushLogisticsBatch(String processTitle) throws DAOException, IOException, CustomResponseException {
+    private void flushLogisticsBatch(String processTitle) throws DataException {
         if (serviceManager.getBatchService().size(logisticsBatch) > 0) {
             logisticsBatch.setTitle(firstGroupFrom(processTitle) + " (" + batchLabel + ')');
             serviceManager.getBatchService().save(logisticsBatch);
@@ -459,11 +454,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *
      * @param theProcessTitle
      *            the title of the process
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
      */
-    private void saveFullBatch(String theProcessTitle) throws DAOException, IOException, CustomResponseException {
+    private void saveFullBatch(String theProcessTitle) throws DataException {
         fullBatch.setTitle(firstGroupFrom(theProcessTitle));
         serviceManager.getBatchService().save(fullBatch);
     }

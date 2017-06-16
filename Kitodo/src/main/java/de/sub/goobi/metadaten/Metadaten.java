@@ -57,6 +57,7 @@ import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -691,7 +692,7 @@ public class Metadaten {
         } catch (ReadException e) {
             Helper.setFehlerMeldung(e.getMessage());
             return Helper.getRequestParameter("zurueck");
-        } catch (PreferencesException | IOException | DAOException | InterruptedException e) {
+        } catch (PreferencesException | IOException e) {
             Helper.setFehlerMeldung("error while loading metadata" + e.getMessage());
             return Helper.getRequestParameter("zurueck");
         }
@@ -705,8 +706,7 @@ public class Metadaten {
      * Metadaten Einlesen.
      */
 
-    public String readXmlStart()
-            throws ReadException, IOException, InterruptedException, PreferencesException, DAOException {
+    public String readXmlStart() throws ReadException, IOException, PreferencesException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.myProzess.getRuleset());
         this.modusAnsicht = "Metadaten";
@@ -806,10 +806,10 @@ public class Metadaten {
             this.myProzess.setSortHelperImages(fileService
                     .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.myProzess)));
             serviceManager.getProcessService().save(this.myProzess);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
             logger.error(e);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Helper.setFehlerMeldung("error while counting current images", e);
             logger.error(e);
         }
@@ -1301,8 +1301,7 @@ public class Metadaten {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
-    public String createPagination()
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, DAOException {
+    public String createPagination() throws TypeNotAllowedForParentException, IOException {
         this.imagehelper.createPagination(this.myProzess, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1660,7 +1659,7 @@ public class Metadaten {
     /**
      * Read all tif folders.
      */
-    public void readAllTifFolders() throws IOException, InterruptedException, DAOException {
+    public void readAllTifFolders() throws IOException {
         this.allTifFolders = new ArrayList<>();
         URI dir = fileService.getProcessSubTypeURI(this.myProzess, ProcessSubType.IMAGE, null);
 
@@ -1721,13 +1720,7 @@ public class Metadaten {
             try {
                 createPagination();
                 dataList = this.imagehelper.getImageFiles(mydocument.getPhysicalDocStruct());
-            } catch (TypeNotAllowedForParentException e) {
-                logger.error(e);
-            } catch (DAOException e) {
-                logger.error(e);
-            } catch (IOException e) {
-                logger.error(e);
-            } catch (InterruptedException e) {
+            } catch (IOException | TypeNotAllowedForParentException e) {
                 logger.error(e);
             }
         }

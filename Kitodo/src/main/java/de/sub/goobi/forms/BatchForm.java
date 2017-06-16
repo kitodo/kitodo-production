@@ -50,7 +50,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
@@ -84,7 +84,7 @@ public class BatchForm extends BasisForm {
     /**
      * Load Batch data.
      */
-    public void loadBatchData() throws DAOException {
+    public void loadBatchData() {
         if (selectedProcesses == null || selectedProcesses.size() == 0) {
             this.currentBatches = serviceManager.getBatchService().findAll();
             this.selectedBatches = new ArrayList<Integer>();
@@ -144,8 +144,8 @@ public class BatchForm extends BasisForm {
     /**
      * Filter batches.
      */
-    public void filterBatches() throws DAOException {
-        currentBatches = new ArrayList<Batch>();
+    public void filterBatches() {
+        currentBatches = new ArrayList<>();
         for (Batch batch : serviceManager.getBatchService().findAll()) {
             if (serviceManager.getBatchService().contains(batch, batchfilter)) {
                 currentBatches.add(batch);
@@ -219,22 +219,19 @@ public class BatchForm extends BasisForm {
      *
      * @return page - all batches
      */
-    public String filterAlleStart() throws DAOException {
+    public String filterAlleStart() {
         filterBatches();
         filterProcesses();
         return "/newpages/BatchesAll";
     }
 
     /**
-     * This method initializes the batch list without any filter whenever the bean is constructed.
+     * This method initializes the batch list without any filter whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeBatchList() {
-        try {
-            filterAlleStart();
-        } catch (DAOException e) {
-            logger.error("DAOException while filtering batches", e);
-        }
+        filterAlleStart();
         setModusBearbeiten("");
     }
 
@@ -337,19 +334,16 @@ public class BatchForm extends BasisForm {
         } catch (DAOException e) {
             logger.error(e);
             Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
-        } catch (IOException e) {
+        } catch (DataException e) {
             logger.error(e);
-            Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
-        } catch (CustomResponseException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
+            Helper.setFehlerMeldung("errorSaveList", e.getMessage());
         }
     }
 
     /**
      * Remove processes from Batch.
      */
-    public void removeProcessesFromBatch() throws DAOException, IOException, CustomResponseException {
+    public void removeProcessesFromBatch() throws DAOException, DataException {
         if (this.selectedBatches.size() == 0) {
             Helper.setFehlerMeldung("noBatchSelected");
             return;
@@ -398,15 +392,9 @@ public class BatchForm extends BasisForm {
                         return;
                     }
                 }
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 Helper.setFehlerMeldung("fehlerNichtAktualisierbar", e.getMessage());
                 logger.error(e);
-            } catch (IOException e) {
-                Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
-                logger.error(e);
-            } catch (CustomResponseException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
             }
         }
     }
@@ -414,7 +402,7 @@ public class BatchForm extends BasisForm {
     /**
      * Create new Batch.
      */
-    public void createNewBatch() throws DAOException, IOException, CustomResponseException {
+    public void createNewBatch() throws DAOException, DataException {
         if (selectedProcesses.size() > 0) {
             Batch batch = null;
             if (batchTitle != null && batchTitle.trim().length() > 0) {
@@ -570,20 +558,14 @@ public class BatchForm extends BasisForm {
     private void setType(Type type) {
         try {
             for (Batch batch : currentBatches) {
-                if (selectedBatches.contains(batch.getId().toString())) {
+                if (selectedBatches.contains(batch.getId())) {
                     batch.setType(type);
                     serviceManager.getBatchService().save(batch);
                 }
             }
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen");
-        } catch (IOException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("errorElasticSearch");
-        } catch (CustomResponseException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("ElasticSearch incorrect server response", e.getMessage());
         }
     }
 }

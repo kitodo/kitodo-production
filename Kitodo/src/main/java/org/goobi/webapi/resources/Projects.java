@@ -13,7 +13,6 @@ package org.goobi.webapi.resources;
 
 import de.sub.goobi.helper.Helper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,8 +48,8 @@ public class Projects {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() throws IOException {
-        Map<Project, Set<Process>> data = new HashMap<Project, Set<Process>>();
+    public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() {
+        Map<Project, Set<Process>> data = new HashMap<>();
 
         Criteria query = Helper.getHibernateSession().createCriteria(Process.class);
         @SuppressWarnings("unchecked")
@@ -63,7 +62,7 @@ public class Projects {
         }
         List<Project> result = new ArrayList<Project>();
         for (Project project : data.keySet()) {
-            project.template = new ArrayList<Process>(data.get(project));
+            project.template = new ArrayList<>(data.get(project));
             result.add(project);
         }
         return new ProjectsRootNode(result);

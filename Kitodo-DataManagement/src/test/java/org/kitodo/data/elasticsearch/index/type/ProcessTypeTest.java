@@ -126,7 +126,7 @@ public class ProcessTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         ProcessType processType = new ProcessType();
 
         List<Process> processes = prepareData();

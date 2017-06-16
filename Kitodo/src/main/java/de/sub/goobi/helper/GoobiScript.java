@@ -36,7 +36,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -65,8 +65,7 @@ public class GoobiScript {
     /**
      * Starten des Scripts.
      */
-    public void execute(List<Process> inProzesse, String inScript)
-            throws IOException, CustomResponseException, DAOException {
+    public void execute(List<Process> inProzesse, String inScript) throws DataException {
         this.myParameters = new HashMap<String, String>();
         /*
          * alle Suchparameter zerlegen und erfassen
@@ -180,7 +179,7 @@ public class GoobiScript {
         Helper.setMeldung("kitodoScriptfield", "", "updateContentFiles finished");
     }
 
-    private void deleteProcess(List<Process> inProzesse, boolean contentOnly) throws CustomResponseException {
+    private void deleteProcess(List<Process> inProzesse, boolean contentOnly) {
         for (Process p : inProzesse) {
             String title = p.getTitle();
             if (contentOnly) {
@@ -203,10 +202,8 @@ public class GoobiScript {
                 try {
                     serviceManager.getProcessService().remove(p);
                     Helper.setMeldung("Process " + title + " deleted.");
-                } catch (DAOException e) {
+                } catch (DataException e) {
                     Helper.setFehlerMeldung("could not delete process " + p.getTitle(), e);
-                } catch (IOException e) {
-                    Helper.setFehlerMeldung("could not delete document for process " + p.getTitle(), e);
                 }
             }
         }
@@ -216,8 +213,7 @@ public class GoobiScript {
         serviceManager.getFileService().deleteProcessContent(process);
     }
 
-    private void runScript(List<Process> inProzesse, String stepname, String scriptname)
-            throws CustomResponseException, DAOException, IOException {
+    private void runScript(List<Process> inProzesse, String stepname, String scriptname) throws DataException {
         for (Process p : inProzesse) {
             for (Task step : p.getTasks()) {
                 if (step.getTitle().equalsIgnoreCase(stepname)) {
@@ -313,7 +309,7 @@ public class GoobiScript {
     /**
      * Tauschen zweier Schritte gegeneinander.
      */
-    private void swapSteps(List<Process> inProzesse) throws CustomResponseException {
+    private void swapSteps(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -351,39 +347,33 @@ public class GoobiScript {
             /*
              * Swapsteps
              */
-            Task s1 = null;
-            Task s2 = null;
+            Task firstTask = null;
+            Task secondTask = null;
             for (Iterator<Task> iterator = proz.getTasks().iterator(); iterator.hasNext();) {
-                Task s = iterator.next();
-                if (s.getTitle().equals(this.myParameters.get("swap1title")) && s.getOrdering() == firstOrder) {
-                    s1 = s;
+                Task task = iterator.next();
+                if (task.getTitle().equals(this.myParameters.get("swap1title")) && task.getOrdering() == firstOrder) {
+                    firstTask = task;
                 }
-                if (s.getTitle().equals(this.myParameters.get("swap2title")) && s.getOrdering() == secondOrder) {
-                    s2 = s;
+                if (task.getTitle().equals(this.myParameters.get("swap2title")) && task.getOrdering() == secondOrder) {
+                    secondTask = task;
                 }
             }
-            if (s1 != null && s2 != null) {
-                TaskStatus statustemp = s1.getProcessingStatusEnum();
-                s1.setProcessingStatusEnum(s2.getProcessingStatusEnum());
-                s2.setProcessingStatusEnum(statustemp);
-                s1.setOrdering(secondOrder);
-                s2.setOrdering(firstOrder);
+            if (firstTask != null && secondTask != null) {
+                TaskStatus statustemp = firstTask.getProcessingStatusEnum();
+                firstTask.setProcessingStatusEnum(secondTask.getProcessingStatusEnum());
+                secondTask.setProcessingStatusEnum(statustemp);
+                firstTask.setOrdering(secondOrder);
+                secondTask.setOrdering(firstOrder);
                 try {
-                    serviceManager.getTaskService().save(s1);
-                    serviceManager.getTaskService().save(s2);
-                } catch (DAOException e) {
-                    Helper.setFehlerMeldung("kitodoScriptfield", "Error on save while swapping steps in process: ",
-                            proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
-                    logger.error("Error on save while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
-                            + " : " + s2.getTitle(), e);
-                } catch (IOException e) {
-                    Helper.setFehlerMeldung("kitodoScriptfield", "Error on insert while swapping steps in process: ",
-                            proz.getTitle() + " - " + s1.getTitle() + " : " + s2.getTitle());
-                    logger.error("Error on insert while swapping process: " + proz.getTitle() + " - " + s1.getTitle()
-                            + " : " + s2.getTitle(), e);
+                    serviceManager.getTaskService().save(firstTask);
+                    serviceManager.getTaskService().save(secondTask);
+                } catch (DataException e) {
+                    Helper.setFehlerMeldung("kitodoScriptfield", "Error on save while swapping tasks in process: ",
+                            proz.getTitle() + " - " + firstTask.getTitle() + " : " + secondTask.getTitle());
+                    logger.error("Error on save while swapping process: " + proz.getTitle() + " - "
+                            + firstTask.getTitle() + " : " + secondTask.getTitle(), e);
                 }
-
-                Helper.setMeldung("kitodoScriptfield", "Swapped steps in: ", proz.getTitle());
+                Helper.setMeldung("kitodoScriptfield", "Swapped tasks in: ", proz.getTitle());
             }
 
         }
@@ -393,7 +383,7 @@ public class GoobiScript {
     /**
      * Schritte löschen.
      */
-    private void deleteStep(List<Process> inProzesse) throws CustomResponseException {
+    private void deleteStep(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -413,16 +403,10 @@ public class GoobiScript {
                         proz.getTasks().remove(s);
                         try {
                             serviceManager.getProcessService().save(proz);
-                        } catch (DAOException e) {
+                        } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
-                        } catch (IOException e) {
-                            Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while inserting to index process: " + proz.getTitle(), e);
-                            logger.error(
-                                    "kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
-                                    e);
                         }
                         Helper.setMeldung("kitodoScriptfield", "Removed step from process: ", proz.getTitle());
                         break;
@@ -436,7 +420,7 @@ public class GoobiScript {
     /**
      * Schritte hinzufuegen.
      */
-    private void addStep(List<Process> inProzesse) throws CustomResponseException {
+    private void addStep(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -468,15 +452,11 @@ public class GoobiScript {
             proz.getTasks().add(s);
             try {
                 serviceManager.getProcessService().save(proz);
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(), e);
                 logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
-            } catch (IOException e) {
-                Helper.setFehlerMeldung("kitodoScriptfield",
-                        "Error while inserting to index process: " + proz.getTitle(), e);
-                logger.error("kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(), e);
             }
-            Helper.setMeldung("kitodoScriptfield", "Added step to process: ", proz.getTitle());
+            Helper.setMeldung("kitodoScriptfield", "Added task to process: ", proz.getTitle());
         }
         Helper.setMeldung("kitodoScriptfield", "", "addStep finished: ");
     }
@@ -484,7 +464,7 @@ public class GoobiScript {
     /**
      * ShellScript an Schritt hängen.
      */
-    private void addShellScriptToStep(List<Process> inProzesse) throws CustomResponseException {
+    private void addShellScriptToStep(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -516,16 +496,10 @@ public class GoobiScript {
                         s.setTypeScriptStep(true);
                         try {
                             serviceManager.getProcessService().save(proz);
-                        } catch (DAOException e) {
+                        } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
-                        } catch (IOException e) {
-                            Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while inserting to index process: " + proz.getTitle(), e);
-                            logger.error(
-                                    "kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
-                                    e);
                         }
                         Helper.setMeldung("kitodoScriptfield", "Added script to step: ", proz.getTitle());
                         break;
@@ -539,7 +513,7 @@ public class GoobiScript {
     /**
      * ShellScript an Schritt hängen.
      */
-    private void addModuleToStep(List<Process> inProzesse) throws CustomResponseException {
+    private void addModuleToStep(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -564,18 +538,12 @@ public class GoobiScript {
                         s.setTypeModuleName(this.myParameters.get("module"));
                         try {
                             serviceManager.getProcessService().save(proz);
-                        } catch (DAOException e) {
+                        } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
-                        } catch (IOException e) {
-                            Helper.setFehlerMeldung("kitodoScriptfield",
-                                    "Error while inserting to index process: " + proz.getTitle(), e);
-                            logger.error(
-                                    "kitodoScriptfield" + "Error while inserting to index process: " + proz.getTitle(),
-                                    e);
                         }
-                        Helper.setMeldung("kitodoScriptfield", "Added module to step: ", proz.getTitle());
+                        Helper.setMeldung("kitodoScriptfield", "Added module to task: ", proz.getTitle());
                         break;
                     }
                 }
@@ -587,7 +555,7 @@ public class GoobiScript {
     /**
      * Flag von Schritten setzen.
      */
-    private void setTaskProperty(List<Process> inProzesse) throws IOException, CustomResponseException {
+    private void setTaskProperty(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -656,7 +624,7 @@ public class GoobiScript {
 
                         try {
                             serviceManager.getProcessService().save(proz);
-                        } catch (DAOException e) {
+                        } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield",
                                     "Error while saving process: " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
@@ -673,7 +641,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Status setzen.
      */
-    private void setStepStatus(List<Process> inProzesse) throws IOException, CustomResponseException {
+    private void setStepStatus(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -704,7 +672,7 @@ public class GoobiScript {
                     serviceManager.getTaskService().setProcessingStatusAsString(this.myParameters.get("status"));
                     try {
                         serviceManager.getTaskService().save(s);
-                    } catch (DAOException e) {
+                    } catch (DataException e) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
                                 e);
                         logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
@@ -720,7 +688,7 @@ public class GoobiScript {
     /**
      * Schritte auf bestimmten Reihenfolge setzen.
      */
-    private void setStepNumber(List<Process> inProzesse) throws IOException, CustomResponseException {
+    private void setStepNumber(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -749,7 +717,7 @@ public class GoobiScript {
                     s.setOrdering(Integer.parseInt(this.myParameters.get("number")));
                     try {
                         serviceManager.getTaskService().save(s);
-                    } catch (DAOException e) {
+                    } catch (DataException e) {
                         Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving process: " + proz.getTitle(),
                                 e);
                         logger.error("kitodoScriptfield" + "Error while saving process: " + proz.getTitle(), e);
@@ -765,7 +733,7 @@ public class GoobiScript {
     /**
      * Benutzer zu Schritt hinzufügen.
      */
-    private void adduser(List<Process> inProzesse) throws IOException, CustomResponseException {
+    private void adduser(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -810,7 +778,7 @@ public class GoobiScript {
                         myBenutzer.add(myUser);
                         try {
                             serviceManager.getTaskService().save(s);
-                        } catch (DAOException e) {
+                        } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving - " + proz.getTitle(), e);
                             logger.error("kitodoScriptfield" + "Error while saving - " + proz.getTitle(), e);
                             return;
@@ -826,7 +794,7 @@ public class GoobiScript {
     /**
      * Benutzergruppe zu Schritt hinzufügen.
      */
-    private void addusergroup(List<Process> inProzesse) throws IOException, CustomResponseException {
+    private void addusergroup(List<Process> inProzesse) {
         /*
          * Validierung der Actionparameter
          */
@@ -870,7 +838,7 @@ public class GoobiScript {
                         myBenutzergruppe.add(myGroup);
                         try {
                             serviceManager.getTaskService().save(s);
-                        } catch (DAOException e) {
+                        } catch (DataException e) {
                             Helper.setFehlerMeldung("kitodoScriptfield", "Error while saving - " + proz.getTitle(), e);
                             return;
                         }
@@ -971,14 +939,8 @@ public class GoobiScript {
                 logger.error("TypeNotAllowedForParentException", e);
             } catch (IOException e) {
                 logger.error("IOException", e);
-            } catch (InterruptedException e) {
-                logger.error("InterruptedException", e);
             } catch (ExportFileException e) {
                 logger.error("ExportFileException", e);
-            } catch (UghHelperException e) {
-                logger.error("UghHelperException", e);
-            } catch (DAOException e) {
-                logger.error("DAOException", e);
             }
         }
     }

@@ -77,7 +77,7 @@ import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 @Named("AktuelleSchritteForm")
@@ -265,13 +265,9 @@ public class AktuelleSchritteForm extends BasisForm {
                          * Sortierungshelper gespeichert wird
                          */
                         this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-                    } catch (DAOException e) {
+                    } catch (DataException e) {
                         Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                        logger.error("step couldn't get saved", e);
-                    } catch (IOException e) {
-                        logger.error("process couldn't get inserted", e);
-                    } catch (CustomResponseException e) {
-                        logger.error("Elastic Search incorrect server response", e);
+                        logger.error("Task couldn't get saved", e);
                     } finally {
                         this.flagWait = false;
                     }
@@ -372,7 +368,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     try {
                         new File(serviceManager.getProcessService().getImagesOrigDirectory(false, s.getProcess()));
                     } catch (Exception e1) {
-
+                        logger.error(e1);
                     }
                     s.setProcessingTime(new Date());
 
@@ -386,11 +382,9 @@ public class AktuelleSchritteForm extends BasisForm {
 
             try {
                 this.serviceManager.getProcessService().save(s.getProcess());
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                logger.error("task couldn't get saved", e);
-            } catch (IOException | CustomResponseException e) {
-                logger.error("task couldn't get inserted", e);
+                logger.error("Task couldn't get saved", e);
             }
         }
 
@@ -474,8 +468,8 @@ public class AktuelleSchritteForm extends BasisForm {
              * gespeichert wird
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException | CustomResponseException e) {
-            logger.error("task couldn't get saved/inserted", e);
+        } catch (DataException e) {
+            logger.error("Task couldn't get saved/inserted", e);
         }
         // calcHomeImages();
         return "/newpages/AktuelleSchritteAlle";
@@ -486,7 +480,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page
      */
-    public String schrittDurchBenutzerAbschliessen() throws DAOException, IOException, CustomResponseException {
+    public String schrittDurchBenutzerAbschliessen() throws DAOException, DataException {
 
         if (mySchritt.getValidationPlugin() != null && mySchritt.getValidationPlugin().length() > 0) {
             IValidatorPlugin ivp = (IValidatorPlugin) PluginLoader.getPluginByTitle(PluginType.Validation,
@@ -656,8 +650,8 @@ public class AktuelleSchritteForm extends BasisForm {
              * gespeichert wird
              */
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException | CustomResponseException e) {
-            logger.error("task couldn't get saved/inserted", e);
+        } catch (DAOException | DataException e) {
+            logger.error("Task couldn't get saved/inserted", e);
         }
 
         this.problemMessage = "";
@@ -748,7 +742,7 @@ public class AktuelleSchritteForm extends BasisForm {
             this.mySchritt.getProcess().getProperties().add(processProperty);
 
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-        } catch (DAOException | IOException | CustomResponseException e) {
+        } catch (DAOException | DataException e) {
             logger.error("task couldn't get saved/inserted", e);
         }
 
@@ -780,7 +774,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             new File(serviceManager.getProcessService().getImagesOrigDirectory(false, this.mySchritt.getProcess()));
         } catch (Exception e1) {
-
+            logger.error(e1);
         }
         mySchritt.setProcessingTime(new Date());
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
@@ -799,8 +793,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     @SuppressWarnings("unchecked")
-    public String uploadFromHomeAlle()
-            throws NumberFormatException, DAOException, IOException, CustomResponseException {
+    public String uploadFromHomeAlle() throws NumberFormatException, DAOException, DataException {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
         List<URI> geprueft = new ArrayList<>();
         /*
@@ -857,12 +850,8 @@ public class AktuelleSchritteForm extends BasisForm {
                 Process proz = step.getProcess();
                 try {
                     this.serviceManager.getProcessService().save(proz);
-                } catch (DAOException e) {
+                } catch (DataException e) {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
-                } catch (IOException e) {
-                    Helper.setMeldung("errorElasticSearch" + proz.getTitle());
-                } catch (CustomResponseException e) {
-                    Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
                 this.myDav.downloadToHome(proz, step.getId(), false);
             }
@@ -894,12 +883,8 @@ public class AktuelleSchritteForm extends BasisForm {
                 Process proz = step.getProcess();
                 try {
                     this.serviceManager.getProcessService().save(proz);
-                } catch (DAOException e) {
+                } catch (DataException e) {
                     Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
-                } catch (IOException e) {
-                    Helper.setMeldung("errorElasticSearch" + proz.getTitle());
-                } catch (CustomResponseException e) {
-                    Helper.setMeldung("ElasticSearch server incorrect response" + proz.getTitle());
                 }
                 this.myDav.downloadToHome(proz, step.getId(), false);
             }
@@ -921,7 +906,7 @@ public class AktuelleSchritteForm extends BasisForm {
     /**
      * Execute script.
      */
-    public void executeScript() throws DAOException, CustomResponseException {
+    public void executeScript() throws DAOException, DataException {
         Task task = serviceManager.getTaskService().find(this.mySchritt.getId());
         serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
@@ -1216,7 +1201,7 @@ public class AktuelleSchritteForm extends BasisForm {
             this.addToWikiField = "";
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
-            } catch (DAOException | IOException | CustomResponseException e) {
+            } catch (DataException e) {
                 logger.error(e);
             }
         }
@@ -1286,11 +1271,9 @@ public class AktuelleSchritteForm extends BasisForm {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
                 this.serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
                 Helper.setMeldung("propertySaved");
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("propertyNotSaved");
-            } catch (IOException | CustomResponseException e) {
-                logger.error(e);
             }
         }
         loadProcessProperties();
@@ -1457,11 +1440,9 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
             Helper.setMeldung("propertySaved");
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
             Helper.setFehlerMeldung("propertiesNotSaved");
-        } catch (IOException | CustomResponseException e) {
-            logger.error(e);
         }
         loadProcessProperties();
         return null;

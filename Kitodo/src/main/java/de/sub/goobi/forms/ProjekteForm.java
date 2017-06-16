@@ -17,7 +17,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +65,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 @Named("ProjekteForm")
@@ -170,16 +170,8 @@ public class ProjekteForm extends BasisForm {
         try {
             serviceManager.getProjectService().save(this.myProjekt);
             return "/newpages/ProjekteAlle";
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("could not save", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+        } catch (DataException e) {
+            Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
             logger.error(e);
             return null;
         }
@@ -197,16 +189,8 @@ public class ProjekteForm extends BasisForm {
         try {
             serviceManager.getProjectService().save(this.myProjekt);
             return null;
-        } catch (DAOException e) {
-            Helper.setFehlerMeldung("could not save", e.getMessage());
-            logger.error(e.getMessage());
-            return null;
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+        } catch (DataException e) {
+            Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
             logger.error(e);
             return null;
         }
@@ -224,15 +208,8 @@ public class ProjekteForm extends BasisForm {
         } else {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
-            } catch (DAOException e) {
-                Helper.setFehlerMeldung("could not delete", e.getMessage());
-                logger.error(e.getMessage());
-                return null;
-            } catch (IOException e) {
-                Helper.setFehlerMeldung("could not delete from index", e.getMessage());
-                logger.error(e);
-            } catch (CustomResponseException e) {
-                Helper.setFehlerMeldung("incorrect response from ElasticSearch", e.getMessage());
+            } catch (DataException e) {
+                Helper.setFehlerMeldung("Project could not be delete: ", e.getMessage());
                 logger.error(e);
                 return null;
             }
@@ -787,9 +764,8 @@ public class ProjekteForm extends BasisForm {
                 wb.write(out);
                 out.flush();
                 facesContext.responseComplete();
-
             } catch (IOException e) {
-
+                logger.error(e);
             }
         }
     }
@@ -819,7 +795,7 @@ public class ProjekteForm extends BasisForm {
      */
     public void loadProject() {
         try {
-            if(!Objects.equals(this.itemId, 0)) {
+            if (!Objects.equals(this.itemId, 0)) {
                 setMyProjekt(this.serviceManager.getProjectService().find(this.itemId));
             }
         } catch (DAOException e) {
@@ -828,8 +804,12 @@ public class ProjekteForm extends BasisForm {
 
     }
 
-    public void setItemId(int id) { this.itemId = id; }
+    public void setItemId(int id) {
+        this.itemId = id;
+    }
 
-    public int getItemId() { return this.itemId; }
+    public int getItemId() {
+        return this.itemId;
+    }
 
 }

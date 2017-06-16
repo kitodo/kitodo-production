@@ -11,7 +11,6 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.kitodo.data.elasticsearch.Index;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Implementation of Elastic Search Searcher for Kitodo - Data Management
@@ -58,14 +57,18 @@ public class Searcher extends Index {
      *            of searched documents
      * @return amount of documents as Long
      */
-    public Long countDocuments(String query) throws CustomResponseException, IOException, ParseException {
+    public Long countDocuments(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
         String response = restClient.countDocuments(query);
         if (!response.equals("")) {
-            JSONObject result = (JSONObject) parser.parse(response);
-            return (Long) result.get("count");
+            try {
+                JSONObject result = (JSONObject) parser.parse(response);
+                return (Long) result.get("count");
+            } catch (ParseException e) {
+                throw new DataException(e);
+            }
         } else {
             return new Long(0);
         }
@@ -78,14 +81,18 @@ public class Searcher extends Index {
      *            of searched document
      * @return search result
      */
-    public SearchResult findDocument(Integer id) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findDocument(Integer id) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(id);
         if (!response.equals("")) {
-            JSONObject result = (JSONObject) parser.parse(response);
-            return convertJsonStringToSearchResult(result);
+            try {
+                JSONObject result = (JSONObject) parser.parse(response);
+                return convertJsonStringToSearchResult(result);
+            } catch (ParseException e) {
+                throw new DataException(e);
+            }
         } else {
             return new SearchResult();
         }
@@ -99,21 +106,25 @@ public class Searcher extends Index {
      *            as String
      * @return search result
      */
-    public SearchResult findDocument(String query) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findDocument(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         SearchResult searchResult = new SearchResult();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query);
-        JSONObject jsonObject = (JSONObject) parser.parse(response);
-        if (jsonObject.containsKey("hits")) {
-            JSONObject hits = (JSONObject) jsonObject.get("hits");
-            JSONArray inHits = (JSONArray) hits.get("hits");
-            if (!inHits.isEmpty()) {
-                searchResult = convertJsonStringToSearchResult((JSONObject) inHits.get(0));
+        try {
+            JSONObject jsonObject = (JSONObject) parser.parse(response);
+            if (jsonObject.containsKey("hits")) {
+                JSONObject hits = (JSONObject) jsonObject.get("hits");
+                JSONArray inHits = (JSONArray) hits.get("hits");
+                if (!inHits.isEmpty()) {
+                    searchResult = convertJsonStringToSearchResult((JSONObject) inHits.get(0));
+                }
+            } else {
+                searchResult = convertJsonStringToSearchResult(jsonObject);
             }
-        } else {
-            searchResult = convertJsonStringToSearchResult(jsonObject);
+        } catch (ParseException e) {
+            throw new DataException(e);
         }
         return searchResult;
     }
@@ -125,24 +136,29 @@ public class Searcher extends Index {
      *            as String
      * @return list of SearchResult objects
      */
-    public List<SearchResult> findDocuments(String query) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findDocuments(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
         List<SearchResult> searchResults = new ArrayList<>();
         JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query);
-        JSONObject jsonObject = (JSONObject) parser.parse(response);
-        if (jsonObject.containsKey("hits")) {
-            JSONObject hits = (JSONObject) jsonObject.get("hits");
-            JSONArray inHits = (JSONArray) hits.get("hits");
-            if (!inHits.isEmpty()) {
-                for (Object hit : inHits) {
-                    searchResults.add(convertJsonStringToSearchResult((JSONObject) hit));
+        try {
+            JSONObject jsonObject = (JSONObject) parser.parse(response);
+            if (jsonObject.containsKey("hits")) {
+                JSONObject hits = (JSONObject) jsonObject.get("hits");
+                JSONArray inHits = (JSONArray) hits.get("hits");
+                if (!inHits.isEmpty()) {
+                    for (Object hit : inHits) {
+                        searchResults.add(convertJsonStringToSearchResult((JSONObject) hit));
+                    }
                 }
+            } else {
+                searchResults.add(convertJsonStringToSearchResult(jsonObject));
             }
-        } else {
-            searchResults.add(convertJsonStringToSearchResult(jsonObject));
+        } catch (ParseException e) {
+            throw new DataException(e);
         }
+
         return searchResults;
     }
 

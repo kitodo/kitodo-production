@@ -11,10 +11,13 @@
 
 package de.sub.goobi.forms;
 
-import java.io.IOException;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
@@ -26,12 +29,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.SimpleDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import javax.annotation.PostConstruct;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 @Named("BenutzergruppenForm")
 @SessionScoped
@@ -56,14 +55,8 @@ public class BenutzergruppenForm extends BasisForm {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
             return "/newpages/BenutzergruppenAlle?faces-redirect=true";
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-            return null;
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
             return null;
         }
     }
@@ -88,14 +81,8 @@ public class BenutzergruppenForm extends BasisForm {
                 return null;
             }
             this.serviceManager.getUserGroupService().remove(this.myBenutzergruppe);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
-            return null;
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("Error, could not delete from index", e.getMessage());
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
             return null;
         }
         return "/newpages/BenutzergruppenAlle?faces-redirect=true";
@@ -121,7 +108,8 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * This method initializes the user group list without applying any filters whenever the bean is constructed.
+     * This method initializes the user group list without applying any filters
+     * whenever the bean is constructed.
      */
     @PostConstruct
     public void initializeUserGroupList() {
@@ -134,12 +122,13 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * Method being used as viewAction for user group edit form.
-     * If 'userGroupId' is '0', the form for creating a new user group will be displayed.
+     * Method being used as viewAction for user group edit form. If
+     * 'userGroupId' is '0', the form for creating a new user group will be
+     * displayed.
      */
     public void loadUserGroup() {
         try {
-            if(!Objects.equals(this.userGroupId, 0)) {
+            if (!Objects.equals(this.userGroupId, 0)) {
                 setMyBenutzergruppe(this.serviceManager.getUserGroupService().find(this.userGroupId));
             }
         } catch (DAOException e) {
@@ -160,8 +149,12 @@ public class BenutzergruppenForm extends BasisForm {
         this.myBenutzergruppe = myBenutzergruppe;
     }
 
-    public void setUserGroupId(int id) { this.userGroupId = id; }
+    public void setUserGroupId(int id) {
+        this.userGroupId = id;
+    }
 
-    public int getUserGroupId() { return this.userGroupId; }
+    public int getUserGroupId() {
+        return this.userGroupId;
+    }
 
 }

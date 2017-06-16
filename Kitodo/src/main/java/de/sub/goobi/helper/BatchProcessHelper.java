@@ -11,7 +11,6 @@
 
 package de.sub.goobi.helper;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,8 +25,7 @@ import org.goobi.production.properties.PropertyParser;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class BatchProcessHelper {
@@ -125,7 +123,7 @@ public class BatchProcessHelper {
     /**
      * Save current property.
      */
-    public void saveCurrentProperty() throws IOException, CustomResponseException {
+    public void saveCurrentProperty() {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
@@ -161,7 +159,7 @@ public class BatchProcessHelper {
             try {
                 serviceManager.getProcessService().save(this.currentProcess);
                 Helper.setMeldung("propertySaved");
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("propertyNotSaved");
             }
@@ -171,7 +169,7 @@ public class BatchProcessHelper {
     /**
      * Save current property for all.
      */
-    public void saveCurrentPropertyForAll() throws IOException, CustomResponseException {
+    public void saveCurrentPropertyForAll() {
         List<ProcessProperty> ppList = getContainerProperties();
         boolean error = false;
         for (ProcessProperty pp : ppList) {
@@ -241,10 +239,10 @@ public class BatchProcessHelper {
 
                 try {
                     serviceManager.getProcessService().save(process);
-                } catch (DAOException e) {
+                } catch (DataException e) {
                     error = true;
                     logger.error(e);
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(process.getTitle());
                     String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
                     Helper.setFehlerMeldung(value);
@@ -377,7 +375,7 @@ public class BatchProcessHelper {
      *
      * @return String
      */
-    public String duplicateContainerForSingle() throws IOException, CustomResponseException {
+    public String duplicateContainerForSingle() {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container
@@ -416,9 +414,9 @@ public class BatchProcessHelper {
      * 
      * @return String
      */
-    public String duplicateContainerForAll() throws IOException, CustomResponseException {
+    public String duplicateContainerForAll() {
         Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> plist = new ArrayList<>();
         // search for all properties in container
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getContainer() == currentContainer) {

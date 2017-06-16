@@ -24,7 +24,6 @@ import org.goobi.production.constants.Parameters;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -202,16 +201,9 @@ public class ExportSerialBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws DAOException
-     *             if an error occurs while saving the fact that the process has
-     *             been swapped back in to the database
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to
-     *             finish
      * @throws TypeNotAllowedForParentException
      *             is thrown, if this DocStruct is not allowed for a parent
      * @throws MetadataTypeNotAllowedException
@@ -223,8 +215,8 @@ public class ExportSerialBatchTask extends EmptyTask {
      *             member of this instance's DocStruct type
      */
     private static DigitalDocument buildExportDocument(Process process, Iterable<String> allPointers)
-            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException,
-            MetadataTypeNotAllowedException, TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
+            throws PreferencesException, ReadException, IOException, MetadataTypeNotAllowedException,
+            TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
         DigitalDocument result = serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument();
         DocStruct root = result.getLogicalDocStruct();
         String type = "Volume";

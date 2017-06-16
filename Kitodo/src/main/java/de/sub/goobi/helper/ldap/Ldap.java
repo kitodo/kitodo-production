@@ -79,7 +79,7 @@ public class Ldap {
      *            String
      */
     public void createNewUser(User inBenutzer, String inPasswort)
-            throws NamingException, NoSuchAlgorithmException, IOException, InterruptedException {
+            throws NamingException, NoSuchAlgorithmException, IOException {
 
         if (!ConfigCore.getBooleanParameter("ldap_readonly", false)) {
             Hashtable<String, String> env = getLdapConnectionSettings();

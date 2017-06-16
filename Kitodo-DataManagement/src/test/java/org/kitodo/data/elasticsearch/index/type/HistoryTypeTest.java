@@ -83,7 +83,7 @@ public class HistoryTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         HistoryType historyType = new HistoryType();
 
         List<History> histories = prepareData();

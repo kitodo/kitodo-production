@@ -52,7 +52,7 @@ import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DocStruct;
@@ -324,6 +324,7 @@ public class CopyProcess extends ProzesskopieForm {
                         try {
                             myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
+                            logger.error(e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -581,8 +582,7 @@ public class CopyProcess extends ProzesskopieForm {
      * Anlegen des Prozesses und save der Metadaten.
      */
 
-    public Process NeuenProzessAnlegen2()
-            throws ReadException, IOException, PreferencesException, WriteException, CustomResponseException {
+    public Process NeuenProzessAnlegen2() throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -619,7 +619,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             e.printStackTrace();
             logger.error("error on save: ", e);
             return this.prozessKopie;
@@ -641,7 +641,7 @@ public class CopyProcess extends ProzesskopieForm {
         } else {
             try {
                 serviceManager.getProcessService().save(this.prozessKopie);
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 e.printStackTrace();
                 logger.error("error on save: ", e);
                 return this.prozessKopie;
@@ -664,7 +664,7 @@ public class CopyProcess extends ProzesskopieForm {
      * @return Process object
      */
     public Process createProcess(ImportObject io)
-            throws ReadException, IOException, PreferencesException, WriteException, CustomResponseException {
+            throws ReadException, IOException, PreferencesException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -701,7 +701,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             e.printStackTrace();
             logger.error("error on save: ", e);
             return this.prozessKopie;
@@ -725,7 +725,7 @@ public class CopyProcess extends ProzesskopieForm {
         } else {
             try {
                 serviceManager.getProcessService().save(this.prozessKopie);
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 e.printStackTrace();
                 logger.error("error on save: ", e);
                 return this.prozessKopie;
@@ -754,10 +754,7 @@ public class CopyProcess extends ProzesskopieForm {
                     colStruct.removeMetadata(md);
                 }
             }
-        } catch (UghHelperException e) {
-            Helper.setFehlerMeldung(e.getMessage(), "");
-            e.printStackTrace();
-        } catch (DocStructHasNoTypeException e) {
+        } catch (UghHelperException | DocStructHasNoTypeException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
             e.printStackTrace();
         }

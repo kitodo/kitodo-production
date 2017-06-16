@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -56,13 +55,11 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
@@ -187,10 +184,7 @@ public class MassImportForm implements Serializable {
                     }
                 }
             }
-        } catch (JDOMException e1) {
-            logger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-        } catch (IOException e1) {
+        } catch (JDOMException | IOException e1) {
             logger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         }
@@ -225,9 +219,8 @@ public class MassImportForm implements Serializable {
      *
      * @return String
      */
-    public String convertData()
-            throws IOException, ParseException, CustomResponseException, DAOException, URISyntaxException {
-        this.processList = new ArrayList<Process>();
+    public String convertData() throws IOException, DAOException {
+        this.processList = new ArrayList<>();
         if (StringUtils.isEmpty(currentPlugin)) {
             Helper.setFehlerMeldung("missingPlugin");
             return null;

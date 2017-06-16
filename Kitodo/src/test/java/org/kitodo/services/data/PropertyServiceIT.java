@@ -13,7 +13,6 @@ package org.kitodo.services.data;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -23,8 +22,8 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for PropertyService class.
@@ -32,7 +31,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class PropertyServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws CustomResponseException, DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -103,7 +102,7 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindAllProperties() throws Exception {
+    public void shouldFindAllProperties() {
         PropertyService propertyService = new PropertyService();
 
         List<Property> properties = propertyService.findAll();

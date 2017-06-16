@@ -16,8 +16,11 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,15 +28,10 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
 
 @Named("RegelsaetzeForm")
 @SessionScoped
@@ -64,15 +62,9 @@ public class RegelsaetzeForm extends BasisForm {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
             }
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
             logger.error(e);
-            return null;
-        } catch (IOException e) {
-            logger.error(e);
-            return null;
-        } catch (CustomResponseException e) {
-            logger.error("ElasticSearch server incorrect response", e);
             return null;
         }
     }
@@ -87,7 +79,7 @@ public class RegelsaetzeForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String Loeschen() throws ParseException {
+    public String Loeschen() {
         try {
             if (hasAssignedProcesses(myRegelsatz)) {
                 Helper.setFehlerMeldung("RulesetInUse");
@@ -95,20 +87,14 @@ public class RegelsaetzeForm extends BasisForm {
             } else {
                 serviceManager.getRulesetService().remove(myRegelsatz);
             }
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            return null;
-        } catch (IOException e) {
-            logger.error(e);
-            return null;
-        } catch (CustomResponseException e) {
-            logger.error("ElasticSearch server incorrect response", e);
             return null;
         }
         return "/newpages/RegelsaetzeAlle";
     }
 
-    private boolean hasAssignedProcesses(Ruleset r) throws ParseException, CustomResponseException, IOException {
+    private boolean hasAssignedProcesses(Ruleset r) throws DataException {
         Integer number = serviceManager.getProcessService().findByRuleset(r).size();
         if (number != null && number > 0) {
             return true;
@@ -154,7 +140,7 @@ public class RegelsaetzeForm extends BasisForm {
      */
     public void loadRuleset() {
         try {
-            if(!Objects.equals(this.rulesetId, 0)) {
+            if (!Objects.equals(this.rulesetId, 0)) {
                 setMyRegelsatz(this.serviceManager.getRulesetService().find(this.rulesetId));
             } else {
                 setMyRegelsatz(null);
@@ -177,7 +163,11 @@ public class RegelsaetzeForm extends BasisForm {
         this.myRegelsatz = inPreference;
     }
 
-    public void setRulesetId(int id) { this.rulesetId = id; }
+    public void setRulesetId(int id) {
+        this.rulesetId = id;
+    }
 
-    public int getRulesetId() { return this.rulesetId; }
+    public int getRulesetId() {
+        return this.rulesetId;
+    }
 }

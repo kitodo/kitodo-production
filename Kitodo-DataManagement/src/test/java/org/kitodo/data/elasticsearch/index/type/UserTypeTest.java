@@ -115,7 +115,7 @@ public class UserTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         UserType userType = new UserType();
 
         List<User> users = prepareData();

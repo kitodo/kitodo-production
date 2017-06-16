@@ -11,7 +11,6 @@
 
 package org.kitodo.data.database.helper;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -40,7 +39,7 @@ public class Helper implements Serializable {
      * Always treat de-serialization as a full-blown constructor, by validating
      * the final state of the de-serialized object.
      */
-    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInputStream aInputStream) {
 
     }
 
@@ -48,7 +47,7 @@ public class Helper implements Serializable {
      * This is the default implementation of writeObject. Customise if
      * necessary.
      */
-    private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
+    private void writeObject(ObjectOutputStream aOutputStream) {
 
     }
 

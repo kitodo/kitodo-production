@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -24,8 +23,8 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for RulesetService class.
@@ -33,7 +32,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class RulesetServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -57,7 +56,7 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindAllRulesets() throws Exception {
+    public void shouldFindAllRulesets() {
         RulesetService rulesetService = new RulesetService();
 
         List<Ruleset> rulesets = rulesetService.findAll();
@@ -98,12 +97,12 @@ public class RulesetServiceIT {
     public void shouldFindByTitleAndFile() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        SearchResult ruleset = rulesetService.findByTitleAndFile("SLUBHH","ruleset_slubhh.xml");
+        SearchResult ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
         Integer actual = ruleset.getId();
         Integer expected = 2;
         assertEquals("Ruleset was not found in index!", expected, actual);
 
-        ruleset = rulesetService.findByTitleAndFile("SLUBDD","none");
+        ruleset = rulesetService.findByTitleAndFile("SLUBDD", "none");
         actual = ruleset.getId();
         expected = null;
         assertEquals("Ruleset was found in index!", expected, actual);
@@ -113,17 +112,17 @@ public class RulesetServiceIT {
     public void shouldFindByTitleOrFile() throws Exception {
         RulesetService rulesetService = new RulesetService();
 
-        List<SearchResult> ruleset = rulesetService.findByTitleOrFile("SLUBDD","ruleset_slubhh.xml");
+        List<SearchResult> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
         Integer actual = ruleset.size();
         Integer expected = 2;
         assertEquals("Rulesets were not found in index!", expected, actual);
 
-        ruleset = rulesetService.findByTitleOrFile("default","ruleset_slubhh.xml");
+        ruleset = rulesetService.findByTitleOrFile("default", "ruleset_slubhh.xml");
         actual = ruleset.size();
         expected = 1;
         assertEquals("Ruleset was not found in index!", expected, actual);
 
-        ruleset = rulesetService.findByTitleOrFile("none","none");
+        ruleset = rulesetService.findByTitleOrFile("none", "none");
         actual = ruleset.size();
         expected = 0;
         assertEquals("Some rulesets were found in index!", expected, actual);
@@ -168,7 +167,8 @@ public class RulesetServiceIT {
         RulesetService rulesetService = new RulesetService();
 
         List<SearchResult> searchResults = rulesetService.findAllDocuments();
-        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertSearchResultsToObjectList(searchResults, "Ruleset");
+        List<Ruleset> rulesets = (List<Ruleset>) rulesetService.convertSearchResultsToObjectList(searchResults,
+                "Ruleset");
         assertEquals("Not all rulesets were converted!", 2, rulesets.size());
     }
 

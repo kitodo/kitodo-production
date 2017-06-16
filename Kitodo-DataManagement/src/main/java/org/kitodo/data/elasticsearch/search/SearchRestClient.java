@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
 import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Extension of KitodoRestClient for search package.
@@ -39,7 +39,7 @@ public class SearchRestClient extends KitodoRestClient {
      *            to find a document
      * @return http entity as String
      */
-    public String countDocuments(String query) throws CustomResponseException, IOException {
+    public String countDocuments(String query) throws DataException {
         String output = "";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         try {
@@ -50,8 +50,10 @@ public class SearchRestClient extends KitodoRestClient {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
                 logger.debug(e.getMessage());
             } else {
-                throw new CustomResponseException(e.getMessage());
+                throw new DataException(e);
             }
+        } catch (IOException e) {
+            throw new DataException(e);
         }
         return output;
     }
@@ -63,7 +65,7 @@ public class SearchRestClient extends KitodoRestClient {
      *            of searched document
      * @return http entity as String
      */
-    public String getDocument(Integer id) throws CustomResponseException, IOException {
+    public String getDocument(Integer id) throws DataException {
         String output = "";
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
@@ -73,8 +75,10 @@ public class SearchRestClient extends KitodoRestClient {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
                 logger.debug(e.getMessage());
             } else {
-                throw new CustomResponseException(e.getMessage());
+                throw new DataException(e);
             }
+        } catch (IOException e) {
+            throw new DataException(e);
         }
         return output;
     }
@@ -86,7 +90,7 @@ public class SearchRestClient extends KitodoRestClient {
      *            to find a document
      * @return http entity as String
      */
-    public String getDocument(String query) throws CustomResponseException, IOException {
+    public String getDocument(String query) throws DataException {
         String output = "";
         String wrappedQuery = "{\n \"query\": " + query + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
@@ -98,8 +102,10 @@ public class SearchRestClient extends KitodoRestClient {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
                 logger.debug(e.getMessage());
             } else {
-                throw new CustomResponseException(e.getMessage());
+                throw new DataException(e);
             }
+        } catch (IOException e) {
+            throw new DataException(e);
         }
         return output;
     }

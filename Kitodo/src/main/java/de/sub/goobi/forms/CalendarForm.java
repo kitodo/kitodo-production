@@ -1014,6 +1014,7 @@ public class CalendarForm implements Serializable {
                 yearShowing = blockShowing.getFirstAppearance().getYear();
             }
         } catch (NullPointerException e) {
+            logger.error(e);
         }
     }
 
@@ -1093,6 +1094,7 @@ public class CalendarForm implements Serializable {
                     Helper.setMeldung("calendar.block." + input + ".swapped");
                     return swapped;
                 } catch (IllegalFieldValueException stillInvalid) {
+                    logger.error(stillInvalid);
                 }
             }
         }

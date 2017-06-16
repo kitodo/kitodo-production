@@ -30,7 +30,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.joda.time.LocalDateTime;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -46,6 +45,7 @@ import org.kitodo.data.elasticsearch.index.type.UserType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.encryption.DesEncrypter;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
@@ -62,19 +62,6 @@ public class UserService extends SearchService<User> {
      */
     public UserService() {
         super(new Searcher(User.class));
-    }
-
-    /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
-     *
-     * @param user
-     *            object
-     */
-    public void save(User user) throws CustomResponseException, DAOException, IOException {
-        userDAO.save(user);
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(user, userType);
     }
 
     /**
@@ -184,7 +171,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of search results
      */
-    public List<SearchResult> findByName(String name) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByName(String name) throws DataException {
         QueryBuilder query = createSimpleQuery("name", name, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -196,8 +183,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of search results
      */
-    public List<SearchResult> findBySurname(String surname)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findBySurname(String surname) throws DataException {
         QueryBuilder query = createSimpleQuery("surname", surname, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -211,8 +197,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of search results
      */
-    public List<SearchResult> findByFullName(String name, String surname)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByFullName(String name, String surname) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("name", name, true, Operator.AND));
         query.must(createSimpleQuery("surname", surname, true, Operator.AND));
@@ -226,7 +211,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return search results
      */
-    public SearchResult findByLogin(String login) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByLogin(String login) throws DataException {
         QueryBuilder query = createSimpleQuery("login", login, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -238,7 +223,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return search result
      */
-    public SearchResult findByLdapLogin(String ldapLogin) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByLdapLogin(String ldapLogin) throws DataException {
         QueryBuilder query = createSimpleQuery("ldapLogin", ldapLogin, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -250,7 +235,7 @@ public class UserService extends SearchService<User> {
      *            true -active user or false - inactive user
      * @return list of search results
      */
-    public List<SearchResult> findByActive(boolean active) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByActive(boolean active) throws DataException {
         QueryBuilder query = createSimpleQuery("active", String.valueOf(active), true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -262,8 +247,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of search results
      */
-    public List<SearchResult> findByLocation(String location)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByLocation(String location) throws DataException {
         QueryBuilder query = createSimpleQuery("location", location, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -275,8 +259,7 @@ public class UserService extends SearchService<User> {
      *            of the searched user
      * @return list of search results
      */
-    public List<SearchResult> findByMetadataLanguage(String metadataLanguage)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByMetadataLanguage(String metadataLanguage) throws DataException {
         QueryBuilder query = createSimpleQuery("metadataLanguage", metadataLanguage, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -288,8 +271,7 @@ public class UserService extends SearchService<User> {
      *            of user group
      * @return list of search results with users for specific user group id
      */
-    public List<SearchResult> findByUserGroupId(Integer id)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByUserGroupId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -301,8 +283,7 @@ public class UserService extends SearchService<User> {
      *            of user group
      * @return list of search results with users for specific user group title
      */
-    public List<SearchResult> findByUserGroupTitle(String title)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByUserGroupTitle(String title) throws DataException {
         List<SearchResult> users = new ArrayList<>();
 
         List<SearchResult> userGroups = serviceManager.getUserGroupService().findByTitle(title, true);
@@ -321,8 +302,7 @@ public class UserService extends SearchService<User> {
      *            of property
      * @return list of search results with users for specific property
      */
-    public List<SearchResult> findByProperty(String title, String value)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProperty(String title, String value) throws DataException {
         List<SearchResult> users = new ArrayList<>();
 
         List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
@@ -339,8 +319,7 @@ public class UserService extends SearchService<User> {
      *            of property
      * @return list of search results with users for specific property id
      */
-    private List<SearchResult> findByPropertyId(Integer id)
-            throws CustomResponseException, IOException, ParseException {
+    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("properties.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -348,7 +327,7 @@ public class UserService extends SearchService<User> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userType);
     }
@@ -566,7 +545,7 @@ public class UserService extends SearchService<User> {
         }
         try {
             addFilterToUser(user, filter);
-        } catch (CustomResponseException | DAOException | IOException e) {
+        } catch (DataException e) {
             logger.error("Cannot not add filter to user with id " + user.getId(), e);
         }
     }
@@ -585,7 +564,7 @@ public class UserService extends SearchService<User> {
         }
         try {
             removeFilterFromUser(user, filter);
-        } catch (CustomResponseException | DAOException | IOException e) {
+        } catch (DataException e) {
             logger.error("Cannot not remove filter from user with id " + user.getId(), e);
         }
     }
@@ -610,7 +589,7 @@ public class UserService extends SearchService<User> {
      * @param filter
      *            String
      */
-    private void addFilterToUser(User user, String filter) throws CustomResponseException, DAOException, IOException {
+    private void addFilterToUser(User user, String filter) throws DataException {
         LocalDateTime localDateTime = new LocalDateTime();
         Property property = new Property();
         property.setTitle("_filter");
@@ -654,8 +633,7 @@ public class UserService extends SearchService<User> {
      * @param filter
      *            String
      */
-    private void removeFilterFromUser(User user, String filter)
-            throws CustomResponseException, DAOException, IOException {
+    private void removeFilterFromUser(User user, String filter) throws DataException {
         for (Property property : user.getProperties()) {
             if (property.getTitle().equals("_filter") && property.getValue().equals(filter)) {
                 serviceManager.getPropertyService().remove(property);

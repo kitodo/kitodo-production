@@ -108,7 +108,7 @@ public class PropertyTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         PropertyType propertyType = new PropertyType();
 
         List<Property> properties = prepareData();

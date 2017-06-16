@@ -75,8 +75,8 @@ public class TemplateTypeTest {
         Template template = prepareData().get(0);
         HttpEntity document = templateType.createDocument(template);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{\"process\":1,\"origin\":null,\"properties\":[{\"id\":1},"
-                + "{\"id\":2}]}");
+        JSONObject excepted = (JSONObject) parser
+                .parse("{\"process\":1,\"origin\":null,\"properties\":[{\"id\":1}," + "{\"id\":2}]}");
         assertEquals("Template JSONObject doesn't match to given JSONObject!", excepted, actual);
 
         template = prepareData().get(1);
@@ -87,7 +87,7 @@ public class TemplateTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         TemplateType processType = new TemplateType();
 
         List<Template> processes = prepareData();

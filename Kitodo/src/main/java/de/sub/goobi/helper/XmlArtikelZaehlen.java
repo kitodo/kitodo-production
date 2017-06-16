@@ -11,13 +11,10 @@
 
 package de.sub.goobi.helper;
 
-import java.io.IOException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 import ugh.dl.DigitalDocument;
@@ -32,7 +29,7 @@ public class XmlArtikelZaehlen {
     private static final Logger logger = LogManager.getLogger(XmlArtikelZaehlen.class);
 
     public enum CountType {
-        METADATA, DOCSTRUCT;
+        METADATA, DOCSTRUCT
     }
 
     /**
@@ -41,7 +38,7 @@ public class XmlArtikelZaehlen {
      * @param myProcess
      *            process object
      */
-    public int getNumberOfUghElements(Process myProcess, CountType inType) throws IOException, CustomResponseException {
+    public int getNumberOfUghElements(Process myProcess, CountType inType) {
         int rueckgabe = 0;
 
         /*
@@ -75,7 +72,7 @@ public class XmlArtikelZaehlen {
         myProcess.setSortHelperArticles(Integer.valueOf(rueckgabe));
         try {
             serviceManager.getProcessService().save(myProcess);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
         }
         return rueckgabe;

@@ -32,7 +32,7 @@ public class CatalogueConfiguration {
 
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public ConfigOpac getCatalogueConfiguration() throws IOException {
+    public ConfigOpac getCatalogueConfiguration() {
         return new ConfigOpac();
     }
 }

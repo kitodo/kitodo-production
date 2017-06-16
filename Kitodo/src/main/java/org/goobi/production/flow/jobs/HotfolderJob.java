@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Helper;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,6 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -145,9 +143,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 } catch (InterruptedException e) {
                     logger.error(e);
                     logger.trace("20");
-                } catch (DAOException e) {
-                    logger.error(e);
-                    logger.trace("21");
                 } catch (Exception e) {
                     logger.error(e);
                 }
@@ -172,7 +167,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return int
      */
     public static int generateProcess(String processTitle, Process vorlage, URI dir, String digitalCollection,
-            String updateStrategy) throws CustomResponseException, IOException, URISyntaxException {
+            String updateStrategy) throws IOException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -312,9 +307,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 } catch (IOException e) {
                     logger.error(e);
                     return 24;
-                } catch (InterruptedException e) {
-                    logger.error(e);
-                    return 25;
                 }
             }
             // TODO updateImagePath aufrufen
@@ -335,8 +327,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage)
-            throws CustomResponseException, IOException, URISyntaxException {
+    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -389,22 +380,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 p = cp.createProcess(io);
                 JobCreation.moveFiles(metsfile, basepath, p);
 
-            } catch (ReadException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (PreferencesException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (DAOException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (WriteException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (IOException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
-            } catch (InterruptedException e) {
+            } catch (ReadException | PreferencesException | WriteException | IOException e) {
                 Helper.setFehlerMeldung(e);
                 logger.error(e);
             }

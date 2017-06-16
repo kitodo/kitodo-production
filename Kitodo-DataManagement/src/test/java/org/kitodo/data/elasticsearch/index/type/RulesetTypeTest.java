@@ -62,7 +62,7 @@ public class RulesetTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         RulesetType rulesetType = new RulesetType();
 
         List<Ruleset> rulesets = prepareData();

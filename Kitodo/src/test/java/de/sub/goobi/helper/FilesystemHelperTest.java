@@ -16,7 +16,6 @@ import static junit.framework.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -26,7 +25,7 @@ import org.kitodo.services.file.FileService;
 public class FilesystemHelperTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @After
@@ -46,7 +45,7 @@ public class FilesystemHelperTest {
     }
 
     @Test
-    public void shouldRenameAFile() throws IOException, URISyntaxException {
+    public void shouldRenameAFile() throws IOException {
         FileService fileService = new FileService();
         URI file = createFile("old.xml");
         fileService.renameFile(file, "new.xml");
@@ -62,7 +61,7 @@ public class FilesystemHelperTest {
     }
 
     @Test
-    public void nothingHappensIfTargetFilenameIsNotSet() throws IOException, URISyntaxException {
+    public void nothingHappensIfTargetFilenameIsNotSet() throws IOException {
         URI file = createFile("old.xml");
         FileService fileService = new FileService();
         fileService.renameFile(file, null);
@@ -83,7 +82,7 @@ public class FilesystemHelperTest {
         }
     }
 
-    private URI createFile(String fileName) throws IOException, URISyntaxException {
+    private URI createFile(String fileName) throws IOException {
         FileService fileService = new FileService();
         URI resource = fileService.createResource(fileName);
         fileService.write(resource).write(4);

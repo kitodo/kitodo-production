@@ -49,6 +49,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -146,7 +147,7 @@ public class TaskService extends TitleSearchService<Task> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, CustomResponseException {
+    public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), taskType);
     }
@@ -363,7 +364,7 @@ public class TaskService extends TitleSearchService<Task> {
      *            boolean
      * @return int
      */
-    public int executeScript(Task task, String script, boolean automatic) throws DAOException, CustomResponseException {
+    public int executeScript(Task task, String script, boolean automatic) throws DataException {
         if (script == null || script.length() == 0) {
             return -1;
         }
@@ -377,9 +378,7 @@ public class TaskService extends TitleSearchService<Task> {
         try {
             dd = serviceManager.getProcessService().readMetadataFile(fi.getMetadataFilePath(), prefs)
                     .getDigitalDocument();
-        } catch (PreferencesException | ReadException e2) {
-            logger.error(e2);
-        } catch (IOException e2) {
+        } catch (PreferencesException | ReadException | IOException e2) {
             logger.error(e2);
         }
         VariableReplacer replacer = new VariableReplacer(dd, prefs, po, task);
@@ -429,8 +428,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param automatic
      *            boolean
      */
-    public void executeAllScripts(Task task, boolean automatic)
-            throws CustomResponseException, IOException, DAOException {
+    public void executeAllScripts(Task task, boolean automatic) throws DataException {
         List<String> scriptpaths = getAllScriptPaths(task);
         int count = 1;
         int size = scriptpaths.size();
@@ -450,7 +448,7 @@ public class TaskService extends TitleSearchService<Task> {
         }
     }
 
-    private void abortTask(Task task) throws IOException, CustomResponseException, DAOException {
+    private void abortTask(Task task) throws DataException {
 
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
@@ -556,7 +554,7 @@ public class TaskService extends TitleSearchService<Task> {
         return processService.getBatchesInitialized(task.getProcess()).size() > 0;
     }
 
-    public void close(Task task, boolean requestFromGUI) throws IOException, CustomResponseException, DAOException {
+    public void close(Task task, boolean requestFromGUI) throws DataException {
         Integer processId = task.getProcess().getId();
         if (logger.isDebugEnabled()) {
             logger.debug("closing step with id " + task.getId() + " and process id " + processId);
@@ -686,7 +684,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param process
      *            the process
      */
-    public void updateProcessStatus(Process process) throws IOException, CustomResponseException, DAOException {
+    public void updateProcessStatus(Process process) throws DataException {
         int offen = 0;
         int inBearbeitung = 0;
         int abgeschlossen = 0;
@@ -728,8 +726,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @param automatic
      *            boolean
      */
-    public void executeDmsExport(Task step, boolean automatic)
-            throws CustomResponseException, IOException, DAOException, ConfigurationException {
+    public void executeDmsExport(Task step, boolean automatic) throws DataException, ConfigurationException {
         ConfigCore.getBooleanParameter("automaticExportWithImages", true);
         if (!ConfigCore.getBooleanParameter("automaticExportWithOcr", true)) {
         }
@@ -742,28 +739,8 @@ public class TaskService extends TitleSearchService<Task> {
             } else {
                 abortTask(step);
             }
-        } catch (DAOException e) {
+        } catch (PreferencesException | WriteException | IOException e) {
             logger.error(e);
-            abortTask(step);
-            return;
-        } catch (PreferencesException e) {
-            logger.error(e);
-            abortTask(step);
-            return;
-        } catch (WriteException e) {
-            logger.error(e);
-            abortTask(step);
-            return;
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-            abortTask(step);
-            return;
-        } catch (IOException e) {
-            logger.error(e);
-            abortTask(step);
-            return;
-        } catch (InterruptedException e) {
-            // validation error
             abortTask(step);
             return;
         }

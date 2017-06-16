@@ -13,7 +13,6 @@ package de.sub.goobi.export.dms;
 
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,7 +63,7 @@ public class ExportDms_CorrectRusdml {
      * @return String
      */
     public String correctionStart() throws DocStructHasNoTypeException, MetadataTypeNotAllowedException,
-            ExportFileException, UghHelperException {
+            ExportFileException {
         String atsPpnBand;
         DocStruct logicalTopstruct = myDocument.getLogicalDocStruct();
         docStructsOhneSeiten = new ArrayList<>();
@@ -343,6 +342,7 @@ public class ExportDms_CorrectRusdml {
             int bandInt = Integer.parseInt(bandNumber) * 10;
             mdSorting.setValue(String.valueOf(bandInt));
         } catch (NumberFormatException e) {
+            logger.error(e);
         }
 
         /*
@@ -356,6 +356,7 @@ public class ExportDms_CorrectRusdml {
             inTopStruct.addMetadata(mdPPN);
             inTopStruct.addMetadata(mdISSN);
         } catch (Exception e) {
+            logger.error(e);
         }
 
         /*
@@ -369,10 +370,8 @@ public class ExportDms_CorrectRusdml {
                 structBand.addMetadata(mdPlace);
                 structBand.addMetadata(mdPPNBand);
                 structBand.addMetadata(mdSorting);
-            } catch (MetadataTypeNotAllowedException e) {
-
-            } catch (DocStructHasNoTypeException e) {
-
+            } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                logger.error(e);
             }
 
         }

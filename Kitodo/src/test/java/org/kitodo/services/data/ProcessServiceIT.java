@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +30,8 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.file.FileService;
 
 import ugh.dl.DigitalDocument;
@@ -43,7 +42,7 @@ import ugh.dl.DigitalDocument;
 public class ProcessServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -67,7 +66,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindAllProcesses() throws Exception {
+    public void shouldFindAllProcesses() {
         ProcessService processService = new ProcessService();
 
         List<Process> processes = processService.findAll();
@@ -660,7 +659,7 @@ public class ProcessServiceIT {
 
     @Ignore("not sure how it should look")
     @Test
-    public void shouldFilterForCorrectionSolutionMessages() throws Exception {
+    public void shouldFilterForCorrectionSolutionMessages() {
         ProcessService processService = new ProcessService();
 
         List<Property> expected = new ArrayList<>();

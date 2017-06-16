@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.goobi.io.FileListFilter;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -52,8 +51,8 @@ public class ExportPdf extends ExportMets {
     private final FileService fileService = serviceManager.getFileService();
 
     @Override
-    public boolean startExport(Process myProcess, URI inZielVerzeichnis) throws InterruptedException, ReadException,
-            IOException, DAOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
+    public boolean startExport(Process myProcess, URI inZielVerzeichnis) throws ReadException,
+            IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
 
         /*
          * Read Document
