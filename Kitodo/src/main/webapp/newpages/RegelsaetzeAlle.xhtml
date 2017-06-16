@@ -47,8 +47,8 @@
                         <h:panelGrid id="id0" width="100%" columns="1"
                                      styleClass="layoutInhaltKopf">
                             <h:panelGroup id="id1">
-                                <h:commandLink id="id2" value="#{msgs.startseite}"
-                                               action="Main"/>
+                                <h:link id="id2" value="#{msgs.startseite}"
+                                               outcome="/newpages/Main"/>
                                 <f:verbatim> &#8250;&#8250; </f:verbatim>
                                 <h:outputText id="id3" value="#{msgs.regelsaetze}"/>
                             </h:panelGroup>
@@ -119,13 +119,12 @@
                                                 <h:outputText id="id20" value="#{msgs.auswahl}"/>
                                             </f:facet>
                                             <!-- Bearbeiten-Schaltknopf -->
-                                            <h:commandLink id="id21" action="RegelsaetzeBearbeiten"
+                                            <h:link id="id21" outcome="/newpages/RegelsaetzeBearbeiten"
                                                            title="#{msgs.regelsatzBearbeiten}">
                                                 <h:graphicImage id="id22" alt="edit ruleset"
-                                                                value="/newpages/images/buttons/edit.gif"/>
-                                                <t:updateActionListener
-                                                        property="#{RegelsaetzeForm.myRegelsatz}" value="#{item}"/>
-                                            </h:commandLink>
+							value="/newpages/images/buttons/edit.gif"/>
+                                                <f:param name="id" value="#{item.id}"/>
+                                            </h:link>
                                         </h:column>
 
                                     </t:dataTable>

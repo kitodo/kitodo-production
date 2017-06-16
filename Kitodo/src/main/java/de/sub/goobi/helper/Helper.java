@@ -98,11 +98,7 @@ public class Helper implements Serializable, Observer {
         /* einen bestimmten übergebenen Parameter ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         Map requestParams = context.getExternalContext().getRequestParameterMap();
-        String myParameter = (String) requestParams.get(Parameter);
-        if (myParameter == null) {
-            myParameter = "";
-        }
-        return myParameter;
+        return (String) requestParams.get(Parameter);
     }
 
     /**

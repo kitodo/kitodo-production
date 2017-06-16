@@ -194,13 +194,6 @@ public class LoginForm {
      */
 
     /**
-     * Bearbeitungsvorgang abbrechen.
-     */
-    public String PasswortAendernAbbrechen() {
-        return "/newpages/Main";
-    }
-
-    /**
      * neues Passwort übernehmen.
      */
     public String PasswortAendernSpeichern() {

@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Page;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -28,6 +29,7 @@ import org.kitodo.data.database.persistence.SimpleDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
@@ -37,10 +39,12 @@ public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private UserGroup myBenutzergruppe = new UserGroup();
     private final ServiceManager serviceManager = new ServiceManager();
+    private int userGroupId;
 
     public String Neu() {
         this.myBenutzergruppe = new UserGroup();
-        return "/newpages/BenutzergruppenBearbeiten";
+        this.userGroupId = 0;
+        return "/newpages/BenutzergruppenBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -51,7 +55,7 @@ public class BenutzergruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getUserGroupService().save(this.myBenutzergruppe);
-            return "/newpages/BenutzergruppenAlle";
+            return "/newpages/BenutzergruppenAlle?faces-redirect=true";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
             return null;
@@ -94,7 +98,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setFehlerMeldung("Error, ElasticSearch incorrect server response", e.getMessage());
             return null;
         }
-        return "/newpages/BenutzergruppenAlle";
+        return "/newpages/BenutzergruppenAlle?faces-redirect=true";
     }
 
     /**
@@ -116,9 +120,31 @@ public class BenutzergruppenForm extends BasisForm {
         return "/newpages/BenutzergruppenAlle";
     }
 
+    /**
+     * This method initializes the user group list without applying any filters whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeUserGroupList() {
+        filterKein();
+    }
+
     public String FilterKeinMitZurueck() {
         filterKein();
         return this.zurueck;
+    }
+
+    /**
+     * Method being used as viewAction for user group edit form.
+     * If 'userGroupId' is '0', the form for creating a new user group will be displayed.
+     */
+    public void loadUserGroup() {
+        try {
+            if(!Objects.equals(this.userGroupId, 0)) {
+                setMyBenutzergruppe(this.serviceManager.getUserGroupService().find(this.userGroupId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving project with ID '" + this.userGroupId + "'; ", e.getMessage());
+        }
     }
 
     /*
@@ -133,5 +159,9 @@ public class BenutzergruppenForm extends BasisForm {
         Helper.getHibernateSession().clear();
         this.myBenutzergruppe = myBenutzergruppe;
     }
+
+    public void setUserGroupId(int id) { this.userGroupId = id; }
+
+    public int getUserGroupId() { return this.userGroupId; }
 
 }

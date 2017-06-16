@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
@@ -222,6 +223,19 @@ public class BatchForm extends BasisForm {
         filterBatches();
         filterProcesses();
         return "/newpages/BatchesAll";
+    }
+
+    /**
+     * This method initializes the batch list without any filter whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeBatchList() {
+        try {
+            filterAlleStart();
+        } catch (DAOException e) {
+            logger.error("DAOException while filtering batches", e);
+        }
+        setModusBearbeiten("");
     }
 
     /**

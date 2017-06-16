@@ -45,8 +45,8 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id0" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink id="id2" value="#{msgs.startseite}"
-                                                   action="newMain"/>
+                                    <h:link id="id2" value="#{msgs.startseite}"
+                                                   outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.projekte}"/>
                                 </h:panelGroup>
@@ -144,13 +144,12 @@
                                                     <h:outputText id="id27" value="#{msgs.auswahl}"/>
                                                 </f:facet>
                                                 <!-- Bearbeiten-Schaltknopf -->
-                                                <h:commandLink id="id28" action="ProjekteBearbeiten"
+                                                <h:link id="id28" outcome="/newpages/ProjekteBearbeiten"
                                                                title="#{msgs.projektBearbeiten}">
+                                                    <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage alt="edit" id="id29"
                                                                     value="/newpages/images/buttons/edit.gif"/>
-                                                    <t:updateActionListener property="#{ProjekteForm.myProjekt}"
-                                                                            value="#{item}"/>
-                                                </h:commandLink>
+                                                </h:link>
                                             </t:column>
                                         </t:dataTable>
 

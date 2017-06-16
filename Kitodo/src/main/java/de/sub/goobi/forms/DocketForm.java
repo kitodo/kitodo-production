@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Page;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -34,6 +35,10 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 @ManagedBean
 @ViewScoped
 public class DocketForm extends BasisForm {
@@ -41,10 +46,12 @@ public class DocketForm extends BasisForm {
     private Docket myDocket = new Docket();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
+    private int docketId;
 
     public String Neu() {
         this.myDocket = new Docket();
-        return "/newpages/DocketEdit";
+        this.docketId = 0;
+        return "/newpages/DocketEdit?faces-redirect=true";
     }
 
     /**
@@ -56,7 +63,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return "/newpages/DocketList";
+                return "/newpages/DocketList?faces-redirect=true";
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -105,7 +112,7 @@ public class DocketForm extends BasisForm {
             logger.error(e);
             return null;
         }
-        return "/newpages/DocketList";
+        return "/newpages/DocketList?faces-redirect=true";
     }
 
     private boolean hasAssignedProcesses(Docket d) throws ParseException, CustomResponseException, IOException {
@@ -138,9 +145,31 @@ public class DocketForm extends BasisForm {
         return "/newpages/DocketList";
     }
 
+    /**
+     * This method initializes the docket list without any filter whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeDocketList() {
+        filterKein();
+    }
+
     public String filterKeinMitZurueck() {
         filterKein();
         return this.zurueck;
+    }
+
+    /**
+     * Method being used as viewAction for docket edit form.
+     * If 'docketId' is '0', the form for creating a new docket will be displayed.
+     */
+    public void loadDocket() {
+        try {
+            if(!Objects.equals(this.docketId, 0)) {
+                setMyDocket(this.serviceManager.getDocketService().find(this.docketId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving docket with ID '" + this.docketId + "'; ", e.getMessage());
+        }
     }
 
     /*
@@ -155,4 +184,8 @@ public class DocketForm extends BasisForm {
         Helper.getHibernateSession().clear();
         this.myDocket = docket;
     }
+
+    public int getDocketId() { return this.docketId; }
+
+    public void setDocketId(int id) { this.docketId = id; }
 }

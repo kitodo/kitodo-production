@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Page;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -33,6 +34,10 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 @ManagedBean
 @ViewScoped
 public class RegelsaetzeForm extends BasisForm {
@@ -40,10 +45,12 @@ public class RegelsaetzeForm extends BasisForm {
     private Ruleset myRegelsatz = new Ruleset();
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RegelsaetzeForm.class);
+    private int rulesetId;
 
     public String Neu() {
         this.myRegelsatz = new Ruleset();
-        return "/newpages/RegelsaetzeBearbeiten";
+        this.rulesetId = 0;
+        return "/newpages/RegelsaetzeBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -131,9 +138,33 @@ public class RegelsaetzeForm extends BasisForm {
         return "/newpages/RegelsaetzeAlle";
     }
 
+    /**
+     * This method initializes the ruleset list without applying any filters whenever the bean is constructed.
+     */
+    @PostConstruct
+    public void initializeRulesetList() {
+        filterKein();
+    }
+
     public String FilterKeinMitZurueck() {
         filterKein();
         return this.zurueck;
+    }
+
+    /**
+     * Method being used as viewAction for ruleset edit form.
+     * If 'rulesetId' is '0', the form for creating a new ruleset will be displayed.
+     */
+    public void loadRuleset() {
+        try {
+            if(!Objects.equals(this.rulesetId, 0)) {
+                setMyRegelsatz(this.serviceManager.getRulesetService().find(this.rulesetId));
+            } else {
+                setMyRegelsatz(null);
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving ruleset with ID '" + this.rulesetId + "'; ", e.getMessage());
+        }
     }
 
     /*
@@ -148,4 +179,8 @@ public class RegelsaetzeForm extends BasisForm {
         Helper.getHibernateSession().clear();
         this.myRegelsatz = inPreference;
     }
+
+    public void setRulesetId(int id) { this.rulesetId = id; }
+
+    public int getRulesetId() { return this.rulesetId; }
 }

@@ -44,9 +44,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id1" width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id2">
-                                    <h:commandLink id="id3" value="#{msgs.startseite}" action="newMain"/>
+                                    <h:link id="id3" value="#{msgs.startseite}" outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink id="id4" value="#{msgs.aktuelleSchritte}" action="AktuelleSchritteAlle"/>
+                                    <h:link id="id4" value="#{msgs.aktuelleSchritte}" outcome="/newpages/AktuelleSchritteAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id5" value="#{msgs.detailsOfBatch}"/>
                                 </h:panelGroup>

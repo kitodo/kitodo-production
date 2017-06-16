@@ -22,19 +22,23 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import java.util.Objects;
 
 @ManagedBean
 @ViewScoped
 public class LdapGruppenForm extends BasisForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
+    private int itemId;
     private final ServiceManager serviceManager = new ServiceManager();
 
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
-        return "/newpages/LdapGruppenBearbeiten";
+        this.itemId = 0;
+        return "/newpages/LdapGruppenBearbeiten?faces-redirect=true";
     }
 
     /**
@@ -45,7 +49,7 @@ public class LdapGruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
-            return "/newpages/LdapGruppenAlle";
+            return "/newpages/LdapGruppenAlle?faces-redirect=true";
         } catch (DAOException e) {
             Helper.setFehlerMeldung("Could not save", e.getMessage());
             return null;
@@ -86,6 +90,28 @@ public class LdapGruppenForm extends BasisForm {
         return "/newpages/LdapGruppenAlle";
     }
 
+    /**
+     * Method being used as viewAction for ldap group edit form.
+     * If 'itemId' is '0', the form for creating a new ldap group will be displayed.
+     */
+    public void loadLdapGroup() {
+        try {
+            if (!Objects.equals(this.itemId, 0)) {
+                setMyLdapGruppe(this.serviceManager.getLdapGroupService().find(this.itemId));
+            }
+        } catch (DAOException e) {
+            Helper.setFehlerMeldung("Error retrieving Ldap group with ID '" + this.itemId + "'; ", e.getMessage());
+        }
+    }
+
+    /**
+     * This method initializes the ldap group list without filters.
+     */
+    @PostConstruct
+    public void initializeLdapGroupList() {
+        filterKein();
+    }
+
     public String FilterKeinMitZurueck() {
         filterKein();
         return this.zurueck;
@@ -103,4 +129,7 @@ public class LdapGruppenForm extends BasisForm {
         this.myLdapGruppe = myLdapGruppe;
     }
 
+    public void setItemId(int id) { this.itemId = id; }
+
+    public int getItemId() { return this.itemId; }
 }

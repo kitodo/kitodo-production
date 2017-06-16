@@ -25,6 +25,10 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
+    <f:metadata>
+        <f:viewParam name="id" value="#{BenutzerverwaltungForm.userId}"/>
+        <f:viewAction action="#{BenutzerverwaltungForm.loadMyClass}"/>
+    </f:metadata>
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
         <h:body>
@@ -43,9 +47,9 @@
                             <!-- Breadcrumb -->
                             <h:panelGrid id="id0" width="100%" columns="1" styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink id="id2" value="#{msgs.startseite}" action="Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}" outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
-                                    <h:commandLink id="id3" value="#{msgs.benutzerverwaltung}" action="BenutzerAlle"/>
+                                    <h:link id="id3" value="#{msgs.benutzerverwaltung}" outcome="/newpages/BenutzerAlle"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id4" value="#{msgs.neuenBenutzerAnlegen}"
                                                   rendered="#{BenutzerverwaltungForm.myClass.id == null}"/>
@@ -294,8 +298,8 @@
 
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
-                                                    <h:commandButton id="id58" value="#{msgs.abbrechen}" action="BenutzerAlle"
-                                                                     immediate="true"/>
+                                                    <h:button id="id58" value="#{msgs.abbrechen}"
+                                                              outcome="/newpages/BenutzerAlle" immediate="true"/>
                                                 </td>
 
                                                 <td class="eingabeBoxen_row3" align="right">

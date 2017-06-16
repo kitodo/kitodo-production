@@ -46,8 +46,8 @@
                             <h:panelGrid id="id0" width="100%" columns="1"
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink id="id2" value="#{msgs.startseite}"
-                                                   action="Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}"
+                                            outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.dockets}"/>
                                 </h:panelGroup>
@@ -104,13 +104,12 @@
                                                     <h:outputText id="id20" value="#{msgs.auswahl}"/>
                                                 </f:facet>
                                                 <!-- Bearbeiten-Schaltknopf -->
-                                                <h:commandLink id="id21" action="DocketEdit"
+                                                <h:link id="id21" outcome="/newpages/DocketEdit"
                                                                title="#{msgs.editDocket}">
+                                                    <f:param name="id" value="#{item.id}"/>
                                                     <h:graphicImage id="id22" alt="edit"
                                                                     value="/newpages/images/buttons/edit.gif"/>
-                                                    <t:updateActionListener
-                                                            property="#{DocketForm.myDocket}" value="#{item}"/>
-                                                </h:commandLink>
+                                                </h:link>
                                             </h:column>
 
                                         </t:dataTable>

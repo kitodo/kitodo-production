@@ -46,8 +46,8 @@
                             <h:panelGrid id="id0" width="100%" columns="1"
                                          styleClass="layoutInhaltKopf">
                                 <h:panelGroup id="id1">
-                                    <h:commandLink id="id2" value="#{msgs.startseite}"
-                                                   action="Main"/>
+                                    <h:link id="id2" value="#{msgs.startseite}"
+                                                   outcome="/newpages/Main"/>
                                     <f:verbatim> &#8250;&#8250; </f:verbatim>
                                     <h:outputText id="id3" value="#{msgs.benutzerkonfiguration}"/>
                                 </h:panelGroup>
@@ -147,8 +147,8 @@
 
                                             <tr>
                                                 <td class="eingabeBoxen_row3" align="left">
-                                                    <h:commandButton id="id22" value="#{msgs.abbrechen}"
-                                                                     action="Main" immediate="true"/>
+                                                    <h:button id="id22" value="#{msgs.abbrechen}"
+                                                                     outcome="/newpages/Main" immediate="true"/>
                                                 </td>
                                                 <td class="eingabeBoxen_row3" align="right">
                                                     <h:commandButton id="absenden" value="#{msgs.speichern}"
