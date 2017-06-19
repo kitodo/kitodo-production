@@ -62,6 +62,7 @@ public class LoginForm implements Serializable{
         }
         this.myBenutzer = null;
         this.schonEingeloggt = false;
+        this.login = "";
         SessionForm temp = (SessionForm) Helper.getManagedBeanValue("#{SessionForm}");
         HttpSession mySession = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         temp.sessionBenutzerAktualisieren(mySession, this.myBenutzer);
