@@ -45,6 +45,7 @@ import org.kitodo.services.ServiceManager;
 @Named("HelperForm")
 @SessionScoped
 public class HelperForm implements Serializable {
+    private static final long serialVersionUID = -5872893771807845586L;
     private final ServiceManager serviceManager = new ServiceManager();
 
     public static final String MAIN_JSF_PATH = "/newpages";

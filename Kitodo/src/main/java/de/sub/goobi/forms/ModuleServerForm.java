@@ -55,6 +55,7 @@ import org.kitodo.services.ServiceManager;
 @Named("ModuleServerForm")
 @SessionScoped
 public class ModuleServerForm implements Serializable {
+    private static final long serialVersionUID = -3296039795297271346L;
     private Boolean running = false;
     private static volatile GoobiModuleManager modulmanager = null;
     private static HashMap<String, String> myRunningShortSessions = new HashMap<String, String>();

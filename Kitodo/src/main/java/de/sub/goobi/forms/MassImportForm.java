@@ -71,6 +71,7 @@ import ugh.dl.Prefs;
 @SessionScoped
 public class MassImportForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
+    private static final long serialVersionUID = -4225927414279404442L;
     private Process template;
     private List<Process> processes;
     private List<String> digitalCollections;

@@ -33,6 +33,7 @@ import javax.inject.Named;
 public class SpracheForm implements Serializable {
 
     public static final String SESSION_LOCALE_FIELD_ID = "lang";
+    private static final long serialVersionUID = -8766724454080390450L;
 
     /**
      * The constructor of this class loads the required MessageBundle.

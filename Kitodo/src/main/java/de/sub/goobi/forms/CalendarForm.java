@@ -56,6 +56,8 @@ import org.xml.sax.SAXException;
 @Named("CalendarForm")
 @SessionScoped
 public class CalendarForm implements Serializable {
+    private static final long serialVersionUID = -1267629887357681855L;
+
     /**
      * The class Cell represents a single table cell on the calendar sheet.
      *

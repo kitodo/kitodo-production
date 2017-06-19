@@ -100,6 +100,7 @@ import ugh.fileformats.mets.XStream;
 @SessionScoped
 public class ProzesskopieForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
+    private static final long serialVersionUID = -4512865679353743L;
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**

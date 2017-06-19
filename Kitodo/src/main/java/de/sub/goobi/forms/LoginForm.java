@@ -40,6 +40,7 @@ import org.kitodo.services.ServiceManager;
 @Named("LoginForm")
 @SessionScoped
 public class LoginForm implements Serializable{
+    private static final long serialVersionUID = 7732045664713555233L;
     private String login;
     private String password;
     private User myBenutzer;

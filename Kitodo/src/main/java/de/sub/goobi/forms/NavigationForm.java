@@ -20,6 +20,7 @@ import java.io.Serializable;
 @Named("NavigationForm")
 @SessionScoped
 public class NavigationForm implements Serializable {
+    private static final long serialVersionUID = 2901349356343485300L;
     private String aktuell = "0";
 
     public String getAktuell() {
