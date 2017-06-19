@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<Configuration monitorInterval="60">
+    <Properties>
+        <Property name="filename">/usr/local/kitodo/logs</Property>
+    </Properties>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+        </Console>
+        <File name="LOGFILE" fileName="${filename}/kitodo-test.log">
+            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="de.sub.goobi, de.unigoettingen.sub.search.opac, org.goobi, org.kitodo" level="debug">
+            <AppenderRef ref="LOGFILE" level="error" />
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="LOGFILE"/>
+        </Root>
+    </Loggers>
+</Configuration>
