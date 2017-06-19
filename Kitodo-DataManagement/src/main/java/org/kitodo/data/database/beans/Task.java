@@ -26,6 +26,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
@@ -667,4 +668,31 @@ public class Task extends BaseBean {
     public int getProcessingTimeNow() {
         return 1;
     }
+
+    /**
+     * Concatenates the script names for displaying in the Frontend.
+     * 
+     * @return The concatenation of script names
+     */
+    public String getListOfPaths() {
+        String answer = "";
+        if (!StringUtils.isBlank(this.scriptName1)) {
+            answer += this.scriptName1;
+        }
+        if (!StringUtils.isBlank(this.scriptName2)) {
+            answer = answer + "; " + this.scriptName2;
+        }
+        if (!StringUtils.isBlank(this.scriptName3)) {
+            answer = answer + "; " + this.scriptName3;
+        }
+        if (!StringUtils.isBlank(this.scriptName4)) {
+            answer = answer + "; " + this.scriptName4;
+        }
+        if (!StringUtils.isBlank(this.scriptName5)) {
+            answer = answer + "; " + this.scriptName5;
+        }
+        return answer;
+
+    }
+
 }
