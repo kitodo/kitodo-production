@@ -26,6 +26,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:t="http://myfaces.apache.org/tomahawk"
+    xmlns:p="http://primefaces.org/ui"
     >
     <f:view locale="#{SpracheForm.locale}">
         <ui:include src="inc/head.xhtml" />
@@ -142,11 +143,8 @@
                                                             <!--  Date  -->
                                                             <h:panelGroup id="prpvw15_5"
                                                                           rendered="#{(property.type.name == 'date')}">
-                                                                <!-- TODO: use PrimeFaces calendar tag as replacement for RichFaces calendar tag! -->
-                                                                <!--<rich:calendar id="prpvw15_5_1" datePattern="dd.MM.yyyy"-->
-                                                                               <!--value="#{property.value}"-->
-                                                                               <!--enableManualInput="true">-->
-                                                                <!--</rich:calendar>-->
+
+                                                                <p:calendar id="prpvw15_5_1" value="#{property.value}" locale="#{SpracheForm.locale}" navigator="true" pattern="dd.MM.yyyy" />
                                                             </h:panelGroup>
                                                         </h:column>
                                                     </t:dataTable>
