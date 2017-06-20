@@ -71,6 +71,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.MetadataHelper;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.ProcessDAO;
@@ -157,24 +158,156 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      */
     protected void manageDependenciesForIndex(Process process)
-            throws CustomResponseException, DataException, IOException {
-        for (Batch batch : process.getBatches()) {
-            serviceManager.getBatchService().saveToIndex(batch);
+            throws CustomResponseException, DAOException, DataException, IOException {
+        manageBatchesDependenciesForIndex(process);
+        manageProjectDependenciesForIndex(process);
+        manageTaskDependenciesForIndex(process);
+        manageTemplatesDependenciesForIndex(process);
+        manageWorkpiecesDependenciesForIndex(process);
+    }
+
+    /**
+     * Check if IndexAction flag is delete. If true remove process from list of
+     * processes and re-save batch, if false only re-save batch object.
+     * 
+     * @param process
+     *            object
+     */
+    private void manageBatchesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+        if (process.getIndexAction() == IndexAction.DELETE) {
+            for (Batch batch : process.getBatches()) {
+                batch.getProcesses().remove(process);
+                serviceManager.getBatchService().saveToIndex(batch);
+            }
+        } else {
+            for (Batch batch : process.getBatches()) {
+                serviceManager.getBatchService().saveToIndex(batch);
+            }
         }
-        for (Task task : process.getTasks()) {
-            serviceManager.getTaskService().saveToIndex(task);
-        }
-        for (Template template : process.getTemplates()) {
-            serviceManager.getTemplateService().saveToIndex(template);
-            saveDependantProperties(template.getProperties());
-        }
-        for (Workpiece workpiece : process.getWorkpieces()) {
-            serviceManager.getWorkpieceService().saveToIndex(workpiece);
-            saveDependantProperties(workpiece.getProperties());
-        }
+    }
+
+    /**
+     * Add process to project, if project is assigned to process.
+     * 
+     * @param process
+     *            object
+     */
+    private void manageProjectDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getProject() != null) {
             serviceManager.getProjectService().saveToIndex(process.getProject());
         }
+    }
+
+    /**
+     * Check IndexAction flag in for process object. If DELETE remove all tasks
+     * from index, if other call saveOrRemoveTaskInIndex() method.
+     * 
+     * @param process
+     *            object
+     */
+    private void manageTaskDependenciesForIndex(Process process)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        if (process.getIndexAction() == IndexAction.DELETE) {
+            for (Task task : process.getTasks()) {
+                serviceManager.getTaskService().removeFromIndex(task);
+            }
+        } else {
+            saveOrRemoveTasksInIndex(process);
+        }
+    }
+
+    /**
+     * Compare index and database, according to comparisons results save or
+     * remove tasks.
+     * 
+     * @param process
+     *            object
+     */
+    private void saveOrRemoveTasksInIndex(Process process)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        List<Integer> database = new ArrayList<>();
+        List<Integer> index = new ArrayList<>();
+
+        for (Task task : process.getTasks()) {
+            database.add(task.getId());
+            serviceManager.getTaskService().saveToIndex(task);
+        }
+
+        List<SearchResult> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
+        for (SearchResult test : searchResults) {
+            Integer id = test.getId();
+            index.add(id);
+        }
+
+        List<Integer> missingInIndex = findMissingValues(database, index);
+        List<Integer> notNeededInIndex = findMissingValues(index, database);
+
+        if (missingInIndex.size() > 0) {
+            for (Integer missing : missingInIndex) {
+                serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().find(missing));
+            }
+        }
+
+        if (notNeededInIndex.size() > 0) {
+            for (Integer notNeeded : notNeededInIndex) {
+                serviceManager.getTaskService().removeFromIndex(notNeeded);
+            }
+        }
+    }
+
+    /**
+     * Remove template if process is removed, add template if process is marked
+     * as template.
+     * 
+     * @param process
+     *            object
+     */
+    private void manageTemplatesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+        if (process.getIndexAction() == IndexAction.DELETE) {
+            for (Template template : process.getTemplates()) {
+                serviceManager.getTemplateService().removeFromIndex(template);
+            }
+        } else {
+            for (Template template : process.getTemplates()) {
+                serviceManager.getTemplateService().saveToIndex(template);
+                saveDependantProperties(template.getProperties());
+            }
+        }
+    }
+
+    /**
+     * Remove workpiece if process is removed, add workpiece if process is marked
+     * as workpiece.
+     *
+     * @param process
+     *            object
+     */
+    private void manageWorkpiecesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
+        if (process.getIndexAction() == IndexAction.DELETE) {
+            for (Workpiece workpiece : process.getWorkpieces()) {
+                serviceManager.getWorkpieceService().removeFromIndex(workpiece);
+            }
+        } else {
+            for (Workpiece workpiece : process.getWorkpieces()) {
+                serviceManager.getWorkpieceService().saveToIndex(workpiece);
+                saveDependantProperties(workpiece.getProperties());
+            }
+        }
+    }
+
+    /**
+     * Compare two list and return difference between them.
+     * 
+     * @param firstList
+     *            list from which records can be remove
+     * @param secondList
+     *            records stored here will be removed from firstList
+     * @return difference between two lists
+     */
+    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
+        List<Integer> newList = new ArrayList<>(firstList);
+        newList.removeAll(secondList);
+        return newList;
     }
 
     /**
@@ -228,6 +361,17 @@ public class ProcessService extends TitleSearchService<Process> {
     public void removeFromIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(process, processType);
+    }
+
+    /**
+     * Method removes process object from index of Elastic Search.
+     *
+     * @param id
+     *            of object
+     */
+    public void removeFromIndex(Integer id) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
 
     public List<Process> search(String query) throws DAOException {
