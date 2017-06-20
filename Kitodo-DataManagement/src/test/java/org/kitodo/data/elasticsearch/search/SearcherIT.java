@@ -71,14 +71,14 @@ public class SearcherIT {
         SearchResult result = searcher.findDocument(query);
         Integer id = result.getId();
         assertEquals("Incorrect result - id doesn't match to given number!", 2, id.intValue());
-        String title = result.getProperties().get("title");
+        String title = (String) result.getProperties().get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch2", title);
 
         query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
         result = searcher.findDocument(query);
         id = result.getId();
         assertEquals("Incorrect result - id doesn't match to given plain text!", 1, id.intValue());
-        title = result.getProperties().get("title");
+        title = (String) result.getProperties().get("title");
         assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
 
         query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";

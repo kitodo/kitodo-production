@@ -96,7 +96,7 @@ public class HistoryServiceIT {
         HistoryService historyService = new HistoryService();
 
         SearchResult history = historyService.findById(1);
-        String actual = history.getProperties().get("stringValue");
+        String actual = (String) history.getProperties().get("stringValue");
         String expected = "History";
         assertEquals("History was not found in index!", expected, actual);
 
@@ -126,7 +126,7 @@ public class HistoryServiceIT {
         HistoryService historyService = new HistoryService();
 
         List<SearchResult> history = historyService.findByStringValue("History");
-        String actual = history.get(0).getProperties().get("stringValue");
+        String actual = (String) history.get(0).getProperties().get("stringValue");
         String expected = "History";
         assertEquals("History was not found in index!", expected, actual);
     }
