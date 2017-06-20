@@ -92,9 +92,9 @@ public class UserTypeTest {
         User user = prepareData().get(0);
         HttpEntity document = userType.createDocument(user);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],"
+        JSONObject expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],\"projects\":[],"
                 + "\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":null,\"login\":\"jkowalski\","
-                + "\"active\":\"true\",\"location\":\"Dresden\",\"filters\":[]}");
+                + "\"active\":\"true\",\"location\":\"Dresden\",\"filters\":[],\"tasks\":[],\"processingTasks\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(1);
@@ -102,7 +102,8 @@ public class UserTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1},{\"id\":2}],"
                 + "\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"filters\":[{\"id\":1},{\"id\":2}]}");
+                + "\"location\":\"Berlin\",\"login\":\"anowak\",\"filters\":[{\"id\":1},{\"id\":2}],\"tasks\":[],"
+                + "\"processingTasks\":[],\"projects\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
@@ -110,7 +111,8 @@ public class UserTypeTest {
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         expected = (JSONObject) parser.parse("{\"login\":\"pmueller\",\"ldapLogin\":null,\"userGroups\":[],"
                 + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":\"true\","
-                + "\"location\":null,\"filters\":[{\"id\":1},{\"id\":2}]}");
+                + "\"location\":null,\"filters\":[{\"id\":1},{\"id\":2}],\"projects\":[],\"tasks\":[],"
+                + "\"processingTasks\":[]}");
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

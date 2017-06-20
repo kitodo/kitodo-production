@@ -36,6 +36,9 @@ public class UserType extends BaseType<User> {
         userObject.put("metadataLanguage", user.getMetadataLanguage());
         userObject.put("userGroups", addObjectRelation(user.getUserGroups()));
         userObject.put("filters", addObjectRelation(user.getFilters()));
+        userObject.put("projects", addObjectRelation(user.getProjects()));
+        userObject.put("processingTasks", addObjectRelation(user.getProcessingTasks()));
+        userObject.put("tasks", addObjectRelation(user.getTasks()));
 
         return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
     }
