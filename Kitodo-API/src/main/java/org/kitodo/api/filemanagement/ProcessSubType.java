@@ -16,5 +16,5 @@ package org.kitodo.api.filemanagement;
  * files on the filemanagement.
  */
 public enum ProcessSubType {
-    IMAGE, IMAGE_SOURCE, META_XML, TEMPLATE, IMPORT, OCR, OCR_PDF, OCR_TXT, OCR_WORD, OCR_ALTO;
+    IMAGE, IMAGE_SOURCE, META_XML, TEMPLATE, IMPORT, OCR, OCR_PDF, OCR_TXT, OCR_WORD, OCR_ALTO
 }
