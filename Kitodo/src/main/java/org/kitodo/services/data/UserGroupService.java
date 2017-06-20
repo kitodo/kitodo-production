@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.UserGroupDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -87,12 +88,47 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            object
      */
     protected void manageDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
-        for (User user : userGroup.getUsers()) {
-            serviceManager.getUserService().saveToIndex(user);
-        }
+        manageTasksDependenciesForIndex(userGroup);
+        manageUsersDependenciesForIndex(userGroup);
+    }
 
-        for (Task task : userGroup.getTasks()) {
-            serviceManager.getTaskService().saveToIndex(task);
+    /**
+     * Check if IndexAction flag is delete. If true remove user group from list of
+     * user groups and re-save task, if false only re-save task object.
+     *
+     * @param userGroup
+     *            object
+     */
+    private void manageTasksDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+        if (userGroup.getIndexAction() == IndexAction.DELETE) {
+            for (Task task : userGroup.getTasks()) {
+                task.getUserGroups().remove(userGroup);
+                serviceManager.getTaskService().saveToIndex(task);
+            }
+        } else {
+            for (Task task : userGroup.getTasks()) {
+                serviceManager.getTaskService().saveToIndex(task);
+            }
+        }
+    }
+
+    /**
+     * Check if IndexAction flag is delete. If true remove user group from list of
+     * user groups and re-save user, if false only re-save user object.
+     *
+     * @param userGroup
+     *            object
+     */
+    private void manageUsersDependenciesForIndex(UserGroup userGroup) throws CustomResponseException, IOException {
+        if (userGroup.getIndexAction() == IndexAction.DELETE) {
+            for (User user : userGroup.getUsers()) {
+                user.getUserGroups().remove(userGroup);
+                serviceManager.getUserService().saveToIndex(user);
+            }
+        } else {
+            for (User user : userGroup.getUsers()) {
+                serviceManager.getUserService().saveToIndex(user);
+            }
         }
     }
 
