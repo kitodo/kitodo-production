@@ -28,6 +28,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -80,9 +81,16 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
-    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, DataException, IOException {
-        for (Process process : batch.getProcesses()) {
-            serviceManager.getProcessService().saveToIndex(process);
+    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, IOException {
+        if (batch.getIndexAction() == IndexAction.DELETE) {
+            for (Process process : batch.getProcesses()) {
+                process.getBatches().remove(batch);
+                serviceManager.getProcessService().saveToIndex(process);
+            }
+        } else {
+            for (Process process : batch.getProcesses()) {
+                serviceManager.getProcessService().saveToIndex(process);
+            }
         }
     }
 
@@ -134,6 +142,17 @@ public class BatchService extends TitleSearchService<Batch> {
     public void removeFromIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
+    }
+
+    /**
+     * Method removes batch object from index of Elastic Search.
+     *
+     * @param id
+     *            of object
+     */
+    public void removeFromIndex(Integer id) throws CustomResponseException, IOException {
+        indexer.setMethod(HTTPMethods.DELETE);
+        indexer.performSingleRequest(id);
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {
