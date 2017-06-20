@@ -37,7 +37,7 @@ import javax.inject.Named;
 @Named("StatistikForm")
 @ApplicationScoped
 public class StatistikForm {
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(StatistikForm.class);
     Calendar cal = new GregorianCalendar();
     int n = 200;

@@ -130,8 +130,8 @@ public class ProzessverwaltungForm extends BasisForm {
     private Integer container;
     private String addToWikiField = "";
     private boolean showStatistics = false;
-    private final ServiceManager serviceManager = new ServiceManager();
-    private final FileService fileService = serviceManager.getFileService();
+    private transient ServiceManager serviceManager = new ServiceManager();
+    private transient FileService fileService = serviceManager.getFileService();
     private static String DONEDIRECTORYNAME = "fertig/";
 
     /**

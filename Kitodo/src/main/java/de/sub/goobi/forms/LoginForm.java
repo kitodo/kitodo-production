@@ -49,7 +49,7 @@ public class LoginForm implements Serializable{
     private String passwortAendernAlt;
     private String passwortAendernNeu1;
     private String passwortAendernNeu2;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Log out.

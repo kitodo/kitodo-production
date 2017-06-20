@@ -40,7 +40,7 @@ import javax.inject.Named;
 public class RegelsaetzeForm extends BasisForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Ruleset myRegelsatz = new Ruleset();
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RegelsaetzeForm.class);
     private int rulesetId;
 

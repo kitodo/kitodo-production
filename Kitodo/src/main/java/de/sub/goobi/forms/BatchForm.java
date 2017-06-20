@@ -71,7 +71,7 @@ public class BatchForm extends BasisForm {
     private IEvaluableFilter myFilteredDataSource;
     private String modusBearbeiten = "";
     private String batchTitle;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     public List<Process> getCurrentProcesses() {
         return this.currentProcesses;

@@ -58,7 +58,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     private static final long serialVersionUID = -3635859455444639614L;
     private User myClass = new User();
     private boolean hideInactiveUsers = true;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
 

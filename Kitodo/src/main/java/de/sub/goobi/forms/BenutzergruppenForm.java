@@ -38,7 +38,7 @@ import de.sub.goobi.helper.Page;
 public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private UserGroup myBenutzergruppe = new UserGroup();
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
 
     public String Neu() {

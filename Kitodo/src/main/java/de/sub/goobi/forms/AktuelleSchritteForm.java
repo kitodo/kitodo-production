@@ -112,7 +112,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Integer container;
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Constructor.

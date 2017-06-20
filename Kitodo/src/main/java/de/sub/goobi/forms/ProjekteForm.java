@@ -76,7 +76,7 @@ public class ProjekteForm extends BasisForm {
 
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting filegroups
     // it needs the execution of commit fileGroups to make these changes

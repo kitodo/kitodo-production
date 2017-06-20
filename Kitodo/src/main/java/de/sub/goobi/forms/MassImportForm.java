@@ -89,7 +89,7 @@ public class MassImportForm implements Serializable {
     private IImportPlugin plugin;
     private File importFile = null;
     private final Helper help = new Helper();
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
 
     private List<Process> processList;
