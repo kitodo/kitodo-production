@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
@@ -34,6 +33,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.PropertyType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -165,8 +165,7 @@ public class PropertyService extends TitleSearchService<Property> {
      *            of the searched batches
      * @return list of search results with properties
      */
-    public List<SearchResult> findByValue(String value, boolean contains)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByValue(String value, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -181,8 +180,7 @@ public class PropertyService extends TitleSearchService<Property> {
      *            of the searched property
      * @return list of search results with batches of exact type
      */
-    public List<SearchResult> findByTitleAndValue(String title, String value)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByTitleAndValue(String title, String value) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("value", value, true, Operator.AND));
@@ -192,7 +190,7 @@ public class PropertyService extends TitleSearchService<Property> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), propertyType);
     }

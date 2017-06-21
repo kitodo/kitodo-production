@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -32,6 +31,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.data.base.TitleSearchService;
 
 import ugh.dl.Prefs;
@@ -123,7 +123,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return search result
      */
-    public SearchResult findByFile(String file) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByFile(String file) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("file", file, true);
         return searcher.findDocument(queryBuilder.toString());
     }
@@ -135,8 +135,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return list of search results
      */
-    public List<SearchResult> findByFileContent(String fileContent)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByFileContent(String fileContent) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("fileContent", fileContent, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -150,8 +149,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return search result
      */
-    public SearchResult findByTitleAndFile(String title, String file)
-            throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("file", file, true, Operator.AND));
@@ -167,8 +165,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      *            of the searched ruleset
      * @return search result
      */
-    public List<SearchResult> findByTitleOrFile(String title, String file)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true));
         query.should(createSimpleQuery("file", file, true));
@@ -178,7 +175,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), rulesetType);
     }

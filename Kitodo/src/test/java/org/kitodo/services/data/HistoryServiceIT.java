@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.joda.time.LocalDate;
@@ -26,8 +25,8 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for TaskService class.
@@ -35,7 +34,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class HistoryServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws CustomResponseException, DAOException, IOException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -59,7 +58,7 @@ public class HistoryServiceIT {
     }
 
     @Test
-    public void shouldFindAllHistories() throws Exception {
+    public void shouldFindAllHistories() {
         HistoryService historyService = new HistoryService();
 
         List<History> histories = historyService.findAll();
@@ -207,7 +206,8 @@ public class HistoryServiceIT {
         HistoryService historyService = new HistoryService();
 
         List<SearchResult> searchResults = historyService.findAllDocuments();
-        List<History> historys = (List<History>) historyService.convertSearchResultsToObjectList(searchResults, "History");
+        List<History> historys = (List<History>) historyService.convertSearchResultsToObjectList(searchResults,
+                "History");
         assertEquals("Not all histories were converted!", 1, historys.size());
     }
 }

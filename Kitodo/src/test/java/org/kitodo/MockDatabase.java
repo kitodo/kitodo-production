@@ -32,6 +32,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -41,7 +42,7 @@ public class MockDatabase {
 
     private static final ServiceManager serviceManager = new ServiceManager();
 
-    public static void insertProcessesFull() throws DAOException, IOException, CustomResponseException {
+    public static void insertProcessesFull() throws DAOException, DataException {
         if (serviceManager.getBatchService().find(1) == null) {
             insertBatches();
             insertDockets();
@@ -63,7 +64,7 @@ public class MockDatabase {
         }
     }
 
-    private static void insertBatches() throws DAOException, IOException, CustomResponseException {
+    private static void insertBatches() throws DataException {
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
         firstBatch.setType(LOGISTIC);
@@ -84,7 +85,7 @@ public class MockDatabase {
         serviceManager.getBatchService().save(fourthBatch);
     }
 
-    public static void insertDockets() throws DAOException, IOException, CustomResponseException {
+    private static void insertDockets() throws DataException {
         Docket firstDocket = new Docket();
         firstDocket.setTitle("default");
         firstDocket.setFile("docket.xsl");
@@ -96,7 +97,7 @@ public class MockDatabase {
         serviceManager.getDocketService().save(secondDocket);
     }
 
-    private static void insertHistory() throws DAOException, IOException, CustomResponseException {
+    private static void insertHistory() throws DAOException, DataException {
         History firstHistory = new History();
         Process firstProcess = serviceManager.getProcessService().find(1);
         firstHistory.setNumericValue(2.0);
@@ -119,7 +120,7 @@ public class MockDatabase {
         serviceManager.getLdapGroupService().save(firstLdapGroup);
     }
 
-    private static void insertProcesses() throws DAOException, IOException, CustomResponseException {
+    private static void insertProcesses() throws DAOException, DataException {
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
         firstProcess.setOutputName("Test");
@@ -168,7 +169,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(test);
     }
 
-    private static void insertProcessProperties() throws CustomResponseException, DAOException, IOException {
+    private static void insertProcessProperties() throws DAOException, DataException {
         Property firstProcessProperty = new Property();
 
         Process process = serviceManager.getProcessService().find(1);
@@ -200,7 +201,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(process);
     }
 
-    private static void insertProjects() throws DAOException, IOException, CustomResponseException {
+    private static void insertProjects() throws DAOException, DataException {
         User firstUser = serviceManager.getUserService().find(1);
         User secondUser = serviceManager.getUserService().find(2);
 
@@ -247,7 +248,7 @@ public class MockDatabase {
         serviceManager.getProjectService().save(thirdProject);
     }
 
-    private static void insertProjectFileGroups() throws DAOException, IOException, CustomResponseException {
+    private static void insertProjectFileGroups() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().find(1);
 
         ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
@@ -304,7 +305,7 @@ public class MockDatabase {
         serviceManager.getProjectService().save(project);
     }
 
-    public static void insertRulesets() throws DAOException, IOException, CustomResponseException {
+    private static void insertRulesets() throws DataException {
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("SLUBDD");
         firstRuleset.setFile("ruleset_slubdd.xml");
@@ -318,7 +319,7 @@ public class MockDatabase {
         serviceManager.getRulesetService().save(secondRuleset);
     }
 
-    private static void insertTasks() throws DAOException, IOException, CustomResponseException {
+    private static void insertTasks() throws DAOException, DataException {
         Task firstTask = new Task();
         Process firstProcess = serviceManager.getProcessService().find(1);
         UserGroup userGroup = serviceManager.getUserGroupService().find(1);
@@ -406,7 +407,7 @@ public class MockDatabase {
         serviceManager.getUserGroupService().save(userGroup);
     }
 
-    private static void insertTemplates() throws DAOException, IOException, CustomResponseException {
+    private static void insertTemplates() throws DAOException, DataException {
         Process process = serviceManager.getProcessService().find(1);
 
         Template firstTemplate = new Template();
@@ -424,7 +425,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(process);
     }
 
-    private static void insertTemplateProperties() throws DAOException, IOException, CustomResponseException {
+    private static void insertTemplateProperties() throws DAOException, DataException {
         Template template = serviceManager.getTemplateService().find(1);
 
         Property firstTemplateProperty = new Property();
@@ -456,7 +457,7 @@ public class MockDatabase {
         serviceManager.getTemplateService().save(template);
     }
 
-    private static void insertUsers() throws DAOException, IOException, CustomResponseException {
+    private static void insertUsers() throws DAOException, DataException {
         User firstUser = new User();
         firstUser.setName("Jan");
         firstUser.setSurname("Kowalski");
@@ -488,7 +489,7 @@ public class MockDatabase {
         serviceManager.getUserService().save(thirdUser);
     }
 
-    private static void insertUserGroups() throws DAOException, IOException, CustomResponseException {
+    private static void insertUserGroups() throws DAOException, DataException {
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
         firstUserGroup.setPermission(1);
@@ -511,7 +512,7 @@ public class MockDatabase {
         serviceManager.getUserGroupService().save(thirdUserGroup);
     }
 
-    public static void insertUserProperties() throws DAOException, IOException, CustomResponseException {
+    private static void insertUserProperties() throws DAOException, DataException {
         User user = serviceManager.getUserService().find(1);
 
         Property firstUserProperty = new Property();
@@ -543,7 +544,7 @@ public class MockDatabase {
         serviceManager.getUserService().save(user);
     }
 
-    private static void insertWorkpieces() throws DAOException, IOException, CustomResponseException {
+    private static void insertWorkpieces() throws DAOException, DataException {
         Process process = serviceManager.getProcessService().find(1);
 
         Workpiece firstWorkpiece = new Workpiece();
@@ -559,7 +560,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(process);
     }
 
-    private static void insertWorkpieceProperties() throws DAOException, IOException, CustomResponseException {
+    private static void insertWorkpieceProperties() throws DAOException, DataException {
         Workpiece workpiece = serviceManager.getWorkpieceService().find(1);
 
         Property firstWorkpieceProperty = new Property();

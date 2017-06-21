@@ -17,7 +17,6 @@ import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadatenVerifizierung;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +53,7 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class BatchStepHelper {
@@ -163,7 +162,7 @@ public class BatchStepHelper {
     /**
      * Save current property.
      */
-    public void saveCurrentProperty() throws IOException, CustomResponseException {
+    public void saveCurrentProperty() {
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
@@ -197,7 +196,7 @@ public class BatchStepHelper {
             try {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());
                 Helper.setMeldung("Property saved");
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("Properties could not be saved");
             }
@@ -207,7 +206,7 @@ public class BatchStepHelper {
     /**
      * Save current property for all.
      */
-    public void saveCurrentPropertyForAll() throws IOException, CustomResponseException {
+    public void saveCurrentPropertyForAll() {
         boolean error = false;
         List<ProcessProperty> ppList = getContainerProperties();
         for (ProcessProperty pp : ppList) {
@@ -273,7 +272,7 @@ public class BatchStepHelper {
 
                 try {
                     this.serviceManager.getProcessService().save(process);
-                } catch (DAOException e) {
+                } catch (DataException e) {
                     error = true;
                     logger.error(e);
                     Helper.setFehlerMeldung("Properties for process " + process.getTitle() + " could not be saved");
@@ -405,7 +404,7 @@ public class BatchStepHelper {
      *
      * @return empty String
      */
-    public String duplicateContainerForSingle() throws IOException, CustomResponseException {
+    public String duplicateContainerForSingle() {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container
@@ -439,7 +438,7 @@ public class BatchStepHelper {
         return "";
     }
 
-    private void saveStep() throws IOException, CustomResponseException {
+    private void saveStep() {
         Process p = this.currentStep.getProcess();
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
@@ -449,7 +448,7 @@ public class BatchStepHelper {
         }
         try {
             this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
         }
     }
@@ -459,7 +458,7 @@ public class BatchStepHelper {
      *
      * @return empty String
      */
-    public String duplicateContainerForAll() throws IOException, CustomResponseException {
+    public String duplicateContainerForAll() {
         Integer currentContainer = this.processProperty.getContainer();
         List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
         // search for all properties in container
@@ -495,7 +494,7 @@ public class BatchStepHelper {
     /**
      * Error management for single.
      */
-    public String reportProblemForSingle() throws IOException, CustomResponseException {
+    public String reportProblemForSingle() {
 
         this.myDav.uploadFromHome(this.currentStep.getProcess());
         reportProblem();
@@ -509,7 +508,7 @@ public class BatchStepHelper {
     /**
      * Error management for all.
      */
-    public String reportProblemForAll() throws IOException, CustomResponseException {
+    public String reportProblemForAll() {
         for (Task s : this.steps) {
             this.currentStep = s;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
@@ -522,7 +521,7 @@ public class BatchStepHelper {
         return asf.filterAlleStart();
     }
 
-    private void reportProblem() throws IOException, CustomResponseException {
+    private void reportProblem() {
         Date myDate = new Date();
         this.currentStep.setProcessingStatusEnum(TaskStatus.LOCKED);
         this.currentStep.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -582,7 +581,8 @@ public class BatchStepHelper {
              * den Prozess aktualisieren, so dass der Sortierungshelper
              * gespeichert wird
              */
-        } catch (DAOException e) {
+        } catch (DataException e) {
+            logger.error(e);
         }
     }
 
@@ -626,7 +626,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String solveProblemForSingle() throws IOException, CustomResponseException {
+    public String solveProblemForSingle() {
         try {
             solveProblem();
             saveStep();
@@ -646,7 +646,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String solveProblemForAll() throws IOException, CustomResponseException {
+    public String solveProblemForAll() {
         try {
             for (Task s : this.steps) {
                 this.currentStep = s;
@@ -664,7 +664,7 @@ public class BatchStepHelper {
         }
     }
 
-    private void solveProblem() throws AuthenticationException, IOException, CustomResponseException {
+    private void solveProblem() throws AuthenticationException {
         User ben = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (ben == null) {
             throw new AuthenticationException("userNotFound");
@@ -727,7 +727,8 @@ public class BatchStepHelper {
                  * gespeichert wird
                  */
             }
-        } catch (DAOException e) {
+        } catch (DataException e) {
+            logger.error(e);
         }
     }
 
@@ -788,7 +789,7 @@ public class BatchStepHelper {
     /**
      * Add to wiki field.
      */
-    public void addToWikiField() throws IOException, CustomResponseException {
+    public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
@@ -797,7 +798,7 @@ public class BatchStepHelper {
             this.addToWikiField = "";
             try {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
             }
         }
@@ -806,7 +807,7 @@ public class BatchStepHelper {
     /**
      * Add to wiki field for all.
      */
-    public void addToWikiFieldForAll() throws IOException, CustomResponseException {
+    public void addToWikiFieldForAll() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
@@ -815,7 +816,7 @@ public class BatchStepHelper {
                         WikiFieldHelper.getWikiMessage(s.getProcess(), s.getProcess().getWikiField(), "user", message));
                 try {
                     this.serviceManager.getProcessService().save(s.getProcess());
-                } catch (DAOException e) {
+                } catch (DataException e) {
                     logger.error(e);
                 }
             }
@@ -834,17 +835,13 @@ public class BatchStepHelper {
     /**
      * Execute script.
      */
-    public void executeScript() throws CustomResponseException, DAOException {
+    public void executeScript() throws DataException {
         for (Task step : this.steps) {
-
             if (serviceManager.getTaskService().getAllScripts(step).containsKey(this.script)) {
                 String scriptPath = serviceManager.getTaskService().getAllScripts(step).get(this.script);
-
                 serviceManager.getTaskService().executeScript(step, scriptPath, false);
-
             }
         }
-
     }
 
     /**
@@ -867,7 +864,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerZurueckgeben() throws IOException, CustomResponseException {
+    public String batchDurchBenutzerZurueckgeben() {
 
         for (Task s : this.steps) {
 
@@ -885,7 +882,7 @@ public class BatchStepHelper {
 
             try {
                 this.serviceManager.getProcessService().save(s.getProcess());
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
             }
         }
@@ -898,7 +895,7 @@ public class BatchStepHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() throws DAOException, IOException, CustomResponseException {
+    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException {
 
         // for (ProcessProperty pp : this.processPropertyList) {
         // this.processProperty = pp;

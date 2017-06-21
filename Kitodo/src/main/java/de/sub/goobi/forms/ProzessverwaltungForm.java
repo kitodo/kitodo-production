@@ -55,7 +55,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.elasticsearch.client.ResponseException;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -87,7 +86,7 @@ import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -309,15 +308,13 @@ public class ProzessverwaltungForm extends BasisForm {
                         gs.updateImagePath(pro);
                     }
                 }
-
             }
 
             try {
                 serviceManager.getProcessService().save(this.myProzess);
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-            } catch (IOException | CustomResponseException e) {
-                Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
+                logger.error(e);
             }
         } else {
             Helper.setFehlerMeldung("titleEmpty");
@@ -334,8 +331,9 @@ public class ProzessverwaltungForm extends BasisForm {
         deleteMetadataDirectory();
         try {
             serviceManager.getProcessService().remove(this.myProzess);
-        } catch (DAOException | IOException | CustomResponseException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("could not delete ", e);
+            logger.error(e);
             return null;
         }
         if (this.modusAnzeige.equals("vorlagen")) {
@@ -588,8 +586,9 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             serviceManager.getProcessService().getPropertiesInitialized(myProzess).remove(myProzessEigenschaft);
             serviceManager.getProcessService().save(myProzess);
-        } catch (DAOException | IOException | CustomResponseException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+            logger.error(e);
         }
         return null;
     }
@@ -601,8 +600,9 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             myVorlage.getProperties().remove(myVorlageEigenschaft);
             serviceManager.getProcessService().save(myProzess);
-        } catch (DAOException | IOException | CustomResponseException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+            logger.error(e);
         }
         return null;
     }
@@ -614,8 +614,9 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             myWerkstueck.getProperties().remove(myWerkstueckEigenschaft);
             serviceManager.getProcessService().save(myProzess);
-        } catch (DAOException | IOException | CustomResponseException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+            logger.error(e);
         }
         return null;
     }
@@ -1066,7 +1067,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenPage() throws DAOException, IOException, CustomResponseException {
+    public void BearbeitungsstatusHochsetzenPage() throws DAOException, DataException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             stepStatusUp(proz.getId());
         }
@@ -1076,7 +1077,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, IOException, CustomResponseException {
+    public void BearbeitungsstatusHochsetzenSelection() throws DAOException, DataException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 stepStatusUp(proz.getId());
@@ -1088,14 +1089,13 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusHochsetzenHits() throws DAOException, IOException, CustomResponseException {
+    public void BearbeitungsstatusHochsetzenHits() throws DAOException, DataException {
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             stepStatusUp(proz.getId());
         }
     }
 
-    private void stepStatusUp(int processId)
-            throws DAOException, IOException, ResponseException, CustomResponseException {
+    private void stepStatusUp(int processId) throws DAOException, DataException {
         List<Task> taskList = serviceManager.getProcessService().find(processId).getTasks();
 
         for (Task t : taskList) {
@@ -1125,7 +1125,7 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-    private void stepStatusDown(Process proz) throws DAOException, IOException, CustomResponseException {
+    private void stepStatusDown(Process proz) throws DataException {
         List<Task> tempList = new ArrayList<Task>(proz.getTasks());
         debug("templist: ", tempList);
 
@@ -1151,7 +1151,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusRuntersetzenPage() throws DAOException, IOException, CustomResponseException {
+    public void BearbeitungsstatusRuntersetzenPage() throws DataException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             stepStatusDown(proz);
         }
@@ -1161,7 +1161,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status selection.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusRuntersetzenSelection() throws DAOException, IOException, CustomResponseException {
+    public void BearbeitungsstatusRuntersetzenSelection() throws DataException {
         for (Process proz : (List<Process>) this.page.getListReload()) {
             if (proz.isSelected()) {
                 stepStatusDown(proz);
@@ -1173,7 +1173,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Set down processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void BearbeitungsstatusRuntersetzenHits() throws DAOException, IOException, CustomResponseException {
+    public void BearbeitungsstatusRuntersetzenHits() throws DataException {
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             stepStatusDown(proz);
         }
@@ -1182,7 +1182,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Task status up.
      */
-    public void SchrittStatusUp() throws DAOException, IOException, CustomResponseException {
+    public void SchrittStatusUp() throws DAOException, DataException {
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.DONE) {
             this.mySchritt = serviceManager.getTaskService().setProcessingStatusUp(this.mySchritt);
             this.mySchritt.setEditTypeEnum(TaskEditType.ADMIN);
@@ -1449,7 +1449,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images pages.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesPage() throws IOException, InterruptedException, DAOException {
+    public void CalcMetadataAndImagesPage() {
         CalcMetadataAndImages(this.page.getListReload());
     }
 
@@ -1457,7 +1457,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images selection.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesSelection() throws IOException, InterruptedException, DAOException {
+    public void CalcMetadataAndImagesSelection() {
         ArrayList<Process> auswahl = new ArrayList<Process>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
@@ -1471,7 +1471,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Calculate metadata and images hits.
      */
     @SuppressWarnings("unchecked")
-    public void CalcMetadataAndImagesHits() throws IOException, InterruptedException, DAOException {
+    public void CalcMetadataAndImagesHits() {
         CalcMetadataAndImages(this.page.getCompleteList());
     }
 
@@ -1572,10 +1572,8 @@ public class ProzessverwaltungForm extends BasisForm {
         GoobiScript gs = new GoobiScript();
         try {
             gs.execute(this.page.getCompleteList(), this.kitodoScript);
-        } catch (IOException | CustomResponseException e) {
-            logger.error("ElasticSearch", e);
-        } catch (DAOException e) {
-            logger.error("DatabaseException", e);
+        } catch (DataException e) {
+            logger.error(e);
         }
     }
 
@@ -1587,10 +1585,8 @@ public class ProzessverwaltungForm extends BasisForm {
         GoobiScript gs = new GoobiScript();
         try {
             gs.execute(this.page.getListReload(), this.kitodoScript);
-        } catch (IOException | CustomResponseException e) {
-            logger.error("ElasticSearch", e);
-        } catch (DAOException e) {
-            logger.error("DatabaseException", e);
+        } catch (DataException e) {
+            logger.error(e);
         }
     }
 
@@ -1599,7 +1595,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void kitodoScriptSelection() {
-        ArrayList<Process> auswahl = new ArrayList<Process>();
+        ArrayList<Process> auswahl = new ArrayList<>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
                 auswahl.add(p);
@@ -1608,10 +1604,8 @@ public class ProzessverwaltungForm extends BasisForm {
         GoobiScript gs = new GoobiScript();
         try {
             gs.execute(auswahl, this.kitodoScript);
-        } catch (IOException | CustomResponseException e) {
-            logger.error("ElasticSearch", e);
-        } catch (DAOException e) {
-            logger.error("DatabaseException", e);
+        } catch (DataException e) {
+            logger.error(e);
         }
     }
 
@@ -1707,7 +1701,7 @@ public class ProzessverwaltungForm extends BasisForm {
         tiff.exportStart();
     }
 
-    public void DownloadMultiTiff() throws IOException, InterruptedException, DAOException {
+    public void DownloadMultiTiff() throws IOException {
         Multipage mp = new Multipage();
         mp.startExport(this.myProzess);
     }
@@ -1869,12 +1863,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 ExportXmlLog export = new ExportXmlLog();
                 export.startTransformation(out, this.myProzess, this.selectedXslt);
                 out.flush();
-            } catch (ConfigurationException e) {
-                Helper.setFehlerMeldung("could not create logfile: ", e);
-            } catch (XSLTransformException e) {
-                Helper.setFehlerMeldung("could not create transformation: ", e);
-            } catch (IOException e) {
-                Helper.setFehlerMeldung("could not create transformation: ", e);
+            } catch (IOException | XSLTransformException e) {
+                Helper.setFehlerMeldung("Could not create transformation: ", e);
             }
             facesContext.responseComplete();
         }
@@ -2103,7 +2093,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.addToWikiField = "";
             try {
                 serviceManager.getProcessService().save(myProzess);
-            } catch (DAOException | IOException | CustomResponseException e) {
+            } catch (DataException e) {
                 logger.error(e);
             }
         }
@@ -2193,11 +2183,9 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 serviceManager.getProcessService().save(this.myProzess);
                 Helper.setMeldung("Properties saved");
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("Properties could not be saved");
-            } catch (IOException | CustomResponseException e) {
-                logger.error(e);
             }
         }
     }
@@ -2234,11 +2222,9 @@ public class ProzessverwaltungForm extends BasisForm {
                 serviceManager.getProcessService().save(this.myProzess);
                 serviceManager.getPropertyService().save(this.processProperty.getProzesseigenschaft());
                 Helper.setMeldung("propertiesSaved");
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("propertiesNotSaved");
-            } catch (IOException | CustomResponseException e) {
-                logger.error(e);
             }
         }
         loadProcessProperties();
@@ -2319,11 +2305,9 @@ public class ProzessverwaltungForm extends BasisForm {
         }
         try {
             serviceManager.getProcessService().save(this.myProzess);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
             Helper.setFehlerMeldung("propertiesNotDeleted");
-        } catch (IOException | CustomResponseException e) {
-            logger.error(e);
         }
         // saveWithoutValidation();
         loadProcessProperties();
@@ -2420,11 +2404,9 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             serviceManager.getProcessService().save(this.myProzess);
             Helper.setMeldung("propertySaved");
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
             Helper.setFehlerMeldung("propertiesNotSaved");
-        } catch (IOException | CustomResponseException e) {
-            logger.error(e);
         }
         loadProcessProperties();
 

@@ -66,8 +66,8 @@ public class UserGroupTypeTest {
         UserGroup userGroup = prepareData().get(0);
         HttpEntity document = userGroupType.createDocument(userGroup);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse(
-                "{\"title\":\"Administrator\",\"permission\":1," + "\"users\":[{\"id\":1},{\"id\":2}]}");
+        JSONObject expected = (JSONObject) parser
+                .parse("{\"title\":\"Administrator\",\"permission\":1," + "\"users\":[{\"id\":1},{\"id\":2}]}");
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
 
         userGroup = prepareData().get(1);
@@ -78,7 +78,7 @@ public class UserGroupTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         UserGroupType UserGroupType = new UserGroupType();
 
         List<UserGroup> batches = prepareData();

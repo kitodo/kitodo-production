@@ -21,7 +21,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
@@ -30,6 +29,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.DocketType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class DocketService extends TitleSearchService<Docket> {
@@ -121,7 +121,7 @@ public class DocketService extends TitleSearchService<Docket> {
      *            of the searched docket
      * @return search result
      */
-    public SearchResult findByFile(String file) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByFile(String file) throws DataException {
         QueryBuilder query = createSimpleQuery("file", file, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -135,8 +135,7 @@ public class DocketService extends TitleSearchService<Docket> {
      *            of the searched docket
      * @return search result
      */
-    public SearchResult findByTitleAndFile(String title, String file)
-            throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("file", file, true, Operator.AND));
@@ -152,8 +151,7 @@ public class DocketService extends TitleSearchService<Docket> {
      *            of the searched docket
      * @return search result
      */
-    public List<SearchResult> findByTitleOrFile(String title, String file)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true, Operator.AND));
         query.should(createSimpleQuery("file", file, true, Operator.AND));
@@ -163,7 +161,7 @@ public class DocketService extends TitleSearchService<Docket> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, CustomResponseException {
+    public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), docketType);
     }

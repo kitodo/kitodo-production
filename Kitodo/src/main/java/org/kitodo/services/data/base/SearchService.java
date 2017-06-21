@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -37,6 +36,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Class for implementing methods used by all service classes which search in
@@ -161,7 +161,7 @@ public abstract class SearchService<T extends BaseBean> {
      * @param baseBean
      *            object
      */
-    public void save(T baseBean) throws CustomResponseException, DAOException, IOException {
+    public void save(T baseBean) throws DataException {
         try {
             baseBean.setIndexAction(IndexAction.INDEX);
             saveToDatabase(baseBean);
@@ -171,7 +171,7 @@ public abstract class SearchService<T extends BaseBean> {
             saveToDatabase(baseBean);
         } catch (DAOException e) {
             logger.debug(e);
-            throw new DAOException(e);
+            throw new DataException(e);
         } catch (CustomResponseException | IOException e) {
             int count = 0;
             int maxTries = 5;
@@ -182,19 +182,14 @@ public abstract class SearchService<T extends BaseBean> {
                     baseBean.setIndexAction(IndexAction.DONE);
                     saveToDatabase(baseBean);
                     break;
-                } catch (CustomResponseException cre) {
-                    logger.debug(e);
+                } catch (CustomResponseException | IOException ee) {
+                    logger.debug(ee);
                     if (++count >= maxTries) {
-                        throw new CustomResponseException(cre.getMessage());
-                    }
-                } catch (IOException ioe) {
-                    logger.debug(e);
-                    if (++count >= maxTries) {
-                        throw new IOException(ioe.getMessage());
+                        throw new DataException(ee);
                     }
                 } catch (DAOException daoe) {
-                    logger.debug("Index was updated but flag in database not... " + e);
-                    throw new DAOException(daoe.getMessage());
+                    logger.debug("Index was updated but flag in database not... " + daoe.getMessage());
+                    throw new DataException(daoe);
                 }
             }
         }
@@ -207,9 +202,13 @@ public abstract class SearchService<T extends BaseBean> {
      * @param id
      *            of object
      */
-    public void remove(Integer id) throws CustomResponseException, DAOException, IOException {
-        T baseBean = find(id);
-        remove(baseBean);
+    public void remove(Integer id) throws DataException {
+        try {
+            T baseBean = find(id);
+            remove(baseBean);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -219,7 +218,7 @@ public abstract class SearchService<T extends BaseBean> {
      * @param baseBean
      *            object
      */
-    public void remove(T baseBean) throws CustomResponseException, DAOException, IOException {
+    public void remove(T baseBean) throws DataException {
         try {
             baseBean.setIndexAction(IndexAction.DELETE);
             saveToDatabase(baseBean);
@@ -227,7 +226,7 @@ public abstract class SearchService<T extends BaseBean> {
             removeFromDatabase(baseBean);
         } catch (DAOException e) {
             logger.debug(e);
-            throw new DAOException(e);
+            throw new DataException(e);
         } catch (CustomResponseException | IOException e) {
             int count = 0;
             int maxTries = 5;
@@ -236,19 +235,14 @@ public abstract class SearchService<T extends BaseBean> {
                     removeFromIndex(baseBean);
                     removeFromDatabase(baseBean);
                     break;
-                } catch (CustomResponseException cre) {
-                    logger.debug(e);
+                } catch (CustomResponseException | IOException ee) {
+                    logger.debug(ee);
                     if (++count >= maxTries) {
-                        throw new CustomResponseException(cre.getMessage());
-                    }
-                } catch (IOException ioe) {
-                    logger.debug(e);
-                    if (++count >= maxTries) {
-                        throw new IOException(ioe.getMessage());
+                        throw new DataException(ee);
                     }
                 } catch (DAOException daoe) {
-                    logger.debug("Remove from index was successful but..." + e);
-                    throw new DAOException(daoe.getMessage());
+                    logger.debug("Remove from index was successful but..." + daoe.getMessage());
+                    throw new DataException(daoe);
                 }
             }
         }
@@ -259,7 +253,7 @@ public abstract class SearchService<T extends BaseBean> {
      *
      * @return list of all documents
      */
-    public List<SearchResult> findAllDocuments() throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findAllDocuments() throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -271,7 +265,7 @@ public abstract class SearchService<T extends BaseBean> {
      *            of the searched user
      * @return search result
      */
-    public SearchResult findById(Integer id) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findById(Integer id) throws DataException {
         return searcher.findDocument(id);
     }
 

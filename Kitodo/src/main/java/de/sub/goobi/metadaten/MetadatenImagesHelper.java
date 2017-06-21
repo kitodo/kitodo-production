@@ -82,8 +82,7 @@ public class MetadatenImagesHelper {
      * DocStructs are less add new pages to physicalDocStruct if images are less
      * delete pages from the end of pyhsicalDocStruct.
      */
-    public void createPagination(Process process, URI directory)
-            throws TypeNotAllowedForParentException, IOException, InterruptedException, DAOException {
+    public void createPagination(Process process, URI directory) throws TypeNotAllowedForParentException, IOException {
         DocStruct physicaldocstruct = this.mydocument.getPhysicalDocStruct();
 
         DocStruct log = this.mydocument.getLogicalDocStruct();

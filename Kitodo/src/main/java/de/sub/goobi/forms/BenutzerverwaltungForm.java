@@ -49,7 +49,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzerverwaltungForm")
@@ -180,12 +180,8 @@ public class BenutzerverwaltungForm extends BasisForm {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
             }
-        } catch (DAOException e) {
+        } catch (DAOException | DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (IOException | CustomResponseException e) {
-            Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             logger.error(e);
             return null;
         }
@@ -212,7 +208,7 @@ public class BenutzerverwaltungForm extends BasisForm {
          */
         try (FileInputStream fis = new FileInputStream(filename);
                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(isr);) {
+                BufferedReader in = new BufferedReader(isr)) {
             String str;
             while ((str = in.readLine()) != null) {
                 if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
@@ -221,6 +217,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 }
             }
         } catch (IOException e) {
+            logger.error(e);
         }
         return valide;
     }
@@ -239,12 +236,8 @@ public class BenutzerverwaltungForm extends BasisForm {
     public String delete() {
         try {
             serviceManager.getUserService().remove(myClass);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("Error, could not save", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (IOException | CustomResponseException e) {
-            Helper.setFehlerMeldung("Error, could not insert to index", e.getMessage());
             logger.error(e);
             return null;
         }

@@ -61,7 +61,7 @@ public class DocketTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         DocketType docketType = new DocketType();
 
         List<Docket> dockets = prepareData();

@@ -27,7 +27,6 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -52,8 +51,7 @@ public class JobCreation {
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage)
-            throws IOException, DAOException, CustomResponseException {
+    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException, DAOException {
         String processTitle = io.getProcessTitle();
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
@@ -123,9 +121,6 @@ public class JobCreation {
             } catch (WriteException e) {
                 Helper.setFehlerMeldung("Cannot write file " + processTitle, e);
                 logger.error(e);
-            } catch (InterruptedException e) {
-                Helper.setFehlerMeldung(e);
-                logger.error(e);
             }
         } else {
             logger.error("title " + processTitle + "is invalid");
@@ -165,7 +160,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static void moveFiles(URI metsfile, URI basepath, Process p)
-            throws DAOException, IOException, InterruptedException {
+            throws IOException {
         if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {
@@ -277,10 +272,8 @@ public class JobCreation {
                     }
                 }
                 fileService.delete(importFolder);
-
                 fileService.delete(metsfile);
             }
-
         }
     }
 }

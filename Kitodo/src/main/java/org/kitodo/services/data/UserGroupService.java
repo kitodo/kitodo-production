@@ -19,7 +19,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -30,6 +29,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -139,8 +139,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            of the searched user group
      * @return list of search results
      */
-    public List<SearchResult> findByPermission(Integer permission)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByPermission(Integer permission) throws DataException {
         QueryBuilder query = createSimpleQuery("permission", permission, true);
         return searcher.findDocuments(query.toString());
     }
@@ -152,7 +151,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            of user
      * @return list of search results with users for specific user group id
      */
-    public List<SearchResult> findByUserId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -164,8 +163,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      *            of user
      * @return list of search result with user groups for specific user login
      */
-    public List<SearchResult> findByUserLogin(String login)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByUserLogin(String login) throws DataException {
         SearchResult user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(user.getId());
     }
@@ -173,7 +171,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), userGroupType);
     }

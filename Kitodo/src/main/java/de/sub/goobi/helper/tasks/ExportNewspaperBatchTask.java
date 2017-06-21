@@ -141,19 +141,11 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set configured
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws DAOException
-     *             if an error occurs while saving the fact that the process has
-     *             been swapped back in to the database
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to
-     *             finish
      */
-    public ExportNewspaperBatchTask(Batch batch) throws HibernateException, PreferencesException, ReadException,
-            DAOException, IOException, InterruptedException {
+    public ExportNewspaperBatchTask(Batch batch) throws PreferencesException, ReadException, IOException {
         super(batch.getLabel());
         batchId = batch.getId();
         action = 1;
@@ -332,19 +324,12 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      * @throws ReadException
      *             if the no node corresponding to the file format is available
      *             in the rule set configured
-     * @throws DAOException
-     *             if an error occurs while saving the fact that the process has
-     *             been swapped back in to the database
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to
-     *             finish
      */
     private static String getMetsYearAnchorPointerURL(Process process)
-            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
+            throws PreferencesException, ReadException, IOException {
         VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
                 serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         String metsPointerPathAnchor = process.getProject().getMetsPointerPath();
@@ -378,8 +363,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                     LocalDate appeared = new LocalDate(year, monthOfYear,
                             getMetadataIntValueByName(dayNode, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
                     for (@SuppressWarnings("unused")
-                    DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
-                        result.add(appeared);
+                        DocStruct entry : skipIfNull(dayNode.getAllChildren())) {
+                            result.add(appeared);
                     }
                 }
             }
@@ -439,8 +424,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             it is waiting for the shell script to create the directory to
      *             finish
      */
-    static String getMetsPointerURL(Process process)
-            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException {
+    static String getMetsPointerURL(Process process) throws PreferencesException, ReadException, IOException {
         VariableReplacer replacer = new VariableReplacer(serviceManager.getProcessService().getDigitalDocument(process),
                 serviceManager.getRulesetService().getPreferences(process.getRuleset()), process, null);
         return replacer.replace(process.getProject().getMetsPointerPathAnchor());
@@ -465,16 +449,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      *             in the rule set used
      * @throws ReadException
      *             if the meta data file cannot be read
-     * @throws DAOException
-     *             if an error occurs while saving the fact that the process has
-     *             been swapped back in to the database
      * @throws IOException
      *             if creating the process directory or reading the meta data
      *             file fails
-     * @throws InterruptedException
-     *             if the current thread is interrupted by another thread while
-     *             it is waiting for the shell script to create the directory to
-     *             finish
      * @throws TypeNotAllowedForParentException
      *             is thrown, if this DocStruct is not allowed for a parent
      * @throws MetadataTypeNotAllowedException
@@ -487,7 +464,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private MetsMods buildExportableMetsMods(Process process, HashMap<Integer, String> years,
             ArrayListMap<LocalDate, String> issues)
-            throws PreferencesException, ReadException, DAOException, IOException, InterruptedException,
+            throws PreferencesException, ReadException, IOException,
             TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
 
         Prefs ruleSet = serviceManager.getRulesetService().getPreferences(process.getRuleset());

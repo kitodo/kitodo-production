@@ -18,7 +18,6 @@ import de.sub.goobi.helper.enums.ReportLevel;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -65,7 +64,7 @@ public class Helper implements Serializable, Observer {
      * Always treat de-serialization as a full-blown constructor, by validating
      * the final state of the de-serialized object.
      */
-    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInputStream aInputStream) {
 
     }
 
@@ -73,7 +72,7 @@ public class Helper implements Serializable, Observer {
      * This is the default implementation of writeObject. Customise if
      * necessary.
      */
-    private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
+    private void writeObject(ObjectOutputStream aOutputStream) {
 
     }
 
@@ -318,6 +317,7 @@ public class Helper implements Serializable, Observer {
                 sessionMap.remove(name);
             }
         } catch (Exception nothingToDo) {
+            logger.error(nothingToDo);
         }
     }
 
@@ -373,6 +373,7 @@ public class Helper implements Serializable, Observer {
                         }
 
                     } catch (Exception e) {
+                        logger.error(e);
                     }
                 }
             }
@@ -397,6 +398,7 @@ public class Helper implements Serializable, Observer {
         try {
             desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         } catch (NullPointerException skip) {
+            logger.error(skip);
         }
         if (desiredLanguage != null) {
             return getString(new Locale(desiredLanguage.getLanguage()), dbTitel);
@@ -425,6 +427,7 @@ public class Helper implements Serializable, Observer {
         try {
             desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         } catch (NullPointerException skip) {
+            logger.error(skip);
         }
         if (desiredLanguage != null) {
             value = getString(new Locale(desiredLanguage.getLanguage()), dbTitel);

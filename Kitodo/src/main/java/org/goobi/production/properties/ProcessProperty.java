@@ -191,9 +191,7 @@ public class ProcessProperty implements IProperty, Serializable {
             cal.setTime(format.parse(value));
             cal.set(Calendar.HOUR, 12);
             return cal.getTime();
-        } catch (ParseException e) {
-            return new Date();
-        } catch (NullPointerException e) {
+        } catch (ParseException | NullPointerException e) {
             return new Date();
         }
     }

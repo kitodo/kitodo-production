@@ -14,7 +14,6 @@ package org.kitodo.production.thread;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -24,8 +23,7 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.IStepPlugin;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
 
@@ -68,18 +66,14 @@ public class TaskScriptThread extends EmptyTask {
         if (scriptPaths.size() > 0) {
             try {
                 this.taskService.executeAllScripts(this.task, automatic);
-            } catch (CustomResponseException e) {
-                logger.error("Index Error occured", e);
-            } catch (IOException e) {
-                logger.error("IOException occured", e);
-            } catch (DAOException e) {
-                logger.error("Database Error occured", e);
+            } catch (DataException e) {
+                logger.error("Data Error occurred", e);
             }
         } else if (this.task.isTypeExportDMS()) {
             try {
                 serviceManager.getTaskService().executeDmsExport(this.task, false);
-            } catch (CustomResponseException | IOException | DAOException e) {
-                logger.error("IO Exception occured", e);
+            } catch (DataException e) {
+                logger.error("IO Exception occurred", e);
             } catch (ConfigurationException e) {
                 logger.error("Configuration could not be read", e);
             }
@@ -89,12 +83,8 @@ public class TaskScriptThread extends EmptyTask {
             if (isp.execute()) {
                 try {
                     taskService.close(task, false);
-                } catch (CustomResponseException e) {
-                    logger.error("Index Error occured", e);
-                } catch (IOException e) {
-                    logger.error("IOException occured", e);
-                } catch (DAOException e) {
-                    logger.error("Database Error occured", e);
+                } catch (DataException e) {
+                    logger.error("Index Error occurred", e);
                 }
             }
         }

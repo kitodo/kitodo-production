@@ -35,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -87,8 +86,8 @@ public class ExportDms extends ExportMets {
      *            String
      */
     @Override
-    public boolean startExport(Process process, URI inZielVerzeichnis) throws IOException, InterruptedException,
-            WriteException, PreferencesException, DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis)
+            throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
 
         Hibernate.initialize(process.getProject().getProjectFileGroups());
         if (process.getProject().isUseDmsImport()
@@ -144,8 +143,8 @@ public class ExportDms extends ExportMets {
      *            DigitalDocument
      * @return boolean
      */
-    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocument newFile) throws IOException,
-            InterruptedException, WriteException, PreferencesException, DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocument newFile)
+            throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         this.cp = new ConfigProjects(process.getProject().getTitle());
@@ -481,7 +480,7 @@ public class ExportDms extends ExportMets {
      *            String
      */
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
-            throws IOException, InterruptedException, DAOException {
+            throws IOException, InterruptedException {
 
         /*
          * dann den Ausgangspfad ermitteln

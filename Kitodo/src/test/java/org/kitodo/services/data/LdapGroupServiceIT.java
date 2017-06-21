@@ -13,15 +13,13 @@ package org.kitodo.services.data;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for LdapGroupService class.
@@ -29,8 +27,8 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 public class LdapGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
-        MockDatabase.insertLdapGroups();
+    public static void prepareDatabase() throws DAOException, DataException {
+        MockDatabase.insertProcessesFull();
     }
 
     @AfterClass

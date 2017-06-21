@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 @Named("LoginForm")
@@ -217,16 +217,13 @@ public class LoginForm implements Serializable{
                 temp.setPasswordDecrypted(this.passwortAendernNeu1);
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
-
                 Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
             } catch (DAOException e) {
                 Helper.setFehlerMeldung("could not save", e.getMessage());
             } catch (NoSuchAlgorithmException e) {
                 Helper.setFehlerMeldung("ldap errror", e.getMessage());
-            } catch (IOException e) {
+            } catch (DataException e) {
                 Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-            } catch (CustomResponseException e) {
-                Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
             }
         }
         return null;
@@ -246,10 +243,8 @@ public class LoginForm implements Serializable{
             Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
         } catch (DAOException e) {
             Helper.setFehlerMeldung("could not save", e.getMessage());
-        } catch (IOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("could not insert to index", e.getMessage());
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("ElasticSearch server incorrect response", e.getMessage());
         }
         return null;
     }
@@ -367,15 +362,11 @@ public class LoginForm implements Serializable{
      * The function getUserHomeDir() returns the home directory of the currently
      * logged in user, if any, or the empty string otherwise.
      *
-     * @return the home directory of the current user
-     * @throws InterruptedException
-     *             If the thread running the script is interrupted by another
-     *             thread while it is waiting, then the wait is ended and an
-     *             InterruptedException is thrown.
+     * @return the home directory of the current user.
      * @throws IOException
      *             if an I/O error occurs.
      */
-    public static URI getCurrentUserHomeDir() throws IOException, InterruptedException {
+    public static URI getCurrentUserHomeDir() throws IOException {
         URI result = null;
         ServiceManager serviceManager = new ServiceManager();
         LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");

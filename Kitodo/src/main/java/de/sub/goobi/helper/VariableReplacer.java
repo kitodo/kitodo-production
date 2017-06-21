@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -45,7 +44,7 @@ import ugh.dl.Prefs;
 public class VariableReplacer {
 
     private enum MetadataLevel {
-        ALL, FIRSTCHILD, TOPSTRUCT;
+        ALL, FIRSTCHILD, TOPSTRUCT
     }
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
@@ -271,11 +270,7 @@ public class VariableReplacer {
 
             }
 
-        } catch (DAOException e) {
-            logger.error(e);
         } catch (IOException e) {
-            logger.error(e);
-        } catch (InterruptedException e) {
             logger.error(e);
         }
 

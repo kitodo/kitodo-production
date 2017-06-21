@@ -14,19 +14,22 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.flow.statistics.StepInformation;
 import org.joda.time.LocalDate;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for ProjectService class.
@@ -34,7 +37,7 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 public class ProjectServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -58,7 +61,7 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindAllProjects() throws Exception {
+    public void shouldFindAllProjects() {
         ProjectService projectService = new ProjectService();
 
         List<Project> projects = projectService.findAll();

@@ -50,10 +50,10 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+import org.goobi.production.plugin.PluginLoader;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -74,7 +74,7 @@ import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 
@@ -770,8 +770,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
-    public String createNewProcess() throws ReadException, IOException, InterruptedException, PreferencesException,
-            DAOException, WriteException {
+    public String createNewProcess()
+            throws ReadException, IOException, PreferencesException, DAOException, WriteException {
         Helper.getHibernateSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
@@ -809,13 +809,9 @@ public class ProzesskopieForm implements Serializable {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
-        } catch (DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
             logger.error("error on save: ", e);
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
-            logger.error(e);
             return null;
         }
 
@@ -845,14 +841,9 @@ public class ProzesskopieForm implements Serializable {
                                 myRdf.getDigitalDocument(), ruleset);
                     }
                 }
-            } catch (NullPointerException e) { // if
+            } catch (NullPointerException | IndexOutOfBoundsException e) { // if
                 // getAllAllowedDocStructTypes()
                 // returns null
-                Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
-                        populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
-            } catch (IndexOutOfBoundsException e) { // if
-                // getAllAllowedDocStructTypes()
-                // returns empty list
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
                         populizer != null && populizer.getType() != null ? populizer.getType().getName() : null);
             } catch (UGHException catchAll) {
@@ -1060,13 +1051,9 @@ public class ProzesskopieForm implements Serializable {
         } else {
             try {
                 serviceManager.getProcessService().save(this.prozessKopie);
-            } catch (DAOException e) {
+            } catch (DataException e) {
                 logger.error(e);
                 logger.error("error on save: ", e);
-                return null;
-            } catch (CustomResponseException e) {
-                Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
-                logger.error(e);
                 return null;
             }
         }

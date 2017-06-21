@@ -25,7 +25,7 @@ public class SQLProductionTest {
     static SQLProduction sqlProd;
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         ArrayList<Integer> testList = new ArrayList<>();
         testList.add(15);
         testList.add(45);

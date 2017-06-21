@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
@@ -32,6 +31,7 @@ import org.kitodo.data.elasticsearch.index.type.HistoryType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
@@ -51,19 +51,6 @@ public class HistoryService extends SearchService<History> {
      */
     public HistoryService() {
         super(new Searcher(History.class));
-    }
-
-    /**
-     * Method saves object to database and insert document to the index of
-     * Elastic Search.
-     *
-     * @param history
-     *            object
-     */
-    public void save(History history) throws CustomResponseException, DAOException, IOException {
-        historyDAO.save(history);
-        indexer.setMethod(HTTPMethods.PUT);
-        indexer.performSingleRequest(history, historyType);
     }
 
     /**
@@ -95,7 +82,9 @@ public class HistoryService extends SearchService<History> {
      */
     protected void saveDependenciesToIndex(History history) throws CustomResponseException, IOException {
         // TODO: is it possible that process is modified during save to history?
-        serviceManager.getProcessService().saveToIndex(history.getProcess());
+        if (history.getProcess() != null) {
+            serviceManager.getProcessService().saveToIndex(history.getProcess());
+        }
     }
 
     public History find(Integer id) throws DAOException {
@@ -155,8 +144,7 @@ public class HistoryService extends SearchService<History> {
      *            of the searched histories
      * @return list of search results
      */
-    public List<SearchResult> findByNumericValue(Double numericValue)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByNumericValue(Double numericValue) throws DataException {
         QueryBuilder query = createSimpleQuery("numericValue", numericValue.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -168,8 +156,7 @@ public class HistoryService extends SearchService<History> {
      *            of the searched histories
      * @return list of search results
      */
-    public List<SearchResult> findByStringValue(String stringValue)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByStringValue(String stringValue) throws DataException {
         QueryBuilder query = createSimpleQuery("stringValue", stringValue, true);
         return searcher.findDocuments(query.toString());
     }
@@ -182,8 +169,7 @@ public class HistoryService extends SearchService<History> {
      *            of the searched histories as HistoryTypeEnum
      * @return list of search results
      */
-    public List<SearchResult> findByType(HistoryTypeEnum type)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByType(HistoryTypeEnum type) throws DataException {
         QueryBuilder query = createSimpleQuery("type", type.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -195,7 +181,7 @@ public class HistoryService extends SearchService<History> {
      *            of the searched histories as Date
      * @return list of search results
      */
-    public List<SearchResult> findByDate(Date date) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByDate(Date date) throws DataException {
         QueryBuilder queryBuilder = createSimpleCompareDateQuery("date", date, SearchCondition.EQUAL);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -207,7 +193,7 @@ public class HistoryService extends SearchService<History> {
      *            of process
      * @return search result with history for specific process id
      */
-    public SearchResult findByProcessId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByProcessId(Integer id) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("process", id, true);
         return searcher.findDocument(queryBuilder.toString());
     }
@@ -219,8 +205,7 @@ public class HistoryService extends SearchService<History> {
      *            title of process
      * @return search results with history for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String processTitle)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProcessTitle(String processTitle) throws DataException {
         List<SearchResult> histories = new ArrayList<>();
 
         List<SearchResult> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
@@ -233,7 +218,7 @@ public class HistoryService extends SearchService<History> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws DAOException, InterruptedException, IOException, CustomResponseException {
+    public void addAllObjectsToIndex() throws InterruptedException, IOException, CustomResponseException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), historyType);
     }

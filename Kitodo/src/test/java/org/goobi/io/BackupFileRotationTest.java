@@ -21,13 +21,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.file.FileService;
 
@@ -58,8 +56,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void backupFileShouldContainSameContentAsOriginalFile()
-            throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void backupFileShouldContainSameContentAsOriginalFile() throws IOException {
         Process process = new Process();
         process.setId(2);
         int numberOfBackups = 1;
@@ -70,8 +67,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void modifiedDateShouldNotChangedOnBackup()
-            throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void modifiedDateShouldNotChangedOnBackup() throws IOException {
         Process process = new Process();
         process.setId(2);
         int numberOfBackups = 1;
@@ -83,7 +79,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void shouldWriteTwoBackupFiles() throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void shouldWriteTwoBackupFiles() throws IOException {
         int numberOfBackups = 2;
         FileService fileService = new FileService();
 
@@ -99,8 +95,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns()
-            throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void initialContentShouldEndUpInSecondBackupFileAfterTwoBackupRuns() throws IOException {
         String content1 = "Test One.";
         int numberOfBackups = 2;
         Process process = new Process();
@@ -118,8 +113,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void secondBackupFileCorrectModifiedDate()
-            throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void secondBackupFileCorrectModifiedDate() throws IOException {
         long expectedLastModifiedDate;
         int numberOfBackups = 2;
         Process process = new Process();
@@ -136,8 +130,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void threeBackupRunsCreateThreeBackupFiles()
-            throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void threeBackupRunsCreateThreeBackupFiles() throws IOException {
         int numberOfBackups = 3;
 
         Process process = new Process();
@@ -154,8 +147,7 @@ public class BackupFileRotationTest {
     }
 
     @Test
-    public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns()
-            throws IOException, URISyntaxException, InterruptedException, DAOException {
+    public void initialContentShouldEndUpInThirdBackupFileAfterThreeBackupRuns() throws IOException {
         int numberOfBackups = 3;
         String content1 = "Test One.";
 
@@ -201,11 +193,11 @@ public class BackupFileRotationTest {
         return testFile.lastModified();
     }
 
-    private void runBackup(int numberOfBackups, Process process) throws IOException, URISyntaxException {
+    private void runBackup(int numberOfBackups, Process process) throws IOException {
         runBackup(numberOfBackups, BACKUP_FILE_NAME, process);
     }
 
-    private void runBackup(int numberOfBackups, String format, Process process) throws IOException, URISyntaxException {
+    private void runBackup(int numberOfBackups, String format, Process process) throws IOException {
 
         BackupFileRotation bfr = new BackupFileRotation();
         bfr.setNumberOfBackups(numberOfBackups);
@@ -240,7 +232,7 @@ public class BackupFileRotationTest {
         }
     }
 
-    private void writeFile(URI uri, String content) throws IOException, URISyntaxException {
+    private void writeFile(URI uri, String content) throws IOException {
         OutputStream outputStream = fileService.write(uri);
         final PrintStream printStream = new PrintStream(outputStream);
         printStream.print(content);

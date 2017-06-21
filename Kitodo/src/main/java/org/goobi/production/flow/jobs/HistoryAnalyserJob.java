@@ -30,9 +30,8 @@ import org.hibernate.Session;
 import org.kitodo.data.database.beans.History;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.HistoryTypeEnum;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -81,8 +80,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return true, if any history event is updated, so the process has to be
      *         saved to database
      */
-    public static Boolean updateHistory(Process inProcess)
-            throws IOException, InterruptedException, CustomResponseException, DAOException {
+    public static Boolean updateHistory(Process inProcess) throws IOException, DataException {
         boolean updated = false;
         /* storage */
         if (updateHistoryEvent(inProcess, HistoryTypeEnum.storageDifference, getCurrentStorageSize(inProcess))) {
@@ -341,7 +339,7 @@ public class HistoryAnalyserJob extends AbstractGoobiJob {
      * @return true if value is different and history got updated, else false
      */
     private static Boolean updateHistoryEvent(Process inProcess, HistoryTypeEnum inType, Long inCurrentValue)
-            throws IOException, CustomResponseException, DAOException {
+            throws DataException {
         long storedValue = getStoredValue(inProcess, inType);
         long diff = inCurrentValue - storedValue;
 

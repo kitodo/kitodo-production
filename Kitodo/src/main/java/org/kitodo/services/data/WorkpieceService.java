@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -30,6 +29,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkpieceType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 
@@ -142,7 +142,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            of process
      * @return search result with workpieces for specific process id
      */
-    public List<SearchResult> findByProcessId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProcessId(Integer id) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("process", id, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -154,8 +154,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            title of process
      * @return search results with workpieces for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String processTitle)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProcessTitle(String processTitle) throws DataException {
         List<SearchResult> workpieces = new ArrayList<>();
 
         List<SearchResult> processes = serviceManager.getProcessService().findByTitle(processTitle, true);
@@ -174,8 +173,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            of property
      * @return list of search results with workpieces for specific property
      */
-    public List<SearchResult> findByProperty(String title, String value)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProperty(String title, String value) throws DataException {
         List<SearchResult> workpieces = new ArrayList<>();
 
         List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
@@ -192,8 +190,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      *            of property
      * @return list of search results with workpieces for specific property id
      */
-    private List<SearchResult> findByPropertyId(Integer id)
-            throws CustomResponseException, IOException, ParseException {
+    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("properties.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -201,7 +198,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), workpieceType);
     }

@@ -20,7 +20,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
@@ -39,7 +38,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -72,9 +70,9 @@ public class ExportMets {
      * @param myProcess
      *            Process object
      */
-    public boolean startExport(Process myProcess) throws IOException, InterruptedException, DocStructHasNoTypeException,
-            PreferencesException, WriteException, MetadataTypeNotAllowedException, ExportFileException,
-            UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process myProcess)
+            throws IOException, DocStructHasNoTypeException, PreferencesException, WriteException,
+            MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
         LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         URI userHome = null;
         if (login != null) {
@@ -91,9 +89,9 @@ public class ExportMets {
      * @param inZielVerzeichnis
      *            String
      */
-    public boolean startExport(Process myProcess, URI inZielVerzeichnis) throws IOException, InterruptedException,
-            PreferencesException, WriteException, DocStructHasNoTypeException, MetadataTypeNotAllowedException,
-            ExportFileException, UghHelperException, ReadException, DAOException, TypeNotAllowedForParentException {
+    public boolean startExport(Process myProcess, URI inZielVerzeichnis)
+            throws IOException, PreferencesException, WriteException, DocStructHasNoTypeException,
+            MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
 
         /*
          * Read Document
@@ -161,8 +159,7 @@ public class ExportMets {
      */
 
     protected boolean writeMetsFile(Process myProcess, URI metaFile, Fileformat gdzfile, boolean writeLocalFilegroup)
-            throws PreferencesException, WriteException, IOException, InterruptedException, DAOException,
-            TypeNotAllowedForParentException {
+            throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {
 
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
@@ -323,10 +320,7 @@ public class ExportMets {
                         return false;
                     }
                 }
-            } catch (IndexOutOfBoundsException e) {
-                logger.error(e);
-                return false;
-            } catch (InvalidImagesException e) {
+            } catch (IndexOutOfBoundsException | InvalidImagesException e) {
                 logger.error(e);
                 return false;
             }

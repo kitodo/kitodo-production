@@ -17,7 +17,6 @@ import de.unigoettingen.goobi.module.api.dataprovider.process.data.DataImpl;
 import de.unigoettingen.goobi.module.api.exception.GoobiException;
 import de.unigoettingen.goobi.module.api.types.GoobiProcessProperty;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +27,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -142,14 +141,8 @@ public class ExtendedDataImpl extends DataImpl {
 
         try {
             serviceManager.getProcessService().save(p);
-        } catch (DAOException e) {
-            throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (IOException e) {
-            throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (CustomResponseException e) {
-            throw new GoobiException(1400, "******** wrapped CustomResponseException ********: " + e.getMessage() + "\n"
+        } catch (DataException e) {
+            throw new GoobiException(1400, "******** wrapped DataException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return 0;
@@ -373,11 +366,8 @@ public class ExtendedDataImpl extends DataImpl {
         } catch (DAOException e) {
             throw new GoobiException(1400, "******** wrapped DAOException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
-        } catch (IOException e) {
-            throw new GoobiException(1400, "******** wrapped IOException ********: " + e.getMessage() + "\n"
-                    + Helper.getStacktraceAsString(e));
-        } catch (CustomResponseException e) {
-            throw new GoobiException(1400, "******** wrapped CustomResponseException ********: " + e.getMessage() + "\n"
+        } catch (DataException e) {
+            throw new GoobiException(1400, "******** wrapped DataException ********: " + e.getMessage() + "\n"
                     + Helper.getStacktraceAsString(e));
         }
         return 0;

@@ -16,8 +16,11 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,16 +28,11 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
 
 @Named("DocketForm")
 @SessionScoped
@@ -65,16 +63,8 @@ public class DocketForm extends BasisForm {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
             }
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
-            logger.error(e);
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
             logger.error(e);
             return null;
         }
@@ -90,7 +80,7 @@ public class DocketForm extends BasisForm {
      *
      * @return page or empty String
      */
-    public String deleteDocket() throws ParseException {
+    public String deleteDocket() {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setFehlerMeldung("DocketInUse");
@@ -98,27 +88,17 @@ public class DocketForm extends BasisForm {
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
-        } catch (DAOException e) {
+        } catch (DataException e) {
             Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
-            return null;
-        } catch (IOException e) {
-            Helper.setFehlerMeldung("errorElasticSearch", e.getMessage());
-            return null;
-        } catch (CustomResponseException e) {
-            Helper.setFehlerMeldung("ElasticSearch server response incorrect", e.getMessage());
-            logger.error(e);
             return null;
         }
         return "/newpages/DocketList?faces-redirect=true";
     }
 
-    private boolean hasAssignedProcesses(Docket d) throws ParseException, CustomResponseException, IOException {
+    private boolean hasAssignedProcesses(Docket d) throws DataException {
         ProcessService processService = serviceManager.getProcessService();
         Integer number = processService.findByDocket(d).size();
-        if (number != null && number > 0) {
-            return true;
-        }
-        return false;
+        return number > 0;
     }
 
     /**
@@ -161,7 +141,7 @@ public class DocketForm extends BasisForm {
      */
     public void loadDocket() {
         try {
-            if(!Objects.equals(this.docketId, 0)) {
+            if (!Objects.equals(this.docketId, 0)) {
                 setMyDocket(this.serviceManager.getDocketService().find(this.docketId));
             }
         } catch (DAOException e) {
@@ -182,7 +162,11 @@ public class DocketForm extends BasisForm {
         this.myDocket = docket;
     }
 
-    public int getDocketId() { return this.docketId; }
+    public int getDocketId() {
+        return this.docketId;
+    }
 
-    public void setDocketId(int id) { this.docketId = id; }
+    public void setDocketId(int id) {
+        this.docketId = id;
+    }
 }

@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
-import org.json.simple.parser.ParseException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -38,6 +37,7 @@ import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -142,8 +142,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of search results
      */
-    public List<SearchResult> findByStartDate(Date startDate, SearchCondition searchCondition)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByStartDate(Date startDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("startDate", startDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -157,8 +156,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            as SearchCondition - bigger, smaller and so on
      * @return list of search results
      */
-    public List<SearchResult> findByEndDate(Date endDate, SearchCondition searchCondition)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByEndDate(Date endDate, SearchCondition searchCondition) throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("endDate", endDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -173,7 +171,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @return list of search results
      */
     public List<SearchResult> findByNumberOfPages(Integer numberOfPages, SearchCondition searchCondition)
-            throws CustomResponseException, IOException, ParseException {
+            throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfPages", numberOfPages, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -188,7 +186,7 @@ public class ProjectService extends TitleSearchService<Project> {
      * @return list of search results
      */
     public List<SearchResult> findByNumberOfVolumes(Integer numberOfVolumes, SearchCondition searchCondition)
-            throws CustomResponseException, IOException, ParseException {
+            throws DataException {
         QueryBuilder query = createSimpleCompareQuery("numberOfVolumes", numberOfVolumes, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -201,8 +199,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            projects
      * @return list of search results
      */
-    public List<SearchResult> findByArchived(Boolean archived)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByArchived(Boolean archived) throws DataException {
         QueryBuilder query = createSimpleQuery("archived", archived.toString(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -214,7 +211,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of process
      * @return search result
      */
-    public SearchResult findByProcessId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public SearchResult findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
         return searcher.findDocument(query.toString());
     }
@@ -226,8 +223,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of process
      * @return list of search results with projects for specific process title
      */
-    public List<SearchResult> findByProcessTitle(String title)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProcessTitle(String title) throws DataException {
         List<SearchResult> projects = new ArrayList<>();
 
         List<SearchResult> processes = serviceManager.getProcessService().findByTitle(title, true);
@@ -244,7 +240,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of user
      * @return list of search results
      */
-    public List<SearchResult> findByUserId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -256,8 +252,7 @@ public class ProjectService extends TitleSearchService<Project> {
      *            of user
      * @return list of search result with projects for specific user login
      */
-    public List<SearchResult> findByUserLogin(String login)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByUserLogin(String login) throws DataException {
         SearchResult user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(user.getId());
     }
@@ -265,7 +260,7 @@ public class ProjectService extends TitleSearchService<Project> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), projectType);
     }

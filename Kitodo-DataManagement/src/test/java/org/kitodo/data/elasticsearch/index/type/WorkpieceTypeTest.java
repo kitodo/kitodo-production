@@ -83,7 +83,7 @@ public class WorkpieceTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         WorkpieceType workpieceType = new WorkpieceType();
 
         List<Workpiece> workpieces = prepareData();

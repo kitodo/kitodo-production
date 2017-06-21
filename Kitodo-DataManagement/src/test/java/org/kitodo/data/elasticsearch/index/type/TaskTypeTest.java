@@ -150,7 +150,7 @@ public class TaskTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         TaskType taskType = new TaskType();
 
         List<Task> tasks = prepareData();

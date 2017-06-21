@@ -55,7 +55,6 @@ import org.goobi.production.export.ExportDocket;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.json.simple.parser.ParseException;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -81,6 +80,7 @@ import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.search.SearchResult;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 import org.kitodo.services.file.FileService;
@@ -93,7 +93,6 @@ import ugh.dl.Prefs;
 import ugh.dl.VirtualFileGroup;
 import ugh.exceptions.PreferencesException;
 import ugh.exceptions.ReadException;
-import ugh.exceptions.TypeNotAllowedForParentException;
 import ugh.exceptions.WriteException;
 import ugh.fileformats.excel.RDFFile;
 import ugh.fileformats.mets.MetsMods;
@@ -102,9 +101,6 @@ import ugh.fileformats.mets.XStream;
 
 public class ProcessService extends TitleSearchService<Process> {
 
-    Helper help = new Helper();
-
-    private Boolean selected = false;
     private ProcessDAO processDAO = new ProcessDAO();
     private ProcessType processType = new ProcessType();
     private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
@@ -251,8 +247,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            as String
      * @return list of search results
      */
-    public List<SearchResult> findByOutputName(String outputName)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByOutputName(String outputName) throws DataException {
         QueryBuilder query = createSimpleQuery("outputName", outputName, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -267,7 +262,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @return list of search results
      */
     public List<SearchResult> findByCreationDate(Date creationDate, SearchCondition searchCondition)
-            throws CustomResponseException, IOException, ParseException {
+            throws DataException {
         QueryBuilder query = createSimpleCompareDateQuery("creationDate", creationDate, searchCondition);
         return searcher.findDocuments(query.toString());
     }
@@ -279,8 +274,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            as String
      * @return list of search results
      */
-    public List<SearchResult> findByWikiField(String wikiField)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByWikiField(String wikiField) throws DataException {
         QueryBuilder query = createSimpleQuery("wikiField", wikiField, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -292,7 +286,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of project
      * @return list of search results with processes for specific process id
      */
-    public List<SearchResult> findByProjectId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProjectId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("project", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -304,7 +298,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of project
      * @return list of search results with processes for specific docket
      */
-    public List<SearchResult> findByDocket(Docket docket) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByDocket(Docket docket) throws DataException {
         QueryBuilder query = createSimpleQuery("docket_id", docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -316,8 +310,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of project
      * @return list of search results with processes for specific ruleset
      */
-    public List<SearchResult> findByRuleset(Ruleset ruleset)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByRuleset(Ruleset ruleset) throws DataException {
         QueryBuilder query = createSimpleQuery("ruleset", ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -329,8 +322,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of process
      * @return list of search results with processes for specific process id
      */
-    public List<SearchResult> findByProjectTitle(String title)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProjectTitle(String title) throws DataException {
         List<SearchResult> processes = new ArrayList<>();
 
         List<SearchResult> projects = serviceManager.getProjectService().findByTitle(title, true);
@@ -347,7 +339,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of process
      * @return list of search results with processes for specific batch id
      */
-    public List<SearchResult> findByBatchId(Integer id) throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByBatchId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -359,8 +351,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of batch
      * @return list of search results with processes for specific batch title
      */
-    public List<SearchResult> findByBatchTitle(String title)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByBatchTitle(String title) throws DataException {
         List<SearchResult> processes = new ArrayList<>();
 
         List<SearchResult> batches = serviceManager.getBatchService().findByTitle(title, true);
@@ -379,8 +370,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of property
      * @return list of search results with processes for specific property
      */
-    public List<SearchResult> findByProperty(String title, String value)
-            throws CustomResponseException, IOException, ParseException {
+    public List<SearchResult> findByProperty(String title, String value) throws DataException {
         List<SearchResult> processes = new ArrayList<>();
 
         List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
@@ -397,8 +387,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            of property
      * @return list of search results with processes for specific property id
      */
-    private List<SearchResult> findByPropertyId(Integer id)
-            throws CustomResponseException, IOException, ParseException {
+    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("properties.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -406,7 +395,7 @@ public class ProcessService extends TitleSearchService<Process> {
     /**
      * Method adds all object found in database to Elastic Search index.
      */
-    public void addAllObjectsToIndex() throws CustomResponseException, DAOException, InterruptedException, IOException {
+    public void addAllObjectsToIndex() throws CustomResponseException, InterruptedException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(findAll(), processType);
     }
@@ -611,8 +600,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      * @return path
      */
-    public URI getImagesOrigDirectory(boolean useFallBack, Process process)
-            throws IOException, InterruptedException, DAOException {
+    public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
             DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
@@ -1367,9 +1355,8 @@ public class ProcessService extends TitleSearchService<Process> {
      *            object
      */
 
-    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
-            throws DAOException, IOException, PreferencesException, TypeNotAllowedForParentException,
-            InterruptedException, org.apache.commons.configuration.ConfigurationException, WriteException {
+    public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText) throws IOException,
+            PreferencesException, org.apache.commons.configuration.ConfigurationException, WriteException {
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
 
         Project project = process.getProject();
@@ -1664,7 +1651,7 @@ public class ProcessService extends TitleSearchService<Process> {
      *            the FileFormat-Object to use for Mets-Writing
      */
     protected boolean writeMetsFile(Process process, String targetFileName, Fileformat gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, WriteException {
+            boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
         FolderInformation fi = new FolderInformation(process.getId(), process.getTitle());
         Prefs preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();

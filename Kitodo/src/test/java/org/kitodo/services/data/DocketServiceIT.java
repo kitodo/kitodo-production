@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -24,8 +23,8 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for DocketService class.
@@ -33,7 +32,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class DocketServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -57,7 +56,7 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldFindAllDockets() throws Exception {
+    public void shouldFindAllDockets() {
         DocketService docketService = new DocketService();
 
         List<Docket> dockets = docketService.findAll();
@@ -98,12 +97,12 @@ public class DocketServiceIT {
     public void shouldFindByTitleAndFile() throws Exception {
         DocketService docketService = new DocketService();
 
-        SearchResult docket = docketService.findByTitleAndFile("default","docket.xsl");
+        SearchResult docket = docketService.findByTitleAndFile("default", "docket.xsl");
         Integer actual = docket.getId();
         Integer expected = 1;
         assertEquals("Docket was not found in index!", expected, actual);
 
-        docket = docketService.findByTitleAndFile("default","none");
+        docket = docketService.findByTitleAndFile("default", "none");
         actual = docket.getId();
         expected = null;
         assertEquals("Docket was found in index!", expected, actual);
@@ -113,17 +112,17 @@ public class DocketServiceIT {
     public void shouldFindByTitleOrFile() throws Exception {
         DocketService docketService = new DocketService();
 
-        List<SearchResult> docket = docketService.findByTitleOrFile("default","docket.xsl");
+        List<SearchResult> docket = docketService.findByTitleOrFile("default", "docket.xsl");
         Integer actual = docket.size();
         Integer expected = 2;
         assertEquals("Dockets were not found in index!", expected, actual);
 
-        docket = docketService.findByTitleOrFile("default","none");
+        docket = docketService.findByTitleOrFile("default", "none");
         actual = docket.size();
         expected = 1;
         assertEquals("Docket was not found in index!", expected, actual);
 
-        docket = docketService.findByTitleOrFile("none","none");
+        docket = docketService.findByTitleOrFile("none", "none");
         actual = docket.size();
         expected = 0;
         assertEquals("Some dockets were found in index!", expected, actual);

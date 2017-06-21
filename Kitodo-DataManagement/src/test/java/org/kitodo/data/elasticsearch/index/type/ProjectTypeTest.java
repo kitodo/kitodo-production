@@ -187,7 +187,7 @@ public class ProjectTypeTest {
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateDocuments() {
         ProjectType processType = new ProjectType();
 
         List<Project> processes = prepareData();

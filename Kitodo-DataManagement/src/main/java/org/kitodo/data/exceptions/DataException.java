@@ -9,20 +9,20 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.elasticsearch.exceptions;
+package org.kitodo.data.exceptions;
 
 /**
- * Exception for checking code statuses from server responses.
+ * Exception for wrapping CustomResponseException, DAOException and IOException.
  */
-public class CustomResponseException extends Exception {
+public class DataException extends Exception {
 
-    private static final long serialVersionUID = 1997753363232807009L;
+    private static final long serialVersionUID = 1987853363232807999L;
 
-    public CustomResponseException(Exception e) {
+    public DataException(Exception e) {
         super(e);
     }
 
-    public CustomResponseException(String message) {
+    public DataException(String message) {
         super(message);
     }
 }

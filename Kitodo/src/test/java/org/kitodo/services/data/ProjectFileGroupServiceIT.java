@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -23,7 +22,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for TaskService class.
@@ -31,7 +30,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 public class ProjectFileGroupServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -51,7 +50,7 @@ public class ProjectFileGroupServiceIT {
     }
 
     @Test
-    public void shouldFindAllProjectFileGroups() throws Exception {
+    public void shouldFindAllProjectFileGroups() {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
         List<ProjectFileGroup> projectFileGroups = projectFileGroupService.findAll();

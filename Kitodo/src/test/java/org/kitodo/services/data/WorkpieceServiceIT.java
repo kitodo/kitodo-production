@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -25,8 +24,8 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.search.SearchResult;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * Tests for WorkpieceService class.
@@ -34,7 +33,7 @@ import org.kitodo.data.elasticsearch.search.SearchResult;
 public class WorkpieceServiceIT {
 
     @BeforeClass
-    public static void prepareDatabase() throws DAOException, IOException, CustomResponseException {
+    public static void prepareDatabase() throws DAOException, DataException {
         MockDatabase.insertProcessesFull();
     }
 
@@ -68,7 +67,8 @@ public class WorkpieceServiceIT {
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
         Workpiece foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(3));
-        assertEquals("Additional workpiece was not inserted in database!", "First process", foundWorkpiece.getProcess().getTitle());
+        assertEquals("Additional workpiece was not inserted in database!", "First process",
+                foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(workpiece);
         foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(3));
@@ -78,7 +78,8 @@ public class WorkpieceServiceIT {
         workpiece.setProcess(process);
         workpieceService.save(workpiece);
         foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(4));
-        assertEquals("Additional workpiece was not inserted in database!", "First process", foundWorkpiece.getProcess().getTitle());
+        assertEquals("Additional workpiece was not inserted in database!", "First process",
+                foundWorkpiece.getProcess().getTitle());
 
         workpieceService.remove(4);
         foundWorkpiece = workpieceService.convertSearchResultToObject(workpieceService.findById(4));
