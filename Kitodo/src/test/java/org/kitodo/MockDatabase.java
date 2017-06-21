@@ -58,7 +58,7 @@ public class MockDatabase {
             insertWorkpieceProperties();
             insertTemplates();
             insertTemplateProperties();
-            insertUserProperties();
+            insertUserFilters();
             insertTasks();
             insertHistory();
         }
@@ -111,7 +111,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(firstProcess);
     }
 
-    public static void insertLdapGroups() throws DAOException {
+    private static void insertLdapGroups() throws DAOException {
         LdapGroup firstLdapGroup = new LdapGroup();
         firstLdapGroup.setTitle("LG");
         firstLdapGroup.setHomeDirectory("..//test_directory/");
@@ -512,35 +512,25 @@ public class MockDatabase {
         serviceManager.getUserGroupService().save(thirdUserGroup);
     }
 
-    private static void insertUserProperties() throws DAOException, DataException {
+    private static void insertUserFilters() throws DAOException, DataException {
         User user = serviceManager.getUserService().find(1);
 
-        Property firstUserProperty = new Property();
-        firstUserProperty.setTitle("FirstUserProperty");
-        firstUserProperty.setValue("first value");
-        firstUserProperty.setObligatory(true);
-        firstUserProperty.setType(PropertyType.general);
-        firstUserProperty.setChoice("choice");
+        Filter firstUserFilter = new Filter();
+        firstUserFilter.setValue("\"id:1\"");
         LocalDate localDate = new LocalDate(2017, 1, 14);
-        firstUserProperty.setCreationDate(localDate.toDate());
-        firstUserProperty.setContainer(1);
-        firstUserProperty.getUsers().add(user);
-        serviceManager.getPropertyService().save(firstUserProperty);
+        firstUserFilter.setCreationDate(localDate.toDate());
+        firstUserFilter.setUser(user);
+        serviceManager.getFilterService().save(firstUserFilter);
 
-        Property secondUserProperty = new Property();
-        secondUserProperty.setTitle("secondUserProperty");
-        secondUserProperty.setValue("second");
-        secondUserProperty.setObligatory(false);
-        secondUserProperty.setType(PropertyType.CommandLink);
-        secondUserProperty.setChoice("chosen");
+        Filter secondUserFilter = new Filter();
+        secondUserFilter.setValue("\"id:2\"");
         localDate = new LocalDate(2017, 1, 15);
-        secondUserProperty.setCreationDate(localDate.toDate());
-        secondUserProperty.setContainer(2);
-        secondUserProperty.getUsers().add(user);
-        serviceManager.getPropertyService().save(secondUserProperty);
+        secondUserFilter.setCreationDate(localDate.toDate());
+        secondUserFilter.setUser(user);
+        serviceManager.getFilterService().save(secondUserFilter);
 
-        user.getProperties().add(firstUserProperty);
-        user.getProperties().add(secondUserProperty);
+        user.getFilters().add(firstUserFilter);
+        user.getFilters().add(secondUserFilter);
         serviceManager.getUserService().save(user);
     }
 
