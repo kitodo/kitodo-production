@@ -24,7 +24,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workpiece;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.PropertyDAO;
@@ -83,9 +82,6 @@ public class PropertyService extends TitleSearchService<Property> {
             throws CustomResponseException, DataException, IOException {
         for (Process process : property.getProcesses()) {
             serviceManager.getProcessService().saveToIndex(process);
-        }
-        for (User user : property.getUsers()) {
-            serviceManager.getUserService().saveToIndex(user);
         }
         for (Template template : property.getTemplates()) {
             serviceManager.getTemplateService().saveToIndex(template);
@@ -163,7 +159,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param value
      *            of the searched property
      * @param contains
-     *            of the searched batches
+     *            of the searched property
      * @return list of search results with properties
      */
     public List<SearchResult> findByValue(String value, boolean contains) throws DataException {
@@ -172,7 +168,7 @@ public class PropertyService extends TitleSearchService<Property> {
     }
 
     /**
-     * Find batches with exact title and type. Necessary to assure that user
+     * Find properties with exact title and type. Necessary to assure that user
      * pickup type from the list which contains enums.
      *
      * @param title

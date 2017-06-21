@@ -27,16 +27,14 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.hibernate.LazyInitializationException;
 import org.hibernate.Session;
 import org.joda.time.LocalDateTime;
+import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.persistence.HibernateUtilOld;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -100,8 +98,8 @@ public class UserService extends SearchService<User> {
             serviceManager.getProjectService().saveToIndex(project);
         }
 
-        for (Property property : user.getProperties()) {
-            serviceManager.getPropertyService().saveToIndex(property);
+        for (Filter filter : user.getFilters()) {
+            serviceManager.getFilterService().saveToIndex(filter);
         }
 
         for (Task task : user.getTasks()) {
@@ -294,33 +292,31 @@ public class UserService extends SearchService<User> {
     }
 
     /**
-     * Find users by property.
+     * Find users by filter.
      *
-     * @param title
-     *            of property
      * @param value
-     *            of property
-     * @return list of search results with users for specific property
+     *            of filter
+     * @return list of search results with users for specific filter
      */
-    public List<SearchResult> findByProperty(String title, String value) throws DataException {
+    public List<SearchResult> findByFilter(String value) throws DataException {
         List<SearchResult> users = new ArrayList<>();
 
-        List<SearchResult> properties = serviceManager.getPropertyService().findByTitleAndValue(title, value);
-        for (SearchResult property : properties) {
-            users.addAll(findByPropertyId(property.getId()));
+        List<SearchResult> filters = serviceManager.getFilterService().findByValue(value, true);
+        for (SearchResult filter : filters) {
+            users.addAll(findByFilterId(filter.getId()));
         }
         return users;
     }
 
     /**
-     * Simulate relationship between property and user type.
+     * Simulate relationship between filter and user type.
      *
      * @param id
-     *            of property
-     * @return list of search results with users for specific property id
+     *            of filter
+     * @return list of search results with users for specific filter id
      */
-    private List<SearchResult> findByPropertyId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("properties.id", id, true);
+    private List<SearchResult> findByFilterId(Integer id) throws DataException {
+        QueryBuilder query = createSimpleQuery("filters.id", id, true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -358,7 +354,7 @@ public class UserService extends SearchService<User> {
      */
     public Integer getTableSize(User user) {
         if (user.getTableSize() == null) {
-            return Integer.valueOf(10);
+            return 10;
         }
         return user.getTableSize();
     }
@@ -476,10 +472,10 @@ public class UserService extends SearchService<User> {
      * @return properties list size
      */
     public int getPropertiesSize(User user) {
-        if (user.getProperties() == null) {
+        if (user.getFilters() == null) {
             return 0;
         } else {
-            return user.getProperties().size();
+            return user.getFilters().size();
         }
     }
 
@@ -554,7 +550,7 @@ public class UserService extends SearchService<User> {
      * Removes filter from list.
      *
      * @param user
-     *            objec
+     *            object
      * @param filter
      *            the filter to remove
      */
@@ -581,24 +577,20 @@ public class UserService extends SearchService<User> {
     }
 
     /**
-     * Add filter to user. Note: filter is property... Is there some other type
-     * of user property? Maybe it would demand rethink our data model...
+     * Add filter to user.
      *
      * @param user
      *            object
-     * @param filter
+     * @param userFilter
      *            String
      */
-    private void addFilterToUser(User user, String filter) throws DataException {
+    private void addFilterToUser(User user, String userFilter) throws DataException {
         LocalDateTime localDateTime = new LocalDateTime();
-        Property property = new Property();
-        property.setTitle("_filter");
-        property.setValue(filter);
-        property.setObligatory(false);
-        property.setType(PropertyType.String);
-        property.setCreationDate(localDateTime.toDate());
-        serviceManager.getPropertyService().save(property);
-        user.getProperties().add(property);
+        Filter filter = new Filter();
+        filter.setValue(userFilter);
+        filter.setCreationDate(localDateTime.toDate());
+        serviceManager.getFilterService().save(filter);
+        user.getFilters().add(filter);
         serviceManager.getUserService().save(user);
     }
 
@@ -610,19 +602,12 @@ public class UserService extends SearchService<User> {
      * @return list of filters
      */
     private List<String> getFiltersForUser(User user) {
-        List<String> filters = new ArrayList<>();
-        // FIXME: fix reason for exception
-        try {
-            List<Property> properties = user.getProperties();
-            for (Property property : properties) {
-                if (property.getTitle().equals("_filter")) {
-                    filters.add(property.getValue());
-                }
-            }
-        } catch (LazyInitializationException e) {
-            logger.error("LazyInitializationException: " + e.getMessage());
+        List<String> userFilters = new ArrayList<>();
+        List<Filter> filters = user.getFilters();
+        for (Filter filter : filters) {
+            userFilters.add(filter.getValue());
         }
-        return filters;
+        return userFilters;
     }
 
     /**
@@ -630,13 +615,13 @@ public class UserService extends SearchService<User> {
      *
      * @param user
      *            object
-     * @param filter
+     * @param userFilter
      *            String
      */
-    private void removeFilterFromUser(User user, String filter) throws DataException {
-        for (Property property : user.getProperties()) {
-            if (property.getTitle().equals("_filter") && property.getValue().equals(filter)) {
-                serviceManager.getPropertyService().remove(property);
+    private void removeFilterFromUser(User user, String userFilter) throws DataException {
+        for (Filter filter : user.getFilters()) {
+            if (filter.getValue().equals(userFilter)) {
+                serviceManager.getFilterService().remove(filter);
             }
         }
     }
