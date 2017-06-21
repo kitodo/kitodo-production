@@ -118,21 +118,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.batch}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort13a"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort13a"
                                    rendered="#{ProzessverwaltungForm.sortierung=='batchAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort14a"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort14a"
                                    rendered="#{ProzessverwaltungForm.sortierung=='batchDesc'}">
                         <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="batchAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort15a"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort15a"
                                    rendered="#{ProzessverwaltungForm.sortierung!='batchDesc' and ProzessverwaltungForm.sortierung!='batchAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -156,21 +156,21 @@
                     </h:panelGroup>
 
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort1"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort1"
                                    rendered="#{ProzessverwaltungForm.sortierung=='titelAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort2"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort2"
                                    rendered="#{ProzessverwaltungForm.sortierung=='titelDesc'}">
                         <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="titelAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort3"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort3"
                                    rendered="#{ProzessverwaltungForm.sortierung!='titelDesc' and ProzessverwaltungForm.sortierung!='titelAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -238,7 +238,7 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.vorgangsdatum}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort4"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort4"
                                    rendered="#{ProzessverwaltungForm.sortierung=='vorgangsdatumAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -246,7 +246,7 @@
                                                 value="vorgangsdatumDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort5"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort5"
                                    rendered="#{ProzessverwaltungForm.sortierung=='vorgangsdatumDesc'}">
                         <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -254,7 +254,7 @@
                                                 value="vorgangsdatumAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort6"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort6"
                                    rendered="#{ProzessverwaltungForm.sortierung!='vorgangsdatumDesc' and ProzessverwaltungForm.sortierung!='vorgangsdatumAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -275,21 +275,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.status}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort7"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort7"
                                    rendered="#{ProzessverwaltungForm.sortierung=='fortschrittAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort8"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort8"
                                    rendered="#{ProzessverwaltungForm.sortierung=='fortschrittDesc'}">
                         <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="fortschrittAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort9"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort9"
                                    rendered="#{ProzessverwaltungForm.sortierung!='fortschrittDesc' and ProzessverwaltungForm.sortierung!='fortschrittAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -313,21 +313,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.projekt}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort10"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort10"
                                    rendered="#{ProzessverwaltungForm.sortierung=='projektAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort11"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort11"
                                    rendered="#{ProzessverwaltungForm.sortierung=='projektDesc'}">
                         <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="projektAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort12"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort12"
                                    rendered="#{ProzessverwaltungForm.sortierung!='projektDesc' and ProzessverwaltungForm.sortierung!='projektAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
@@ -345,21 +345,21 @@
                     <!-- Header -->
                     <h:outputText value="#{msgs.sperrungen}"/>
                     <!-- Sortierung Asc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort13"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort13"
                                    rendered="#{ProzessverwaltungForm.sortierung=='sperrungenAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/asc.gif" alt="sort ascending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenDesc"/>
                     </h:commandLink>
                     <!-- Sortierung Desc -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort14"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort14"
                                    rendered="#{ProzessverwaltungForm.sortierung=='sperrungenDesc'}">
                         <h:graphicImage value="/newpages/images/sorting/desc.gif" alt="sort descending"
                                         style="vertical-align:middle;margin-left:5px"/>
                         <t:updateActionListener property="#{ProzessverwaltungForm.sortierung}" value="sperrungenAsc"/>
                     </h:commandLink>
                     <!-- Sortierung none -->
-                    <h:commandLink action="#{ProzessverwaltungForm.FilterAlleStart}" id="sort15"
+                    <h:commandLink action="#{ProzessverwaltungForm.filterAlleStart}" id="sort15"
                                    rendered="#{ProzessverwaltungForm.sortierung!='sperrungenDesc' and ProzessverwaltungForm.sortierung!='sperrungenAsc'}">
                         <h:graphicImage value="/newpages/images/sorting/none.gif" alt="no sorting"
                                         style="vertical-align:middle;margin-left:5px"/>
