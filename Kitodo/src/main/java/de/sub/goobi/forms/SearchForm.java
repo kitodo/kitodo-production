@@ -18,8 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.faces.context.FacesContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -80,6 +82,9 @@ public class SearchForm {
     private String templatePropertyOperand = "";
     private String stepOperand = "";
 
+    @Inject
+    BeanManager beanManager;
+
     /**
      * Initialise drop down list of master piece property titles.
      */
@@ -88,7 +93,6 @@ public class SearchForm {
         Criteria crit = session.createCriteria(Property.class);
         crit.addOrder(Order.asc("titel"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
-        this.masterpiecePropertyTitles.add(Helper.getTranslation("notSelected"));
         try {
             @SuppressWarnings("unchecked")
             List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
@@ -112,7 +116,6 @@ public class SearchForm {
         if (restriction > 2) {
             crit.add(Restrictions.not(Restrictions.eq("projectIsArchived", true)));
         }
-        this.projects.add(Helper.getTranslation("notSelected"));
 
         try {
             @SuppressWarnings("unchecked")
@@ -133,7 +136,6 @@ public class SearchForm {
         Criteria crit = session.createCriteria(Property.class);
         crit.addOrder(Order.asc("title"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
-        this.processPropertyTitles.add(Helper.getTranslation("notSelected"));
         try {
             @SuppressWarnings("unchecked")
             List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
@@ -164,7 +166,6 @@ public class SearchForm {
         Criteria crit = session.createCriteria(Task.class);
         crit.addOrder(Order.asc("title"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
-        this.stepTitles.add(Helper.getTranslation("notSelected"));
         try {
             @SuppressWarnings("unchecked")
             List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
@@ -184,7 +185,6 @@ public class SearchForm {
         Criteria crit = session.createCriteria(Property.class);
         crit.addOrder(Order.asc("title"));
         crit.setProjection(Projections.distinct(Projections.property("title")));
-        this.templatePropertyTitles.add(Helper.getTranslation("notSelected"));
         try {
             @SuppressWarnings("unchecked")
             List<String> results = crit.setFirstResult(0).setMaxResults(Integer.MAX_VALUE).list();
@@ -400,12 +400,11 @@ public class SearchForm {
         if (!this.idin.isEmpty()) {
             search += "\"" + FilterString.ID + this.idin + "\" ";
         }
-        if (!this.project.isEmpty() && !this.project.equals(Helper.getTranslation("notSelected"))) {
+        if (!this.project.isEmpty()) {
             search += "\"" + this.projectOperand + FilterString.PROJECT + this.project + "\" ";
         }
         if (!this.processPropertyValue.isEmpty()) {
-            if (!this.processPropertyTitle.isEmpty()
-                    && !this.processPropertyTitle.equals(Helper.getTranslation("notSelected"))) {
+            if (!this.processPropertyTitle.isEmpty()) {
                 search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY + this.processPropertyTitle
                         + ":" + this.processPropertyValue + "\" ";
             } else {
@@ -414,8 +413,7 @@ public class SearchForm {
             }
         }
         if (!this.masterpiecePropertyValue.isEmpty()) {
-            if (!this.masterpiecePropertyTitle.isEmpty()
-                    && !this.masterpiecePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
+            if (!this.masterpiecePropertyTitle.isEmpty()) {
                 search += "\"" + this.masterpiecePropertyOperand + FilterString.WORKPIECE
                         + this.masterpiecePropertyTitle + ":" + this.masterpiecePropertyValue + "\" ";
             } else {
@@ -424,8 +422,7 @@ public class SearchForm {
             }
         }
         if (!this.templatePropertyValue.isEmpty()) {
-            if (!this.templatePropertyTitle.isEmpty()
-                    && !this.templatePropertyTitle.equals(Helper.getTranslation("notSelected"))) {
+            if (!this.templatePropertyTitle.isEmpty()) {
                 search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE + this.templatePropertyTitle + ":"
                         + this.templatePropertyValue + "\" ";
             } else {
@@ -434,17 +431,20 @@ public class SearchForm {
             }
         }
 
-        if (!this.stepname.isEmpty() && !this.stepname.equals(Helper.getTranslation("notSelected"))) {
+        if (!this.stepname.isEmpty()) {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
-                && !this.stepdonetitle.equals(Helper.getTranslation("notSelected"))
                 && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
             search += "\"" + FilterString.STEPDONEUSER + this.stepdoneuser + "\" \"" + FilterString.STEPDONETITLE
                     + this.stepdonetitle + "\" ";
         }
-        ProzessverwaltungForm form = (ProzessverwaltungForm) FacesContext.getCurrentInstance().getExternalContext()
-                .getSessionMap().get("ProzessverwaltungForm");
+
+        Bean<ProzessverwaltungForm> bean =
+                (Bean<ProzessverwaltungForm>) beanManager.resolve(beanManager.getBeans(ProzessverwaltungForm.class));
+        ProzessverwaltungForm form =
+                beanManager.getContext(bean.getScope()).get(bean, beanManager.createCreationalContext(bean));
+
         if (form != null) {
             form.filter = search;
             form.setModusAnzeige("aktuell");
