@@ -13,6 +13,7 @@ package org.kitodo.services;
 
 import org.kitodo.services.data.BatchService;
 import org.kitodo.services.data.DocketService;
+import org.kitodo.services.data.FilterService;
 import org.kitodo.services.data.HistoryService;
 import org.kitodo.services.data.LdapGroupService;
 import org.kitodo.services.data.ProcessService;
@@ -31,6 +32,7 @@ public class ServiceManager {
 
     private BatchService batchService;
     private DocketService docketService;
+    private FilterService filterService;
     private HistoryService historyService;
     private LdapGroupService ldapGroupService;
     private PropertyService propertyService;
@@ -54,6 +56,12 @@ public class ServiceManager {
     private void initializeDocketService() {
         if (docketService == null) {
             docketService = new DocketService();
+        }
+    }
+
+    private void initializeFilterService() {
+        if (filterService == null) {
+            filterService = new FilterService();
         }
     }
 
@@ -153,6 +161,16 @@ public class ServiceManager {
     public DocketService getDocketService() {
         initializeDocketService();
         return docketService;
+    }
+
+    /**
+     * Initialize FilterService if it is not yet initialized and next return it.
+     *
+     * @return FilterService object
+     */
+    public FilterService getFilterService() {
+        initializeFilterService();
+        return filterService;
     }
 
     /**
