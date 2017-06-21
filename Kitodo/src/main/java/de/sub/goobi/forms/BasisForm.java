@@ -25,7 +25,7 @@ import org.kitodo.services.ServiceManager;
 public class BasisForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(BasisForm.class);
     private static final long serialVersionUID = 2950419497162710096L;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     protected Page page;
     protected String zurueck = "";
     protected String filter = "";

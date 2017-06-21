@@ -11,12 +11,12 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -30,15 +30,15 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
 
-@ManagedBean
-@ViewScoped
+@Named("BenutzergruppenForm")
+@SessionScoped
 public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private UserGroup myBenutzergruppe = new UserGroup();
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private int userGroupId;
 
     public String Neu() {

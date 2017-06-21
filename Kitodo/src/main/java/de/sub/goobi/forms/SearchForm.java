@@ -17,8 +17,10 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +37,8 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
+@Named("SearchForm")
+@RequestScoped
 public class SearchForm {
 
     /**

@@ -17,6 +17,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -66,10 +67,11 @@ import org.kitodo.services.ServiceManager;
 
 import ugh.dl.Prefs;
 
-@ManagedBean
-@ViewScoped
-public class MassImportForm {
+@Named("MassImportForm")
+@SessionScoped
+public class MassImportForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
+    private static final long serialVersionUID = -4225927414279404442L;
     private Process template;
     private List<Process> processes;
     private List<String> digitalCollections;
@@ -87,7 +89,7 @@ public class MassImportForm {
     private IImportPlugin plugin;
     private File importFile = null;
     private final Helper help = new Helper();
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
 
     private List<Process> processList;

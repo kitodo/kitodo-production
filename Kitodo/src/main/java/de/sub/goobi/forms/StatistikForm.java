@@ -31,8 +31,13 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
+
+@Named("StatistikForm")
+@ApplicationScoped
 public class StatistikForm {
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(StatistikForm.class);
     Calendar cal = new GregorianCalendar();
     int n = 200;

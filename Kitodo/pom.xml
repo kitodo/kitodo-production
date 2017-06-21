@@ -486,16 +486,6 @@
             <version>3.2.2</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jsfcomp.easysi</groupId>
-            <artifactId>easysi</artifactId>
-            <version>0.9.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.exadel.htmLib</groupId>
-            <artifactId>htmLib</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>net.sf.j2ep</groupId>
             <artifactId>j2ep</artifactId>
             <version>1.0</version>

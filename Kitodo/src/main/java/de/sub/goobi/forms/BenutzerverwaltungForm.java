@@ -11,11 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-import de.sub.goobi.helper.ldap.Ldap;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,11 +25,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Named;
 import javax.servlet.http.HttpSession;
+
+import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.Page;
+import de.sub.goobi.helper.ldap.Ldap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,13 +52,13 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.ServiceManager;
 
-@ManagedBean
-@ViewScoped
+@Named("BenutzerverwaltungForm")
+@SessionScoped
 public class BenutzerverwaltungForm extends BasisForm {
     private static final long serialVersionUID = -3635859455444639614L;
     private User myClass = new User();
     private boolean hideInactiveUsers = true;
-    private final ServiceManager serviceManager = new ServiceManager();
+    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private int userId;
 
