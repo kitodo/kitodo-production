@@ -124,6 +124,10 @@
     <filter>
         <filter-name>requestControlFilter</filter-name>
         <filter-class>de.sub.goobi.helper.servletfilter.RequestControlFilter</filter-class>
+        <init-param>
+            <param-name>excludePattern</param-name>
+            <param-value>.*\.(js|css)\.jsf</param-value>
+        </init-param>
     </filter>
 
     <filter>
