@@ -17,6 +17,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -93,11 +94,8 @@ public class User extends BaseBean {
     @ManyToMany(mappedBy = "users")
     private List<Project> projects;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_x_property", joinColumns = {
-            @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_property_user_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_user_x_property_property_id")) })
-    private List<Property> properties;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Filter> filters;
 
     /**
      * Constructor for User Entity.
@@ -106,7 +104,7 @@ public class User extends BaseBean {
         this.userGroups = new ArrayList<>();
         this.projects = new ArrayList<>();
         this.tasks = new ArrayList<>();
-        this.properties = new ArrayList<>();
+        this.filters = new ArrayList<>();
     }
 
     public String getLogin() {
@@ -277,15 +275,25 @@ public class User extends BaseBean {
         this.css = css;
     }
 
-    public List<Property> getProperties() {
-        if (this.properties == null) {
-            this.properties = new ArrayList<>();
+    /**
+     * Get user filters.
+     *
+     * @return list of user filters
+     */
+    public List<Filter> getFilters() {
+        if (this.filters == null) {
+            this.filters = new ArrayList<>();
         }
-        return this.properties;
+        return this.filters;
     }
 
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
+    /**
+     * Set user filters.
+     *
+     * @param filters list of user filters
+     */
+    public void setFilters(List<Filter> filters) {
+        this.filters = filters;
     }
 
     /**

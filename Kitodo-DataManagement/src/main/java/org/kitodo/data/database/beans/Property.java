@@ -57,9 +57,6 @@ public class Property extends BaseBean implements Comparable<Property> {
     private List<Template> templates;
 
     @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
-    private List<User> users;
-
-    @ManyToMany(mappedBy = "properties", cascade = CascadeType.PERSIST)
     private List<Workpiece> workpieces;
 
     @Transient
@@ -306,28 +303,6 @@ public class Property extends BaseBean implements Comparable<Property> {
      */
     public void setTemplates(List<Template> templates) {
         this.templates = templates;
-    }
-
-    /**
-     * Get users list or new empty list.
-     *
-     * @return users list or new empty list
-     */
-    public List<User> getUsers() {
-        if (this.users == null) {
-            this.users = new ArrayList<>();
-        }
-        return this.users;
-    }
-
-    /**
-     * Set users.
-     * 
-     * @param users
-     *            as List
-     */
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     /**
