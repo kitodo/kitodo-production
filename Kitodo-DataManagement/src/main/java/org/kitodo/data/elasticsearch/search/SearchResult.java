@@ -18,7 +18,7 @@ import java.util.HashMap;
  */
 public class SearchResult {
     private Integer id;
-    private HashMap<String, String> properties;
+    private HashMap<String, Object> properties;
 
     /**
      * Get id.
@@ -43,9 +43,9 @@ public class SearchResult {
      * Get properties of search result.
      *
      * @return HashMap of properties - key is name of field and value is value
-     *         of field
+     *         of field (possible Integer, String, JSONArray)
      */
-    public HashMap<String, String> getProperties() {
+    public HashMap<String, Object> getProperties() {
         return properties;
     }
 
@@ -53,9 +53,9 @@ public class SearchResult {
      * Set properties of search result.
      *
      * @param properties
-     *            HashMap - key is name of field and value is value of field
+     *            HashMap - key is name of field and value is value of field (possible Integer, String, JSONArray)
      */
-    public void setProperties(HashMap<String, String> properties) {
+    public void setProperties(HashMap<String, Object> properties) {
         this.properties = properties;
     }
 }

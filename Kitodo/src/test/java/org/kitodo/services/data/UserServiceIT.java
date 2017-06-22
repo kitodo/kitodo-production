@@ -129,7 +129,7 @@ public class UserServiceIT {
         UserService userService = new UserService();
 
         SearchResult user = userService.findById(1);
-        String actual = user.getProperties().get("login");
+        String actual = (String) user.getProperties().get("login");
         String expected = "kowal";
         assertEquals("User was not found in index!", expected, actual);
     }

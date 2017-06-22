@@ -68,7 +68,7 @@ public class RulesetServiceIT {
         RulesetService rulesetService = new RulesetService();
 
         SearchResult ruleset = rulesetService.findById(1);
-        String actual = ruleset.getProperties().get("title");
+        String actual = (String) ruleset.getProperties().get("title");
         String expected = "SLUBDD";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
@@ -88,7 +88,7 @@ public class RulesetServiceIT {
         RulesetService rulesetService = new RulesetService();
 
         SearchResult ruleset = rulesetService.findByFile("ruleset_slubdd.xml");
-        String actual = ruleset.getProperties().get("file");
+        String actual = (String) ruleset.getProperties().get("file");
         String expected = "ruleset_slubdd.xml";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }

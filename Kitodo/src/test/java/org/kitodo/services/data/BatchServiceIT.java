@@ -95,7 +95,7 @@ public class BatchServiceIT {
         BatchService batchService = new BatchService();
 
         SearchResult batch = batchService.findById(1);
-        String actual = batch.getProperties().get("title");
+        String actual = (String) batch.getProperties().get("title");
         String expected = "First batch";
         assertEquals("Batch was not found in index!", expected, actual);
     }

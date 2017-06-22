@@ -68,7 +68,7 @@ public class DocketServiceIT {
         DocketService docketService = new DocketService();
 
         SearchResult docket = docketService.findById(1);
-        String actual = docket.getProperties().get("title");
+        String actual = (String) docket.getProperties().get("title");
         String expected = "default";
         assertEquals("Docket was not found in index!", expected, actual);
     }
@@ -88,7 +88,7 @@ public class DocketServiceIT {
         DocketService docketService = new DocketService();
 
         SearchResult docket = docketService.findByFile("docket.xsl");
-        String actual = docket.getProperties().get("file");
+        String actual = (String) docket.getProperties().get("file");
         String expected = "docket.xsl";
         assertEquals("Docket was not found in index!", expected, actual);
     }

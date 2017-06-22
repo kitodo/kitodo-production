@@ -125,7 +125,7 @@ public class UserGroupServiceIT {
         UserGroupService userGroupService = new UserGroupService();
 
         SearchResult userGroup = userGroupService.findById(1);
-        String actual = userGroup.getProperties().get("title");
+        String actual = (String) userGroup.getProperties().get("title");
         String expected = "Admin";
         assertEquals("User group was not found in index!", expected, actual);
     }

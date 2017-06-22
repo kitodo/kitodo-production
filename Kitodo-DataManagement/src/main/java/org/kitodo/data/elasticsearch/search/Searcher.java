@@ -167,10 +167,10 @@ public class Searcher extends Index {
         SearchResult searchResult = new SearchResult();
 
         searchResult.setId(Integer.valueOf(jsonObject.get("_id").toString()));
-        HashMap<String, String> properties = new HashMap<>();
+        HashMap<String, Object> properties = new HashMap<>();
         JSONObject result = (JSONObject) jsonObject.get("_source");
-        Set<Map.Entry<String, String>> entries = result.entrySet();
-        for (Map.Entry<String, String> entry : entries) {
+        Set<Map.Entry<String, Object>> entries = result.entrySet();
+        for (Map.Entry<String, Object> entry : entries) {
             properties.put(entry.getKey(), entry.getValue());
         }
         searchResult.setProperties(properties);

@@ -98,7 +98,7 @@ public class ProjectServiceIT {
         ProjectService projectService = new ProjectService();
 
         SearchResult project = projectService.findById(1);
-        String actual = project.getProperties().get("title");
+        String actual = (String) project.getProperties().get("title");
         String expected = "First project";
         assertEquals("Project was not found in index!", expected, actual);
     }
