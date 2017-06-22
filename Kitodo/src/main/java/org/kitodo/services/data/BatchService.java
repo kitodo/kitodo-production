@@ -80,7 +80,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
-    protected void saveDependenciesToIndex(Batch batch) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, DataException, IOException {
         for (Process process : batch.getProcesses()) {
             serviceManager.getProcessService().saveToIndex(process);
         }

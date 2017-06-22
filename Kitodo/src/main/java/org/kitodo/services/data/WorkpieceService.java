@@ -75,7 +75,8 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
-    protected void saveDependenciesToIndex(Workpiece workpiece) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Workpiece workpiece)
+            throws CustomResponseException, DataException, IOException {
         if (workpiece.getProcess() != null) {
             serviceManager.getProcessService().saveToIndex(workpiece.getProcess());
         }

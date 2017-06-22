@@ -136,7 +136,7 @@ public abstract class SearchService<T extends BaseBean> {
      * @param baseBean
      *            object
      */
-    protected void saveDependenciesToIndex(T baseBean) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(T baseBean) throws CustomResponseException, DataException, IOException {
 
     }
 
@@ -166,7 +166,7 @@ public abstract class SearchService<T extends BaseBean> {
             baseBean.setIndexAction(IndexAction.INDEX);
             saveToDatabase(baseBean);
             saveToIndex(baseBean);
-            saveDependenciesToIndex(baseBean);
+            manageDependenciesForIndex(baseBean);
             baseBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(baseBean);
         } catch (DAOException e) {
@@ -178,7 +178,7 @@ public abstract class SearchService<T extends BaseBean> {
             while (true) {
                 try {
                     saveToIndex(baseBean);
-                    saveDependenciesToIndex(baseBean);
+                    manageDependenciesForIndex(baseBean);
                     baseBean.setIndexAction(IndexAction.DONE);
                     saveToDatabase(baseBean);
                     break;
@@ -223,6 +223,7 @@ public abstract class SearchService<T extends BaseBean> {
             baseBean.setIndexAction(IndexAction.DELETE);
             saveToDatabase(baseBean);
             removeFromIndex(baseBean);
+            manageDependenciesForIndex(baseBean);
             removeFromDatabase(baseBean);
         } catch (DAOException e) {
             logger.debug(e);

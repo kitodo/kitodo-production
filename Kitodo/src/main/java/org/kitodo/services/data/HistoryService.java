@@ -80,7 +80,8 @@ public class HistoryService extends SearchService<History> {
      * @param history
      *            object
      */
-    protected void saveDependenciesToIndex(History history) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(History history)
+            throws CustomResponseException, DataException, IOException {
         // TODO: is it possible that process is modified during save to history?
         if (history.getProcess() != null) {
             serviceManager.getProcessService().saveToIndex(history.getProcess());
