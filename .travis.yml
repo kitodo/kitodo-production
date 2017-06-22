@@ -5,8 +5,8 @@ dist: trusty
 language: java
 
 jdk:
-  - oraclejdk7
-  - openjdk7
+  - oraclejdk8
+  - openjdk8
 
 addons:
   apt:
