@@ -339,7 +339,7 @@ public class ProzessverwaltungForm extends BasisForm {
         if (this.modusAnzeige.equals("vorlagen")) {
             return FilterVorlagen();
         } else {
-            return FilterAlleStart();
+            return filterAlleStart();
         }
     }
 
@@ -434,22 +434,20 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * This method initializes the process list without any filter whenever the bean is constructed.
+     * This method initializes the process list without any filter whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeProcessList() {
-        Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String originLink = params.get("linkId");
         if (Objects.equals(originLink, "newProcess")) {
             NeuenVorgangAnlegen();
-        }
-        else if (Objects.equals(originLink, "templates")) {
+        } else if (Objects.equals(originLink, "templates")) {
             FilterVorlagen();
-        }
-        else if (Objects.equals(originLink, "allProcesses")) {
+        } else if (Objects.equals(originLink, "allProcesses")) {
             FilterAktuelleProzesse();
-        }
-        else {
+        } else {
             logger.error("ERROR: did not recognize link ID '" + originLink + "'.");
         }
         setFilter("");
@@ -475,7 +473,7 @@ public class ProzessverwaltungForm extends BasisForm {
     /**
      * Anzeige der Sammelbände filtern.
      */
-    public String FilterAlleStart() {
+    public String filterAlleStart() {
         this.statisticsManager = null;
         this.myAnzahlList = null;
         /*
