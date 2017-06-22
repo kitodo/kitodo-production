@@ -801,13 +801,13 @@ public class FilterHelper {
 
         if (flagSteps) {
 
-            critProject = critProcess.createCriteria("project", "proj");
+            critProject = critProcess.createCriteria("project", "project");
 
             if (conjProjects != null) {
                 inCrit.add(conjProjects);
             }
         } else {
-            inCrit.createCriteria("project", "proj");
+            inCrit.createCriteria("project", "project");
             if (conjProjects != null) {
                 inCrit.add(conjProjects);
             }

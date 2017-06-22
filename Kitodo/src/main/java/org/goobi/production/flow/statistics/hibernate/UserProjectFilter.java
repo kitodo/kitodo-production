@@ -61,8 +61,8 @@ public class UserProjectFilter implements IEvaluableFilter, Cloneable {
         Session session = Helper.getHibernateSession();
         PaginatingCriteria crit = new PaginatingCriteria(Process.class, session);
         crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-        crit.createCriteria("project", "proj");
-        crit.add(Restrictions.eq("proj.id", projectID));
+        crit.createCriteria("project", "project");
+        crit.add(Restrictions.eq("project.id", projectID));
         return crit;
     }
 

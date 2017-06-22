@@ -58,13 +58,13 @@ public class StatQuestProjectAssociations implements IStatisticalQuestion {
 
         ProjectionList proj = Projections.projectionList();
         proj.add(Projections.count("id"));
-        proj.add(Projections.groupProperty("proj.title"));
+        proj.add(Projections.groupProperty("project.title"));
 
         Criteria crit;
 
         if (originalFilter instanceof UserDefinedFilter) {
             crit = new UserDefinedFilter(originalFilter.getIDList()).getCriteria();
-            crit.createCriteria("project", "proj");
+            crit.createCriteria("project", "project");
         } else {
             crit = originalFilter.clone().getCriteria();
         }

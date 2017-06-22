@@ -206,10 +206,10 @@ public class AktuelleSchritteForm extends BasisForm {
             order = Order.desc("proc.creationDate");
         }
         if (this.sortierung.equals("projektAsc")) {
-            order = Order.asc("proj.title");
+            order = Order.asc("project.title");
         }
         if (this.sortierung.equals("projektDesc")) {
-            order = Order.desc("proj.title");
+            order = Order.desc("project.title");
         }
         if (this.sortierung.equals("modulesAsc")) {
             order = Order.asc("typeModuleName");
