@@ -124,7 +124,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private boolean showArchivedProjects = false;
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
+    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
     private Integer container;
     private String addToWikiField = "";
     private boolean showStatistics = false;
@@ -136,7 +136,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * Constructor.
      */
     public ProzessverwaltungForm() {
-        this.anzeigeAnpassen = new HashMap<String, Boolean>();
+        this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
         this.anzeigeAnpassen.put("swappedOut", false);
         this.anzeigeAnpassen.put("selectionBoxes", false);
@@ -301,7 +301,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     if (!this.myProzess.isTemplate()) {
                         /* Tiffwriter-Datei löschen */
                         GoobiScript gs = new GoobiScript();
-                        ArrayList<Process> pro = new ArrayList<Process>();
+                        ArrayList<Process> pro = new ArrayList<>();
                         pro.add(this.myProzess);
                         gs.deleteTiffHeaderFile(pro);
                         gs.updateImagePath(pro);
@@ -1123,7 +1123,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void stepStatusDown(Process proz) throws DataException {
-        List<Task> tempList = new ArrayList<Task>(proz.getTasks());
+        List<Task> tempList = new ArrayList<>(proz.getTasks());
         debug("templist: ", tempList);
 
         Collections.reverse(tempList);
@@ -1434,7 +1434,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProjektAuswahlListe() throws DAOException {
-        List<SelectItem> myProjekte = new ArrayList<SelectItem>();
+        List<SelectItem> myProjekte = new ArrayList<>();
         List<Project> temp = serviceManager.getProjectService().search("from Project ORDER BY title");
         for (Project proj : temp) {
             myProjekte.add(new SelectItem(proj.getId(), proj.getTitle(), null));
@@ -1455,7 +1455,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public void CalcMetadataAndImagesSelection() {
-        ArrayList<Process> auswahl = new ArrayList<Process>();
+        ArrayList<Process> auswahl = new ArrayList<>();
         for (Process p : (List<Process>) this.page.getListReload()) {
             if (p.isSelected()) {
                 auswahl.add(p);
@@ -1474,7 +1474,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
     private void CalcMetadataAndImages(List<Process> inListe) {
 
-        this.myAnzahlList = new ArrayList<ProcessCounterObject>();
+        this.myAnzahlList = new ArrayList<>();
         int allMetadata = 0;
         int allDocstructs = 0;
         int allImages = 0;
@@ -1543,7 +1543,7 @@ public class ProzessverwaltungForm extends BasisForm {
             averageDocstructs = allDocstructs / countOfProcessesWithDocstructs;
         }
 
-        this.myAnzahlSummary = new HashMap<String, Integer>();
+        this.myAnzahlSummary = new HashMap<>();
         this.myAnzahlSummary.put("sumProcesses", this.myAnzahlList.size());
         this.myAnzahlSummary.put("sumMetadata", allMetadata);
         this.myAnzahlSummary.put("sumDocstructs", allDocstructs);
@@ -1956,13 +1956,13 @@ public class ProzessverwaltungForm extends BasisForm {
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
                         this.showArchivedProjects);
                 HSSFWorkbook wb = sr.getResult();
-                List<List<HSSFCell>> rowList = new ArrayList<List<HSSFCell>>();
+                List<List<HSSFCell>> rowList = new ArrayList<>();
                 HSSFSheet mySheet = wb.getSheetAt(0);
                 Iterator<Row> rowIter = mySheet.rowIterator();
                 while (rowIter.hasNext()) {
                     HSSFRow myRow = (HSSFRow) rowIter.next();
                     Iterator<Cell> cellIter = myRow.cellIterator();
-                    List<HSSFCell> row = new ArrayList<HSSFCell>();
+                    List<HSSFCell> row = new ArrayList<>();
                     while (cellIter.hasNext()) {
                         HSSFCell myCell = (HSSFCell) cellIter.next();
                         row.add(myCell);
@@ -2110,7 +2110,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 logger.warn("could not refresh process with id " + this.myProzess.getId(), e);
             }
         }
-        this.containers = new TreeMap<Integer, PropertyListObject>();
+        this.containers = new TreeMap<>();
         this.processPropertyList = PropertyParser.getPropertiesForProcess(this.myProzess);
 
         for (ProcessProperty pt : this.processPropertyList) {
@@ -2140,7 +2140,7 @@ public class ProzessverwaltungForm extends BasisForm {
         boolean valid = true;
         for (IProperty p : this.processPropertyList) {
             if (!p.isValid()) {
-                List<String> param = new ArrayList<String>();
+                List<String> param = new ArrayList<>();
                 param.add(p.getName());
                 String value = Helper.getTranslation("propertyNotValid", param);
                 Helper.setFehlerMeldung(value);
@@ -2250,7 +2250,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     public List<Integer> getContainerList() {
-        return new ArrayList<Integer>(this.containers.keySet());
+        return new ArrayList<>(this.containers.keySet());
     }
 
     /**
@@ -2336,7 +2336,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return list of ProcessProperty objects
      */
     public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
 
         if (this.container != null && this.container > 0) {
             for (ProcessProperty pp : this.processPropertyList) {
@@ -2358,7 +2358,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String duplicateContainer() {
         Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> plist = new ArrayList<>();
         // search for all properties in container
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getContainer() == currentContainer) {
@@ -2410,7 +2410,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return list of ProcessProperty objects
      */
     public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
         for (ProcessProperty pp : this.processPropertyList) {
             if (pp.getContainer() == 0) {
                 answer.add(pp);
@@ -2424,7 +2424,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void createNewProperty() {
         if (this.processPropertyList == null) {
-            this.processPropertyList = new ArrayList<ProcessProperty>();
+            this.processPropertyList = new ArrayList<>();
         }
         ProcessProperty pp = new ProcessProperty();
         pp.setType(Type.TEXT);

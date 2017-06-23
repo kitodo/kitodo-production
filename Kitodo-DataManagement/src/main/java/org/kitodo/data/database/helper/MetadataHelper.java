@@ -35,7 +35,7 @@ public class MetadataHelper {
         /*
          * Typen und Suchbegriffe festlegen
          */
-        HashMap<String, String> types = new HashMap<String, String>();
+        HashMap<String, String> types = new HashMap<>();
         types.put("metsmods", "ugh.fileformats.mets.MetsModsImportExport".toLowerCase());
         types.put("mets", "www.loc.gov/METS/".toLowerCase());
         types.put("rdf", "<RDF:RDF ".toLowerCase());

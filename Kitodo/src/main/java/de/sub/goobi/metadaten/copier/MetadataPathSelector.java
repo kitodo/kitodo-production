@@ -213,7 +213,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     @Override
     protected Iterable<MetadataSelector> findAll(DocStruct logicalNode) {
-        LinkedList<MetadataSelector> result = new LinkedList<MetadataSelector>();
+        LinkedList<MetadataSelector> result = new LinkedList<>();
         List<DocStruct> children = logicalNode.getAllChildren();
         if (children == null) {
             children = Collections.emptyList();

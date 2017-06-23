@@ -57,7 +57,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
         items = getItems(projectName, DisplayType.select);
         if (binding != null) {
             List<Metadata> elements = binding.getMetadataByType(metadataType.getName());
-            List<String> selected = new ArrayList<String>(elements.size());
+            List<String> selected = new ArrayList<>(elements.size());
             for (Metadata m : elements) {
                 selected.add(m.getValue());
             }
@@ -87,7 +87,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      * @return the items to choose from
      */
     public Collection<SelectItem> getItems() {
-        ArrayList<SelectItem> result = new ArrayList<SelectItem>(items.size());
+        ArrayList<SelectItem> result = new ArrayList<>(items.size());
         for (Item item : items) {
             result.add(new SelectItem(item.getValue(), item.getLabel()));
         }
@@ -100,7 +100,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      * @return the items currently selected
      */
     public List<String> getSelectedItems() {
-        List<String> result = new ArrayList<String>(items.size());
+        List<String> result = new ArrayList<>(items.size());
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(item.getValue());
@@ -132,7 +132,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      */
     @Override
     public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<Metadata>(items.size());
+        List<Metadata> result = new ArrayList<>(items.size());
         for (Item item : items) {
             if (item.getIsSelected()) {
                 result.add(getMetadata(item.getValue()));

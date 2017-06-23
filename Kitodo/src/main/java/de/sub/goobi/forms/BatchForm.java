@@ -87,9 +87,9 @@ public class BatchForm extends BasisForm {
     public void loadBatchData() {
         if (selectedProcesses == null || selectedProcesses.size() == 0) {
             this.currentBatches = serviceManager.getBatchService().findAll();
-            this.selectedBatches = new ArrayList<Integer>();
+            this.selectedBatches = new ArrayList<>();
         } else {
-            selectedBatches = new ArrayList<Integer>();
+            selectedBatches = new ArrayList<>();
             List<Batch> batchesToSelect = new ArrayList<>();
             for (Process process : selectedProcesses) {
                 batchesToSelect.addAll(serviceManager.getProcessService().getBatchesInitialized(process));
@@ -109,7 +109,7 @@ public class BatchForm extends BasisForm {
             for (int b : selectedBatches) {
                 processes.addAll(serviceManager.getBatchService().find(b).getProcesses());
             }
-            currentProcesses = new ArrayList<Process>(processes);
+            currentProcesses = new ArrayList<>(processes);
         } catch (Exception e) { // NumberFormatException, DAOException
             logger.error(e);
             Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -137,7 +137,7 @@ public class BatchForm extends BasisForm {
         try {
             this.currentProcesses = crit.list();
         } catch (HibernateException e) {
-            this.currentProcesses = new ArrayList<Process>();
+            this.currentProcesses = new ArrayList<>();
         }
     }
 
@@ -159,7 +159,7 @@ public class BatchForm extends BasisForm {
      * @return list of select items
      */
     public List<SelectItem> getCurrentProcessesAsSelectItems() {
-        List<SelectItem> answer = new ArrayList<SelectItem>();
+        List<SelectItem> answer = new ArrayList<>();
         for (Process p : this.currentProcesses) {
             answer.add(new SelectItem(p, p.getTitle()));
         }
@@ -293,7 +293,7 @@ public class BatchForm extends BasisForm {
             Helper.setFehlerMeldung("noBatchSelected");
             return;
         }
-        List<Integer> ids = new ArrayList<Integer>(selectedBatchesSize);
+        List<Integer> ids = new ArrayList<>(selectedBatchesSize);
         for (Integer entry : this.selectedBatches) {
             ids.add(entry);
         }

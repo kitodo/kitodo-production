@@ -154,8 +154,8 @@ public class Course extends ArrayList<Block> {
     /**
      * List of Lists of Issues, each representing a process.
      */
-    private final List<List<IndividualIssue>> processes = new ArrayList<List<IndividualIssue>>();
-    private final Map<String, Block> resolveByBlockVariantCache = new HashMap<String, Block>();
+    private final List<List<IndividualIssue>> processes = new ArrayList<>();
+    private final Map<String, Block> resolveByBlockVariantCache = new HashMap<>();
 
     private boolean processesAreVolatile = true;
 
@@ -190,7 +190,7 @@ public class Course extends ArrayList<Block> {
             if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS)) {
                 continue;
             }
-            List<IndividualIssue> process = new ArrayList<IndividualIssue>(initialCapacity);
+            List<IndividualIssue> process = new ArrayList<>(initialCapacity);
             for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
                     .getNextSibling()) {
                 if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
@@ -347,7 +347,7 @@ public class Course extends ArrayList<Block> {
      *         representing one physically appeared issue
      */
     public LinkedHashSet<IndividualIssue> getIndividualIssues() {
-        LinkedHashSet<IndividualIssue> result = new LinkedHashSet<IndividualIssue>();
+        LinkedHashSet<IndividualIssue> result = new LinkedHashSet<>();
         LocalDate lastAppearance = getLastAppearance();
         for (LocalDate day = getFirstAppearance(); !day.isAfter(lastAppearance); day = day.plusDays(1)) {
             for (Block block : this) {
@@ -527,7 +527,7 @@ public class Course extends ArrayList<Block> {
                 process = null;
             }
             if (process == null) {
-                process = new ArrayList<IndividualIssue>(initialCapacity);
+                process = new ArrayList<>(initialCapacity);
             }
             process.add(issue);
             lastMark = mark;

@@ -148,7 +148,7 @@ public class Paginator {
     }
 
     private List addSquareBracketsToEachInSequence(List sequence) {
-        List<Object> fictitiousSequence = new ArrayList<Object>(sequence.size());
+        List<Object> fictitiousSequence = new ArrayList<>(sequence.size());
         for (Object o : sequence) {
             String newLabel = o.toString();
             fictitiousSequence.add("[" + newLabel + "]");
@@ -157,7 +157,7 @@ public class Paginator {
     }
 
     private List addAlternatingRectoVersoSuffixToEachInSequence(List sequence) {
-        List<Object> rectoversoSequence = new ArrayList<Object>(sequence.size());
+        List<Object> rectoversoSequence = new ArrayList<>(sequence.size());
         Boolean toggle = false;
         for (Object o : sequence) {
             String label = o.toString();
@@ -170,7 +170,7 @@ public class Paginator {
     }
 
     private List scrunchSequence(List sequence) {
-        List<Object> scrunchedSequence = new ArrayList<Object>((sequence.size() / 2));
+        List<Object> scrunchedSequence = new ArrayList<>((sequence.size() / 2));
         String prev = "";
         boolean scrunch = false;
         for (Object o : sequence) {
@@ -185,7 +185,7 @@ public class Paginator {
     }
 
     private List cloneEachInSequence(List sequence) {
-        List<Object> foliationSequence = new ArrayList<Object>(sequence.size() * 2);
+        List<Object> foliationSequence = new ArrayList<>(sequence.size() * 2);
         for (Object o : sequence) {
             foliationSequence.add(o);
             foliationSequence.add(o);

@@ -96,8 +96,8 @@ public class Metadaten {
     private Fileformat gdzfile;
     private DocStruct myDocStruct;
     private DocStruct tempStrukturelement;
-    private List<MetadatumImpl> myMetadaten = new LinkedList<MetadatumImpl>();
-    private List<MetaPerson> myPersonen = new LinkedList<MetaPerson>();
+    private List<MetadatumImpl> myMetadaten = new LinkedList<>();
+    private List<MetaPerson> myPersonen = new LinkedList<>();
     private MetadatumImpl curMetadatum;
     private MetaPerson curPerson;
     private DigitalDocument mydocument;
@@ -119,7 +119,7 @@ public class Metadaten {
     private String[] structSeitenAuswahl;
     private SelectItem alleSeiten[];
     private MetadatumImpl alleSeitenNeu[];
-    private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<MetadatumImpl>();
+    private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
     private String currentRepresentativePage = "";
 
@@ -178,7 +178,7 @@ public class Metadaten {
      * Konstruktor.
      */
     public Metadaten() {
-        this.treeProperties = new HashMap<String, Boolean>();
+        this.treeProperties = new HashMap<>();
         this.treeProperties.put("showtreelevel", Boolean.FALSE);
         this.treeProperties.put("showtitle", Boolean.FALSE);
         this.treeProperties.put("fullexpanded", Boolean.TRUE);
@@ -539,7 +539,7 @@ public class Metadaten {
      * die noch erlaubten Metadaten zurückgeben.
      */
     public ArrayList<SelectItem> getAddableMetadataTypes() {
-        ArrayList<SelectItem> myList = new ArrayList<SelectItem>();
+        ArrayList<SelectItem> myList = new ArrayList<>();
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln
          */
@@ -552,7 +552,7 @@ public class Metadaten {
          * alle Metadatentypen, die keine Person sind, oder mit einem
          * Unterstrich anfangen rausnehmen
          */
-        for (MetadataType mdt : new ArrayList<MetadataType>(types)) {
+        for (MetadataType mdt : new ArrayList<>(types)) {
             if (mdt.getIsPerson()) {
                 types.remove(mdt);
             }
@@ -899,8 +899,8 @@ public class Metadaten {
 
     private void saveMetadataAsBean(DocStruct inStrukturelement) {
         this.myDocStruct = inStrukturelement;
-        LinkedList<MetadatumImpl> lsMeta = new LinkedList<MetadatumImpl>();
-        LinkedList<MetaPerson> lsPers = new LinkedList<MetaPerson>();
+        LinkedList<MetadatumImpl> lsMeta = new LinkedList<>();
+        LinkedList<MetaPerson> lsPers = new LinkedList<>();
 
         /*
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
@@ -943,7 +943,7 @@ public class Metadaten {
     private String readMetadataAsTree1() {
         HashMap map;
         TreeNodeStruct3 knoten;
-        List<DocStruct> status = new ArrayList<DocStruct>();
+        List<DocStruct> status = new ArrayList<>();
 
         /*
          * den Ausklapp-Zustand aller Knoten erfassen
@@ -1174,7 +1174,7 @@ public class Metadaten {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
                 return "Metadaten3links";
             }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
+            List<DocStruct> alleDS = new ArrayList<>();
 
             /* alle Elemente des Parents durchlaufen */
             for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
@@ -1209,7 +1209,7 @@ public class Metadaten {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
                 return "Metadaten3links";
             }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
+            List<DocStruct> alleDS = new ArrayList<>();
 
             /* alle Elemente des Parents durchlaufen */
             for (Iterator<DocStruct> iter = parent.getAllChildren().iterator(); iter.hasNext();) {
@@ -1243,12 +1243,12 @@ public class Metadaten {
                 logger.debug("das gewählte Element kann den Vater nicht ermitteln");
                 return "Metadaten3links";
             }
-            List<DocStruct> alleDS = new ArrayList<DocStruct>();
+            List<DocStruct> alleDS = new ArrayList<>();
             alleDS.add(ds);
 
             if (parent.getAllChildren() != null && parent.getAllChildren().size() != 0) {
                 alleDS.addAll(parent.getAllChildren());
-                parent.getAllChildren().retainAll(new ArrayList<DocStruct>());
+                parent.getAllChildren().retainAll(new ArrayList<>());
             }
 
             /* anschliessend die neue Childliste anlegen */
@@ -2018,7 +2018,7 @@ public class Metadaten {
                 if (addrdf != null) {
 
                     /* die Liste aller erlaubten Metadatenelemente erstellen */
-                    List<String> erlaubte = new ArrayList<String>();
+                    List<String> erlaubte = new ArrayList<>();
                     for (Iterator<MetadataType> it = this.myDocStruct.getAddableMetadataTypes().iterator(); it
                             .hasNext();) {
                         MetadataType mt = it.next();
@@ -2126,7 +2126,7 @@ public class Metadaten {
 
     private int pageNumber = 0;
 
-    private SelectOne<Separator> paginierungSeparators = new SelectOne<Separator>(
+    private SelectOne<Separator> paginierungSeparators = new SelectOne<>(
             Separator.factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
 
     public int getPageNumber() {
@@ -2147,7 +2147,7 @@ public class Metadaten {
      */
     public List<String> getAjaxAlleSeiten(String prefix) {
         logger.debug("Ajax-Liste abgefragt");
-        List<String> li = new ArrayList<String>();
+        List<String> li = new ArrayList<>();
         if (this.alleSeiten != null && this.alleSeiten.length > 0) {
             for (SelectItem selectItem : this.alleSeiten) {
                 if (selectItem.getLabel().contains(prefix)) {
@@ -2874,8 +2874,8 @@ public class Metadaten {
      */
     public List<String> autocomplete(Object suggest) {
         String pref = (String) suggest;
-        ArrayList<String> result = new ArrayList<String>();
-        ArrayList<String> alle = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> alle = new ArrayList<>();
         for (SelectItem si : this.alleSeiten) {
             alle.add(si.getLabel());
         }
@@ -2932,7 +2932,7 @@ public class Metadaten {
      * Move selected pages up.
      */
     public void moveSeltectedPagesUp() {
-        List<Integer> selectedPages = new ArrayList<Integer>();
+        List<Integer> selectedPages = new ArrayList<>();
         List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
         List<String> pageNoList = Arrays.asList(alleSeitenAuswahl);
         for (String order : pageNoList) {
@@ -2946,7 +2946,7 @@ public class Metadaten {
         if (selectedPages.isEmpty()) {
             return;
         }
-        List<String> newSelectionList = new ArrayList<String>();
+        List<String> newSelectionList = new ArrayList<>();
         for (Integer pageIndex : selectedPages) {
             DocStruct firstpage = allPages.get(pageIndex - 1);
             DocStruct secondpage = allPages.get(pageIndex);
@@ -2964,7 +2964,7 @@ public class Metadaten {
      * Move selected pages down.
      */
     public void moveSeltectedPagesDown() {
-        List<Integer> selectedPages = new ArrayList<Integer>();
+        List<Integer> selectedPages = new ArrayList<>();
         List<DocStruct> allPages = mydocument.getPhysicalDocStruct().getAllChildren();
         List<String> pagesList = Arrays.asList(alleSeitenAuswahl);
         Collections.reverse(pagesList);
@@ -3018,7 +3018,7 @@ public class Metadaten {
             mydocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
 
             mydocument.getPhysicalDocStruct().removeChild(pageToRemove);
-            List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
+            List<Reference> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
             for (ugh.dl.Reference ref : refs) {
                 ref.getSource().removeReferenceTo(pageToRemove);
             }
@@ -3274,7 +3274,7 @@ public class Metadaten {
         if (records == null) {
             return Collections.emptyList();
         }
-        List<RenderableMetadataGroup> result = new ArrayList<RenderableMetadataGroup>(records.size());
+        List<RenderableMetadataGroup> result = new ArrayList<>(records.size());
         String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
         String projectName = myProzess.getProject().getTitle();
         for (MetadataGroup record : records) {

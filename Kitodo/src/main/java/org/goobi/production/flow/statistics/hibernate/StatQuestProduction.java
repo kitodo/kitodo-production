@@ -77,7 +77,7 @@ public class StatQuestProduction implements IStatisticalQuestionLimitedTimeframe
         // retrieving the statistical data
         Integer exactStepDone = null;
         String stepname = null;
-        List<DataTable> allTables = new ArrayList<DataTable>();
+        List<DataTable> allTables = new ArrayList<>();
 
         IEvaluableFilter originalFilter;
 

@@ -63,7 +63,7 @@ public class BatchStepHelper {
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
+    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
     private Integer container;
     private String myProblemStep;
     private String mySolutionStep;
@@ -74,7 +74,7 @@ public class BatchStepHelper {
     private String script;
     private final ServiceManager serviceManager = new ServiceManager();
     private final WebDav myDav = new WebDav();
-    private List<String> processNameList = new ArrayList<String>();
+    private List<String> processNameList = new ArrayList<>();
 
     /**
      * Constructor.
@@ -285,7 +285,7 @@ public class BatchStepHelper {
     }
 
     private void loadProcessProperties(Task s) {
-        this.containers = new TreeMap<Integer, PropertyListObject>();
+        this.containers = new TreeMap<>();
         this.processPropertyList = PropertyParser.getPropertiesForStep(s);
         List<Process> pList = new ArrayList<>();
         for (Task step : this.steps) {
@@ -352,7 +352,7 @@ public class BatchStepHelper {
      * @return list of containerless properties
      */
     public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
         for (ProcessProperty pp : this.processPropertyList) {
             if (pp.getContainer() == 0 && pp.getName() != null) {
                 answer.add(pp);
@@ -384,7 +384,7 @@ public class BatchStepHelper {
      * @return list of container properties
      */
     public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
 
         if (this.container != null && this.container > 0) {
             for (ProcessProperty pp : this.processPropertyList) {
@@ -406,7 +406,7 @@ public class BatchStepHelper {
      */
     public String duplicateContainerForSingle() {
         Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> plist = new ArrayList<>();
         // search for all properties in container
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getContainer() == currentContainer) {
@@ -460,7 +460,7 @@ public class BatchStepHelper {
      */
     public String duplicateContainerForAll() {
         Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> plist = new ArrayList<>();
         // search for all properties in container
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getContainer() == currentContainer) {
@@ -593,7 +593,7 @@ public class BatchStepHelper {
      */
     @SuppressWarnings("unchecked")
     public List<SelectItem> getPreviousStepsForProblemReporting() {
-        List<SelectItem> answer = new ArrayList<SelectItem>();
+        List<SelectItem> answer = new ArrayList<>();
         List<Task> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
                 .add(Restrictions.lt("ordering", this.currentStep.getOrdering())).addOrder(Order.desc("ordering"))
                 .createCriteria("process").add(Restrictions.idEq(this.currentStep.getProcess().getId())).list();
@@ -610,7 +610,7 @@ public class BatchStepHelper {
      */
     @SuppressWarnings("unchecked")
     public List<SelectItem> getNextStepsForProblemSolution() {
-        List<SelectItem> answer = new ArrayList<SelectItem>();
+        List<SelectItem> answer = new ArrayList<>();
         List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
                 .add(Restrictions.gt("ordering", this.currentStep.getOrdering())).add(Restrictions.eq("priority", 10))
                 .addOrder(Order.asc("ordering")).createCriteria("process")
@@ -956,7 +956,7 @@ public class BatchStepHelper {
                         Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
                         error = true;
                     } else if (!prop.isValid()) {
-                        List<String> parameter = new ArrayList<String>();
+                        List<String> parameter = new ArrayList<>();
                         parameter.add(prop.getName());
                         parameter.add(s.getProcess().getTitle());
                         Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyValidation", parameter));
@@ -982,7 +982,7 @@ public class BatchStepHelper {
      * @return list of names
      */
     public List<String> getScriptnames() {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         answer.addAll(serviceManager.getTaskService().getAllScripts(getCurrentStep()).keySet());
         return answer;
     }

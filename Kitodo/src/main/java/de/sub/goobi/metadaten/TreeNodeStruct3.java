@@ -41,7 +41,7 @@ public class TreeNodeStruct3 extends TreeNode {
         this.label = label;
         this.id = id;
         // TODO: Use generics
-        this.children = new ArrayList<TreeNode>();
+        this.children = new ArrayList<>();
     }
 
     public TreeNodeStruct3(String label, DocStruct struct) {

@@ -747,7 +747,7 @@ public class PicaPlugin implements Plugin {
      */
     @SuppressWarnings("unchecked")
     private static Collection<String> getFieldValues(Element inElement, String attributeValue) {
-        List<String> rueckgabe = new LinkedList<String>();
+        List<String> rueckgabe = new LinkedList<>();
 
         for (Iterator<Element> iter = inElement.getChildren().iterator(); iter.hasNext();) {
             Element subElement = iter.next();
@@ -776,7 +776,7 @@ public class PicaPlugin implements Plugin {
     private static Map<String, Object> createResult(String docType, Element hit, Fileformat fileformat) {
         final LocalTime DAY_END = new LocalTime(23, 59, 59, 999);
 
-        Map<String, Object> result = new HashMap<String, Object>(20);
+        Map<String, Object> result = new HashMap<>(20);
         LocalDate today = new LocalDate();
 
         result.put("fileformat", fileformat);

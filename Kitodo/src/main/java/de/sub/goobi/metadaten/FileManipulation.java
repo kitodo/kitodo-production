@@ -69,7 +69,7 @@ public class FileManipulation {
 
     private String uploadedFileName = null;
 
-    private List<String> selectedFiles = new ArrayList<String>();
+    private List<String> selectedFiles = new ArrayList<>();
 
     private boolean deleteFilesAfterMove = false;
 
@@ -121,7 +121,7 @@ public class FileManipulation {
             }
 
             if (fileService.fileExist(filename)) {
-                List<String> parameterList = new ArrayList<String>();
+                List<String> parameterList = new ArrayList<>();
                 parameterList.add(baseName);
                 Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
                 return;
@@ -328,7 +328,7 @@ public class FileManipulation {
         }
 
         if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-            List<String> paramList = new ArrayList<String>();
+            List<String> paramList = new ArrayList<>();
             // paramList.add(metadataBean.getMyProzess().getTitel());
             paramList.add(filenamePrefix);
             paramList.add(currentFolder);
@@ -389,7 +389,7 @@ public class FileManipulation {
             return;
         }
         List<DocStruct> allPages = metadataBean.getDocument().getPhysicalDocStruct().getAllChildren();
-        List<String> filenamesToMove = new ArrayList<String>();
+        List<String> filenamesToMove = new ArrayList<>();
 
         for (String fileIndex : selectedFiles) {
             try {
@@ -444,7 +444,7 @@ public class FileManipulation {
             selectedFiles.toArray(pagesArray);
             metadataBean.setAlleSeitenAuswahl(pagesArray);
             metadataBean.deleteSeltectedPages();
-            selectedFiles = new ArrayList<String>();
+            selectedFiles = new ArrayList<>();
             deleteFilesAfterMove = false;
         }
 

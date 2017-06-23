@@ -79,7 +79,7 @@ public class StatQuestUsergroups implements IStatisticalQuestion {
         }
 
         dtbl.addDataRow(dRow);
-        List<DataTable> allTables = new ArrayList<DataTable>();
+        List<DataTable> allTables = new ArrayList<>();
 
         dtbl.setUnitLabel(Helper.getTranslation("benutzergruppe"));
         allTables.add(dtbl);

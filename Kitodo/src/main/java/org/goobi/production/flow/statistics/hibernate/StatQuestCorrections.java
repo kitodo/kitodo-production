@@ -73,7 +73,7 @@ public class StatQuestCorrections implements IStatisticalQuestionLimitedTimefram
     @Override
     public List<DataTable> getDataTables(IDataSource dataSource) {
 
-        List<DataTable> allTables = new ArrayList<DataTable>();
+        List<DataTable> allTables = new ArrayList<>();
 
         IEvaluableFilter originalFilter;
 

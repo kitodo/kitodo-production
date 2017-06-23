@@ -58,7 +58,7 @@ public class MapMessageObjectReader {
      *             can be thrown by MapMessage.getObject(String)
      */
     public Set<String> getMandatorySetOfString(String key) throws IllegalArgumentException, JMSException {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         Boolean emptiness = Boolean.TRUE;
 
         Object collectionObject = ticket.getObject(key);
@@ -159,7 +159,7 @@ public class MapMessageObjectReader {
      *             type String.
      */
     public Map<String, String> getMapOfStringToString(String key) {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
 
         Object mapObject = null;
         try {

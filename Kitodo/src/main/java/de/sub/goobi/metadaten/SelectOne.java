@@ -41,7 +41,7 @@ public class SelectOne<T extends Selectable> {
      *            selectable elements
      */
     public SelectOne(Collection<T> elements) {
-        entries = new LinkedHashMap<String, T>((int) Math.ceil(elements.size() / 0.75));
+        entries = new LinkedHashMap<>((int) Math.ceil(elements.size() / 0.75));
         for (T element : elements) {
             entries.put(element.getId(), element);
         }

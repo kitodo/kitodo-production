@@ -130,7 +130,7 @@ public class MetadatenImagesHelper {
         DocStructType newPage = this.myPrefs.getDocStrctTypeByName("page");
         List<DocStruct> oldPages = physicaldocstruct.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
-            oldPages = new ArrayList<DocStruct>();
+            oldPages = new ArrayList<>();
         }
 
         /*
@@ -142,7 +142,7 @@ public class MetadatenImagesHelper {
         }
 
         String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
-        Map<String, DocStruct> assignedImages = new HashMap<String, DocStruct>();
+        Map<String, DocStruct> assignedImages = new HashMap<>();
         List<DocStruct> pageElementsWithoutImages = new ArrayList<>();
         List<URI> imagesWithoutPageElements = new ArrayList<>();
 
@@ -193,7 +193,7 @@ public class MetadatenImagesHelper {
         if (!pageElementsWithoutImages.isEmpty() && imagesWithoutPageElements.isEmpty()) {
             for (DocStruct pageToRemove : pageElementsWithoutImages) {
                 physicaldocstruct.removeChild(pageToRemove);
-                List<Reference> refs = new ArrayList<Reference>(pageToRemove.getAllFromReferences());
+                List<Reference> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
                 for (ugh.dl.Reference ref : refs) {
                     ref.getSource().removeReferenceTo(pageToRemove);
                 }
@@ -269,7 +269,7 @@ public class MetadatenImagesHelper {
                 } else {
                     // remove page
                     physicaldocstruct.removeChild(page);
-                    List<Reference> refs = new ArrayList<Reference>(page.getAllFromReferences());
+                    List<Reference> refs = new ArrayList<>(page.getAllFromReferences());
                     for (ugh.dl.Reference ref : refs) {
                         ref.getSource().removeReferenceTo(page);
                     }

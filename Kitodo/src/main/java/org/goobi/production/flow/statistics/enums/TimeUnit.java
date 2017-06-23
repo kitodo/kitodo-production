@@ -125,7 +125,7 @@ public enum TimeUnit {
      * @return list of TimeUnit objects
      */
     public static List<TimeUnit> getAllVisibleValues() {
-        ArrayList<TimeUnit> mylist = new ArrayList<TimeUnit>();
+        ArrayList<TimeUnit> mylist = new ArrayList<>();
         for (TimeUnit tu : TimeUnit.values()) {
             if (tu.visible) {
                 mylist.add(tu);
@@ -153,8 +153,7 @@ public enum TimeUnit {
      * @return date row
      */
     public List<String> getDateRow(Date start, Date end) {
-        List<String> dateRow = new ArrayList<String>();
-
+        List<String> dateRow = new ArrayList<>();
         Date nextDate = start;
 
         while (nextDate.before(end)) {

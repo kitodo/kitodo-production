@@ -169,7 +169,7 @@ public class IndividualIssue {
      * @return the generic fields for process title creation
      */
     public Map<String, String> getGenericFields() {
-        Map<String, String> result = new HashMap<String, String>(18);
+        Map<String, String> result = new HashMap<>(18);
         String heading = issue.getHeading();
         int length = heading.length();
         String upperCase = heading.toUpperCase();

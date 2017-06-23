@@ -150,7 +150,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
      */
     public static List<GoobiHotfolder> getInstances() {
         logger.trace("config 1");
-        List<GoobiHotfolder> answer = new ArrayList<GoobiHotfolder>();
+        List<GoobiHotfolder> answer = new ArrayList<>();
         logger.trace("config 2");
 
         try {
@@ -204,7 +204,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
             if (logger.isTraceEnabled()) {
                 logger.trace("config 19" + e.getMessage());
             }
-            return new ArrayList<GoobiHotfolder>();
+            return new ArrayList<>();
         }
         logger.trace("config 20");
         return answer;

@@ -127,7 +127,7 @@ public class Ldap {
         // Start TLS
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
             logger.debug("use TLS for auth");
-            env = new Hashtable<String, String>();
+            env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, ConfigCore.getParameter("ldap_url"));
             env.put("java.naming.ldap.version", "3");
@@ -235,7 +235,7 @@ public class Ldap {
         Hashtable<String, String> env = getLdapConnectionSettings();
         if (ConfigCore.getBooleanParameter("ldap_useTLS", false)) {
 
-            env = new Hashtable<String, String>();
+            env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, ConfigCore.getParameter("ldap_url"));
             env.put("java.naming.ldap.version", "3");
@@ -515,7 +515,7 @@ public class Ldap {
 
     private Hashtable<String, String> getLdapConnectionSettings() {
         // Set up environment for creating initial context
-        Hashtable<String, String> env = new Hashtable<String, String>(11);
+        Hashtable<String, String> env = new Hashtable<>(11);
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, ConfigCore.getParameter("ldap_url"));
         env.put(Context.SECURITY_AUTHENTICATION, "simple");

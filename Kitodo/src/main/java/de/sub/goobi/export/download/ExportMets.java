@@ -313,7 +313,7 @@ public class ExportMets {
                     if (sizeOfPagination == sizeOfImages) {
                         dd.overrideContentFiles(imageStrings);
                     } else {
-                        List<String> param = new ArrayList<String>();
+                        List<String> param = new ArrayList<>();
                         param.add(String.valueOf(sizeOfPagination));
                         param.add(String.valueOf(sizeOfImages));
                         Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));

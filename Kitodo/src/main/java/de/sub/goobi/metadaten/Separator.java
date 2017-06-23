@@ -43,7 +43,7 @@ public class Separator implements Selectable {
      * @return a list of separator objects
      */
     public static List<Separator> factory(String data) {
-        List<Separator> result = new LinkedList<Separator>();
+        List<Separator> result = new LinkedList<>();
         Matcher m = UNQUOTE.matcher(data);
         while (m.find()) {
             if (m.group(1) != null) {

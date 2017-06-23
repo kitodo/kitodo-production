@@ -78,7 +78,7 @@ public class SpracheForm implements Serializable {
      *         “selected”
      */
     public List<Map<String, Object>> getSupportedLocales() {
-        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> result = new ArrayList<>();
         Locale currentDisplayLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         @SuppressWarnings("unchecked")
         // It seems we have an old Faces API, Faces 2.1’s getSupportedLocales()
@@ -88,7 +88,7 @@ public class SpracheForm implements Serializable {
         while (localesIterator.hasNext()) {
             Locale supportedLocale = localesIterator.next();
             if (supportedLocale.getLanguage().length() > 0) {
-                Map<String, Object> translation = new HashMap<String, Object>();
+                Map<String, Object> translation = new HashMap<>();
                 translation.put("id", supportedLocale.toString());
                 translation.put("displayLanguageSelf", supportedLocale.getDisplayLanguage(supportedLocale));
                 translation.put("displayLanguageTranslated",

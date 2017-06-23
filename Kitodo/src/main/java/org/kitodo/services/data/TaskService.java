@@ -306,7 +306,7 @@ public class TaskService extends TitleSearchService<Task> {
      * @return array list
      */
     public ArrayList<String> getAllScriptPaths(Task task) {
-        ArrayList<String> answer = new ArrayList<String>();
+        ArrayList<String> answer = new ArrayList<>();
         if (task.getTypeAutomaticScriptPath() != null && !task.getTypeAutomaticScriptPath().equals("")) {
             answer.add(task.getTypeAutomaticScriptPath());
         }

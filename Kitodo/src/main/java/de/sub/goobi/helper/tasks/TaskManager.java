@@ -52,7 +52,7 @@ public class TaskManager {
     /**
      * The field taskList holds the list of threads managed by the task manager.
      */
-    final LinkedList<EmptyTask> taskList = new LinkedList<EmptyTask>();
+    final LinkedList<EmptyTask> taskList = new LinkedList<>();
 
     /**
      * TaskManager is a singleton so its constructor is private. It will be
@@ -114,7 +114,7 @@ public class TaskManager {
      * @return a copy of the task list
      */
     public static List<EmptyTask> getTaskList() {
-        return new ArrayList<EmptyTask>(singleton().taskList);
+        return new ArrayList<>(singleton().taskList);
     }
 
     /**

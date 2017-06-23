@@ -122,7 +122,7 @@ public class ComposeFormattedRule extends DataCopyrule {
     /**
      * Selectors for the data to be formatted.
      */
-    private final List<DataSelector> source = new LinkedList<DataSelector>();
+    private final List<DataSelector> source = new LinkedList<>();
 
     /**
      * Applies the rule to the given data object.
@@ -139,7 +139,7 @@ public class ComposeFormattedRule extends DataCopyrule {
         }
         Iterable<MetadataSelector> destinations = destination.findAll(data);
         destinationLoop: for (MetadataSelector particularDestination : destinations) {
-            List<String> objectStringValues = new LinkedList<String>();
+            List<String> objectStringValues = new LinkedList<>();
             for (DataSelector objectSelector : source) {
                 String value = objectSelector.findIn(new CopierData(data, particularDestination));
                 if (value == null) {

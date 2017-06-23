@@ -21,7 +21,7 @@ public class PropertyListObject implements Serializable {
 
     private static final long serialVersionUID = 1119130003588038047L;
 
-    private List<ProcessProperty> propertyList = new ArrayList<ProcessProperty>();
+    private List<ProcessProperty> propertyList = new ArrayList<>();
     private int containerNumber = 0;
 
     public PropertyListObject() {

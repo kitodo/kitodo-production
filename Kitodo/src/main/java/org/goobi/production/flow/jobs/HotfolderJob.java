@@ -95,7 +95,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 logger.trace("10");
                                 List<URI> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
                                 logger.trace("11");
-                                HashMap<String, Integer> failedData = new HashMap<String, Integer>();
+                                HashMap<String, Integer> failedData = new HashMap<>();
                                 logger.trace("12");
 
                                 for (URI filename : metsfiles) {
@@ -228,10 +228,10 @@ public class HotfolderJob extends AbstractGoobiJob {
             form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
             if (form.testTitle()) {
                 if (digitalCollection == null) {
-                    List<String> collections = new ArrayList<String>();
+                    List<String> collections = new ArrayList<>();
                     form.setDigitalCollections(collections);
                 } else {
-                    List<String> col = new ArrayList<String>();
+                    List<String> col = new ArrayList<>();
                     col.add(digitalCollection);
                     form.setDigitalCollections(col);
                 }

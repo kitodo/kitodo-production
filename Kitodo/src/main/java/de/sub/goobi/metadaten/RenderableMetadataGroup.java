@@ -109,7 +109,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     public RenderableMetadataGroup(Collection<MetadataGroupType> addableTypes, String projectName)
             throws ConfigurationException {
         super(addableTypes.iterator().next().getAllLanguages(), null);
-        possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.hashCapacityFor(addableTypes));
+        possibleTypes = new LinkedHashMap<>(Util.hashCapacityFor(addableTypes));
         for (MetadataGroupType possibleType : addableTypes) {
             possibleTypes.put(possibleType.getName(), possibleType);
         }
@@ -204,7 +204,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      */
     public RenderableMetadataGroup(RenderableMetadataGroup master, Collection<MetadataGroupType> addableTypes) {
         super(master.labels, null);
-        possibleTypes = new LinkedHashMap<String, MetadataGroupType>(Util.hashCapacityFor(addableTypes));
+        possibleTypes = new LinkedHashMap<>(Util.hashCapacityFor(addableTypes));
         for (MetadataGroupType possibleType : addableTypes) {
             possibleTypes.put(possibleType.getName(), possibleType);
         }
@@ -238,7 +238,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      */
     private final void createMembers(MetadataGroup data, boolean autoUpdate) throws ConfigurationException {
         List<MetadataType> requiredFields = data.getType().getMetadataTypeList();
-        members = new LinkedHashMap<String, RenderableGroupableMetadatum>(Util.hashCapacityFor(requiredFields));
+        members = new LinkedHashMap<>(Util.hashCapacityFor(requiredFields));
         for (MetadataType field : requiredFields) {
             RenderableGroupableMetadatum member;
             if (!(this instanceof RenderablePersonMetadataGroup)) {
@@ -325,7 +325,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      * @return the metadata group types available
      */
     public Collection<SelectItem> getPossibleTypes() {
-        ArrayList<SelectItem> result = new ArrayList<SelectItem>(possibleTypes.size());
+        ArrayList<SelectItem> result = new ArrayList<>(possibleTypes.size());
         for (Entry<String, MetadataGroupType> possibleType : possibleTypes.entrySet()) {
             result.add(new SelectItem(possibleType.getKey(), possibleType.getValue().getLanguage(language)));
         }
@@ -451,7 +451,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      */
     private final void updateMembers(MetadataGroupType newGroupType) throws ConfigurationException {
         List<MetadataType> requiredMetadataTypes = newGroupType.getMetadataTypeList();
-        Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<String, RenderableGroupableMetadatum>(
+        Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<>(
                 Util.hashCapacityFor(requiredMetadataTypes));
         for (MetadataType type : requiredMetadataTypes) {
             RenderableGroupableMetadatum member = members.get(type.getName());

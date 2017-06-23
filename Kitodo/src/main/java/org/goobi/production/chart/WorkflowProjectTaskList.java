@@ -29,7 +29,7 @@ public class WorkflowProjectTaskList implements IProvideProjectTaskList {
 
     @Override
     public List<IProjectTask> calculateProjectTasks(Project inProject, Boolean countImages, Integer inMax) {
-        List<IProjectTask> myTaskList = new ArrayList<IProjectTask>();
+        List<IProjectTask> myTaskList = new ArrayList<>();
         calculate(inProject, myTaskList, countImages, inMax);
         return myTaskList;
     }

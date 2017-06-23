@@ -128,7 +128,7 @@ public class HelperForm implements Serializable {
     }
 
     public List<SelectItem> getRegelsaetze() throws DAOException {
-        List<SelectItem> myPrefs = new ArrayList<SelectItem>();
+        List<SelectItem> myPrefs = new ArrayList<>();
         List<Ruleset> temp = serviceManager.getRulesetService().search("from Ruleset ORDER BY title");
         for (Iterator<Ruleset> iter = temp.iterator(); iter.hasNext();) {
             Ruleset an = iter.next();
@@ -138,7 +138,7 @@ public class HelperForm implements Serializable {
     }
 
     public List<SelectItem> getDockets() {
-        List<SelectItem> answer = new ArrayList<SelectItem>();
+        List<SelectItem> answer = new ArrayList<>();
         try {
             List<Docket> temp = serviceManager.getDocketService().search("from Docket ORDER BY title");
             for (Docket d : temp) {
@@ -152,7 +152,7 @@ public class HelperForm implements Serializable {
     }
 
     public List<String> getFileFormats() {
-        ArrayList<String> ffs = new ArrayList<String>();
+        ArrayList<String> ffs = new ArrayList<>();
         for (MetadataFormat ffh : MetadataFormat.values()) {
             if (!ffh.equals(MetadataFormat.RDF)) {
                 ffs.add(ffh.getName());
@@ -162,7 +162,7 @@ public class HelperForm implements Serializable {
     }
 
     public List<String> getFileFormatsInternalOnly() {
-        ArrayList<String> ffs = new ArrayList<String>();
+        ArrayList<String> ffs = new ArrayList<>();
         for (MetadataFormat ffh : MetadataFormat.values()) {
             if (ffh.isUsableForInternal()) {
                 if (!ffh.equals(MetadataFormat.RDF)) {
@@ -194,7 +194,7 @@ public class HelperForm implements Serializable {
     }
 
     public List<SelectItem> getCssFiles() {
-        List<SelectItem> myList = new ArrayList<SelectItem>();
+        List<SelectItem> myList = new ArrayList<>();
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);

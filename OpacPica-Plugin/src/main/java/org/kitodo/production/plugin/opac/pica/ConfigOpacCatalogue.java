@@ -137,7 +137,7 @@ class ConfigOpacCatalogue {
     private void executeBeautifierForElement(Element el) {
         for (ConfigOpacCatalogueBeautifier beautifier : this.beautifySetList) {
             int moreOccurrences;
-            HashSet<Element> processed = new HashSet<Element>();
+            HashSet<Element> processed = new HashSet<>();
             do {
                 Element elementToChange = null;
                 Element tagged = null;

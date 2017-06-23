@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Record {
 
-    private List<String> collections = new ArrayList<String>();
+    private List<String> collections = new ArrayList<>();
     private String data = "";
     private String id = "";
 

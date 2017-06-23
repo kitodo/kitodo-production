@@ -160,7 +160,7 @@ public class GranularityForm {
      */
     @SuppressWarnings("incomplete-switch")
     public List<SelectItem> getBatchOptions() {
-        List<SelectItem> result = new ArrayList<SelectItem>();
+        List<SelectItem> result = new ArrayList<>();
         if (granularity == null) {
             result.add(new SelectItem("null", Helper.getTranslation("granularity.batches.noData")));
         } else if (granularity == Granularity.YEARS) {

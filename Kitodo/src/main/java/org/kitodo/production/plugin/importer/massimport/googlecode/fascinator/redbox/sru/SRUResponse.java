@@ -69,7 +69,7 @@ public class SRUResponse {
 
         // Results List
         if (totalRecords == 0) {
-            resultsList = new ArrayList<Node>();
+            resultsList = new ArrayList<>();
         } else {
 
             resultsList = searchResponse.selectNodes("//srw:recordData");

@@ -108,7 +108,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private BatchStepHelper batchHelper;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
+    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
     private Integer container;
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;
@@ -118,7 +118,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Constructor.
      */
     public AktuelleSchritteForm() {
-        this.anzeigeAnpassen = new HashMap<String, Boolean>();
+        this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
         this.anzeigeAnpassen.put("selectionBoxes", false);
         this.anzeigeAnpassen.put("processId", false);
@@ -311,7 +311,7 @@ public class AktuelleSchritteForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public String takeOverBatch() {
         // find all steps with same batch id and step status
-        List<Task> currentStepsOfBatch = new ArrayList<Task>();
+        List<Task> currentStepsOfBatch = new ArrayList<>();
 
         String steptitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
@@ -400,7 +400,7 @@ public class AktuelleSchritteForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public String batchesEdit() {
         // find all steps with same batch id and step status
-        List<Task> currentStepsOfBatch = new ArrayList<Task>();
+        List<Task> currentStepsOfBatch = new ArrayList<>();
 
         String steptitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
@@ -544,7 +544,7 @@ public class AktuelleSchritteForm extends BasisForm {
                         + Helper.getTranslation("requiredValue"));
                 return null;
             } else if (!prop.isValid()) {
-                List<String> parameter = new ArrayList<String>();
+                List<String> parameter = new ArrayList<>();
                 parameter.add(prop.getName());
                 Helper.setFehlerMeldung(Helper.getTranslation("PropertyValidation", parameter));
                 return null;
@@ -1222,7 +1222,7 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     private void loadProcessProperties() {
-        this.containers = new TreeMap<Integer, PropertyListObject>();
+        this.containers = new TreeMap<>();
         this.processPropertyList = PropertyParser.getPropertiesForStep(this.mySchritt);
 
         for (ProcessProperty pt : this.processPropertyList) {
@@ -1296,7 +1296,7 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     public List<Integer> getContainerList() {
-        return new ArrayList<Integer>(this.containers.keySet());
+        return new ArrayList<>(this.containers.keySet());
     }
 
     /**
@@ -1347,7 +1347,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return list of properties
      */
     public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
         for (ProcessProperty pp : this.processPropertyList) {
             if (pp.getContainer() == 0) {
                 answer.add(pp);
@@ -1402,7 +1402,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String duplicateContainer() {
         Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> plist = new ArrayList<>();
         // search for all properties in container
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getContainer() == currentContainer) {

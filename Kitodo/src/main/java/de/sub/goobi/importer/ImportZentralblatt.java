@@ -81,7 +81,7 @@ public class ImportZentralblatt {
         this.separator = ":";
         boolean istAbsatz = false;
         boolean istErsterTitel = true;
-        LinkedList<DocStruct> listArtikel = new LinkedList<DocStruct>();
+        LinkedList<DocStruct> listArtikel = new LinkedList<>();
 
         /*
          * Vorbereitung der Dokumentenstruktur

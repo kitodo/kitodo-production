@@ -442,7 +442,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
      */
 
     public List<String> getSelectableSteps() {
-        List<String> selectableList = new ArrayList<String>();
+        List<String> selectableList = new ArrayList<>();
         selectableList.add(Helper.getTranslation("selectAll"));
         for (StepInformation steps : this.commonWorkFlow) {
             selectableList.add(steps.getTitle());
@@ -453,7 +453,7 @@ public class StatQuestProjectProgressData implements IStatisticalQuestionLimited
     public void setSelectedSteps(List<String> inSteps) {
         this.isDirty = true;
         if (inSteps.contains(Helper.getTranslation("selectAll"))) {
-            this.selectedSteps = new ArrayList<String>();
+            this.selectedSteps = new ArrayList<>();
             for (StepInformation steps : this.commonWorkFlow) {
                 this.selectedSteps.add(steps.getTitle());
                 this.terminatingStep = steps.getTitle();

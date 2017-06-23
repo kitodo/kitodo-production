@@ -66,7 +66,7 @@ public class GoobiScript {
      * Starten des Scripts.
      */
     public void execute(List<Process> inProzesse, String inScript) throws DataException {
-        this.myParameters = new HashMap<String, String>();
+        this.myParameters = new HashMap<>();
         /*
          * alle Suchparameter zerlegen und erfassen
          */
@@ -447,7 +447,7 @@ public class GoobiScript {
             s.setOrdering(Integer.parseInt(this.myParameters.get("number")));
             s.setProcess(proz);
             if (proz.getTasks() == null) {
-                proz.setTasks(new ArrayList<Task>());
+                proz.setTasks(new ArrayList<>());
             }
             proz.getTasks().add(s);
             try {

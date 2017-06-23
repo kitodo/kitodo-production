@@ -214,7 +214,7 @@ public class Helper implements Serializable, Observer {
      * @return a map with all language id strings and the corresponding resource
      */
     public static HashMap<String, String> getAllStrings(String key) {
-        HashMap<String, String> result = new HashMap<String, String>(Util.hashCapacityFor(commonMessages.entrySet()));
+        HashMap<String, String> result = new HashMap<>(Util.hashCapacityFor(commonMessages.entrySet()));
         @SuppressWarnings("unchecked")
         Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
         while (languages.hasNext()) {
@@ -343,8 +343,8 @@ public class Helper implements Serializable, Observer {
     }
 
     private static void loadMsgs() {
-        commonMessages = new HashMap<Locale, ResourceBundle>();
-        localMessages = new HashMap<Locale, ResourceBundle>();
+        commonMessages = new HashMap<>();
+        localMessages = new HashMap<>();
         if (FacesContext.getCurrentInstance() != null) {
             @SuppressWarnings("unchecked")
             Iterator<Locale> polyglot = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();

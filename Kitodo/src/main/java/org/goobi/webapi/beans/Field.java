@@ -69,7 +69,7 @@ public class Field {
             }
             Integer selectEntries = projectConfig.getParamList(fieldRef + ".select").size();
             if (selectEntries > 0) {
-                Map<String, String> selectConfig = new HashMap<String, String>();
+                Map<String, String> selectConfig = new HashMap<>();
                 for (Integer selectEntry = 0; selectEntry < selectEntries; selectEntry++) {
                     String key = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")");
                     String value = projectConfig.getParamString(fieldRef + ".select(" + selectEntry + ")[@label]");

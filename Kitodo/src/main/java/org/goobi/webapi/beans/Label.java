@@ -73,7 +73,7 @@ public class Label {
      * @return list of Label objects
      */
     public static List<Label> toListOfLabels(Map<String, String> data, KeyAttribute keyAttribute) {
-        List<Label> result = new ArrayList<Label>();
+        List<Label> result = new ArrayList<>();
         for (String key : data.keySet()) {
             Label entry = new Label();
             switch (keyAttribute) {

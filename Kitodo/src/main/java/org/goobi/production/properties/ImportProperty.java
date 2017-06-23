@@ -27,16 +27,16 @@ public class ImportProperty implements IProperty {
     private String validation = "";
     private Type type = Type.TEXT;
     private String value = "";
-    private List<String> possibleValues = new ArrayList<String>();
-    private List<String> projects = new ArrayList<String>();
+    private List<String> possibleValues = new ArrayList<>();
+    private List<String> projects = new ArrayList<>();
     private boolean required = false;
 
     /**
      * Constructor.
      */
     public ImportProperty() {
-        this.possibleValues = new ArrayList<String>();
-        this.projects = new ArrayList<String>();
+        this.possibleValues = new ArrayList<>();
+        this.projects = new ArrayList<>();
     }
 
     @Override
@@ -151,7 +151,7 @@ public class ImportProperty implements IProperty {
      */
     public List<String> getValueList() {
         String[] values = this.value.split("; ");
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         for (String val : values) {
             answer.add(val);
         }

@@ -100,7 +100,7 @@ public class MetadatenVerifizierung {
             try {
                 if (!identifierTopStruct.getValue()
                         .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
-                    List<String> parameter = new ArrayList<String>();
+                    List<String> parameter = new ArrayList<>();
                     parameter.add(identifierTopStruct.getType().getNameByLanguage(metadataLanguage));
                     parameter.add(logical.getType().getNameByLanguage(metadataLanguage));
 
@@ -112,7 +112,7 @@ public class MetadatenVerifizierung {
                 Metadata identifierFirstChild = firstChild.getAllIdentifierMetadata().get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
                         && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
-                    List<String> parameter = new ArrayList<String>();
+                    List<String> parameter = new ArrayList<>();
                     parameter.add(identifierTopStruct.getType().getName());
                     parameter.add(logical.getType().getName());
                     parameter.add(firstChild.getType().getName());
@@ -121,7 +121,7 @@ public class MetadatenVerifizierung {
                 }
                 if (!identifierFirstChild.getValue()
                         .replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "").equals("")) {
-                    List<String> parameter = new ArrayList<String>();
+                    List<String> parameter = new ArrayList<>();
                     parameter.add(identifierFirstChild.getType().getNameByLanguage(metadataLanguage));
                     parameter.add(firstChild.getType().getNameByLanguage(metadataLanguage));
                     Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
@@ -184,7 +184,7 @@ public class MetadatenVerifizierung {
         /*
          * auf mandatory Values der Metadaten prüfen
          */
-        List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<String>(),
+        List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<>(),
                 metadataLanguage);
         if (mandatoryList.size() != 0) {
             for (Iterator<String> iter = mandatoryList.iterator(); iter.hasNext();) {
@@ -199,7 +199,7 @@ public class MetadatenVerifizierung {
          * auf Details in den Metadaten prüfen, die in der Konfiguration
          * angegeben wurden
          */
-        List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<String>(),
+        List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<>(),
                 inPrefs, metadataLanguage);
         if (configuredList.size() != 0) {
             for (Iterator<String> iter = configuredList.iterator(); iter.hasNext();) {
@@ -226,7 +226,7 @@ public class MetadatenVerifizierung {
                 int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
                 int sizeOfImages = images.size();
                 if (sizeOfPagination != sizeOfImages) {
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(String.valueOf(sizeOfPagination));
                     param.add(String.valueOf(sizeOfImages));
                     Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
@@ -281,7 +281,7 @@ public class MetadatenVerifizierung {
     }
 
     private List<String> checkSeitenOhneDocstructs(Fileformat inRdf) throws PreferencesException {
-        List<String> rueckgabe = new ArrayList<String>();
+        List<String> rueckgabe = new ArrayList<>();
         DocStruct boundbook = inRdf.getDigitalDocument().getPhysicalDocStruct();
         /* wenn boundbook null ist */
         if (boundbook == null || boundbook.getAllChildren() == null) {
@@ -405,7 +405,7 @@ public class MetadatenVerifizierung {
             if (mdt != null) {
                 /* ein CreatorsAllOrigin soll erzeugt werden */
                 if (propCreateElementFrom != null) {
-                    ArrayList<MetadataType> listOfFromMdts = new ArrayList<MetadataType>();
+                    ArrayList<MetadataType> listOfFromMdts = new ArrayList<>();
                     StringTokenizer tokenizer = new StringTokenizer(propCreateElementFrom, "|");
                     while (tokenizer.hasMoreTokens()) {
                         String tok = tokenizer.nextToken();

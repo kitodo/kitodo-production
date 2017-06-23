@@ -573,7 +573,7 @@ public class Process extends BaseBean {
         List<Property> lpe = this.getProperties();
 
         if (lpe.isEmpty()) {
-            return new ArrayList<Property>();
+            return new ArrayList<>();
         }
 
         filteredList = filterForCorrectionSolutionMessages(lpe);
@@ -594,7 +594,7 @@ public class Process extends BaseBean {
             }
         });
 
-        return new ArrayList<Property>(filteredList);
+        return new ArrayList<>(filteredList);
     }
 
     /**
@@ -605,8 +605,8 @@ public class Process extends BaseBean {
      * @return List of filtered correction / solution messages
      */
     private List<Property> filterForCorrectionSolutionMessages(List<Property> propertyList) {
-        ArrayList<Property> filteredList = new ArrayList<Property>();
-        List<String> listOfTranslations = new ArrayList<String>();
+        ArrayList<Property> filteredList = new ArrayList<>();
+        List<String> listOfTranslations = new ArrayList<>();
         String propertyTitle = "";
 
         listOfTranslations.add("Korrektur notwendig");

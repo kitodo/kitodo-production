@@ -135,7 +135,7 @@ public class ExportDms_CorrectRusdml {
         String language = "";
 
         if (inStruct.getAllVisibleMetadata() != null) {
-            List<Metadata> kopie = new ArrayList<Metadata>(inStruct.getAllMetadata());
+            List<Metadata> kopie = new ArrayList<>(inStruct.getAllMetadata());
             for (Metadata meta : kopie) {
                 // Metadata meta = (Metadata) iter.next();
 
@@ -234,7 +234,7 @@ public class ExportDms_CorrectRusdml {
      */
     private void rusdmlDropPersons(DocStruct inStruct) {
         if (inStruct.getAllPersons() != null) {
-            List<Person> kopie = new ArrayList<Person>(inStruct.getAllPersons());
+            List<Person> kopie = new ArrayList<>(inStruct.getAllPersons());
             for (Iterator<Person> iter = kopie.iterator(); iter.hasNext();) {
                 Metadata meta = iter.next();
                 if (meta.getType().getName().equals("ZBLAuthor")) {

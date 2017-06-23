@@ -80,12 +80,12 @@ public class Citation {
      * The field contributors holds the list of editors, compilers, translators,
      * … of the anthology.
      */
-    private final List<String> contributors = new ArrayList<String>();
+    private final List<String> contributors = new ArrayList<>();
 
     /**
      * The field creators holds the list of creators of the work.
      */
-    private final List<String> creators = new ArrayList<String>();
+    private final List<String> creators = new ArrayList<>();
 
     /**
      * The field department holds the department of the author.

@@ -109,7 +109,7 @@ public class RenderableEdit extends RenderableMetadatum
      */
     @Override
     public List<Metadata> toMetadata() {
-        List<Metadata> result = new ArrayList<Metadata>(1);
+        List<Metadata> result = new ArrayList<>(1);
         result.add(getMetadata(value));
         return result;
     }

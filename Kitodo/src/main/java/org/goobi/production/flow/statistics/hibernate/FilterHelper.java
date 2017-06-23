@@ -85,7 +85,7 @@ public class FilterHelper {
             return;
         }
         /* init id-list, preset with item 0 */
-        List<Integer> idList = new ArrayList<Integer>();
+        List<Integer> idList = new ArrayList<>();
         idList.add(0);
 
         /*
@@ -434,7 +434,7 @@ public class FilterHelper {
      */
     private static void filterIds(Conjunction con, String tok) {
         /* filtering by ids */
-        List<Integer> listIds = new ArrayList<Integer>();
+        List<Integer> listIds = new ArrayList<>();
         if (tok.substring(tok.indexOf(":") + 1).length() > 0) {
             String[] tempids = tok.substring(tok.indexOf(":") + 1).split(" ");
             for (String tempId : tempids) {

@@ -46,27 +46,27 @@ public class SearchForm {
      */
     private static final Logger logger = LogManager.getLogger(SearchForm.class);
 
-    private List<String> projects = new ArrayList<String>(); // proj:
+    private List<String> projects = new ArrayList<>(); // proj:
     private String project = "";
 
-    private List<String> processPropertyTitles = new ArrayList<String>(); // processeig:
+    private List<String> processPropertyTitles = new ArrayList<>(); // processeig:
     private String processPropertyTitle = "";
     private String processPropertyValue = "";
 
-    private List<String> masterpiecePropertyTitles = new ArrayList<String>(); // werk:
+    private List<String> masterpiecePropertyTitles = new ArrayList<>(); // werk:
     private String masterpiecePropertyTitle = "";
     private String masterpiecePropertyValue = "";
 
-    private List<String> templatePropertyTitles = new ArrayList<String>();// vorl:
+    private List<String> templatePropertyTitles = new ArrayList<>();// vorl:
     private String templatePropertyTitle = "";
     private String templatePropertyValue = "";
 
-    private List<String> stepTitles = new ArrayList<String>(); // step:
-    private List<TaskStatus> stepstatus = new ArrayList<TaskStatus>();
+    private List<String> stepTitles = new ArrayList<>(); // step:
+    private List<TaskStatus> stepstatus = new ArrayList<>();
     private String status = "";
     private String stepname = "";
 
-    private List<User> user = new ArrayList<User>();
+    private List<User> user = new ArrayList<>();
     private String stepdonetitle = "";
     private String stepdoneuser = "";
 
@@ -459,7 +459,7 @@ public class SearchForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getOperands() {
-        List<SelectItem> answer = new ArrayList<SelectItem>();
+        List<SelectItem> answer = new ArrayList<>();
         SelectItem and = new SelectItem("", Helper.getTranslation("AND"));
         SelectItem not = new SelectItem("-", Helper.getTranslation("NOT"));
         answer.add(and);

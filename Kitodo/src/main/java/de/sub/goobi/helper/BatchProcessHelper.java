@@ -36,7 +36,7 @@ public class BatchProcessHelper {
     private Process currentProcess;
     private List<ProcessProperty> processPropertyList;
     private ProcessProperty processProperty;
-    private Map<Integer, PropertyListObject> containers = new TreeMap<Integer, PropertyListObject>();
+    private Map<Integer, PropertyListObject> containers = new TreeMap<>();
     private Integer container;
 
     /**
@@ -87,7 +87,7 @@ public class BatchProcessHelper {
         return this.processPropertyList;
     }
 
-    private List<String> processNameList = new ArrayList<String>();
+    private List<String> processNameList = new ArrayList<>();
 
     public List<String> getProcessNameList() {
         return this.processNameList;
@@ -128,7 +128,7 @@ public class BatchProcessHelper {
         for (ProcessProperty pp : ppList) {
             this.processProperty = pp;
             if (!this.processProperty.isValid()) {
-                List<String> param = new ArrayList<String>();
+                List<String> param = new ArrayList<>();
                 param.add(processProperty.getName());
                 String value = Helper.getTranslation("propertyNotValid", param);
                 Helper.setFehlerMeldung(value);
@@ -256,7 +256,7 @@ public class BatchProcessHelper {
 
     private void loadProcessProperties(Process process) {
         serviceManager.getProcessService().refresh(this.currentProcess);
-        this.containers = new TreeMap<Integer, PropertyListObject>();
+        this.containers = new TreeMap<>();
         this.processPropertyList = PropertyParser.getPropertiesForProcess(this.currentProcess);
 
         for (ProcessProperty pt : this.processPropertyList) {
@@ -319,7 +319,7 @@ public class BatchProcessHelper {
      * @return list of process properties
      */
     public List<ProcessProperty> getContainerlessProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
         for (ProcessProperty pp : this.processPropertyList) {
             if (pp.getContainer() == 0 && pp.getName() != null) {
                 answer.add(pp);
@@ -333,7 +333,7 @@ public class BatchProcessHelper {
     }
 
     public List<Integer> getContainerList() {
-        return new ArrayList<Integer>(this.containers.keySet());
+        return new ArrayList<>(this.containers.keySet());
     }
 
     /**
@@ -355,7 +355,7 @@ public class BatchProcessHelper {
      * @return list of process properties
      */
     public List<ProcessProperty> getContainerProperties() {
-        List<ProcessProperty> answer = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> answer = new ArrayList<>();
 
         if (this.container != null && this.container > 0) {
             for (ProcessProperty pp : this.processPropertyList) {
@@ -377,7 +377,7 @@ public class BatchProcessHelper {
      */
     public String duplicateContainerForSingle() {
         Integer currentContainer = this.processProperty.getContainer();
-        List<ProcessProperty> plist = new ArrayList<ProcessProperty>();
+        List<ProcessProperty> plist = new ArrayList<>();
         // search for all properties in container
         for (ProcessProperty pt : this.processPropertyList) {
             if (pt.getContainer() == currentContainer) {

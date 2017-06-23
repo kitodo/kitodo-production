@@ -160,7 +160,7 @@ public class StatistikForm {
             Criteria crit = session.createCriteria(Task.class);
 
             /* Liste der IDs */
-            List<Integer> trefferListe = new ArrayList<Integer>();
+            List<Integer> trefferListe = new ArrayList<>();
 
             /*
              * die Treffer der Benutzergruppen

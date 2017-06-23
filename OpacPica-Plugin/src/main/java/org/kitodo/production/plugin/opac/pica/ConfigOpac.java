@@ -70,7 +70,7 @@ class ConfigOpac {
                 // Opac-Beautifier einlesen und in Liste zu jedem Catalogue
                 // packen
 
-                ArrayList<ConfigOpacCatalogueBeautifier> beautyList = new ArrayList<ConfigOpacCatalogueBeautifier>();
+                ArrayList<ConfigOpacCatalogueBeautifier> beautyList = new ArrayList<>();
                 for (int j = 0; j <= getConfig().getMaxIndex("catalogue(" + i + ").beautify.setvalue"); j++) {
                     /* Element, dessen Wert geändert werden soll */
                     String tempJ = "catalogue(" + i + ").beautify.setvalue(" + j + ")";
@@ -106,7 +106,7 @@ class ConfigOpac {
      * Return all configured Doctype-Titles from Configfile.
      */
     private static ArrayList<String> getAllDoctypeTitles() {
-        ArrayList<String> myList = new ArrayList<String>();
+        ArrayList<String> myList = new ArrayList<>();
         int countTypes = getConfig().getMaxIndex("doctypes.type");
         for (int i = 0; i <= countTypes; i++) {
             String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
@@ -119,7 +119,7 @@ class ConfigOpac {
      * Return all configured Doctype-Titles from Configfile.
      */
     static ArrayList<ConfigOpacDoctype> getAllDoctypes() {
-        ArrayList<ConfigOpacDoctype> myList = new ArrayList<ConfigOpacDoctype>();
+        ArrayList<ConfigOpacDoctype> myList = new ArrayList<>();
         for (String title : getAllDoctypeTitles()) {
             myList.add(getDoctypeByName(title));
         }
@@ -138,7 +138,7 @@ class ConfigOpac {
 
                 // alle speziell gemappten DocTypes eines Kataloges einlesen
 
-                HashMap<String, String> labels = new HashMap<String, String>();
+                HashMap<String, String> labels = new HashMap<>();
                 int countLabels = getConfig().getMaxIndex("catalogue(" + i + ").specialmapping");
                 for (int j = 0; j <= countLabels; j++) {
                     String type = getConfig().getString("catalogue(" + i + ").specialmapping[@type]");

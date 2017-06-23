@@ -99,10 +99,10 @@ public class NLAIdentity {
     }
 
     private List<Map<String, String>> getSourceIdentities() {
-        List<Map<String, String>> returnList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> returnList = new ArrayList<>();
 
         // Top level institution
-        Map<String, String> idMap = new HashMap<String, String>();
+        Map<String, String> idMap = new HashMap<>();
         Node institutionNode = eac.selectSingleNode("eac:eac-cpf/eac:control/eac:maintenanceAgency/eac:agencyName");
         String institutionString = institutionNode.getText();
         // Top level name
@@ -138,7 +138,7 @@ public class NLAIdentity {
             List<Node> idNodes = identity.selectNodes("*//eac:identity");
             for (Node idNode : idNodes) {
                 // A Map for each name
-                idMap = new HashMap<String, String>();
+                idMap = new HashMap<>();
                 // Get all the names this ID lists
                 nameList = getNames(idNode);
                 for (Map<String, String> name : nameList) {
@@ -162,13 +162,13 @@ public class NLAIdentity {
     }
 
     private List<Map<String, String>> getNames(Node node) {
-        List<Map<String, String>> nameList = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> nameList = new ArrayList<>();
 
         // Any names for this ID
         @SuppressWarnings("unchecked")
         List<Node> names = node.selectNodes("eac:nameEntry");
         for (Node name : names) {
-            Map<String, String> nameMap = new HashMap<String, String>();
+            Map<String, String> nameMap = new HashMap<>();
 
             String thisDisplay = null;
             String thisFirstName = null;
@@ -355,7 +355,7 @@ public class NLAIdentity {
      */
     public static List<NLAIdentity> convertNodesToIdentities(List<Node> nodes, boolean haltOnErrors)
             throws SRUException {
-        List<NLAIdentity> response = new ArrayList<NLAIdentity>();
+        List<NLAIdentity> response = new ArrayList<>();
         // Sanity check
         if (nodes == null || nodes.isEmpty()) {
             return response;

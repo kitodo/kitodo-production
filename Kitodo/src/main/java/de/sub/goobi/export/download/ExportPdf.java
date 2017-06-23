@@ -131,7 +131,7 @@ public class ExportPdf extends ExportMets {
                     ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
                     int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                             + myProcess.getTitle().length() + PDF_EXTENSION.length();
-                    TreeSet<String> filenames = new TreeSet<String>(new MetadatenHelper(null, null));
+                    TreeSet<String> filenames = new TreeSet<>(new MetadatenHelper(null, null));
                     for (URI data : meta) {
                         String file = data.toURL().toString();
                         filenames.add(file);

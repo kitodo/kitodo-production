@@ -456,7 +456,7 @@ public class ProcessService extends TitleSearchService<Process> {
             logger.debug("Hibernate exception: ", e);
         }
         if (process.getHistory() == null) {
-            process.setHistory(new ArrayList<History>());
+            process.setHistory(new ArrayList<>());
         }
         return process.getHistory();
     }
@@ -1253,7 +1253,7 @@ public class ProcessService extends TitleSearchService<Process> {
      */
     protected List<Property> filterForCorrectionSolutionMessages(List<Property> lpe) {
         ArrayList<Property> filteredList = new ArrayList<>();
-        List<String> listOfTranslations = new ArrayList<String>();
+        List<String> listOfTranslations = new ArrayList<>();
         String propertyTitle = "";
 
         listOfTranslations.add("Korrektur notwendig");
@@ -1797,7 +1797,7 @@ public class ProcessService extends TitleSearchService<Process> {
                 if (sizeOfPagination == sizeOfImages) {
                     dd.overrideContentFiles(imageStrings);
                 } else {
-                    List<String> param = new ArrayList<String>();
+                    List<String> param = new ArrayList<>();
                     param.add(String.valueOf(sizeOfPagination));
                     param.add(String.valueOf(sizeOfImages));
                     Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));

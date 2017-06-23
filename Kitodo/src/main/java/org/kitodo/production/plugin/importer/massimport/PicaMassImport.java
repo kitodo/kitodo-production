@@ -469,7 +469,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<ImportObject> generateFiles(List<Record> records) {
-        List<ImportObject> answer = new ArrayList<ImportObject>();
+        List<ImportObject> answer = new ArrayList<>();
 
         for (Record r : records) {
             this.data = r.getData();
@@ -518,12 +518,12 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<Record> splitRecords(String records) {
-        return new ArrayList<Record>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<Record> generateRecordsFromFile() {
-        List<Record> records = new ArrayList<Record>();
+        List<Record> records = new ArrayList<>();
 
         try (InputStream myxls = new FileInputStream(importFile)) {
             if (importFile.getName().endsWith(".xlsx")) {
@@ -655,7 +655,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<Record> generateRecordsFromFilenames(List<String> filenames) {
-        return new ArrayList<Record>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -665,24 +665,24 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public List<String> splitIds(String ids) {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<ImportType> getImportTypes() {
-        List<ImportType> answer = new ArrayList<ImportType>();
+        List<ImportType> answer = new ArrayList<>();
         answer.add(ImportType.FILE);
         return answer;
     }
 
     @Override
     public List<ImportProperty> getProperties() {
-        return new ArrayList<ImportProperty>();
+        return new ArrayList<>();
     }
 
     @Override
     public List<String> getAllFilenames() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     @Override

@@ -58,7 +58,7 @@ public class CourseToGerman {
      * @return Verbal description of the course in German
      */
     public static List<String> asReadableText(Course course) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (course.isEmpty()) {
             return result;
         }
@@ -191,7 +191,7 @@ public class CourseToGerman {
         }
 
         TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates
-                : new TreeSet<LocalDate>(dates);
+                : new TreeSet<>(dates);
 
         Iterator<LocalDate> datesIterator = orderedDates.iterator();
 

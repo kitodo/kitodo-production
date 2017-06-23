@@ -150,7 +150,7 @@ public class ShellScript {
      */
     public int run(List<String> args) throws IOException {
 
-        List<String> commandLine = new ArrayList<String>();
+        List<String> commandLine = new ArrayList<>();
         commandLine.add(command);
         if (args != null) {
             commandLine.addAll(args);
@@ -196,7 +196,7 @@ public class ShellScript {
      * @return A linked list holding the single lines.
      */
     public static LinkedList<String> inputStreamToLinkedList(InputStream myInputStream) {
-        LinkedList<String> result = new LinkedList<String>();
+        LinkedList<String> result = new LinkedList<>();
         Scanner inputLines = null;
         try {
             inputLines = new Scanner(myInputStream, "UTF-8");
@@ -248,7 +248,7 @@ public class ShellScript {
         int err = ShellScript.ERRORLEVEL_ERROR;
         try {
             s = new ShellScript(new File(tokenisedCommand[0]));
-            ArrayList<String> scriptingArgs = new ArrayList<String>();
+            ArrayList<String> scriptingArgs = new ArrayList<>();
             for (int i = 1; i < tokenisedCommand.length; i++) {
                 scriptingArgs.add(tokenisedCommand[i]);
             }

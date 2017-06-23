@@ -42,9 +42,9 @@ public class HibernateUtilOld {
 
     private static Configuration configuration;
     private static SessionFactory sessionFactory;
-    private static final ThreadLocal<Session> threadSession = new ThreadLocal<Session>();
-    private static final ThreadLocal<Transaction> threadTransaction = new ThreadLocal<Transaction>();
-    private static final ThreadLocal<Interceptor> threadInterceptor = new ThreadLocal<Interceptor>();
+    private static final ThreadLocal<Session> threadSession = new ThreadLocal<>();
+    private static final ThreadLocal<Transaction> threadTransaction = new ThreadLocal<>();
+    private static final ThreadLocal<Interceptor> threadInterceptor = new ThreadLocal<>();
     private static final Object sessionFactoryRebuildLock = new Object();
 
     // Create the initial SessionFactory from the default configuration files

@@ -152,7 +152,7 @@ public class ConfigProjects {
             return this.config.getList(this.projektTitel + inParameter);
         } catch (RuntimeException e) {
             logger.error(e);
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 
