@@ -1096,10 +1096,10 @@ public class ProzessverwaltungForm extends BasisForm {
         List<Task> taskList = serviceManager.getProcessService().find(processId).getTasks();
 
         for (Task t : taskList) {
-            if (t.getProcessingStatus() != TaskStatus.DONE.getValue()) {
+            if (!t.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
                 t.setProcessingStatus(t.getProcessingStatus() + 1);
                 t.setEditType(TaskEditType.ADMIN.getValue());
-                if (t.getProcessingStatus() == TaskStatus.DONE.getValue()) {
+                if (t.getProcessingStatus().equals(TaskStatus.DONE.getValue())) {
                     serviceManager.getTaskService().close(t, true);
                 } else {
                     User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");

@@ -589,7 +589,8 @@ public class TaskService extends TitleSearchService<Task> {
         List<Task> allehoeherenSchritte = new ArrayList<>();
         int offeneSchritteGleicherReihenfolge = 0;
         for (Task so : steps) {
-            if (so.getOrdering() == task.getOrdering() && so.getProcessingStatus() != 3 && so.getId() != task.getId()) {
+            if (so.getOrdering().equals(task.getOrdering()) && so.getProcessingStatus() != 3
+                    && !so.getId().equals(task.getId())) {
                 offeneSchritteGleicherReihenfolge++;
             } else if (so.getOrdering() > task.getOrdering()) {
                 allehoeherenSchritte.add(so);
