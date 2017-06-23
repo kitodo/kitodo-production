@@ -177,11 +177,7 @@ public class ImportProperty implements IProperty {
      * @return boolean
      */
     public boolean getBooleanValue() {
-        if (this.value.equalsIgnoreCase("true")) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.value.equalsIgnoreCase("true");
     }
 
     /**

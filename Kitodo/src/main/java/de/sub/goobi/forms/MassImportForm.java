@@ -379,11 +379,8 @@ public class MassImportForm implements Serializable {
      */
 
     private boolean testForData() {
-        if (StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
-                && this.selectedFilenames.size() == 0) {
-            return false;
-        }
-        return true;
+        return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
+                && this.selectedFilenames.size() == 0);
     }
 
     /**

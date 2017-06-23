@@ -247,10 +247,8 @@ public class HibernateUtilOld {
      * @return open session
      */
     public static boolean hasOpenSession() {
-        Session s = threadSession.get();
-        if (s == null) {
-            return false;
-        }
-        return true;
+        Session session = threadSession.get();
+
+        return session != null;
     }
 }

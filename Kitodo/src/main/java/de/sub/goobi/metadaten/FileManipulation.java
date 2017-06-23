@@ -643,11 +643,8 @@ public class FileManipulation {
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
 
         String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
-        if (!afterLastBackslash.matches(prefix + "\\..+")) {
-            return false;
-        }
 
-        return true;
+        return afterLastBackslash.matches(prefix + "\\..+");
     }
 
 }

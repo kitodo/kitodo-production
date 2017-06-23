@@ -365,11 +365,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * @return boolean
      */
     public boolean getBooleanValue() {
-        if (this.value != null && this.value.equalsIgnoreCase("true")) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.value != null && this.value.equalsIgnoreCase("true");
     }
 
     /**
@@ -404,10 +400,7 @@ public class ProcessProperty implements IProperty, Serializable {
      * @return boolean
      */
     public boolean getIsNew() {
-        if (this.name == null || this.name.length() == 0) {
-            return true;
-        }
-        return false;
+        return this.name == null || this.name.length() == 0;
     }
 
     public AccessCondition getCurrentStepAccessCondition() {

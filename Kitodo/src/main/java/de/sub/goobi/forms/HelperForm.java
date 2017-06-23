@@ -264,11 +264,8 @@ public class HelperForm implements Serializable {
     public boolean getIsIE() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-        if (request.getHeader("User-Agent").contains("MSIE")) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return request.getHeader("User-Agent").contains("MSIE");
     }
 
     public String getUserAgent() {

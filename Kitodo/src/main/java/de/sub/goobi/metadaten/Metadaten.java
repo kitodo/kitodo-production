@@ -886,10 +886,8 @@ public class Metadaten {
      */
     public boolean isCheckForRepresentative() {
         MetadataType mdt = myPrefs.getMetadataTypeByName("_representative");
-        if (mdt != null) {
-            return true;
-        }
-        return false;
+
+        return mdt != null;
     }
 
     /**
