@@ -82,7 +82,7 @@ public class Import {
              */
 
             /* russischer Import */
-            if (this.mySchritt.isTypeImportFileUpload() && this.mySchritt.isTypeExportRussian() == true) {
+            if (this.mySchritt.isTypeImportFileUpload() && this.mySchritt.isTypeExportRussian()) {
                 String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.UTF_16LE);
                 reader = new BufferedReader(new StringReader(gesamteDatei));
                 ImportRussland myImport = new ImportRussland();
@@ -91,7 +91,7 @@ public class Import {
             }
 
             /* Zentralblatt-Import */
-            if (this.mySchritt.isTypeImportFileUpload() && this.mySchritt.isTypeExportRussian() == false) {
+            if (this.mySchritt.isTypeImportFileUpload() && !this.mySchritt.isTypeExportRussian()) {
                 String gesamteDatei = new String(this.upDatei.getBytes(), StandardCharsets.ISO_8859_1);
                 reader = new BufferedReader(new StringReader(gesamteDatei));
                 ImportZentralblatt myImport = new ImportZentralblatt();

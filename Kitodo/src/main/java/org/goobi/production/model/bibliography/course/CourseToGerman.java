@@ -90,7 +90,7 @@ public class CourseToGerman {
     private static String titleToString(Block block, boolean subsequentBlock) {
         StringBuilder result = new StringBuilder(500);
         int currentIssuesSize = block.getIssues().size();
-        if (subsequentBlock == false) {
+        if (!subsequentBlock) {
             result.append("Die Zeitung erschien vom ");
             appendDate(result, block.getFirstAppearance());
         } else {
