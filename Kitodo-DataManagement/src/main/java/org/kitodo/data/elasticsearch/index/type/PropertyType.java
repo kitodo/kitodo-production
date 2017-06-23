@@ -11,16 +11,11 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import java.util.List;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workpiece;
 
 /**
  * Implementation of Property Type.

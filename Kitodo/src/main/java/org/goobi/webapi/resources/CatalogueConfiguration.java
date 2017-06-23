@@ -13,8 +13,6 @@ package org.goobi.webapi.resources;
 
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
-import java.io.IOException;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;

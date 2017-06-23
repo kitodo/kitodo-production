@@ -21,10 +21,6 @@ import org.apache.http.HttpEntity;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
 
 /**
