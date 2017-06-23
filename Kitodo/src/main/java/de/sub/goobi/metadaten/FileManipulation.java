@@ -536,9 +536,8 @@ public class FileManipulation {
                             URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
                                     currentProcess);
                             ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                            List<URI> sortedList = objectInFolder;
-                            Collections.sort(sortedList);
-                            for (URI file : sortedList) {
+                            Collections.sort(objectInFolder);
+                            for (URI file : objectInFolder) {
                                 fileService.copyFileToDirectory(file, masterDirectory);
                             }
                         } catch (IOException e) {
@@ -552,17 +551,15 @@ public class FileManipulation {
                                     currentProcess);
                             if (folderName != null) {
                                 try {
-                                    URI directory = folderName;
                                     ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                                    List<URI> sortedList = objectInFolder;
-                                    Collections.sort(sortedList);
-                                    for (URI file : sortedList) {
+                                    Collections.sort(objectInFolder);
+                                    for (URI file : objectInFolder) {
                                         if (serviceManager.getProcessService()
                                                 .getImagesTifDirectory(false, currentProcess)
                                                 .equals(folderName + File.separator)) {
                                             importedFilenames.add(file);
                                         }
-                                        fileService.copyFileToDirectory(file, directory);
+                                        fileService.copyFileToDirectory(file, folderName);
                                     }
                                 } catch (IOException e) {
                                     logger.error(e);
@@ -579,17 +576,15 @@ public class FileManipulation {
                         URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix,
                                 currentProcess);
                         if (folderName != null) {
-                            URI directory = folderName;
                             ArrayList<URI> objectInFolder = fileService.getSubUris(subfolder);
-                            List<URI> sortedList = objectInFolder;
-                            Collections.sort(sortedList);
-                            for (URI file : sortedList) {
+                            Collections.sort(objectInFolder);
+                            for (URI file : objectInFolder) {
                                 try {
                                     if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess)
                                             .equals(folderName + File.separator)) {
                                         importedFilenames.add(file);
                                     }
-                                    fileService.copyFileToDirectory(file, directory);
+                                    fileService.copyFileToDirectory(file, folderName);
                                 } catch (IOException e) {
                                     logger.error(e);
                                 }

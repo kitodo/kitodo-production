@@ -376,12 +376,11 @@ public class ExportXmlLog implements IProcessDataExport {
             URI filename = serviceManager.getFileService().getMetadataFilePath(process);
             Document metsDoc = new SAXBuilder().build(filename.toString());
             Document anchorDoc = null;
-            URI anchorfilename = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
+            URI anchorFileName = URI.create(serviceManager.getFileService().getMetadataFilePath(process).toString()
                     .replace("meta.xml", "meta_anchor.xml"));
-            URI anchorFile = anchorfilename;
-            if (serviceManager.getFileService().fileExist(anchorFile)
-                    && serviceManager.getFileService().canRead(anchorFile)) {
-                anchorDoc = new SAXBuilder().build(anchorfilename.toString());
+            if (serviceManager.getFileService().fileExist(anchorFileName)
+                    && serviceManager.getFileService().canRead(anchorFileName)) {
+                anchorDoc = new SAXBuilder().build(anchorFileName.toString());
             }
             HashMap<String, Namespace> namespaces = new HashMap<>();
 

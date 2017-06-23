@@ -170,7 +170,8 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * This method initializes the task list without any filter whenever the bean is created.
+     * This method initializes the task list without any filter whenever the
+     * bean is created.
      */
     @PostConstruct
     public void initializeTaskList() {
@@ -573,10 +574,9 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public List<Task> getPreviousStepsForProblemReporting() {
-        List<Task> alleVorherigenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
+        return Helper.getHibernateSession().createCriteria(Task.class)
                 .add(Restrictions.lt("ordering", this.mySchritt.getOrdering())).addOrder(Order.desc("ordering"))
                 .createCriteria("process").add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
-        return alleVorherigenSchritte;
     }
 
     public int getSizeOfPreviousStepsForProblemReporting() {
@@ -664,11 +664,10 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public List<Task> getNextStepsForProblemSolution() {
-        List<Task> alleNachfolgendenSchritte = Helper.getHibernateSession().createCriteria(Task.class)
+        return Helper.getHibernateSession().createCriteria(Task.class)
                 .add(Restrictions.gt("ordering", this.mySchritt.getOrdering())).add(Restrictions.eq("priority", 10))
                 .addOrder(Order.asc("ordering")).createCriteria("process")
                 .add(Restrictions.idEq(this.mySchritt.getProcess().getId())).list();
-        return alleNachfolgendenSchritte;
     }
 
     public int getSizeOfNextStepsForProblemSolution() {

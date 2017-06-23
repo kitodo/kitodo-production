@@ -186,9 +186,7 @@ public class FolderInformation {
                 origOrdner = URI.create(DIRECTORY_PREFIX + "_" + this.title + "_" + DIRECTORY_SUFFIX);
             }
 
-            URI rueckgabe = getImagesDirectory().resolve(origOrdner + File.separator);
-
-            return rueckgabe;
+            return getImagesDirectory().resolve(origOrdner + File.separator);
         } else {
             return getImagesTifDirectory(useFallBack);
         }
@@ -200,9 +198,7 @@ public class FolderInformation {
      * @return path
      */
     public URI getImagesDirectory() {
-        URI pfad = getProcessDataDirectory().resolve("images" + File.separator);
-
-        return pfad;
+        return getProcessDataDirectory().resolve("images" + File.separator);
     }
 
     /**

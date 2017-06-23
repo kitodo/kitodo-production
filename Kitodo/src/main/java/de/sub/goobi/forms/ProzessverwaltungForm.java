@@ -1677,8 +1677,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     public int getMyDatasetHoeheInt() {
-        int bla = this.page.getCompleteList().size() * 20;
-        return bla;
+        return this.page.getCompleteList().size() * 20;
     }
 
     public NumberFormat getMyFormatter() {

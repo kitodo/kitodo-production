@@ -287,8 +287,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     }
 
     public URI getLockFile() throws IOException {
-        URI resource = fileService.createResource(this.folder, ".lock");
-        return resource;
+        return fileService.createResource(this.folder, ".lock");
 
     }
 

@@ -79,19 +79,15 @@ public class HelperForm implements Serializable {
 
     // TODO: Change the defaults
     public String getApplicationHeaderTitle() {
-        String rueck = ConfigCore.getParameter("ApplicationHeaderTitle", "Goobi - Universitätsbibliothek Göttingen");
-        return rueck;
+        return ConfigCore.getParameter("ApplicationHeaderTitle", "Goobi - Universitätsbibliothek Göttingen");
     }
 
     public String getApplicationTitle() {
-        String rueck = ConfigCore.getParameter("ApplicationTitle", "http://goobi.gdz.uni-goettingen.de");
-        return rueck;
+        return ConfigCore.getParameter("ApplicationTitle", "http://goobi.gdz.uni-goettingen.de");
     }
 
     public String getApplicationTitleStyle() {
-        String rueck = ConfigCore.getParameter("ApplicationTitleStyle",
-                "font-size:17; font-family:verdana; color: black;");
-        return rueck;
+        return ConfigCore.getParameter("ApplicationTitleStyle", "font-size:17; font-family:verdana; color: black;");
     }
 
     public String getApplicationWebsiteUrl() {
@@ -119,8 +115,7 @@ public class HelperForm implements Serializable {
     }
 
     public String getApplicationIndividualHeader() {
-        String rueck = ConfigCore.getParameter("ApplicationIndividualHeader", "");
-        return rueck;
+        return ConfigCore.getParameter("ApplicationIndividualHeader", "");
     }
 
     public boolean getAnonymized() {
@@ -185,8 +180,7 @@ public class HelperForm implements Serializable {
         String serverName = request.getServerName(); // hostname.com
         int serverPort = request.getServerPort(); // 80
         String contextPath = request.getContextPath(); // /mywebapp
-        String reqUrl = scheme + "://" + serverName + ":" + serverPort + contextPath;
-        return reqUrl;
+        return scheme + "://" + serverName + ":" + serverPort + contextPath;
     }
 
     public boolean getMessagesExist() {
@@ -198,8 +192,7 @@ public class HelperForm implements Serializable {
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI filename = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
-        URI cssDir = filename;
+        URI fileName = new File(session.getServletContext().getRealPath("/css") + File.separator).toURI();
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -207,7 +200,7 @@ public class HelperForm implements Serializable {
             }
         };
 
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, cssDir);
+        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
         for (URI uri : dateien) {
             myList.add(new SelectItem("/css/" + uri.toString(), uri.toString()));
         }
@@ -226,9 +219,8 @@ public class HelperForm implements Serializable {
     public String getCssLinkIfExists(String cssFileName) {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        URI filename = serviceManager.getFileService()
+        URI fileName = serviceManager.getFileService()
                 .getInternUri(new File(session.getServletContext().getRealPath(CSS_PATH) + File.separator).toURI());
-        URI cssDir = filename;
         FilenameFilter filter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -236,7 +228,7 @@ public class HelperForm implements Serializable {
             }
         };
 
-        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, cssDir);
+        ArrayList<URI> dateien = serviceManager.getFileService().getSubUris(filter, fileName);
         for (URI uri : dateien) {
             if ((CSS_PATH + "/" + uri).equals(cssFileName)) {
                 return cssFileName;

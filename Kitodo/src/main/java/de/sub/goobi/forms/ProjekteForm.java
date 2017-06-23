@@ -444,8 +444,7 @@ public class ProjekteForm extends BasisForm {
         if (volumes == 0) {
             return pages;
         }
-        int i = pages / volumes;
-        return i;
+        return pages / volumes;
     }
 
     /**
@@ -553,8 +552,7 @@ public class ProjekteForm extends BasisForm {
         if (days < 1) {
             days = 1;
         }
-        double back = (double) this.myProjekt.getNumberOfVolumes() / (double) days;
-        return back;
+        return (double) this.myProjekt.getNumberOfVolumes() / (double) days;
     }
 
     /**
@@ -582,8 +580,7 @@ public class ProjekteForm extends BasisForm {
         if (days < 1) {
             days = 1;
         }
-        double back = (double) this.myProjekt.getNumberOfPages() / (double) days;
-        return back;
+        return (double) this.myProjekt.getNumberOfPages() / (double) days;
     }
 
     /**

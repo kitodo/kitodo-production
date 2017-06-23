@@ -142,8 +142,7 @@ public abstract class SQLGenerator {
      * @return time stamp
      */
     private static Timestamp dateToSqlTimestamp(Date date) {
-        Timestamp timestamp = new Timestamp(date.getTime());
-        return timestamp;
+        return new Timestamp(date.getTime());
     }
 
     public void setMyIdFieldName(String name) {

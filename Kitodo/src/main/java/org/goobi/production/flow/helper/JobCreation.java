@@ -56,6 +56,7 @@ public class JobCreation {
         if (logger.isTraceEnabled()) {
             logger.trace("processtitle is " + processTitle);
         }
+        //TODO: what is differecene between metsfilename and basepath and metsfile
         URI metsfilename = io.getMetsFilename();
         if (logger.isTraceEnabled()) {
             logger.trace("mets filename is " + metsfilename);

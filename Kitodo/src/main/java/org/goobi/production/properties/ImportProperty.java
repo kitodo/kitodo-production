@@ -136,8 +136,7 @@ public class ImportProperty implements IProperty {
 
     @Override
     public ImportProperty getClone(int containerNumber) {
-        ImportProperty p = new ImportProperty();
-        return p;
+        return new ImportProperty();
     }
 
     @Override

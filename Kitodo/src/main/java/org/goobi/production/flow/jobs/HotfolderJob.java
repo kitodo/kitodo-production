@@ -340,7 +340,6 @@ public class HotfolderJob extends AbstractGoobiJob {
         if (logger.isTraceEnabled()) {
             logger.trace("basepath is " + basepath);
         }
-        URI metsfile = metsfilename;
         Process p = null;
         if (!testTitle(processTitle)) {
             logger.trace("wrong title");
@@ -355,7 +354,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 }
             }
             try {
-                fileService.delete(metsfile);
+                fileService.delete(metsfilename);
             } catch (Exception e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
@@ -378,7 +377,7 @@ public class HotfolderJob extends AbstractGoobiJob {
             cp.evaluateOpac();
             try {
                 p = cp.createProcess(io);
-                JobCreation.moveFiles(metsfile, basepath, p);
+                JobCreation.moveFiles(metsfilename, basepath, p);
 
             } catch (ReadException | PreferencesException | WriteException | IOException e) {
                 Helper.setFehlerMeldung(e);

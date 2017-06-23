@@ -150,9 +150,7 @@ public class Page implements Serializable { // implements Iterator
                 this.results = this.criteria.setFirstResult(this.page * this.pageSize).setMaxResults(this.pageSize + 1)
                         .list();
                 if (this.results != null && this.results.size() > 0) {
-                    List answer = hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
-
-                    return answer;
+                    return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
                 } else {
                     return new ArrayList();
                 }

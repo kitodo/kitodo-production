@@ -94,9 +94,8 @@ class ConfigOpac {
                     beautyList.add(new ConfigOpacCatalogueBeautifier(oteChange, proofElements));
                 }
 
-                ConfigOpacCatalogue coc = new ConfigOpacCatalogue(title, description, address, database, iktlist, port,
-                        charset, cbs, beautyList, opacType);
-                return coc;
+                return new ConfigOpacCatalogue(title, description, address, database, iktlist, port, charset, cbs,
+                        beautyList, opacType);
             }
         }
         return null;
@@ -178,8 +177,7 @@ class ConfigOpac {
                 ArrayList<String> mappings = (ArrayList<String>) getConfig()
                         .getList("doctypes.type(" + i + ").mapping");
 
-                ConfigOpacDoctype cod = new ConfigOpacDoctype(title, periodical, multiVolume, containedWork, mappings);
-                return cod;
+                return new ConfigOpacDoctype(title, periodical, multiVolume, containedWork, mappings);
             }
         }
         return null;

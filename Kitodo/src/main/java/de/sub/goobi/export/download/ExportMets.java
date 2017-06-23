@@ -130,21 +130,20 @@ public class ExportMets {
     /**
      * prepare user directory.
      *
-     * @param inTargetFolder
+     * @param targetFolder
      *            the folder to prove and maybe create it
      */
-    protected URI prepareUserDirectory(URI inTargetFolder) {
-        URI target = inTargetFolder;
+    protected URI prepareUserDirectory(URI targetFolder) {
         User myBenutzer = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
         if (myBenutzer != null) {
             try {
-                fileService.createDirectoryForUser(target, myBenutzer.getLogin());
+                fileService.createDirectoryForUser(targetFolder, myBenutzer.getLogin());
             } catch (Exception e) {
-                Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + inTargetFolder,
+                Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + targetFolder,
                         e);
             }
         }
-        return target;
+        return targetFolder;
     }
 
     /**
@@ -164,7 +163,6 @@ public class ExportMets {
         MetsModsImportExport mm = new MetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = serviceManager.getFileService().getImagesDirectory(myProcess);
-        URI imageFolder = imageFolderPath;
         /*
          * before creating mets file, change relative path to absolute -
          */
@@ -223,7 +221,7 @@ public class ExportMets {
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            URI uri = !url.startsWith(imageFolder.getPath()) ? imageFolder : URI.create("");
+            URI uri = !url.startsWith(imageFolderPath.getPath()) ? imageFolderPath : URI.create("");
             uri = uri.resolve(url);
             cf.setLocation(uri.toString());
         }

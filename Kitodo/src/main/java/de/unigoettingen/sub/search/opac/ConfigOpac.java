@@ -148,9 +148,8 @@ public class ConfigOpac {
                 ArrayList<String> mappings = (ArrayList<String>) getConfig()
                         .getList("doctypes.type(" + i + ").mapping");
 
-                ConfigOpacDoctype cod = new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical,
-                        multiVolume, containedWork, newspaper, labels, mappings);
-                return cod;
+                return new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical, multiVolume,
+                        containedWork, newspaper, labels, mappings);
             }
         }
         return null;

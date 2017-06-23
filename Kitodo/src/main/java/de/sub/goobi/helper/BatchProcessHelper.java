@@ -194,9 +194,8 @@ public class BatchProcessHelper {
             processProperty.setValue(this.processProperty.getValue());
             processProperty.setContainer(this.processProperty.getContainer());
 
-            for (Process s : this.processes) {
-                Process process = s;
-                if (!s.equals(this.currentProcess)) {
+            for (Process process : this.processes) {
+                if (!process.equals(this.currentProcess)) {
                     if (processProperty.getTitle() != null) {
                         boolean match = false;
                         for (Property processPe : process.getProperties()) {

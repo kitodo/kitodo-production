@@ -237,8 +237,7 @@ public class HibernateUtilOld {
     }
 
     private static Interceptor getInterceptor() {
-        Interceptor interceptor = threadInterceptor.get();
-        return interceptor;
+        return threadInterceptor.get();
     }
 
     /**
