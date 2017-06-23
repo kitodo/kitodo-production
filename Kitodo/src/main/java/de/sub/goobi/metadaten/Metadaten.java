@@ -684,7 +684,7 @@ public class Metadaten {
         this.alleSeitenAuswahl_ersteSeite = "";
         this.alleSeitenAuswahl_letzteSeite = "";
         this.zurueck = Helper.getRequestParameter("zurueck");
-        this.nurLesenModus = Helper.getRequestParameter("nurLesen").equals("true") ? true : false;
+        this.nurLesenModus = Helper.getRequestParameter("nurLesen").equals("true");
         this.neuesElementWohin = "1";
         this.tree3 = null;
         try {
