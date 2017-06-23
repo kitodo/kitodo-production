@@ -250,7 +250,7 @@ public class BatchForm extends BasisForm {
             Helper.setFehlerMeldung("noBatchSelected");
         } else if (this.selectedBatches.size() == 1) {
             try {
-                docket = serviceManager.getBatchService().find(Integer.valueOf(selectedBatches.get(0))).getProcesses();
+                docket = serviceManager.getBatchService().find(selectedBatches.get(0)).getProcesses();
             } catch (DAOException e) {
                 logger.error(e);
                 Helper.setFehlerMeldung("fehlerBeimEinlesen");
@@ -447,7 +447,7 @@ public class BatchForm extends BasisForm {
                     && !this.selectedBatches.get(0).equals("null")) {
                 Batch batch;
                 try {
-                    batch = serviceManager.getBatchService().find(Integer.valueOf(selectedBatches.get(0)));
+                    batch = serviceManager.getBatchService().find(selectedBatches.get(0));
                     this.batchHelper = new BatchProcessHelper(batch);
                     return "/newpages/BatchProperties";
                 } catch (DAOException e) {
