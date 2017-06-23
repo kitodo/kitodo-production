@@ -1805,10 +1805,9 @@ public class ProcessService extends TitleSearchService<Process> {
                 }
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
-
             logger.error(e);
         }
-        mm.write(targetFileName.toString());
+        mm.write(targetFileName);
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
         return true;
     }

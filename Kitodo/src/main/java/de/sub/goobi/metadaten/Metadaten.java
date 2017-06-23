@@ -3100,7 +3100,7 @@ public class Metadaten {
                     String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
                     fileService.renameFile(tempFileName, sortedName);
                     mydocument.getPhysicalDocStruct().getAllChildren().get(counter - 1)
-                            .setImageName(sortedName.toString());
+                            .setImageName(sortedName);
                 }
                 try {
                     URI ocr = fileService.getProcessSubTypeURI(myProzess, ProcessSubType.OCR, null);
