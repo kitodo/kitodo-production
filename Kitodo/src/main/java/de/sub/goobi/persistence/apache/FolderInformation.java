@@ -293,9 +293,7 @@ public class FolderInformation {
         ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, dir);
         ArrayList<URI> dataList = new ArrayList<>();
         if (dateien != null && dateien.size() > 0) {
-            for (URI s : dateien) {
-                dataList.add(s);
-            }
+            dataList.addAll(dateien);
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
                 Collections.sort(dataList, new GoobiImageURIComparator());

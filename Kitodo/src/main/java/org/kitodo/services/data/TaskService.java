@@ -467,9 +467,7 @@ public class TaskService extends TitleSearchService<Task> {
     public Task setAllScripts(HashMap<String, String> paths, Task task) {
         Set<String> keys = paths.keySet();
         ArrayList<String> keyList = new ArrayList<>();
-        for (String key : keys) {
-            keyList.add(key);
-        }
+        keyList.addAll(keys);
         int size = keyList.size();
         if (size > 0) {
             task.setScriptName1(keyList.get(0));

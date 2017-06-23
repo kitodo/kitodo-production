@@ -106,9 +106,7 @@ public class ModuleServerForm implements Serializable {
 
                     // Alle Modulbeschreibungen aus der Konfigurationsdatei
                     // modules.xml einlesen
-                    for (ModuleDesc md : getModulesFromConfigurationFile()) {
-                        manager.add(md);
-                    }
+                    manager.addAll(getModulesFromConfigurationFile());
                     modulmanager = manager;
                 }
 

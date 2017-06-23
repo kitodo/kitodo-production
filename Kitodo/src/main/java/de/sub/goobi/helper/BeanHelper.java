@@ -149,18 +149,14 @@ public class BeanHelper {
              * Benutzer übernehmen
              */
             List<User> myUsers = new ArrayList<>();
-            for (User userNew : task.getUsers()) {
-                myUsers.add(userNew);
-            }
+            myUsers.addAll(task.getUsers());
             taskNew.setUsers(myUsers);
 
             /*
              * Benutzergruppen übernehmen
              */
             List<UserGroup> myUserGroups = new ArrayList<>();
-            for (UserGroup userGroupNew : task.getUserGroups()) {
-                myUserGroups.add(userGroupNew);
-            }
+            myUserGroups.addAll(task.getUserGroups());
             taskNew.setUserGroups(myUserGroups);
 
             /* Schritt speichern */

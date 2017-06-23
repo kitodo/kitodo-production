@@ -155,9 +155,7 @@ public class BackupFileRotation {
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);
         ArrayList<URI> subUris = fileService.getSubUris(filter, processDataDirectory);
-        for (URI uri : subUris) {
-            filteredUris.add(uri);
-        }
+        filteredUris.addAll(subUris);
         return filteredUris;
     }
 

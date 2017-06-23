@@ -294,9 +294,7 @@ public class BatchForm extends BasisForm {
             return;
         }
         List<Integer> ids = new ArrayList<>(selectedBatchesSize);
-        for (Integer entry : this.selectedBatches) {
-            ids.add(entry);
-        }
+        ids.addAll(this.selectedBatches);
         try {
             serviceManager.getBatchService().removeAll(ids);
             filterAlleStart();

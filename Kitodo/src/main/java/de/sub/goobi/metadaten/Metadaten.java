@@ -621,10 +621,8 @@ public class Metadaten {
          */
         zaehler = 0;
         for (MetadataType mdt : types) {
-
             myTypen[zaehler] = new SelectItem(mdt.getName(), this.metahelper.getMetadatatypeLanguage(mdt));
             zaehler++;
-
         }
 
         /*
@@ -1672,9 +1670,7 @@ public class Metadaten {
         };
 
         ArrayList<URI> subUris = fileService.getSubUris(filterVerz, dir);
-        for (URI uri : subUris) {
-            this.allTifFolders.add(uri);
-        }
+        this.allTifFolders.addAll(subUris);
 
         if (ConfigCore.getParameter("MetsEditorDefaultSuffix", null) != null) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix");
