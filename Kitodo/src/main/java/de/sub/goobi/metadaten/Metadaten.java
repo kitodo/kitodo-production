@@ -2106,10 +2106,9 @@ public class Metadaten {
      * Current start page.
      */
     public void currentStartpage() {
-        for (int i = 0; i < this.alleSeiten.length; i++) {
-            SelectItem si = this.alleSeiten[i];
-            if (si.getValue().equals(String.valueOf(this.pageNumber))) {
-                this.pagesStart = si.getLabel();
+        for (SelectItem selectItem : this.alleSeiten) {
+            if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
+                this.pagesStart = selectItem.getLabel();
             }
         }
     }
@@ -2118,10 +2117,9 @@ public class Metadaten {
      * Current end page.
      */
     public void currentEndpage() {
-        for (int i = 0; i < this.alleSeiten.length; i++) {
-            SelectItem si = this.alleSeiten[i];
-            if (si.getValue().equals(String.valueOf(this.pageNumber))) {
-                this.pagesEnd = si.getLabel();
+        for (SelectItem selectItem : this.alleSeiten) {
+            if (selectItem.getValue().equals(String.valueOf(this.pageNumber))) {
+                this.pagesEnd = selectItem.getLabel();
             }
         }
     }
@@ -2151,10 +2149,9 @@ public class Metadaten {
         logger.debug("Ajax-Liste abgefragt");
         List<String> li = new ArrayList<String>();
         if (this.alleSeiten != null && this.alleSeiten.length > 0) {
-            for (int i = 0; i < this.alleSeiten.length; i++) {
-                SelectItem si = this.alleSeiten[i];
-                if (si.getLabel().contains(prefix)) {
-                    li.add(si.getLabel());
+            for (SelectItem selectItem : this.alleSeiten) {
+                if (selectItem.getLabel().contains(prefix)) {
+                    li.add(selectItem.getLabel());
                 }
             }
         }
@@ -2172,15 +2169,14 @@ public class Metadaten {
          * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite
          * überhaupt existiert
          */
-        for (int i = 0; i < this.alleSeiten.length; i++) {
-            SelectItem si = this.alleSeiten[i];
-            if (si.getLabel().equals(this.ajaxSeiteStart)) {
+        for (SelectItem selectItem : this.alleSeiten) {
+            if (selectItem.getLabel().equals(this.ajaxSeiteStart)) {
                 startseiteOk = true;
-                this.alleSeitenAuswahl_ersteSeite = (String) si.getValue();
+                this.alleSeitenAuswahl_ersteSeite = (String) selectItem.getValue();
             }
-            if (si.getLabel().equals(this.ajaxSeiteEnde)) {
+            if (selectItem.getLabel().equals(this.ajaxSeiteEnde)) {
                 endseiteOk = true;
-                this.alleSeitenAuswahl_letzteSeite = (String) si.getValue();
+                this.alleSeitenAuswahl_letzteSeite = (String) selectItem.getValue();
             }
         }
 
@@ -2265,10 +2261,9 @@ public class Metadaten {
     public String imageShowLastPage() {
         this.bildAnzeigen = true;
         if (this.treeProperties.get("showpagesasajax")) {
-            for (int i = 0; i < this.alleSeiten.length; i++) {
-                SelectItem si = this.alleSeiten[i];
-                if (si.getLabel().equals(this.ajaxSeiteEnde)) {
-                    this.alleSeitenAuswahl_letzteSeite = (String) si.getValue();
+            for (SelectItem selectItem : this.alleSeiten) {
+                if (selectItem.getLabel().equals(this.ajaxSeiteEnde)) {
+                    this.alleSeitenAuswahl_letzteSeite = (String) selectItem.getValue();
                     break;
                 }
             }
@@ -2287,9 +2282,8 @@ public class Metadaten {
      */
     public String addPages() {
         /* alle markierten Seiten durchlaufen */
-        for (int i = 0; i < this.alleSeitenAuswahl.length; i++) {
-            int aktuelleID = Integer.parseInt(this.alleSeitenAuswahl[i]);
-
+        for (String page : this.alleSeitenAuswahl) {
+            int aktuelleID = Integer.parseInt(page);
             boolean schonEnthalten = false;
 
             /*
@@ -2324,8 +2318,8 @@ public class Metadaten {
      * ausgewählte Seiten aus dem Strukturelement entfernen.
      */
     public String removePages() {
-        for (int i = 0; i < this.structSeitenAuswahl.length; i++) {
-            int aktuelleID = Integer.parseInt(this.structSeitenAuswahl[i]);
+        for (String structurePage : this.structSeitenAuswahl) {
+            int aktuelleID = Integer.parseInt(structurePage);
             this.myDocStruct.removeReferenceTo(this.structSeitenNeu[aktuelleID].getMd().getDocStruct());
         }
         determinePagesStructure(this.myDocStruct);
@@ -2379,9 +2373,8 @@ public class Metadaten {
         int startseite = -1;
         int endseite = -1;
         if (this.structSeiten != null) {
-            for (int i = 0; i < this.structSeiten.length; i++) {
-                SelectItem si = this.structSeiten[i];
-                int temp = Integer.parseInt(si.getLabel().substring(0, si.getLabel().indexOf(":")));
+            for (SelectItem selectItem : this.structSeiten) {
+                int temp = Integer.parseInt(selectItem.getLabel().substring(0, selectItem.getLabel().indexOf(":")));
                 if (startseite == -1 || startseite > temp) {
                     startseite = temp;
                 }

@@ -170,9 +170,8 @@ public class JobCreation {
                 List<URI> imageDir = new ArrayList<>();
 
                 ArrayList<URI> files = fileService.getSubUris(imagesFolder);
-                for (int i = 0; i < files.size(); i++) {
-                    imageDir.add(files.get(i));
-                }
+                imageDir.addAll(files);
+
                 for (URI uri : imageDir) {
                     URI image = fileService.createResource(imagesFolder, uri.toString());
                     URI dest = fileService.createResource(

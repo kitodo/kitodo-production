@@ -149,8 +149,9 @@ public class FolderInformation {
 
             URI origOrdner = null;
             ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
-            for (int i = 0; i < verzeichnisse.size(); i++) {
-                origOrdner = verzeichnisse.get(i);
+            //TODO: does it actually make sense?
+            for (URI directory : verzeichnisse) {
+                origOrdner = directory;
             }
             if (origOrdner == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");

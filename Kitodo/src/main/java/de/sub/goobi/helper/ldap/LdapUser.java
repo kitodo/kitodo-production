@@ -284,8 +284,8 @@ public class LdapUser implements DirContext {
 
         Attributes answer = new BasicAttributes(true);
         Attribute target;
-        for (int i = 0; i < ids.length; i++) {
-            target = this.myAttrs.get(ids[i]);
+        for (String id : ids) {
+            target = this.myAttrs.get(id);
             if (target != null) {
                 answer.put(target);
             }

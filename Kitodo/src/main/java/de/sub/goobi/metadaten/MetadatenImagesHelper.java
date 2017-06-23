@@ -512,9 +512,7 @@ public class MetadatenImagesHelper {
         ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, dir);
         List<URI> dataList = new ArrayList<>();
         if (files != null && files.size() > 0) {
-            for (int i = 0; i < files.size(); i++) {
-                dataList.add(files.get(i));
-            }
+            dataList.addAll(files);
             /* alle Dateien durchlaufen */
         }
         List<URI> orderedFilenameList = new ArrayList<>();
@@ -590,9 +588,7 @@ public class MetadatenImagesHelper {
         ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         ArrayList<URI> dataList = new ArrayList<>();
         if (files != null && files.size() > 0) {
-            for (int i = 0; i < files.size(); i++) {
-                dataList.add(files.get(i));
-            }
+            dataList.addAll(files);
             /* alle Dateien durchlaufen */
             if (dataList.size() != 0) {
                 Collections.sort(dataList, new GoobiImageFileComparator());

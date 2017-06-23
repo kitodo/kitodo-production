@@ -1632,11 +1632,10 @@ public class ProcessService extends TitleSearchService<Process> {
             /* jetzt den eigentlichen Kopiervorgang */
 
             ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < dateien.size(); i++) {
-                if (fileService.isFile(dateien.get(i))) {
-                    URI meinZiel = zielTif
-                            .resolve(File.separator + fileService.getFileNameWithExtension(dateien.get(i)));
-                    fileService.copyFile(dateien.get(i), meinZiel);
+            for (URI file : dateien) {
+                if (fileService.isFile(file)) {
+                    URI target = zielTif.resolve(File.separator + fileService.getFileNameWithExtension(file));
+                    fileService.copyFile(file, target);
                 }
             }
         }

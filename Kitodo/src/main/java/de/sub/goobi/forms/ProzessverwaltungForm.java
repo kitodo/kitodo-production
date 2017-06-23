@@ -1976,21 +1976,15 @@ public class ProzessverwaltungForm extends BasisForm {
                 document.open();
                 if (rowList.size() > 0) {
                     Paragraph p = new Paragraph(rowList.get(0).get(0).toString());
-
                     document.add(p);
                     PdfPTable table = new PdfPTable(9);
                     table.setSpacingBefore(20);
-                    for (int i = 1; i < rowList.size(); i++) {
-
-                        List<HSSFCell> row = rowList.get(i);
-                        for (int j = 0; j < row.size(); j++) {
-                            HSSFCell myCell = row.get(j);
+                    for (List<HSSFCell> row : rowList) {
+                        for (HSSFCell hssfCell : row) {
                             // TODO aufhübschen und nicht toString() nutzen
-
-                            String stringCellValue = myCell.toString();
+                            String stringCellValue = hssfCell.toString();
                             table.addCell(stringCellValue);
                         }
-
                     }
                     document.add(table);
                 }
