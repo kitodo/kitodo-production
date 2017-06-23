@@ -209,8 +209,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         return;
                     }
                     process = processesIterator.next();
-                    Integer processesYear = Integer
-                            .valueOf(getYear(serviceManager.getProcessService().getDigitalDocument(process)));
+                    Integer processesYear = getYear(serviceManager.getProcessService().getDigitalDocument(process));
                     if (!collectedYears.containsKey(processesYear)) {
                         collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
                     }
@@ -510,7 +509,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             Prefs ruleSet)
             throws TypeNotAllowedForParentException, MetadataTypeNotAllowedException, TypeNotAllowedAsChildException {
         for (Integer year : years.keySet()) {
-            if (year.intValue() != ownYear) {
+            if (year != ownYear) {
                 DocStruct child = getOrCreateChild(act.getLogicalDocStruct(), yearLevelName,
                         MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, year.toString(),
                         MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, act, ruleSet);

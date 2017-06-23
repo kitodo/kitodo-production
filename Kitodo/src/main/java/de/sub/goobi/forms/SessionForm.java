@@ -78,7 +78,7 @@ public class SessionForm {
         map.put("last", this.formatter.format(new Date()));
         map.put("last2", Long.valueOf(System.currentTimeMillis()));
         map.put("user", " - ");
-        map.put("userid", Integer.valueOf(0));
+        map.put("userid", 0);
         map.put("session", insession);
         map.put("browserIcon", "none.gif");
         FacesContext context = FacesContext.getCurrentInstance();
@@ -176,7 +176,7 @@ public class SessionForm {
                     insession.setMaxInactiveInterval(serviceManager.getUserService().getSessionTimeout(inBenutzer));
                 } else {
                     map.put("user", "- ausgeloggt - ");
-                    map.put("userid", Integer.valueOf(0));
+                    map.put("userid", 0);
                 }
                 break;
             }

@@ -318,7 +318,7 @@ public class ExtendedDataImpl extends DataImpl {
         /*
          * Prozesseigenschaft
          */
-        String myquery = "from ProcessProperty where process=" + p.getId().intValue();
+        String myquery = "from ProcessProperty where process=" + p.getId();
         /*
          * Werkstückeigenschaft
          */

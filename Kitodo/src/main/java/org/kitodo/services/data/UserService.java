@@ -358,7 +358,7 @@ public class UserService extends SearchService<User> {
      */
     public Integer getTableSize(User user) {
         if (user.getTableSize() == null) {
-            return Integer.valueOf(10);
+            return 10;
         }
         return user.getTableSize();
     }

@@ -253,20 +253,20 @@ public class GoobiScript {
             for (Process p : inProzesse) {
                 URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, p);
                 if (fileService.getSubUris(imagesFolder).size() > 0) {
-                    Helper.setFehlerMeldung("kitodoScriptfield", "", "The process " + p.getTitle() + " ["
-                            + p.getId().intValue() + "] has already data in image folder");
+                    Helper.setFehlerMeldung("kitodoScriptfield", "",
+                            "The process " + p.getTitle() + " [" + p.getId() + "] has already data in image folder");
                 } else {
                     URI sourceFolderProzess = fileService.createResource(sourceFolder, p.getTitle());
                     if (!fileService.isDirectory(sourceFolder)) {
-                        Helper.setFehlerMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle()
-                                + " [" + p.getId().intValue() + "] is not existing");
+                        Helper.setFehlerMeldung("kitodoScriptfield", "",
+                                "The directory for process " + p.getTitle() + " [" + p.getId() + "] is not existing");
                     } else {
                         fileService.copyDirectory(sourceFolderProzess, imagesFolder);
-                        Helper.setMeldung("kitodoScriptfield", "", "The directory for process " + p.getTitle() + " ["
-                                + p.getId().intValue() + "] is copied");
+                        Helper.setMeldung("kitodoScriptfield", "",
+                                "The directory for process " + p.getTitle() + " [" + p.getId() + "] is copied");
                     }
                     Helper.setMeldung("kitodoScriptfield", "",
-                            "The process " + p.getTitle() + " [" + p.getId().intValue() + "] is copied");
+                            "The process " + p.getTitle() + " [" + p.getId() + "] is copied");
                 }
             }
         } catch (Exception e) {

@@ -121,7 +121,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     private MetadataPathSelector(String docStructType, int index, MetadataSelector selector) {
         this.docStructType = docStructType;
-        this.index = Integer.valueOf(index);
+        this.index = index;
         this.selector = selector;
     }
 

@@ -1407,7 +1407,7 @@ public class ProzessverwaltungForm extends BasisForm {
         if (this.myProzess.getProject() != null) {
             return this.myProzess.getProject().getId();
         } else {
-            return Integer.valueOf(0);
+            return 0;
         }
     }
 
@@ -1418,7 +1418,7 @@ public class ProzessverwaltungForm extends BasisForm {
      *            Integer
      */
     public void setProjektAuswahl(Integer inProjektAuswahl) {
-        if (inProjektAuswahl.intValue() != 0) {
+        if (inProjektAuswahl != 0) {
             try {
                 this.myProzess.setProject(serviceManager.getProjectService().find(inProjektAuswahl));
             } catch (DAOException e) {

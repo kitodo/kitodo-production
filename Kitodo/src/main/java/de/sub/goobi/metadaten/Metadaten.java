@@ -698,7 +698,7 @@ public class Metadaten {
         }
 
         expandTree();
-        this.sperrung.setLocked(this.myProzess.getId().intValue(), this.myBenutzerID);
+        this.sperrung.setLocked(this.myProzess.getId(), this.myBenutzerID);
         return "Metadaten";
     }
 
@@ -1863,9 +1863,9 @@ public class Metadaten {
          * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer
          * gilt, Sperrung aktualisieren
          */
-        if (MetadatenSperrung.isLocked(this.myProzess.getId().intValue())
-                && this.sperrung.getLockBenutzer(this.myProzess.getId().intValue()).equals(this.myBenutzerID)) {
-            this.sperrung.setLocked(this.myProzess.getId().intValue(), this.myBenutzerID);
+        if (MetadatenSperrung.isLocked(this.myProzess.getId())
+                && this.sperrung.getLockBenutzer(this.myProzess.getId()).equals(this.myBenutzerID)) {
+            this.sperrung.setLocked(this.myProzess.getId(), this.myBenutzerID);
             return true;
         } else {
             return false;
@@ -1873,9 +1873,9 @@ public class Metadaten {
     }
 
     private void disableReturn() {
-        if (MetadatenSperrung.isLocked(this.myProzess.getId().intValue())
-                && this.sperrung.getLockBenutzer(this.myProzess.getId().intValue()).equals(this.myBenutzerID)) {
-            this.sperrung.setFree(this.myProzess.getId().intValue());
+        if (MetadatenSperrung.isLocked(this.myProzess.getId())
+                && this.sperrung.getLockBenutzer(this.myProzess.getId()).equals(this.myBenutzerID)) {
+            this.sperrung.setFree(this.myProzess.getId());
         }
     }
 

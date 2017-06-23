@@ -356,7 +356,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         if (this.myClass.getLdapGroup() != null) {
             return this.myClass.getLdapGroup().getId();
         } else {
-            return Integer.valueOf(0);
+            return 0;
         }
     }
 
@@ -364,7 +364,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration - set LDAP group.
      */
     public void setLdapGruppeAuswahl(Integer inAuswahl) {
-        if (inAuswahl.intValue() != 0) {
+        if (inAuswahl != 0) {
             try {
                 this.myClass.setLdapGroup(serviceManager.getLdapGroupService().find(inAuswahl));
             } catch (DAOException e) {

@@ -86,7 +86,7 @@ public class FilterHelper {
         }
         /* init id-list, preset with item 0 */
         List<Integer> idList = new ArrayList<Integer>();
-        idList.add(Integer.valueOf(0));
+        idList.add(0);
 
         /*
          * hits by user groups

@@ -1125,7 +1125,7 @@ public class CalendarForm implements Serializable {
             if (currentBlock == null) {
                 cell.setOnBlock(false);
             } else {
-                Integer hashCode = Integer.valueOf(currentBlock.hashCode());
+                Integer hashCode = currentBlock.hashCode();
                 if (!issueControllersCreatedOnce.containsKey(hashCode)) {
                     issueControllersCreatedOnce.put(hashCode, getIssues(currentBlock));
                 }

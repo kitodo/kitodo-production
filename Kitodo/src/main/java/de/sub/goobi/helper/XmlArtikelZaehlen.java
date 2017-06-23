@@ -69,7 +69,7 @@ public class XmlArtikelZaehlen {
         /*
          * die ermittelte Zahl im Prozess speichern
          */
-        myProcess.setSortHelperArticles(Integer.valueOf(rueckgabe));
+        myProcess.setSortHelperArticles(rueckgabe);
         try {
             serviceManager.getProcessService().save(myProcess);
         } catch (DataException e) {
