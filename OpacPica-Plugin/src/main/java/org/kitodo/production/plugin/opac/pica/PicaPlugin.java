@@ -633,13 +633,10 @@ public class PicaPlugin implements Plugin {
                 DocStructType dstV = inPrefs.getDocStrctTypeByName("PeriodicalVolume");
                 DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
                 topstruct.addChild(dsvolume);
-            } catch (TypeNotAllowedForParentException e) {
-                e.printStackTrace();
-            } catch (TypeNotAllowedAsChildException e) {
+            } catch (TypeNotAllowedForParentException |TypeNotAllowedAsChildException e) {
                 e.printStackTrace();
             }
         }
-
     }
 
     /**

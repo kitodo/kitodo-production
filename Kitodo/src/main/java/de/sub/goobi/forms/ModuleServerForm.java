@@ -350,8 +350,6 @@ public class ModuleServerForm implements Serializable {
                              */
                             try {
                                 modules.get(i - 1).getModuleClient().stop(gmp);
-                            } catch (GoobiModuleException e) {
-                                logger.error(e);
                             } catch (XmlRpcException e) {
                                 logger.error(e);
                             }

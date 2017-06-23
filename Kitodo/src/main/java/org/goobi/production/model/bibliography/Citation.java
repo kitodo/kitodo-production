@@ -191,9 +191,7 @@ public class Citation {
         Type type;
         try {
             type = Type.valueOf(format.toUpperCase());
-        } catch (IllegalArgumentException formatCodeUnknown) {
-            type = Type.MONOGRAPH;
-        } catch (NullPointerException formatIsNull) {
+        } catch (IllegalArgumentException | NullPointerException e) {
             type = Type.MONOGRAPH;
         }
         style = type;

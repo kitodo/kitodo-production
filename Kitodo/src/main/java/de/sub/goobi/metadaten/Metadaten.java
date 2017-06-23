@@ -671,10 +671,7 @@ public class Metadaten {
         try {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
             this.myProzess = serviceManager.getProcessService().find(id);
-        } catch (NumberFormatException e1) {
-            Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
-            return Helper.getRequestParameter("zurueck");
-        } catch (DAOException e1) {
+        } catch (NumberFormatException | DAOException e1) {
             Helper.setFehlerMeldung("error while loading process data" + e1.getMessage());
             return Helper.getRequestParameter("zurueck");
         }

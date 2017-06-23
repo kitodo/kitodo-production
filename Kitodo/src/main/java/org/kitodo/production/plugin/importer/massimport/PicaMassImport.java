@@ -334,25 +334,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
 
             return ff;
-        } catch (ReadException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (PreferencesException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (IOException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (JDOMException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (ParserConfigurationException e) {
-            logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (MetadataTypeNotAllowedException e) {
+        } catch (PreferencesException | ReadException | TypeNotAllowedForParentException | IOException | JDOMException
+                | ParserConfigurationException | MetadataTypeNotAllowedException e) {
             logger.error(this.currentIdentifier + ": " + e.getMessage(), e);
             throw new ImportPluginException(e);
         }
@@ -385,16 +368,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                     String mess = "Could not retrieve superordinate record " + parentPPN;
                     logger.error(mess);
                     throw new ImportPluginException(mess);
-
                 }
                 org.jdom.Document resultAsJDOM = new DOMBuilder().build(parentRecord.getOwnerDocument());
                 volumeAsJDOM.getParent().removeContent(volumeAsJDOM);
                 resultAsJDOM.getRootElement().addContent(volumeAsJDOM);
                 return new DOMOutputter().output(resultAsJDOM).getFirstChild();
             }
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (ImportPluginException e) {
+        } catch (RuntimeException | ImportPluginException e) {
             throw e;
         } catch (Exception e) {
             throw new ImportPluginException(e.getMessage(), e);
@@ -845,20 +825,10 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             address = node.getAttributes().getNamedItem("address").getNodeValue();
 
-        } catch (ParserConfigurationException e) {
-            logger.error(e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (SAXException e) {
-            logger.error(e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new ImportPluginException(e);
-        } catch (XPathExpressionException e) {
+        } catch (ParserConfigurationException | SAXException | IOException | XPathExpressionException e) {
             logger.error(e.getMessage(), e);
             throw new ImportPluginException(e);
         }
-
         return address;
     }
 }

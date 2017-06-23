@@ -56,9 +56,7 @@ public enum StatisticsMode {
         if (inQuestion != null) {
             try {
                 question = inQuestion.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }

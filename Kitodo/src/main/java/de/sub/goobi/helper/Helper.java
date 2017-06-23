@@ -43,7 +43,6 @@ import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
-import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 
@@ -291,8 +290,6 @@ public class Helper implements Serializable, Observer {
                 if (vb != null) {
                     try {
                         value = vb.getValue(context);
-                    } catch (PropertyNotFoundException e) {
-                        logger.error(e);
                     } catch (EvaluationException e) {
                         logger.error(e);
                     }

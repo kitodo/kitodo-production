@@ -149,7 +149,7 @@ public class FolderInformation {
 
             URI origOrdner = null;
             ArrayList<URI> verzeichnisse = fileService.getSubUris(filterVerz, dir);
-            //TODO: does it actually make sense?
+            // TODO: does it actually make sense?
             for (URI directory : verzeichnisse) {
                 origOrdner = directory;
             }
@@ -260,13 +260,8 @@ public class FolderInformation {
             method = this.getClass().getMethod(methodName);
             Object o = method.invoke(this);
             return (String) o;
-        } catch (SecurityException e) {
-
-        } catch (NoSuchMethodException e) {
-
-        } catch (IllegalArgumentException e) {
-        } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {
+        } catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException
+                | InvocationTargetException e) {
         }
         String folder = this.getImagesTifDirectory(false).toString();
         folder = folder.substring(0, folder.lastIndexOf("_"));

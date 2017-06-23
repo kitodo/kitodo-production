@@ -110,12 +110,9 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException e) {
-            logger.error(e);
-        } catch (ReadException e) {
+        } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
-        ;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(false);
@@ -153,12 +150,9 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = new MetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
-        } catch (PreferencesException e) {
-            logger.error(e);
-        } catch (ReadException e) {
+        } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
-        ;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(false);
@@ -769,12 +763,9 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             ff = new MetsMods(myPrefs);
             ff.read(this.metadataFile.getPath());
-        } catch (PreferencesException e) {
-            logger.error(e);
-        } catch (ReadException e) {
+        } catch (PreferencesException | ReadException e) {
             logger.error(e);
         }
-
     }
 
     private void addProperties(ImportObject io) {

@@ -240,9 +240,7 @@ public class MetadatenImagesHelper {
                     }
                     dsPage.addContentFile(cf);
 
-                } catch (TypeNotAllowedAsChildException e) {
-                    logger.error(e);
-                } catch (MetadataTypeNotAllowedException e) {
+                } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                     logger.error(e);
                 }
             }
@@ -319,9 +317,7 @@ public class MetadatenImagesHelper {
                         }
                         dsPage.addContentFile(cf);
 
-                    } catch (TypeNotAllowedAsChildException e) {
-                        logger.error(e);
-                    } catch (MetadataTypeNotAllowedException e) {
+                    } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                         logger.error(e);
                     }
                 }

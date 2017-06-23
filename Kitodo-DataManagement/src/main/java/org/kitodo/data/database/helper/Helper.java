@@ -19,7 +19,6 @@ import java.util.Map;
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
-import javax.faces.el.PropertyNotFoundException;
 import javax.faces.el.ValueBinding;
 
 import org.apache.logging.log4j.LogManager;
@@ -91,8 +90,6 @@ public class Helper implements Serializable {
                 if (vb != null) {
                     try {
                         value = vb.getValue(context);
-                    } catch (PropertyNotFoundException e) {
-                        logger.error(e);
                     } catch (EvaluationException e) {
                         logger.error(e);
                     }

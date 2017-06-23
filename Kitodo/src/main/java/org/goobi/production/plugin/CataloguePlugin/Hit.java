@@ -411,9 +411,7 @@ public class Hit {
             try {
                 String year = getAs("year", String.class);
                 return Integer.valueOf(year);
-            } catch (ClassCastException e) {
-                throw integerExpected;
-            } catch (NumberFormatException e) {
+            } catch (ClassCastException | NumberFormatException e) {
                 throw integerExpected;
             }
         }

@@ -88,9 +88,7 @@ public class VariableSelector extends DataSelector {
             }
         } catch (NoSuchFieldException e) {
             return null;
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }

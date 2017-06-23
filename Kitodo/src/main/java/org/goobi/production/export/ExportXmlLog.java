@@ -416,15 +416,11 @@ public class ExportXmlLog implements IProcessDataExport {
             metsElement.addContent(metadataElements);
             processElements.add(metsElement);
 
-        } catch (IOException | JDOMException e) {
-            logger.error(e);
-        } catch (JaxenException e) {
+        } catch (IOException | JDOMException | JaxenException e) {
             logger.error(e);
         }
-
         processElm.setContent(processElements);
         return doc;
-
     }
 
     /**

@@ -1083,15 +1083,8 @@ public class ProzesskopieForm implements Serializable {
                 md.setValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
-            } catch (UghHelperException e) {
+            } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
                 Helper.setFehlerMeldung(e.getMessage(), "");
-
-            } catch (DocStructHasNoTypeException e) {
-                Helper.setFehlerMeldung(e.getMessage(), "");
-
-            } catch (MetadataTypeNotAllowedException e) {
-                Helper.setFehlerMeldung(e.getMessage(), "");
-
             }
         }
     }
@@ -1110,10 +1103,7 @@ public class ProzesskopieForm implements Serializable {
                     colStruct.removeMetadata(md);
                 }
             }
-        } catch (UghHelperException e) {
-            Helper.setFehlerMeldung(e.getMessage(), "");
-            logger.error(e);
-        } catch (DocStructHasNoTypeException e) {
+        } catch (UghHelperException | DocStructHasNoTypeException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
             logger.error(e);
         }
@@ -1175,11 +1165,7 @@ public class ProzesskopieForm implements Serializable {
                 this.myRdf = ff;
             }
 
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-        } catch (TypeNotAllowedAsChildException e) {
-            logger.error(e);
-        } catch (PreferencesException e) {
+        } catch (TypeNotAllowedForParentException | TypeNotAllowedAsChildException | PreferencesException e) {
             logger.error(e);
         } catch (FileNotFoundException e) {
             logger.error("Error while reading von opac-config", e);
@@ -1314,8 +1300,8 @@ public class ProzesskopieForm implements Serializable {
             for (Metadata md : oldDocStruct.getAllMetadata()) {
                 try {
                     newDocStruct.addMetadata(md);
-                } catch (MetadataTypeNotAllowedException e) {
-                } catch (DocStructHasNoTypeException e) {
+                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    logger.error(e);
                 }
             }
         }
@@ -1323,8 +1309,8 @@ public class ProzesskopieForm implements Serializable {
             for (Person p : oldDocStruct.getAllPersons()) {
                 try {
                     newDocStruct.addPerson(p);
-                } catch (MetadataTypeNotAllowedException e) {
-                } catch (DocStructHasNoTypeException e) {
+                } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+                    logger.error(e);
                 }
             }
         }
@@ -1480,10 +1466,7 @@ public class ProzesskopieForm implements Serializable {
                     }
                 }
             }
-        } catch (JDOMException e1) {
-            logger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
-        } catch (IOException e1) {
+        } catch (JDOMException | IOException e1) {
             logger.error("error while parsing digital collections", e1);
             Helper.setFehlerMeldung("Error while parsing digital collections", e1);
         }
