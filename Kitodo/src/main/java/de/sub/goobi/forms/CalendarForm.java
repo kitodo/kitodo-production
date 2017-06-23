@@ -1098,7 +1098,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         }
-        if (!uploadShowing && value.indexOf("\u00A0") == -1) {
+        if (!uploadShowing && !value.contains("\u00A0")) {
             Helper.setFehlerMeldung("calendar.block." + input + ".invalid");
         }
         return null;

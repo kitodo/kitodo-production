@@ -73,7 +73,7 @@ public class GoobiScript {
         StrTokenizer tokenizer = new StrTokenizer(inScript, ' ', '\"');
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
-            if (tok.indexOf(":") == -1) {
+            if (!tok.contains(":")) {
                 Helper.setFehlerMeldung("kitodoScriptfield", "missing delimiter / unknown parameter: ", tok);
             } else {
                 String myKey = tok.substring(0, tok.indexOf(":"));

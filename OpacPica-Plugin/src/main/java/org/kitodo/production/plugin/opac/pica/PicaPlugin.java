@@ -535,7 +535,7 @@ public class PicaPlugin implements Plugin {
         /*
          * Sorting-Titel mit Umlaut-Konvertierung
          */
-        if (myTitle.indexOf("@") != -1) {
+        if (myTitle.contains("@")) {
             myTitle = myTitle.substring(myTitle.indexOf("@") + 1);
         }
         UGHUtils.replaceMetadatum(topstruct, inPrefs, "TitleDocMainShort", myTitle);
@@ -553,7 +553,7 @@ public class PicaPlugin implements Plugin {
          */
         if (topstructChild != null && mySecondHit != null) {
             String sortingTitleMulti = getElementFieldValue(mySecondHit, "021A", "a");
-            if (sortingTitleMulti.indexOf("@") != -1) {
+            if (sortingTitleMulti.contains("@")) {
                 sortingTitleMulti = sortingTitleMulti.substring(sortingTitleMulti.indexOf("@") + 1);
             }
             UGHUtils.replaceMetadatum(topstructChild, inPrefs, "TitleDocMainShort", sortingTitleMulti);

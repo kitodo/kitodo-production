@@ -417,7 +417,7 @@ public class ImportRussland {
         if (pName.length() == 0) {
             return;
         }
-        if (pName.indexOf(",") == -1) {
+        if (!pName.contains(",")) {
             throw new WrongImportFileException(
                     "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + inDetail + "')");
         }
