@@ -93,6 +93,7 @@
                                                             </h:selectOneMenu>
 
                                                             <h:selectOneMenu value="#{SearchForm.project}" style="width:570px">
+                                                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                                                 <f:selectItems id="pcid11" value="#{SearchForm.projects}"
                                                                                 var="proj" itemLabel="#{proj}"
                                                                                 itemValue="#{proj}"/>
@@ -109,6 +110,7 @@
                                                             <h:panelGroup>
                                                                 <h:selectOneMenu value="#{SearchForm.processPropertyTitle}"
                                                                                  style="width:175px; margin-right:3px">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                                                     <f:selectItems value="#{SearchForm.processPropertyTitles}"
                                                                                     var="proc" itemLabel="#{proc}"
                                                                                     itemValue="#{proc}"/>
@@ -128,6 +130,7 @@
                                                             <h:panelGroup>
                                                                 <h:selectOneMenu value="#{SearchForm.masterpiecePropertyTitle}"
                                                                                  style="width:175px; margin-right:3px">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                                                     <f:selectItems
                                                                             value="#{SearchForm.masterpiecePropertyTitles}"
                                                                             var="work" itemLabel="#{work}" itemValue="#{work}"/>
@@ -146,6 +149,7 @@
                                                             <h:panelGroup>
                                                                 <h:selectOneMenu value="#{SearchForm.templatePropertyTitle}"
                                                                                  style="width:175px; margin-right:3px">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                                                     <f:selectItems value="#{SearchForm.templatePropertyTitles}"
                                                                                     var="temp" itemLabel="#{temp}"
                                                                                     itemValue="#{temp}"/>
@@ -171,6 +175,7 @@
                                                                 </h:selectOneMenu>
                                                                 <h:selectOneMenu value="#{SearchForm.stepname}"
                                                                                  style="width:394px">
+                                                                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                                                     <f:selectItems value="#{SearchForm.stepTitles}"
                                                                                     var="stepTitles" itemLabel="#{stepTitles}"
                                                                                     itemValue="#{stepTitles}"/>
