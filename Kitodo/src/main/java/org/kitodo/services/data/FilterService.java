@@ -36,13 +36,13 @@ public class FilterService extends SearchService<Filter> {
 
     private FilterDAO filterDAO = new FilterDAO();
     private FilterType filterType = new FilterType();
-    private Indexer<Filter, FilterType> indexer = new Indexer<>(Filter.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public FilterService() {
         super(new Searcher(Filter.class));
+        this.indexer = new Indexer<>(Filter.class);
     }
 
     /**
@@ -61,6 +61,7 @@ public class FilterService extends SearchService<Filter> {
      * @param filter
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Filter filter) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(filter, filterType);
@@ -123,6 +124,7 @@ public class FilterService extends SearchService<Filter> {
      * @param filter
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Filter filter) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(filter, filterType);

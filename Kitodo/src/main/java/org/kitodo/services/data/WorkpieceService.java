@@ -37,15 +37,15 @@ public class WorkpieceService extends SearchService<Workpiece> {
 
     private WorkpieceDAO workpieceDAO = new WorkpieceDAO();
     private WorkpieceType workpieceType = new WorkpieceType();
-    private Indexer<Workpiece, WorkpieceType> indexer = new Indexer<>(Workpiece.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(WorkpieceService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public WorkpieceService() {
         super(new Searcher(Workpiece.class));
+        this.indexer = new Indexer<>(Workpiece.class);
     }
 
     /**
@@ -64,6 +64,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(workpiece, workpieceType);
@@ -131,6 +132,7 @@ public class WorkpieceService extends SearchService<Workpiece> {
      * @param workpiece
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Workpiece workpiece) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(workpiece, workpieceType);

@@ -51,15 +51,15 @@ public class UserService extends SearchService<User> {
 
     private UserDAO userDAO = new UserDAO();
     private UserType userType = new UserType();
-    private Indexer<User, UserType> indexer = new Indexer<>(User.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public UserService() {
         super(new Searcher(User.class));
+        this.indexer = new Indexer<>(User.class);
     }
 
     /**
@@ -78,6 +78,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(user, userType);
@@ -141,6 +142,7 @@ public class UserService extends SearchService<User> {
      * @param user
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(User user) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(user, userType);

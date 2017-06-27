@@ -37,15 +37,15 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
 
     private UserGroupDAO userGroupDAO = new UserGroupDAO();
     private UserGroupType userGroupType = new UserGroupType();
-    private Indexer<UserGroup, UserGroupType> indexer = new Indexer<>(UserGroup.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserGroupService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public UserGroupService() {
         super(new Searcher(UserGroup.class));
+        this.indexer = new Indexer<>(UserGroup.class);
     }
 
     public UserGroup find(Integer id) throws DAOException {
@@ -72,6 +72,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(userGroup, userGroupType);
@@ -120,6 +121,7 @@ public class UserGroupService extends TitleSearchService<UserGroup> {
      * @param userGroup
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(UserGroup userGroup) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(userGroup, userGroupType);

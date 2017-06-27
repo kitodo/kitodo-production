@@ -37,15 +37,15 @@ public class TemplateService extends SearchService<Template> {
 
     private TemplateDAO templateDAO = new TemplateDAO();
     private TemplateType templateType = new TemplateType();
-    private Indexer<Template, TemplateType> indexer = new Indexer<>(Template.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public TemplateService() {
         super(new Searcher(Template.class));
+        this.indexer = new Indexer<>(Template.class);
     }
 
     /**
@@ -64,6 +64,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(template, templateType);
@@ -131,6 +132,7 @@ public class TemplateService extends SearchService<Template> {
      * @param template
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Template template) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(template, templateType);

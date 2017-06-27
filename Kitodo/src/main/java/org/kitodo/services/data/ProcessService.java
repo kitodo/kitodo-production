@@ -104,7 +104,6 @@ public class ProcessService extends TitleSearchService<Process> {
 
     private ProcessDAO processDAO = new ProcessDAO();
     private ProcessType processType = new ProcessType();
-    private Indexer<Process, ProcessType> indexer = new Indexer<>(Process.class);
     private final MetadatenSperrung msp = new MetadatenSperrung();
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
@@ -115,10 +114,11 @@ public class ProcessService extends TitleSearchService<Process> {
     private static String DIRECTORY_SUFFIX = "images";
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public ProcessService() {
         super(new Searcher(Process.class));
+        this.indexer = new Indexer<>(Process.class);
     }
 
     public Process find(Integer id) throws DAOException {
@@ -145,6 +145,7 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(process, processType);
@@ -358,20 +359,10 @@ public class ProcessService extends TitleSearchService<Process> {
      * @param process
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Process process) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(process, processType);
-    }
-
-    /**
-     * Method removes process object from index of Elastic Search.
-     *
-     * @param id
-     *            of object
-     */
-    public void removeFromIndex(Integer id) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
     }
 
     public List<Process> search(String query) throws DAOException {

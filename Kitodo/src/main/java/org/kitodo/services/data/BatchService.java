@@ -43,15 +43,15 @@ public class BatchService extends TitleSearchService<Batch> {
 
     private BatchDAO batchDAO = new BatchDAO();
     private BatchType batchType = new BatchType();
-    private Indexer<Batch, BatchType> indexer = new Indexer<>(Batch.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(BatchService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public BatchService() {
         super(new Searcher(Batch.class));
+        this.indexer = new Indexer<>(Batch.class);
     }
 
     /**
@@ -70,6 +70,7 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(batch, batchType);
@@ -139,20 +140,10 @@ public class BatchService extends TitleSearchService<Batch> {
      * @param batch
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Batch batch) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(batch, batchType);
-    }
-
-    /**
-     * Method removes batch object from index of Elastic Search.
-     *
-     * @param id
-     *            of object
-     */
-    public void removeFromIndex(Integer id) throws CustomResponseException, IOException {
-        indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {

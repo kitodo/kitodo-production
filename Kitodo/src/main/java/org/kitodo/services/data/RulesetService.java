@@ -43,13 +43,13 @@ public class RulesetService extends TitleSearchService<Ruleset> {
 
     private RulesetDAO rulesetDAO = new RulesetDAO();
     private RulesetType rulesetType = new RulesetType();
-    private Indexer<Ruleset, RulesetType> indexer = new Indexer<>(Ruleset.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public RulesetService() {
         super(new Searcher(Ruleset.class));
+        this.indexer = new Indexer<>(Ruleset.class);
     }
 
     /**
@@ -68,6 +68,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param ruleset
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(ruleset, rulesetType);
@@ -111,6 +112,7 @@ public class RulesetService extends TitleSearchService<Ruleset> {
      * @param ruleset
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Ruleset ruleset) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(ruleset, rulesetType);

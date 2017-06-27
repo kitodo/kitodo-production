@@ -40,15 +40,15 @@ public class PropertyService extends TitleSearchService<Property> {
 
     private PropertyDAO propertyDAO = new PropertyDAO();
     private PropertyType propertyType = new PropertyType();
-    private Indexer<Property, PropertyType> indexer = new Indexer<>(Property.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(PropertyService.class);
 
     /**
-     * Constructor with searcher's assigning.
+     * Constructor with Searcher and Indexer assigning.
      */
     public PropertyService() {
         super(new Searcher(Property.class));
+        this.indexer = new Indexer<>(Property.class);
     }
 
     /**
@@ -67,6 +67,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void saveToIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performSingleRequest(property, propertyType);
@@ -148,6 +149,7 @@ public class PropertyService extends TitleSearchService<Property> {
      * @param property
      *            object
      */
+    @SuppressWarnings("unchecked")
     public void removeFromIndex(Property property) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         indexer.performSingleRequest(property, propertyType);
