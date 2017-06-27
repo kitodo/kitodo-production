@@ -121,6 +121,8 @@ public class MockDatabase {
     }
 
     private static void insertProcesses() throws DAOException, DataException {
+        Project project = serviceManager.getProjectService().find(1);
+
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
         firstProcess.setOutputName("Test");
@@ -138,7 +140,7 @@ public class MockDatabase {
         batches.add(secondBatch);
         firstProcess.setBatches(batches);
         firstProcess.setDocket(serviceManager.getDocketService().find(1));
-        firstProcess.setProject(serviceManager.getProjectService().find(1));
+        firstProcess.setProject(project);
         firstProcess.setRuleset(serviceManager.getRulesetService().find(1));
         serviceManager.getProcessService().save(firstProcess);
 
@@ -149,7 +151,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 20);
         secondProcess.setCreationDate(localDate.toDate());
         secondProcess.setDocket(serviceManager.getDocketService().find(1));
-        secondProcess.setProject(serviceManager.getProjectService().find(1));
+        secondProcess.setProject(project);
         secondProcess.setRuleset(serviceManager.getRulesetService().find(1));
         serviceManager.getProcessService().save(secondProcess);
 
@@ -160,13 +162,19 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 2, 10);
         thirdProcess.setCreationDate(localDate.toDate());
         thirdProcess.setDocket(serviceManager.getDocketService().find(1));
-        thirdProcess.setProject(serviceManager.getProjectService().find(1));
+        thirdProcess.setProject(project);
         thirdProcess.setRuleset(serviceManager.getRulesetService().find(1));
         serviceManager.getProcessService().save(thirdProcess);
 
         Process test = new Process();
         test.setTitle("DBConnectionTest");
         serviceManager.getProcessService().save(test);
+
+        project.getProcesses().add(firstProcess);
+        project.getProcesses().add(secondProcess);
+        project.getProcesses().add(thirdProcess);
+
+        serviceManager.getProjectService().save(project);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
