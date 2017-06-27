@@ -29,7 +29,9 @@ import org.goobi.production.flow.statistics.StepInformation;
 import org.goobi.webapi.beans.Field;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -80,15 +82,51 @@ public class ProjectService extends TitleSearchService<Project> {
     }
 
     /**
-     * Method saves processes related to modified project.
+     * Method saves processes and users related to modified project.
      *
      * @param project
      *            object
      */
     protected void manageDependenciesForIndex(Project project)
             throws CustomResponseException, DataException, IOException {
-        for (Process process : project.getProcesses()) {
-            serviceManager.getProcessService().saveToIndex(process);
+        manageProcessesDependenciesForIndex(project);
+        manageUsersDependenciesForIndex(project);
+    }
+
+    /**
+     * Management od processes for project object.
+     * 
+     * @param project
+     *            object
+     */
+    private void manageProcessesDependenciesForIndex(Project project) throws CustomResponseException, IOException {
+        if (project.getIndexAction() == IndexAction.DELETE) {
+            for (Process process : project.getProcesses()) {
+                serviceManager.getProcessService().removeFromIndex(process);
+            }
+        } else {
+            for (Process process : project.getProcesses()) {
+                serviceManager.getProcessService().saveToIndex(process);
+            }
+        }
+    }
+
+    /**
+     * Management od users for project object.
+     *
+     * @param project
+     *            object
+     */
+    private void manageUsersDependenciesForIndex(Project project) throws CustomResponseException, IOException {
+        if (project.getIndexAction() == IndexAction.DELETE) {
+            for (User user : project.getUsers()) {
+                user.getProjects().remove(project);
+                serviceManager.getUserService().saveToIndex(user);
+            }
+        } else {
+            for (User user : project.getUsers()) {
+                serviceManager.getUserService().saveToIndex(user);
+            }
         }
     }
 
