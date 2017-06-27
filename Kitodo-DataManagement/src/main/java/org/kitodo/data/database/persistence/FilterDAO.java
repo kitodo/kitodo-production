@@ -63,6 +63,13 @@ public class FilterDAO extends BaseDAO {
         return retrieveObjects(query);
     }
 
+    /**
+     * Save filter object to database.
+     * 
+     * @param filter
+     *            object to be saved
+     * @return saved object
+     */
     public Filter save(Filter filter) throws DAOException {
         storeObject(filter);
         return (Filter) retrieveObject(Filter.class, filter.getId());
