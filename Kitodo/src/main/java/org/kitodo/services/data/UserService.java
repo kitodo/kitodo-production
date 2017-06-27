@@ -589,9 +589,8 @@ public class UserService extends SearchService<User> {
         Filter filter = new Filter();
         filter.setValue(userFilter);
         filter.setCreationDate(localDateTime.toDate());
+        filter.setUser(user);
         serviceManager.getFilterService().save(filter);
-        user.getFilters().add(filter);
-        serviceManager.getUserService().save(user);
     }
 
     /**
