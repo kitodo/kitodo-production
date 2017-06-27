@@ -28,7 +28,6 @@ import org.hibernate.criterion.Order;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.SimpleDAO;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -68,7 +67,7 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String Loeschen() {
         try {
-            new SimpleDAO().refreshObject(this.myBenutzergruppe);
+            this.serviceManager.getUserGroupService().refresh(this.myBenutzergruppe);
             if (this.myBenutzergruppe.getUsers().size() > 0) {
                 for (User b : this.myBenutzergruppe.getUsers()) {
                     b.getUserGroups().remove(this.myBenutzergruppe);

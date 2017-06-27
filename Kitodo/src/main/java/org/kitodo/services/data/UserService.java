@@ -163,6 +163,16 @@ public class UserService extends SearchService<User> {
     }
 
     /**
+     * Refresh user object after update.
+     *
+     * @param user
+     *            object
+     */
+    public void refresh(User user) {
+        userDAO.refresh(user);
+    }
+
+    /**
      * Find users with exact name.
      *
      * @param name
@@ -591,6 +601,7 @@ public class UserService extends SearchService<User> {
         filter.setCreationDate(localDateTime.toDate());
         filter.setUser(user);
         serviceManager.getFilterService().save(filter);
+        refresh(user);
     }
 
     /**

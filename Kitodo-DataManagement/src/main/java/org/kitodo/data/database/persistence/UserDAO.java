@@ -117,4 +117,14 @@ public class UserDAO extends BaseDAO {
     public Long count(String query) throws DAOException {
         return retrieveAmount(query);
     }
+
+    /**
+     * Refresh user object after some changes.
+     *
+     * @param user
+     *            object
+     */
+    public void refresh(User user) {
+        refreshObject(user);
+    }
 }
