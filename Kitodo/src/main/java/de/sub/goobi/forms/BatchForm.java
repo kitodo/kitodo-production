@@ -445,8 +445,7 @@ public class BatchForm extends BasisForm {
             Helper.setFehlerMeldung("tooManyBatchesSelected");
             return null;
         } else {
-            if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals("")
-                    && !this.selectedBatches.get(0).equals("null")) {
+            if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals(0)) {
                 Batch batch;
                 try {
                     batch = serviceManager.getBatchService().find(Integer.valueOf(selectedBatches.get(0)));
