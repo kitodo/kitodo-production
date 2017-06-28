@@ -397,7 +397,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
             }
             if (!this.showArchivedProjects) {
-                crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
+                crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
             }
             sortList(crit, false);
             this.page = new Page(crit, 0);
@@ -420,7 +420,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.myFilteredDataSource = new UserTemplatesFilter(true);
             Criteria crit = this.myFilteredDataSource.getCriteria();
             if (!this.showArchivedProjects) {
-                crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
+                crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
             }
             sortList(crit, false);
             this.page = new Page(crit, 0);
@@ -508,8 +508,8 @@ public class ProzessverwaltungForm extends BasisForm {
             }
 
             if (!this.showArchivedProjects) {
-                crit.createCriteria("project", "proj");
-                crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
+                crit.createCriteria("project", "project");
+                crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
                 sortList(crit, false);
             } else {
                 /* noch sortieren */
@@ -547,16 +547,16 @@ public class ProzessverwaltungForm extends BasisForm {
 
         if (this.sortierung.equals("projektAsc")) {
             if (addCriteria) {
-                inCrit.createCriteria("project", "proj");
+                inCrit.createCriteria("project", "project");
             }
-            order = Order.asc("proj.title");
+            order = Order.asc("project.title");
         }
 
         if (this.sortierung.equals("projektDesc")) {
             if (addCriteria) {
-                inCrit.createCriteria("project", "proj");
+                inCrit.createCriteria("project", "project");
             }
-            order = Order.desc("proj.title");
+            order = Order.desc("project.title");
         }
 
         if (this.sortierung.equals("vorgangsdatumAsc")) {

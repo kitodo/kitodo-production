@@ -63,10 +63,10 @@ public class SearchResultGeneration {
             crit.add(Restrictions.not(Restrictions.eq("sortHelperStatus", "100000000")));
         }
         if (!this.showArchivedProjects) {
-            crit.createCriteria("projekt", "proj");
-            crit.add(Restrictions.not(Restrictions.eq("proj.projectIsArchived", true)));
+            crit.createCriteria("projekt", "project");
+            crit.add(Restrictions.not(Restrictions.eq("project.projectIsArchived", true)));
         } else {
-            crit.createCriteria("projekt", "proj");
+            crit.createCriteria("projekt", "project");
         }
         Order order = Order.asc("titel");
         crit.addOrder(order);
